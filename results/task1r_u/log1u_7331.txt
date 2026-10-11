@@ -1,0 +1,3 @@
+   done unilateral_c40 in 2266 s :: WAVE-E 0.01/0.21/0.29 | WAVE-P 0.27/0.27/0.53 | WAVE-PSH 0.01/0.21/0.50 | GAMMA 0.00/0.33/0.33
+   done ladder_4 in 1371 s :: WAVE-E 0.01/0.01/0.01 | WAVE-P 0.01/0.01/0.31 | WAVE-PSH 0.00/0.00/0.13 | GAMMA 0.07/0.07/0.07
+   done ladder_6 in 1463 s :: WAVE-E 0.01/0.01/0.23 | WAVE-P 0.01/0.27/0.35 | WAVE-PSH 0.01/0.01/0.26 | GAMMA 0.14/0.15/0.18

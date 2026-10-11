@@ -1,0 +1,37 @@
+Controls of Task 2F on seed 999 (task2f_control.py)
+
+(1) Reproduction of the dense pilot (c2_ablate; networks 10-15, TAG 3002, kmax 7)
+  thin: 180 windows (pilot 180); k equal 180/180; identical records (==, bit for bit after JSON): MT-FW+SC 180/180, MT-FW-NOCAP+SC 180/180, BOMP-PK+SC 180/180, BOMP-PK-CAP+SC 180/180, BOMP-PK-SEQ+SC 180/180 -> OK
+  (2) thin: MT-FW-NOCAP+SC and BOMP-PK-SEQ+SC with identical hit sequences in 180/180 windows
+      pooled recall (3 cells) cap 0.1 / 0.25: analyze_2f.Pool on task2f  |  xc.recall_caps on the saved pilot
+      MT-FW+SC         0.212 / 0.304  |  MT-FW        0.212 / 0.304  equal
+      MT-FW-NOCAP+SC   0.131 / 0.233  |  MT-FW-NOCAP  0.131 / 0.233  equal
+      BOMP-PK+SC       0.135 / 0.230  |  BOMP-PK      0.135 / 0.230  equal
+      BOMP-PK-CAP+SC   0.180 / 0.291  |  BOMP-PK-CAP  0.180 / 0.291  equal
+      BOMP-PK-SEQ+SC   0.131 / 0.233  |  BOMP-PK-SEQ  0.131 / 0.233  equal
+  strong: 180 windows (pilot 180); k equal 180/180; identical records (==, bit for bit after JSON): MT-FW+SC 180/180, MT-FW-NOCAP+SC 180/180, BOMP-PK+SC 180/180, BOMP-PK-CAP+SC 180/180, BOMP-PK-SEQ+SC 180/180 -> OK
+  (2) strong: MT-FW-NOCAP+SC and BOMP-PK-SEQ+SC with identical hit sequences in 180/180 windows
+      pooled recall (3 cells) cap 0.1 / 0.25: analyze_2f.Pool on task2f  |  xc.recall_caps on the saved pilot
+      MT-FW+SC         0.164 / 0.241  |  MT-FW        0.164 / 0.241  equal
+      MT-FW-NOCAP+SC   0.085 / 0.183  |  MT-FW-NOCAP  0.085 / 0.183  equal
+      BOMP-PK+SC       0.085 / 0.190  |  BOMP-PK      0.085 / 0.190  equal
+      BOMP-PK-CAP+SC   0.144 / 0.215  |  BOMP-PK-CAP  0.144 / 0.215  equal
+      BOMP-PK-SEQ+SC   0.085 / 0.183  |  BOMP-PK-SEQ  0.085 / 0.183  equal
+  Values published in results/explorations/out/c2_ablate_analysis.txt (thin) and c2_ablate_strong_analysis.txt:
+    thin   BOMP-PK 0.135/0.230, MT-FW 0.212/0.304, MT-FW-NOCAP 0.131/0.233, BOMP-PK-CAP 0.180/0.291, BOMP-PK-SEQ 0.131/0.233
+    strong BOMP-PK 0.085/0.190, MT-FW 0.164/0.241, MT-FW-NOCAP 0.085/0.183, BOMP-PK-CAP 0.144/0.215, BOMP-PK-SEQ 0.085/0.183
+
+(3) Standard arm: C6 HOM (networks 20-21, TAG 3006, draw_sources, kmax 5)
+  thin: 60 windows; k, truth and origins equal 60/60; identical records: MT-FW+SC 60/60, BOMP-PK+SC 60/60 -> OK
+  strong: 60 windows; k, truth and origins equal 60/60; identical records: MT-FW+SC 60/60, BOMP-PK+SC 60/60 -> OK
+
+(4) analyze_2f.Pool versus froc_exact.exact_HF + analyze_2c.val
+  point and 200 hierarchical resamples, 4 methods, 2 regimes, 2 caps: maximum difference 0.0e+00
+
+(5) Time estimate of the full design (times of the control parts, 2 processes in parallel)
+  dense: 1.66 s of CPU per window (4 methods 1.56 + amortised network preparation 0.09); 11520 windows in the two seeds -> 5.31 h of CPU
+  std: 1.20 s of CPU per window (4 methods 1.11 + amortised network preparation 0.09); 1920 windows in the two seeds -> 0.64 h of CPU
+  total 5.95 h of CPU, about 2.97 h of wall-clock time on 2 cores
+
+OpenBLAS kernels recorded in the control parts: ['{"OPENBLAS_CORETYPE": "Prescott", "blas": [["Prescott", "libopenblas64_p-r0-0cf96a72.3.23.dev.so"], ["Katmai", "libscipy_openblas-6cdc3b4a.so"]]}']
+OVERALL RESULT OF THE CONTROLS: OK

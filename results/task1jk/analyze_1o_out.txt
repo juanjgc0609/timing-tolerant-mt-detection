@@ -1,0 +1,25 @@
+TABLE A: per-event recall at realized false-event rate <= 0.1 / <= 0.25 per window, seed 2024 ; 7331
+| Generator | Cell | TOL-TB | KIN-LR | PHYS-LR | WAVE-E | WAVE-P | GAMMA | PYOCTO |
+|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+| consistent | one-sided, 8 st. | 0.17/0.17 ; 0.35/0.35 | 0.36/0.36 ; 0.43/0.57 | 0.38/0.57 ; 0.59/0.68 | 0.26/0.26 ; 0.32/0.41 | 0.00/0.38 ; 0.38/0.62 | 0.28/0.28 ; 0.41/0.41 | 0.09/0.19 ; 0.27/0.27 |
+| consistent | 4 stations | 0.04/0.04 ; 0.04/0.04 | 0.04/0.04 ; 0.00/0.00 | 0.22/0.36 ; 0.00/0.33 | 0.00/0.18 ; 0.11/0.11 | 0.16/0.16 ; 0.20/0.47 | 0.00/0.00 ; 0.02/0.02 | 0.00/0.07 ; 0.00/0.00 |
+| consistent | 6 stations | 0.06/0.17 ; 0.02/0.19 | 0.08/0.08 ; 0.04/0.21 | 0.13/0.32 ; 0.25/0.35 | 0.08/0.15 ; 0.21/0.21 | 0.08/0.08 ; 0.35/0.35 | 0.09/0.11 ; 0.04/0.04 | 0.00/0.09 ; 0.00/0.02 |
+| control, 0.5 s | one-sided, 8 st. | 0.02/0.32 ; 0.30/0.59 | 0.00/0.30 ; 0.46/0.46 | 0.00/0.57 ; 0.32/0.57 | 0.26/0.26 ; 0.32/0.41 | 0.00/0.38 ; 0.38/0.62 | 0.00/0.74 ; - | 0.00/0.00 ; - |
+| control, 0.5 s | 4 stations | 0.02/0.16 ; 0.02/0.02 | 0.02/0.18 ; 0.02/0.02 | 0.13/0.13 ; 0.00/0.00 | 0.00/0.18 ; 0.11/0.11 | 0.16/0.16 ; 0.20/0.47 | 0.00/0.24 ; - | 0.00/0.00 ; - |
+| control, 0.5 s | 6 stations | 0.36/0.36 ; 0.02/0.25 | 0.21/0.45 ; 0.02/0.44 | 0.42/0.58 ; 0.00/0.38 | 0.08/0.15 ; 0.21/0.21 | 0.08/0.08 ; 0.35/0.35 | 0.25/0.57 ; - | 0.00/0.62 ; - |
+
+TABLE B: per-event pairs at budget 0.1 (detected only by A : only by B, p)
+consistent one-sided, 8 st. :: KIN-LR vs PHYS-LR: 0:11, p=0.00098 ; 0:9, p=0.0039 || GAMMA vs PHYS-LR: 0:15, p=6.1e-05 ; 0:15, p=6.1e-05 || PYOCTO vs PHYS-LR: 0:20, p=1.9e-06 ; 0:23, p=2.4e-07 || PHYS-LR vs WAVE-P: 13:3, p=0.021 ; 12:1, p=0.0034
+consistent 4 stations :: KIN-LR vs PHYS-LR: 0:10, p=0.002 ; 0:0, p=1 || GAMMA vs PHYS-LR: 0:12, p=0.00049 ; 0:0, p=1 || PYOCTO vs PHYS-LR: 0:12, p=0.00049 ; 0:0, p=1 || PHYS-LR vs WAVE-P: 7:4, p=0.55 ; 0:9, p=0.0039
+consistent 6 stations :: KIN-LR vs PHYS-LR: 0:13, p=0.00024 ; 0:10, p=0.002 || GAMMA vs PHYS-LR: 1:15, p=0.00052 ; 0:10, p=0.002 || PYOCTO vs PHYS-LR: 0:17, p=1.5e-05 ; 0:12, p=0.00049 || PHYS-LR vs WAVE-P: 13:0, p=0.00024 ; 2:7, p=0.18
+control, 0.5 s one-sided, 8 st. :: KIN-LR vs PHYS-LR: 2:20, p=0.00012 ; 1:5, p=0.22 || GAMMA vs PHYS-LR: 12:7, p=0.36 ; - || PYOCTO vs PHYS-LR: 0:34, p=1.2e-10 ; - || PHYS-LR vs WAVE-P: 20:6, p=0.0094 ; 12:5, p=0.14
+control, 0.5 s 4 stations :: KIN-LR vs PHYS-LR: 0:6, p=0.031 ; 0:10, p=0.002 || GAMMA vs PHYS-LR: 0:7, p=0.016 ; - || PYOCTO vs PHYS-LR: 0:7, p=0.016 ; - || PHYS-LR vs WAVE-P: 5:7, p=0.77 ; 9:7, p=0.8
+control, 0.5 s 6 stations :: KIN-LR vs PHYS-LR: 2:13, p=0.0074 ; 0:13, p=0.00024 || GAMMA vs PHYS-LR: 17:9, p=0.17 ; - || PYOCTO vs PHYS-LR: 0:22, p=4.8e-07 ; - || PHYS-LR vs WAVE-P: 19:1, p=4e-05 ; 20:3, p=0.00049
+
+realized at nominal budget 0.1 (recall, false/window):
+consistent one-sided, 8 st. :: TOL-TB 0.17,0.08 ; 0.35,0.08 | KIN-LR 0.36,0.10 ; 0.43,0.08 | PHYS-LR 0.57,0.25 ; 0.68,0.15 | WAVE-E 0.26,0.10 ; 0.32,0.08 | WAVE-P 0.38,0.15 ; 0.38,0.08 | GAMMA 0.28,0.12 ; 0.27,0.03 | PYOCTO 0.19,0.15 ; 0.05,0.05
+consistent 4 stations :: TOL-TB 0.04,0.03 ; 0.00,0.02 | KIN-LR 0.04,0.03 ; 0.00,0.02 | PHYS-LR 0.22,0.08 ; 0.00,0.00 | WAVE-E 0.18,0.22 ; 0.11,0.10 | WAVE-P 0.16,0.07 ; 0.20,0.05 | GAMMA 0.00,0.03 ; 0.00,0.02 | PYOCTO 0.00,0.00 ; 0.00,0.00
+consistent 6 stations :: TOL-TB 0.06,0.02 ; 0.02,0.00 | KIN-LR 0.08,0.10 ; 0.04,0.00 | PHYS-LR 0.32,0.22 ; 0.25,0.02 | WAVE-E 0.08,0.03 ; 0.21,0.10 | WAVE-P 0.08,0.03 ; 0.35,0.03 | GAMMA 0.06,0.12 ; 0.04,0.02 | PYOCTO 0.00,0.02 ; 0.00,0.02
+control, 0.5 s one-sided, 8 st. :: TOL-TB 0.32,0.15 ; 0.49,0.13 | KIN-LR 0.30,0.17 ; 0.46,0.10 | PHYS-LR 0.64,0.28 ; 0.57,0.25 | WAVE-E 0.26,0.10 ; 0.32,0.08 | WAVE-P 0.38,0.15 ; 0.38,0.08 | GAMMA 0.74,0.22 ; - | PYOCTO 0.00,0.00 ; -
+control, 0.5 s 4 stations :: TOL-TB 0.02,0.00 ; 0.02,0.00 | KIN-LR 0.02,0.00 ; 0.02,0.00 | PHYS-LR 0.13,0.07 ; 0.24,0.30 | WAVE-E 0.18,0.22 ; 0.11,0.10 | WAVE-P 0.16,0.07 ; 0.20,0.05 | GAMMA 0.00,0.00 ; - | PYOCTO 0.00,0.00 ; -
+control, 0.5 s 6 stations :: TOL-TB 0.25,0.05 ; 0.25,0.15 | KIN-LR 0.21,0.05 ; 0.44,0.18 | PHYS-LR 0.42,0.10 ; 0.71,0.40 | WAVE-E 0.08,0.03 ; 0.21,0.10 | WAVE-P 0.08,0.03 ; 0.35,0.03 | GAMMA 0.57,0.13 ; - | PYOCTO 0.00,0.00 ; -

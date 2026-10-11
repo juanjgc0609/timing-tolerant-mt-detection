@@ -1,0 +1,384 @@
+TASK 2A - CONFIRMATORY BENCHMARK: INDEPENDENT VERIFICATION REPORT
+=================================================================
+
+Written by an independent verifier after the runs finished (Sep 26 2026). Inputs: PREREGISTRO_1j_1k.txt (section
+"Task 2A"), task2a_confirm.py, analyze_2a.py, task2a_seed{999,2024,7331}_{thin,strong}.json, task2a_parts/ (90
+per-network files), task2a_frozen_2Ae.json, qm_recal_2a.json, log2a_*.txt, task2a_smoke.txt, analyze_2a_out.txt.
+None of these files was modified. All verifier scripts and outputs are in verif_2a/ (every file there carries a
+_verif suffix).
+
+Short verdict. No implementation error, leakage or scoring asymmetry was found that could produce a false
+positive. The headline (MT-FW+SC beats the best of GaMMA, PyOcto and QuakeMigrate in every cell, both seeds, both
+clutter regimes, by +0.09 to +0.49 recall) is reproduced exactly from the JSON and survives every check below. It
+needs three qualifications: the effective competitor is QuakeMigrate (the pick-based associators are starved by
+the picker), the per-window bootstrap intervals are too narrow because they ignore network clustering, and rule
+2A-e passes only under one of two readings of an ambiguous preregistered sentence.
+
+
+1. DESIGN AS IMPLEMENTED
+------------------------
+
+Generator. gen_realistic.generate_real with DEFAULT_CFG (1D gradient medium VS0 = 2.8 km/s, g = 0.04 1/s, VP =
+1.73 VS, curved rays; Ricker source with fc U[1.4, 2.8] Hz and phase rotation U[-45, 45] deg; scattered coda
+with energy ratio 0.3; polarisation deviation 10 deg; lognormal site factor sigma 0.5; white noise 0.02 SNR
+units). The per-window static draw is replaced by fixed statics per network, N(0, 0.3 s) per station and phase,
+drawn from default_rng([seed, 2002, cell, net]); the rng_h sequence is consumed identically (verified by the
+selfcheck). The source is a random double couple (task1w_mech.rand_dc).
+
+All detectors and the station-correction estimator use the same homogeneous model VP = 5.19 km/s, VS = 3.0 km/s
+(task0_common): MT-FW (predicted times), GaMMA and PyOcto (velocity model), QuakeMigrate (homogeneous LUT),
+station_corrections.peak_delays.
+
+Cells and regimes. ladder_4 (random, 4 st.), ladder_6 (random, 6 st.), unilateral_c40 (one-sided, 8 st., 40
+clutter); regimes thin (clutter amplitude 0.35) and strong (1.75). Seeds 2024 and 7331 for evaluation, 999 for
+calibration.
+
+Networks. Per seed and cell, 5 networks make_network(kind, nst, seed=[s, 2001, ci, j]). The same 5 networks and
+the same statics are used by both regimes (paired regimes).
+
+Catalogue and station corrections (SC). Per network AND regime, 20 catalogued single-source events drawn with
+generate_real on that network with that regime's clutter; an event enters if >= 3 station/phase arrivals exceed
+matched-filter energy 25 in a +-1 s search around the homogeneous time from the true source; catalogue location
+and origin time carry N(0, 1 km) per coordinate and N(0, 0.1 s) errors (depth clipped to [1, 20] km).
+estimate_station_corrections (median of gated joint P/S peak delays) is run on these 20 events with the
+catalogue (perturbed) location and origin time. The catalogue streams (tag 2003) are independent of the
+evaluation-window streams (tag 2004).
+
+Evaluation. 20 windows per network (draw_sources: 0/1/2 sources with p 0.4/0.4/0.2, sources > 12 km apart,
+origin U[5.5, 7.5] s), 100 windows per cell, 67-87 true events per cell.
+
+Methods. MT-FW and MT-FW+SC: certified_fw_record (kmax 5, min_sep 5 km, CAPV 6), with tcorr = SC added to the
+predicted P and S times; identity with fw_record / dense_fw_record_c asserted on 2 windows of every network (all
+90 part files report checks 2/2/2/1). MT-FW-NODE+SC: subspace of a node >= 9 km away (0 violations of the 9 km
+constraint in 810000 node pairs). WAVE-PT@20 without SC. GaMMA-STALTA(+SC) and GaMMA-DY(+SC): GAMMA_GRID (10
+configurations, np.random.seed(42) per call), oracle choice of configuration per cell and cap. PyOcto-STALTA(+SC):
+PYOCTO_GRID (15 configurations), oracle; an empty-pick guard avoids a PyOcto 0.2.0 segfault and returns [] only
+when fewer picks than n_picks exist (identical output otherwise). QM, QM-3C, QM-3C+SC: QuakeMigrate 1.2.2 detect +
+trigger with the recalibrated configurations of qm_recal_2a.json; +SC adds the corrections to lut.traveltimes.
+Picks: real_picker.pick_waveforms(method="stalta") with CLASSIC_CFG (calibrated on seed 999 in real_picker.py);
+DY picks: task1y_clutter.degrade_y on the generator's true arrivals and clutter picks.
+
+Endpoint and statistics. Recall at <= 0.1 and <= 0.25 realised false events per window on the exact FROC
+(froc_exact.exact_HF for MT-FW, WAVE-PT and QM records; configuration points for GaMMA and PyOcto). Paired
+bootstrap over windows, 2000 replicates, same resamples for all methods of a cell, operating point,
+configuration and best comparator re-chosen per replicate. Rules decided on point estimates with threshold 0.05
+(tolerance 1e-9).
+
+2A-e. MT-FW+SC and QM-3C+SC score thresholds and GaMMA-STALTA+SC configuration frozen on the seed-999 results
+(5 networks x 20 windows per cell and regime) for budgets 0.1 and 0.25, written to task2a_frozen_2Ae.json at
+20:12:25 (-05), before the first evaluation part file (20:17:20); analyze_2a.py re-derives the frozen values
+from the seed-999 JSON and asserts equality.
+
+
+2. DEVIATIONS FROM THE PREREGISTRATION
+--------------------------------------
+
+None of the following changes the direction or the pass/fail status of 2A-a to 2A-d.
+
+D1 (documentation). gen_realistic.py was modified at 18:25 (-05), after the 2A section was written (15:14 -05 =
+20:14 UTC, matching its header). The change adds the statics argument that the preregistered design requires.
+The selfcheck confirms that the rng/rng_m/rng_h sequences, the clutter picks and the pick times are as expected
+(max error 0 s). No seed-2024/7331 data existed at that time.
+
+D2 (minor). The preregistration says "Per network, a catalogue of 20 events". The implementation draws one catalogue
+per network and per regime, each with the clutter of its regime. Consequence: in strong clutter the SC are
+estimated from strong-clutter catalogue windows and are clearly worse (section 4.8). This is the main reason 2A-d
+fails in strong clutter. It affects every +SC method equally (the same corrections are given to MT-FW, GaMMA,
+PyOcto and QM).
+
+D3 (minor, declared by design). The same 5 networks and statics serve both regimes ("per seed, cell and regime, 5 fixed
+networks" is satisfied, but the two regimes are paired, not independent).
+
+D4 (scope of QM recalibration). The qm_wrapper procedure was run on seed-999 generate_real windows 0-5 of the
+5 networks of ladder_6 and unilateral_c40 (qm_wrapper.CELLS), thin regime only, without SC: 60 windows, 44
+sources. QM-3C+SC uses the QM-3C configuration. This follows "the qm_wrapper procedure" but QM is never
+calibrated on strong clutter or on the 4-station cell. The calibration windows are identical (60/60) to windows
+0-5 of the seed-999 thin part files produced later by the final code.
+
+D5 (low). The first seed-999 attempt crashed (PyOcto segfault on an empty pick list); the four seed-999 strong
+unilateral_c40 part files written before the crash (19:12-19:18) were produced by an earlier version of
+task2a_confirm.py (final mtime 19:32) and were reused. I re-ran net 1 with the final code
+(verif_2a/seed999_strong_unilateral_c40_net1_verif.json): station corrections differ by 9e-16 s, MT-FW, MT-FW+SC,
+MT-FW-NODE+SC, WAVE-PT, GaMMA, PyOcto and picker outputs are identical, QuakeMigrate scores differ in the 5th
+decimal and one extra QM-3C+SC false event (score 1.39989) appears in 1 of 20 windows. That event is below the
+frozen QM-3C+SC threshold at budget 0.1 (1.40042) and at 0.25 it would add at most 0.01 to the calibration false
+rate. The effect on 2A-e is nil or marginal and it does not touch 2A-a to 2A-d.
+
+D6 (interpretation). The preregistration does not say how the bootstrap intervals enter the rules; the analysis
+decides on point estimates (the 1y convention) and reports intervals.
+
+D7 (interpretation). The 2A-e sentence is ambiguous; analyze_2a.py (mtime 19:43, before any evaluation data)
+prints both readings. See section 6.
+
+D8 (none, stated for completeness). "the configurations and thresholds of GaMMA-STALTA+SC": GaMMA has no event score in
+this pipeline, so only its configuration index is frozen. Evaluation of seed 7331 was interrupted twice and
+resumed; every job is seeded independently and no module was modified after 20:12, so resumption is exact.
+Compute budget: the seed-999 estimate was 1.47 h on 2 cores (< 10 h), so N_WIN stayed at 20, as preregistered.
+
+
+3. QUAKEMIGRATE RECALIBRATION (qm_recal_2a.json, log2a_qmcal.txt)
+---------------------------------------------------------------
+
+Detect grid: 24 onsets (band 1-4, 1-6, 2-16 Hz x 8 STA/LTA pairs), 60 windows, 0.77 s per detect. Trigger grid:
+624 rows per variant (floor quantile x marginal window/minimum interval x normalisation x smoothing), two phases.
+Criterion: recall at <= 0.25 false per window, ties broken at 0.1 then 0.05.
+
+QM (P on Z, S on N/E): band 1-6 Hz, STA/LTA 0.4/6.0 s, onset lag 0.12 s (trigger window 5.12-8.12 s),
+normalised coalescence, floor quantile 0.9 (threshold 1.964), marginal window / minimum event interval
+0.25/0.5 s, no smoothing. Calibration recall 0.14 / 0.16 / 0.20 at 0.05 / 0.1 / 0.25 (package-default onset
+0.00 / 0.00 / 0.02). 2 tied rows, same onset. Trigger phase 421 s.
+
+QM-3C (P and S onsets from Z, N, E): band 1-6 Hz, STA/LTA 0.8/6.0 s, lag 0.36 s (trigger window 5.36-8.36 s),
+normalised, floor quantile 0.5 (threshold 1.310), 0.25/0.5 s, no smoothing. Calibration recall 0.25 / 0.30 /
+0.36 (package default 0.02 / 0.02 / 0.07). 4 tied rows, same onset. Trigger phase 361 s.
+
+In evaluation a QuakeMigrate variant (QM-3C or QM-3C+SC) is the best preregistered comparator in all 24
+cell x seed x cap cases (Table 3 of analyze_2a_out.txt).
+
+
+4. VERIFICATION CHECKS AND OUTCOMES
+-----------------------------------
+
+4.1 Conformity (task item 1). All preregistered design elements are present: generator configuration, fixed
+N(0, 0.3 s) statics per network, 5 networks x 20 windows, 20-event catalogue with 1 km / 0.1 s errors and gate
+25 / 3 arrivals, K = 20 SC, STA/LTA configuration frozen from seed 999, the 15 method variants, QM recalibration
+on seed-999 generate_real windows, the endpoint, the 2000-replicate paired bootstrap with re-selection and the
+five rules with the preregistered thresholds and counting ("2 of 3 cells, both seeds"). Deviations: section 2.
+
+4.2 Leakage (task item 2).
+- MT-FW, MT-FW+SC, MT-FW-NODE+SC: the truth list enters certified_fw_record / dense_fw_record_c / fw_record only
+  in the hit-labelling block after a node has been selected; the oracle, the matched filter (matched(D)) and its
+  robust scale use only D. The same holds for greedy_record (WAVE-PT) and qm_records (QM). Truth, true origin
+  times, true statics and mechanisms are not visible to any detector.
+- SC come only from the catalogue windows (tag 2003 streams): estimate_station_corrections(STA, cat) receives the
+  catalogue waveforms and the perturbed catalogue locations/times. True sources enter the catalogue only through
+  the preregistered admission gate. true statics are used only for the diagnostic fields resid_rms and
+  expected_corr.
+- 2A-e: frozen values depend only on task2a_seed999_*.json (verified by my own re-implementation of the freezing
+  rule: thresholds identical to the file for 4 cell/regime pairs x 2 budgets); written before any evaluation
+  output existed.
+- Networks: no seed-999 network equals any seed-2024/7331 network (minimum distance between a seed-999 station
+  and a station of the same cell in the evaluation seeds 0.34 km, no identical network pairs, no identical static
+  matrices). All 90 part files store exactly the STA and statics that network() regenerates.
+- Per the preregistration, seeds 2024/7331 were never used with gen_realistic/real_picker/qm_wrapper before: the
+  only modules calling generate_real are gen_realistic.py, real_picker.py (seed 999) and task2a_confirm.py.
+- GaMMA-DY uses the true arrival times by design (optimistic bound, secondary rule 2A-c only).
+
+4.3 Equal scoring (task item 3).
+- Hit rule: nearest true source within 5 km epicentral distance, identical code path semantics in
+  score_events (GaMMA, PyOcto), greedy_record / certified_fw_record (MT-FW, WAVE-PT) and qm_records (QM). No time
+  tolerance for any method. A second event on an already-hit source counts neither as hit nor as false for every
+  method (set semantics in score_events and exact_HF).
+- Separation / caps: MT-FW (kmax 5, 5 km exclusion) and QM (greedy 5 km, max 5 events) are treated identically.
+  GaMMA and PyOcto have NO separation rule and NO cap, i.e. they are scored more leniently (duplicates are free).
+  No comparator receives fewer candidate events than MT-FW because of a cap; windows contain at most 2 sources.
+- Origin-time range: MT-FW DEFAULT_TAUS 5.0-8.0 s; GaMMA and PyOcto keep events with origin in [5, 8] s
+  (in_domain); QM keeps coalescence peaks in 5.0-8.0 s + calibrated onset lag. Sensitivity test
+  (verif_2a/qm_trigwin_2024_thin_verif.json, 300 regenerated windows, seed 2024 thin, all cells): widening the
+  QM-3C+SC trigger window by 0.5 s on each side changes recall by -0.02/-0.01 (4 st.), -0.03/0.00 (6 st.),
+  +0.01/+0.01 (one-sided 8) at 0.1/0.25, so the time window does not handicap QM. Measured QM hit offsets
+  t0 - tau: median 0.37-0.47 s, 95th percentile 1.2-1.7 s.
+- Structural (not implementation) differences: GaMMA/PyOcto operating points are 10/15 configurations without an
+  event score (coarser FROC; the oracle choice compensates in part); QuakeMigrate's trigger merges coalescence
+  peaks closer than the minimum event interval (0.5 s), and 137 of 215 two-source windows have origin times
+  within 0.75 s, while two-source windows hold about half of all events. See 4.9.
+
+4.4 Sign of the SC for every method (task item 4). By code: GaMMA/PyOcto picks t - corr[i, phase]
+(apply_sc); QM lut.traveltimes[station][phase] + corr (selfcheck: served LUT = LUT + rint(corr * 50) in every
+cell, and on 4 synthetic windows with known statics the corrected LUT restores the clean COA maximum to within
+1-2 %, at 0 km, versus 2.2-2.6 and up to 8.2 km mislocation without SC); MT-FW tcorr added to the predicted times
+(_idx_node). The estimator returns peak - predicted, so corr ~ +static. Numerical oracle test on 80 regenerated
+evaluation windows (seed 2024 thin: ladder_6 nets 0-1, one-sided net 0, ladder_4 net 0; 59 events;
+verif_2a/starve_sc_2024_thin_verif.json; the regenerated MT-FW, MT-FW+SC, QM-3C+SC and GaMMA-DY+SC outputs agree
+with the stored ones in 396/400 checks, the 4 exceptions being QuakeMigrate scores differing in the 5th decimal
+with identical hits). Recall at 0.1 / 0.25:
+
+    correction            MT-FW          QM-3C          GaMMA-DY (oracle config)
+    none                  0.25 / 0.36    0.17 / 0.24    0.29 / 0.36
+    estimated SC (used)   0.44 / 0.56    0.32 / 0.37    0.39 / 0.39
+    true statics          0.51 / 0.54    0.36 / 0.36    0.41 / 0.41
+    statics + mismatch    0.44 / 0.64    0.34 / 0.34    0.42 / 0.42
+
+Oracle corrections never hurt; the sign is right for all three families, and the estimated SC recover most of the
+oracle gain in thin clutter.
+
+4.5 Why GaMMA and PyOcto on STA/LTA picks are near zero (task item 5). Same 80 windows: per true event the
+frozen STA/LTA picker yields on average 1.53 correctly labelled picks within 0.3 s out of 11.5 arrivals (13.2 %;
+analyze_2a Table 5 gives 9.6-16.8 % over all cells). Only 20 % of events have >= 3 such picks (the smallest
+GaMMA min_picks), 7 % have >= 4, 2 % have >= 6. Ignoring phase labels and widening to 1 s gives 44 % with >= 3.
+Matched pick errors: median -0.009 s, sd 0.13 s, so there is no time-origin offset, unit error or station-order
+error. Positive controls with the same run_gamma / run_pyocto wiring: GaMMA on the generator's true-time picks
+(with the real statics, no correction) 0.88 recall at 0.1 (0.90 with oracle SC); PyOcto on the same picks 0.69;
+GaMMA on only the correctly matched STA/LTA picks (all false picks removed) 0.08. The associators are starved by
+the picker (the generator's white noise over 0-8 Hz against a 1.4-2.8 Hz signal; real_picker.py reports
+calibration F1 of 0.13 for P and 0.19 for S), not miswired.
+
+4.6 Independent re-derivation of table numbers (task item 6). My own FROC code (pooled scores, unique (window,
+source) hits, no use of exact_HF; verif_2a/rederive_verif.py) on the JSON gives, recall at 0.1 / 0.25:
+    2024 thin 6 st.:        MT-FW+SC 0.4583/0.5556, QM-3C+SC 0.2778/0.3056, GaMMA-DY+SC 0.4722/0.4722
+    7331 strong one-sided:  MT-FW+SC 0.6267/0.7067, QM-3C+SC 0.2533/0.2933, GaMMA-DY+SC 0.0000/0.3600
+    7331 thin 4 st.:        MT-FW+SC 0.3205/0.5128, QM-3C+SC 0.1538/0.1667, GaMMA-DY+SC 0.2821/0.2821
+    2024 strong 4 st.:      MT-FW+SC 0.3117/0.3896, QM-3C+SC 0.1169/0.1299, GaMMA-DY+SC 0.0130/0.0519
+All equal Table 1 of analyze_2a_out.txt to the printed precision. The 2A-e frozen thresholds and realised
+recall / false rates (e.g. one-sided 8, seed 7331, budget 0.1: MT-FW+SC 0.77/0.22 thin and 0.71/0.23 strong)
+were re-derived independently (verif_2a/rederive_2Ae_verif.py) and agree with Table 4. The aggregate JSON equals
+the concatenation of the part files (checked for seed 7331 thin, all cells).
+
+4.7 Robustness of the 2A-a margins to network clustering (exploratory). The preregistered bootstrap resamples
+windows, but windows share a network (5 per cell) and per-network recall varies widely (0.00-0.88 at cap 0.1
+for MT-FW+SC). A network-level cluster bootstrap (verif_2a/cluster_boot_verif.py, 2000 replicates, maximum over the 7
+comparators re-chosen per replicate): at cap 0.25 every one of the 12 cells has a lower 2.5 % bound above 0
+(minimum +0.03); at cap 0.1 four cells include 0 (thin 2024 6 st. [-0.03, +0.34], thin 7331 one-sided
+[-0.18, +0.41], strong 2024 one-sided [-0.03, +0.36], strong 7331 6 st. [-0.05, +0.29]). With 5 clusters these
+intervals are crude, but they show that the per-window intervals of Table 3 understate uncertainty.
+
+4.8 Station corrections in strong clutter (exploratory; verif_2a/sc_strong_7331_verif.json, all 300 strong
+windows of seed 7331). MT-FW recall at 0.1 / 0.25 with each correction:
+
+    cell         none         SC used (strong cat.)  SC from thin catalogue  true statics  statics+mismatch
+    4 st.        0.14/0.26    0.13/0.22              0.26/0.31               0.23/0.28     0.27/0.36
+    6 st.        0.23/0.38    0.36/0.42              0.37/0.48               0.45/0.56     0.50/0.60
+    one-sided 8  0.55/0.61    0.63/0.71              0.65/0.72               0.73/0.79     0.67/0.71
+
+Residual rms(SC - static) is 0.22 / 0.27 / 0.26 s with the strong catalogue versus 0.12 / 0.14 / 0.15 s with the
+thin catalogue (rms(static) 0.28-0.34 s). The 2A-d failure in strong clutter is therefore a property of the SC
+estimator on clutter-contaminated catalogue windows (D2), not a sign or wiring error: oracle or thin-catalogue
+corrections give the expected gain.
+
+4.9 Simultaneous events (exploratory; verif_2a/subset_k01_verif.py). Restricted to windows with 0 or 1 source,
+MT-FW+SC still exceeds max(QM-3C, QM-3C+SC, GaMMA-STALTA+SC) in all 12 cells at both caps; the smallest margins
+are +0.06 to +0.07 at 0.1 (thin 2024 6 st., thin 7331 one-sided, strong 7331 4 st.). Part of the full-set margin
+therefore comes from two-source windows, where QuakeMigrate's single-trace trigger cannot separate events with
+close origin times. On the same single-source subsets GaMMA-DY+SC (optimistic picks) exceeds MT-FW+SC at 0.1 in
+5 of 6 thin cells.
+
+4.10 Other. selfcheck passes (verif_2a/selfcheck_verif.txt). Floating-point nondeterminism is present (MT-FW
+scores differ at 1e-14, QuakeMigrate COA at 1e-5 between runs) but changed no hit label and no FROC point in any
+regenerated window.
+
+
+5. TIMINGS (task2a_smoke.txt)
+-----------------------------
+
+Smoke test: seed 999, network 0, 3 windows per cell and regime, 2 processes, 113 s wall. Per window (all
+methods): thin 3.36 s (4 st.), 3.81 s (6 st.), 5.85 s (one-sided 8); strong 11.74, 11.24 and 14.81 s. GaMMA (4
+pick sets x 10 configurations) dominates in strong clutter (7.8-10.9 s per window); QuakeMigrate 3 variants
+1.7-2.4 s; MT-FW 3 variants 0.50-0.71 s; fields_x 0.24-0.39 s; PyOcto 0.38-0.47 s; picker and generator < 0.01 s.
+Per network: catalogue + SC + operators + LUT 0.5-1.0 s, identity checks 5.3-8.1 s. Estimate 2.95 h CPU,
+1.47 h on 2 cores for 20 windows per network (0.91 h for 12), below the 10 h budget, so N_WIN = 20. Realised:
+seed 2024 2740 s wall (46 min); seed 7331 about 53 min of compute over three resumed sessions; seed 999 about
+1 h including a first attempt that crashed.
+
+
+6. RULE VERDICTS (analyze_2a_out.txt)
+-------------------------------------
+
+                        thin            strong
+    2A-a (primary)      passes          passes
+    2A-b                passes          passes
+    2A-c                passes          passes
+    2A-d                passes          FAILS
+    2A-e                see below       see below
+
+2A-a: MT-FW+SC minus the best of the 7 comparators, per cell, cap 0.1 / 0.25. Thin: 2024 +0.14/+0.26,
++0.18/+0.25, +0.20/+0.27; 7331 +0.17/+0.35, +0.49/+0.46, +0.17/+0.28. Strong: 2024 +0.19/+0.25, +0.26/+0.32,
++0.16/+0.23; 7331 +0.09/+0.17, +0.18/+0.17, +0.37/+0.41. 3/3 cells in every seed and regime. Preregistered
+interpretation: the advantage of 1y survives the mismatched generator, the operational picker and QuakeMigrate.
+2A-b: 3/3 in all cases except strong 7331 (2/3; 4 st. fails with +0.04 at 0.1; its +0.0513 at 0.25 is the only
+difference within 0.005 of the threshold in the whole analysis).
+2A-c: thin 2/3 in both seeds (one-sided 8 fails by +0.01 in both seeds: GaMMA-DY+SC ties MT-FW+SC); strong 3/3.
+2A-d: thin 3/3 and 2/3 (7331 4 st. -0.03); strong 3/3 in 2024 but 1/3 in 7331 (-0.04, +0.04, +0.09): fails.
+
+2A-e. Text: "It is met if the realized rate of MT-FW+SC does not exceed 2 times the budget and its recall exceeds that of
+the best frozen comparator by >= 0.05 in at least 2 of 3 cells at both budgets, in both seeds."
+The recall condition holds in 3/3 cells at both budgets in both seeds and both regimes. The rate condition fails
+in exactly one cell per regime: one-sided 8, seed 7331, budget 0.1, realised 0.22 (thin) and 0.23 (strong)
+false events per window against a limit of 0.20. Per-cell reading (a cell counts if both conditions hold in it
+at both budgets; >= 2 of 3 cells per seed): 3/3 and 2/3, PASSES in both regimes. Strict reading (rate condition
+required in every cell and budget, recall condition in >= 2 of 3 cells): FAILS in both regimes.
+My judgement: the grammar favours the per-cell reading. The rate clause has a free variable ("the budget")
+that is bound only by the trailing "at both budgets", and the trailing quantifiers ("in at least 2 of 3
+cells at both budgets, in both seeds") are the same construction every other rule uses to quantify
+its whole condition; nothing in the sentence singles out the rate clause as global. Against that, 2A-e is a
+deployability rule and a reader could reasonably intend the false-alarm guarantee to hold everywhere. Both
+readings were coded before evaluation data existed (analyze_2a.py, 19:43), which removes the suspicion of a
+post-hoc choice, but the preregistration itself does not resolve it. Recommended wording in the proposal:
+"2A-e passes under the per-cell reading and fails under the strict reading; the only violation is the one-sided
+8-station cell of seed 7331 at budget 0.1 (realised 0.22-0.23, 2.2-2.3 times the budget), where the recall
+advantage is nonetheless +0.30 to +0.41." It should not be reported as an unqualified pass.
+
+
+7. LIMITATIONS
+--------------
+
+L1. The pick-based associators are starved by the picker: the frozen STA/LTA picker detects 10-17 % of arrivals
+within 0.3 s, and only about 20 % of events get the 3 picks GaMMA needs. GaMMA-STALTA and PyOcto-STALTA near
+zero recall is a property of the picker on this generator (verified wiring, 4.5). Hence 2A-a is in effect
+MT-FW+SC versus QuakeMigrate, which is the best comparator in all 24 cases. Claims against GaMMA/PyOcto should
+be phrased as "GaMMA/PyOcto with an operational STA/LTA picker".
+
+L2. With optimistic picks (GaMMA-DY+SC) an associator ties MT-FW+SC in thin clutter on the one-sided 8-station
+network (+0.01 at 0.25 in both seeds) and beats it on single-source windows in several thin cells (4.9). The
+advantage over associators with good picks is established only in strong clutter.
+
+L3. Station corrections: residual rms(SC - static) 0.12-0.21 s in thin and 0.20-0.28 s in strong clutter,
+against rms(static) 0.26-0.34 s. In strong clutter the catalogue windows contaminate the estimate and SC barely
+help or hurt (2A-d fails; 4.8). SC also hurt MT-FW in 7331 thin 4 st. (-0.14 at 0.1).
+
+L4. The per-window bootstrap ignores clustering by network (5 networks per cell); network-level resampling
+gives wider intervals, and at cap 0.1 four cells include 0 (4.7). The rules are decided on point estimates, as
+in 1y. Samples are small: 67-87 events per cell.
+
+L5. Design features favourable to MT-FW: about half of all events are in two-source windows with origin times
+drawn in the same 2-s interval, which a single-trace trigger (QuakeMigrate) cannot separate; the margin shrinks
+but persists without them (4.9). The generator's source is a point double couple, inside MT-FW's
+moment-tensor subspace; the mismatch introduced by gen_realistic is in the velocity model, wavelet, coda,
+polarisation and site terms, not in the source model.
+
+L6. QuakeMigrate was recalibrated on thin clutter and two cells only (44 sources), without SC; its strong-clutter
+and 4-station performance may be below what a regime-specific calibration would give. The associators, in
+contrast, choose configurations by oracle on the evaluation data, which favours them.
+
+L7. 2A-e realised false rates of MT-FW+SC exceed the budget by up to 2.3 times (one-sided 8, seed 7331): the
+absolute score threshold transfers imperfectly across networks.
+
+
+8. PROBLEMS FOUND AND SEVERITY
+------------------------------
+
+P1 (moderate, reporting). 2A-e is ambiguous; per-cell reading passes, strict reading fails (section 6). Must be
+reported with both readings.
+P2 (moderate, statistics). Per-window bootstrap intervals understate uncertainty (L4); does not change any rule,
+which are decided on point estimates as preregistered.
+P3 (low, design deviation). Catalogue per regime instead of per network (D2); explains the strong-clutter SC
+degradation and the 2A-d failure; neutral between methods.
+P4 (low, provenance). Four seed-999 part files from a pre-final code version (D5); reproduced to floating-point
+precision; no effect on the frozen 2A-e values beyond at most 0.01 in one calibration false rate.
+P5 (low, provenance). gen_realistic.py edited after the preregistration to add the preregistered statics
+argument (D1); verified by the selfcheck.
+No implementation bug, leakage path or scoring asymmetry favouring MT-FW was found.
+
+
+9. VERDICT ON TRUSTWORTHINESS
+-----------------------------
+
+The Task 2A results can be trusted as an implementation of the preregistered design. Every checked number is
+reproduced, truth reaches the detectors only for scoring, the station corrections come from the catalogue
+alone, the 2A-e calibration uses only seed-999 networks distinct from the evaluation networks, the correction
+signs are right for all methods, the scoring rule is identical or more lenient for the comparators, and the low
+association recall is picker starvation with a working association stage. The headline stands: 2A-a passes in
+both regimes with margins +0.09 to +0.49 (min +0.14 thin, +0.09 strong), and 2A-b passes. It should be stated
+together with L1 (the real competitor is QuakeMigrate), L2 (GaMMA with optimistic picks ties in thin clutter),
+the 2A-d failure in strong clutter (L3), the clustering caveat (L4) and the 2A-e ambiguity (section 6).
+
+
+10. VERIFIER FILES (verif_2a/)
+------------------------------
+
+rederive_verif.py                  independent FROC re-derivation (4.6)
+rederive_2Ae_verif.py              2A-e freezing and application re-derived (4.6)
+rerun_part_verif.py, seed999_strong_unilateral_c40_net1_verif.json, rerun_999_strong_uc40_net1_verif.log (D5)
+starve_sc_verif.py, analyze_starve_verif.py, starve_sc_2024_thin_verif.json/.log (4.4, 4.5)
+qm_trigwin_verif.py, qm_trigwin_2024_thin_verif.json/.log (4.3)
+cluster_boot_verif.py (4.7); sc_strong_verif.py, sc_strong_7331_verif.json/.log (4.8)
+subset_k01_verif.py (4.9); selfcheck_verif.txt (4.10); dbg_consistency_verif.py (window regeneration check)

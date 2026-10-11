@@ -1,0 +1,3 @@
+ladder_4        mean |tt_grad - tt_hom| 0.122 s; after a per-station/phase constant: mean 0.118 s, P95 0.304 s
+ladder_6        mean |tt_grad - tt_hom| 0.118 s; after a per-station/phase constant: mean 0.115 s, P95 0.297 s
+unilateral_c40  mean |tt_grad - tt_hom| 0.123 s; after a per-station/phase constant: mean 0.120 s, P95 0.307 s

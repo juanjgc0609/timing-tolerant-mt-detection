@@ -1,0 +1,4 @@
+Fri Oct  2 18:14:44 UTC 2026
+first job on 5151/6262 launched: Fri Oct  2 18:14:45 UTC 2026 (./run_queue_2i.sh: OPENBLAS_CORETYPE=Prescott python3 task2i_run.py run --seeds 5151,6262 --arms prim --workers 2; afterwards --arms thr,s25,s80)
+resumed Fri Oct  2 20:34:09 UTC 2026 (process interrupted at 20:33:25 UTC; same parts, code unchanged: sha256sum -c OK)
+resumed Fri Oct  2 21:29:10 UTC 2026 (interrupted 20:46:15 UTC when the session was suspended; code unchanged)

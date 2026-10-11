@@ -1,0 +1,315 @@
+# Task 2D - equality of temporal tolerance, MT-FW ablations and deployable threshold (analyze_2d.py)
+
+Part (i): event recall at realised false events per window <= 0.1 / <= 0.25 (exact FROC curve, operating point selected on the evaluation itself), 100 windows (5 networks x 20) per cell. Differences: point [95% CI H] (hierarchical bootstrap: networks and windows) and W[95% CI, bootstrap over windows]; 2000 replicates; operating point and maximum re-selected in each replicate. Part (ii): split-conformal threshold frozen on 200 empty windows of seed 999 per cell and regime.
+
+## Controls
+
+- thin 2024 4 st.: 5 networks; network, catalogue, corrections and exact MT-FW+SC on windows 0-1 correct; windows paired with 2A and 2C 100 (differing 0); required kernel ['Prescott'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- thin 2024 6 st.: 5 networks; network, catalogue, corrections and exact MT-FW+SC on windows 0-1 correct; windows paired with 2A and 2C 100 (differing 0); required kernel ['Prescott'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- thin 2024 one-sided 8: 5 networks; network, catalogue, corrections and exact MT-FW+SC on windows 0-1 correct; windows paired with 2A and 2C 100 (differing 0); required kernel ['Prescott'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- thin 7331 4 st.: 5 networks; network, catalogue, corrections and exact MT-FW+SC on windows 0-1 correct; windows paired with 2A and 2C 100 (differing 0); required kernel ['SkylakeX'], loaded [(('SkylakeX', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('SkylakeX', 'libscipy_openblas-6cdc3b4a.so'))]
+- thin 7331 6 st.: 5 networks; network, catalogue, corrections and exact MT-FW+SC on windows 0-1 correct; windows paired with 2A and 2C 100 (differing 0); required kernel ['SkylakeX'], loaded [(('SkylakeX', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('SkylakeX', 'libscipy_openblas-6cdc3b4a.so'))]
+- thin 7331 one-sided 8: 5 networks; network, catalogue, corrections and exact MT-FW+SC on windows 0-1 correct; windows paired with 2A and 2C 100 (differing 0); required kernel ['Prescott'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- strong 2024 4 st.: 5 networks; network, catalogue, corrections and exact MT-FW+SC on windows 0-1 correct; windows paired with 2A and 2C 100 (differing 0); required kernel ['Prescott'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- strong 2024 6 st.: 5 networks; network, catalogue, corrections and exact MT-FW+SC on windows 0-1 correct; windows paired with 2A and 2C 100 (differing 0); required kernel ['Prescott'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- strong 2024 one-sided 8: 5 networks; network, catalogue, corrections and exact MT-FW+SC on windows 0-1 correct; windows paired with 2A and 2C 100 (differing 0); required kernel ['Prescott'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- strong 7331 4 st.: 5 networks; network, catalogue, corrections and exact MT-FW+SC on windows 0-1 correct; windows paired with 2A and 2C 100 (differing 0); required kernel ['SkylakeX'], loaded [(('SkylakeX', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('SkylakeX', 'libscipy_openblas-6cdc3b4a.so'))]
+- strong 7331 6 st.: 5 networks; network, catalogue, corrections and exact MT-FW+SC on windows 0-1 correct; windows paired with 2A and 2C 100 (differing 0); required kernel ['Prescott', 'SkylakeX'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so')), (('SkylakeX', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('SkylakeX', 'libscipy_openblas-6cdc3b4a.so'))]
+- strong 7331 one-sided 8: 5 networks; network, catalogue, corrections and exact MT-FW+SC on windows 0-1 correct; windows paired with 2A and 2C 100 (differing 0); required kernel ['Prescott'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- calibration 999 thin 4 st.: 200 empty windows; network and delays equal to 2A True; identical corrections 5/5 (max |diff| 0.0e+00 s); the pipeline reproduces 2A on windows 0-1: MT-FW+SC 10/10, QM-3C+SC 10/10; kernel [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- calibration 999 thin 6 st.: 200 empty windows; network and delays equal to 2A True; identical corrections 5/5 (max |diff| 0.0e+00 s); the pipeline reproduces 2A on windows 0-1: MT-FW+SC 10/10, QM-3C+SC 10/10; kernel [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- calibration 999 thin one-sided 8: 200 empty windows; network and delays equal to 2A True; identical corrections 5/5 (max |diff| 0.0e+00 s); the pipeline reproduces 2A on windows 0-1: MT-FW+SC 10/10, QM-3C+SC 10/10; kernel [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- calibration 999 strong 4 st.: 200 empty windows; network and delays equal to 2A True; identical corrections 5/5 (max |diff| 0.0e+00 s); the pipeline reproduces 2A on windows 0-1: MT-FW+SC 10/10, QM-3C+SC 10/10; kernel [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- calibration 999 strong 6 st.: 200 empty windows; network and delays equal to 2A True; identical corrections 5/5 (max |diff| 0.0e+00 s); the pipeline reproduces 2A on windows 0-1: MT-FW+SC 10/10, QM-3C+SC 10/10; kernel [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- calibration 999 strong one-sided 8: 200 empty windows; network and delays equal to 2A True; identical corrections 5/5 (max |diff| 0.0e+00 s); the pipeline reproduces 2A on windows 0-1: MT-FW+SC 10/10, QM-3C+SC 10/10; kernel [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+
+## Regime thin: part (i), networks 0-4 of 2A
+
+### Table 1 (thin). Recall at <= 0.1 / <= 0.25
+
+| Cell (seed) | events | MT-FW+SC | BOMP-PK+SC | MTSTACK-PK+SC | GL-FW-PK+SC | MT-FW-EX+SC | MT-FW-NOCAP+SC | BOMP+SC | MTSTACK+SC | GL-FW+SC | QM-3C+SC |
+|:--|--:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | 87 | 0.322/0.517 | 0.241/0.437 | 0.126/0.218 | 0.092/0.241 | 0.172/0.287 | 0.241/0.437 | 0.161/0.230 | 0.092/0.161 | 0.057/0.207 | 0.184/0.253 |
+| 6 st. (2024) | 72 | 0.458/0.556 | 0.361/0.514 | 0.167/0.319 | 0.264/0.389 | 0.250/0.403 | 0.347/0.514 | 0.083/0.222 | 0.069/0.139 | 0.083/0.125 | 0.278/0.306 |
+| one-sided 8 (2024) | 71 | 0.549/0.648 | 0.408/0.592 | 0.225/0.423 | 0.225/0.493 | 0.183/0.338 | 0.408/0.577 | 0.197/0.380 | 0.070/0.225 | 0.070/0.197 | 0.352/0.380 |
+| 4 st. (7331) | 78 | 0.321/0.513 | 0.205/0.423 | 0.179/0.256 | 0.167/0.269 | 0.167/0.295 | 0.205/0.423 | 0.154/0.282 | 0.077/0.154 | 0.077/0.218 | 0.154/0.167 |
+| 6 st. (7331) | 68 | 0.721/0.794 | 0.706/0.824 | 0.368/0.588 | 0.368/0.647 | 0.265/0.382 | 0.706/0.838 | 0.176/0.353 | 0.118/0.265 | 0.118/0.235 | 0.235/0.338 |
+| one-sided 8 (7331) | 81 | 0.642/0.765 | 0.568/0.741 | 0.235/0.420 | 0.259/0.469 | 0.173/0.358 | 0.568/0.741 | 0.160/0.247 | 0.123/0.173 | 0.086/0.160 | 0.469/0.481 |
+
+### Table 2 (thin). 2D-a: MT-FW+SC - max(BOMP-PK+SC, MTSTACK-PK+SC) (best comparator per cell and cap) [CI H] W[CI W] one-sided p H; and against each one (H)
+
+| Cell (seed) | at 0.1 | at 0.25 | 2D-a (>= 0.05 at 0.25) | - BOMP-PK+SC (0.1 / 0.25) | - MTSTACK-PK+SC (0.1 / 0.25) |
+|:--|:-:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | BOMP-PK+SC: +0.080 [-0.202, +0.257] W[-0.095, +0.224] p=0.3688 | BOMP-PK+SC: +0.080 [-0.136, +0.282] W[-0.098, +0.200] p=0.3533 | yes | +0.080 [-0.202, +0.257] / +0.080 [-0.136, +0.282] | +0.195 [+0.013, +0.408] / +0.299 [+0.118, +0.464] |
+| 6 st. (2024) | BOMP-PK+SC: +0.097 [-0.118, +0.271] W[-0.072, +0.225] p=0.2324 | BOMP-PK+SC: +0.042 [-0.092, +0.224] W[-0.056, +0.176] p=0.3088 | no | +0.097 [-0.118, +0.271] / +0.042 [-0.092, +0.224] | +0.292 [+0.038, +0.468] / +0.236 [+0.048, +0.407] |
+| one-sided 8 (2024) | BOMP-PK+SC: +0.141 [-0.036, +0.469] W[+0.000, +0.353] p=0.0775 | BOMP-PK+SC: +0.056 [+0.000, +0.265] W[+0.012, +0.211] p=0.0760 | yes | +0.141 [-0.035, +0.473] / +0.056 [+0.000, +0.265] | +0.324 [+0.041, +0.606] / +0.225 [+0.034, +0.483] |
+| 4 st. (7331) | BOMP-PK+SC: +0.115 [-0.051, +0.316] W[-0.043, +0.284] p=0.1014 | BOMP-PK+SC: +0.090 [-0.029, +0.256] W[-0.025, +0.241] p=0.0705 | yes | +0.115 [-0.051, +0.316] / +0.090 [-0.029, +0.256] | +0.141 [+0.017, +0.392] / +0.256 [+0.050, +0.375] |
+| 6 st. (7331) | BOMP-PK+SC: +0.015 [-0.148, +0.175] W[-0.136, +0.141] p=0.5317 | BOMP-PK+SC: -0.029 [-0.125, +0.047] W[-0.109, +0.035] p=0.8536 | no | +0.015 [-0.148, +0.175] / -0.029 [-0.125, +0.047] | +0.353 [+0.103, +0.575] / +0.206 [+0.059, +0.343] |
+| one-sided 8 (7331) | BOMP-PK+SC: +0.074 [-0.119, +0.270] W[-0.073, +0.211] p=0.3858 | BOMP-PK+SC: +0.025 [-0.084, +0.155] W[-0.082, +0.112] p=0.4003 | no | +0.074 [-0.119, +0.270] / +0.025 [-0.084, +0.155] | +0.407 [+0.157, +0.538] / +0.346 [+0.178, +0.521] |
+
+### Table 3 (thin). 2D-b: MT-FW+SC - MT-FW-EX+SC [CI H] W[CI W] one-sided p H
+
+| Cell (seed) | at 0.1 | at 0.25 | 2D-b (>= 0.05 at 0.25) |
+|:--|:-:|:-:|:-:|
+| 4 st. (2024) | +0.149 [-0.014, +0.350] W[+0.000, +0.287] p=0.0465 | +0.230 [+0.028, +0.388] W[+0.069, +0.369] p=0.0165 | yes |
+| 6 st. (2024) | +0.208 [-0.127, +0.362] W[-0.014, +0.318] p=0.1309 | +0.153 [-0.118, +0.348] W[-0.029, +0.289] p=0.1579 | yes |
+| one-sided 8 (2024) | +0.366 [+0.164, +0.534] W[+0.206, +0.519] p=0.0005 | +0.310 [+0.154, +0.515] W[+0.192, +0.427] p=0.0005 | yes |
+| 4 st. (7331) | +0.154 [-0.053, +0.381] W[-0.041, +0.337] p=0.1004 | +0.218 [-0.038, +0.378] W[+0.023, +0.367] p=0.0460 | yes |
+| 6 st. (7331) | +0.456 [+0.194, +0.640] W[+0.264, +0.597] p=0.0010 | +0.412 [+0.108, +0.597] W[+0.211, +0.538] p=0.0065 | yes |
+| one-sided 8 (7331) | +0.469 [+0.110, +0.713] W[+0.235, +0.627] p=0.0045 | +0.407 [+0.212, +0.619] W[+0.237, +0.557] p=0.0010 | yes |
+
+### Table 4 (thin, descriptive). MT-FW-NOCAP+SC - MT-FW+SC and GL-FW-PK+SC - MT-FW+SC at 0.1 / 0.25 [CI H]
+
+| Cell (seed) | NOCAP - MT-FW+SC | GL-FW-PK+SC - MT-FW+SC |
+|:--|:-:|:-:|
+| 4 st. (2024) | -0.080 [-0.257, +0.200] / -0.080 [-0.286, +0.133] | -0.230 [-0.416, +0.012] / -0.276 [-0.510, -0.027] |
+| 6 st. (2024) | -0.111 [-0.271, +0.114] / -0.042 [-0.226, +0.092] | -0.194 [-0.402, -0.017] / -0.167 [-0.397, +0.013] |
+| one-sided 8 (2024) | -0.141 [-0.478, +0.024] / -0.070 [-0.250, +0.000] | -0.324 [-0.543, -0.049] / -0.155 [-0.488, -0.012] |
+| 4 st. (7331) | -0.115 [-0.316, +0.051] / -0.090 [-0.256, +0.029] | -0.154 [-0.421, -0.013] / -0.244 [-0.392, -0.034] |
+| 6 st. (7331) | -0.015 [-0.181, +0.151] / +0.044 [-0.042, +0.129] | -0.353 [-0.679, -0.061] / -0.147 [-0.347, -0.014] |
+| one-sided 8 (7331) | -0.074 [-0.267, +0.114] / -0.025 [-0.168, +0.082] | -0.383 [-0.506, -0.114] / -0.296 [-0.443, -0.032] |
+
+### Table 5 (thin, descriptive). Effect of the peak reading (0.1 / 0.25, points)
+
+| Cell (seed) | BOMP-PK - BOMP | MTSTACK-PK - MTSTACK | GL-FW-PK - GL-FW | MT-FW+SC - MT-FW-EX | GL-FW-PK - BOMP-PK | max(BOMP-PK, MTSTACK-PK) - QM-3C+SC |
+|:--|:-:|:-:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | +0.080 / +0.207 | +0.034 / +0.057 | +0.034 / +0.034 | +0.149 / +0.230 | -0.149 / -0.195 | +0.057 / +0.184 |
+| 6 st. (2024) | +0.278 / +0.292 | +0.097 / +0.181 | +0.181 / +0.264 | +0.208 / +0.153 | -0.097 / -0.125 | +0.083 / +0.208 |
+| one-sided 8 (2024) | +0.211 / +0.211 | +0.155 / +0.197 | +0.155 / +0.296 | +0.366 / +0.310 | -0.183 / -0.099 | +0.056 / +0.211 |
+| 4 st. (7331) | +0.051 / +0.141 | +0.103 / +0.103 | +0.090 / +0.051 | +0.154 / +0.218 | -0.038 / -0.154 | +0.051 / +0.256 |
+| 6 st. (7331) | +0.529 / +0.471 | +0.250 / +0.324 | +0.250 / +0.412 | +0.456 / +0.412 | -0.338 / -0.176 | +0.471 / +0.485 |
+| one-sided 8 (7331) | +0.407 / +0.494 | +0.111 / +0.247 | +0.173 / +0.309 | +0.469 / +0.407 | -0.309 / -0.272 | +0.099 / +0.259 |
+
+- Rule 2D-a (thin): seed 2024: 2/3 cells (4 st. yes +0.080, 6 st. no +0.042, one-sided 8 yes +0.056); seed 7331: 1/3 cells (4 st. yes +0.090, 6 st. no -0.029, one-sided 8 no +0.025) -> NOT MET (exploratory: met in 11% of the H replicates)
+
+- Rule 2D-b (thin): seed 2024: 3/3 cells (4 st. yes +0.230, 6 st. yes +0.153, one-sided 8 yes +0.310); seed 7331: 3/3 cells (4 st. yes +0.218, 6 st. yes +0.412, one-sided 8 yes +0.407) -> MET (exploratory: met in 99% of the H replicates)
+
+Diagnostics (thin). GL-FW-PK+SC, 600 windows: lambdas solved per window 2-15 (median 3); stopping by complete record in 600; FW steps per window median 13, max 49; lambdas at the FW step cap 0; relative gap max 1.7e-08 (last lambda: median 5.4e-14); max c/lambda of the oracle 1.000000001; max |c/lambda - 1| on the support 9.6e-10; re-solves 0; final support median 12, max 37. BOMP-PK+SC: shift of the peak samples of the entering atom relative to the predicted ones: 91% of the station-phase readings shifted, mean |shift| 2.41 samples; orthogonality of the refit max 8.0e-14.
+
+## Regime strong: part (i), networks 0-4 of 2A
+
+### Table 1 (strong). Recall at <= 0.1 / <= 0.25
+
+| Cell (seed) | events | MT-FW+SC | BOMP-PK+SC | MTSTACK-PK+SC | GL-FW-PK+SC | MT-FW-EX+SC | MT-FW-NOCAP+SC | BOMP+SC | MTSTACK+SC | GL-FW+SC | QM-3C+SC |
+|:--|--:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | 77 | 0.312/0.390 | 0.234/0.299 | 0.091/0.234 | 0.078/0.234 | 0.169/0.234 | 0.234/0.299 | 0.195/0.260 | 0.078/0.182 | 0.039/0.182 | 0.117/0.130 |
+| 6 st. (2024) | 74 | 0.378/0.486 | 0.446/0.486 | 0.203/0.351 | 0.135/0.284 | 0.243/0.338 | 0.446/0.486 | 0.095/0.162 | 0.081/0.135 | 0.095/0.135 | 0.122/0.162 |
+| one-sided 8 (2024) | 83 | 0.313/0.422 | 0.301/0.458 | 0.169/0.313 | 0.145/0.313 | 0.120/0.181 | 0.301/0.458 | 0.108/0.217 | 0.096/0.157 | 0.084/0.157 | 0.157/0.193 |
+| 4 st. (7331) | 78 | 0.128/0.218 | 0.167/0.269 | 0.090/0.205 | 0.103/0.231 | 0.141/0.154 | 0.167/0.269 | 0.103/0.141 | 0.103/0.115 | 0.115/0.154 | 0.038/0.051 |
+| 6 st. (7331) | 84 | 0.357/0.417 | 0.298/0.571 | 0.179/0.274 | 0.167/0.298 | 0.107/0.250 | 0.286/0.548 | 0.071/0.214 | 0.036/0.119 | 0.024/0.107 | 0.179/0.250 |
+| one-sided 8 (7331) | 75 | 0.627/0.707 | 0.653/0.760 | 0.427/0.547 | 0.347/0.573 | 0.200/0.413 | 0.653/0.760 | 0.067/0.253 | 0.080/0.173 | 0.080/0.133 | 0.253/0.293 |
+
+### Table 2 (strong). 2D-a: MT-FW+SC - max(BOMP-PK+SC, MTSTACK-PK+SC) (best comparator per cell and cap) [CI H] W[CI W] one-sided p H; and against each one (H)
+
+| Cell (seed) | at 0.1 | at 0.25 | 2D-a (>= 0.05 at 0.25) | - BOMP-PK+SC (0.1 / 0.25) | - MTSTACK-PK+SC (0.1 / 0.25) |
+|:--|:-:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | BOMP-PK+SC: +0.078 [-0.086, +0.238] W[-0.050, +0.198] p=0.2254 | BOMP-PK+SC: +0.091 [-0.048, +0.257] W[-0.026, +0.219] p=0.1194 | yes | +0.078 [-0.086, +0.239] / +0.091 [-0.048, +0.257] | +0.221 [+0.000, +0.363] / +0.156 [+0.043, +0.392] |
+| 6 st. (2024) | BOMP-PK+SC: -0.068 [-0.289, +0.203] W[-0.214, +0.141] p=0.6642 | BOMP-PK+SC: +0.000 [-0.138, +0.145] W[-0.132, +0.122] p=0.4813 | no | -0.068 [-0.289, +0.203] / +0.000 [-0.138, +0.147] | +0.176 [-0.041, +0.359] / +0.135 [+0.000, +0.291] |
+| one-sided 8 (2024) | BOMP-PK+SC: +0.012 [-0.152, +0.164] W[-0.116, +0.132] p=0.5732 | BOMP-PK+SC: -0.036 [-0.130, +0.108] W[-0.120, +0.079] p=0.7271 | no | +0.012 [-0.152, +0.167] / -0.036 [-0.130, +0.108] | +0.145 [-0.036, +0.315] / +0.108 [-0.042, +0.317] |
+| 4 st. (7331) | BOMP-PK+SC: -0.038 [-0.149, +0.154] W[-0.137, +0.104] p=0.6322 | BOMP-PK+SC: -0.051 [-0.206, +0.095] W[-0.160, +0.057] p=0.7856 | no | -0.038 [-0.149, +0.154] / -0.051 [-0.197, +0.096] | +0.038 [-0.080, +0.205] / +0.013 [-0.157, +0.197] |
+| 6 st. (7331) | BOMP-PK+SC: +0.060 [-0.250, +0.233] W[-0.174, +0.229] p=0.5042 | BOMP-PK+SC: -0.155 [-0.277, +0.032] W[-0.275, +0.000] p=0.9535 | no | +0.060 [-0.250, +0.235] / -0.155 [-0.277, +0.032] | +0.179 [-0.028, +0.329] / +0.143 [-0.086, +0.323] |
+| one-sided 8 (7331) | BOMP-PK+SC: -0.027 [-0.154, +0.099] W[-0.125, +0.067] p=0.7716 | BOMP-PK+SC: -0.053 [-0.158, +0.030] W[-0.143, +0.012] p=0.9530 | no | -0.027 [-0.154, +0.099] / -0.053 [-0.158, +0.030] | +0.200 [-0.012, +0.488] / +0.160 [+0.000, +0.386] |
+
+### Table 3 (strong). 2D-b: MT-FW+SC - MT-FW-EX+SC [CI H] W[CI W] one-sided p H
+
+| Cell (seed) | at 0.1 | at 0.25 | 2D-b (>= 0.05 at 0.25) |
+|:--|:-:|:-:|:-:|
+| 4 st. (2024) | +0.143 [-0.080, +0.250] W[-0.033, +0.224] p=0.1344 | +0.156 [+0.041, +0.355] W[+0.056, +0.278] p=0.0080 | yes |
+| 6 st. (2024) | +0.135 [-0.068, +0.329] W[+0.013, +0.292] p=0.0850 | +0.149 [+0.000, +0.327] W[+0.039, +0.300] p=0.0260 | yes |
+| one-sided 8 (2024) | +0.193 [+0.037, +0.371] W[+0.062, +0.313] p=0.0065 | +0.241 [+0.025, +0.433] W[+0.078, +0.353] p=0.0150 | yes |
+| 4 st. (7331) | -0.013 [-0.118, +0.191] W[-0.096, +0.125] p=0.4488 | +0.064 [-0.096, +0.240] W[-0.050, +0.179] p=0.2544 | yes |
+| 6 st. (7331) | +0.250 [+0.009, +0.430] W[+0.062, +0.384] p=0.0255 | +0.167 [-0.024, +0.410] W[+0.026, +0.346] p=0.0440 | yes |
+| one-sided 8 (7331) | +0.427 [+0.225, +0.605] W[+0.225, +0.590] p=0.0005 | +0.293 [+0.098, +0.472] W[+0.133, +0.438] p=0.0005 | yes |
+
+### Table 4 (strong, descriptive). MT-FW-NOCAP+SC - MT-FW+SC and GL-FW-PK+SC - MT-FW+SC at 0.1 / 0.25 [CI H]
+
+| Cell (seed) | NOCAP - MT-FW+SC | GL-FW-PK+SC - MT-FW+SC |
+|:--|:-:|:-:|
+| 4 st. (2024) | -0.078 [-0.238, +0.088] / -0.091 [-0.253, +0.048] | -0.234 [-0.370, -0.041] / -0.156 [-0.354, -0.045] |
+| 6 st. (2024) | +0.068 [-0.203, +0.289] / +0.000 [-0.143, +0.141] | -0.243 [-0.448, +0.014] / -0.203 [-0.403, +0.000] |
+| one-sided 8 (2024) | -0.012 [-0.167, +0.150] / +0.036 [-0.121, +0.125] | -0.169 [-0.398, +0.000] / -0.108 [-0.359, +0.029] |
+| 4 st. (7331) | +0.038 [-0.154, +0.149] / +0.051 [-0.096, +0.197] | -0.026 [-0.191, +0.081] / +0.013 [-0.141, +0.136] |
+| 6 st. (7331) | -0.071 [-0.235, +0.246] / +0.131 [-0.092, +0.253] | -0.190 [-0.337, -0.014] / -0.119 [-0.320, +0.107] |
+| one-sided 8 (7331) | +0.027 [-0.156, +0.154] / +0.053 [-0.027, +0.159] | -0.280 [-0.524, -0.047] / -0.133 [-0.321, +0.016] |
+
+### Table 5 (strong, descriptive). Effect of the peak reading (0.1 / 0.25, points)
+
+| Cell (seed) | BOMP-PK - BOMP | MTSTACK-PK - MTSTACK | GL-FW-PK - GL-FW | MT-FW+SC - MT-FW-EX | GL-FW-PK - BOMP-PK | max(BOMP-PK, MTSTACK-PK) - QM-3C+SC |
+|:--|:-:|:-:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | +0.039 / +0.039 | +0.013 / +0.052 | +0.039 / +0.052 | +0.143 / +0.156 | -0.156 / -0.065 | +0.117 / +0.169 |
+| 6 st. (2024) | +0.351 / +0.324 | +0.122 / +0.216 | +0.041 / +0.149 | +0.135 / +0.149 | -0.311 / -0.203 | +0.324 / +0.324 |
+| one-sided 8 (2024) | +0.193 / +0.241 | +0.072 / +0.157 | +0.060 / +0.157 | +0.193 / +0.241 | -0.157 / -0.145 | +0.145 / +0.265 |
+| 4 st. (7331) | +0.064 / +0.128 | -0.013 / +0.090 | -0.013 / +0.077 | -0.013 / +0.064 | -0.064 / -0.038 | +0.128 / +0.218 |
+| 6 st. (7331) | +0.226 / +0.357 | +0.143 / +0.155 | +0.143 / +0.190 | +0.250 / +0.167 | -0.131 / -0.274 | +0.119 / +0.321 |
+| one-sided 8 (7331) | +0.587 / +0.507 | +0.347 / +0.373 | +0.267 / +0.440 | +0.427 / +0.293 | -0.307 / -0.187 | +0.400 / +0.467 |
+
+- Rule 2D-a (strong): seed 2024: 1/3 cells (4 st. yes +0.091, 6 st. no +0.000, one-sided 8 no -0.036); seed 7331: 0/3 cells (4 st. no -0.051, 6 st. no -0.155, one-sided 8 no -0.053) -> NOT MET (exploratory: met in 0% of the H replicates)
+
+- Rule 2D-b (strong): seed 2024: 3/3 cells (4 st. yes +0.156, 6 st. yes +0.149, one-sided 8 yes +0.241); seed 7331: 3/3 cells (4 st. yes +0.064, 6 st. yes +0.167, one-sided 8 yes +0.293) -> MET (exploratory: met in 95% of the H replicates)
+
+Diagnostics (strong). GL-FW-PK+SC, 600 windows: lambdas solved per window 2-13 (median 3); stopping by complete record in 600; FW steps per window median 11, max 51; lambdas at the FW step cap 0; relative gap max 1.1e-08 (last lambda: median 6.3e-14); max c/lambda of the oracle 1.000000001; max |c/lambda - 1| on the support 9.1e-10; re-solves 0; final support median 11, max 37. BOMP-PK+SC: shift of the peak samples of the entering atom relative to the predicted ones: 92% of the station-phase readings shifted, mean |shift| 2.44 samples; orthogonality of the refit max 9.2e-14.
+
+## Regime thin: part (ii), split-conformal threshold (200 empty windows of seed 999 per cell)
+
+### Table 6 (thin). Calibration: frozen thresholds q (index k of n) and rates on the calibration itself
+
+| Cell | method | empty windows with events | alpha 0.1: q (k/n), false events/window, frac. with false event | alpha 0.25: q (k/n), false events/window, frac. with false event |
+|:--|:--|--:|:-:|:-:|
+| 4 st. | MT-FW+SC | 200 | 25.75 (181/200), 0.095, 0.095 | 23.73 (151/200), 0.290, 0.245 |
+| 4 st. | QM-3C+SC | 92 | 1.473 (181/200), 0.095, 0.095 | 1.416 (151/200), 0.245, 0.245 |
+| 6 st. | MT-FW+SC | 200 | 28.74 (181/200), 0.100, 0.095 | 26.69 (151/200), 0.285, 0.245 |
+| 6 st. | QM-3C+SC | 122 | 1.39 (181/200), 0.095, 0.095 | 1.352 (151/200), 0.250, 0.245 |
+| one-sided 8 | MT-FW+SC | 200 | 29.8 (181/200), 0.105, 0.095 | 27.8 (151/200), 0.270, 0.245 |
+| one-sided 8 | QM-3C+SC | 28 | 1.318 (181/200), 0.095, 0.095 | -inf (151/200), 0.145, 0.140 |
+
+### Table 7 (thin). Evaluation (2A windows) with the frozen threshold: recall; false events per empty window; fraction of empty windows with a false event; false events per window (all)
+
+| Cell (seed) | alpha | empty windows | MT-FW+SC | QM-3C+SC | MT-FW+SC - QM-3C+SC recall [CI H] p | MT-FW+SC rate on empty windows [CI H] | cell counts |
+|:--|--:|--:|:-:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | 0.1 | 39 | 0.667; 0.179; 0.179; 0.840 | 0.230; 0.051; 0.051; 0.170 | +0.437 [+0.275, +0.565] p=0.0005 | 0.179 [0.034, 0.351] | yes |
+| 4 st. (2024) | 0.25 | 39 | 0.690; 0.410; 0.333; 1.090 | 0.241; 0.051; 0.051; 0.200 | +0.448 [+0.275, +0.592] p=0.0005 | 0.410 [0.189, 0.711] | yes |
+| 6 st. (2024) | 0.1 | 44 | 0.639; 0.045; 0.045; 0.730 | 0.292; 0.045; 0.045; 0.150 | +0.347 [+0.121, +0.532] p=0.0020 | 0.045 [0.000, 0.122] | yes |
+| 6 st. (2024) | 0.25 | 44 | 0.681; 0.159; 0.159; 0.980 | 0.306; 0.205; 0.205; 0.230 | +0.375 [+0.190, +0.534] p=0.0010 | 0.159 [0.000, 0.400] | yes |
+| one-sided 8 (2024) | 0.1 | 43 | 0.662; 0.070; 0.070; 0.750 | 0.366; 0.023; 0.023; 0.150 | +0.296 [+0.100, +0.507] p=0.0020 | 0.070 [0.000, 0.193] | yes |
+| one-sided 8 (2024) | 0.25 | 43 | 0.690; 0.186; 0.186; 1.100 | 0.380; 0.023; 0.023; 0.160 | +0.310 [+0.123, +0.500] p=0.0020 | 0.186 [0.036, 0.405] | yes |
+| 4 st. (7331) | 0.1 | 39 | 0.590; 0.179; 0.179; 0.810 | 0.154; 0.154; 0.154; 0.220 | +0.436 [+0.300, +0.579] p=0.0005 | 0.179 [0.061, 0.324] | yes |
+| 4 st. (7331) | 0.25 | 39 | 0.628; 0.410; 0.359; 1.020 | 0.179; 0.359; 0.359; 0.310 | +0.449 [+0.319, +0.581] p=0.0005 | 0.410 [0.163, 0.718] | yes |
+| 6 st. (7331) | 0.1 | 45 | 0.824; 0.222; 0.200; 0.870 | 0.338; 0.089; 0.089; 0.230 | +0.485 [+0.289, +0.662] p=0.0005 | 0.222 [0.077, 0.411] | no |
+| 6 st. (7331) | 0.25 | 45 | 0.824; 0.422; 0.378; 1.170 | 0.338; 0.222; 0.222; 0.300 | +0.485 [+0.289, +0.662] p=0.0005 | 0.422 [0.233, 0.684] | yes |
+| one-sided 8 (7331) | 0.1 | 38 | 0.840; 0.053; 0.053; 1.180 | 0.481; 0.105; 0.105; 0.150 | +0.358 [+0.172, +0.565] p=0.0005 | 0.053 [0.000, 0.182] | yes |
+| one-sided 8 (7331) | 0.25 | 38 | 0.840; 0.263; 0.211; 1.460 | 0.481; 0.158; 0.158; 0.190 | +0.358 [+0.172, +0.565] p=0.0005 | 0.263 [0.075, 0.526] | yes |
+
+- Rule 2D-c (thin), per-cell reading (rate on empty windows <= 2 alpha and recall difference >= 0.05 in the same cell, >= 2 of 3 cells): alpha 0.1 seed 2024: 3/3 (4 st. yes +0.437, rate 0.179, 6 st. yes +0.347, rate 0.045, one-sided 8 yes +0.296, rate 0.070); alpha 0.1 seed 7331: 2/3 (4 st. yes +0.436, rate 0.179, 6 st. no +0.485, rate 0.222, one-sided 8 yes +0.358, rate 0.053); alpha 0.25 seed 2024: 3/3 (4 st. yes +0.448, rate 0.410, 6 st. yes +0.375, rate 0.159, one-sided 8 yes +0.310, rate 0.186); alpha 0.25 seed 7331: 3/3 (4 st. yes +0.449, rate 0.410, 6 st. yes +0.485, rate 0.422, one-sided 8 yes +0.358, rate 0.263) -> MET
+- Rule 2D-c (thin), strict reading (rate <= 2 alpha in all cells, seeds and alpha; difference >= 0.05 in >= 2 of 3): rate in all no; differences alpha 0.1 seed 2024: 3/3, alpha 0.1 seed 7331: 3/3, alpha 0.25 seed 2024: 3/3, alpha 0.25 seed 7331: 3/3 -> NOT MET
+- Exploratory: the per-cell reading is met in 76% of the H replicates (fixed threshold).
+
+### Table 8 (thin). Holm (family of 36 comparisons of the regime, one-sided p H, level 0.025): adjusted p, * = rejection (MT-FW+SC greater)
+
+| Comparison | Cell (seed) | cap/alpha 0.1 | cap/alpha 0.25 |
+|:--|:--|:-:|:-:|
+| 2D-a | 4 st. (2024) | +0.080 pHolm=1.0000 | +0.080 pHolm=1.0000 |
+| 2D-a | 6 st. (2024) | +0.097 pHolm=1.0000 | +0.042 pHolm=1.0000 |
+| 2D-a | one-sided 8 (2024) | +0.141 pHolm=1.0000 | +0.056 pHolm=1.0000 |
+| 2D-a | 4 st. (7331) | +0.115 pHolm=1.0000 | +0.090 pHolm=1.0000 |
+| 2D-a | 6 st. (7331) | +0.015 pHolm=1.0000 | -0.029 pHolm=1.0000 |
+| 2D-a | one-sided 8 (7331) | +0.074 pHolm=1.0000 | +0.025 pHolm=1.0000 |
+| 2D-b | 4 st. (2024) | +0.149 pHolm=0.7816 | +0.230 pHolm=0.2969 |
+| 2D-b | 6 st. (2024) | +0.208 pHolm=1.0000 | +0.153 pHolm=1.0000 |
+| 2D-b | one-sided 8 (2024) | +0.366 pHolm=0.0180 * | +0.310 pHolm=0.0180 * |
+| 2D-b | 4 st. (7331) | +0.154 pHolm=1.0000 | +0.218 pHolm=0.7816 |
+| 2D-b | 6 st. (7331) | +0.456 pHolm=0.0260 | +0.412 pHolm=0.1234 |
+| 2D-b | one-sided 8 (7331) | +0.469 pHolm=0.0900 | +0.407 pHolm=0.0260 |
+| 2D-c | 4 st. (2024) | +0.437 pHolm=0.0180 * | +0.448 pHolm=0.0180 * |
+| 2D-c | 6 st. (2024) | +0.347 pHolm=0.0460 | +0.375 pHolm=0.0260 |
+| 2D-c | one-sided 8 (2024) | +0.296 pHolm=0.0460 | +0.310 pHolm=0.0460 |
+| 2D-c | 4 st. (7331) | +0.436 pHolm=0.0180 * | +0.449 pHolm=0.0180 * |
+| 2D-c | 6 st. (7331) | +0.485 pHolm=0.0180 * | +0.485 pHolm=0.0180 * |
+| 2D-c | one-sided 8 (7331) | +0.358 pHolm=0.0180 * | +0.358 pHolm=0.0180 * |
+
+- 2D-a (thin) with Holm (rejection and point >= 0.05 at 0.25): seed 2024: 0/3; seed 7331: 0/3 -> not met
+- 2D-b (thin) with Holm (rejection and point >= 0.05 at 0.25): seed 2024: 1/3; seed 7331: 0/3 -> not met
+- 2D-c (thin) with Holm (per-cell reading, with Holm rejection of the recall difference): alpha 0.1 seed 2024: 1/3; alpha 0.1 seed 7331: 2/3; alpha 0.25 seed 2024: 1/3; alpha 0.25 seed 7331: 3/3 -> not met
+
+## Regime strong: part (ii), split-conformal threshold (200 empty windows of seed 999 per cell)
+
+### Table 6 (strong). Calibration: frozen thresholds q (index k of n) and rates on the calibration itself
+
+| Cell | method | empty windows with events | alpha 0.1: q (k/n), false events/window, frac. with false event | alpha 0.25: q (k/n), false events/window, frac. with false event |
+|:--|:--|--:|:-:|:-:|
+| 4 st. | MT-FW+SC | 200 | 52.1 (181/200), 0.105, 0.095 | 43.13 (151/200), 0.365, 0.245 |
+| 4 st. | QM-3C+SC | 55 | 1.681 (181/200), 0.095, 0.095 | 1.525 (151/200), 0.245, 0.245 |
+| 6 st. | MT-FW+SC | 200 | 45.22 (181/200), 0.095, 0.095 | 40.51 (151/200), 0.255, 0.245 |
+| 6 st. | QM-3C+SC | 70 | 1.516 (181/200), 0.095, 0.095 | 1.439 (151/200), 0.245, 0.245 |
+| one-sided 8 | MT-FW+SC | 200 | 40.2 (181/200), 0.095, 0.095 | 36.2 (151/200), 0.290, 0.245 |
+| one-sided 8 | QM-3C+SC | 104 | 1.394 (181/200), 0.095, 0.095 | 1.354 (151/200), 0.250, 0.245 |
+
+### Table 7 (strong). Evaluation (2A windows) with the frozen threshold: recall; false events per empty window; fraction of empty windows with a false event; false events per window (all)
+
+| Cell (seed) | alpha | empty windows | MT-FW+SC | QM-3C+SC | MT-FW+SC - QM-3C+SC recall [CI H] p | MT-FW+SC rate on empty windows [CI H] | cell counts |
+|:--|--:|--:|:-:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | 0.1 | 40 | 0.221; 0.025; 0.025; 0.050 | 0.130; 0.075; 0.075; 0.190 | +0.091 [-0.033, +0.211] p=0.0870 | 0.025 [0.000, 0.103] | yes |
+| 4 st. (2024) | 0.25 | 40 | 0.403; 0.200; 0.150; 0.290 | 0.143; 0.275; 0.275; 0.340 | +0.260 [+0.157, +0.371] p=0.0005 | 0.200 [0.024, 0.500] | yes |
+| 6 st. (2024) | 0.1 | 44 | 0.419; 0.000; 0.000; 0.120 | 0.135; 0.023; 0.023; 0.140 | +0.284 [+0.162, +0.431] p=0.0005 | 0.000 [0.000, 0.000] | yes |
+| 6 st. (2024) | 0.25 | 44 | 0.514; 0.023; 0.023; 0.340 | 0.162; 0.159; 0.159; 0.260 | +0.351 [+0.208, +0.513] p=0.0005 | 0.023 [0.000, 0.111] | yes |
+| one-sided 8 (2024) | 0.1 | 42 | 0.530; 0.048; 0.048; 0.410 | 0.193; 0.095; 0.095; 0.140 | +0.337 [+0.149, +0.547] p=0.0010 | 0.048 [0.000, 0.159] | yes |
+| one-sided 8 (2024) | 0.25 | 42 | 0.590; 0.190; 0.167; 0.680 | 0.193; 0.262; 0.238; 0.270 | +0.398 [+0.231, +0.612] p=0.0005 | 0.190 [0.021, 0.458] | yes |
+| 4 st. (7331) | 0.1 | 37 | 0.115; 0.000; 0.000; 0.070 | 0.038; 0.081; 0.081; 0.150 | +0.077 [+0.000, +0.186] p=0.0475 | 0.000 [0.000, 0.000] | yes |
+| 4 st. (7331) | 0.25 | 37 | 0.218; 0.108; 0.108; 0.260 | 0.051; 0.216; 0.216; 0.220 | +0.167 [+0.056, +0.310] p=0.0015 | 0.108 [0.000, 0.381] | yes |
+| 6 st. (7331) | 0.1 | 36 | 0.500; 0.028; 0.028; 0.390 | 0.238; 0.111; 0.111; 0.180 | +0.262 [+0.062, +0.443] p=0.0075 | 0.028 [0.000, 0.118] | yes |
+| 6 st. (7331) | 0.25 | 36 | 0.595; 0.167; 0.167; 0.620 | 0.250; 0.139; 0.139; 0.220 | +0.345 [+0.130, +0.526] p=0.0040 | 0.167 [0.000, 0.400] | yes |
+| one-sided 8 (7331) | 0.1 | 40 | 0.773; 0.075; 0.075; 0.560 | 0.293; 0.225; 0.225; 0.230 | +0.480 [+0.259, +0.664] p=0.0005 | 0.075 [0.000, 0.275] | yes |
+| one-sided 8 (7331) | 0.25 | 40 | 0.773; 0.375; 0.275; 0.940 | 0.293; 0.375; 0.375; 0.320 | +0.480 [+0.259, +0.664] p=0.0005 | 0.375 [0.065, 0.907] | yes |
+
+- Rule 2D-c (strong), per-cell reading (rate on empty windows <= 2 alpha and recall difference >= 0.05 in the same cell, >= 2 of 3 cells): alpha 0.1 seed 2024: 3/3 (4 st. yes +0.091, rate 0.025, 6 st. yes +0.284, rate 0.000, one-sided 8 yes +0.337, rate 0.048); alpha 0.1 seed 7331: 3/3 (4 st. yes +0.077, rate 0.000, 6 st. yes +0.262, rate 0.028, one-sided 8 yes +0.480, rate 0.075); alpha 0.25 seed 2024: 3/3 (4 st. yes +0.260, rate 0.200, 6 st. yes +0.351, rate 0.023, one-sided 8 yes +0.398, rate 0.190); alpha 0.25 seed 7331: 3/3 (4 st. yes +0.167, rate 0.108, 6 st. yes +0.345, rate 0.167, one-sided 8 yes +0.480, rate 0.375) -> MET
+- Rule 2D-c (strong), strict reading (rate <= 2 alpha in all cells, seeds and alpha; difference >= 0.05 in >= 2 of 3): rate in all yes; differences alpha 0.1 seed 2024: 3/3, alpha 0.1 seed 7331: 3/3, alpha 0.25 seed 2024: 3/3, alpha 0.25 seed 7331: 3/3 -> MET
+- Exploratory: the per-cell reading is met in 96% of the H replicates (fixed threshold).
+
+### Table 8 (strong). Holm (family of 36 comparisons of the regime, one-sided p H, level 0.025): adjusted p, * = rejection (MT-FW+SC greater)
+
+| Comparison | Cell (seed) | cap/alpha 0.1 | cap/alpha 0.25 |
+|:--|:--|:-:|:-:|
+| 2D-a | 4 st. (2024) | +0.078 pHolm=1.0000 | +0.091 pHolm=1.0000 |
+| 2D-a | 6 st. (2024) | -0.068 pHolm=1.0000 | +0.000 pHolm=1.0000 |
+| 2D-a | one-sided 8 (2024) | +0.012 pHolm=1.0000 | -0.036 pHolm=1.0000 |
+| 2D-a | 4 st. (7331) | -0.038 pHolm=1.0000 | -0.051 pHolm=1.0000 |
+| 2D-a | 6 st. (7331) | +0.060 pHolm=1.0000 | -0.155 pHolm=1.0000 |
+| 2D-a | one-sided 8 (7331) | -0.027 pHolm=1.0000 | -0.053 pHolm=1.0000 |
+| 2D-b | 4 st. (2024) | +0.143 pHolm=1.0000 | +0.156 pHolm=0.1839 |
+| 2D-b | 6 st. (2024) | +0.135 pHolm=1.0000 | +0.149 pHolm=0.5352 |
+| 2D-b | one-sided 8 (2024) | +0.193 pHolm=0.1624 | +0.241 pHolm=0.3298 |
+| 2D-b | 4 st. (7331) | -0.013 pHolm=1.0000 | +0.064 pHolm=1.0000 |
+| 2D-b | 6 st. (7331) | +0.250 pHolm=0.5352 | +0.167 pHolm=0.8356 |
+| 2D-b | one-sided 8 (7331) | +0.427 pHolm=0.0180 * | +0.293 pHolm=0.0180 * |
+| 2D-c | 4 st. (2024) | +0.091 pHolm=1.0000 | +0.260 pHolm=0.0180 * |
+| 2D-c | 6 st. (2024) | +0.284 pHolm=0.0180 * | +0.351 pHolm=0.0180 * |
+| 2D-c | one-sided 8 (2024) | +0.337 pHolm=0.0280 | +0.398 pHolm=0.0180 * |
+| 2D-c | 4 st. (7331) | +0.077 pHolm=0.8546 | +0.167 pHolm=0.0405 |
+| 2D-c | 6 st. (7331) | +0.262 pHolm=0.1799 | +0.345 pHolm=0.1039 |
+| 2D-c | one-sided 8 (7331) | +0.480 pHolm=0.0180 * | +0.480 pHolm=0.0180 * |
+
+- 2D-a (strong) with Holm (rejection and point >= 0.05 at 0.25): seed 2024: 0/3; seed 7331: 0/3 -> not met
+- 2D-b (strong) with Holm (rejection and point >= 0.05 at 0.25): seed 2024: 0/3; seed 7331: 1/3 -> not met
+- 2D-c (strong) with Holm (per-cell reading, with Holm rejection of the recall difference): alpha 0.1 seed 2024: 1/3; alpha 0.1 seed 7331: 1/3; alpha 0.25 seed 2024: 3/3; alpha 0.25 seed 7331: 1/3 -> not met
+
+## Exploratory: 2D-c with the same frozen thresholds on the 30 networks of 2C per cell (2A + 25 new networks)
+
+| Regime | Cell (seed) | alpha | networks | empty windows | recall MT-FW+SC / QM-3C+SC | diff [CI H] | MT-FW+SC rate on empty windows [CI H] | frac. empty with false event |
+|:--|:--|--:|--:|--:|:-:|:-:|:-:|:-:|
+| thin | 4 st. (2024) | 0.1 | 30 | 166 | 0.679 / 0.205 | +0.474 [+0.388, +0.561] | 0.139 [0.074, 0.214] | 0.139 |
+| thin | 4 st. (2024) | 0.25 | 30 | 166 | 0.685 / 0.218 | +0.468 [+0.379, +0.555] | 0.349 [0.240, 0.463] | 0.307 |
+| thin | 6 st. (2024) | 0.1 | 30 | 165 | 0.700 / 0.284 | +0.415 [+0.329, +0.503] | 0.055 [0.013, 0.109] | 0.055 |
+| thin | 6 st. (2024) | 0.25 | 30 | 165 | 0.732 / 0.300 | +0.431 [+0.351, +0.514] | 0.206 [0.114, 0.319] | 0.188 |
+| thin | one-sided 8 (2024) | 0.1 | 30 | 157 | 0.732 / 0.369 | +0.363 [+0.273, +0.451] | 0.102 [0.038, 0.171] | 0.102 |
+| thin | one-sided 8 (2024) | 0.25 | 30 | 157 | 0.745 / 0.373 | +0.373 [+0.281, +0.461] | 0.274 [0.171, 0.403] | 0.255 |
+| thin | 4 st. (7331) | 0.1 | 30 | 163 | 0.547 / 0.153 | +0.394 [+0.315, +0.470] | 0.135 [0.073, 0.203] | 0.135 |
+| thin | 4 st. (7331) | 0.25 | 30 | 163 | 0.573 / 0.163 | +0.410 [+0.333, +0.486] | 0.331 [0.228, 0.446] | 0.301 |
+| thin | 6 st. (7331) | 0.1 | 30 | 162 | 0.779 / 0.338 | +0.442 [+0.351, +0.526] | 0.105 [0.039, 0.185] | 0.099 |
+| thin | 6 st. (7331) | 0.25 | 30 | 162 | 0.795 / 0.338 | +0.458 [+0.376, +0.540] | 0.259 [0.153, 0.376] | 0.241 |
+| thin | one-sided 8 (7331) | 0.1 | 30 | 150 | 0.767 / 0.411 | +0.356 [+0.274, +0.438] | 0.073 [0.020, 0.153] | 0.067 |
+| thin | one-sided 8 (7331) | 0.25 | 30 | 150 | 0.779 / 0.414 | +0.365 [+0.285, +0.446] | 0.333 [0.212, 0.469] | 0.287 |
+| strong | 4 st. (2024) | 0.1 | 30 | 150 | 0.160 / 0.065 | +0.095 [+0.033, +0.162] | 0.033 [0.000, 0.082] | 0.033 |
+| strong | 4 st. (2024) | 0.25 | 30 | 150 | 0.274 / 0.077 | +0.197 [+0.125, +0.269] | 0.220 [0.085, 0.383] | 0.160 |
+| strong | 6 st. (2024) | 0.1 | 30 | 169 | 0.362 / 0.148 | +0.214 [+0.146, +0.289] | 0.006 [0.000, 0.029] | 0.006 |
+| strong | 6 st. (2024) | 0.25 | 30 | 169 | 0.454 / 0.184 | +0.270 [+0.192, +0.352] | 0.095 [0.037, 0.162] | 0.095 |
+| strong | one-sided 8 (2024) | 0.1 | 30 | 169 | 0.564 / 0.246 | +0.318 [+0.233, +0.408] | 0.083 [0.026, 0.166] | 0.077 |
+| strong | one-sided 8 (2024) | 0.25 | 30 | 169 | 0.633 / 0.252 | +0.380 [+0.302, +0.463] | 0.231 [0.112, 0.393] | 0.178 |
+| strong | 4 st. (7331) | 0.1 | 30 | 160 | 0.105 / 0.073 | +0.032 [-0.020, +0.084] | 0.025 [0.000, 0.068] | 0.025 |
+| strong | 4 st. (7331) | 0.25 | 30 | 160 | 0.227 / 0.112 | +0.115 [+0.033, +0.195] | 0.219 [0.067, 0.393] | 0.188 |
+| strong | 6 st. (7331) | 0.1 | 30 | 150 | 0.459 / 0.185 | +0.274 [+0.180, +0.363] | 0.060 [0.000, 0.161] | 0.053 |
+| strong | 6 st. (7331) | 0.25 | 30 | 150 | 0.541 / 0.225 | +0.316 [+0.205, +0.413] | 0.307 [0.169, 0.474] | 0.280 |
+| strong | one-sided 8 (7331) | 0.1 | 30 | 152 | 0.620 / 0.252 | +0.368 [+0.276, +0.455] | 0.092 [0.013, 0.201] | 0.072 |
+| strong | one-sided 8 (7331) | 0.25 | 30 | 152 | 0.660 / 0.264 | +0.395 [+0.308, +0.482] | 0.329 [0.142, 0.557] | 0.237 |
+
+## Verdicts
+
+| Rule | thin | strong |
+|:--|:-:|:-:|
+| 2D-a | not met | not met |
+| 2D-a_holm | not met | not met |
+| 2D-b | met | met |
+| 2D-b_holm | not met | not met |
+| 2D-c | met | met |
+| 2D-c_strict | not met | met |
+| 2D-c_holm | not met | not met |
+
+Cases within 0.005 of the threshold: none

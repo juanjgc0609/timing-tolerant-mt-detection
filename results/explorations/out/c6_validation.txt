@@ -1,0 +1,18 @@
+  Homog tt vs d/VP, d/VS                                                 0.000e+00 (<= 1e-12) ok
+  Homog radiation operator vs task1x radiation_operator                  5.551e-17 (<= 1e-12) ok
+  Gradient tt vs gen_realistic.travel_time_gradient                      0.000e+00 (<= 1e-12) ok
+  Gradient radiation operator . m vs gen_realistic.radiation_gradient    2.776e-17 (<= 1e-12) ok
+  TwoLayer(v1 = v2) tt vs homogeneous                                    2.487e-13 (<= 1e-09) ok
+  TwoLayer dT/dX vs ray parameter sin(i_r)/v1                            8.837e-08 (<= 1e-05) ok
+  NetCfg built in 0.2 s
+  corr_model(Homog) vs estimate_station_corrections                      0.000e+00 (<= 1e-12) ok
+  ModelOps 0.60 s (xc.Ops 0.29 s)
+  BlockDict idx (ModelOps Homog vs registered)                           0.000e+00 (<= 0) ok
+  BlockDict Kinv, max abs diff / max |Kinv| (operators differ by ~1e-17) 5.222e-14 (<= 1e-06) ok
+  BOMP-PK records (ModelOps Homog vs registered), 8 windows              3.411e-13 (<= 1e-09) ok
+  MT-FW records (dense vs certified_fw_record), 8 windows                7.816e-14 (<= 1e-09) ok
+  s/window: dense MT-FW 0.070, certified MT-FW 0.200
+  JHD homog: {'round0': {'n_obs': 66, 'theta': [2.987712212098275, 1.7616669278395838], 'rms': 0.021564138030529048, 'mad': 0.009096510606677377, 'nfev': 16}, 'round1': {'n_obs': 66, 'theta': [2.9864195477409528, 1.7617834000212962], 'rms': 0.02154820826345367, 'mad': 0.00937677663362102, 'nfev': 8}}  (0.2 s)
+  JHD gradient: {'round0': {'n_obs': 66, 'theta': [2.6985228183121763, 0.049982623119899025, 1.7288306318241684], 'rms': 0.013822624173110207, 'mad': 0.007566669302947027, 'nfev': 25}, 'round1': {'n_obs': 66, 'theta': [2.7020039901080546, 0.04940576294960036, 1.7287472653442761], 'rms': 0.013840604470297295, 'mad': 0.007352959481952581, 'nfev': 9}}  (0.4 s)
+  JHD twolayer: {'round0': {'n_obs': 62, 'theta': [2.9943818374745446, 0.24229909264611368, 6.664670933019763, 1.7204668180489815], 'rms': 0.014382011650031694, 'mad': 0.009202766798173556, 'nfev': 37}, 'round1': {'n_obs': 66, 'theta': [2.932844905551903, 0.20864123927083347, 6.666553825266044, 1.7478743382018793], 'rms': 0.017034541152060746, 'mad': 0.007880897809804388, 'nfev': 40}}  (7.8 s)
+VALIDATION PASS

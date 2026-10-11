@@ -1,0 +1,51 @@
+amplitude calibration (network 199, 90 single-event windows, dir 0, site 0): |v| / |G m| median 74.4 (IQR 63.2-89.3) noise sd per unit; analytic value for a matched 2 Hz pulse and noise-only sd: 77
+  ladder_4        amplitude in noise sd (site factor 1): P median 1.8 (P25 0.8, P75 3.0), S median 3.0 (P25 2.0, P75 4.3); waveform-noise angular scatter 1/A: P 32 deg, S 19 deg
+  ladder_6        amplitude in noise sd (site factor 1): P median 1.5 (P25 0.6, P75 2.8), S median 3.1 (P25 2.2, P75 4.4); waveform-noise angular scatter 1/A: P 39 deg, S 19 deg
+  unilateral_c40  amplitude in noise sd (site factor 1): P median 1.8 (P25 0.7, P75 3.1), S median 3.2 (P25 2.3, P75 4.4); waveform-noise angular scatter 1/A: P 33 deg, S 18 deg
+
+Bayesian Cramer-Rao bound on the epicentre: median over 200 sources of sqrt(C_xx + C_yy), km
+  channel                                                 ladder_4        ladder_6  unilateral_c40
+  no data (prior only)                                       12.25           12.25           12.25
+  T  sigma_t 0.05 s                                           0.24            0.15            0.26
+  T  sigma_t 0.144 s (+-0.25 s tolerance)                     0.68            0.43            0.69
+  T  sigma_t 0.15 s (measured medium residual)                0.71            0.44            0.72
+  T  sigma_t 0.30 s (uncorrected statics)                     1.34            0.84            1.29
+  PP 0 deg  (waveform noise only)                             8.77            7.90            7.14
+  PP 5 deg                                                    8.91            8.04            7.32
+  PP 10 deg (nominal)                                         9.23            8.53            7.79
+  PP 20 deg                                                  10.11            9.55            8.86
+  PP 10 deg, no waveform noise                                4.99            4.07            3.82
+  PP 5 deg, no waveform noise                                 2.76            2.15            2.05
+  PP 2 deg, no waveform noise                                 1.15            0.88            0.85
+  PP+SP 10 deg (DC)                                           7.47            6.10            6.03
+  PP+SP 0 deg (DC)                                            6.63            5.22            5.21
+  A  sd 0.5 (DC)                                              9.18            7.75            9.11
+  A  sd 0.25 (DC)                                             8.13            6.30            7.69
+  A  sd 0 (DC; waveform noise only)                           7.33            5.31            6.77
+  A  sd 0.5 (full MT)                                        10.83            9.12           10.12
+  A  sd 0 (full MT)                                           9.78            7.07            8.58
+  RATIO S/P sd 0.5 (DC)                                      11.77           10.46           10.88
+  RATIO S/P sd 0 (DC)                                        11.47            9.76            9.94
+  ALL time-free 10 deg, 0.5 (DC)                              5.59            4.35            4.81
+  ALL time-free 10 deg, 0.5 (full MT)                         5.90            4.62            5.16
+  ALL time-free 0 deg, 0 (DC) = oracle world                  4.01            3.10            3.57
+  ALL time-free 0 deg, 0, SNR x3                              1.45            1.08            1.28
+  ALL time-free 0 deg, 0, SNR x10                             0.45            0.33            0.39
+  ALL time-free 2 deg, 0.1, SNR x10                           1.00            0.71            0.77
+  JOINT T 0.144 + ALL time-free nominal (DC)                  0.65            0.41            0.66
+  JOINT T 0.144 + ALL time-free oracle world                  0.62            0.40            0.64
+  JOINT T 0.30 + ALL time-free nominal (DC)                   1.21            0.80            1.20
+  joint / time-only ratio (nominal):                         0.960           0.962           0.953
+  joint / time-only ratio (oracle world):                    0.915           0.930           0.926
+  joint / time-only ratio (sigma_t 0.30, nominal):           0.906           0.953           0.927
+
+Break-even scan: polarization scatter (deg) x SNR multiplier at which PP+SP (DC) reaches the T 0.144 s bound (median, km)
+  SNR x1    0 deg: 6.1/5.2/5.0  1 deg: 6.1/5.2/5.0  2 deg: 6.1/5.3/5.1  5 deg: 6.4/5.5/5.3  10 deg: 6.9/6.1/5.9
+  SNR x3    0 deg: 2.8/2.2/2.1  1 deg: 2.8/2.3/2.1  2 deg: 2.9/2.4/2.2  5 deg: 3.6/2.9/2.8  10 deg: 5.0/4.1/3.8
+  SNR x10   0 deg: 1.0/0.7/0.7  1 deg: 1.1/0.8/0.8  2 deg: 1.4/1.0/1.0  5 deg: 2.4/1.9/1.8  10 deg: 4.1/3.3/3.1
+  SNR x30   0 deg: 0.3/0.2/0.2  1 deg: 0.6/0.5/0.4  2 deg: 1.0/0.8/0.7  5 deg: 2.1/1.7/1.6  10 deg: 4.0/3.2/2.9
+
+Monte Carlo check of the bound (network 130, 300 sources; grid ML on the 1 km grid; no waveform noise):
+  ladder_4        PP 10 deg: ML rms 6.33 median 4.77 | bound rms 5.23 median 5.30     T 0.144 s: ML rms 1.13 median 0.82 | bound rms 0.91 median 0.92
+  ladder_6        PP 10 deg: ML rms 6.29 median 4.88 | bound rms 5.29 median 5.37     T 0.144 s: ML rms 0.68 median 0.52 | bound rms 0.48 median 0.47
+  unilateral_c40  PP 10 deg: ML rms 4.69 median 3.34 | bound rms 3.96 median 3.69     T 0.144 s: ML rms 1.19 median 0.85 | bound rms 0.87 median 0.86

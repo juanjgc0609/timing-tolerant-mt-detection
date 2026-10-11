@@ -1,0 +1,27 @@
+2024 one-sided, 8 st.  events   53 :: WAVE-E 0.26/0.38 | WAVE-P 0.30/0.40 | WAVE-PSH 0.30/0.34
+     WAVE-P - WAVE-E @0.25: +0.019 [+0.000, +0.060]
+     WAVE-P - WAVE-PSH @0.25: +0.057 [-0.021, +0.143]
+     WAVE-PSH - WAVE-E @0.25: -0.038 [-0.135, +0.047]
+2024 4 stations        events   55 :: WAVE-E 0.02/0.16 | WAVE-P 0.20/0.20 | WAVE-PSH 0.02/0.02
+     WAVE-P - WAVE-E @0.25: +0.036 [+0.000, +0.089]
+     WAVE-P - WAVE-PSH @0.25: +0.182 [+0.087, +0.288]
+     WAVE-PSH - WAVE-E @0.25: -0.145 [-0.245, -0.062]
+2024 6 stations        events   53 :: WAVE-E 0.09/0.19 | WAVE-P 0.17/0.26 | WAVE-PSH 0.09/0.19
+     WAVE-P - WAVE-E @0.25: +0.075 [+0.000, +0.170]
+     WAVE-P - WAVE-PSH @0.25: +0.075 [-0.018, +0.167]
+     WAVE-PSH - WAVE-E @0.25: +0.000 [-0.073, +0.077]
+   seed 2024: T-a cells 1/3, CI excludes 0: False; T-b: True; T-c cells 0/3
+7331 one-sided, 8 st.  events   37 :: WAVE-E 0.30/0.38 | WAVE-P 0.30/0.70 | WAVE-PSH 0.22/0.62
+     WAVE-P - WAVE-E @0.25: +0.324 [+0.167, +0.500]
+     WAVE-P - WAVE-PSH @0.25: +0.081 [+0.000, +0.184]
+     WAVE-PSH - WAVE-E @0.25: +0.243 [+0.059, +0.432]
+7331 4 stations        events   45 :: WAVE-E 0.02/0.02 | WAVE-P 0.20/0.47 | WAVE-PSH 0.02/0.20
+     WAVE-P - WAVE-E @0.25: +0.444 [+0.286, +0.610]
+     WAVE-P - WAVE-PSH @0.25: +0.267 [+0.156, +0.385]
+     WAVE-PSH - WAVE-E @0.25: +0.178 [+0.067, +0.308]
+7331 6 stations        events   48 :: WAVE-E 0.02/0.27 | WAVE-P 0.33/0.52 | WAVE-PSH 0.27/0.38
+     WAVE-P - WAVE-E @0.25: +0.250 [+0.115, +0.396]
+     WAVE-P - WAVE-PSH @0.25: +0.146 [+0.021, +0.275]
+     WAVE-PSH - WAVE-E @0.25: +0.104 [-0.024, +0.241]
+   seed 7331: T-a cells 2/3, CI excludes 0: True; T-b: True; T-c cells 0/3
+T-a: False  T-b: True  T-c: {2024: None, 7331: None}

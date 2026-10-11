@@ -1,0 +1,92 @@
+C12 NULL CALIBRATION
+
+== tube constants of the DC manifold in the G-metric (30 random nodes x 2 networks per cell, 1500 Haar rotations per node): L3 = volume, in units of vol(S^3) = 2 pi^2; L1 = (1 / 4 pi) int scalar curvature
+   ladder_4        L3 / vol(S^3): median 1.861 range [1.619, 1.952];  L1: median -0.328 range [-1.666, +0.231]
+   ladder_6        L3 / vol(S^3): median 1.893 range [1.619, 1.959];  L1: median -0.399 range [-1.333, +0.235]
+   unilateral_c40  L3 / vol(S^3): median 1.745 range [1.461, 1.962];  L1: median -0.610 range [-2.338, +0.789]
+   Frobenius (isotropic) metric: L3 = 4 pi^2 = 2 vol(S^3), L1 = 0 exactly (the orbit is flat on average: Milnor's formula for the left-invariant metric (1, 1, 4) on SO(3) gives scalar curvature 0)
+
+== theory, single candidate, z ~ N(0, I_6): upper quantile x of 2 s; ratio to FULL6; amplitude gain sqrt(x6 / x) - 1; effective dof = k with P(chi2_k > x_DC) = alpha
+   alpha 1e-02: FULL6  16.81  DEV5  15.09 (ratio 0.897, gain +0.056)  DC  14.17 (ratio 0.843, gain +0.089); effective dof of DC 4.49
+   alpha 1e-03: FULL6  22.46  DEV5  20.52 (ratio 0.913, gain +0.046)  DC  19.46 (ratio 0.866, gain +0.074); effective dof of DC 4.47
+   alpha 1e-04: FULL6  27.86  DEV5  25.74 (ratio 0.924, gain +0.040)  DC  24.55 (ratio 0.881, gain +0.065); effective dof of DC 4.46
+   alpha 1e-05: FULL6  33.11  DEV5  30.86 (ratio 0.932, gain +0.036)  DC  29.54 (ratio 0.892, gain +0.059); effective dof of DC 4.44
+   alpha 1e-06: FULL6  38.26  DEV5  35.89 (ratio 0.938, gain +0.032)  DC  34.46 (ratio 0.901, gain +0.054); effective dof of DC 4.43
+   alpha 1e-07: FULL6  43.34  DEV5  40.86 (ratio 0.943, gain +0.030)  DC  39.34 (ratio 0.908, gain +0.050); effective dof of DC 4.41
+
+== event-free windows WITHOUT clutter (noise only), networks 1226-1229: 600 windows
+   single candidate, read = fixed (predicted sample, no cap), regime thin: n = 90000; mean of 2 s: FULL6 6.00 DEV5 5.01 DC 4.66
+      upper quantile 0.1: sim FULL6  10.63 DEV5   9.24 DC   8.64 | theory  10.64   9.24   8.41 | ratio DC/FULL6 sim 0.812 theory 0.790; DEV5/FULL6 sim 0.868 theory 0.868
+      upper quantile 0.01: sim FULL6  16.83 DEV5  15.13 DC  14.28 | theory  16.81  15.09  14.17 | ratio DC/FULL6 sim 0.849 theory 0.843; DEV5/FULL6 sim 0.899 theory 0.897
+      upper quantile 0.001: sim FULL6  22.57 DEV5  20.76 DC  19.69 | theory  22.46  20.52  19.46 | ratio DC/FULL6 sim 0.872 theory 0.866; DEV5/FULL6 sim 0.920 theory 0.913
+      tail probabilities sim / theory: x=10: FULL6 1.24e-01/1.25e-01 DEV5 7.57e-02/7.52e-02 DC 5.97e-02/5.49e-02; x=14: FULL6 2.96e-02/2.96e-02 DEV5 1.56e-02/1.56e-02 DC 1.13e-02/1.08e-02; x=18: FULL6 6.53e-03/6.23e-03 DEV5 3.14e-03/2.95e-03 DC 2.11e-03/1.91e-03
+   single candidate, read = peak (registered peak rule, cap 6), regime thin: n = 90000; mean of 2 s: FULL6 12.99 DEV5 10.83 DC 10.09
+      upper quantile 0.1: sim FULL6  21.82 DEV5  19.11 DC  17.87 | theory  10.64   9.24   8.41 | ratio DC/FULL6 sim 0.819 theory 0.790; DEV5/FULL6 sim 0.876 theory 0.868
+      upper quantile 0.01: sim FULL6  32.13 DEV5  28.77 DC  27.32 | theory  16.81  15.09  14.17 | ratio DC/FULL6 sim 0.850 theory 0.843; DEV5/FULL6 sim 0.895 theory 0.897
+      upper quantile 0.001: sim FULL6  40.61 DEV5  37.05 DC  35.12 | theory  22.46  20.52  19.46 | ratio DC/FULL6 sim 0.865 theory 0.866; DEV5/FULL6 sim 0.912 theory 0.913
+   window level (greedy loop with deflation, 5 atoms; statistic units s): threshold with <= 0.1 / <= 0.25 false per window; ratio to FULL6 [95% bootstrap over networks then windows]; amplitude gain sqrt(thr6 / thr) - 1; theory = DC (or DEV5) threshold predicted from the FULL6 threshold by equal single-candidate tail
+      regime thin: 600 windows, 12 network x cell x regime setups
+      FULL6       @0.1: thr  28.64 [27.20,29.55]  @0.25: thr  26.73 [25.57,27.62]
+      DEV5        @0.1: thr  26.66 [25.75,27.59] ratio 0.931 [0.917,0.952] gain +0.036 [+0.025,+0.044]  @0.25: thr  25.22 [24.37,25.96] ratio 0.943 [0.931,0.957] gain +0.030 [+0.022,+0.036]
+      DC          @0.1: thr  25.93 [24.53,27.02] ratio 0.906 [0.883,0.928] gain +0.051 [+0.038,+0.064]  @0.25: thr  24.01 [23.12,24.88] ratio 0.898 [0.886,0.914] gain +0.055 [+0.046,+0.062]
+      MIX-DC      @0.1: thr  25.03 [23.46,26.57] ratio 0.874 [0.847,0.912] gain +0.070 [+0.047,+0.086]  @0.25: thr  22.86 [21.75,23.85] ratio 0.855 [0.831,0.878] gain +0.081 [+0.067,+0.097]
+      MIX-DEV     @0.1: thr  26.37 [25.35,27.54] ratio 0.921 [0.905,0.944] gain +0.042 [+0.029,+0.051]  @0.25: thr  24.56 [23.34,25.55] ratio 0.919 [0.892,0.940] gain +0.043 [+0.031,+0.059]
+      DCrank/s6   @0.1: thr  27.24 [26.05,28.49] ratio 0.951 [0.933,0.976] gain +0.025 [+0.012,+0.035]  @0.25: thr  25.47 [24.61,26.28] ratio 0.953 [0.940,0.967] gain +0.024 [+0.017,+0.031]
+      peak-read single-candidate law of 2 s6 fitted by moments: 1.650 x chi2 with 7.87 dof (check: upper 0.001 quantile fit 42.73, simulated 40.61)
+      theory @0.1: FULL6 thr 28.64 = per-candidate tail 2.7e-05 under the fitted law (implied number of independent candidates 3696); Gaussian theory at that tail: DC / FULL6 threshold ratio 0.888 (gain +0.061, effective dof of DC 4.45), DEV5 / FULL6 0.929; simulated ratios DC 0.906, MIX-DC 0.874, DEV5 0.931
+      theory @0.25: FULL6 thr 26.73 = per-candidate tail 7.1e-05 under the fitted law (implied number of independent candidates 3512); Gaussian theory at that tail: DC / FULL6 threshold ratio 0.883 (gain +0.064, effective dof of DC 4.45), DEV5 / FULL6 0.925; simulated ratios DC 0.898, MIX-DC 0.855, DEV5 0.943
+      first atom (window maximum of the statistic): mean FULL6 24.66 DEV5 23.10 DC 22.06; median 24.49 22.81 21.78; mean paired difference FULL6 - DC 2.60 (sd 1.81)
+
+== event-free windows WITH the clutter of the regime, networks 1220-1225: 1440 windows
+   single candidate, read = fixed (predicted sample, no cap), regime strong: n = 108000; mean of 2 s: FULL6 6.90 DEV5 5.75 DC 5.37
+      upper quantile 0.1: sim FULL6  12.58 DEV5  10.86 DC  10.20 | theory  10.64   9.24   8.41 | ratio DC/FULL6 sim 0.810 theory 0.790; DEV5/FULL6 sim 0.863 theory 0.868
+      upper quantile 0.01: sim FULL6  22.89 DEV5  20.29 DC  19.29 | theory  16.81  15.09  14.17 | ratio DC/FULL6 sim 0.843 theory 0.843; DEV5/FULL6 sim 0.886 theory 0.897
+      upper quantile 0.001: sim FULL6  35.76 DEV5  31.76 DC  30.34 | theory  22.46  20.52  19.46 | ratio DC/FULL6 sim 0.848 theory 0.866; DEV5/FULL6 sim 0.888 theory 0.913
+      tail probabilities sim / theory: x=10: FULL6 1.90e-01/1.25e-01 DEV5 1.26e-01/7.52e-02 DC 1.05e-01/5.49e-02; x=14: FULL6 7.09e-02/2.96e-02 DEV5 4.40e-02/1.56e-02 DC 3.63e-02/1.08e-02; x=18: FULL6 2.85e-02/6.23e-03 DEV5 1.68e-02/2.95e-03 DC 1.35e-02/1.91e-03
+   single candidate, read = fixed (predicted sample, no cap), regime thin: n = 108000; mean of 2 s: FULL6 6.05 DEV5 5.05 DC 4.71
+      upper quantile 0.1: sim FULL6  10.76 DEV5   9.33 DC   8.75 | theory  10.64   9.24   8.41 | ratio DC/FULL6 sim 0.813 theory 0.790; DEV5/FULL6 sim 0.867 theory 0.868
+      upper quantile 0.01: sim FULL6  17.01 DEV5  15.17 DC  14.36 | theory  16.81  15.09  14.17 | ratio DC/FULL6 sim 0.845 theory 0.843; DEV5/FULL6 sim 0.892 theory 0.897
+      upper quantile 0.001: sim FULL6  22.82 DEV5  21.03 DC  19.96 | theory  22.46  20.52  19.46 | ratio DC/FULL6 sim 0.875 theory 0.866; DEV5/FULL6 sim 0.922 theory 0.913
+      tail probabilities sim / theory: x=10: FULL6 1.29e-01/1.25e-01 DEV5 7.86e-02/7.52e-02 DC 6.11e-02/5.49e-02; x=14: FULL6 3.10e-02/2.96e-02 DEV5 1.62e-02/1.56e-02 DC 1.16e-02/1.08e-02; x=18: FULL6 6.49e-03/6.23e-03 DEV5 3.09e-03/2.95e-03 DC 2.16e-03/1.91e-03
+   single candidate, read = peak (registered peak rule, cap 6), regime strong: n = 108000; mean of 2 s: FULL6 15.77 DEV5 13.14 DC 12.25
+      upper quantile 0.1: sim FULL6  27.61 DEV5  23.96 DC  22.49 | theory  10.64   9.24   8.41 | ratio DC/FULL6 sim 0.814 theory 0.790; DEV5/FULL6 sim 0.868 theory 0.868
+      upper quantile 0.01: sim FULL6  44.19 DEV5  39.64 DC  37.46 | theory  16.81  15.09  14.17 | ratio DC/FULL6 sim 0.848 theory 0.843; DEV5/FULL6 sim 0.897 theory 0.897
+      upper quantile 0.001: sim FULL6  59.14 DEV5  53.93 DC  51.19 | theory  22.46  20.52  19.46 | ratio DC/FULL6 sim 0.866 theory 0.866; DEV5/FULL6 sim 0.912 theory 0.913
+   single candidate, read = peak (registered peak rule, cap 6), regime thin: n = 108000; mean of 2 s: FULL6 13.07 DEV5 10.91 DC 10.16
+      upper quantile 0.1: sim FULL6  21.94 DEV5  19.19 DC  17.97 | theory  10.64   9.24   8.41 | ratio DC/FULL6 sim 0.819 theory 0.790; DEV5/FULL6 sim 0.874 theory 0.868
+      upper quantile 0.01: sim FULL6  32.45 DEV5  29.46 DC  27.76 | theory  16.81  15.09  14.17 | ratio DC/FULL6 sim 0.856 theory 0.843; DEV5/FULL6 sim 0.908 theory 0.897
+      upper quantile 0.001: sim FULL6  41.22 DEV5  38.38 DC  36.08 | theory  22.46  20.52  19.46 | ratio DC/FULL6 sim 0.875 theory 0.866; DEV5/FULL6 sim 0.931 theory 0.913
+   window level (greedy loop with deflation, 5 atoms; statistic units s): threshold with <= 0.1 / <= 0.25 false per window; ratio to FULL6 [95% bootstrap over networks then windows]; amplitude gain sqrt(thr6 / thr) - 1; theory = DC (or DEV5) threshold predicted from the FULL6 threshold by equal single-candidate tail
+      regime strong: 720 windows, 18 network x cell x regime setups
+      FULL6       @0.1: thr  43.77 [40.21,47.85]  @0.25: thr  39.51 [36.71,42.86]
+      DEV5        @0.1: thr  40.76 [37.62,44.93] ratio 0.931 [0.911,0.954] gain +0.036 [+0.024,+0.048]  @0.25: thr  37.21 [34.66,40.07] ratio 0.942 [0.922,0.957] gain +0.030 [+0.022,+0.042]
+      DC          @0.1: thr  38.93 [36.00,42.49] ratio 0.889 [0.873,0.914] gain +0.060 [+0.046,+0.070]  @0.25: thr  35.67 [32.74,38.24] ratio 0.903 [0.881,0.915] gain +0.052 [+0.045,+0.065]
+      MIX-DC      @0.1: thr  37.52 [34.70,40.25] ratio 0.857 [0.832,0.893] gain +0.080 [+0.058,+0.096]  @0.25: thr  33.17 [31.15,36.03] ratio 0.840 [0.818,0.864] gain +0.091 [+0.076,+0.106]
+      MIX-DEV     @0.1: thr  39.42 [37.01,42.59] ratio 0.901 [0.873,0.932] gain +0.054 [+0.036,+0.070]  @0.25: thr  35.86 [33.58,38.06] ratio 0.908 [0.877,0.928] gain +0.050 [+0.038,+0.068]
+      DCrank/s6   @0.1: thr  41.62 [38.72,45.89] ratio 0.951 [0.935,0.979] gain +0.026 [+0.010,+0.034]  @0.25: thr  38.07 [35.19,40.92] ratio 0.964 [0.938,0.978] gain +0.019 [+0.011,+0.033]
+      peak-read single-candidate law of 2 s6 fitted by moments: 2.537 x chi2 with 6.21 dof (check: upper 0.001 quantile fit 58.01, simulated 59.14)
+      theory @0.1: FULL6 thr 43.77 = per-candidate tail 6.6e-06 under the fitted law (implied number of independent candidates 15044); Gaussian theory at that tail: DC / FULL6 threshold ratio 0.894 (gain +0.058, effective dof of DC 4.44), DEV5 / FULL6 0.933; simulated ratios DC 0.889, MIX-DC 0.857, DEV5 0.931
+      theory @0.25: FULL6 thr 39.51 = per-candidate tail 2.9e-05 under the fitted law (implied number of independent candidates 8578); Gaussian theory at that tail: DC / FULL6 threshold ratio 0.888 (gain +0.061, effective dof of DC 4.45), DEV5 / FULL6 0.929; simulated ratios DC 0.903, MIX-DC 0.840, DEV5 0.942
+      first atom (window maximum of the statistic): mean FULL6 34.78 DEV5 32.54 DC 31.14; median 33.78 31.48 30.19; mean paired difference FULL6 - DC 3.64 (sd 2.61)
+      regime thin: 720 windows, 18 network x cell x regime setups
+      FULL6       @0.1: thr  28.69 [27.91,29.51]  @0.25: thr  26.86 [26.22,27.69]
+      DEV5        @0.1: thr  26.73 [26.22,27.18] ratio 0.932 [0.915,0.946] gain +0.036 [+0.028,+0.045]  @0.25: thr  25.37 [24.62,25.91] ratio 0.945 [0.929,0.958] gain +0.029 [+0.022,+0.038]
+      DC          @0.1: thr  25.77 [25.05,26.32] ratio 0.898 [0.881,0.912] gain +0.055 [+0.047,+0.066]  @0.25: thr  24.18 [23.48,24.71] ratio 0.900 [0.883,0.913] gain +0.054 [+0.046,+0.064]
+      MIX-DC      @0.1: thr  25.20 [24.33,25.80] ratio 0.878 [0.854,0.895] gain +0.067 [+0.057,+0.082]  @0.25: thr  22.96 [22.48,23.67] ratio 0.855 [0.835,0.873] gain +0.082 [+0.070,+0.095]
+      MIX-DEV     @0.1: thr  26.46 [25.69,27.07] ratio 0.922 [0.903,0.936] gain +0.041 [+0.033,+0.052]  @0.25: thr  24.54 [23.87,25.33] ratio 0.913 [0.897,0.931] gain +0.046 [+0.037,+0.056]
+      DCrank/s6   @0.1: thr  27.52 [26.71,28.36] ratio 0.959 [0.940,0.974] gain +0.021 [+0.013,+0.032]  @0.25: thr  25.79 [24.99,26.32] ratio 0.960 [0.942,0.973] gain +0.021 [+0.014,+0.030]
+      peak-read single-candidate law of 2 s6 fitted by moments: 1.669 x chi2 with 7.83 dof (check: upper 0.001 quantile fit 43.10, simulated 41.22)
+      theory @0.1: FULL6 thr 28.69 = per-candidate tail 3.0e-05 under the fitted law (implied number of independent candidates 3323); Gaussian theory at that tail: DC / FULL6 threshold ratio 0.887 (gain +0.062, effective dof of DC 4.45), DEV5 / FULL6 0.929; simulated ratios DC 0.898, MIX-DC 0.878, DEV5 0.932
+      theory @0.25: FULL6 thr 26.86 = per-candidate tail 7.5e-05 under the fitted law (implied number of independent candidates 3322); Gaussian theory at that tail: DC / FULL6 threshold ratio 0.883 (gain +0.064, effective dof of DC 4.45), DEV5 / FULL6 0.925; simulated ratios DC 0.900, MIX-DC 0.855, DEV5 0.945
+      first atom (window maximum of the statistic): mean FULL6 24.90 DEV5 23.35 DC 22.32; median 24.68 23.30 22.21; mean paired difference FULL6 - DC 2.58 (sd 1.79)
+      regime both: 1440 windows, 36 network x cell x regime setups
+      FULL6       @0.1: thr  40.63 [37.04,43.90]  @0.25: thr  36.21 [33.22,38.68]
+      DEV5        @0.1: thr  38.11 [34.77,40.82] ratio 0.938 [0.918,0.956] gain +0.033 [+0.023,+0.044]  @0.25: thr  34.06 [31.08,36.41] ratio 0.941 [0.928,0.952] gain +0.031 [+0.025,+0.038]
+      DC          @0.1: thr  36.67 [33.18,39.16] ratio 0.902 [0.880,0.913] gain +0.053 [+0.047,+0.066]  @0.25: thr  32.44 [29.71,34.70] ratio 0.896 [0.885,0.910] gain +0.057 [+0.048,+0.063]
+      MIX-DC      @0.1: thr  34.27 [31.38,37.45] ratio 0.844 [0.820,0.870] gain +0.089 [+0.072,+0.104]  @0.25: thr  29.92 [27.10,32.34] ratio 0.826 [0.804,0.848] gain +0.100 [+0.086,+0.115]
+      MIX-DEV     @0.1: thr  36.81 [33.73,39.27] ratio 0.906 [0.876,0.928] gain +0.051 [+0.038,+0.069]  @0.25: thr  32.08 [29.17,34.42] ratio 0.886 [0.860,0.910] gain +0.062 [+0.048,+0.078]
+      DCrank/s6   @0.1: thr  38.81 [35.32,41.69] ratio 0.955 [0.938,0.977] gain +0.023 [+0.012,+0.033]  @0.25: thr  34.43 [31.34,37.16] ratio 0.951 [0.940,0.971] gain +0.026 [+0.015,+0.031]
+      peak-read single-candidate law of 2 s6 fitted by moments: 2.207 x chi2 with 6.53 dof (check: upper 0.001 quantile fit 51.78, simulated 54.71)
+      theory @0.1: FULL6 thr 40.63 = per-candidate tail 3.2e-06 under the fitted law (implied number of independent candidates 30785); Gaussian theory at that tail: DC / FULL6 threshold ratio 0.897 (gain +0.056, effective dof of DC 4.43), DEV5 / FULL6 0.935; simulated ratios DC 0.902, MIX-DC 0.844, DEV5 0.938
+      theory @0.25: FULL6 thr 36.21 = per-candidate tail 1.9e-05 under the fitted law (implied number of independent candidates 13279); Gaussian theory at that tail: DC / FULL6 threshold ratio 0.890 (gain +0.060, effective dof of DC 4.44), DEV5 / FULL6 0.930; simulated ratios DC 0.896, MIX-DC 0.826, DEV5 0.941
+      first atom (window maximum of the statistic): mean FULL6 29.84 DEV5 27.94 DC 26.73; median 28.26 26.43 25.36; mean paired difference FULL6 - DC 3.11 (sd 2.30)

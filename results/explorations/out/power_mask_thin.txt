@@ -1,0 +1,11 @@
+BOMP-PK-MASK - BOMP-PK: pilot 180 windows, 6 networks per stratum
+  cap 0.1: point +0.149, 95% CI [-0.007, +0.267], bootstrap SD 0.0710
+    delta 0.050, power 80%: 95 networks per stratum (x 10 windows)
+    delta 0.050, power 90%: 128 networks per stratum (x 10 windows)
+    delta 0.075, power 80%: 43 networks per stratum (x 10 windows)
+    delta 0.075, power 90%: 57 networks per stratum (x 10 windows)
+  cap 0.25: point +0.084, 95% CI [+0.000, +0.166], bootstrap SD 0.0400
+    delta 0.042, power 80%: 43 networks per stratum (x 10 windows)
+    delta 0.042, power 90%: 58 networks per stratum (x 10 windows)
+    delta 0.050, power 80%: 31 networks per stratum (x 10 windows)
+    delta 0.050, power 90%: 41 networks per stratum (x 10 windows)

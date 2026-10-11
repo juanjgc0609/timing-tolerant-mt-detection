@@ -1,0 +1,443 @@
+C14 - SELF-INTERFERENCE OF THE MT-FW DETECTOR: DIAGNOSIS OF THE FALSE DETECTIONS INDUCED BY THE EVENTS AND FOUR
+REMEDIES (explore_contrib) - REPORT
+======================================================================================================================
+Status: EXPLORATORY, NOT CONFIRMATORY. Nothing below tests a registered hypothesis.
+Dates: code and first part of the development on Monday 5 Oct 2026, 18:48-19:02 (-05); the run was cut at 19:02
+(usage limit and container restart) with 8 of 18 development parts written. The coordinator relaunched it on
+Friday 9 Oct at 11:10 (same code: sha256 of c14_lib.py and c14_run.py verified identical; same environment
+OPENBLAS_NUM_THREADS=1, OPENBLAS_CORETYPE=Prescott; the 8 completed parts were skipped). Development finished 11:24,
+round 2 11:26-11:35, FREEZE 11:36:11, evaluation 11:36-13:00:43 (84 min, one process), analysis 13:01-13:03,
+write-up the rest. 2-core machine, a single computation process (another job uses the second core); short test
+calls with nice. The preregistration was not edited, nor anything in /mnt/user-data/outputs, nor any earlier file of
+explore_contrib (only new files c14_*, C14_FREEZE.txt*).
+
+Seed and data (base seed 999 ONLY):
+  networks task2a_confirm.network(999, cell, j); cells ladder_4, ladder_6, unilateral_c40; regimes thin and strong;
+           statics sd 0.3 s; +SC terms from the registered catalogue of 20 events.
+           DEVELOPMENT j = 1600, 1601, 1602 (constants); EVALUATION j = 1610-1621 (12 per cell and regime), generated
+           for the first time after the freeze. Prior grep: no 16xx as network or TAG in *.py, *.sh, *.txt.
+  TAGs     streams [999, TAG, ci, j, ri, 41|233|61], new: 1651 STD windows (xc.draw_sources, 0-2 events, kmax 5);
+           1652 DENSE windows (c2_run.draw_dense, 3-5 events within 9 km, kmax 7). The twins and the per-event parts
+           come from clones of those same generators (they do not consume new streams).
+  sample   development: 18 parts x (10 STD + 10 DENSE) = 360 windows (STD 138 events, DENSE 733).
+           evaluation: 72 parts x (16 STD + 16 DENSE) = 2304 windows (STD 855 events in 1152 windows; DENSE 4594
+           events in 1152 windows); event-free twins in the first 8 windows of each type of each part (342
+           STD windows with an event, 576 DENSE). All parts finished; nothing excluded.
+Measurement protocol (as in C10-C13): exact FROC, recall at <= 0.1 and <= 0.25 realised false events per window
+(operating point re-chosen in each replicate), rules LOC+T (epicentre <= 5 km and |origin error| <= 0.5 s;
+primary) and LOC (<= 5 km); a duplicate of an event already hit is neither a false event nor a new hit; hierarchical
+bootstrap (strata regime x cell; networks and then windows), 1000 replicates in evaluation and 300 in development,
+95% percentile intervals, paired differences against BASE. Lines: ALL (the 6 cell-regimes pooled, primary), per
+cell (two regimes) and per regime.
+
+----------------------------------------------------------------------------------------------------------------------
+0. SUMMARY AND VERDICT
+----------------------------------------------------------------------------------------------------------------------
+(1) DIAGNOSIS. At the benchmark operating point (<= 0.25 and <= 0.1 false events per window) the false-event budget
+    under LOC+T is spent mainly by a class that is NOT deflation self-interference: the detection of a real event,
+    well located (median 3 km) with the origin shifted by a median of 0.8 s, almost always early (73-75%) and almost
+    always WITHOUT another correct detection of the same event (86-92%). It is 55-58% of the false events in STD and
+    80-95% in DENSE (development). Deflation residual 0-7%, coda 0%, cross phase 0-5%, copies of an already hit event
+    0-11%, missed mislocated event 0-11%, clutter-dominated 0-25% (these still carry 24-28% of live event energy).
+    The deflation residual only matters at low thresholds (12-23% of the false events above the twin's q95).
+    Ground-truth ceiling: PERFECT deflation (subtracting the true contribution, direct + coda, of each hit event)
+    gives +0.051 [-0.024, +0.111] (STD) and +0.052 [+0.012, +0.105] (DENSE) of LOC+T recall at <= 0.25 in development.
+(2) THE REMEDIES DO WHAT THEY PROMISE ON THE FALSE EVENTS... On the unseen networks, R1 (hard exclusivity), R2
+    (variable noise scale), R3 (adaptive FIR deflation) and the combination C23 = R2 + R3 halve the event-induced
+    false atoms. Ratio against the event-free twin (LOC+T false events / twin atoms, per window
+    with an event, at the q95 of the twin atoms of the method itself):
+        STD    BASE 6.23 [4.72, 8.58]  R1h8 3.18  R2a64 3.41  R3fir2 3.17  C23 2.52 [1.99, 3.29]  R4 6.20
+        DENSE  BASE 10.04 [8.22,12.63] R1h8 5.01  R2a64 5.49  R3fir2 4.84  C23 4.24 [3.61, 5.14]  R4 10.21
+    and at more than 10 km from every event from 3.42 / 5.42 (BASE) to 1.00 / 1.60 (C23): far from the events C23
+    leaves the clutter level. Paired change in false events per window with an event at q95: C23 -0.95 [-1.19, -0.73]
+    (STD), -2.08 [-2.31, -1.83] (DENSE).
+(3) ...BUT THEY DO NOT MOVE THE OPERATING-POINT RECALL UNDER THE PRIMARY RULE. Paired differences against BASE on
+    the unseen networks, LOC+T at <= 0.25 (BASE STD 0.283, DENSE 0.108):
+        STD    R1h8 +0.015 [-0.007, +0.044]  R2a64 +0.016 [-0.006, +0.043]  R3fir2 +0.016 [-0.006, +0.042]
+               R4x10t10 +0.002 [-0.007, +0.017]  C23 +0.016 [-0.007, +0.048]
+        DENSE  R1h8 -0.005 [-0.017, +0.008]  R2a64 -0.002 [-0.015, +0.016]  R3fir2 -0.007 [-0.019, +0.006]
+               R4x10t10 -0.011 [-0.018, -0.001]  C23 -0.004 [-0.017, +0.011]
+    At <= 0.1 (LOC+T): STD +0.029 to +0.036 (intervals touching 0), DENSE -0.003 to +0.009. Under LOC there is a small
+    gain in STD at <= 0.1: R2a64 +0.056 [+0.010, +0.086], R3fir2 +0.051 [+0.010, +0.083], R1h8 +0.049 [+0.008,
+    +0.081], C23 +0.056 [+0.006, +0.090] (at <= 0.25: +0.029 to +0.036, intervals touching 0); in DENSE under LOC
+    +0.014 to +0.018, none different from 0. Reason, consistent with (1): the false events that are removed lie below
+    the operating-point threshold; above it the "right place, wrong origin" atoms dominate, and no remedy touches
+    them (per window, above the 0.25 threshold: STD 0.082 in BASE and 0.089-0.093 with the remedies; DENSE 0.161 and
+    0.169-0.175).
+(4) CLOSE PAIRS (central case of the thesis). At the operating point no remedy loses recall of events in a close
+    pair (DENSE, LOC+T, <= 0.25: -0.002 to -0.005; R4 -0.011 [-0.019, -0.001]). But at ANY score (what the list of
+    kmax atoms contains) R1h8, R3fir2 and C23 lose one quarter: -0.103 [-0.121, -0.086],
+    -0.098 [-0.116, -0.080], -0.095 [-0.115, -0.078] (LOC+T; BASE 0.400) and -0.13 under LOC (BASE 0.627). R2a64 alone
+    does not: -0.009 [-0.029, +0.009] (LOC+T), -0.037 [-0.057, -0.018] (LOC). R4 (merging within 10 km and 1 s):
+    -0.046 and -0.079. That is, hard exclusivity and FIR deflation erase evidence of overlapping events that today
+    only appears at low score; if the benchmark moved to lower thresholds, that damage would pass into the recall.
+(5) R4 (merging of duplicates in origin time) is useless: the "right place, wrong origin" atoms are not
+    duplicates (the event has no other correct detection in ~90% of the cases); R4 does not change the STD recall and
+    lowers it somewhat in DENSE. T3 (local refinement, reference) DOES improve the LOC+T recall in STD, +0.056 [+0.015,
+    +0.100], and LOC in DENSE, +0.030 [+0.001, +0.055], but does NOT reduce the "right place, wrong origin" atoms (per
+    window, at any score: STD -0.003 [-0.043, +0.038], DENSE -0.052 [-0.136, +0.035]).
+(6) Development versus evaluation: the gains of the development winners shrank by a factor of 3 to 6 (STD
+    LOC+T at 0.25: R1h8 +0.094 -> +0.015, R3fir2 +0.094 -> +0.016, R2a64 +0.080 -> +0.016; DENSE R2a64 +0.042 ->
+    -0.002). This is the winner's curse with 3 development networks; the freeze protocol did its job.
+VERDICT: NEGATIVE for the stated objective. The starting hypothesis ("the false-positive budget of the operating
+point is spent on self-interference; reducing it will raise the recall") is false in its second half: the
+self-interference exists and the remedies halve it (and far from the events they almost eliminate it), but the
+operating-point budget under LOC+T is spent by something else, the origin-time bias of well-located real
+detections. No C14 remedy improves the LOC+T recall at <= 0.25 distinguishably from 0 in any window
+type (STD +0.016 with CI up to +0.048; DENSE between -0.011 and -0.002), and the two most aggressive (R1h8, R3fir2) cost
+25% of the overlapping events found at low score. The only thing left standing: R2a64 (CFAR normalisation of
+the local scale of the residual after each deflation) is harmless for close pairs, divides the event-induced false
+detections by 1.8 and gives +0.056 [+0.010, +0.086] under LOC at <= 0.1 in STD (not under LOC+T and not in DENSE). I do
+not recommend preregistering any C14 remedy as a recall contribution; the next objective should be class a1 (origin
+time: JHD terms of C11 + T3, or a better velocity/time model), which is where the budget is.
+----------------------------------------------------------------------------------------------------------------------
+1. DESIGN (code: c14_lib.py, c14_run.py; analysis c14_analyze.py)
+----------------------------------------------------------------------------------------------------------------------
+Base detector (BASE): MT-FW with cap 6 per station, registered +SC terms, hard rule +-0.25 s (4 samples),
+3 km grid x 3 depths (675 nodes), origins 5.0-8.0 s step 0.1, epicentral exclusion of 5 km, greedy
+deflation with the 6-parameter moment-tensor fit (c10_lib.mt_loop, unchanged). c14_lib.mt_loop14 is the
+same loop with hooks for the remedies; with an empty configuration it reproduces c10_lib.mt_loop atom by atom (position,
+origin and statistic bit-identical): checked on the 360 development windows (with the decomposition enabled)
+and on the first two windows of each type of each part of round 2 and of the evaluation.
+
+Remedies (all without ground truth at run time; they only use the residual and the atoms already accepted):
+  R1  arrival exclusivity. After an atom is accepted, the samples within +-Wc of its read sample at each station (P and S)
+      become CLAIMED. Hard version (R1h): the residual read by later candidates is 0 there, so that the
+      statistic of a candidate is that of its unclaimed evidence. Soft version (R1s): weight rho^p, rho = min(1,
+      residual energy / original energy) of the claimed window measured right after the deflation. The weights are
+      applied to the residual with which peaks are read and the statistic is computed; the deflation always uses the
+      unweighted residual.
+  R2  time-varying noise scale (self-interference CFAR). Per station and component, running robust scale
+      of the CURRENT residual (moving median of |R| over L samples / 0.6745) divided by the scale of the complete
+      original trace of that station and component, with floor 1; the residual read by the candidates is divided by it.
+      R2a: only after the first deflation (the first atom is that of BASE); R2f: from the start.
+  R3  adaptive deflation. After the 6-parameter fit, each station-phase is subtracted with the best least-squares
+      fit, over the deflation window, from a small family around the template (autocorrelation
+      wavelet): 'amp' predicted polarisation and free scalar amplitude with the best shift within +-L
+      samples; 'vec' free 3-component vector with the best shift; 'fir' free vector on each of the
+      2L+1 shifted copies (short per-component shaping FIR filter). The guard against removing a second
+      event is the filter length (L = 2 samples = 0.125 s) and the recall on close pairs (section 6).
+  R4  merging of duplicates in origin time: a candidate within <= X km (epicentre) and <= Y s (origin) of an accepted
+      atom is the same event and is excluded, in addition to the registered exclusion of 5 km at every origin.
+  T3  local refinement from C10/C11 (c10_lib.mt_loop with EF: selection by the hard rule, relocation on the
+      1 km grid within <= 10 km and <= 1 s with the independent time loading). It is not a self-interference remedy; it
+      is included because the brief asks to see what it does with the "right place, wrong origin" atoms.
+
+Diagnosis (ground truth used only here). Each window is regenerated in parts with clones of the generators (as in
+c13_twin): per event, direct waves and coda; clutter + noise (the event-free twin of C13); the sum reproduces the
+trace (assert). The statistic of an atom, s0 = v . P v / 2 (v the residual vectors with cap at the read
+samples, P the projector of the node), is linear in v and is split EXACTLY (assert on the sum) among: direct waves
+of each event, coda of each event, clutter + noise, and minus the deflations already applied. The direct part of an
+event in a reading is assigned to "residual" if the arrival of that event closest to the reading (P or S) was already
+claimed (an earlier atom read that station within <= 0.4 s of it; the deflation is added to the residual), to "live same
+phase" if it was not and the phase matches, and to "live cross phase" if it does not match. Classes of the false atoms (LOC+T):
+  a1  within <= 5 km of an event with |origin error| > 0.5 s (right place, wrong origin);
+  otherwise, the largest of the five parts decides:  live same phase -> a2 (copy elsewhere of an event that some atom
+  does hit) or e (only detection, mislocated, of an event that nobody hits); live cross phase -> b; residual -> c;
+  coda -> d; clutter + noise -> f.
+Literal measure of the brief: f_arr = fraction of the statistic that comes from readings within <= 0.4 s of a real arrival
+(any part of the signal in that reading); f_acc = the same restricted to arrivals of already accepted events (an
+earlier atom within <= 5 km); dom.acc = the event contributing most had already been accepted.
+Ground-truth ceilings (development only): NOCODA = BASE on the trace without the coda of the events; ORAdir / ORAall = BASE
+with oracle deflation: when an accepted atom falls within <= 5 km of an event not yet removed, the TRUE
+contribution of that event (direct, or direct + coda) is subtracted instead of the fit. ORAall is the ceiling of any
+R1/R3-type remedy: perfect deflation.
+----------------------------------------------------------------------------------------------------------------------
+2. WHAT WAS FIXED BEFOREHAND AND WHAT IS POST HOC
+----------------------------------------------------------------------------------------------------------------------
+Fixed before any run (5 Oct 18:54, sha256 c14_lib.py 5e5d75e9...f3bbf2, c14_run.py 7747fb9f...f7c09):
+detector, round 1 development grid (12 variants of R1-R4 and T3), diagnosis, ground-truth ceilings, development
+and evaluation networks, TAGs, hit rules, levels, bootstrap.
+Post hoc or decided with development data in view (all before generating any window of networks 1610+):
+  (a) The rule for choosing constants (section 4) was written after seeing an intermediate table with 2 of the 3
+      development networks.
+  (b) Round 2 (combinations, c14_dev2.json) and the C13/C23 tie-break by the damage on close pairs.
+  (c) Twins only in the first 8 windows of each type per part, and 16 + 16 windows per part: for budget reasons,
+      in view of the development times.
+  (d) Class a1 was subdivided (origin error, sign, "another atom hits the same event") after seeing the
+      first diagnosis table.
+After the freeze (11:36:11) and BEFORE reading any evaluation number: in c14_analyze.py (i) the "far" ratio
+of the twin now uses the twin atoms far from the events as denominator (before: all of them; code
+error); (ii) the TIGHT pair descriptor (<= 7 km, <= 1 s) is added because 89% of the DENSE events satisfy the
+definition of the brief; (iii) the table of a1 atoms per method is added. A code test of the analysis on the
+first two evaluated networks (11:45) wrote its output to out/c14_analysis_eval_codetest_unread.txt without reading the
+results (only the section headers were checked). Final hash of c14_analyze.py in
+C14_FREEZE.txt.post. No remedy constant, network, window or arm changed after the freeze.
+Incidents: (1) cut of the development run on 5 Oct at 19:02 and relaunch by the coordinator on 9 Oct
+(same code version, verified by hash); (2) when launching round 2, two processes were left running at once and a test
+of 1 + 1 windows wrote parts to out/c14_dev2_parts; both were killed, the directory was deleted and round 2 was
+repeated in full with a single process (11:26-11:35). It affects neither development nor evaluation.
+----------------------------------------------------------------------------------------------------------------------
+3. STEP 1: DIAGNOSIS (development networks 1600-1602, BASE detector; 180 STD windows with 107 windows with an event and
+   138 events; 180 DENSE windows with 733 events). Full table: out/c14_analysis_dev.txt, section DIAGNOSIS.
+----------------------------------------------------------------------------------------------------------------------
+False atoms under LOC+T by class, at four cuts: above the operating-point threshold (<= 0.25 and <= 0.1
+false events per window, pooled development FROC), above the 95th percentile of the event-free twin atoms, and
+all (no threshold). Per window with an event in parentheses.
+
+  STD                                          op 0.25 (t=46.4)  op 0.1 (t=55.2)   twin q95 (t=32.6)    all
+  false events per window with an event        0.41              0.18              1.52                 4.35
+  a1 right place, wrong origin                 0.55              0.58              0.21                 0.09
+  a2 copy of a hit event (other place)         0.05              0.11              0.01                 0.00
+  b  cross-phase ghost                         0.00              0.00              0.00                 0.00
+  c  deflation residual                        0.05              0.05              0.12                 0.07
+  d  coda                                      0.00              0.00              0.01                 0.00
+  e  only detection (mislocated) of an         0.11              0.11              0.07                 0.03
+     event that nobody hits
+  f  clutter + noise dominates                 0.25              0.16              0.58                 0.81
+
+  DENSE                                        op 0.25 (t=65.8)  op 0.1 (t=74.8)   twin q95 (t=30.2)    all
+  false events per window with an event        0.26              0.11              3.47                 5.36
+  a1 right place, wrong origin                 0.80              0.95              0.28                 0.21
+  a2 copy of a hit event (other place)         0.04              0.00              0.02                 0.02
+  b  cross-phase ghost                         0.02              0.05              0.01                 0.01
+  c  deflation residual                        0.07              0.00              0.23                 0.16
+  d  coda                                      0.00              0.00              0.02                 0.01
+  e  only detection (mislocated) of an         0.07              0.00              0.09                 0.07
+     event that nobody hits
+  f  clutter + noise dominates                 0.00              0.00              0.34                 0.51
+
+Mean split of the statistic of the false events (all classes together): live same phase / live cross phase / residual /
+coda / clutter + noise, and literal measures of the brief:
+  STD   op 0.25: 0.51 / 0.01 / 0.11 / 0.05 / 0.33;  f_arr 0.81, f_arr >= 0.5 in 89%, f_acc 0.12, dom.acc 0.18
+  STD   q95    : 0.24 / 0.01 / 0.19 / 0.05 / 0.51;  f_arr 0.61, 66%, f_acc 0.23, dom.acc 0.46
+  DENSE op 0.25: 0.56 / 0.03 / 0.17 / 0.07 / 0.18;  f_arr 0.93, 100%, f_acc 0.13, dom.acc 0.20
+  DENSE q95    : 0.24 / 0.02 / 0.27 / 0.08 / 0.38;  f_arr 0.77, 89%, f_acc 0.27, dom.acc 0.39
+Detail of class a1 (operating point 0.25): |origin error| median 0.76 s (STD) and 0.86 s (DENSE), quartiles
+0.58-1.01 and 0.63-1.21; the atom's origin is EARLY in 75% / 73% of the cases; the same event is hit with the
+correct origin by ANOTHER atom in only 8% / 14% of the cases; median epicentral error 3.2 / 3.0 km; it is the first atom
+of the window in 71% / 49%. The statistic of an a1 is 60-76% live energy, in the same phase, of ITS event.
+
+Reading of the diagnosis.
+(i)  At the operating point fixed by the benchmark, the false-event budget under LOC+T is NOT spent by the deflation: it
+     is spent by class a1, which is the detection (almost always the only one) of a real event, well located at ~3 km, with the
+     origin biased by about 0.8 s, mostly towards earlier times. It is 55-58% of the false events in STD and 80-95% in DENSE. Under the
+     LOC rule those atoms are hits. It is not "self-interference" in the sense of duplicates: the event has no other
+     correct detection in 86-92% of the cases.
+(ii) The deflation residual (c), the coda (d) and the cross-phase ghosts (b) are minor at the operating point
+     (c 0-7%, d 0%, b 0-5%) and grow towards low thresholds (c 12-23% above the twin's q95). The coda is almost never the
+     dominant part (<= 2%), although it contributes 5-8% of the statistic on average.
+(iii) The "clutter-dominated" false events (f) still carry 24-28% of live event energy at the operating point:
+     they are coalitions of clutter arrivals with fragments of real arrivals. This explains the ratio with the twin
+     (STD 6.8 [4.9, 11.0], DENSE 10.7 [7.6, 17.5] at the twin's q95; at more than 10 km from every event 3.8 [2.6, 6.2] and 6.8
+     [4.6, 12.3]) without there being a
+     single class to target.
+(iv) Ground-truth ceilings (development, B = 300, paired differences against BASE at the 0.25 point, LOC+T): perfect
+     deflation of direct + coda (ORAall) +0.051 [-0.024, +0.111] in STD and +0.052 [+0.012, +0.105] in DENSE; direct
+     only (ORAdir) +0.058 [0.000, +0.107] and +0.019 [-0.018, +0.041]; removing the coda (NOCODA) +0.036 [-0.053, +0.121] and
+     +0.012 [-0.039, +0.065]. Under LOC: ORAall +0.007 (STD) and +0.071 [+0.020, +0.129] (DENSE). That is: even with
+     perfect deflation, what can be gained in LOC+T recall by removing self-interference is of the order of +0.05.
+     No R1/R3-type remedy can exceed that ceiling except through effects that are not deflation effects (e.g. changing
+     which readings win the peak).
+----------------------------------------------------------------------------------------------------------------------
+4. STEP 2, DEVELOPMENT: CHOICE OF CONSTANTS (networks 1600-1602; out/c14_analysis_dev.txt and _dev2.txt; B = 300)
+----------------------------------------------------------------------------------------------------------------------
+Choice rule (written after looking at 2 of the 3 development networks in an intermediate table, before the third
+finished; see section 2): within each family, the constant with the largest mean of the paired differences against BASE
+of the LOC+T recall at <= 0.25 false events per window in STD and DENSE (pooled line ALL); the combination, with the same rule
+among the combinations of the family winners (round 2).
+
+Round 1 (paired difference against BASE, LOC+T at <= 0.25; STD | DENSE | mean; 95% CI in brackets):
+  R1h4     +0.036 [-0.035,+0.105] | +0.007 [-0.011,+0.039] | +0.022
+  R1h8     +0.094 [-0.030,+0.143] | +0.008 [-0.019,+0.036] | +0.051   <- R1
+  R1s8p1   +0.022 [-0.034,+0.095] | +0.003 [-0.011,+0.033] | +0.013
+  R1s8p05  +0.022 [-0.024,+0.072] | -0.005 [-0.014,+0.025] | +0.009
+  R2a32    +0.043 [-0.061,+0.115] | +0.037 [+0.003,+0.070] | +0.040
+  R2a64    +0.080 [-0.046,+0.163] | +0.042 [+0.004,+0.070] | +0.061   <- R2
+  R2f64    +0.109 [-0.047,+0.208] | -0.005 [-0.043,+0.055] | +0.052
+  R3amp2   +0.043 [-0.015,+0.098] | +0.007 [-0.012,+0.030] | +0.025
+  R3vec2   +0.029 [-0.044,+0.093] | +0.010 [-0.004,+0.039] | +0.020
+  R3fir2   +0.094 [-0.028,+0.141] | +0.010 [-0.013,+0.040] | +0.052   <- R3
+  R4x10t05 +0.007 [-0.029,+0.047] | +0.001 [-0.008,+0.016] | +0.004
+  R4x10t10 +0.007 [-0.032,+0.060] | +0.004 [-0.014,+0.030] | +0.006   <- R4
+  T3       +0.072 [-0.046,+0.202] | -0.007 [-0.050,+0.037] | +0.033   (reference)
+  BASE: STD 0.275, DENSE 0.104. Under LOC no remedy improves in development (differences between -0.07 and +0.02).
+Round 2 (combinations of winners, same windows): C12 +0.044, C13 +0.053, C23 +0.053, C123 +0.046, C1234
++0.048 (STD/DENSE means). No combination beats R2a64 alone (+0.061). Tie C13 = C23; it was broken in favour of C23
+(R2a64 + R3fir2) because it does less damage to the close-pair recall at any score (-0.077 versus -0.089,
+DENSE LOC+T): post hoc tie-break, declared.
+Development caveats: 3 networks per cell and regime; bootstrap standard deviation of the differences 0.03-0.07 in STD;
+choosing the maximum of 3-4 constants per family on these data biases the winners upwards (winner's
+curse); that is why the evaluation on unseen networks is the one that counts. The most aggressive remedies (R1h8, R3fir2,
+R4x10t10, all combinations) already in development lower the close-pair recall AT ANY SCORE (DENSE,
+LOC+T: -0.05 to -0.11), although not at the operating point.
+
+FREEZE: c14_frozen.json and sha256 of c14_frozen.json, c14_lib.py, c14_run.py, c14_analyze.py and c10_lib.py in
+C14_FREEZE.txt, written on 9 Oct 11:36:11 (-05), before generating any window of networks 1610-1621. Frozen
+arms: BASE, R1h8, R2a64, R3fir2, R4x10t10, C23 (= R2a64 + R3fir2), T3.
+----------------------------------------------------------------------------------------------------------------------
+5. EVALUATION ON UNSEEN NETWORKS (1610-1621; out/c14_analysis_eval.txt, B = 1000). EVERYTHING in this section and in
+   sections 6-7 comes from these networks; nothing from them was used to fix constants.
+----------------------------------------------------------------------------------------------------------------------
+5.1 Recall and paired difference against BASE, line ALL (STD 1152 windows, 855 events; DENSE 1152 windows, 4594
+events). Recall at <= 0.1 | <= 0.25 false events per window; d = paired difference with 95% CI.
+
+  STD, LOC+T
+    BASE      0.179 [0.144,0.230]  0.283 [0.238,0.329]
+    R1h8      0.208                0.298                d +0.029 [-0.005,+0.062]   d +0.015 [-0.007,+0.044]
+    R2a64     0.212                0.299                d +0.033 [-0.002,+0.059]   d +0.016 [-0.006,+0.043]
+    R3fir2    0.215                0.299                d +0.036 [-0.001,+0.067]   d +0.016 [-0.006,+0.042]
+    R4x10t10  0.187                0.285                d +0.008 [+0.000,+0.029]   d +0.002 [-0.007,+0.017]
+    C23       0.214                0.299                d +0.035 [-0.001,+0.063]   d +0.016 [-0.007,+0.048]
+    T3        0.225                0.339                d +0.046 [-0.006,+0.088]   d +0.056 [+0.015,+0.100]
+  STD, LOC
+    BASE      0.324 [0.280,0.386]  0.429 [0.381,0.489]
+    R1h8      0.373                0.458                d +0.049 [+0.008,+0.081]   d +0.029 [-0.006,+0.057]
+    R2a64     0.380                0.463                d +0.056 [+0.010,+0.086]   d +0.034 [-0.001,+0.062]
+    R3fir2    0.375                0.460                d +0.051 [+0.010,+0.083]   d +0.030 [-0.008,+0.059]
+    R4x10t10  0.333                0.434                d +0.009 [-0.006,+0.028]   d +0.005 [-0.010,+0.018]
+    C23       0.380                0.465                d +0.056 [+0.006,+0.090]   d +0.036 [-0.001,+0.072]
+    T3        0.372                0.470                d +0.048 [+0.006,+0.087]   d +0.041 [+0.010,+0.071]
+  DENSE, LOC+T
+    BASE      0.054 [0.041,0.070]  0.108 [0.090,0.125]
+    R1h8      0.055                0.104                d +0.001 [-0.010,+0.011]   d -0.005 [-0.017,+0.008]
+    R2a64     0.062                0.106                d +0.008 [-0.006,+0.017]   d -0.002 [-0.015,+0.016]
+    R3fir2    0.053                0.101                d -0.001 [-0.010,+0.011]   d -0.007 [-0.019,+0.006]
+    R4x10t10  0.051                0.098                d -0.003 [-0.009,+0.003]   d -0.011 [-0.018,-0.001]
+    C23       0.063                0.104                d +0.009 [-0.005,+0.019]   d -0.004 [-0.017,+0.011]
+    T3        0.063                0.119                d +0.008 [-0.011,+0.025]   d +0.011 [-0.007,+0.033]
+  DENSE, LOC
+    BASE      0.153 [0.132,0.182]  0.247 [0.221,0.274]
+    R1h8      0.168                0.261                d +0.016 [-0.016,+0.044]   d +0.015 [-0.011,+0.035]
+    R2a64     0.167                0.264                d +0.015 [-0.011,+0.038]   d +0.017 [-0.010,+0.039]
+    R3fir2    0.171                0.264                d +0.018 [-0.010,+0.046]   d +0.018 [-0.007,+0.038]
+    R4x10t10  0.141                0.231                d -0.012 [-0.028,-0.001]   d -0.016 [-0.032,-0.001]
+    C23       0.170                0.261                d +0.017 [-0.010,+0.040]   d +0.014 [-0.011,+0.037]
+    T3        0.180                0.277                d +0.028 [-0.005,+0.048]   d +0.030 [+0.001,+0.055]
+
+5.2 By cell and regime (LOC+T at <= 0.25, paired difference; full table in out/c14_analysis_eval.txt). No
+remedy R1-R4 nor C23 has an interval excluding 0 in any cell, except R4 in DENSE thin (-0.014 [-0.027,
+-0.003]) and the remedies R1h8 / R3fir2 in STD thin (+0.054 [+0.002, +0.104] and +0.054 [+0.002, +0.107]). The effect in
+STD comes from the unilateral cell (+0.018 to +0.032) and from the thin regime (+0.031 to +0.054); in strong it is +0.005 to
++0.016. Under LOC the effect of R1h8, R3fir2 and C23 in STD is concentrated in the unilateral_c40 cell at <= 0.1 (+0.127 to
++0.134, CI excludes 0); in ladder_4 and ladder_6 it is between 0.000 and +0.036. These are 6 lines x 6 methods x 2 rules x 2
+levels without correction for multiplicity: the few intervals that exclude 0 are compatible with chance.
+
+----------------------------------------------------------------------------------------------------------------------
+6. FALSE EVENTS AGAINST THE EVENT-FREE TWIN AND CLOSE PAIRS (unseen networks)
+----------------------------------------------------------------------------------------------------------------------
+6.1 Twins (first 8 windows of each type of each part; 342 STD windows with an event and 576 DENSE). W = false
+atoms (LOC+T) per window with an event, W0 = twin atoms per window, both with registered score above
+the 80 | 95 percentile of the twin scores OF THE METHOD ITSELF in the stratum (regime x cell); "far" = at more
+than 10 km from every event, W and W0 with the same restriction. By construction W0 is almost constant (1.0 / 0.26 in STD,
+1.4 / 0.35 in DENSE), so the ratio measures W at a threshold calibrated without events (unlike C13, which used the
+quantiles of CLUT windows; the BASE values agree in order of magnitude: C13 12 and 45 with t95 of CLUT, here 6.2 and 10.0).
+
+  STD          W q80   ratio q80           W q95   ratio q95             ratio far q95
+    BASE       2.576   2.57 [2.24,3.06]    1.602   6.23 [4.72, 8.58]     3.42 [2.40,5.08]
+    R1h8       1.538   1.54 [1.38,1.70]    0.819   3.18 [2.54, 4.17]     1.69 [1.29,2.33]
+    R2a64      1.711   1.71 [1.50,1.92]    0.877   3.41 [2.67, 4.65]     1.38 [1.01,1.96]
+    R3fir2     1.509   1.51 [1.36,1.70]    0.816   3.17 [2.50, 4.27]     1.66 [1.24,2.35]
+    R4x10t10   2.553   2.55 [2.21,3.00]    1.596   6.20 [4.58, 8.64]     3.99 [2.83,6.09]
+    C23        1.301   1.30 [1.16,1.47]    0.649   2.52 [1.99, 3.29]     1.00 [0.73,1.40]
+  DENSE
+    BASE       4.519   3.21 [2.90,3.58]    3.575  10.04 [8.22,12.63]     5.42 [4.42,6.79]
+    R1h8       2.686   1.91 [1.76,2.07]    1.774   5.01 [4.16, 6.25]     2.41 [1.92,3.12]
+    R2a64      3.908   2.77 [2.58,2.98]    1.944   5.49 [4.62, 6.57]     2.31 [1.80,2.98]
+    R3fir2     2.613   1.86 [1.72,2.04]    1.714   4.84 [4.06, 6.03]     2.08 [1.68,2.68]
+    R4x10t10   4.710   3.35 [3.03,3.71]    3.635  10.21 [8.47,12.86]     6.58 [5.36,8.28]
+    C23        2.731   1.94 [1.82,2.08]    1.500   4.24 [3.61, 5.14]     1.60 [1.27,2.12]
+  Paired change of W against BASE (q80 | q95): STD R1h8 -1.04 [-1.32,-0.75] | -0.78 [-1.04,-0.54]; R2a64 -0.87 |
+  -0.73; R3fir2 -1.07 | -0.79; C23 -1.28 [-1.55,-1.00] | -0.95 [-1.19,-0.73]; R4 -0.02 | -0.01 (CI with 0). DENSE
+  R1h8 -1.83 | -1.80; R2a64 -0.61 | -1.63; R3fir2 -1.91 | -1.86; C23 -1.79 | -2.08 [-2.31,-1.83]; R4 +0.19 | +0.06
+  (CI with 0). All intervals of R1-R3 and C23 exclude 0 by a wide margin.
+
+6.2 "Right place, wrong origin" atoms (within <= 5 km of an event, |origin error| > 0.5 s) per window:
+  above the LOC+T threshold of the 0.25 point (of 0.25 false events per window)  |  at any score (d against BASE)
+  STD    BASE 0.082 | 0.198;  R1h8 0.089 | 0.154 (-0.044);  R2a64 0.093 | 0.191 (-0.007);  R3fir2 0.090 | 0.156
+         (-0.042);  R4 0.084 | 0.185 (-0.013);  C23 0.091 | 0.164 (-0.034);  T3 0.082 | 0.194 (-0.003 [-0.043,+0.038])
+  DENSE  BASE 0.161 | 1.071;  R1h8 0.169 | 0.852 (-0.219);  R2a64 0.174 | 0.976 (-0.095);  R3fir2 0.174 | 0.867
+         (-0.204);  R4 0.157 | 0.885 (-0.186);  C23 0.175 | 0.849 (-0.222);  T3 0.165 | 1.019 (-0.052 [-0.136,+0.035])
+  At the operating point class a1 is one third (STD) and two thirds (DENSE) of the false events with BASE and somewhat more with
+  the remedies: the remedies remove a1 from the low tail (these are the a1 that follow another detection) but not those at the top.
+  R4 removes a1 from the low tail and nothing at the operating point. T3 does not correct them: its recall gain comes from
+  elsewhere (events that go from undetected or mislocated to hit).
+
+6.3 Close pairs (DENSE, line ALL). "Close" = another event in the window within <= 10 km and <= 2 s (definition of the
+brief): 4100 of the 4594 DENSE events satisfy it (89%), so the TIGHT descriptor is added (<= 7 km and <= 1 s; it was
+fixed after the freeze and before looking at evaluation results). Recall of those events at the method's operating point
+(<= 0.25) and at any score (present in the list of kmax atoms), d against BASE:
+
+  LOC+T          close op 0.25              close any score             TIGHT op 0.25              TIGHT any score
+    BASE         0.108                      0.400                       0.110                      0.386
+    R1h8         -0.003 [-0.017,+0.010]     -0.103 [-0.121,-0.086]      -0.003 [-0.021,+0.013]     -0.088
+    R2a64        -0.002 [-0.015,+0.016]     -0.009 [-0.029,+0.009]      -0.007 [-0.025,+0.013]     +0.000
+    R3fir2       -0.005 [-0.018,+0.007]     -0.098 [-0.116,-0.080]      -0.007 [-0.022,+0.010]     -0.088
+    R4x10t10     -0.011 [-0.019,-0.001]     -0.046 [-0.060,-0.033]      -0.009 [-0.017,+0.003]     -0.062
+    C23          -0.003 [-0.017,+0.012]     -0.095 [-0.115,-0.078]      -0.004 [-0.023,+0.016]     -0.078
+    T3           +0.011 [-0.008,+0.032]     +0.037 [+0.016,+0.057]      +0.005 [-0.015,+0.031]     +0.035
+  LOC
+    BASE         0.247                      0.627                       0.232                      0.596
+    R1h8         +0.014 [-0.012,+0.035]     -0.138 [-0.156,-0.120]      +0.011                     -0.125
+    R2a64        +0.015 [-0.011,+0.039]     -0.037 [-0.057,-0.018]      +0.015                     -0.028
+    R3fir2       +0.016 [-0.009,+0.038]     -0.134 [-0.151,-0.116]      +0.016                     -0.127
+    R4x10t10     -0.018 [-0.034,-0.003]     -0.079 [-0.094,-0.065]      -0.025 [-0.044,-0.005]     -0.094
+    C23          +0.014 [-0.010,+0.037]     -0.134 [-0.153,-0.115]      +0.018                     -0.123
+    T3           +0.030 [+0.002,+0.055]     +0.017 [-0.000,+0.034]      +0.037 [+0.001,+0.069]     +0.017
+  Reading: at the current operating point there is no damage (the overlapping events that are lost were already below the
+  threshold), but R1h8, R3fir2 and C23 erase from the list one quarter of the overlapping events that BASE finds at
+  any score; hard exclusivity (8 samples = 0.5 s) and the FIR of +-2 samples absorb the coincident arrivals
+  of a second event, exactly the risk the brief asked to watch for. R2a64 is the only remedy that
+  does not do so under LOC+T.
+
+----------------------------------------------------------------------------------------------------------------------
+7. COST
+----------------------------------------------------------------------------------------------------------------------
+Seconds per window (one process, means of STD and DENSE together; ladder_4 | ladder_6 | unilateral_c40):
+  BASE 0.118 | 0.166 | 0.215;  R1h8 0.118 | 0.167 | 0.214 (no cost);  R3fir2 0.124 | 0.174 | 0.224 (+4-5%);
+  R4 0.119 | 0.165 | 0.215 (no cost);  R2a64 0.154 | 0.220 | 0.286 (+30-33%, the 64-sample moving median at each
+  iteration);  C23 0.161 | 0.227 | 0.295 (+36%);  T3 0.355 | 0.536 | 0.701 (x3).
+Runs: development 18 parts, about 23 min of wall time (with decomposition, ceilings and 12 variants); round 2, 9 min;
+evaluation 72 parts, 84 min (5068 s, 2.2 s per window with 7 arms and 6 twins); analysis 80 s with 1000 replicates.
+
+----------------------------------------------------------------------------------------------------------------------
+8. FROZEN CONFIGURATION AND POWER ESTIMATE
+----------------------------------------------------------------------------------------------------------------------
+Frozen configuration evaluated (c14_frozen.json, C14_FREEZE.txt): R1h8 = {r1: hard, Wc 8 samples}; R2a64 = {r2:
+L 64 samples (4 s), from the second iteration}; R3fir2 = {r3: fir, L 2}; R4x10t10 = {r4: 10 km, 1.0 s}; C23 = R2a64 +
+R3fir2; T3 as reference.
+The result is not promising for the primary criterion, so I do NOT propose a confirmation. For whoever wants to
+decide with numbers, the power that would be needed (80%, two-sided alpha 0.05, assumed effect equal to the point
+estimate here, n scaled from the bootstrap standard deviation of the paired difference with 12 networks per cell and regime and
+16 windows per network: n = 12 (2.8 sd / effect)^2):
+  R2a64, STD, LOC+T, <= 0.25: effect +0.016, sd 0.013 -> 62 networks per cell and regime (372 networks, 6 times C14); with
+         half the effect, 250 per cell and regime. DENSE: effect -0.002, no power possible.
+  R2a64, STD, LOC, <= 0.1 (the only CI that excludes 0): effect +0.056, sd 0.020 -> 12 networks per cell and regime; with
+         half the effect (what is to be expected after selection; the LOC rule was not the primary one), 48.
+  T3 (not a C14 remedy; reference from C10/C11), STD, LOC+T, <= 0.25: effect +0.056, sd 0.022 -> 15 networks; with
+         half, 58. Consistent with C11, where T3 + JHD terms was the contrast that worked.
+If despite everything something from here were registered, the only defensible option is R2a64 as a normalisation of the
+local scale (harmless for close pairs, +30% cost) with the LOC criterion at <= 0.1 in standard windows, new seeds, 48
+networks per cell and regime, and the close-pair recall at any score as a non-inferiority criterion
+(margin -0.02).
+
+----------------------------------------------------------------------------------------------------------------------
+9. LIMITATIONS AND WHAT THIS DOES NOT SAY
+----------------------------------------------------------------------------------------------------------------------
+  (i)   One seed; 12 evaluation networks per cell and regime, 16 windows per type and network; 3 development networks
+        (the chosen constants were overfitted, section 0 (6)).
+  (ii)  The diagnosis is from development (360 windows) and of the BASE detector; the classification by the largest part of the
+        statistic is a convention (the parts are exact; the class is not). The fractions in the table have a sampling
+        uncertainty of about +-0.07 at the operating point (44 and 46 false atoms).
+  (iii) The remedies were tested one per family with 2-4 constants; soft R1 with other weight forms,
+        R3 with the pulse basis of c7_lib, and R2 with other windows in evaluation were not tested.
+  (iv)  The threshold of the ratios with the twin is the quantile of the twin scores of the method itself (not that
+        of the CLUT windows of C13); the BASE ratios are therefore smaller than those of C13 (6.2 and 10.0 versus 12 and 45).
+  (v)   The gains under LOC in STD (+0.05 at <= 0.1) are concentrated in the unilateral cell and in the thin regime; I did not
+        correct for multiplicity (6 methods x 2 rules x 2 levels x 2 window types).
+  (vi)  The interaction with the decoy calibration of C13 was not tested. Untested hypothesis: since the remedies
+        bring the far false events down to the clutter level (C23: far ratio 1.0 in STD), a D1p decoy could end up
+        better calibrated with them; under LOC+T it would still fail because of class a1, which no decoy imitates.
+
+----------------------------------------------------------------------------------------------------------------------
+10. FILES
+----------------------------------------------------------------------------------------------------------------------
+  c14_lib.py        per-event parts (direct, coda, arrivals) and twin; mt_loop14 loop with R1-R4, oracle
+                    deflation and decomposition of the statistic.
+  c14_run.py        dev (grid + diagnosis + ceilings) -> out/c14_dev_parts; dev2 (combinations, c14_dev2.json) ->
+                    out/c14_dev2_parts; eval (c14_frozen.json + twins) -> out/c14_eval_parts. Logs out/c14_*.log.
+  c14_analyze.py    exact FROC, hierarchical bootstrap, twins, close pairs, class a1, diagnosis ->
+                    out/c14_analysis_dev.txt, out/c14_analysis_dev2.txt, out/c14_analysis_eval.txt.
+  c14_dev2.json, c14_frozen.json, C14_FREEZE.txt (hashes at the freeze), C14_FREEZE.txt.post (final hash of
+  c14_analyze.py); out/c14_analysis_eval_codetest_unread.txt = output of the code test of section 2 (not read).
+

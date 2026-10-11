@@ -1,0 +1,6 @@
+(1) statics: rng/rng_m/rng_h sequences equal after the call: True; |t_pick - (t_grad + tau + static)| max 0.00e+00 s; clutter picks identical: True
+(2) window 0: corrected LUT = LUT + rint(static*50) in all cells: True; clean: COA max 3.707 at 0.0 km, t 6.48 s | static,noSC: COA max 2.597 at 8.2 km, t 3.76 s | static,SC: COA max 3.740 at 0.0 km, t 6.76 s | max |COA_clean - COA_SC| / max COA_clean = 0.075
+(2) window 1: corrected LUT = LUT + rint(static*50) in all cells: True; clean: COA max 3.483 at 0.0 km, t 6.56 s | static,noSC: COA max 2.519 at 2.2 km, t 5.30 s | static,SC: COA max 3.459 at 0.0 km, t 6.74 s | max |COA_clean - COA_SC| / max COA_clean = 0.066
+(2) window 2: corrected LUT = LUT + rint(static*50) in all cells: True; clean: COA max 3.419 at 0.0 km, t 6.30 s | static,noSC: COA max 2.216 at 0.0 km, t 5.82 s | static,SC: COA max 3.395 at 0.0 km, t 6.84 s | max |COA_clean - COA_SC| / max COA_clean = 0.089
+(2) window 3: corrected LUT = LUT + rint(static*50) in all cells: True; clean: COA max 3.874 at 0.0 km, t 6.62 s | static,noSC: COA max 2.568 at 8.1 km, t 4.48 s | static,SC: COA max 3.908 at 0.0 km, t 6.68 s | max |COA_clean - COA_SC| / max COA_clean = 0.062
+selfcheck passed

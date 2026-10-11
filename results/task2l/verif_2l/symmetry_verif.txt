@@ -1,0 +1,29 @@
+# parts metadata
+tags: Counter({(6101, 6102): 1920})
+kmax: Counter({(5, 7): 1920})
+methods std by net range: [((3, ('MT@S0', 'MT@S0+T3', 'MT@S2+T3')), 720), ((2, ('MT@S0', 'MT@S0+T3', 'MT@S2+T3')), 480), ((0, ('MT@S0', 'MT@S0+T3', 'MT@S2+T3', 'BOMP@S0', 'BOMP@S0+T3', 'BOMP@S2+T3', 'MT@ORA+T3', 'BOMP@ORA+T3')), 360), ((1, ('MT@S0', 'MT@S0+T3', 'MT@S2+T3', 'BOMP@S0', 'BOMP@S0+T3', 'BOMP@S2+T3')), 360)]
+methods dense: [((False, True, ('MT@S0', 'MT@S0+T3', 'MT@S2+T3')), 840), ((False, False, ()), 720), ((True, True, ('MT@S0', 'MT@S0+T3', 'MT@S2+T3', 'MT@ORA+T3')), 360)]
+kernel/arm: Counter({('Prescott', 'Prescott', 'main', '2L'): 1920})
+
+# per arm: atoms per window, origin range, min pairwise epicentral distance, grid membership
+std   MT@S0      : atoms/window {5: 9600}; origins [5.00, 8.00]; depths [5.0, 9.0, 13.0]; min pairwise epicentral distance 6.00 km; max deviation from the 1 km lattice 0.0e+00
+std   MT@S0+T3   : atoms/window {5: 9600}; origins [5.00, 8.00]; depths [5.0, 9.0, 13.0]; min pairwise epicentral distance 5.00 km; max deviation from the 1 km lattice 8.9e-16
+std   MT@S2+T3   : atoms/window {5: 9600}; origins [5.00, 8.00]; depths [5.0, 9.0, 13.0]; min pairwise epicentral distance 5.00 km; max deviation from the 1 km lattice 8.9e-16
+std   BOMP@S0+T3 : atoms/window {5: 3600}; origins [5.00, 8.00]; depths [5.0, 9.0, 13.0]; min pairwise epicentral distance 5.00 km; max deviation from the 1 km lattice 8.9e-16
+std   BOMP@S2+T3 : atoms/window {5: 3600}; origins [5.00, 8.00]; depths [5.0, 9.0, 13.0]; min pairwise epicentral distance 5.00 km; max deviation from the 1 km lattice 8.9e-16
+dense MT@S0      : atoms/window {7: 6000}; origins [5.00, 8.00]; depths [5.0, 9.0, 13.0]; min pairwise epicentral distance 6.00 km; max deviation from the 1 km lattice 0.0e+00
+dense MT@S0+T3   : atoms/window {7: 6000}; origins [5.00, 8.00]; depths [5.0, 9.0, 13.0]; min pairwise epicentral distance 5.00 km; max deviation from the 1 km lattice 8.9e-16
+dense MT@S2+T3   : atoms/window {7: 6000}; origins [5.00, 8.00]; depths [5.0, 9.0, 13.0]; min pairwise epicentral distance 5.00 km; max deviation from the 1 km lattice 8.9e-16
+
+# T3 definition: first atom of MT@S0+T3 vs first atom of MT@S0 (same hard selection on the same engine and data)
+max epicentral move 10.00 km (limit 10), max origin move 1.00 s (limit 1), first-atom score identical in 15600/15600 windows, moved in 0.872
+
+# T3 timing level (sigma_catalogue recomputed with each term set): S0 vs S2
+ladder_4        thin  : sig S0 median 0.140 [q10 0.091, q90 0.204]  sig S2 median 0.134 [q10 0.085, q90 0.203]  S2 < S0 in 0.54
+ladder_4        strong: sig S0 median 0.239 [q10 0.154, q90 0.337]  sig S2 median 0.239 [q10 0.150, q90 0.341]  S2 < S0 in 0.52
+ladder_6        thin  : sig S0 median 0.152 [q10 0.099, q90 0.220]  sig S2 median 0.149 [q10 0.105, q90 0.215]  S2 < S0 in 0.52
+ladder_6        strong: sig S0 median 0.228 [q10 0.157, q90 0.311]  sig S2 median 0.227 [q10 0.150, q90 0.304]  S2 < S0 in 0.53
+unilateral_c40  thin  : sig S0 median 0.136 [q10 0.097, q90 0.188]  sig S2 median 0.117 [q10 0.084, q90 0.161]  S2 < S0 in 0.74
+unilateral_c40  strong: sig S0 median 0.211 [q10 0.151, q90 0.283]  sig S2 median 0.179 [q10 0.126, q90 0.241]  S2 < S0 in 0.75
+
+# host_time_utc of main parts: earliest 2026-10-04 21:25:19 latest 2026-10-05 01:48:15

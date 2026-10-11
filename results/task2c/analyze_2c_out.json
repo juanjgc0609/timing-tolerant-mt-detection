@@ -1,0 +1,286 @@
+{
+ "thin": {
+  "2C-a": true,
+  "2C-a_counts": {
+   "2024": 3,
+   "7331": 3
+  },
+  "2C-a_replicate_fraction": 1.0,
+  "2C-b": [
+   [
+    2024,
+    "ladder_4",
+    "0.1",
+    "por debajo",
+    -0.26436781609195403
+   ],
+   [
+    2024,
+    "ladder_4",
+    "0.25",
+    "por debajo",
+    -0.31034482758620696
+   ],
+   [
+    2024,
+    "ladder_6",
+    "0.1",
+    "por debajo",
+    -0.375
+   ],
+   [
+    2024,
+    "ladder_6",
+    "0.25",
+    "por debajo",
+    -0.4305555555555556
+   ],
+   [
+    2024,
+    "unilateral_c40",
+    "0.1",
+    "por debajo",
+    -0.47887323943661975
+   ],
+   [
+    2024,
+    "unilateral_c40",
+    "0.25",
+    "por debajo",
+    -0.45070422535211274
+   ],
+   [
+    7331,
+    "ladder_4",
+    "0.1",
+    "por debajo",
+    -0.2435897435897436
+   ],
+   [
+    7331,
+    "ladder_4",
+    "0.25",
+    "por debajo",
+    -0.2948717948717948
+   ],
+   [
+    7331,
+    "ladder_6",
+    "0.1",
+    "por debajo",
+    -0.6029411764705882
+   ],
+   [
+    7331,
+    "ladder_6",
+    "0.25",
+    "por debajo",
+    -0.5588235294117647
+   ],
+   [
+    7331,
+    "unilateral_c40",
+    "0.1",
+    "por debajo",
+    -0.5555555555555556
+   ],
+   [
+    7331,
+    "unilateral_c40",
+    "0.25",
+    "por debajo",
+    -0.6049382716049383
+   ]
+  ],
+  "2C-c": true,
+  "2C-c_holm": true,
+  "2C-c_counts": {
+   "2024": 3,
+   "7331": 3
+  },
+  "2C-c_holm_counts": {
+   "2024": 3,
+   "7331": 3
+  },
+  "holm_rejections": {
+   "2024|ladder_4|QM-3C+SC|0.1": true,
+   "2024|ladder_4|QM-3C+SC|0.25": true,
+   "2024|ladder_4|BOMP+SC|0.1": true,
+   "2024|ladder_4|BOMP+SC|0.25": true,
+   "2024|ladder_4|MTSTACK+SC|0.1": true,
+   "2024|ladder_4|MTSTACK+SC|0.25": true,
+   "2024|ladder_6|QM-3C+SC|0.25": true,
+   "2024|ladder_6|BOMP+SC|0.1": true,
+   "2024|ladder_6|BOMP+SC|0.25": true,
+   "2024|ladder_6|MTSTACK+SC|0.1": true,
+   "2024|ladder_6|MTSTACK+SC|0.25": true,
+   "2024|unilateral_c40|QM-3C+SC|0.1": true,
+   "2024|unilateral_c40|QM-3C+SC|0.25": true,
+   "2024|unilateral_c40|BOMP+SC|0.1": true,
+   "2024|unilateral_c40|BOMP+SC|0.25": true,
+   "2024|unilateral_c40|MTSTACK+SC|0.1": true,
+   "2024|unilateral_c40|MTSTACK+SC|0.25": true,
+   "7331|ladder_4|QM-3C+SC|0.1": true,
+   "7331|ladder_4|QM-3C+SC|0.25": true,
+   "7331|ladder_4|MTSTACK+SC|0.1": true,
+   "7331|ladder_4|MTSTACK+SC|0.25": true,
+   "7331|ladder_6|QM-3C+SC|0.1": true,
+   "7331|ladder_6|QM-3C+SC|0.25": true,
+   "7331|ladder_6|BOMP+SC|0.1": true,
+   "7331|ladder_6|BOMP+SC|0.25": true,
+   "7331|ladder_6|MTSTACK+SC|0.1": true,
+   "7331|ladder_6|MTSTACK+SC|0.25": true,
+   "7331|unilateral_c40|QM-3C+SC|0.25": true,
+   "7331|unilateral_c40|BOMP+SC|0.1": true,
+   "7331|unilateral_c40|BOMP+SC|0.25": true,
+   "7331|unilateral_c40|MTSTACK+SC|0.1": true,
+   "7331|unilateral_c40|MTSTACK+SC|0.25": true,
+   "7331|ladder_4|BOMP+SC|0.25": true,
+   "2024|ladder_6|QM-3C+SC|0.1": true,
+   "7331|unilateral_c40|QM-3C+SC|0.1": true,
+   "7331|ladder_4|BOMP+SC|0.1": true
+  }
+ },
+ "strong": {
+  "2C-a": true,
+  "2C-a_counts": {
+   "2024": 3,
+   "7331": 3
+  },
+  "2C-a_replicate_fraction": 0.988,
+  "2C-b": [
+   [
+    2024,
+    "ladder_4",
+    "0.1",
+    "por debajo",
+    -0.2727272727272727
+   ],
+   [
+    2024,
+    "ladder_4",
+    "0.25",
+    "por debajo",
+    -0.2077922077922078
+   ],
+   [
+    2024,
+    "ladder_6",
+    "0.1",
+    "por debajo",
+    -0.28378378378378377
+   ],
+   [
+    2024,
+    "ladder_6",
+    "0.25",
+    "por debajo",
+    -0.35135135135135137
+   ],
+   [
+    2024,
+    "unilateral_c40",
+    "0.1",
+    "por debajo",
+    -0.22891566265060243
+   ],
+   [
+    2024,
+    "unilateral_c40",
+    "0.25",
+    "por debajo",
+    -0.26506024096385544
+   ],
+   [
+    7331,
+    "ladder_4",
+    "0.1",
+    "iguala",
+    -0.012820512820512803
+   ],
+   [
+    7331,
+    "ladder_4",
+    "0.25",
+    "por debajo",
+    -0.0641025641025641
+   ],
+   [
+    7331,
+    "ladder_6",
+    "0.1",
+    "por debajo",
+    -0.33333333333333337
+   ],
+   [
+    7331,
+    "ladder_6",
+    "0.25",
+    "por debajo",
+    -0.30952380952380953
+   ],
+   [
+    7331,
+    "unilateral_c40",
+    "0.1",
+    "por debajo",
+    -0.5466666666666667
+   ],
+   [
+    7331,
+    "unilateral_c40",
+    "0.25",
+    "por debajo",
+    -0.5733333333333334
+   ]
+  ],
+  "2C-c": true,
+  "2C-c_holm": true,
+  "2C-c_counts": {
+   "2024": 3,
+   "7331": 3
+  },
+  "2C-c_holm_counts": {
+   "2024": 3,
+   "7331": 2
+  },
+  "holm_rejections": {
+   "2024|ladder_4|QM-3C+SC|0.25": true,
+   "2024|ladder_4|MTSTACK+SC|0.1": true,
+   "2024|ladder_4|MTSTACK+SC|0.25": true,
+   "2024|ladder_6|QM-3C+SC|0.1": true,
+   "2024|ladder_6|QM-3C+SC|0.25": true,
+   "2024|ladder_6|BOMP+SC|0.1": true,
+   "2024|ladder_6|BOMP+SC|0.25": true,
+   "2024|ladder_6|MTSTACK+SC|0.1": true,
+   "2024|ladder_6|MTSTACK+SC|0.25": true,
+   "2024|unilateral_c40|QM-3C+SC|0.25": true,
+   "2024|unilateral_c40|BOMP+SC|0.1": true,
+   "2024|unilateral_c40|BOMP+SC|0.25": true,
+   "2024|unilateral_c40|MTSTACK+SC|0.1": true,
+   "2024|unilateral_c40|MTSTACK+SC|0.25": true,
+   "7331|ladder_6|QM-3C+SC|0.25": true,
+   "7331|ladder_6|BOMP+SC|0.1": true,
+   "7331|ladder_6|BOMP+SC|0.25": true,
+   "7331|ladder_6|MTSTACK+SC|0.1": true,
+   "7331|ladder_6|MTSTACK+SC|0.25": true,
+   "7331|unilateral_c40|QM-3C+SC|0.1": true,
+   "7331|unilateral_c40|QM-3C+SC|0.25": true,
+   "7331|unilateral_c40|BOMP+SC|0.1": true,
+   "7331|unilateral_c40|BOMP+SC|0.25": true,
+   "7331|unilateral_c40|MTSTACK+SC|0.1": true,
+   "7331|unilateral_c40|MTSTACK+SC|0.25": true,
+   "2024|ladder_4|QM-3C+SC|0.1": true,
+   "2024|unilateral_c40|QM-3C+SC|0.1": true,
+   "7331|ladder_6|QM-3C+SC|0.1": true,
+   "7331|ladder_4|QM-3C+SC|0.25": false,
+   "7331|ladder_4|QM-3C+SC|0.1": false,
+   "2024|ladder_4|BOMP+SC|0.25": false,
+   "7331|ladder_4|MTSTACK+SC|0.25": false,
+   "2024|ladder_4|BOMP+SC|0.1": false,
+   "7331|ladder_4|MTSTACK+SC|0.1": false,
+   "7331|ladder_4|BOMP+SC|0.1": false,
+   "7331|ladder_4|BOMP+SC|0.25": false
+  }
+ }
+}

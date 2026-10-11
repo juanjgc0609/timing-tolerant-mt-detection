@@ -1,0 +1,31 @@
+# Own re-derivation of the rule contrasts (points), recall at cap 0.1 / 0.25
+7171 std   LOC+T nwin 4800 nev 3826: S0 0.212/0.315  S0+T3 0.244/0.346  S2+T3 0.297/0.403  diff(S2+T3 - S0+T3) +0.0531/+0.0572
+7171 std   LOC   nwin 4800 nev 3826: S0 0.367/0.474  S0+T3 0.385/0.494  S2+T3 0.423/0.530  diff(S2+T3 - S0+T3) +0.0379/+0.0363
+   2L-c 7171 std thin: LOC+T diff at 0.25 +0.0834
+   2L-c 7171 std strong: LOC+T diff at 0.25 +0.0375
+7171 dense LOC+T nwin 3000 nev 11978: S0 0.050/0.102  S0+T3 0.066/0.124  S2+T3 0.092/0.162  diff(S2+T3 - S0+T3) +0.0255/+0.0380
+7171 dense LOC   nwin 3000 nev 11978: S0 0.153/0.252  S0+T3 0.179/0.276  S2+T3 0.199/0.296  diff(S2+T3 - S0+T3) +0.0205/+0.0200
+   2L-c 7171 dense thin: LOC+T diff at 0.25 +0.0520
+   2L-c 7171 dense strong: LOC+T diff at 0.25 +0.0287
+7171 BOMP std LOC+T nwin 1800: S0+T3 0.325 S2+T3 0.393 diff +0.0675
+7171 std LOC+T raw (no running-min) score: diff at 0.25 +0.0565
+9393 std   LOC+T nwin 4800 nev 3863: S0 0.186/0.292  S0+T3 0.237/0.350  S2+T3 0.293/0.411  diff(S2+T3 - S0+T3) +0.0567/+0.0616
+9393 std   LOC   nwin 4800 nev 3863: S0 0.354/0.470  S0+T3 0.369/0.488  S2+T3 0.421/0.537  diff(S2+T3 - S0+T3) +0.0520/+0.0497
+   2L-c 9393 std thin: LOC+T diff at 0.25 +0.0773
+   2L-c 9393 std strong: LOC+T diff at 0.25 +0.0559
+9393 dense LOC+T nwin 3000 nev 12000: S0 0.056/0.109  S0+T3 0.065/0.120  S2+T3 0.084/0.151  diff(S2+T3 - S0+T3) +0.0187/+0.0305
+9393 dense LOC   nwin 3000 nev 12000: S0 0.159/0.255  S0+T3 0.177/0.272  S2+T3 0.200/0.307  diff(S2+T3 - S0+T3) +0.0233/+0.0352
+   2L-c 9393 dense thin: LOC+T diff at 0.25 +0.0334
+   2L-c 9393 dense strong: LOC+T diff at 0.25 +0.0273
+9393 BOMP std LOC+T nwin 1800: S0+T3 0.352 S2+T3 0.422 diff +0.0707
+9393 std LOC+T raw (no running-min) score: diff at 0.25 +0.0608
+
+# Own hierarchical bootstrap (600 replicates; strata regime x cell, networks then windows; operating point re-chosen)
+7171 std   LOC+T: point +0.0572  95% CI [+0.0316, +0.0818]  5th pct +0.0378  sd 0.0122  frac(d<=0) 0.0000
+7171 dense LOC+T: point +0.0380  95% CI [+0.0227, +0.0535]  5th pct +0.0252  sd 0.0079  frac(d<=0) 0.0000
+7171 std   LOC  : point +0.0363  95% CI [+0.0168, +0.0576]  5th pct +0.0197  sd 0.0103  frac(d<=0) 0.0000
+7171 dense LOC  : point +0.0200  95% CI [+0.0023, +0.0389]  5th pct +0.0055  sd 0.0097  frac(d<=0) 0.0167
+9393 std   LOC+T: point +0.0616  95% CI [+0.0365, +0.0828]  5th pct +0.0398  sd 0.0123  frac(d<=0) 0.0000
+9393 dense LOC+T: point +0.0305  95% CI [+0.0169, +0.0430]  5th pct +0.0181  sd 0.0069  frac(d<=0) 0.0000
+9393 std   LOC  : point +0.0497  95% CI [+0.0282, +0.0712]  5th pct +0.0314  sd 0.0111  frac(d<=0) 0.0000
+9393 dense LOC  : point +0.0352  95% CI [+0.0127, +0.0497]  5th pct +0.0156  sd 0.0093  frac(d<=0) 0.0000

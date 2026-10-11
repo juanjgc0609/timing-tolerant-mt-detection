@@ -1,0 +1,50 @@
+== sha256sum -c task2f_code_hashes.txt
+analyze_2c.py: OK
+analyze_2f.py: OK
+certified_fw.py: OK
+explore_contrib/c2_ablate.py: OK
+explore_contrib/c2_run.py: OK
+explore_contrib/c6_lib.py: OK
+explore_contrib/power.py: OK
+explore_contrib/xc.py: OK
+froc_exact.py: OK
+gen_realistic.py: OK
+qm_wrapper.py: OK
+real_picker.py: OK
+station_corrections.py: OK
+task0_common.py: OK
+task1o_consistent.py: OK
+task1r_baselines.py: OK
+task1r_fair.py: OK
+task1w_mech.py: OK
+task1x_mtglrt.py: OK
+task1y_clutter.py: OK
+task2a_confirm.py: OK
+task2c_methods.py: OK
+task2d_methods.py: OK
+task2e_methods.py: OK
+task2f_control.py: OK
+task2f_run.py: OK
+== registry prefix hashes
+6e8510b3367f...bf88 prefix bytes 39694 monotone True
+dc8cf7087448...e32b prefix bytes 40221 monotone True
+b01a2eac3703...d9a8 prefix bytes 41377 monotone True
+b40f0c6ead27...e988 prefix bytes 46364 monotone True
+fada69b1f1f6...9271 prefix bytes 46795 monotone True
+ebbc35de04f9...af1b prefix bytes 47540 monotone True
+3d8e4c9b2f71...2f5f prefix bytes 50804 monotone True
+dc46cb381b7a...7376 prefix bytes 51545 monotone True
+registration 3d8e4c9b prefix ends with: 'dified\nafter seeing 4242/8888; any added analysis is declared exploratory.\n'
+current file sha256 dc46cb381b7a1ab2e7edd0ef860e3e6ed64d478c4db6af2f4e0becf4a52e7376
+== part mtimes (UTC)
+2026-09-28 03:49:29.261246175
+2026-09-28 06:52:31.329314363
+confirmatory parts:
+1344
+control parts:
+48
+freeze file 2026-09-28 03:49:08.641069401
+== files named *4242*/*8888* outside task2f_parts (excluding caches):
+3
+== JSON files outside task2f_parts with seed 4242/8888:
+0

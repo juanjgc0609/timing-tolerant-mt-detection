@@ -1,0 +1,64 @@
+C15 analysis, mode dev: 720 windows, networks [1800, 1801, 1802], methods ['BASE', 'MID', 'LSO', 'LSOs', 'LSX', 'EDT', 'EDT2'], B = 100
+plateau size of the accepted atoms (origins with the maximal statistic): mean 1.023, fraction > 1: 0.022
+
+==============================================================================================================
+STD: 360 windows, 286 events
+  origin error of atoms within 5 km (BASE ): n 230, median -0.009 s, |e| <= 0.5: 0.657, |e| median 0.332, early 0.509
+  origin error of atoms within 5 km (MID  ): n 230, median -0.009 s, |e| <= 0.5: 0.661, |e| median 0.333, early 0.509
+  origin error of atoms within 5 km (LSO  ): n 230, median -0.041 s, |e| <= 0.5: 0.670, |e| median 0.339, early 0.526
+  origin error of atoms within 5 km (LSOs ): n 230, median -0.035 s, |e| <= 0.5: 0.678, |e| median 0.340, early 0.522
+  origin error of atoms within 5 km (LSX  ): n 232, median -0.027 s, |e| <= 0.5: 0.690, |e| median 0.304, early 0.534
+  origin error of atoms within 5 km (EDT  ): n 232, median -0.030 s, |e| <= 0.5: 0.664, |e| median 0.318, early 0.530
+  origin error of atoms within 5 km (EDT2 ): n 241, median -0.016 s, |e| <= 0.5: 0.664, |e| median 0.300, early 0.515
+  LOC+T <= 0.1: BASE 0.168  MID 0.168  (d +0.000 [+0.000,+0.000])  LSO 0.171  (d +0.003 [-0.031,+0.059])  LSOs 0.175  (d +0.007 [-0.017,+0.071])  LSX 0.199  (d +0.031 [-0.004,+0.076])  EDT 0.199  (d +0.031 [-0.016,+0.102])  EDT2 0.213  (d +0.045 [-0.004,+0.096])  
+  LOC+T <= 0.25: BASE 0.252  MID 0.252  (d +0.000 [+0.000,+0.000])  LSO 0.273  (d +0.021 [-0.012,+0.069])  LSOs 0.280  (d +0.028 [-0.012,+0.079])  LSX 0.294  (d +0.042 [-0.005,+0.075])  EDT 0.276  (d +0.024 [-0.019,+0.082])  EDT2 0.290  (d +0.038 [-0.020,+0.092])  
+  LOC   <= 0.1: BASE 0.304  MID 0.304  (d +0.000 [+0.000,+0.000])  LSO 0.304  (d +0.000 [+0.000,+0.000])  LSOs 0.304  (d +0.000 [+0.000,+0.000])  LSX 0.301  (d -0.003 [-0.037,+0.031])  EDT 0.301  (d -0.003 [-0.037,+0.040])  EDT2 0.301  (d -0.003 [-0.039,+0.040])  
+  LOC   <= 0.25: BASE 0.441  MID 0.441  (d +0.000 [+0.000,+0.000])  LSO 0.441  (d +0.000 [+0.000,+0.000])  LSOs 0.441  (d +0.000 [+0.000,+0.000])  LSX 0.437  (d -0.003 [-0.026,+0.027])  EDT 0.434  (d -0.007 [-0.041,+0.030])  EDT2 0.448  (d +0.007 [-0.031,+0.054])  
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: BASE 0.092; all scores 0.219
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: MID 0.092; all scores 0.217
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: LSO 0.081; all scores 0.211
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: LSOs 0.078; all scores 0.206
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: LSX 0.075; all scores 0.200
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: EDT 0.075; all scores 0.217
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: EDT2 0.072; all scores 0.225
+  close pairs (10 km, 2 s) LOC+T <= 0.25: BASE 0.000   tight (7 km, 1 s): 0.000
+  close pairs (10 km, 2 s) LOC+T <= 0.25: MID 0.000   tight (7 km, 1 s): 0.000
+  close pairs (10 km, 2 s) LOC+T <= 0.25: LSO 0.000   tight (7 km, 1 s): 0.000
+  close pairs (10 km, 2 s) LOC+T <= 0.25: LSOs 0.000   tight (7 km, 1 s): 0.000
+  close pairs (10 km, 2 s) LOC+T <= 0.25: LSX 0.000   tight (7 km, 1 s): 0.000
+  close pairs (10 km, 2 s) LOC+T <= 0.25: EDT 0.000   tight (7 km, 1 s): 0.000
+  close pairs (10 km, 2 s) LOC+T <= 0.25: EDT2 0.000   tight (7 km, 1 s): 0.000
+  cell ladder_4        LOC+T <= 0.25: BASE 0.211  MID +0.000 [+0.000,+0.022]  LSO -0.032 [-0.073,+0.006]  LSOs -0.032 [-0.073,+0.006]  LSX -0.011 [-0.085,+0.046]  EDT -0.032 [-0.110,+0.037]  EDT2 -0.032 [-0.095,+0.038]
+  cell ladder_6        LOC+T <= 0.25: BASE 0.353  MID +0.000 [+0.000,+0.000]  LSO +0.039 [-0.069,+0.137]  LSOs +0.039 [-0.069,+0.137]  LSX +0.039 [-0.036,+0.129]  EDT +0.020 [-0.101,+0.125]  EDT2 +0.049 [-0.040,+0.152]
+  cell unilateral_c40  LOC+T <= 0.25: BASE 0.292  MID +0.000 [+0.000,+0.000]  LSO +0.034 [+0.000,+0.150]  LSOs +0.045 [+0.000,+0.156]  LSX +0.056 [-0.011,+0.160]  EDT +0.045 [-0.041,+0.212]  EDT2 +0.034 [-0.071,+0.231]
+
+==============================================================================================================
+DENSE: 360 windows, 1436 events
+  origin error of atoms within 5 km (BASE ): n 972, median -0.074 s, |e| <= 0.5: 0.583, |e| median 0.404, early 0.546
+  origin error of atoms within 5 km (MID  ): n 972, median -0.074 s, |e| <= 0.5: 0.584, |e| median 0.403, early 0.545
+  origin error of atoms within 5 km (LSO  ): n 972, median -0.102 s, |e| <= 0.5: 0.579, |e| median 0.415, early 0.572
+  origin error of atoms within 5 km (LSOs ): n 972, median -0.105 s, |e| <= 0.5: 0.578, |e| median 0.420, early 0.570
+  origin error of atoms within 5 km (LSX  ): n 976, median -0.048 s, |e| <= 0.5: 0.589, |e| median 0.396, early 0.549
+  origin error of atoms within 5 km (EDT  ): n 975, median -0.059 s, |e| <= 0.5: 0.593, |e| median 0.404, early 0.546
+  origin error of atoms within 5 km (EDT2 ): n 986, median -0.055 s, |e| <= 0.5: 0.571, |e| median 0.428, early 0.532
+  LOC+T <= 0.1: BASE 0.064  MID 0.064  (d +0.000 [+0.000,+0.000])  LSO 0.064  (d +0.000 [-0.010,+0.011])  LSOs 0.064  (d +0.000 [-0.010,+0.011])  LSX 0.064  (d +0.000 [-0.017,+0.014])  EDT 0.065  (d +0.001 [-0.026,+0.011])  EDT2 0.067  (d +0.003 [-0.019,+0.023])  
+  LOC+T <= 0.25: BASE 0.118  MID 0.118  (d +0.000 [+0.000,+0.000])  LSO 0.120  (d +0.003 [-0.008,+0.021])  LSOs 0.120  (d +0.003 [-0.008,+0.021])  LSX 0.123  (d +0.005 [-0.017,+0.037])  EDT 0.114  (d -0.003 [-0.033,+0.026])  EDT2 0.116  (d -0.002 [-0.034,+0.033])  
+  LOC   <= 0.1: BASE 0.168  MID 0.168  (d +0.000 [+0.000,+0.000])  LSO 0.168  (d +0.000 [+0.000,+0.000])  LSOs 0.168  (d +0.000 [+0.000,+0.000])  LSX 0.173  (d +0.005 [-0.028,+0.032])  EDT 0.159  (d -0.009 [-0.053,+0.028])  EDT2 0.160  (d -0.008 [-0.044,+0.034])  
+  LOC   <= 0.25: BASE 0.250  MID 0.250  (d +0.000 [+0.000,+0.000])  LSO 0.250  (d +0.000 [+0.000,+0.000])  LSOs 0.250  (d +0.000 [+0.000,+0.000])  LSX 0.257  (d +0.007 [-0.018,+0.020])  EDT 0.245  (d -0.005 [-0.035,+0.013])  EDT2 0.249  (d -0.001 [-0.029,+0.028])  
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: BASE 0.172; all scores 1.017
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: MID 0.172; all scores 1.014
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: LSO 0.167; all scores 1.028
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: LSOs 0.167; all scores 1.033
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: LSX 0.167; all scores 1.011
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: EDT 0.161; all scores 0.997
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: EDT2 0.164; all scores 1.069
+  close pairs (10 km, 2 s) LOC+T <= 0.25: BASE 0.119   tight (7 km, 1 s): 0.146
+  close pairs (10 km, 2 s) LOC+T <= 0.25: MID 0.119   tight (7 km, 1 s): 0.146
+  close pairs (10 km, 2 s) LOC+T <= 0.25: LSO 0.122   tight (7 km, 1 s): 0.148
+  close pairs (10 km, 2 s) LOC+T <= 0.25: LSOs 0.122   tight (7 km, 1 s): 0.148
+  close pairs (10 km, 2 s) LOC+T <= 0.25: LSX 0.122   tight (7 km, 1 s): 0.146
+  close pairs (10 km, 2 s) LOC+T <= 0.25: EDT 0.116   tight (7 km, 1 s): 0.143
+  close pairs (10 km, 2 s) LOC+T <= 0.25: EDT2 0.119   tight (7 km, 1 s): 0.148
+  cell ladder_4        LOC+T <= 0.25: BASE 0.087  MID +0.002 [+0.000,+0.011]  LSO +0.000 [-0.012,+0.008]  LSOs +0.000 [-0.012,+0.008]  LSX +0.004 [-0.007,+0.029]  EDT +0.004 [-0.017,+0.032]  EDT2 -0.012 [-0.041,+0.018]
+  cell ladder_6        LOC+T <= 0.25: BASE 0.121  MID +0.000 [+0.000,+0.000]  LSO +0.000 [-0.042,+0.065]  LSOs +0.000 [-0.042,+0.065]  LSX +0.051 [-0.040,+0.080]  EDT -0.008 [-0.063,+0.065]  EDT2 -0.006 [-0.086,+0.071]
+  cell unilateral_c40  LOC+T <= 0.25: BASE 0.144  MID +0.000 [+0.000,+0.000]  LSO +0.002 [-0.038,+0.034]  LSOs +0.002 [-0.038,+0.034]  LSX -0.006 [-0.086,+0.026]  EDT -0.006 [-0.081,+0.033]  EDT2 +0.000 [-0.051,+0.041]

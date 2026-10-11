@@ -1,0 +1,4 @@
+thin ladder_4 2024 cap 0.1: point +0.055  95% CI [-0.067, +0.139]  p1 = 0.2679
+thin ladder_4 2024 cap 0.25: point +0.039  95% CI [-0.025, +0.123]  p1 = 0.1179
+strong ladder_6 2024 cap 0.1: point +0.010  95% CI [-0.023, +0.085]  p1 = 0.2809
+strong ladder_6 2024 cap 0.25: point +0.033  95% CI [-0.013, +0.083]  p1 = 0.1039

@@ -1,0 +1,21 @@
+=== part k | ladder_6 | seed 7331 ===
+   windows 60 (empty 32), true events 35
+   TOL      recall 35/35=1.00  false/window 0.07  empty with emission 0/32  ok  threshold=1.0000
+   TOL-TB   recall 29/35=0.83  false/window 0.02  empty with emission 0/32  ok  threshold=0.9959
+   TOL-K    recall 34/35=0.97  false/window 0.08  empty with emission 0/32  ok  threshold=0.7471
+   CIII-TB  recall 29/35=0.83  false/window 0.02  empty with emission 0/32  ok  threshold=0.9959
+   PHYS     recall 33/35=0.94  false/window 0.72  empty with emission 0/32  ok  threshold=0.4558
+   PHYS-S   recall 31/35=0.89  false/window 0.18  empty with emission 0/32  ok  threshold=0.5485
+   PHYS-K   recall 31/35=0.89  false/window 0.17  empty with emission 0/32  ok  threshold=0.4494
+   GAMMA    recall 25/35=0.71  false/window 1.78  empty with emission 31/32  NOT reached  config={'min_picks': 5, 'sigma': 1.0, 'eps': 10.0}
+   PYOCTO   recall 25/35=0.71  false/window 0.05  empty with emission 0/32  NOT reached  config={'n_picks': 12, 'tol': 0.5}
+      false per window TOL vs PHYS: 0/22  sign p=0.0000
+      false per window TOL-TB vs PHYS: 0/22  sign p=0.0000
+      false per window TOL-K vs PHYS: 0/22  sign p=0.0000
+      false per window CIII-TB vs PHYS: 0/22  sign p=0.0000
+      false per window PHYS-S vs PHYS: 0/20  sign p=0.0000
+      false per window PHYS-K vs PHYS: 0/20  sign p=0.0000
+      false per window GAMMA vs PHYS: 43/10  sign p=0.0000
+      false per window PYOCTO vs PHYS: 0/22  sign p=0.0000
+
+written k_ladder_6_7331_j0.json

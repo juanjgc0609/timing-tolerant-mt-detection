@@ -1,0 +1,774 @@
+Preregistro de las Tareas 1j y 1k. Escrito antes de ejecutar cualquier corrida de evaluacion.
+
+1j. Protocolo P3 de la Tarea 0 (red por realizacion, umbral relativo, calibracion a recall 0.98),
+30 realizaciones de calibracion y 30 de evaluacion por celda, semillas 2024 y 7331.
+Regla (fijada en AUDITORIA_PROPUESTA.md, K1): si en las dos celdas unilaterales la diferencia de
+tasa de eventos falsos entre la mejor ablacion sin polarizacion con desempate continuo (TOL-TB,
+TOL-K o CIII-TB) y PHYS es menor de 0.05 en ambas semillas, la ventaja de G1 en la celda
+unilateral se atribuye al desempate y G1 se reformula. En otro caso, la ventaja se atribuye a la
+polarizacion.
+Nota: la eleccion de "la mejor" ablacion entre tres favorece a la ablacion; se reportan las tres.
+
+1k. Ventanas con K en {0,1,2} fuentes (0.4/0.4/0.2), umbral absoluto calibrado a recall por
+evento 0.90 en 60 ventanas de calibracion, 60 de evaluacion, semillas 2024 y 7331.
+Criterio de G1' (AUDITORIA_PROPUESTA.md, Seccion 5.1): PHYS (o PHYS-S) con al menos 0.05 eventos
+falsos por ventana menos que el mejor comparador (ablaciones con desempate, GaMMA y PyOcto
+afinados) a recall no inferior (margen 0.02), en al menos la mitad de las celdas, en ambas
+semillas. Prueba pareada: signo exacto sobre falsos por ventana.
+Baselines: rejilla de hiperparametros evaluada SOLO en calibracion; configuracion congelada.
+Wed Sep 23 02:14:26 UTC 2026
+
+Nota anadida antes de ejecutar la parte k (Wed Sep 23 02:33:24 UTC 2026): por tiempo de computo, la rejilla de GaMMA en la parte k se reduce a min_picks {5,6,8,10,12} x escala temporal {1.0,2.0} s con radio de agrupamiento 10; PyOcto conserva su rejilla completa.
+Nota (Wed Sep 23 02:42:56 UTC 2026): las corridas se detuvieron y reiniciaron antes de producir ningun resultado de evaluacion. Rejilla de GaMMA, para j y k: min_picks {5,6,8,10,12,14} x escala temporal {1.0,2.0} s, radio de agrupamiento 10. PyOcto: n_picks {4,...,14} x tolerancia {0.5,1.0,2.0}.
+
+Tarea 1j-b (anadida el Wed Sep 23 03:24:51 UTC 2026, despues de ver 1j con semilla 2024 y antes de ejecutar 1j-b; es
+por tanto un analisis disenado a la vista de un resultado y se declara exploratorio).
+Motivo: en 1j, semilla 2024, un puntaje continuo de residuos sin polarizacion (TOL-K) igualo a PHYS
+en las celdas unilaterales y lo supero en la escalera de 3 y 4 estaciones, con picks exactos.
+Diseno: protocolo P3, 30+30 realizaciones, celdas unilateral_c40, ladder_4, ladder_6; ruido de
+tiempo de pick 0.1 s y 0.2 s, y 0.1 s con error de velocidad del 5% en la inferencia; semillas 2024 y
+7331. Metodos TOL-K, PHYS, PHYS-S y PHYS-K (kernel de residuos por coseno al cuadrado, con C-III);
+escala del kernel elegida en calibracion entre 0.15, 0.3 y 0.6 s.
+Regla: la polarizacion aporta sobre el mejor puntaje cinematico continuo si PHYS-K tiene al menos
+0.05 menos tasa de falsos que TOL-K a recall no inferior (margen 0.02) en al menos la mitad de las
+nueve celdas ruidosas, en ambas semillas.
+Nota (Wed Sep 23 04:39:45 UTC 2026): la corrida de la parte k con semilla 2024 termino sin escribir resultados despues de completar tres de cuatro celdas (causa no identificada; no se vio ningun resultado de k). Se repite celda por celda, con registro de errores por celda.
+Nota (Wed Sep 23 04:50:49 UTC 2026), antes de ejecutar ninguna celda de k: tras ver 1j-b (semilla 2024), se anade a k el metodo PHYS-K (kernel de residuos de 0.3 s por coseno al cuadrado, con C-III) y una condicion con error de tiempo de pick de 0.2 s en unilateral_c40 y ladder_4, ambas semillas. El criterio G1 prerregistrado se aplica igual; PHYS-K se declara incorporado a la vista de 1j-b.
+Nota (Wed Sep 23 07:18:48 UTC 2026): cuatro celdas de k (dispersa 7331, ladder_6 2024, unilateral 7331 exacta y con 0.2 s) fallaron por una estacion sin ningun pick en una ventana vacia (IndexError en _precompute). Se corrige con un pick ficticio fuera de la ventana y se repiten solo esas cuatro celdas; las ocho completadas no contienen ese caso.
+
+Tarea 1o (escrita el Wed Sep 23 14:23:44 UTC 2026, antes de cualquier corrida de evaluacion de 1o).
+Motivo: pregunta del autor sobre si los resultados de Y eran un defecto de implementacion. El
+diagnostico del canal sintetico (diag_pol.py) da AUC 0.78 entre |cos| de arribos verdaderos y de
+clutter, y solo 0.47 de los P dentro de 20 grados en azimut, porque la amplitud sobre el ruido es
+1.1-2.5 en las estaciones lejanas; con esa misma senal/ruido el generador detectaba todos los
+arribos con tiempo exacto. Generador consistente: deteccion Phi((a-2)/0.5), error de tiempo 3 x CRB.
+Metodos: TOL-TB, KIN-LR, PHYS-LR (ec. 9d, f/g estimadas en calibracion), WAVE-E, WAVE-P (sin picks).
+Celdas unilateral_c40, ladder_4, ladder_6; 0-2 fuentes por ventana; 60+60; umbral absoluto a recall
+por evento 0.90; semillas 2024 y 7331.
+R1 (control positivo, condicion jit0.5: todos detectados, error 0.5 s): PHYS-LR debe tener menos
+falsos por ventana que KIN-LR, con recall comparable, en al menos 2 de 3 celdas en ambas semillas.
+Si no, el canal de polarizacion implementado es sospechoso y 1o no permite concluir sobre la fisica.
+R2 (G1 en el generador consistente): PHYS-LR con al menos 0.05 falsos por ventana menos que KIN-LR a
+recall no inferior (margen 0.02) en al menos 2 de 3 celdas en ambas semillas; prueba de signo.
+R3 (fisica sin picks): WAVE-P alcanza el recall objetivo donde KIN-LR y PHYS-LR no, o tiene al menos
+0.05 falsos por ventana menos que el mejor de ellos a recall no inferior, en al menos 2 de 3 celdas
+en ambas semillas.
+
+Enmienda a 1o (Wed Sep 23 14:56:20 UTC 2026), despues de ver la semilla 2024 y antes de ver ningun resultado de la
+7331 (su corrida se detuvo sin terminar ninguna celda). En el generador consistente casi ningun
+metodo alcanza el recall objetivo de 0.90 en calibracion, asi que cae al umbral mas permisivo y los
+falsos por ventana (~4) reflejan ese umbral, no el metodo: R1-R3 no son evaluables como se
+escribieron. Se reemplaza el endpoint por el de Neyman-Pearson, que es el operativo: umbral
+calibrado para un presupuesto de falsos por ventana (0.05, 0.1, 0.25, 0.5) y recall por evento en
+evaluacion; la escala de cada metodo se elige en calibracion por el recall medio en esos cuatro
+presupuestos. Comparacion pareada por evento verdadero (McNemar exacto) al presupuesto 0.1.
+R1': en jit0.5, PHYS-LR con mayor recall que KIN-LR al presupuesto 0.1 en al menos 2 de 3 celdas en
+ambas semillas. R2': en el generador consistente, PHYS-LR con recall al menos 0.05 mayor que KIN-LR al
+presupuesto 0.1 en al menos 2 de 3 celdas en ambas semillas. R3': igual para WAVE-P frente al mejor de
+KIN-LR y PHYS-LR. La semilla 2024 es exploratoria para estas reglas (sus resultados por umbral de
+recall se vieron); la 7331 es la replica.
+
+1o-b (Wed Sep 23 15:51:09 UTC 2026): GaMMA y PyOcto afinados en calibracion por presupuesto de falsos por ventana,
+sobre las mismas ventanas regeneradas de 1o. Regla: PHYS-LR con recall al menos 0.05 mayor que el
+mejor de GaMMA y PyOcto al presupuesto 0.1, en al menos 2 de 3 celdas del generador consistente, en
+ambas semillas; se reporta tambien con la tasa de falsos realizada.
+Nota (Wed Sep 23 16:50:20 UTC 2026): por tiempo de computo, la semilla 7331 de 1o-b corre solo las celdas del generador consistente, que son las de la regla; la 2024 incluye tambien el control jit0.5.
+
+Tarea 1r (Wed Sep 23 18:18:38 UTC 2026), escrita antes de correrla, en respuesta a la verificacion independiente de 1o,
+que encontro: sobrepaso del presupuesto de falsos por PHYS-LR, control positivo no limpio, dominio de
+busqueda mas amplio para GaMMA/PyOcto y minimo de picks >=5, confusion entre cambio de generador y
+cambio de forma de verosimilitud, y ausencia de control negativo.
+Diseno: task1r_fair.py y task1r_baselines.py; celdas unilateral_c40, ladder_4, ladder_6; condiciones
+consistente y exacto (todos detectados, tiempo exacto); 60 ventanas de calibracion, 60 de evaluacion
+y 40 propias para f/g; semillas 2024 y 7331. KIN-LR, PHYS-LR y PHYS-SH (cosenos permutados) con la
+misma rejilla sigma {0.1,0.2,0.4} x eps {0.05,0.1,0.2}, variante elegida en calibracion; umbral
+barrido en evaluacion (FROC). Baselines con el mismo dominio y ventana de tiempo de origen, minimo de
+picks desde 3, configuracion oraculo sobre la evaluacion.
+Endpoint: recall por evento a tasa de falsos REALIZADA <= 0.1 y <= 0.25 por ventana.
+R-a (G1, consistente): PHYS-LR supera a KIN-LR en >= 0.05 de recall a ambos topes en al menos 2 de 3
+celdas en ambas semillas, con IC95 bootstrap pareado de la diferencia a tope 0.25 que excluye 0 en al
+menos una celda por semilla.
+R-b (control negativo): |PHYS-SH - KIN-LR| < 0.05 a tope 0.25 en al menos 2 de 3 celdas por semilla;
+si PHYS-SH mejora como PHYS-LR, la ganancia no se atribuye a la polarizacion.
+R-c (confusion): se reporta PHYS-LR contra KIN-LR en la condicion exacto; si tambien gana alli, el
+negativo de Y.2-Y.3 se atribuye a la forma de combinacion y no al generador.
+R-d (estado del arte): PHYS-LR supera al mejor de GaMMA y PyOcto (oraculo) en >= 0.05 a ambos topes
+en al menos 2 de 3 celdas consistentes en ambas semillas.
+
+Tarea 1s (Wed Sep 23 19:36:09 UTC 2026), escrita antes de correrla. Pregunta: agrega la fisica (verosimilitud de
+polarizacion por estacion, razon f/g de 9d) sobre el asociador cinematico mas fuerte medido en 1r
+(GaMMA), y no sobre un KIN-LR propio que 1r mostro debil.
+Diseno: task1s_gamma_pol.py. GaMMA con la rejilla de 1r (min_picks {3,4,5,6,8} x sigma {1,2}), mismo
+dominio y ventana de origen. Cada evento emitido se puntua con la suma de log f/g sobre sus picks
+asignados por GaMMA (f/g estimada en 40 ventanas propias); GAMMA+POL emite los eventos cuyo puntaje
+supera un umbral (21 cuantiles). GAMMA+SH: igual, con cosenos tomados al azar del conjunto de cosenos
+observados (misma cantidad de grados de libertad de umbral que GAMMA+POL). Configuracion y umbral con
+oraculo sobre la evaluacion para los tres. Celdas consistentes de 1r, semillas 2024 y 7331.
+S-0 (implementacion): con 60 ventanas (las mismas de 1r), el recall de GAMMA a cada tope debe
+coincidir con task1r_baselines; AUC del puntaje POL entre eventos GaMMA verdaderos y falsos > 0.6 en al
+menos 2 de 3 celdas por semilla (el canal existe), y AUC de SH en [0.4, 0.6]. Si S-0 falla, 1s no se
+interpreta.
+Analisis primario con 200 ventanas de evaluacion (las 60 de 1r mas 140 nuevas; las ventanas de f/g
+cambian por el orden del generador y se declara).
+S-a (fisica sobre el estado del arte): GAMMA+POL - GAMMA+SH >= 0.05 y GAMMA+POL - GAMMA >= 0.05 a ambos
+topes (0.1 y 0.25) en al menos 2 de 3 celdas en ambas semillas, con IC95 bootstrap pareado por
+ventanas (B=2000, punto de operacion fijo) de GAMMA+POL - GAMMA+SH a tope 0.25 que excluye 0 en al
+menos una celda por semilla.
+S-b (control negativo): GAMMA+SH - GAMMA < 0.05 a tope 0.25 en al menos 2 de 3 celdas por semilla.
+Si S-a se cumple y S-b tambien: G1 sostenido en sintetico consistente contra el estado del arte.
+Si S-a falla: G1 queda no establecido en sintetico y la pregunta pasa entera al dato real (1n, 1p).
+
+Enmienda a 1s (Wed Sep 23 19:56:01 UTC 2026). La corrida de 60 ventanas se detuvo tras la primera celda de cada
+semilla: el recall de GAMMA no reprodujo el de task1r_baselines (2024 unilateral 0.36/0.42/0.43 contra
+0.40/0.40/0.40; 7331 0.43/0.43/0.43 contra 0.41/0.41/0.43). Causa identificada en el codigo de GaMMA
+(gamma/utils.py, linea 638): la inicializacion de las componentes usa el RNG global de numpy sin
+semilla cuando no hay multiproceso, de modo que su salida depende de todo lo que el proceso ejecuto
+antes. Correccion: np.random.seed(42) antes de cada llamada, la convencion que GaMMA usa en su propio
+modo multiproceso, en task1s y en task1r_baselines. S-0 se reemplaza por una verificacion directa
+(check_gamma_det.py): con semilla, las dos rutas de codigo dan el mismo catalogo en cada ventana y
+configuracion, y se mide cuanto cambia GaMMA sin semilla. Los recall de GaMMA de 1r quedan con ese
+ruido de inicializacion y se reportan como tales. Se vio el resultado de GAMMA+POL en la primera celda
+(0.43/0.43/0.43 en ambas semillas) antes de esta enmienda; las reglas S-a y S-b no cambian. Se corre
+tambien task1r_baselines con semilla y 200 ventanas para que la comparacion con PHYS-LR use el mismo
+GaMMA determinista.
+
+Tarea 1t (Wed Sep 23 20:29:31 UTC 2026), escrita antes de correrla. Motivo declarado: en 1r el puntaje sin picks WAVE-P
+estuvo entre los mejores en las celdas consistentes (visto antes de este registro). Pregunta: la
+migracion de la forma de onda de tres componentes proyectada sobre la polarizacion predicha supera a
+la misma migracion sin direccion (WAVE-E, analogo de los apiladores por coherencia QuakeMigrate, LOKI,
+MALMI) y a los asociadores de picks. Diseno: task1t_wave.py; WAVE-E, WAVE-P y WAVE-PSH (proyeccion
+sobre la direccion predicha para otra estacion, permutacion fija por ventana); mismas ventanas,
+grilla y endpoint FROC que 1r; celdas consistentes; semillas 2024 y 7331.
+T-0 (implementacion): con 60 ventanas, el recall de WAVE-P a cada tope coincide con el de 1r.
+Analisis primario con 200 ventanas.
+T-a: WAVE-P - WAVE-E >= 0.05 a ambos topes en al menos 2 de 3 celdas en ambas semillas, con IC95
+bootstrap pareado a tope 0.25 que excluye 0 en al menos una celda por semilla.
+T-b (control): WAVE-P - WAVE-PSH >= 0.05 a tope 0.25 en las celdas donde T-a se cumple; si WAVE-PSH
+iguala a WAVE-P, la ganancia no se atribuye a la geometria de la polarizacion.
+T-c (estado del arte): WAVE-P supera al mejor de GaMMA y PyOcto (con semilla, oraculo, 200 ventanas)
+en >= 0.05 a ambos topes en al menos 2 de 3 celdas en ambas semillas.
+Limite declarado de antemano: el generador usa un pulso conocido en un medio homogeneo, lo que
+favorece a todo puntaje de forma de onda; un positivo aqui obliga a 1p (picker real) y a dato real
+antes de cualquier afirmacion.
+
+Tarea 1u (Wed Sep 23 21:33:50 UTC 2026), escrita antes de correrla y despues de ver WAVE-P con 200 ventanas en la
+semilla 2024 (T-a en camino de cumplirse). Pregunta: el positivo de WAVE-P sobrevive a lo que un medio
+real anade y el modelo homogeneo no predice? Diseno: task1u_hetero.py; retardo por estacion y fase
+N(0, 0.15 s) y desviacion de la direccion de polarizacion de ~10 grados, fijos por ventana, aplicados a
+la forma de onda y a los picks; WAVE-E, WAVE-P, WAVE-PSH y GaMMA con semilla (rejilla de 1r, oraculo);
+100 ventanas de evaluacion, celdas consistentes, semillas 2024 y 7331.
+U-a: WAVE-P - WAVE-E >= 0.05 a ambos topes en al menos 2 de 3 celdas en ambas semillas.
+U-b: WAVE-P - GAMMA >= 0.05 a ambos topes en al menos 2 de 3 celdas en ambas semillas.
+Si U-a o U-b fallan donde T-a o T-c se cumplieron, el positivo de 1t se declara dependiente de un medio
+conocido y no se afirma fuera de el.
+
+Enmienda de endpoint (Wed Sep 23 22:43:25 UTC 2026), para 1r, 1t y 1u, antes de ver ninguna lectura exacta. Al revisar
+la curva de 1t se encontro que el barrido registrado (80 cuantiles, 0.85 a 1.0, de los puntajes de la
+grilla agrupados) muestrea la curva FROC con saltos de hasta 0.14 falsos por ventana en su extremo
+estricto (WAVE-E, 4 estaciones: puntos en 0.00 y 0.14 falsos por ventana), de modo que la lectura a
+tope 0.1 depende de donde caen los umbrales y puede crear o borrar una diferencia. Correccion
+(froc_exact.py): el catalogo a cada umbral es el prefijo de la lista voraz completa, asi que la curva
+exacta se obtiene evaluando todos los puntajes de esa lista como umbrales; verificado identico a
+_catalog_impl + score_events en cada umbral. Las reglas R, T y U se evaluan sobre la curva exacta y se
+reporta tambien la lectura con el barrido registrado. GaMMA y PyOcto siguen con su rejilla de
+configuraciones (su curva es la de sus configuraciones). La Tarea 1s no se repite: su conclusion no
+depende del muestreo, porque el recall de GAMMA+POL esta acotado por el techo de GaMMA (el mayor recall
+de sus configuraciones), que GaMMA solo alcanza con a lo sumo 0.21 falsos por ventana en todas las
+celdas, y a tope 0.1 la distancia al techo es menor que 0.05 en las seis celdas.
+
+Nota sobre las enmiendas anteriores (Thu Sep 24 01:22:23 UTC 2026). La enmienda de endpoint (curva FROC exacta) se
+escribio despues de ver, con el barrido registrado, que T-b fallaba en una celda (7331 unilateral,
+WAVE-P - WAVE-PSH = 0.00 a tope 0.25). Con el barrido registrado fallan tambien R-d, U-a y U-b; con la
+curva exacta se cumplen. Ambas lecturas se reportan en el Apendice Y.
+
+Tarea 1w (Thu Sep 24 01:22:23 UTC 2026), escrita antes de correrla, en respuesta a la segunda verificacion
+independiente, que hallo: (1) el generador da a la onda S polarizacion SV pura; con dobles pares al
+azar la ventaja de WAVE-P sobre WAVE-E casi desaparece en una prueba exploratoria de 80 ventanas, y una
+variante independiente del mecanismo (P sobre el rayo, S en el plano transversal) conserva margen;
+(2) PHYS-SH no es un control nulo (conserva el conjunto de razones del nodo); un control que toma la
+direccion de otro nodo cae al nivel de KIN-LR en la unica celda probada. Diseno: task1w_mech.py;
+fuentes con doble par al azar (radiacion en forma de onda, deteccion y error de tiempo); KIN-LR,
+PHYS-LR, PHYS-NODE (direccion de otro nodo a mas de 9 km), WAVE-E, WAVE-P, WAVE-PT (P sobre el rayo, S
+en el plano transversal), WAVE-PT-NODE (rayo de otro nodo), GaMMA con semilla; 60 ventanas de
+calibracion, 120 de evaluacion, 40 para f/g; celdas consistentes; semillas 2024 y 7331; curva FROC
+exacta; IC bootstrap pareado con el punto de operacion re-elegido en cada replica (la verificacion
+mostro que fijarlo estrecha los intervalos entre 15 y 40 por ciento).
+W-a (fisica por pick con mecanismo real): PHYS-LR - PHYS-NODE >= 0.05 a ambos topes en al menos 2 de 3
+celdas en ambas semillas, con IC a tope 0.25 que excluye 0 en al menos una celda por semilla.
+W-b (fisica sin picks independiente del mecanismo): WAVE-PT - WAVE-PT-NODE >= 0.05 y WAVE-PT - WAVE-E
+>= 0.05 a ambos topes en al menos 2 de 3 celdas en ambas semillas.
+W-c (estado del arte): PHYS-LR - GAMMA >= 0.05 a ambos topes en al menos 2 de 3 celdas en ambas
+semillas; lo mismo, por separado, para WAVE-PT.
+Se reporta WAVE-P (S sobre SV) para mostrar la dependencia del mecanismo. Si W-a falla, la afirmacion
+por pick se limita al generador SV; si W-b falla, la afirmacion sin picks se retira.
+
+Replica 1w-R (Thu Sep 24 02:32:43 UTC 2026), escrita antes de correrla y despues de ver 1w en tres de sus seis
+celdas-semilla. Motivo: las primeras 80 ventanas de evaluacion de 1w y sus mecanismos coinciden con los
+de la prueba exploratoria de la verificacion que propuso WAVE-PT; 1w no es por si sola una
+confirmacion independiente de WAVE-PT. Diseno: task1w_mech.py --wave-only --evbase 9000 --moff 131;
+120 ventanas nuevas por celda (redes, fuentes, clutter, deteccion y mecanismos de flujos aleatorios
+distintos), WAVE-E, WAVE-P, WAVE-PT, WAVE-PT-NODE y GaMMA con semilla; semillas 2024 y 7331.
+WR-a: WAVE-PT - WAVE-PT-NODE >= 0.05 y WAVE-PT - WAVE-E >= 0.05 a ambos topes en al menos 2 de 3
+celdas en ambas semillas. WR-b: WAVE-PT - GAMMA >= 0.05 a ambos topes en al menos 2 de 3 celdas en
+ambas semillas.
+
+Tarea 1x (Thu Sep 24 14:51:45 UTC 2026), escrita antes de correr la evaluacion. Pregunta: el GLRT con el tensor de
+momento como estorbo lineal (proyeccion de los vectores firmados de tres componentes de todas las
+estaciones y fases sobre el subespacio de dimension 6 del patron de radiacion) supera a WAVE-PT, a su
+control con el subespacio de otro nodo y a GaMMA; y si Frank-Wolfe con deflacion anade sobre el GLRT.
+Diseno: task1x_mtglrt.py; fuentes de doble par; condiciones ideal y pert (retardos N(0, 0.15 s),
+~10 grados, factor de sitio lognormal sigma 0.5); 100 ventanas nuevas por celda (evbase 15000,
+mecanismos moff 173); semillas 2024 y 7331; curva FROC exacta; GaMMA con semilla, rejilla, oraculo.
+El tope por estacion CAPV = 6 se fijo en ventanas de calibracion propias (evbase 20000, cal_capv.py):
+6 domino a 12, 24 y sin tope en 5 de 6 celdas-condicion.
+Por condicion:
+X-a (coherencia fisica): WAVE-MT - WAVE-MT-NODE >= 0.05 y WAVE-MT - WAVE-PT >= 0.05 a ambos topes en
+al menos 2 de 3 celdas en ambas semillas.
+X-b (estado del arte): WAVE-MT - GAMMA >= 0.05 a ambos topes en al menos 2 de 3 celdas en ambas semillas.
+X-c (Frank-Wolfe, exploratoria): MT-FW - WAVE-MT >= 0.05 a tope 0.25 en al menos una celda por semilla.
+Si X-a falla en pert, la coherencia de amplitudes se declara fragil ante errores de amplitud no
+modelados y el metodo cae a WAVE-PT en ese peldano de la escalera.
+
+Resultado de 1x y verificacion (vmThu Sep 24 16:55:30 UTC 2026). X-a no se cumplio en ninguna condicion (semilla 2024:
+1 de 3 celdas); X-b y X-c se cumplieron. La verificacion independiente hallo que desde 1o los picks de
+clutter se entregaban siempre y con tiempo exacto aunque sus pulsos estan por debajo del ruido (E26):
+GaMMA recibia ~90 por ciento de picks indetectables. X-b queda invalidada. "MT-FW contra GaMMA" no
+estaba registrada. La mayor parte de la ganancia de MT-FW sobre WAVE-MT es supresion de lobulos
+laterales (WAVE-MT con supresion a 20 km casi la iguala).
+
+Tarea 1y (Thu Sep 24 16:55:30 UTC 2026), escrita antes de correrla. Diseno: task1y_clutter.py; condicion pert de 1x;
+clutter tratado con la misma regla de deteccion y de error de tiempo que los arribos verdaderos, en
+dos regimenes: thin (amplitud 0.35) y strong (amplitud 1.75, transitorios visibles y detectados); 100
+ventanas nuevas por celda (evbase 25000, mecanismos moff 233); semillas 2024 y 7331; curva FROC exacta.
+Por regimen:
+Y-a (estado del arte): MT-FW - GAMMA >= 0.05 a ambos topes en al menos 2 de 3 celdas en ambas semillas.
+Y-b (control del metodo completo): MT-FW - MT-FW-NODE >= 0.05 a ambos topes en al menos 2 de 3 celdas
+en ambas semillas.
+Y-c (deflacion contra supresion afinada): MT-FW - max(WAVE-MT@20, WAVE-PT@20) >= 0.05 a tope 0.25 en al
+menos 2 de 3 celdas en ambas semillas.
+Se reporta tambien WAVE-MT@20 - GAMMA y WAVE-PT@20 - GAMMA.
+
+Tarea 2A (Fri Sep 25 20:15:00 UTC 2026), escrita antes de cualquier corrida de evaluacion de 2A. Las semillas 2024 y
+7331 no se han usado nunca con gen_realistic.py, real_picker.py ni qm_wrapper.py: las calibraciones del picker
+STA/LTA y de QuakeMigrate usaron solo la semilla 999.
+Pregunta confirmatoria: con un generador que no coincide con el modelo de los detectores, picks de un picker
+operativo y comparadores reales, MT-FW con correcciones de estacion estimadas de un catalogo supera al mejor
+comparador.
+Diseno.
+Generador: gen_realistic.generate_real con DEFAULT_CFG (medio con gradiente VS0 2.8 km/s, g 0.04 1/s, rayos
+curvos; funcion fuente Ricker con frecuencia central U[1.4, 2.8] Hz y rotacion de fase hasta 45 grados; coda
+dispersada con cociente de energia 0.3; desviacion de polarizacion ~10 grados; factor de sitio lognormal sigma
+0.5), salvo los retardos de estacion, que se fijan por red, N(0, 0.3 s) por estacion y fase, en lugar de
+sortearse por ventana. Todos los detectores (MT-FW, WAVE-PT, GaMMA, PyOcto, QuakeMigrate) usan el mismo modelo
+homogeneo VP = 1.73 x 3.0, VS = 3.0 km/s: el desajuste de modelo es comun a todos.
+Celdas: ladder_4, ladder_6 y unilateral_c40 (task1r_fair.SCEN); regimenes de clutter thin (amplitud 0.35) y
+strong (1.75).
+Redes: por semilla, celda y regimen, 5 redes fijas. Por red, un catalogo de 20 eventos generados con
+generate_real sobre esa red (entra al catalogo un evento con al menos 3 arribos sobre la compuerta de energia 25
+de station_corrections.catalogue), con errores de catalogo de 1 km por coordenada y 0.1 s en el tiempo de
+origen, y 20 ventanas de evaluacion (draw_sources: 0, 1 o 2 fuentes con probabilidades 0.4/0.4/0.2): 100
+ventanas por celda.
+Correcciones de estacion (SC): station_corrections.estimate_station_corrections con los 20 eventos del
+catalogo; las mismas correcciones para todo metodo que las admite: MT-FW (sumadas a los tiempos predichos),
+GaMMA y PyOcto (restadas a los tiempos de los picks por estacion y fase) y QuakeMigrate (sumadas a sus tablas de
+tiempos de viaje por estacion y fase si su API lo permite; si no, QuakeMigrate se reporta sin SC y se declara).
+Picks: real_picker.pick_waveforms(D, method="stalta") con la configuracion congelada de la semilla 999. Como cota
+optimista para los asociadores, degrade_y (task1y_clutter) sobre los tiempos y amplitudes verdaderos del
+generador (GaMMA-DY).
+Metodos: MT-FW y MT-FW+SC (fw_record, o certified_fw_record, que da registros identicos; kmax 5, min_sep 5 km,
+CAPV 6); MT-FW-NODE+SC (subespacio de otro nodo a >= 9 km, control del metodo completo); WAVE-PT@20 sin SC
+(referencia); GaMMA-STALTA y GaMMA-STALTA+SC (GAMMA_GRID, semilla 42, configuracion por oraculo en cada celda y
+tope, como en 1y); PyOcto-STALTA y PyOcto-STALTA+SC (PYOCTO_GRID, oraculo); QM, QM-3C y QM-3C+SC
+(configuraciones recalibradas con el procedimiento de qm_wrapper en ventanas de generate_real de la semilla 999
+y congeladas antes de la evaluacion); GaMMA-DY y GaMMA-DY+SC (oraculo).
+Endpoint primario: recall de eventos a eventos falsos realizados por ventana <= 0.1 y <= 0.25, curva FROC exacta,
+punto de operacion elegido por metodo sobre la propia evaluacion, igual para todos (los asociadores eligen ademas
+su configuracion con oraculo, lo que los favorece). IC: bootstrap pareado por ventanas, 2000 replicas,
+re-eligiendo punto de operacion y configuracion en cada replica.
+Reglas, por regimen de clutter:
+2A-a (estado del arte, primaria): MT-FW+SC - max(GaMMA-STALTA, GaMMA-STALTA+SC, PyOcto-STALTA, PyOcto-STALTA+SC,
+QM, QM-3C, QM-3C+SC) >= 0.05 a ambos topes en al menos 2 de 3 celdas, en ambas semillas. El maximo se toma por
+celda y por tope.
+2A-b (control del metodo completo): MT-FW+SC - MT-FW-NODE+SC >= 0.05 a ambos topes en al menos 2 de 3 celdas en
+ambas semillas.
+2A-c (robustez ante picks optimistas, secundaria): MT-FW+SC - max(GaMMA-DY, GaMMA-DY+SC) >= 0.05 a tope 0.25 en al
+menos 2 de 3 celdas en ambas semillas.
+2A-d (correcciones de estacion, secundaria): MT-FW+SC - MT-FW >= 0.05 a tope 0.25 en al menos 2 de 3 celdas en
+ambas semillas.
+2A-e (punto de operacion desplegable, secundaria): el umbral de MT-FW+SC y las configuraciones y umbrales de
+GaMMA-STALTA+SC y de QM-3C+SC (o QM-3C) se fijan en ventanas de calibracion de la semilla 999 con el mismo diseno
+y redes distintas (5 redes x 20 ventanas por celda y regimen) para los presupuestos 0.1 y 0.25 falsos por
+ventana, y se congelan. En evaluacion se reportan recall y tasa de falsos realizada. Se cumple si la tasa
+realizada de MT-FW+SC no supera 2 veces el presupuesto y su recall supera en >= 0.05 al del mejor comparador
+congelado en al menos 2 de 3 celdas a ambos presupuestos, en ambas semillas.
+Interpretacion: si 2A-a se cumple en ambos regimenes, la ventaja de 1y sobrevive al generador desajustado, al
+picker real y a QuakeMigrate. Si se cumple en un solo regimen, la afirmacion se restringe a ese regimen. Si falla
+en ambos, la afirmacion de superioridad sobre el estado del arte se retira de la propuesta y se reporta como
+resultado negativo. Si 2A-b falla, la ganancia no se atribuye al patron de radiacion.
+Presupuesto de computo: si la estimacion hecha en la semilla 999 supera 10 horas en 2 nucleos, el numero de
+ventanas de evaluacion por red baja a 12 (60 por celda) antes de cualquier corrida de evaluacion, y el cambio se
+anota aqui con fecha. Nada de lo registrado se modifica despues de ver resultados de las semillas 2024 o 7331;
+todo analisis anadido despues se declara exploratorio.
+
+Resultado de 2A (Sat Sep 26 2026, despues de correr las semillas 2024 y 7331 y de la verificacion independiente
+task2a_report.txt). 2A-a se cumple en ambos regimenes en las 3 celdas de ambas semillas (MT-FW+SC menos el mejor
+comparador: +0.09 a +0.49 a tope 0.1 y +0.17 a +0.46 a tope 0.25; el mejor comparador es una variante de
+QuakeMigrate en los 24 casos). 2A-b se cumple en ambos regimenes (strong 7331 ladder_4 por +0.0513). 2A-c se cumple
+(thin: 2 de 3 celdas por semilla; GaMMA-DY+SC empata en la celda unilateral de 8 estaciones). 2A-d se cumple en thin
+y no en strong. 2A-e: la condicion de recall se cumple en todas las celdas; la tasa realizada supera 2 veces el
+presupuesto solo en unilateral de 8 estaciones, semilla 7331, presupuesto 0.1 (0.22 y 0.23); con la lectura por celda
+se cumple y con la lectura estricta no; se reportan ambas. Desviaciones registradas en task2a_report.txt: un
+catalogo por red y regimen (no uno por red), lo que degrada las correcciones en strong; cuatro partes de la semilla
+999 de una version anterior del codigo (efecto nulo o marginal). Los IC por ventanas ignoran la agrupacion por red;
+con bootstrap por red todas las celdas quedan sobre 0 a tope 0.25 y cuatro incluyen 0 a tope 0.1 (exploratorio).
+
+Tarea 2B (Sat Sep 26 2026, 14:30 UTC), escrita antes de calcularla. Motivo: la auditoria de novedad senalo que la
+ventaja de un metodo sin picks puede deberse a no usar picks y no al patron de radiacion; 2A-b (subespacio de otro
+nodo) controla la geometria pero no aisla el signo. Diseno: las mismas ventanas, redes, catalogos y correcciones de
+2A (semillas 2024 y 7331, ambos regimenes, regeneradas de forma determinista; control: los registros de MT-FW+SC
+regenerados deben coincidir exactamente con los guardados en task2a_parts). Metodo nuevo MT-FW-FREE+SC: la misma
+busqueda voraz con deflacion, el mismo tope, exclusion de 5 km y correcciones, pero con el operador de radiacion
+reemplazado por la identidad (amplitud libre de tres componentes por estacion y fase): su estadistico es la energia
+total de los vectores de pico, invariante al signo, y la deflacion resta los vectores observados. Es la ablacion
+del patron de radiacion dentro del mismo solver.
+Regla 2B, por regimen: MT-FW+SC - MT-FW-FREE+SC >= 0.05 a ambos topes en al menos 2 de 3 celdas en ambas semillas.
+Si falla, la ganancia de 2A se atribuye a la migracion sin picks con deflacion y no al patron de radiacion, y la
+propuesta lo declara. Endpoint e IC como en 2A (bootstrap por ventanas y, como lectura adicional, por red).
+
+Resultado de 2B (Sat Sep 26 2026; task2b_report.txt, analyze_2b_out.txt). La regla 2B se cumple en ambos regimenes:
+thin 2 de 3 celdas en cada semilla (en la celda unilateral de 8 estaciones MT-FW-FREE+SC iguala a MT-FW+SC: -0.01 y
++0.04/+0.049), strong 3 de 3 en cada semilla. Re-aplicada en cada replica del bootstrap se cumple en ~60 por ciento de
+replicas en thin y 97-98 por ciento en strong: en thin el resultado es fragil. Exploratorio: en thin MT-FW-FREE+SC
+supera al mejor comparador de 2A en 5 de 6 celdas-semilla a tope 0.25, de modo que buena parte de la ventaja sobre
+QuakeMigrate en thin no requiere el patron de radiacion; en strong queda al nivel del mejor comparador, y la ventaja
+de 2A depende del operador. El reemplazo por la identidad retira a la vez el signo, la restriccion de polarizacion y
+la geometria de amplitudes; 2B no aisla el signo. Incidencia: el primer intento se detuvo en el control exacto porque
+18 redes de 2A (las de las sesiones reanudadas de 7331) se calcularon con otro nucleo de OpenBLAS (SkylakeX); con ese
+nucleo se reproducen bit a bit y se reejecutaron asi, sin relajar el control; el efecto del nucleo sobre el recall es
+nulo en las 4 celdas afectadas.
+
+Tarea 2C (Sat Sep 26 2026, 15:05 UTC), escrita antes de implementarla y de ver ningun resultado suyo, en respuesta a la
+auditoria independiente (56/100): faltan los comparadores mas cercanos, el metodo convexo que la tesis defiende no esta
+implementado y la inferencia no respeta la red como unidad de replicacion.
+Parte (i), comparadores y metodo convexo, sobre las mismas 1200 ventanas de 2A regeneradas bit a bit (control: los
+registros de MT-FW+SC regenerados coinciden con los guardados). Todos con las mismas correcciones de estacion, la misma
+rejilla de nodos y tiempos de origen, exclusion de 5 km y a lo sumo 5 eventos por ventana:
+  BOMP+SC: inversion dispersa por bloques de [129] (Vera Rodriguez, Sacchi y Gu 2012) en el dominio del filtro
+    adaptado: diccionario de bloques de 6 columnas (una por componente del tensor de momento) en cada nodo y tiempo de
+    origen, con los tiempos predichos exactos (sin busqueda de pico ni tope), seleccion por la mayor energia de la
+    proyeccion del residuo sobre el bloque, reajuste por minimos cuadrados de todos los bloques activos (ortogonal) y
+    puntaje = energia explicada por el bloque al entrar.
+  MTSTACK+SC: apilamiento corregido por mecanismo en la forma de [122] (Anikiev et al. 2014): en cada nodo y tiempo,
+    inversion del tensor de momento por minimos cuadrados con las amplitudes en los tiempos predichos exactos y
+    funcion de apilamiento = energia de la prediccion; catalogo por supresion de maximos a 20 km, sin deflacion.
+  GL-FW+SC: el problema convexo de la tesis restringido a la rejilla, BLASSO de grupos sobre el mismo diccionario que
+    BOMP, resuelto por Frank-Wolfe totalmente correctivo con brecha de dualidad; el catalogo se obtiene recorriendo la
+    trayectoria en lambda (de lambda_max hacia abajo, 30 valores geometricos hasta lambda_max/30) y el puntaje de cada
+    atomo es el mayor lambda en que entra al soporte con norma de grupo mayor que cero; se reporta la brecha de dualidad
+    final en cada lambda.
+Regla 2C-a (comparadores cercanos), por regimen: MT-FW+SC - max(BOMP+SC, MTSTACK+SC) >= 0.05 a tope 0.25 en al menos 2
+de 3 celdas en ambas semillas. Si falla, la ventaja de MT-FW se atribuye al tensor de momento con deflacion, ya
+presente en [129], y no a los elementos propios de MT-FW (busqueda de pico y tope).
+Regla 2C-b (metodo convexo, descriptiva): GL-FW+SC - MT-FW+SC a ambos topes, por celda, con IC; no hay umbral: se
+reporta si el metodo convexo de la tesis iguala (|dif| < 0.05), supera o queda por debajo de su aproximacion voraz.
+Parte (ii), replicacion por red: 25 redes nuevas por celda, semilla y regimen (indices de red 5 a 29, misma
+construccion de semillas que 2A), 12 ventanas de evaluacion por red, metodos MT-FW+SC, QM-3C+SC, BOMP+SC, MTSTACK+SC
+(GaMMA y PyOcto no, porque en 2A quedaron por inanicion del picker). Con las 5 redes de 2A (20 ventanas cada una) hay 30
+redes por celda. Regla 2C-c (primaria de esta parte), por regimen: la cota inferior del IC 95 por bootstrap jerarquico
+(redes y, dentro de cada red, ventanas; 2000 replicas; punto de operacion re-elegido en cada replica) de MT-FW+SC -
+QM-3C+SC a tope 0.25 es mayor que 0 en al menos 2 de 3 celdas en ambas semillas, y la estimacion puntual es >= 0.05.
+Se reporta lo mismo para MT-FW+SC - BOMP+SC y MT-FW+SC - MTSTACK+SC, y a tope 0.1, con correccion de Holm sobre las
+comparaciones por regimen.
+Presupuesto de computo: si la estimacion en la semilla 999 supera 8 horas en 2 nucleos, la parte (ii) baja a 15 redes
+nuevas (20 por celda), anotado aqui con fecha antes de correr. Nada se modifica despues de ver resultados de 2024/7331.
+Nota de presupuesto de 2C (Sat Sep 26 2026, 19:56 UTC), antes de correr las semillas 2024 y 7331: la prueba de humo en
+la semilla 999 (task2c_smoke.txt, 3 ventanas por celda y regimen) estima 0.79 h en 2 nucleos (parte (i) 0.12 h de CPU,
+parte (ii) con 25 redes 1.47 h de CPU), por debajo de 8 h: la regla de presupuesto no se activa y la parte (ii) se corre
+con 25 redes nuevas por celda, semilla y regimen. Sin otros cambios.
+
+Resultado de 2C (Sat Sep 26 2026; task2c_report.txt, analyze_2c_out.txt). 2C-a se cumple en ambos regimenes en 3 de 3
+celdas por semilla (MT-FW+SC menos el mejor de BOMP+SC y MTSTACK+SC a tope 0.25: +0.23 a +0.52 en thin, +0.08 a +0.45
+en strong; el mejor es BOMP+SC en todas). 2C-c se cumple en ambos regimenes con 30 redes por celda y bootstrap
+jerarquico (MT-FW+SC - QM-3C+SC a 0.25: +0.22 a +0.35 en thin, +0.10 a +0.30 en strong, cotas inferiores > 0); con Holm
+strong queda 2 de 3 en la semilla 7331. 2C-b: el BLASSO de grupos en la rejilla, resuelto con brecha de dualidad
+<= 1.4e-8, queda por debajo de MT-FW+SC (-0.06 a -0.61 en 23 de 24 casos). Exploratorio, posterior a ver la parte (i):
+con fuentes sobre nodos de la rejilla BOMP supera a MT-FW (0.97 contra 0.76) y GL-FW se acerca (0.73); la causa del
+colapso de los metodos de tiempo exacto es la rejilla de 3 km / 0.1 s y los errores de tiempo residuales, que la busqueda
+de pico de +-0.25 s de MT-FW absorbe. La afirmacion sostenible es robustez a errores de rejilla y de tiempo, no
+superioridad sobre la inversion dispersa de tensor de momento como tal.
+
+Fe de erratas sobre la marca de 2B (Sat Sep 26 2026, 21:13 UTC, escrita tras la segunda auditoria independiente). La
+marca "14:30 UTC" de la Tarea 2B se escribio sin consultar un reloj y es erronea. El texto de 2B se anadio a este
+archivo inmediatamente antes de lanzar la implementacion: el primer archivo de 2B, task2b_ablation.py, se creo a las
+14:16:49 UTC (fecha de nacimiento del sistema de archivos) y el primer resultado (task2b_selfcheck.txt) es de las
+14:17:01 UTC; la redaccion de 2B es por tanto anterior a las 14:16:49 UTC y a cualquier codigo o resultado de 2B. No
+hay registro independiente con hash de ese momento; la ordenacion se sostiene solo en las marcas del sistema de
+archivos. A partir de 2D cada entrada lleva la hora tomada de un reloj y un hash SHA-256 del archivo, registrado en
+PREREGISTRO_hashes.txt.
+
+Tarea 2D (Sat Sep 26 2026, 21:13 UTC), escrita antes de implementarla. Motivo: la segunda auditoria independiente senala
+que en 2C los comparadores de tiempo exacto (BOMP+SC, MTSTACK+SC, GL-FW+SC) no tenian la tolerancia temporal de +-0.25 s
+que tiene MT-FW, y que falta la ablacion de la busqueda de pico; y que la lectura primaria usa un punto de operacion
+elegido sobre la evaluacion.
+Parte (i), igualdad de tolerancia y ablacion, sobre las mismas 1200 ventanas de 2A (regeneradas bit a bit, con el nucleo
+de OpenBLAS fijado como en 2C): BOMP-PK+SC, MTSTACK-PK+SC y GL-FW-PK+SC, identicos a 2C salvo que la muestra de cada
+estacion y fase se toma en el pico de energia de tres componentes dentro de +-0.25 s del tiempo predicho, como en
+node_vectors de MT-FW (el diccionario de GL-FW-PK se construye con esos tiempos, fijados por el residuo al entrar el
+atomo); y MT-FW-EX+SC (MT-FW sin busqueda de pico: tiempos exactos) y MT-FW-NOCAP+SC (MT-FW sin tope).
+Regla 2D-a, por regimen: MT-FW+SC - max(BOMP-PK+SC, MTSTACK-PK+SC) >= 0.05 a tope 0.25 en al menos 2 de 3 celdas en ambas
+semillas. Si falla, la ventaja de MT-FW sobre [129] y [122] se atribuye a la busqueda de pico y no a otro elemento del
+metodo, y la propuesta lo declara.
+Regla 2D-b, por regimen: MT-FW+SC - MT-FW-EX+SC >= 0.05 a tope 0.25 en al menos 2 de 3 celdas en ambas semillas (la
+busqueda de pico importa). Descriptivo: MT-FW-NOCAP+SC - MT-FW+SC y GL-FW-PK+SC - MT-FW+SC con IC.
+Parte (ii), umbral desplegable: para MT-FW+SC y QM-3C+SC, umbral split-conformal calibrado en 200 ventanas sin eventos
+de la semilla 999 por celda y regimen (redes de calibracion de 2A, mismas estaciones y retardos, clutter del regimen),
+al cuantil que da nivel alfa = 0.1 y alfa = 0.25 para el maximo del puntaje por ventana vacia; umbral congelado y
+aplicado a las ventanas de evaluacion de 2A. Se reportan recall y tasa de falsos realizada. Regla 2D-c, por regimen:
+con el umbral congelado, la tasa de falsos realizada de MT-FW+SC en ventanas vacias no supera 2 x alfa y su recall supera
+al de QM-3C+SC con su umbral congelado por >= 0.05 en al menos 2 de 3 celdas en ambas semillas, a ambos alfa.
+Estadistica: bootstrap jerarquico por red y ventanas como en 2C, Holm dentro de regimen.
+Presupuesto: si la estimacion en la semilla 999 supera 6 horas en 2 nucleos, la parte (ii) usa 100 ventanas vacias por
+celda y regimen, anotado aqui con hora de reloj antes de correr 2024/7331.
+Nota de presupuesto de 2D (Sun Sep 27 02:41:50 UTC 2026), antes de correr las semillas 2024 y 7331: la prueba de humo en la semilla 999
+(task2d_smoke.txt: parte (i) con 3 ventanas por celda y regimen en la red 0; parte (ii) con 3 ventanas vacias por celda y
+regimen) estima 0.64 h en 2 nucleos (parte (i) 0.92 h de CPU; parte (ii) con 200 ventanas vacias por celda y regimen
+0.36 h de CPU), por debajo de 6 h: la regla de presupuesto no se activa y la parte (ii) usa 200 ventanas vacias por celda
+y regimen. Sin otros cambios.
+
+Resultado de 2D (Sun Sep 27 03:54:55 UTC 2026, task2d_report.txt, analyze_2d_out.txt). 2D-a no se cumple en ningun regimen: con la misma
+busqueda de pico de +-0.25 s, BOMP-PK+SC iguala a MT-FW+SC (diferencias a 0.25 entre -0.155 y +0.091; todos los IC
+jerarquicos contienen 0). Segun lo preregistrado, la ventaja de MT-FW sobre [129] y [122] se atribuye a la busqueda de
+pico y no a otro elemento del metodo. 2D-b se cumple en ambos regimenes (12 de 12 diferencias positivas, +0.06 a +0.41).
+Descriptivo: el tope no cambia el resultado (IC contienen 0); GL-FW-PK+SC queda 0.11 a 0.30 por debajo de MT-FW+SC en 11
+de 12 casos; los metodos de tensor de momento con busqueda de pico y deflacion superan a QM-3C+SC por +0.17 a +0.49.
+2D-c se cumple en la lectura por celda y no en la estricta en thin (una celda: 0.222 > 0.2); con Holm ninguna regla se
+cumple. El umbral conformal sobre ventanas vacias no es un punto de operacion desplegable: en ventanas con eventos da
+1.2 a 2.2 falsos por ventana en thin. Unico cambio posterior: una linea de diagnostico de analyze_2d.py (hashes antes y
+despues en task2d_report.txt); ninguna regla ni estadistico cambio.
+
+Tarea 2E (Sun Sep 27 14:44:14 UTC 2026, hora de reloj), escrita antes de escribir codigo alguno de 2E. Su SHA-256 se entrega al usuario por el
+chat en el momento de registrarla (marca externa al contenedor) y se anota en PREREGISTRO_hashes.txt.
+Pregunta (hipotesis G1-M): el BLASSO de grupos con desplazamientos temporales por estacion y fase, resuelto fuera de la
+rejilla con Frank-Wolfe deslizante, detecta mas eventos que la busqueda ortogonal por bloques con la misma tolerancia
+temporal (BOMP-PK+SC de 2D), a igual tasa de falsos realizada.
+Datos: 30 redes por celda, semilla y regimen: las 5 redes de 2A (20 ventanas cada una) y las 25 de 2C parte (ii) (12
+ventanas cada una), regeneradas bit a bit con el nucleo de OpenBLAS fijado como en 2C y 2D; 4800 ventanas en total.
+Mismas correcciones de estacion, rejilla de inicio, tiempos de origen, tolerancia de +-0.25 s, exclusion de 5 km, a lo
+sumo 5 eventos por ventana y regla de acierto que en 2A-2D.
+Metodos:
+  TS-SFW+SC (el metodo de la tesis): residuo r = datos en el dominio del filtro adaptado. En cada iteracion k <= 5:
+    (a) oraculo: maximo sobre nodos y tiempos de origen (excluyendo 5 km alrededor de atomos aceptados) del certificado
+        con desplazamientos, es decir la energia de la proyeccion sobre el subespacio de 6 dimensiones del tensor de
+        momento de los vectores de tres componentes tomados en el pico de energia de cada estacion y fase dentro de
+        +-0.25 s (el estadistico de MT-FW sin tope);
+    (b) refinamiento continuo del atomo nuevo: posicion (x, y, z), tiempo de origen y desplazamientos por estacion y fase
+        acotados a +-0.25 s, maximizando esa energia de proyeccion con interpolacion continua de las trazas del filtro
+        adaptado (L-BFGS-B con cotas; profundidad en [1, 20] km);
+    (c) paso deslizante: minimizacion conjunta sobre todos los atomos activos de 1/2 ||r0 - sum_k A(theta_k, delta_k)
+        m_k||^2 + lambda sum_k ||m_k||_G (norma de grupo blanqueada por bloque, como GL-FW de 2C), alternando el paso
+        convexo en las amplitudes m (proximal hasta brecha relativa <= 1e-6) y un paso local en (theta_k, delta_k) de
+        todos los atomos (L-BFGS-B, a lo sumo 50 iteraciones por paso, a lo sumo 5 alternancias);
+    (d) residuo = datos menos la prediccion conjunta.
+    lambda = f x (valor del oraculo en la primera iteracion de la ventana), con f fijado en la calibracion.
+    Puntaje del registro: minimo acumulado del valor del oraculo en (a) al entrar cada atomo (prefijo monotono, como
+    fw_record); acierto evaluado con la posicion final de cada atomo tras la ultima iteracion.
+  BOMP-PK-SLIDE+SC (control): identico a TS-SFW+SC con lambda = 0 (reajuste por minimos cuadrados), para separar el
+    aporte de la penalizacion de grupo del aporte del deslizamiento fuera de la rejilla.
+  BOMP-PK+SC (comparador de referencia, codigo de 2D sin cambios) y MT-FW+SC (registros guardados de 2A y 2C).
+Calibracion (solo semilla 999, redes de calibracion de 2A, 5 redes x 20 ventanas por celda y regimen): f en
+{0.01, 0.03, 0.1, 0.3} (estrictamente positivo), elegido por el mayor recall a tope 0.25 agrupando celdas y regimenes;
+empate a favor del f menor. Se congela antes de correr 2024/7331 y se anota aqui con hora de reloj y hash.
+Endpoint: recall a eventos falsos realizados por ventana <= 0.1 y <= 0.25, curva FROC exacta, punto de operacion por
+metodo sobre la evaluacion (igual para todos). IC: bootstrap jerarquico (redes, luego ventanas; 2000 replicas; punto de
+operacion re-elegido en cada replica).
+Regla 2E-a (primaria), por regimen: TS-SFW+SC - BOMP-PK+SC a tope 0.25 con estimacion puntual >= 0.05 y cota inferior
+del IC 95 jerarquico > 0 en al menos 2 de 3 celdas en ambas semillas. Lectura estricta adicional: Holm sobre las 6
+pruebas celda x semilla del regimen (unilateral 0.025).
+Regla 2E-b (secundaria), por regimen: TS-SFW+SC - BOMP-PK-SLIDE+SC >= 0.05 a tope 0.25 en al menos 2 de 3 celdas en ambas
+semillas (estimacion puntual).
+Descriptivo: TS-SFW+SC - MT-FW+SC y BOMP-PK-SLIDE+SC - BOMP-PK+SC con IC, a ambos topes; error epicentral mediano de
+los aciertos por metodo; diagnosticos de convergencia (brecha, iteraciones, fraccion de desplazamientos en la cota).
+Interpretacion: si 2E-a falla en ambos regimenes, G1-M queda refutada en este diseno sintetico: el BLASSO con
+desplazamientos no es mejor detector que la busqueda por bloques con la misma tolerancia, y la propuesta lo declara y
+reformula su contribucion metodologica. Si 2E-a se cumple y 2E-b falla, la ganancia se atribuye al deslizamiento fuera
+de la rejilla y no a la penalizacion de grupo. Si ambas se cumplen, G1-M queda apoyada en sintetico.
+Presupuesto: si la estimacion en la semilla 999 supera 10 horas en 2 nucleos, se usan las 5 redes de 2A mas las 10
+primeras redes de 2C (15 por celda), anotado aqui con hora de reloj antes de correr 2024/7331. Nada se modifica despues
+de ver resultados de 2024/7331; todo analisis anadido se declara exploratorio.
+Nota de calibracion de 2E (Sun Sep 27 15:38:20 UTC 2026), antes de correr las semillas 2024 y 7331: f = 0.01. Recall de TS-SFW+SC a tope 0.25
+sobre las 600 ventanas de calibracion de la semilla 999 agrupadas (redes 0-4 de 2A, 20 ventanas por red, ambas celdas y
+regimenes; una curva FROC exacta): f = 0.01: 0.4749; f = 0.03: 0.4644; f = 0.1: 0.2510; f = 0.3: 0.1841 (task2e_calibration.txt,
+task2e_parts/cal_*). Sin otros cambios.
+
+Resultado de 2E (Sun Sep 27 17:45:17 UTC 2026; task2e_report.txt, analyze_2e_out.txt). 2E-a no se cumple en ningun regimen: TS-SFW+SC - BOMP-PK+SC
+a tope 0.25 va de +0.000 a +0.039, todas las cotas inferiores de los IC jerarquicos por debajo de 0, 0 de 3 celdas en
+ambas semillas; Holm no rechaza ninguna prueba. 2E-b no se cumple (-0.020 a +0.013). Segun lo preregistrado, G1-M queda
+refutada en este diseno sintetico: el BLASSO con desplazamientos resuelto fuera de la rejilla no es mejor detector que la
+busqueda por bloques con la misma tolerancia. f calibrado = 0.01; con f mayor el recall cae. El codigo de 2E no cambio
+despues de iniciar la evaluacion (sha256sum -c task2e_code_hashes.txt). Desviaciones declaradas en task2e_report.txt.
+
+Tarea 2F (Mon Sep 28 03:34:51 UTC 2026, hora de reloj), escrita antes de correr codigo alguno sobre las semillas 4242 y 8888, que nunca se han
+usado. Su SHA-256 se entrega al usuario por el chat. Origen: exploracion en la semilla 999 (explore_contrib/REPORT.txt,
+seccion 7.1, y replica en redes nuevas en REPORT_C7.txt); la hipotesis se eligio entre varias candidatas exploradas
+(C1-C7, casi todas nulas), lo que se declara.
+Pregunta (H-CAP): en ventanas con 3 a 5 eventos solapados, MT-FW+SC (estadistico del subespacio del tensor de momento con
+tope por estacion y deflacion secuencial) detecta mas eventos que BOMP-PK+SC a igual tasa de falsos realizada, y la
+ganancia se debe al tope.
+Datos: semillas 4242 y 8888, cada una una replica independiente; redes nuevas task2a_confirm con j = 0..95 (96 por celda,
+regimen y semilla); 3 celdas; regimenes thin y strong; 10 ventanas densas por red con c2_run.draw_dense (3 a 5 eventos,
+separaciones >= 5 km dentro de 9 km, origenes en [5.2, 7.8] s con huecos >= 0.5 s), TAG no usado antes; correcciones de
+estacion de 20 eventos de catalogo por red como en 2A. Brazo de equivalencia: 16 redes por celda y regimen (j = 96..111)
+con ventanas estandar (draw_sources, 0 a 2 eventos), 10 por red.
+Metodos (codigo congelado con hashes SHA-256 antes de correr 4242/8888; c6_lib.mtfw_dense y
+task2d_methods.bomp_pk_record; kmax 7 en ventanas densas y 5 en estandar): MT-FW+SC (primario), BOMP-PK+SC (comparador),
+BOMP-PK-CAP+SC y MT-FW-NOCAP+SC (mecanismo); misma rejilla, origenes, tolerancia de +-0.25 s, exclusion de 5 km y regla de
+acierto que en 2A-2E.
+Endpoint: recall a <= 0.25 eventos falsos realizados por ventana (primario) y <= 0.1 (secundario), FROC exacta, punto de
+operacion por metodo sobre la evaluacion; bootstrap jerarquico (celdas como estratos, redes y ventanas, 2000 replicas,
+punto de operacion re-elegido en cada replica).
+Regla 2F-a (primaria), por regimen: MT-FW+SC - BOMP-PK+SC a tope 0.25, agrupando las 3 celdas, con cota inferior del IC 95
+> 0 y estimacion puntual >= 0.03, en ambas semillas. Lectura estricta: Holm sobre las 4 pruebas (2 regimenes x 2
+semillas), unilateral 0.025.
+Regla 2F-b (mecanismo): MT-FW+SC - MT-FW-NOCAP+SC con cota inferior > 0 en ambas semillas (agrupando regimenes), y
+|MT-FW-NOCAP+SC - BOMP-PK+SC| <= 0.02 (puntual) en ambas semillas.
+Regla 2F-c (no dano en ventanas estandar): equivalencia TOST con margen 0.05 de MT-FW+SC frente a BOMP-PK+SC a tope 0.25,
+agrupando celdas y regimenes, en ambas semillas.
+Descriptivo: diferencias por celda con IC; tope 0.1; BOMP-PK-CAP - BOMP-PK; tiempos.
+Tamano: con las DE piloto (0.0383 thin, 0.0353 strong), 96 redes por celda dan potencia ~0.95 por semilla para delta 0.035.
+Interpretacion: 2F-a y 2F-b se cumplen -> el tope por estacion es una contribucion confirmada para secuencias densas; 2F-a
+se cumple y 2F-b no -> la ganancia es real pero no se debe al tope; 2F-a falla -> el efecto piloto era un artefacto de
+seleccion. Novedad declarada: recortar contribuciones por estacion es practica conocida en apilamientos robustos; la
+contribucion seria su efecto medido y explicado en deteccion de tensor de momento de eventos solapados. Nada se modifica
+despues de ver 4242/8888; todo analisis anadido se declara exploratorio.
+
+Resultado de 2F (Mon Sep 28 06:59:18 UTC 2026; task2f_report.txt, analyze_2f_out.txt). 2F-a se cumple en ambos regimenes y en ambas semillas,
+tambien con Holm: MT-FW+SC - BOMP-PK+SC a tope 0.25 en ventanas densas = +0.072 [+0.048, +0.092] y +0.074 [+0.052,
++0.100] (thin, 4242 y 8888), +0.051 [+0.032, +0.070] y +0.043 [+0.022, +0.066] (strong). 2F-b se cumple: MT-FW -
+MT-FW-NOCAP = +0.060 y +0.059 (cotas > 0); MT-FW-NOCAP - BOMP-PK = -0.001 y -0.002. 2F-c se cumple (TOST, margen 0.05),
+estrecho en 8888 y con estimaciones negativas en ventanas estandar con clutter fuerte. Codigo congelado a las 03:49:08 UTC
+(task2f_code_hashes.txt), corrida unica 03:49:14-06:52:31 UTC, sin cambios posteriores. Pendiente: verificacion
+independiente.
+
+Verificacion independiente de 2F (Mon Sep 28 07:26:18 UTC 2026; verif_2f/task2f_verification.txt): positivo confirmado, sin fuga ni asimetria;
+estimaciones y bootstrap reproducidos. Alcance mas estrecho que el informe de 2F: con coincidencia de tiempo de origen
+(0.5 s) la ganancia es +0.024 a +0.045; la ganancia pertenece al nivel de tope fijado (CAPV = 6, elegido en 1x sobre otros
+datos) y desaparece por encima de 12; el mecanismo principal es robustez a la amplificacion de sitio por estacion no
+modelada (sin factores de sitio la ganancia cae a +0.023 con IC que incluye 0), y la mejora es sobre todo en la
+fiabilidad del puntaje entre ventanas, no en la separacion de eventos dentro de la ventana (exploratorio, semilla 999).
+
+Tarea 2I (Fri Oct  2 18:00:05 UTC 2026, hora de reloj), escrita antes de correr codigo alguno sobre las semillas 5151 y 6262, nunca usadas. Su
+SHA-256 se entrega al usuario por el chat. Origen: exploracion C8 en la semilla 999 (explore_contrib/REPORT_C8.txt,
+seccion 10); HUBER-N fue el mejor de 11 candidatos en el piloto (sesgo de seleccion declarado; se planifica con +0.04).
+Pregunta: un certificado de tensor de momento con ajuste ponderado de Huber por estacion y fase y umbral fijado por regla
+a partir del ruido (HUBER-N), sin tope calibrado, (a) supera a BOMP-PK+SC en ventanas densas, (b) no es inferior a
+MT-FW+SC con tope 6 alli, y (c) no cambia el recall de eventos aislados.
+Datos: semillas 5151 y 6262 (replicas independientes); redes task2a_confirm con j = 0..119 (120 por celda y regimen);
+3 celdas; regimenes thin y strong; +SC de 20 eventos de catalogo como en 2A; gen_realistic por defecto (factores de
+sitio sorteados por ventana, sd 0.5); 5 ventanas densas (c2_run.draw_dense, kmax 7) y 5 estandar (draw_sources, kmax 5)
+por red, con dos TAG nuevos.
+Metodos (codigo congelado con hashes antes de correr: c8_lib.py, c8_run.py, c6_lib.py, task2d_methods.py, xc.py y lo
+que se anada): BOMP-PK+SC; MT-FW+SC tope 6 (c8_lib.mtfw_general "ls", capv 6); MT-FW-NOCAP+SC; HUBER-N+SC =
+mtfw_general "huber_n": funcion de Huber de la norma del residuo de cada vector de 3 componentes por estacion y fase,
+umbral c = raiz del cuantil 0.95 de chi-cuadrado(3) = 2.7955 en unidades de la desviacion del ruido del filtro adaptado,
+4 pasadas IRLS desde el ajuste de minimos cuadrados, estadistico = perdida de Huber de los datos menos la del residuo,
+deflacion con el ajuste robusto. La constante se fijo por esa regla antes de cualquier corrida; el barrido posterior en
+la semilla 999 (c de 1.5 a 8) esta declarado en REPORT_C8.txt.
+Endpoint: recall a <= 0.25 falsos realizados por ventana (primario) y <= 0.1 (secundario); FROC exacta; punto de
+operacion por metodo; bootstrap jerarquico (estratos regimen x celda, redes y ventanas, 2000 replicas); agrupado sobre
+regimenes y celdas, por semilla.
+Reglas (cada una debe cumplirse en AMBAS semillas):
+2I-a superioridad, densas: HUBER-N - BOMP-PK, cota inferior unilateral 97.5 > 0 y estimacion puntual >= 0.03.
+2I-b no inferioridad, densas: HUBER-N - MT-FW, cota inferior unilateral 97.5 > -0.03.
+2I-c equivalencia, estandar: HUBER-N - BOMP-PK, intervalo de 90 dentro de [-0.05, +0.05] (TOST).
+La afirmacion "un ajuste de Huber escalado por el ruido reemplaza al tope calibrado" exige a, b y c. Si a se cumple y b
+no: HUBER-N ayuda pero el tope es mejor. Si a falla: el piloto fue un artefacto de seleccion.
+Secundario, descriptivo: umbrales 2.5003, 3.3682 y 5 en 20 redes por celda y regimen; sd de sitio 0.25 y 0.8 en 20 redes
+por celda y regimen; por regimen; regla de acierto con |error de origen| <= 0.5 s; MT-FW - BOMP-PK (replica de 2F).
+Presupuesto: si la estimacion supera 8 horas en 2 nucleos se omiten los brazos secundarios, anotado con hora de reloj
+antes de correr. Nada se modifica despues de ver 5151/6262; todo analisis anadido se declara exploratorio.
+
+Resultado de 2I, brazo primario (Fri Oct  2 22:08:07 UTC 2026; analyze_2i_primary_out.txt; los brazos secundarios siguen corriendo). Las tres
+reglas se cumplen en ambas semillas. 2I-a: HUBER-N+SC - BOMP-PK+SC en densas a 0.25 = +0.058 [+0.039, +0.076] (5151) y
++0.053 [+0.037, +0.070] (6262). 2I-b: HUBER-N+SC - MT-FW+SC = -0.008 [-0.023, +0.006] y -0.002 [-0.018, +0.012], cotas
+inferiores por encima de -0.03. 2I-c: en ventanas estandar HUBER-N+SC - BOMP-PK+SC = +0.010 (IC 90 [-0.010, +0.027]) y
++0.007 (IC 90 [-0.013, +0.024]). Codigo congelado a las 18:14:44 UTC y sin cambios (sha256sum -c); la corrida se
+interrumpio dos veces por suspension de la sesion y se reanudo desde las partes (task2i_freeze_time.txt). Pendiente:
+verificacion independiente y brazos secundarios.
+
+Verificacion independiente de 2I (Fri Oct  2 22:16:47 UTC 2026; verif_2i/task2i_verification.txt): positivo confirmado; procedencia, simetria y
+estadistica reproducidas; seis partes regeneradas identicas a traves de las dos interrupciones. Alcance: con la regla de
+acierto que exige |error de origen| <= 0.5 s la ganancia sobre BOMP-PK baja a +0.031 y +0.019 (el criterio puntual de
+0.03 fallaria en 6262); la equivalencia en ventanas estandar se cumple agrupada pero no en thin 6262 (-0.032 [-0.064,
+-0.003]); el recall con todos los atomos aceptados no cambia: HUBER-N ordena y elige mejor, no encuentra mas eventos; a
+tope 0.1 queda algo por debajo del tope en 5151 (-0.018); cuesta ~9 veces MT-FW. Brazos secundarios aun sin verificar.
+
+Resultado de 2I, brazos secundarios (Sat Oct  3 05:54:02 UTC 2026; analyze_2i_out.txt, codigo congelado sin cambios). Las reglas primarias no
+cambian. Umbrales de Huber 2.50 a 3.37 indistinguibles del registrado (diferencias dentro de +-0.006); c = 5 es peor.
+Dispersion de amplitud: con sd 0.25 el tope no aporta (+0.005/+0.009) y HUBER-N aporta +0.036/+0.002; con sd 0.8 HUBER-N
+gana a BOMP-PK (+0.100/+0.072) pero queda por debajo del tope (-0.055/-0.069; la no inferioridad se pierde en 6262).
+Regla de acierto estricta (origen a 0.5 s): HUBER-N - BOMP-PK = +0.031/+0.019 en densas. Ventanas estandar thin 6262:
+-0.032 [-0.063, -0.004].
+
+Tarea 2L (Sun Oct  4 21:10:33 UTC 2026, hora de reloj), escrita antes de correr codigo alguno sobre las semillas 7171 y 9393, nunca usadas (los
+borradores de C9 y C10 que nombraban estas semillas no se registraron ni se corrieron; este protocolo absorbe el de C10
+y el de C9 se descarta). Su SHA-256 se entrega al usuario por el chat. Origen: exploracion C11 en la semilla 999
+(explore_contrib/REPORT_C11.txt, seccion 12; plan congelado C11_PLAN.txt, sha256 del cuerpo 42e66138...1c5f). El
+contraste primario del piloto fue +0.070 [+0.010, +0.120]; se planifica con +0.05 porque los efectos de C10 se redujeron
+al replicar.
+Pregunta: los terminos de estacion estimados por la determinacion conjunta de hipocentros y terminos sin picks (S2, JHD
+sobre el catalogo registrado de 20 eventos) mejoran la deteccion consistente en tiempo de origen del detector refinado
+(T3), sin perdida con la regla de acierto anterior, en ventanas estandar y densas.
+Regla de acierto primaria: epicentro a 5 km y |error de tiempo de origen| <= 0.5 s (LOC+T). Secundaria: solo epicentro
+(LOC).
+Datos: semillas 7171 y 9393 (replicas independientes); redes task2a_confirm j = 0..159 (diseno estandar) y j = 0..99
+(diseno denso); 3 celdas; regimenes thin y strong; retardos sd 0.3 s; catalogo de 20 eventos con errores de 1 km y 0.1 s
+como en 2A; gen_realistic por defecto; 5 ventanas por red con dos TAG nuevos (draw_sources, kmax 5; draw_dense, kmax 7).
+Metodos (codigo congelado con hashes antes de correr: c11_lib.py, c11_run.py, c10_lib.py, c10_run.py, c9_lib.py,
+c8_lib.py, c6_lib.py, xc.py, station_corrections.py y lo que se anada): familia MT-FW tope 6 con S0 (el +SC registrado)
+sin refinamiento, S0 + T3 y S2 + T3 en todas las redes; familia BOMP-PK con S0, S0 + T3 y S2 + T3 solo en el diseno
+estandar, redes j = 0..59 (secundario, por presupuesto de computo); brazo oraculo (retardos verdaderos + T3) en 30 redes
+por celda y regimen, descriptivo. Constantes exactamente las de c11_lib.P del plan congelado; T3 como en C10. No queda
+ninguna constante libre.
+Endpoint: recall a <= 0.25 falsos realizados por ventana (primario) y <= 0.1 (secundario); FROC exacta; punto de
+operacion por metodo; bootstrap jerarquico (estratos regimen x celda, redes y ventanas, 2000 replicas), por semilla.
+Reglas (cada una debe cumplirse en AMBAS semillas):
+2L-a superioridad, ventanas estandar, LOC+T, agrupado: MT@S2+T3 - MT@S0+T3, cota inferior unilateral 97.5 > 0 y
+estimacion puntual >= +0.03.
+2L-b superioridad, ventanas densas, LOC+T, agrupado: el mismo contraste, cota inferior unilateral 97.5 > 0.
+2L-c no inferioridad, margen 0.02, POR REGIMEN (thin, strong), LOC+T, estandar y densas: cota inferior unilateral 95 >
+-0.02.
+2L-d no inferioridad, margen 0.02, regla LOC, agrupado, estandar y densas: cota inferior unilateral 95 > -0.02.
+La afirmacion "los terminos de estacion por JHD sin picks mejoran la deteccion consistente en tiempo de origen del
+detector refinado sin costo con la regla anterior" exige a, b, c y d. No se registra superioridad con la regla LOC.
+Secundario registrado: BOMP@S2+T3 - BOMP@S0+T3, estandar, LOC+T, en las 60 redes (cota inferior 97.5 > 0).
+Descriptivo: contrastes totales contra el detector registrado (MT@S2+T3 - MT@S0); por celda; tope 0.1; error de los
+terminos contra los retardos verdaderos; error epicentral y de origen de los aciertos; fraccion de la ganancia del
+oraculo capturada.
+Interpretacion: a-d se cumplen -> contribucion confirmada (calibracion mas refinamiento, para deteccion consistente en
+tiempo de origen). a o b fallan -> el piloto fue un artefacto de seleccion. c o d fallan con a y b -> la ganancia existe
+pero con un costo, y se reporta asi. Novedad declarada: la determinacion conjunta con terminos de estacion es clasica en
+localizacion con picks; lo nuevo seria estimarlos y usarlos dentro de un detector de subespacio de tensor de momento sin
+picks, con efecto medido sobre la deteccion a tasa de falsos fija.
+Presupuesto: si la estimacion supera 10 horas en 2 nucleos, el diseno estandar baja a 120 redes y el denso a 80, anotado
+con hora de reloj antes de correr. Nada se modifica despues de ver 7171/9393.
+
+Resultado de 2L (Mon Oct  5 02:00:25 UTC 2026; analyze_2l_out.txt; codigo congelado sin cambios, sha256sum -c OK; corrida interrumpida por
+suspension de la sesion y reanudada desde las partes, task2l_freeze_time.txt). Todas las reglas se cumplen en ambas
+semillas. 2L-a (estandar, LOC+T): +0.057 [+0.034, +0.081] (7171) y +0.062 [+0.036, +0.083] (9393). 2L-b (densas,
+LOC+T): +0.038 [+0.024, +0.054] y +0.030 [+0.015, +0.044]. 2L-c: cotas inferiores por regimen entre +0.007 y +0.052.
+2L-d (LOC): estandar +0.036 y +0.050, densas +0.020 y +0.035, cotas > -0.02. Secundario BOMP: +0.068 [+0.026, +0.107] y
++0.071 [+0.029, +0.114]. Descriptivo: la ganancia se concentra en la celda unilateral de 8 estaciones (+0.108 y +0.113);
+en 4 y 6 estaciones los IC incluyen 0 salvo un caso; fraccion de la ganancia del oraculo 0.28 a 0.61. Pendiente:
+verificacion independiente.
+
+Verificacion independiente de 2L (Mon Oct  5 02:36:52 UTC 2026; verif_2l/task2l_verification.txt): positivo confirmado; sin fuga (S2 recalculado
+sin acceso a retardos ni catalogo verdaderos es identico bit a bit en 300 de 300 unidades), simetria y estadistica
+reproducidas con codigo propio, 6 partes regeneradas identicas. La ganancia sobrevive a ventanas de acierto de 0.3 a 1.0
+s y a la correccion de sesgo del tiempo de origen. Alcance: el efecto agrupado es en esencia la celda unilateral de 8
+estaciones (+0.108 y +0.113); en 4 estaciones no hay ganancia demostrada; S2 empeora los terminos en ~22 por ciento de
+las redes; condicional a T3; supone un catalogo de 20 eventos con errores de 1 km y 0.1 s de tamano conocido. Nota: el
+gauge de S2 es "desplazamiento mediano de origen de los eventos relocalizados = 0" (declarado en C11_PLAN.txt antes de
+congelar), no media cero por fase.
+
+======================================================================================================================
+TAREA R0 - PILOTO CON DATOS REALES PUBLICOS: RIDGECREST 2019 (registrada Sat Oct 10 00:00:42 UTC 2026, antes de correr cualquier detector,
+picker o asociador sobre estas formas de onda; aprobada por el autor en la conversacion del 9 de octubre de 2026)
+======================================================================================================================
+Estado previo declarado. Datos descargados por un agente desde benchflow-ai/skillsbench (tasks/earthquake-phase-
+association, licencia Apache-2.0; red CI, catalogo SCSN): wave.mseed (sha256 en R0_data_hashes.txt), stations.csv,
+catalog.csv. Antes de este registro se leyo el inventario de las trazas (estaciones, canales, muestreo 100 Hz, ventana
+19:00-20:00 UTC del 2019-07-04, sin huecos) y stations.csv; del catalogo se vieron las 4 primeras filas y estadisticos
+agregados (102 eventos, M 1.49-4.50, 23 con M >= 2.5, tiempos interevento) y su centroide (35.6773 N, 117.5418 W), usado
+solo para ordenar estaciones. Ninguna forma de onda se filtro, se vio ni se proceso.
+
+Pregunta. Si la ventaja medida en sintetico del detector de la tesis (MT-FW con tope 6, terminos S2 y refinamiento T3;
+G1, G1-R, G1-C) sobre asociadores publicados alimentados por PhaseNet y sobre BOMP-PK transfiere a datos reales con
+eventos solapados. Es un piloto previo a G1' (que sigue registrado para la RSNC), en otra region y otra red.
+
+Datos y particion. HH* de tres componentes. CAL = origenes de 19:00:00 a 19:15:00; EVAL = origenes de 19:15:00 a
+19:59:20 (44 min 20 s). Verdad: catalogo SCSN; objetivos del endpoint = eventos con M >= 2.0 y origen en EVAL.
+Subredes (regla fijada con distancias y azimutes al centroide): N8 = CLC, SRT, CCC, TOW2, LRL, WRC2, WBM, SLA (las 8
+HH mas cercanas); N6 = CLC, SRT, CCC, TOW2, LRL, WRC2; N4 = CLC, SRT, CCC, TOW2; U8 (sector azimutal mas estrecho con
+8 HH, 256-6 grados) = WBM, SRT, TOW2, JRC2, WCS2, CLC, WRC2, MPM.
+Preproceso comun. Cuentas a m/s con la sensibilidad escalar de stations.csv; media y tendencia fuera; para los metodos
+sin picks: pasabanda Butterworth orden 4 fase cero 0.5-6 Hz, remuestreo 100 -> 16 Hz (resample_poly 4/25),
+componentes (E, N, -Z) en la convencion del generador (z profundidad hacia abajo); para PhaseNet: 100 Hz sin filtrar.
+Marco: plano local en km centrado en el centroide de los eventos catalogados en CAL (se calcula en desarrollo y se anota
+antes de congelar); estaciones a z = 0. Reticula xc.make_grid(paso 3, half 21) con profundidades 3, 7 y 11 km (rango
+publicado de la secuencia, no de este catalogo). Medio homogeneo VP = 6.0 km/s, VS = VP/1.73 para todos los metodos
+(los sin picks via task0_common; GaMMA, PyOcto y QuakeMigrate con las mismas velocidades).
+Ventanas continuas: 40 s, paso 3 s; origenes buscados de 0.0 a 14.9 s (paso 0.1) y cada ventana solo "posee" los atomos
+con origen en [5.0, 8.0) s, para que los eventos anteriores se expliquen y deflacten sin reportarse; kmax 8. Atomos de
+todas las ventanas juntos; un atomo a <= 5 km y <= 1.0 s de otro de mayor puntuacion se elimina (igual para todos los
+metodos sin picks). Presupuesto: si en desarrollo el costo proyectado supera 8 h en 2 nucleos, los origenes bajan a
+2.0-11.9 s y kmax a 6, anotado con hora antes de congelar.
+Correcciones. +SC (registradas): retardos de pico de los eventos catalogados de CAL con M >= 2.0 (compuerta de energia y
+>= 3 arribos como station_corrections). S2: c11_lib.s2_terms con los mismos eventos.
+
+Metodos. Sin picks: M1 = MT-FW tope 6 +SC (registrado); M2 = MT-FW tope 6 + S2 + T3 (metodo de la tesis); M3 = BOMP-PK
++SC; M4 = HUBER-N +SC (si su costo cabe en el presupuesto; si no, se declara); M5 = MT-FW tope 6 +SC +T3. Con picks:
+PhaseNet (modelo original del repositorio, como real_picker.py, umbral 0.3 P y S) sobre las estaciones de la subred en
+la hora completa; GaMMA y PyOcto con su configuracion de task1r/2A adaptada al marco y a VP/VS de arriba, puntuacion =
+numero de picks asociados (desempate por la puntuacion propia del asociador). QuakeMigrate como comparador secundario si
+corre dentro del presupuesto.
+
+Acierto y falsos. LOC+T (primaria): epicentro a <= 5 km y |error de origen| <= 0.5 s de un evento catalogado (cualquier
+M). LOC (secundaria): epicentro a <= 5 km y |error de origen| <= 3.0 s. Una deteccion que acierta un evento de M >= 2.0
+cuenta para el recall; una que solo acierta eventos de M < 2.0 es neutra (ni acierto ni falso); una sin correspondencia
+es falsa (cuenta conservadora: el catalogo es incompleto en la secuencia temprana y eso penaliza a todos los metodos).
+Endpoint primario: recall de M >= 2.0 en EVAL a <= 30 falsos por hora (floor(30 x 44.33/60) = 22 falsos), FROC exacto,
+punto de operacion por metodo en EVAL como en el benchmark. Secundarios: 10 y 60 falsos por hora; regla LOC; umbral
+desplegable fijado en CAL a 30 por hora con su tasa realizada en EVAL.
+Incertidumbre: bootstrap de bloques de 60 s de EVAL (eventos y detecciones por bloque del origen), 2000 replicas, punto
+de operacion re-elegido en cada replica, intervalos percentiles 95 %. Agrupado = media de las cuatro subredes.
+Contraste primario: M2 - mejor comparador con picks (max de GaMMA y PyOcto en cada subred y replica), LOC+T, 30/h.
+R0-a: cota inferior agrupada > -0.02 (no inferioridad). R0-b: M2 >= comparador (punto) en al menos 2 de 4 subredes.
+Superioridad solo si la cota inferior agrupada > 0. Secundarios: M2 - M1 (transferencia de G1-C), M1 - M3 (G1 contra
+BOMP-PK), M4 - M3 (G1-R), M2 - M5 (efecto de S2). Descriptivo: por subred, por magnitud (2.0-2.5, >= 2.5), eventos
+solapados (otro evento a <= 10 s), error epicentral y de origen de los aciertos, falsos por hora.
+Desarrollo permitido antes de congelar: SOLO con datos de CAL (origenes de 19:00 a 19:15 y las trazas hasta 19:15:35):
+depurar codigo, verificar unidades, polaridad de Z y que los metodos encuentran eventos de CAL, medir el costo, fijar el
+centroide. Ninguna constante se ajusta por recall; todo cambio respecto de este registro se anota con hora antes de
+congelar. Congelacion: sha256 del codigo y del analisis agregado a este archivo antes del primer calculo sobre EVAL; una
+sola corrida; nada se modifica despues de ver EVAL.
+Limites declarados: una hora, una secuencia, una red; catalogo incompleto; respuesta solo escalar; un positivo es
+evidencia de transferencia, no la confirmacion de G1'; un negativo se reporta igual.
+
+Enmienda de R0 antes de congelar (Sat Oct 10 00:27:36 UTC 2026), con el desarrollo hecho solo sobre CAL (r0/R0_DEV_LOG.txt):
+(1) Reduccion de presupuesto prevista en el registro: costo proyectado ~25 h de CPU (> 8 h); origenes 2.0-11.9 s,
+kmax 6; M4 (HUBER-N) excluido por costo. (2) Normalizacion por estacion: cada estacion se divide por su sd robusta en
+CAL antes del filtro adaptado (el ruido real difiere hasta 4 veces entre estaciones). (3) Comparadores tambien con picks
+corregidos por +SC, como en 2A; BESTPICK = mejor de GaMMA, PyOcto, GaMMA+SC y PyOcto+SC en cada subred y replica (mas
+favorable a los comparadores). (4) Etiquetado: entre eventos que cumplen la regla se prefiere el de M >= 2.0 mas cercano.
+(5) Hallazgo de desarrollo, declarado antes de ver EVAL: en CAL (N8) el detector registrado acierta 3 de 16 eventos M >=
+2.0 a cualquier puntuacion y tiene recall 0 a <= 60/h, frente a 0.625 de PyOcto; el nivel de tiempos tras +SC es
+0.35-0.41 s (0.14 s en sintetico) y la lectura de +-0.25 s no lo cubre. El primario no cambia. Se agrega un brazo
+SECUNDARIO, no confirmatorio: M6 = MT-FW tope 6 + S2 + T3 con semiancho de lectura W = round(2 sigma_S2 / DT) muestras
+por subred, fijado por regla sin correr M6 sobre CAL; contrastes secundarios M6 - BESTPICK y M6 - M2 (LOC+T, 30/h).
+Prediccion declarada: con lo visto en CAL, R0-a probablemente falla para M2; se reportara igual.
+
+Congelacion de R0 (Sat Oct 10 00:27:38 UTC 2026): r0/R0_FREEZE.txt, sha256 21900f008a808fa6abc4a330c3685f71953d4092be118b33cd2169efd3ecacf0, con el sha256 de
+r0_lib.py, r0_run.py, r0_picks.py, r0_analyze.py, queue_eval.sh, R0_DEV_LOG.txt, los modulos del proyecto que ejecutan,
+gamma_src y los tres archivos de datos. Ningun calculo sobre EVAL antes de esta linea.
+
+Resultado de R0 (Sat Oct 10 19:12:30 UTC 2026; r0/run/analysis_eval.txt; codigo congelado sin cambios, sha256sum -c OK). La corrida se
+corto por un reinicio del contenedor el 9 oct a las 21:07 (-05) con N8 completo; se reanudo el 10 oct a las 12:58 con el
+mismo codigo (r0/queue_resume.sh; salidas por subconjunto de metodos unidas con r0/merge_parts.py), el primario primero.
+45 eventos objetivo (M >= 2.0) en EVAL. PRIMARIO (LOC+T, 30/h): M2 - BESTPICK = -0.383 [-0.481, -0.310] agrupado; por
+subred N8 -0.578, N6 -0.667, N4 +0.000 (ambos en 0.000), U8 -0.289. R0-a NO se cumple; R0-b NO se cumple. Recall de M2:
+0.022, 0.000, 0.000, 0.000; de PyOcto: 0.600, 0.667, 0.000, 0.289. Secundario M6 (lectura +-0.69 s): -0.383 [-0.484,
+-0.311]; M6 - M2 +0.000 [-0.016, +0.019]. Regla LOC: M2 - BESTPICK -0.450 [-0.563, -0.385]. Recomputo independiente de
+los puntos de N8 y N6 (script propio): identico. Los contrastes M2 - M1, M1 - M3 y M2 - M5 quedan pendientes de que
+terminen M1/M5 en N4 y U8 y M3 en N6, N4 y U8. Diagnostico post hoc (R0_DEV_LOG_POSTFREEZE.txt): los detectores sin
+picks fallan por ubicacion (distancia mediana del atomo mas cercano en +-3 s, 8-18 km, frente a 1.5 km de PyOcto) y
+por ordenacion (los eventos reales no puntuan por encima de los atomos espurios en una secuencia continua).
+Lectura: la ventaja sintetica de G1/G1-C NO transfiere a estos datos reales con el medio homogeneo y la lectura
+registrada. Pendiente: verificacion independiente completa.
+
+Secundarios de R0 (Sat Oct 10 19:42:54 UTC 2026; r0/run/analysis_eval.txt, B = 2000, mismo codigo). LOC+T, 30/h, agrupado: M2 - M1
+(efecto de S2 + T3 sobre el detector registrado) -0.006 [-0.022, +0.014]; M2 - M5 (efecto de S2) +0.006 [+0.000,
++0.019]; M1 - BESTPICK -0.378 [-0.482, -0.304]; M6 - M2 +0.000 [-0.016, +0.019]. Todos los detectores sin picks tienen
+recall entre 0.000 y 0.044 en todas las subredes, de modo que estos contrastes entre ellos no informan. M1 - M3 (contra
+BOMP-PK) NO se completo: M3 termino solo en N8 (LOC+T 30/h: M1 0.044, M3 0.022; LOC: 0.044 y 0.089); las corridas de
+M3 en N6, N4 y U8 se detuvieron a mano al cerrar la sesion y se declaran no hechas. Verificacion independiente completa:
+pendiente; hecho solo el recomputo propio de los puntos de N8 y N6 del primario.

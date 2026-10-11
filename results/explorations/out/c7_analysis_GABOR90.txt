@@ -1,0 +1,182 @@
+======================================================================================================================
+DESIGN GABOR90
+
+GABOR90 thin: windows 300, events 223, networks 60
+  recall @0.1 / @0.25 with 95% CI
+    BOMP-PK            0.242 [0.159, 0.380]   0.439 [0.326, 0.533]
+    BOMP-PK-NX         0.242 [0.159, 0.380]   0.439 [0.326, 0.533]
+    BOMP-PK-CAP        0.413 [0.254, 0.507]   0.520 [0.406, 0.613]
+    BOMP-PK-PH         0.242 [0.125, 0.386]   0.444 [0.321, 0.572]
+    BOMP-PK-PHF        0.260 [0.179, 0.374]   0.466 [0.331, 0.580]
+    BOMP-PK-PH-FULL    0.251 [0.167, 0.459]   0.502 [0.395, 0.644]
+    BOMP-PK-PHF-FULL   0.296 [0.196, 0.493]   0.498 [0.410, 0.631]
+    BOMP-PK-PHF3       0.323 [0.215, 0.430]   0.511 [0.381, 0.618]
+    BOMP-PK-PH-CAP     0.363 [0.259, 0.469]   0.507 [0.404, 0.610]
+    BOMP-PK-PHF-CAP    0.305 [0.230, 0.403]   0.435 [0.336, 0.552]
+    MT-FW              0.413 [0.265, 0.500]   0.516 [0.411, 0.612]
+    MT-FW-PH           0.377 [0.275, 0.492]   0.507 [0.400, 0.624]
+    MT-FW-PHF          0.314 [0.236, 0.395]   0.422 [0.329, 0.529]
+    CEIL-GD            0.318 [0.211, 0.532]   0.547 [0.413, 0.683]
+  paired differences @0.1 / @0.25 (95% CI, P(diff <= 0))
+    BOMP-PK-PH       - BOMP-PK      @0.1 +0.000 [-0.118, +0.110] P 0.583   @0.25 +0.004 [-0.099, +0.128] P 0.434   (boot SD 0.0570 / 0.0571)
+    BOMP-PK-PHF      - BOMP-PK      @0.1 +0.018 [-0.089, +0.103] P 0.380   @0.25 +0.027 [-0.098, +0.125] P 0.394   (boot SD 0.0498 / 0.0558)
+    BOMP-PK-PH-FULL  - BOMP-PK      @0.1 +0.009 [-0.087, +0.174] P 0.345   @0.25 +0.063 [-0.032, +0.218] P 0.090   (boot SD 0.0621 / 0.0625)
+    BOMP-PK-PHF-FULL - BOMP-PK      @0.1 +0.054 [-0.060, +0.217] P 0.164   @0.25 +0.058 [-0.020, +0.195] P 0.068   (boot SD 0.0686 / 0.0553)
+    BOMP-PK-PHF3     - BOMP-PK      @0.1 +0.081 [-0.043, +0.180] P 0.110   @0.25 +0.072 [-0.046, +0.187] P 0.129   (boot SD 0.0560 / 0.0603)
+    BOMP-PK-NX       - BOMP-PK      @0.1 +0.000 [+0.000, +0.000] P 1.000   @0.25 +0.000 [+0.000, +0.000] P 1.000   (boot SD 0.0000 / 0.0000)
+    BOMP-PK-CAP      - BOMP-PK      @0.1 +0.170 [+0.008, +0.257] P 0.024   @0.25 +0.081 [-0.020, +0.178] P 0.067   (boot SD 0.0649 / 0.0506)
+    BOMP-PK-PH-CAP   - BOMP-PK      @0.1 +0.121 [-0.005, +0.205] P 0.034   @0.25 +0.067 [-0.034, +0.184] P 0.087   (boot SD 0.0558 / 0.0550)
+    BOMP-PK-PHF-CAP  - BOMP-PK      @0.1 +0.063 [-0.085, +0.156] P 0.169   @0.25 -0.004 [-0.090, +0.108] P 0.437   (boot SD 0.0580 / 0.0518)
+    BOMP-PK-PH-CAP   - BOMP-PK-CAP  @0.1 -0.049 [-0.138, +0.074] P 0.795   @0.25 -0.013 [-0.102, +0.101] P 0.557   (boot SD 0.0535 / 0.0527)
+    BOMP-PK-PHF-CAP  - BOMP-PK-CAP  @0.1 -0.108 [-0.202, +0.060] P 0.900   @0.25 -0.085 [-0.178, +0.041] P 0.889   (boot SD 0.0668 / 0.0575)
+    BOMP-PK-PH       - MT-FW        @0.1 -0.170 [-0.286, -0.009] P 0.984   @0.25 -0.072 [-0.185, +0.055] P 0.840   (boot SD 0.0723 / 0.0630)
+    BOMP-PK-PHF      - MT-FW        @0.1 -0.152 [-0.248, +0.005] P 0.972   @0.25 -0.049 [-0.172, +0.068] P 0.842   (boot SD 0.0647 / 0.0602)
+    BOMP-PK-PH-CAP   - MT-FW        @0.1 -0.049 [-0.129, +0.063] P 0.800   @0.25 -0.009 [-0.104, +0.101] P 0.524   (boot SD 0.0470 / 0.0509)
+    BOMP-PK-PHF-CAP  - MT-FW        @0.1 -0.108 [-0.203, +0.050] P 0.896   @0.25 -0.081 [-0.177, +0.034] P 0.893   (boot SD 0.0671 / 0.0549)
+    MT-FW            - BOMP-PK      @0.1 +0.170 [+0.015, +0.258] P 0.016   @0.25 +0.076 [-0.009, +0.167] P 0.042   (boot SD 0.0620 / 0.0462)
+    MT-FW-PH         - MT-FW        @0.1 -0.036 [-0.123, +0.081] P 0.685   @0.25 -0.009 [-0.097, +0.106] P 0.494   (boot SD 0.0515 / 0.0528)
+    MT-FW-PHF        - MT-FW        @0.1 -0.099 [-0.194, +0.031] P 0.914   @0.25 -0.094 [-0.190, +0.009] P 0.967   (boot SD 0.0593 / 0.0513)
+    MT-FW-PH         - BOMP-PK      @0.1 +0.135 [+0.000, +0.233] P 0.028   @0.25 +0.067 [-0.027, +0.197] P 0.093   (boot SD 0.0593 / 0.0586)
+    MT-FW-PHF        - BOMP-PK      @0.1 +0.072 [-0.075, +0.159] P 0.154   @0.25 -0.018 [-0.107, +0.093] P 0.582   (boot SD 0.0559 / 0.0497)
+    CEIL-GD          - BOMP-PK      @0.1 +0.076 [-0.029, +0.280] P 0.074   @0.25 +0.108 [-0.025, +0.259] P 0.055   (boot SD 0.0805 / 0.0719)
+  fraction of the CEIL-GD headroom captured, (m - BOMP-PK) / (CEIL-GD - BOMP-PK): point, median and 95% interval over replicates
+    BOMP-PK-PH       @0.1 +0.00 (median -0.03, [-5.79, +3.02])   @0.25 +0.04 (median +0.13, [-2.52, +2.00])
+    BOMP-PK-PHF      @0.1 +0.24 (median +0.16, [-4.00, +2.68])   @0.25 +0.25 (median +0.17, [-1.82, +2.46])
+    BOMP-PK-PH-CAP   @0.1 +1.59 (median +0.87, [-5.39, +8.61])   @0.25 +0.63 (median +0.60, [-1.76, +4.00])
+    BOMP-PK-PHF-CAP  @0.1 +0.82 (median +0.45, [-7.50, +5.67])   @0.25 -0.04 (median +0.10, [-2.00, +1.78])
+    MT-FW            @0.1 +2.24 (median +1.24, [-7.03, +10.53])   @0.25 +0.71 (median +0.60, [-1.83, +3.52])
+    MT-FW-PH         @0.1 +1.76 (median +1.04, [-7.18, +10.00])   @0.25 +0.63 (median +0.62, [-1.65, +4.21])
+    MT-FW-PHF        @0.1 +0.94 (median +0.48, [-6.06, +5.53])   @0.25 -0.17 (median -0.05, [-2.53, +1.88])
+
+GABOR90 strong: windows 300, events 226, networks 60
+  recall @0.1 / @0.25 with 95% CI
+    BOMP-PK            0.283 [0.189, 0.368]   0.376 [0.274, 0.456]
+    BOMP-PK-NX         0.283 [0.189, 0.368]   0.376 [0.274, 0.456]
+    BOMP-PK-CAP        0.265 [0.178, 0.360]   0.363 [0.272, 0.459]
+    BOMP-PK-PH         0.261 [0.133, 0.369]   0.354 [0.260, 0.458]
+    BOMP-PK-PHF        0.217 [0.129, 0.329]   0.336 [0.236, 0.445]
+    BOMP-PK-PH-FULL    0.283 [0.167, 0.372]   0.367 [0.257, 0.450]
+    BOMP-PK-PHF-FULL   0.230 [0.139, 0.326]   0.314 [0.219, 0.418]
+    BOMP-PK-PHF3       0.261 [0.156, 0.354]   0.372 [0.266, 0.464]
+    BOMP-PK-PH-CAP     0.252 [0.157, 0.329]   0.363 [0.266, 0.459]
+    BOMP-PK-PHF-CAP    0.292 [0.199, 0.377]   0.385 [0.284, 0.473]
+    MT-FW              0.261 [0.175, 0.374]   0.389 [0.286, 0.479]
+    MT-FW-PH           0.257 [0.165, 0.343]   0.367 [0.265, 0.459]
+    MT-FW-PHF          0.261 [0.183, 0.354]   0.363 [0.265, 0.460]
+    CEIL-GD            0.394 [0.239, 0.533]   0.540 [0.405, 0.644]
+  paired differences @0.1 / @0.25 (95% CI, P(diff <= 0))
+    BOMP-PK-PH       - BOMP-PK      @0.1 -0.022 [-0.124, +0.055] P 0.793   @0.25 -0.022 [-0.099, +0.069] P 0.645   (boot SD 0.0458 / 0.0427)
+    BOMP-PK-PHF      - BOMP-PK      @0.1 -0.066 [-0.152, +0.041] P 0.902   @0.25 -0.040 [-0.135, +0.072] P 0.752   (boot SD 0.0472 / 0.0547)
+    BOMP-PK-PH-FULL  - BOMP-PK      @0.1 +0.000 [-0.092, +0.070] P 0.575   @0.25 -0.009 [-0.090, +0.065] P 0.630   (boot SD 0.0422 / 0.0394)
+    BOMP-PK-PHF-FULL - BOMP-PK      @0.1 -0.053 [-0.148, +0.053] P 0.845   @0.25 -0.062 [-0.165, +0.057] P 0.836   (boot SD 0.0504 / 0.0564)
+    BOMP-PK-PHF3     - BOMP-PK      @0.1 -0.022 [-0.126, +0.060] P 0.730   @0.25 -0.004 [-0.091, +0.079] P 0.523   (boot SD 0.0462 / 0.0441)
+    BOMP-PK-NX       - BOMP-PK      @0.1 +0.000 [+0.000, +0.000] P 1.000   @0.25 +0.000 [+0.000, +0.000] P 1.000   (boot SD 0.0000 / 0.0000)
+    BOMP-PK-CAP      - BOMP-PK      @0.1 -0.018 [-0.088, +0.069] P 0.623   @0.25 -0.013 [-0.066, +0.070] P 0.544   (boot SD 0.0405 / 0.0343)
+    BOMP-PK-PH-CAP   - BOMP-PK      @0.1 -0.031 [-0.114, +0.043] P 0.813   @0.25 -0.013 [-0.091, +0.073] P 0.614   (boot SD 0.0397 / 0.0427)
+    BOMP-PK-PHF-CAP  - BOMP-PK      @0.1 +0.009 [-0.087, +0.098] P 0.449   @0.25 +0.009 [-0.086, +0.114] P 0.447   (boot SD 0.0484 / 0.0519)
+    BOMP-PK-PH-CAP   - BOMP-PK-CAP  @0.1 -0.013 [-0.115, +0.064] P 0.701   @0.25 +0.000 [-0.103, +0.086] P 0.584   (boot SD 0.0439 / 0.0469)
+    BOMP-PK-PHF-CAP  - BOMP-PK-CAP  @0.1 +0.027 [-0.076, +0.121] P 0.360   @0.25 +0.022 [-0.089, +0.124] P 0.430   (boot SD 0.0506 / 0.0550)
+    BOMP-PK-PH       - MT-FW        @0.1 +0.000 [-0.144, +0.094] P 0.674   @0.25 -0.035 [-0.129, +0.062] P 0.741   (boot SD 0.0605 / 0.0476)
+    BOMP-PK-PHF      - MT-FW        @0.1 -0.044 [-0.163, +0.066] P 0.806   @0.25 -0.053 [-0.165, +0.059] P 0.821   (boot SD 0.0594 / 0.0566)
+    BOMP-PK-PH-CAP   - MT-FW        @0.1 -0.009 [-0.121, +0.066] P 0.731   @0.25 -0.027 [-0.118, +0.068] P 0.715   (boot SD 0.0467 / 0.0472)
+    BOMP-PK-PHF-CAP  - MT-FW        @0.1 +0.031 [-0.093, +0.117] P 0.401   @0.25 -0.004 [-0.112, +0.109] P 0.554   (boot SD 0.0536 / 0.0566)
+    MT-FW            - BOMP-PK      @0.1 -0.022 [-0.089, +0.079] P 0.578   @0.25 +0.013 [-0.051, +0.083] P 0.343   (boot SD 0.0439 / 0.0341)
+    MT-FW-PH         - MT-FW        @0.1 -0.004 [-0.113, +0.076] P 0.657   @0.25 -0.022 [-0.119, +0.073] P 0.693   (boot SD 0.0482 / 0.0476)
+    MT-FW-PHF        - MT-FW        @0.1 +0.000 [-0.108, +0.096] P 0.542   @0.25 -0.027 [-0.134, +0.087] P 0.704   (boot SD 0.0518 / 0.0565)
+    MT-FW-PH         - BOMP-PK      @0.1 -0.027 [-0.105, +0.053] P 0.741   @0.25 -0.009 [-0.087, +0.078] P 0.599   (boot SD 0.0407 / 0.0421)
+    MT-FW-PHF        - BOMP-PK      @0.1 -0.022 [-0.100, +0.082] P 0.601   @0.25 -0.013 [-0.108, +0.095] P 0.606   (boot SD 0.0469 / 0.0524)
+    CEIL-GD          - BOMP-PK      @0.1 +0.111 [-0.035, +0.245] P 0.057   @0.25 +0.164 [+0.041, +0.269] P 0.004   (boot SD 0.0728 / 0.0575)
+  fraction of the CEIL-GD headroom captured, (m - BOMP-PK) / (CEIL-GD - BOMP-PK): point, median and 95% interval over replicates
+    BOMP-PK-PH       @0.1 -0.20 (median -0.21, [-4.26, +2.00])   @0.25 -0.14 (median -0.08, [-1.37, +0.40])
+    BOMP-PK-PHF      @0.1 -0.60 (median -0.45, [-6.38, +2.93])   @0.25 -0.24 (median -0.21, [-1.95, +0.42])
+    BOMP-PK-PH-CAP   @0.1 -0.28 (median -0.26, [-3.03, +1.50])   @0.25 -0.08 (median -0.06, [-1.20, +0.44])
+    BOMP-PK-PHF-CAP  @0.1 +0.08 (median +0.06, [-2.57, +2.02])   @0.25 +0.05 (median +0.05, [-0.93, +0.79])
+    MT-FW            @0.1 -0.20 (median -0.04, [-2.67, +2.00])   @0.25 +0.08 (median +0.10, [-0.44, +0.75])
+    MT-FW-PH         @0.1 -0.24 (median -0.21, [-2.92, +1.41])   @0.25 -0.05 (median -0.05, [-1.00, +0.45])
+    MT-FW-PHF        @0.1 -0.20 (median -0.08, [-2.53, +1.50])   @0.25 -0.08 (median -0.07, [-1.26, +0.70])
+
+GABOR90 both regimes pooled (6 strata): windows 600, events 449, networks 120
+  recall @0.1 / @0.25 with 95% CI
+    BOMP-PK            0.261 [0.199, 0.343]   0.394 [0.331, 0.458]
+    BOMP-PK-NX         0.261 [0.199, 0.343]   0.394 [0.331, 0.458]
+    BOMP-PK-CAP        0.303 [0.231, 0.389]   0.423 [0.357, 0.488]
+    BOMP-PK-PH         0.232 [0.163, 0.333]   0.390 [0.317, 0.457]
+    BOMP-PK-PHF        0.241 [0.174, 0.314]   0.370 [0.295, 0.465]
+    BOMP-PK-PH-FULL    0.269 [0.189, 0.350]   0.401 [0.345, 0.480]
+    BOMP-PK-PHF-FULL   0.261 [0.189, 0.332]   0.403 [0.315, 0.469]
+    BOMP-PK-PHF3       0.287 [0.215, 0.362]   0.414 [0.342, 0.490]
+    BOMP-PK-PH-CAP     0.281 [0.224, 0.355]   0.410 [0.345, 0.476]
+    BOMP-PK-PHF-CAP    0.301 [0.239, 0.354]   0.399 [0.325, 0.470]
+    MT-FW              0.316 [0.239, 0.396]   0.441 [0.371, 0.506]
+    MT-FW-PH           0.294 [0.232, 0.369]   0.408 [0.350, 0.477]
+    MT-FW-PHF          0.294 [0.232, 0.351]   0.388 [0.311, 0.453]
+    CEIL-GD            0.376 [0.254, 0.481]   0.526 [0.434, 0.613]
+  paired differences @0.1 / @0.25 (95% CI, P(diff <= 0))
+    BOMP-PK-PH       - BOMP-PK      @0.1 -0.029 [-0.089, +0.047] P 0.772   @0.25 -0.004 [-0.069, +0.058] P 0.575   (boot SD 0.0353 / 0.0326)
+    BOMP-PK-PHF      - BOMP-PK      @0.1 -0.020 [-0.092, +0.038] P 0.800   @0.25 -0.024 [-0.088, +0.069] P 0.668   (boot SD 0.0330 / 0.0406)
+    BOMP-PK-PH-FULL  - BOMP-PK      @0.1 +0.009 [-0.069, +0.071] P 0.524   @0.25 +0.007 [-0.045, +0.081] P 0.338   (boot SD 0.0351 / 0.0319)
+    BOMP-PK-PHF-FULL - BOMP-PK      @0.1 +0.000 [-0.077, +0.069] P 0.610   @0.25 +0.009 [-0.074, +0.080] P 0.453   (boot SD 0.0366 / 0.0399)
+    BOMP-PK-PHF3     - BOMP-PK      @0.1 +0.027 [-0.050, +0.087] P 0.303   @0.25 +0.020 [-0.048, +0.090] P 0.292   (boot SD 0.0351 / 0.0359)
+    BOMP-PK-NX       - BOMP-PK      @0.1 +0.000 [+0.000, +0.000] P 1.000   @0.25 +0.000 [+0.000, +0.000] P 1.000   (boot SD 0.0000 / 0.0000)
+    BOMP-PK-CAP      - BOMP-PK      @0.1 +0.042 [-0.033, +0.116] P 0.159   @0.25 +0.029 [-0.020, +0.086] P 0.135   (boot SD 0.0394 / 0.0270)
+    BOMP-PK-PH-CAP   - BOMP-PK      @0.1 +0.020 [-0.051, +0.088] P 0.331   @0.25 +0.016 [-0.042, +0.085] P 0.294   (boot SD 0.0356 / 0.0326)
+    BOMP-PK-PHF-CAP  - BOMP-PK      @0.1 +0.040 [-0.042, +0.098] P 0.219   @0.25 +0.004 [-0.066, +0.080] P 0.424   (boot SD 0.0359 / 0.0370)
+    BOMP-PK-PH-CAP   - BOMP-PK-CAP  @0.1 -0.022 [-0.093, +0.044] P 0.753   @0.25 -0.013 [-0.073, +0.050] P 0.647   (boot SD 0.0354 / 0.0323)
+    BOMP-PK-PHF-CAP  - BOMP-PK-CAP  @0.1 -0.002 [-0.094, +0.070] P 0.600   @0.25 -0.024 [-0.099, +0.053] P 0.746   (boot SD 0.0421 / 0.0390)
+    BOMP-PK-PH       - MT-FW        @0.1 -0.085 [-0.165, +0.019] P 0.944   @0.25 -0.051 [-0.125, +0.021] P 0.928   (boot SD 0.0464 / 0.0367)
+    BOMP-PK-PHF      - MT-FW        @0.1 -0.076 [-0.154, +0.011] P 0.962   @0.25 -0.071 [-0.142, +0.024] P 0.922   (boot SD 0.0412 / 0.0431)
+    BOMP-PK-PH-CAP   - MT-FW        @0.1 -0.036 [-0.093, +0.030] P 0.851   @0.25 -0.031 [-0.088, +0.039] P 0.796   (boot SD 0.0316 / 0.0328)
+    BOMP-PK-PHF-CAP  - MT-FW        @0.1 -0.016 [-0.100, +0.061] P 0.703   @0.25 -0.042 [-0.113, +0.038] P 0.842   (boot SD 0.0404 / 0.0385)
+    MT-FW            - BOMP-PK      @0.1 +0.056 [-0.021, +0.121] P 0.088   @0.25 +0.047 [-0.002, +0.097] P 0.034   (boot SD 0.0364 / 0.0259)
+    MT-FW-PH         - MT-FW        @0.1 -0.022 [-0.087, +0.046] P 0.739   @0.25 -0.033 [-0.090, +0.036] P 0.801   (boot SD 0.0340 / 0.0326)
+    MT-FW-PHF        - MT-FW        @0.1 -0.022 [-0.101, +0.044] P 0.775   @0.25 -0.053 [-0.127, +0.021] P 0.924   (boot SD 0.0370 / 0.0371)
+    MT-FW-PH         - BOMP-PK      @0.1 +0.033 [-0.041, +0.103] P 0.233   @0.25 +0.013 [-0.043, +0.082] P 0.316   (boot SD 0.0362 / 0.0325)
+    MT-FW-PHF        - BOMP-PK      @0.1 +0.033 [-0.047, +0.089] P 0.274   @0.25 -0.007 [-0.082, +0.064] P 0.605   (boot SD 0.0350 / 0.0356)
+    CEIL-GD          - BOMP-PK      @0.1 +0.116 [-0.011, +0.216] P 0.038   @0.25 +0.131 [+0.049, +0.219] P 0.003   (boot SD 0.0564 / 0.0436)
+  fraction of the CEIL-GD headroom captured, (m - BOMP-PK) / (CEIL-GD - BOMP-PK): point, median and 95% interval over replicates
+    BOMP-PK-PH       @0.1 -0.25 (median -0.20, [-2.66, +1.47])   @0.25 -0.03 (median -0.04, [-0.84, +0.38])
+    BOMP-PK-PHF      @0.1 -0.17 (median -0.24, [-2.61, +1.31])   @0.25 -0.19 (median -0.12, [-1.14, +0.48])
+    BOMP-PK-PH-CAP   @0.1 +0.17 (median +0.17, [-1.06, +1.68])   @0.25 +0.12 (median +0.13, [-0.50, +0.60])
+    BOMP-PK-PHF-CAP  @0.1 +0.35 (median +0.28, [-1.35, +2.72])   @0.25 +0.03 (median +0.06, [-0.77, +0.62])
+    MT-FW            @0.1 +0.48 (median +0.43, [-1.46, +3.41])   @0.25 +0.36 (median +0.32, [-0.04, +0.94])
+    MT-FW-PH         @0.1 +0.29 (median +0.27, [-1.01, +2.13])   @0.25 +0.10 (median +0.12, [-0.46, +0.63])
+    MT-FW-PHF        @0.1 +0.29 (median +0.21, [-1.04, +2.15])   @0.25 -0.05 (median -0.05, [-0.94, +0.49])
+
+GABOR90 diagnostics (both regimes)
+  empty windows (k = 0): top-atom score quantiles (median / P90 / max), n windows; and the per-method threshold at the pooled cap-0.25 operating point
+    BOMP-PK               28.0    40.2    94.7  n 257   mean ratio to NX 1.000   thr@0.25    50.9  thr@0.1    71.4
+    BOMP-PK-NX            28.0    40.2    94.7  n 257   mean ratio to NX 1.000   thr@0.25    50.9  thr@0.1    71.4
+    BOMP-PK-CAP           28.0    38.6    61.0  n 257   mean ratio to NX 0.986   thr@0.25    43.2  thr@0.1    50.5
+    BOMP-PK-PH            25.1    36.9    98.0  n 257   mean ratio to NX 0.914   thr@0.25    47.1  thr@0.1    68.5
+    BOMP-PK-PHF           27.3    36.2    79.8  n 257   mean ratio to NX 0.979   thr@0.25    48.8  thr@0.1    70.5
+    BOMP-PK-PH-FULL       30.3    42.6    99.3  n 257   mean ratio to NX 1.091   thr@0.25    52.9  thr@0.1    73.4
+    BOMP-PK-PHF-FULL      40.0    51.7    95.4  n 257   mean ratio to NX 1.430   thr@0.25    60.5  thr@0.1    82.3
+    BOMP-PK-PHF3          27.5    36.4    89.0  n 257   mean ratio to NX 0.991   thr@0.25    46.6  thr@0.1    65.2
+    BOMP-PK-PH-CAP        25.1    34.6    59.0  n 257   mean ratio to NX 0.890   thr@0.25    37.9  thr@0.1    44.2
+    BOMP-PK-PHF-CAP       26.8    32.6    46.5  n 257   mean ratio to NX 0.940   thr@0.25    35.2  thr@0.1    39.3
+    MT-FW                 28.0    38.6    61.0  n 257   mean ratio to NX 0.986   thr@0.25    42.5  thr@0.1    49.5
+    MT-FW-PH              25.1    34.6    59.0  n 257   mean ratio to NX 0.890   thr@0.25    37.9  thr@0.1    43.5
+    MT-FW-PHF             26.8    32.6    46.5  n 257   mean ratio to NX 0.940   thr@0.25    35.7  thr@0.1    39.9
+  at the pooled cap-0.25 threshold: false atoms/window in empty | event windows; first-atom hit rate (event windows); coverage; median epicentral error of hits (km)
+    BOMP-PK             0.051 |  0.391   first-hit 0.598   coverage 0.666   err 2.08
+    BOMP-PK-NX          0.051 |  0.391   first-hit 0.598   coverage 0.666   err 2.08
+    BOMP-PK-CAP         0.054 |  0.379   first-hit 0.618   coverage 0.688   err 2.27
+    BOMP-PK-PH          0.054 |  0.391   first-hit 0.592   coverage 0.644   err 2.33
+    BOMP-PK-PHF         0.039 |  0.402   first-hit 0.580   coverage 0.666   err 2.48
+    BOMP-PK-PH-FULL     0.051 |  0.370   first-hit 0.615   coverage 0.690   err 2.33
+    BOMP-PK-PHF-FULL    0.054 |  0.394   first-hit 0.574   coverage 0.615   err 2.30
+    BOMP-PK-PHF3        0.047 |  0.402   first-hit 0.603   coverage 0.675   err 2.46
+    BOMP-PK-PH-CAP      0.054 |  0.379   first-hit 0.621   coverage 0.664   err 2.33
+    BOMP-PK-PHF-CAP     0.054 |  0.394   first-hit 0.589   coverage 0.668   err 2.51
+    MT-FW               0.054 |  0.394   first-hit 0.618   coverage 0.688   err 2.25
+    MT-FW-PH            0.054 |  0.379   first-hit 0.621   coverage 0.668   err 2.35
+    MT-FW-PHF           0.047 |  0.397   first-hit 0.589   coverage 0.675   err 2.52
+  per-event recall at each method's pooled cap-0.25 threshold, by pulse parameters (n events)
+    |phase| 0-15   n   73  BOMP-PK 0.425  BOMP-PK-PH 0.425  BOMP-PK-PHF 0.397  BOMP-PK-PH-CAP 0.397  MT-FW 0.466  MT-FW-PH 0.397
+    |phase| 15-30  n   69  BOMP-PK 0.391  BOMP-PK-PH 0.391  BOMP-PK-PHF 0.362  BOMP-PK-PH-CAP 0.493  MT-FW 0.435  MT-FW-PH 0.493
+    |phase| 30-45  n   77  BOMP-PK 0.390  BOMP-PK-PH 0.377  BOMP-PK-PHF 0.351  BOMP-PK-PH-CAP 0.390  MT-FW 0.455  MT-FW-PH 0.364
+    |phase| 45-90  n  230  BOMP-PK 0.387  BOMP-PK-PH 0.383  BOMP-PK-PHF 0.370  BOMP-PK-PH-CAP 0.396  MT-FW 0.430  MT-FW-PH 0.400
+    fc < 1.75      n  108  BOMP-PK 0.398  BOMP-PK-PH 0.361  BOMP-PK-PHF 0.472  BOMP-PK-PH-CAP 0.435  MT-FW 0.454  MT-FW-PH 0.435
+    fc 1.75-2.25   n  162  BOMP-PK 0.444  BOMP-PK-PH 0.426  BOMP-PK-PHF 0.377  BOMP-PK-PH-CAP 0.420  MT-FW 0.488  MT-FW-PH 0.420
+    fc >= 2.25     n  179  BOMP-PK 0.346  BOMP-PK-PH 0.374  BOMP-PK-PHF 0.302  BOMP-PK-PH-CAP 0.385  MT-FW 0.391  MT-FW-PH 0.380
+  runtime s/window (2 processes on 2 cores): BOMP-PK 0.480, BOMP-PK-NX 0.045, BOMP-PK-CAP 0.083, BOMP-PK-PH 0.085, BOMP-PK-PHF 0.268, BOMP-PK-PH-FULL 0.124, BOMP-PK-PHF-FULL 0.229, BOMP-PK-PHF3 0.201, BOMP-PK-PH-CAP 0.137, BOMP-PK-PHF-CAP 0.360, MT-FW 0.078, MT-FW-PH 0.213, MT-FW-PHF 0.459, CEIL-GD 0.244

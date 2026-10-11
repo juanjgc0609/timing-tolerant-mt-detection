@@ -1,0 +1,59 @@
+## Check 3. Budget handicap (seed 999, 2A calibration networks 0-4, windows 0-2 of each network, 90 windows)
+- reproducibility: registered TS-SFW+SC recomputed here == stored calibration record bit-for-bit in 88/90 windows; identical hit pattern in 90/90 (the rest differ by floating-point path differences amplified by the 50-iteration L-BFGS-B)
+- REG   :   1.2 s/window; J after atom 1 relative to REG: median +0.0000, P10 +0.0000 (negative = lower objective); sliding L-BFGS-B at cap 0.80; refinement at cap 0.91; alternations at cap 1.00; shifts at the +-0.25 s bound 0.298
+- X10   :   3.4 s/window; J after atom 1 relative to REG: median -0.0000, P10 -0.0026 (negative = lower objective); sliding L-BFGS-B at cap 0.00; refinement at cap 0.00; alternations at cap 0.84; shifts at the +-0.25 s bound 0.330
+- MS    :   2.4 s/window; J after atom 1 relative to REG: median +0.0000, P10 -0.0724 (negative = lower objective); sliding L-BFGS-B at cap 0.81; refinement at cap 0.94; alternations at cap 1.00; shifts at the +-0.25 s bound 0.300
+- X10MS :   5.8 s/window; J after atom 1 relative to REG: median -0.0008, P10 -0.0724 (negative = lower objective); sliding L-BFGS-B at cap 0.00; refinement at cap 0.00; alternations at cap 0.85; shifts at the +-0.25 s bound 0.325
+
+Recall at <= 0.1 / <= 0.25 false per window (exact FROC, one curve per pool); differences with 95% CI (bootstrap over networks then windows, 2000 replicates, operating point re-chosen)
+- pool all (90 windows, 72 events): REG 0.347/0.458; X10 0.389/0.472; MS 0.389/0.472; X10MS 0.389/0.472; stored_REG 0.347/0.458; BOMP-PK+SC 0.292/0.389; MT-FW+SC 0.319/0.444; BOMP-PK-SLIDE+SC 0.375/0.458
+    X10    - REG: +0.042 [+0.000, +0.116], +0.014 [+0.000, +0.083] | X10 - BOMP-PK+SC: +0.097 [+0.000, +0.221], +0.083 [-0.051, +0.208]
+    MS     - REG: +0.042 [-0.017, +0.128], +0.014 [-0.045, +0.113] | MS - BOMP-PK+SC: +0.097 [+0.000, +0.232], +0.083 [-0.043, +0.225]
+    X10MS  - REG: +0.042 [-0.022, +0.127], +0.014 [-0.047, +0.095] | X10MS - BOMP-PK+SC: +0.097 [+0.000, +0.232], +0.083 [-0.047, +0.213]
+    REG    - BOMP-PK+SC: +0.056 [-0.046, +0.200], +0.069 [-0.077, +0.189] | REG(recomputed) - REG(stored): +0.000, +0.000
+- pool thin (45 windows, 38 events): REG 0.342/0.500; X10 0.342/0.500; MS 0.342/0.500; X10MS 0.342/0.500; stored_REG 0.342/0.500; BOMP-PK+SC 0.316/0.447; MT-FW+SC 0.263/0.500; BOMP-PK-SLIDE+SC 0.342/0.500
+    X10    - REG: +0.000 [-0.033, +0.065], +0.000 [-0.040, +0.045] | X10 - BOMP-PK+SC: +0.026 [+0.000, +0.235], +0.053 [-0.171, +0.324]
+    MS     - REG: +0.000 [-0.071, +0.089], +0.000 [-0.119, +0.122] | MS - BOMP-PK+SC: +0.026 [+0.000, +0.225], +0.053 [-0.167, +0.324]
+    X10MS  - REG: +0.000 [-0.071, +0.102], +0.000 [-0.119, +0.122] | X10MS - BOMP-PK+SC: +0.026 [+0.000, +0.225], +0.053 [-0.167, +0.324]
+    REG    - BOMP-PK+SC: +0.026 [+0.000, +0.250], +0.053 [-0.178, +0.312] | REG(recomputed) - REG(stored): +0.000, +0.000
+- pool strong (45 windows, 34 events): REG 0.382/0.500; X10 0.441/0.529; MS 0.441/0.559; X10MS 0.441/0.559; stored_REG 0.382/0.500; BOMP-PK+SC 0.206/0.412; MT-FW+SC 0.353/0.471; BOMP-PK-SLIDE+SC 0.412/0.500
+    X10    - REG: +0.059 [+0.000, +0.243], +0.029 [+0.000, +0.171] | X10 - BOMP-PK+SC: +0.235 [+0.000, +0.425], +0.118 [-0.061, +0.325]
+    MS     - REG: +0.059 [+0.000, +0.269], +0.059 [+0.000, +0.206] | MS - BOMP-PK+SC: +0.235 [+0.000, +0.433], +0.147 [+0.000, +0.360]
+    X10MS  - REG: +0.059 [+0.000, +0.268], +0.059 [+0.000, +0.188] | X10MS - BOMP-PK+SC: +0.235 [+0.000, +0.433], +0.147 [+0.000, +0.359]
+    REG    - BOMP-PK+SC: +0.176 [-0.147, +0.382], +0.088 [-0.129, +0.310] | REG(recomputed) - REG(stored): +0.000, +0.000
+- distinct true events detected (any score) gained / lost relative to REG: X10 +1/-0; MS +3/-0; X10MS +2/-0 (of 72 events)
+
+### Check 3 (pooled). REG vs X10MS (x10 caps + 9-start refinement) on 270 windows (windows 0-8 of each of the 30 seed-999 calibration networks), 208 events
+- registered recompute vs stored: identical hit pattern in 270/270 windows
+- all (270 windows, 208 events): REG 0.351/0.462; X10MS 0.346/0.447; BOMP-PK+SC 0.351/0.457; BOMP-PK-SLIDE+SC 0.356/0.462; MT-FW+SC 0.322/0.433
+    X10MS - REG: -0.005 [-0.072, +0.045], -0.014 [-0.052, +0.038] | X10MS - BOMP-PK+SC: -0.005 [-0.100, +0.096], -0.010 [-0.068, +0.087] | REG - BOMP-PK+SC: +0.000 [-0.075, +0.105], +0.005 [-0.054, +0.088]
+- thin (135 windows, 96 events): REG 0.427/0.594; X10MS 0.417/0.594; BOMP-PK+SC 0.406/0.562; BOMP-PK-SLIDE+SC 0.438/0.594; MT-FW+SC 0.438/0.542
+    X10MS - REG: -0.010 [-0.130, +0.060], +0.000 [-0.062, +0.085] | X10MS - BOMP-PK+SC: +0.010 [-0.122, +0.216], +0.031 [-0.138, +0.155] | REG - BOMP-PK+SC: +0.021 [-0.077, +0.182], +0.031 [-0.131, +0.140]
+- strong (135 windows, 112 events): REG 0.286/0.438; X10MS 0.268/0.438; BOMP-PK+SC 0.259/0.446; BOMP-PK-SLIDE+SC 0.321/0.438; MT-FW+SC 0.286/0.402
+    X10MS - REG: -0.018 [-0.106, +0.092], +0.000 [-0.059, +0.065] | X10MS - BOMP-PK+SC: +0.009 [-0.160, +0.196], -0.009 [-0.083, +0.123] | REG - BOMP-PK+SC: +0.027 [-0.140, +0.175], -0.009 [-0.089, +0.125]
+- distinct true events ever hit: X10MS gains 6, loses 4 of 208; windows whose hit pattern changes 25/270; joint objective J after atom 1 (X10MS vs REG, relative): median -0.0005, P10 -0.0708, fraction improved by > 1%: 0.35; after atom 5: median -0.0190
+
+## Check 4. Headroom / ceiling (seed 999, 2A calibration networks 0-4 x 20 windows = 600 windows)
+Oracle ('genie') detectors, exact FROC, recall at <= 0.1 / <= 0.25 false per window:
+  CEIL-G     true events scored by the best BOMP-PK block statistic within 5 km of each source (grid, +-0.25 s peak reading, full data); false candidates = greedy block maxima on the clutter+noise-only data (event signal removed exactly). Perfect localisation + perfect deflation: generous ceiling for any grid block detector.
+  CEIL-GD    as CEIL-G, false candidates from the full data after an ORACLE joint LS deflation of the true events (truth-start continuous atoms): keeps the false alarms caused by event-model mismatch.
+  CEIL-C     continuous version: true events scored by the single-atom off-grid energy (TS-SFW refinement from the truth, 500 it.); false candidates refined the same way on the clutter+noise-only data.
+  CEIL-G+BF  true events at the CEIL-G score + BOMP-PK+SC's own false atoms (its realised false-alarm process; can double-count a mislocated event, so it is a lower-side ceiling).
+
+| Pool | windows | events | BOMP-PK+SC | TS-SFW+SC | MT-FW+SC | CEIL-G | CEIL-GD | CEIL-C | CEIL-G+BF | headroom CEIL-G - BOMP-PK [95% CI] at 0.1 / 0.25 | CEIL-GD - BOMP-PK at 0.1 / 0.25 |
+|:--|--:|--:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| 4 st. (thin) | 100 | 81 | 0.309/0.531 | 0.321/0.568 | 0.383/0.469 | 0.840/0.852 | 0.605/0.753 | 0.840/0.864 | 0.457/0.716 | +0.531 [+0.273, +0.853] / +0.321 [+0.128, +0.607] | +0.296 [+0.064, +0.643] / +0.222 [+0.041, +0.495] |
+| 6 st. (thin) | 100 | 67 | 0.433/0.657 | 0.463/0.657 | 0.493/0.627 | 0.955/0.955 | 0.672/0.836 | 0.970/0.985 | 0.597/0.866 | +0.522 [+0.267, +0.732] / +0.299 [+0.148, +0.542] | +0.239 [+0.013, +0.571] / +0.179 [-0.042, +0.418] |
+| one-sided 8 (thin) | 100 | 77 | 0.571/0.623 | 0.636/0.675 | 0.623/0.662 | 0.844/0.870 | 0.675/0.701 | 0.857/0.883 | 0.649/0.714 | +0.273 [+0.161, +0.402] / +0.247 [+0.118, +0.351] | +0.104 [-0.054, +0.227] / +0.078 [-0.039, +0.178] |
+| 4 st. (strong) | 100 | 74 | 0.176/0.230 | 0.189/0.230 | 0.149/0.230 | 0.284/0.392 | 0.230/0.338 | 0.284/0.351 | 0.230/0.405 | +0.108 [+0.027, +0.423] / +0.162 [+0.028, +0.375] | +0.054 [-0.167, +0.396] / +0.108 [+0.000, +0.352] |
+| 6 st. (strong) | 100 | 97 | 0.175/0.309 | 0.268/0.381 | 0.216/0.402 | 0.608/0.680 | 0.371/0.546 | 0.649/0.742 | 0.268/0.464 | +0.433 [+0.120, +0.698] / +0.371 [+0.162, +0.651] | +0.196 [+0.065, +0.474] / +0.237 [+0.067, +0.505] |
+| one-sided 8 (strong) | 100 | 82 | 0.439/0.512 | 0.488/0.524 | 0.451/0.512 | 0.683/0.732 | 0.634/0.671 | 0.695/0.744 | 0.524/0.671 | +0.244 [+0.043, +0.495] / +0.220 [+0.042, +0.398] | +0.195 [+0.020, +0.411] / +0.159 [+0.022, +0.352] |
+| thin (3 cells) | 300 | 225 | 0.422/0.582 | 0.471/0.631 | 0.467/0.578 | 0.876/0.880 | 0.631/0.738 | 0.867/0.893 | 0.542/0.738 | +0.453 [+0.324, +0.569] / +0.298 [+0.196, +0.403] | +0.209 [+0.079, +0.359] / +0.156 [+0.042, +0.286] |
+| strong (3 cells) | 300 | 253 | 0.245/0.356 | 0.265/0.395 | 0.257/0.391 | 0.447/0.601 | 0.375/0.518 | 0.498/0.617 | 0.316/0.526 | +0.202 [+0.093, +0.441] / +0.245 [+0.101, +0.392] | +0.130 [+0.050, +0.317] / +0.162 [+0.037, +0.301] |
+| all | 600 | 478 | 0.331/0.441 | 0.358/0.475 | 0.354/0.454 | 0.579/0.692 | 0.481/0.605 | 0.598/0.699 | 0.429/0.615 | +0.249 [+0.127, +0.406] / +0.251 [+0.147, +0.352] | +0.151 [+0.083, +0.283] / +0.163 [+0.076, +0.259] |
+
+Failure anatomy of BOMP-PK+SC and TS-SFW+SC on these windows (all pools): for every true event, whether the method ever places an atom within 5 km of it (any score), and whether its best near-truth grid score exceeds the largest clutter+noise-only score of its window:
+- BOMP-PK+SC: events 478; ever hit (any score, <= 5 atoms) 337 (0.705); events whose near-truth grid score beats every clutter+noise-only candidate of the window 426 (0.891), of which ever hit 327 (0.768)
+- TS-SFW+SC: events 478; ever hit (any score, <= 5 atoms) 328 (0.686); events whose near-truth grid score beats every clutter+noise-only candidate of the window 426 (0.891), of which ever hit 316 (0.742)
+- truth-start continuous refinement: final 3D distance to the true source median 2.35 km, P90 6.66 km; stays within 5 km epicentral in 0.981 of events (model mismatch: 1D gradient medium, source spectra/phase, statics vs the homogeneous detector model)
+

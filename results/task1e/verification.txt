@@ -1,0 +1,18 @@
+== 1. selftest of task1e_polarization_reliability.py
+selftest OK: generate_rel(IDEAL) == generate, TOL/PHYS == score_grid, PHYS-G and PHYS-N at their two limits
+
+== 2. determinism: two runs with seed 2024 (first run without PHYS-N)
+cell-method combinations compared: 84, different: 0
+
+== 3. eta estimator of task1_decide.py on synthetic mixtures with known proportion
+analytic null 0.3477 | Monte Carlo 0.3478 | raw fraction with pi=0: 0.333
+true pi 0.0 -> f=0.383 f0=0.341 fctrl=0.773 pi_est=0.098 CI95[-0.012,0.217] | raw fraction CI hi=0.440 | INCONCLUSIVE between LOW and INTERMEDIATE: the CI95 of pi crosses 0.20
+true pi 0.3 -> f=0.460 f0=0.366 fctrl=0.787 pi_est=0.223 CI95[0.100,0.361] | raw fraction CI hi=0.517 | INCONCLUSIVE between LOW and INTERMEDIATE: the CI95 of pi crosses 0.20
+true pi 0.7 -> f=0.663 f0=0.374 fctrl=0.747 pi_est=0.776 CI95[0.592,1.011] | raw fraction CI hi=0.717 | HIGH coherence
+
+== 4. width of the CI95 of eta as a function of the number of clutter picks (20 repetitions, true eta 0)
+clutter n=   50: mean CI95 width of pi = 0.550 | verdict LOW with true pi 0: 5/20
+clutter n=  100: mean CI95 width of pi = 0.396 | verdict LOW with true pi 0: 12/20
+clutter n=  300: mean CI95 width of pi = 0.230 | verdict LOW with true pi 0: 20/20
+clutter n=  600: mean CI95 width of pi = 0.158 | verdict LOW with true pi 0: 20/20
+clutter n= 1000: mean CI95 width of pi = 0.127 | verdict LOW with true pi 0: 20/20

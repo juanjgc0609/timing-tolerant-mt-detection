@@ -1,0 +1,389 @@
+C12 - DETECTOR ON THE DOUBLE-COUPLE (DC) MANIFOLD WITHIN MT-FW (explore_contrib) - REPORT
+======================================================================================================================
+Status: EXPLORATORY, NOT CONFIRMATORY. Nothing below tests a registered hypothesis.
+Date: Monday 5 October 2026, 17:03-18:31 (-05). 2-core machine shared with another job (c13_run.py).
+A single detection process, OPENBLAS_NUM_THREADS=1, OPENBLAS_CORETYPE=Prescott. Total wall time 1 h 28 min:
+reading C10/C11 and development 9 min, validation 3 min, runs 57 min (17:15:13-18:11:56; 56.6 min of CPU), analysis
+and report 19 min. Within the 2 h budget.
+
+VERDICT: NULL for detection; POSITIVE for the analytical piece.
+  The theory holds: the tube formula predicts the null law of the DC statistic (effective degrees of freedom 4.4-4.5
+  instead of 6) and the simulation confirms it; at equal false-alarm rate the threshold drops by 10% in energy (5.5% in
+  amplitude). That advantage does not reach recall: DC - FULL6 = +0.005 [-0.021, +0.033] (standard windows, LOC+T, <= 0.25
+  false events per window) and -0.004 [-0.018, +0.011] (dense windows). Measured reason: when restricted to the DC
+  manifold, hits lose as much energy as the threshold drops (5.9-6.4 units against 4.3-5.1). No confirmation is proposed.
+
+----------------------------------------------------------------------------------------------------------------------
+0. SUMMARY
+----------------------------------------------------------------------------------------------------------------------
+(1) Theory. For a candidate with a fixed reading and Gaussian noise, 2 s6 ~ chi2 with 6 df, 2 s5 ~ chi2 with 5 df and
+    P(2 sdc > x) = L3 (x - 1) exp(-x/2) / (4 pi^2) + L1 exp(-x/2) / (2 pi), with L3 the volume of the DC manifold
+    projected onto the sphere S^5 with the Gram metric and L1 the integral of its scalar curvature divided by 4 pi. In
+    the isotropic (Frobenius) metric L3 = 4 pi^2 = 2 vol(S^3) and L1 = 0 exactly. In the study networks L3 = 1.75-1.89
+    vol(S^3) (range 1.46-1.96) and L1 = -0.3 to -0.6. Effective degrees of freedom of the DC statistic: 4.4-4.5 by
+    tail matching (4.49 at alpha = 1e-2, 4.41 at 1e-7); 4.66 by the mean.
+(2) Theory versus simulation: THEY AGREE. Single candidate, fixed reading, 90000 candidates from 600 noise-only
+    windows: upper 0.01 quantile of 2 sdc 14.28 simulated against 14.17 from the tube; 0.001: 19.69 against 19.46 (Monte
+    Carlo error 0.23). FULL6 16.83 / 22.57 against 16.81 / 22.46; DEV5 15.13 / 20.76 against 15.09 / 20.52. The tube
+    formula does not hold in the centre of the law (quantile 0.1: 8.64 against 8.41), as expected of a tail formula.
+(3) Full detector without events (maximum over 20925 candidates, peak reading, 5 atoms with deflation): ratio of
+    thresholds DC / FULL6 at equal number of false events per window 0.906 [0.883, 0.928] (<= 0.1) and 0.898 [0.886,
+    0.914] (<= 0.25) with noise only; 0.902 [0.880, 0.913] and 0.896 [0.885, 0.910] with the clutter of the regimes.
+    Gaussian theory at the implied per-candidate tail gives 0.888 / 0.883 and 0.897 / 0.890. DEV5: 0.93-0.94
+    simulated, 0.93 theoretical. Implied amplitude gain if the signal kept all of its energy: +5.1% to +6.0% (DC),
+    +3.0% to +3.6% (DEV5).
+(4) Detection, 16 networks per cell and regime, 1920 windows per design. Paired differences against FULL6, <= 0.25
+    false events per window [95%]:
+                     STANDARD LOC+T            STANDARD LOC              DENSE LOC+T               DENSE LOC
+      DEV5           -0.005 [-0.027,+0.020]    -0.004 [-0.022,+0.026]    -0.006 [-0.016,+0.009]    -0.001 [-0.021,+0.016]
+      DC-proj        +0.005 [-0.021,+0.033]    +0.017 [-0.010,+0.043]    -0.004 [-0.018,+0.011]    +0.006 [-0.016,+0.023]
+      MIXED          -0.003 [-0.020,+0.018]    -0.008 [-0.030,+0.018]    +0.004 [-0.007,+0.012]    +0.002 [-0.013,+0.015]
+    No interval excludes zero; the same holds at <= 0.1, by regime and by cell.
+(5) Weak isolated events (lower amplitude tercile, standard windows, 516 events; FULL6 recall 0.060 with LOC+T and
+    0.124 with LOC at <= 0.25): DC +0.006 [-0.016, +0.030] and +0.012 [-0.025, +0.037]; MIXED +0.012 [-0.007,
+    +0.037] and +0.021 [-0.015, +0.051]. Nothing resolved. In dense windows the MIXED rule gives in the lower tercile
+    +0.009 [+0.001, +0.017] (LOC+T) and +0.017 [+0.003, +0.032] (LOC), with no gain in the total (+0.004 and +0.002) and
+    with a loss in the upper tercile (-0.009 [-0.029, +0.008] and -0.028 [-0.051, -0.006]): it is a small
+    redistribution of recall from the strong events to the weak ones. Of the 360 paired intervals computed, 6 exclude
+    zero (fewer than the 18 expected by chance at 5%); there is no multiplicity correction.
+(6) Why it does not win. Among the FULL6 atoms with s6 between 25 and 50 (the band where the decision is made), hits
+    lose on average 5.9 units on passing to sdc and false events 6.6; the realised threshold drops 5.1 (<= 0.1) and
+    4.3 (<= 0.25). The separation between hits and false events does not improve: P(score of a hit > score of a false
+    event) = 0.893 with s6, 0.878 with s5, 0.879 with sdc (standard); 0.766, 0.755, 0.754 (dense). With the exact model
+    the loss of a true DC would be 1 unit (checked: 0.95); the site factors and the polarisation scatter of the
+    generator raise it to 1.6-2.8; the rest, some 3-4 units, was not decomposed (peak reading, 3 km grid, times, coda,
+    clutter).
+(7) Cost: the exact DC statistic over the whole candidate grid costs 0.065 s more per standard window (0.199
+    against 0.135 s) and 0.089 s in dense ones (0.278 against 0.189), because the bound sdc <= s5 <= s6 allows
+    evaluating only 32 of 20925 candidates per iteration. DEV5 costs nothing (0.134 s).
+
+----------------------------------------------------------------------------------------------------------------------
+1. DESIGN (code: c12_lib.py, c12_run.py, c12_analyze.py; validation c12_validate.py; mechanism c12_mech.py)
+----------------------------------------------------------------------------------------------------------------------
+Seed 999 ONLY. No other seed was generated, read or touched. Neither the preregistration nor any document in
+/mnt/user-data/outputs, nor any earlier file of explore_contrib, was modified.
+Networks task2a_confirm.network(999, cell, j), all new (prior grep: nothing used at j >= 1200):
+    EVALUATION            j = 1200-1215 (16 per cell and regime; the minimum requested was 12)
+    NULL with clutter     j = 1220-1225
+    NULL without clutter  j = 1226-1229 (noise only; also used for the tube constants)
+    VALIDATION            j = 1290
+Streams [999, TAG, ci, j, ri, 41|233|61], all new (used before: 3001-3008, 37xx-39xx, 4000-4004, 4101-4105 and, in
+other seeds, 4201-4202): 4301 standard windows (xc.draw_sources, 0-2 events, kmax 5), 4302 dense windows
+(c2_run.draw_dense, 3-5 events within 9 km, kmax 7), 4303 windows without events with the clutter of the regime, 4304
+windows without events and without clutter, 4305 validation.
+Cells ladder_4 (4 stations), ladder_6 (6), unilateral_c40 (8, on one side); regimes thin and strong; statics with
+sd 0.3 s; registered station corrections +SC (S0). Default generator gen_realistic, unchanged; xc.NetCfg, xc.Ops,
+c8_lib.DOps, c8_lib.generate_site and c10_lib.Eng are reused. Sources: random double couples.
+Sample: 16 networks x 3 cells x 2 regimes x 20 windows = 1920 windows per design (standard 1550 events and 774
+windows without an event; dense 7613 events). Null: 1440 windows with clutter (6 networks x 3 cells x 2 regimes x 40)
+and 600 without clutter (4 networks x 3 cells x 50).
+Detector: greedy MT-FW loop of c10_lib.mt_loop unchanged (per-station cap 6, hard peak rule +-0.25 s, grid of
+3 km x 3 depths = 675 nodes, origins 5.0-8.0 s step 0.1 = 20925 candidates, exclusion 5 km), without the
+T3 refinement. At each candidate y = Q^T v (6 numbers), Rm = Q^T G.
+  (a) FULL6   s6 = |y|^2 / 2. Identical to the registered one.
+  (b) DEV5    s5 = s6 - (n . y)^2 / 2, with n the unit vector of col(Rm) orthogonal to Rm {trace m = 0}. It is the energy
+              explained by the projection of the least-squares estimate onto the trace-free subspace in the Gram
+              metric (verified against the explicit constrained fit).
+  (c) DC-proj sdc = max over unit double couples m of (m^T G^T v)^2 / (2 m^T G^T G m). The manifold is parametrised
+              by rotations R (equivalent to strike, dip, rake): m = R diag(1, 0, -1) R^T / sqrt(2). Four
+              starts (the closed form by eigenvalues of the deviatoric part of the estimate, with eigenvalues
+              (+a, 0, -a), and the 3 best points of a fixed set of 3000 Haar rotations) and 8 steps of
+              damped Gauss-Newton on the rotation vector. An approximate re-ranking of the K best was NOT used:
+              since sdc <= s5 <= s6 always, the candidates are evaluated in decreasing order of s5 until the best sdc
+              exceeds the next s5, and the maximum of sdc over the whole grid is exact (up to the local optimiser).
+              32 candidates per iteration were always enough.
+  (d) MIXED   the FULL6 atoms (same position and origin), scored with sdc.
+  Cost-free extras: MIX-DEV (FULL6 atoms scored with s5) and DCrank/s6 (atoms of the DC loop scored with s6).
+Declared design decision: in all variants the deflation uses the full 6-parameter fit of the chosen candidate; only
+the selection and scoring statistic changes. Thus (d) differs from (a) only in the scoring.
+Criterion: recall at <= 0.1 and <= 0.25 realised false events per window (exact FROC), rules LOC+T (epicentre within
+5 km and |origin error| <= 0.5 s) and LOC; paired differences against FULL6 with hierarchical bootstrap (strata regime x
+cell, networks and then windows, 2000 replicates, operating point re-chosen in each replicate; that of c10_analyze.Boot).
+Weak events: amplitude terciles within each cell (square root of the sum of squares of the arrival amplitudes
+over stations and phases, in noise standard deviations; cuts 6.6 / 9.4, 7.7 / 10.3 and 8.8 / 12.3). In standard
+windows all events are isolated (separation > 12 km). In the subset analysis hits on events of other terciles are
+ignored (neither hit nor false event) and the operating point uses all windows.
+Nothing was tuned after seeing results: NGRID 3000, 8 steps, 3 starts and block of 32 were fixed before the
+evaluation. During the run the analysis of the first 2 networks was looked at once to test the analysis code; no
+decision was taken from it.
+
+----------------------------------------------------------------------------------------------------------------------
+2. VALIDATION (out/c12_validation.txt; network 1290)
+----------------------------------------------------------------------------------------------------------------------
+  V0 Curvature in the Frobenius metric: L3 = 39.478 = 4 pi^2 and L1 = 0 (2e-15). Matches the analytical calculation:
+     the orbit is SO(3) / D2 with an invariant metric of squared lengths (1, 1, 4) and Milnor's formula gives
+     scalar curvature 0.
+  V1 |Q^T v|^2 = h^T A^-1 h (5e-15); s5 = fit constrained to zero trace (7e-15); sdc in Q coordinates = (m^T h)^2 /
+     (2 m^T A m) (4e-15), trace of m 1e-15, determinant 3e-17.
+  V2 Optimiser against dense search (300000 rotations), 40 noise vectors: sdc - reference between -0.003 and
+     +0.008; greater than or equal in 39/40. The closed form alone reaches on average 88% of the maximum and the best
+     grid point 98%: the refinement is needed. Order sdc <= s5 <= s6 in all cases.
+  V3 Exact DC signal without noise: sdc / s6 = 1.000000.
+  V4 The loop with rank = full6 reproduces c10_lib.mt_loop in 6/6 standard windows and 6/6 dense ones.
+  V5 Tube tail against direct Monte Carlo (z ~ N(0, I_6), 100000): Frobenius x = 12 / 16 / 20: 2.73e-2 / 5.24e-3 /
+     8.5e-4 simulated against 2.73e-2 / 5.03e-3 / 8.63e-4; quantiles 0.99 and 0.999: 14.27 and 19.53 against 14.40
+     and 19.67. Five grid nodes: quantile differences of 0.02 to 0.2.
+  V6 Pruned search for the maximum of sdc = exhaustive search over the 20925 candidates in 8/8 windows (4 with
+     events, 4 noise-only).
+
+----------------------------------------------------------------------------------------------------------------------
+3. NULL CALIBRATION AND TUBE FORMULA (out/c12_null.txt)
+----------------------------------------------------------------------------------------------------------------------
+3.1 Derivation. In Q coordinates the datum of a candidate is y = Rm m a + z, z ~ N(0, I_6) with a fixed reading. The
+    generalised likelihood ratio over a set of directions U of the sphere S^5 is max_U (u . y)^2.
+    U = S^5 gives chi2 with 6 df; U = trace-free hyperplane, chi2 with 5 df; U = {Rm m / |Rm m| : m double couple} is a
+    closed manifold of dimension 3 (the orbit of SO(3), with a stabiliser of order 4, symmetric: -m is also DC).
+    Hotelling-Weyl / Gaussian kinematic formula for a closed manifold of dimension 3:
+        P(max_U u . z > t) ~ L3 rho3(t) + L1 rho1(t),   rho3 = (2 pi)^-2 (t^2 - 1) exp(-t^2 / 2),
+                                                        rho1 = (2 pi)^-1 exp(-t^2 / 2),
+    L3 = vol(U), L1 = (1 / 4 pi) integral of the scalar curvature S; L2 = 0 (no boundary) and L0 = Euler characteristic
+    = 0. S is obtained from the Gauss equation, S = 6 + |H|^2 - |II|^2, with the second fundamental form computed from
+    the second derivatives of the orbit. L3 and L1 are integrated by Monte Carlo over Haar rotations
+    (c12_lib.lk_curvatures). Check of the form: with the sphere S^3 (L3 = 2 pi^2, L1 = 3 pi) the expression gives
+    exactly the tail of chi2 with 4 df, (1 + x / 2) exp(-x / 2).
+    Reading: the dominant term is that of 4 degrees of freedom (3 angles plus the amplitude) multiplied by
+    L3 / vol(S^3), which equals 2 in the isotropic metric. The DC manifold "occupies" two spheres S^3, and that is why
+    the effective degrees of freedom are 4.4-4.5 and not 4.
+3.2 Constants in the Gram metric of the networks (30 nodes x 2 networks per cell, 1500 rotations per node):
+                        L3 / vol(S^3) median [range]       L1 median [range]
+      ladder_4          1.861 [1.619, 1.952]               -0.328 [-1.666, +0.231]
+      ladder_6          1.893 [1.619, 1.959]               -0.399 [-1.333, +0.235]
+      unilateral_c40    1.745 [1.461, 1.962]               -0.610 [-2.338, +0.789]
+      Frobenius         2 exact                            0 exact
+3.3 Theoretical prediction for one candidate (mixture over the 180 nodes): upper quantile x of 2 s
+      alpha     FULL6    DEV5    ratio     amp. gain       DC      ratio     amp. gain       effective df DC
+      1e-2      16.81    15.09   0.897     +5.6%           14.17   0.843     +8.9%           4.49
+      1e-3      22.46    20.52   0.913     +4.6%           19.46   0.866     +7.4%           4.47
+      1e-4      27.86    25.74   0.924     +4.0%           24.55   0.881     +6.5%           4.46
+      1e-5      33.11    30.86   0.932     +3.6%           29.54   0.892     +5.9%           4.44
+      1e-6      38.26    35.89   0.938     +3.2%           34.46   0.901     +5.4%           4.43
+      1e-7      43.34    40.86   0.943     +3.0%           39.34   0.908     +5.0%           4.41
+    (amplitude gain = sqrt(x6 / x) - 1, valid only if the signal keeps all of its energy in the subspace.)
+    The advantage shrinks as alpha decreases: it is a difference in degrees of freedom, which weighs little in deep tails.
+3.4 Simulation, single candidate, windows without events and without clutter (600 windows, 150 random candidates each).
+    Fixed reading (predicted sample, no cap): mean of 2 s 6.00 / 5.01 / 4.66 (FULL6 / DEV5 / DC).
+      upper quant.   FULL6 sim / theory   DEV5 sim / theory   DC sim / theory    DC/FULL6 sim / theory
+      0.1            10.63 / 10.64        9.24 / 9.24         8.64 / 8.41        0.812 / 0.790
+      0.01           16.83 / 16.81        15.13 / 15.09       14.28 / 14.17      0.849 / 0.843
+      0.001          22.57 / 22.46        20.76 / 20.52       19.69 / 19.46      0.872 / 0.866
+    Registered peak reading (cap 6): mean of 2 s 12.99 / 10.83 / 10.09. The peak reading inflates the statistic
+    (law of 2 s6 fitted by moments: 1.65 x chi2 with 7.9 df), so that the chi2 laws no longer hold in absolute
+    value; but the ratios at equal tail follow the theory: DC / FULL6 0.819, 0.850, 0.865 simulated against 0.790,
+    0.843, 0.866; DEV5 / FULL6 0.876, 0.895, 0.912 against 0.868, 0.897, 0.913.
+    With clutter, regime thin: same as without clutter (0.01: 17.01 / 15.17 / 14.36). Regime strong: tails much
+    heavier than the Gaussian (0.001: 35.76 / 31.76 / 30.34 with fixed reading, against 22.46 / 20.52 / 19.46), with
+    ratios DC / FULL6 0.843 and 0.848: the restriction to DC removes the same from the clutter as from the noise.
+3.5 Simulation, full detector (loop with deflation, 5 atoms per window; threshold in units of s at <= 0.1 /
+    <= 0.25 false events per window; ratio against FULL6 [95%, bootstrap over network x cell x regime and windows];
+    amplitude gain = sqrt(threshold6 / threshold) - 1):
+      WITHOUT CLUTTER (600 windows)
+        FULL6     28.64 / 26.73
+        DEV5      26.66 / 25.22   ratio 0.931 [0.917,0.952] / 0.943 [0.931,0.957]   gain +3.6% / +3.0%
+        DC        25.93 / 24.01   ratio 0.906 [0.883,0.928] / 0.898 [0.886,0.914]   gain +5.1% / +5.5%
+        MIXED     25.03 / 22.86   ratio 0.874 [0.847,0.912] / 0.855 [0.831,0.878]   (not a maximum of sdc)
+        theory at the implied per-candidate tail (2.7e-5 / 7.1e-5): DC 0.888 / 0.883; DEV5 0.929 / 0.925
+      WITH CLUTTER, thin (720 windows)
+        FULL6     28.69 / 26.86
+        DEV5      26.73 / 25.37   ratio 0.932 [0.915,0.946] / 0.945 [0.929,0.958]
+        DC        25.77 / 24.18   ratio 0.898 [0.881,0.912] / 0.900 [0.883,0.913]   gain +5.5% / +5.4%
+        theory: DC 0.887 / 0.883; DEV5 0.929 / 0.925
+      WITH CLUTTER, strong (720 windows)
+        FULL6     43.77 / 39.51
+        DEV5      40.76 / 37.21   ratio 0.931 [0.911,0.954] / 0.942 [0.922,0.957]
+        DC        38.93 / 35.67   ratio 0.889 [0.873,0.914] / 0.903 [0.881,0.915]   gain +6.0% / +5.2%
+        theory: DC 0.894 / 0.888; DEV5 0.933 / 0.929
+      WITH CLUTTER, both (1440 windows)
+        FULL6     40.63 / 36.21;  DC 36.67 / 32.44, ratio 0.902 [0.880,0.913] / 0.896 [0.885,0.910];
+        DEV5 ratio 0.938 / 0.941; MIXED 0.844 / 0.826; theory DC 0.897 / 0.890, DEV5 0.935 / 0.930
+    The "implied per-candidate tail" comes from the fitted law of the peak reading and is equivalent to some 3300-3700
+    independent candidates (thin) among the 20925 x 5 evaluated. It is a semi-empirical step: the theory gives the
+    ratio at a given tail, not the absolute level of the threshold, which depends on the peak reading and the clutter.
+3.6 Put plainly. Theory and simulation agree: in the law of one candidate (1% in the tail quantiles), in the ratios
+    with peak reading (0.01) and in the threshold ratio of the full detector (0.01-0.02, within the intervals except at
+    <= 0.25 without clutter, where the simulation gives 0.898 [0.886, 0.914] and the theory 0.883). The threshold drops
+    by 10% in energy at equal false-alarm rate; that is 2.7-2.9 units of s in thin and 3.8-4.8 in strong. The implied
+    detectable amplitude gain is +5% to +6% as a ceiling. For an exact double couple read at its node the restriction
+    costs 1 unit of s (the 2 noise degrees of freedom that are no longer summed; measured 0.95), so the ideal net gain
+    is (threshold6 - thresholdDC - 1) / threshold6 = 6.6% of energy in thin and 8.9% in strong, that is +3.4% and
+    +4.5% of amplitude.
+
+----------------------------------------------------------------------------------------------------------------------
+4. DETECTION RESULTS, STANDARD WINDOWS (1920 windows, 1550 events; out/c12_analysis_STD.txt)
+----------------------------------------------------------------------------------------------------------------------
+4.1 Recall <= 0.1 / <= 0.25 [95%] and paired difference against FULL6 [95%] (bootstrap sd)
+  LOC+T, pooled
+    FULL6      0.214 [.177,.252]  0.317 [.277,.354]
+    DEV5       0.208 [.170,.251]  0.312 [.277,.349]   -0.006 [-0.033,+0.024] / -0.005 [-0.027,+0.020] (0.0145 / 0.0123)
+    DC         0.220 [.183,.265]  0.322 [.285,.358]   +0.006 [-0.021,+0.039] / +0.005 [-0.021,+0.033] (0.0153 / 0.0134)
+    MIXED      0.236 [.197,.273]  0.314 [.276,.353]   +0.022 [-0.002,+0.044] / -0.003 [-0.020,+0.018] (0.0116 / 0.0097)
+    MIX-DEV    0.225 [.180,.262]  0.313 [.275,.350]   +0.010 [-0.014,+0.029] / -0.005 [-0.021,+0.013] (0.0109 / 0.0086)
+    DCrank/s6  0.215 [.182,.256]  0.323 [.287,.360]   +0.001 [-0.024,+0.033] / +0.005 [-0.017,+0.033] (0.0141 / 0.0131)
+  LOC, pooled
+    FULL6      0.370 [.328,.415]  0.470 [.426,.513]
+    DEV5       0.375 [.332,.418]  0.466 [.431,.514]   +0.005 [-0.025,+0.027] / -0.004 [-0.022,+0.026] (0.0135 / 0.0125)
+    DC         0.381 [.336,.427]  0.487 [.442,.526]   +0.011 [-0.022,+0.038] / +0.017 [-0.010,+0.043] (0.0154 / 0.0136)
+    MIXED      0.373 [.327,.411]  0.463 [.422,.503]   +0.003 [-0.028,+0.022] / -0.008 [-0.030,+0.018] (0.0127 / 0.0120)
+    MIX-DEV    0.366 [.324,.407]  0.454 [.418,.500]   -0.005 [-0.029,+0.017] / -0.016 [-0.034,+0.012] (0.0116 / 0.0116)
+    DCrank/s6  0.379 [.327,.425]  0.474 [.435,.516]   +0.008 [-0.029,+0.035] / +0.004 [-0.016,+0.030] (0.0162 / 0.0119)
+4.2 By regime and by cell, difference DC - FULL6 and MIXED - FULL6, <= 0.1 / <= 0.25
+                       LOC+T: DC                                        MIXED
+    thin               +0.004 [-0.041,+0.056] / +0.014 [-0.032,+0.057]  +0.003 [-0.025,+0.041] / -0.001 [-0.033,+0.027]
+    strong             +0.003 [-0.029,+0.046] / +0.003 [-0.031,+0.042]  +0.018 [-0.017,+0.045] / -0.016 [-0.039,+0.015]
+    ladder_4           +0.006 [-0.045,+0.051] / -0.002 [-0.043,+0.041]  +0.025 [-0.038,+0.063] / -0.004 [-0.043,+0.026]
+    ladder_6           +0.017 [-0.030,+0.080] / +0.027 [-0.025,+0.073]  -0.006 [-0.036,+0.040] / +0.000 [-0.036,+0.036]
+    unilateral_c40     +0.016 [-0.059,+0.072] / +0.012 [-0.041,+0.059]  +0.020 [-0.028,+0.054] / +0.004 [-0.025,+0.029]
+                       LOC: DC                                          MIXED
+    thin               +0.030 [-0.020,+0.068] / +0.000 [-0.034,+0.037]  +0.005 [-0.038,+0.037] / -0.009 [-0.038,+0.019]
+    strong             +0.014 [-0.031,+0.055] / -0.006 [-0.035,+0.034]  +0.010 [-0.028,+0.041] / -0.020 [-0.046,+0.018]
+    ladder_4           +0.010 [-0.067,+0.055] / -0.006 [-0.045,+0.045]  +0.012 [-0.051,+0.046] / -0.021 [-0.054,+0.027]
+    ladder_6           +0.019 [-0.037,+0.057] / +0.030 [-0.022,+0.076]  -0.010 [-0.052,+0.033] / -0.008 [-0.046,+0.030]
+    unilateral_c40     +0.016 [-0.031,+0.071] / +0.032 [-0.018,+0.068]  +0.004 [-0.033,+0.053] / +0.006 [-0.035,+0.036]
+    DEV5 by regime and cell: between -0.021 and +0.025, all intervals include 0.
+    The point estimates of DC are almost all positive and small (+0.00 to +0.03); none separates from 0.
+4.3 Isolated events by amplitude tercile (516 / 516 / 518 events), <= 0.1 / <= 0.25
+  LOC+T              FULL6 recall      DC - FULL6                                       MIXED - FULL6
+    lower tercile    0.021 / 0.060     +0.010 [-0.004,+0.028] / +0.006 [-0.016,+0.030]  +0.010 [-0.004,+0.026] / +0.012 [-0.007,+0.037]
+    middle tercile   0.194 / 0.320     +0.004 [-0.030,+0.058] / +0.014 [-0.023,+0.058]  +0.027 [-0.012,+0.066] / -0.023 [-0.051,+0.015]
+    upper tercile    0.427 / 0.571     +0.004 [-0.048,+0.057] / -0.006 [-0.055,+0.048]  +0.029 [-0.013,+0.065] / +0.002 [-0.035,+0.034]
+  LOC
+    lower tercile    0.070 / 0.124     +0.002 [-0.022,+0.020] / +0.012 [-0.025,+0.037]  +0.016 [-0.011,+0.035] / +0.021 [-0.015,+0.051]
+    middle tercile   0.364 / 0.481     +0.027 [-0.011,+0.068] / +0.047 [+0.002,+0.096]  -0.002 [-0.045,+0.036] / -0.012 [-0.049,+0.038]
+    DEV5, lower tercile: LOC+T +0.012 [-0.002,+0.028] / +0.004 [-0.017,+0.027]; LOC -0.002 / +0.004.
+  The weak isolated events remain almost all missed (recall 0.06 with LOC+T and 0.12 with LOC) with any
+  statistic. The only interval that excludes 0 in standard windows is DC in the middle tercile with LOC at <= 0.25
+  (+0.047 [+0.002, +0.096]); it does not appear with LOC+T (+0.014) nor at <= 0.1 and it is one among 180.
+4.4 Realised thresholds (units of s) at <= 0.1 / <= 0.25, LOC+T: FULL6 56.36 / 46.87; DEV5 54.12 / 44.54; DC 51.27 /
+    42.61; MIXED 48.51 / 39.49. Ratios DC / FULL6 0.910 / 0.909, DEV5 0.960 / 0.950. With events present the threshold
+    is set by the false events of the windows with events (coda, lobes of the events themselves, clutter), it is higher
+    than the null of section 3 (40.6 / 36.2) and the relative reduction of DC is somewhat smaller (9% against 10%).
+
+----------------------------------------------------------------------------------------------------------------------
+5. DETECTION RESULTS, DENSE WINDOWS (1920 windows, 7613 events; out/c12_analysis_DENSE.txt)
+----------------------------------------------------------------------------------------------------------------------
+  LOC+T, pooled: recall <= 0.1 / <= 0.25 and difference against FULL6
+    FULL6      0.057 [.047,.070]  0.117 [.102,.133]
+    DEV5       0.059 [.048,.072]  0.112 [.099,.130]   +0.002 [-0.008,+0.010] / -0.006 [-0.016,+0.009] (0.0047 / 0.0062)
+    DC         0.060 [.049,.074]  0.113 [.097,.131]   +0.002 [-0.008,+0.013] / -0.004 [-0.018,+0.011] (0.0054 / 0.0071)
+    MIXED      0.064 [.050,.077]  0.121 [.105,.135]   +0.006 [-0.003,+0.014] / +0.004 [-0.007,+0.012] (0.0043 / 0.0050)
+    MIX-DEV    0.060 [.047,.073]  0.118 [.103,.133]   +0.002 [-0.006,+0.010] / +0.001 [-0.008,+0.008] (0.0039 / 0.0042)
+    DCrank/s6  0.060 [.049,.073]  0.116 [.099,.133]   +0.003 [-0.008,+0.013] / -0.001 [-0.015,+0.013] (0.0052 / 0.0072)
+  LOC, pooled
+    FULL6      0.180 [.156,.201]  0.268 [.249,.290]
+    DEV5       0.174 [.153,.201]  0.267 [.246,.290]   -0.006 [-0.023,+0.017] / -0.001 [-0.021,+0.016] (0.0105 / 0.0092)
+    DC         0.179 [.158,.199]  0.274 [.253,.294]   -0.001 [-0.020,+0.021] / +0.006 [-0.016,+0.023] (0.0104 / 0.0096)
+    MIXED      0.179 [.160,.200]  0.269 [.251,.292]   -0.001 [-0.016,+0.018] / +0.002 [-0.013,+0.015] (0.0085 / 0.0072)
+    MIX-DEV    0.182 [.161,.201]  0.273 [.252,.292]   +0.002 [-0.012,+0.018] / +0.005 [-0.010,+0.016] (0.0074 / 0.0068)
+    DCrank/s6  0.179 [.159,.202]  0.273 [.251,.295]   -0.001 [-0.018,+0.024] / +0.005 [-0.015,+0.024] (0.0106 / 0.0097)
+  By regime, DC - FULL6: LOC+T thin +0.007 [-0.011,+0.022] / -0.004 [-0.022,+0.017], strong -0.001 [-0.016,+0.015] /
+    -0.003 [-0.022,+0.017]; LOC thin -0.003 [-0.030,+0.024] / +0.004 [-0.031,+0.035], strong +0.010 [-0.025,+0.041] /
+    +0.005 [-0.020,+0.027]. MIXED - FULL6: LOC+T thin +0.008 [-0.007,+0.019] / -0.002 [-0.017,+0.013], strong +0.005
+    [-0.008,+0.016] / +0.008 [-0.005,+0.021].
+  Amplitude terciles (2538 / 2537 / 2538 events; these are not isolated events), LOC+T:
+    lower      FULL6 0.004 / 0.015   DC +0.002 [-0.002,+0.005] / +0.001 [-0.006,+0.008]   MIXED +0.002 [-0.001,+0.004] / +0.009 [+0.001,+0.017]
+    middle     FULL6 0.044 / 0.098   DC -0.001 [-0.012,+0.013] / -0.005 [-0.022,+0.013]   MIXED +0.007 [-0.005,+0.018] / +0.011 [-0.004,+0.024]
+    upper      FULL6 0.123 / 0.239   DC +0.006 [-0.016,+0.029] / -0.009 [-0.033,+0.021]   MIXED +0.010 [-0.009,+0.025] / -0.009 [-0.029,+0.008]
+  LOC, lower tercile: FULL6 0.032 / 0.078; DC +0.006 [-0.003,+0.014] / +0.002 [-0.013,+0.017]; MIXED +0.015
+    [+0.003,+0.027] / +0.017 [+0.003,+0.032]; MIX-DEV +0.011 [+0.001,+0.020] / +0.011 [-0.001,+0.024].
+  LOC, upper tercile: FULL6 0.354 / 0.477; MIXED -0.024 [-0.048,+0.009] / -0.028 [-0.051,-0.006].
+  Realised thresholds, LOC+T: FULL6 79.87 / 67.76; DC 74.24 / 62.81 (ratio 0.930 / 0.927); MIXED 70.41 / 58.15.
+  Reading: null in the total with narrow intervals (+-0.015). The MIXED rule moves a little recall towards the
+  weak events (+0.01 to +0.02 on a base of 0.02-0.08) and takes it away from the strong ones (-0.01 to -0.03), without
+  changing the total. This is consistent with its mechanics (the sdc threshold on FULL6 atoms drops by 12-16%, and the
+  absolute loss of the hits grows with s6, section 6.1), but it is a post hoc subgroup.
+
+----------------------------------------------------------------------------------------------------------------------
+6. MECHANISM: WHY THE THRESHOLD REDUCTION DOES NOT TURN INTO RECALL
+----------------------------------------------------------------------------------------------------------------------
+6.1 FULL6 atoms labelled with LOC+T (out/c12_analysis_*.txt, final): ratio of the restricted statistic to s6
+                          STANDARD                                        DENSE
+                          hits (828)            false events (8772)       hits (3470)           false events (9970)
+    s5 / s6 median        0.964 [.890,.993]     0.917 [.773,.982]         0.958 [.872,.992]     0.937 [.820,.985]
+    sdc / s6 median       0.924 [.827,.972]     0.833 [.693,.927]         0.905 [.802,.961]     0.866 [.738,.942]
+    mean loss s6-sdc      6.38                  5.89                      7.63                  6.94
+    by s6 band, mean loss s6 - sdc (hits / false events):
+      15-25               3.42 / 4.80                                     3.79 / 4.47
+      25-50               5.92 / 6.62                                     6.36 / 6.58
+      > 50                6.95 / 8.89                                     8.67 / 10.03
+    P(hit > false event): s6 0.893, s5 0.878, sdc 0.879                   s6 0.766, s5 0.755, sdc 0.754
+    In proportion the hits keep more (0.92 against 0.83), as the idea predicts; but the hits have higher s6 and in
+    absolute units they lose the same as the false events of their band. The threshold drops 4.3-5.1 units
+    (standard) and the marginal hits lose 5.9: the balance is zero or slightly negative. The global separation
+    between hits and false events worsens by one point.
+6.2 Vector-level test (c12_mech.py, POST HOC, without waveforms; exact DC read at its node with unit noise;
+    mean loss s6 - sdc; noise-free s6 = 30 / 60; the three cells give the same, ladder_6 is shown):
+      exact model                                     0.92 / 0.98     (theory: 1)
+      polarisation scatter 10 degrees                 1.02 / 1.16
+      site factor sd 0.25                             1.13 / 1.34
+      site factor sd 0.5 (generator)                  1.62 / 2.25
+      site 0.5 + polarisation 10 degrees (generator)  1.66 / 2.46
+    The amplitude errors of the generator (lognormal site factor with sd 0.5 per station and phase, polarisation with
+    10 degrees) take the signal off the DC manifold and cost 0.7-1.5 units more than the exact model, growing with the
+    amplitude. That explains 1.7-2.5 of the 5.9-6.4 units observed. The other 3-4 were NOT decomposed: peak reading
+    at stations where the arrival is weak (noise, coda or clutter is read, which under the peak rule has twice the
+    energy and is not coherent with a DC), node up to 2 km from the event, timing errors, medium with a gradient
+    against homogeneous operators. It is a reasonable hypothesis, not a result.
+6.3 Size of the ceiling. Even with perfect conservation, +3.4% to +4.5% of amplitude (section 3.6) is little: the slope
+    of recall with amplitude across terciles (0.06, 0.32, 0.57 for median amplitudes in an approximate ratio 1 : 1.4 :
+    2) is about 0.7 per unit of logarithm, which would give +0.02 to +0.03 of recall. The interval observed for DC
+    ([-0.021, +0.033]) does not exclude that ceiling; what rules it out as an expectation is 6.1. The slope estimate
+    is crude.
+
+----------------------------------------------------------------------------------------------------------------------
+7. COST
+----------------------------------------------------------------------------------------------------------------------
+Seconds per window, one process with the other core occupied by an unrelated job:
+                 FULL6     DEV5      DC-proj (exact over the whole grid)
+    standard     0.135     0.134     0.199
+    dense        0.189     0.188     0.278
+MIXED = FULL6 plus one DC maximisation per atom (less than 1 ms). DC-proj evaluates 32 of 20925 candidates per
+iteration thanks to the bound by s5; each evaluation is 4 starts and 8 batched Gauss-Newton steps. Network preparation
+0.8 s. Full run: 144 parts (96 evaluation, 36 null with clutter, 12 null without clutter), 56.6 min of CPU.
+
+----------------------------------------------------------------------------------------------------------------------
+8. VERDICT AND LIMITS
+----------------------------------------------------------------------------------------------------------------------
+NULL for detection. None of the four rules (DEV5, DC-proj, MIXED, nor the two extras) changes recall at a fixed
+false-event rate, in standard or dense windows, with LOC+T or with LOC, in any regime or cell. The weak isolated events
+are not recovered. It is not a negative result: there is no loss (the point estimates of DC are mostly positive,
++0.00 to +0.03) and the cost is low.
+POSITIVE for the theory. The null calibration of the DC statistic is derived and verified: tube formula with two
+constants computable per node, 4.4-4.5 effective degrees of freedom, threshold 10% lower at equal false-alarm rate.
+It is a clean and reusable result (it gives calibrated p-values for a double-couple test and quantifies that the DC
+hypothesis is worth at most 5% of amplitude), but it is not a detection lever on this test bench.
+No frozen configuration and no preregistered confirmation are proposed. With the measured paired sd (0.0134 standard,
+0.0071 dense, 16 networks per cell and regime) detecting a true effect of +0.01 with power 0.8 would require some 225
+networks per cell and regime in standard windows or 63 in dense ones; this is not justified by an effect whose
+theoretical ceiling is +0.02 to +0.03 and whose mechanism (6.1) points to zero.
+Limits of this study.
+  (i)   One seed, 16 networks per cell and regime. The intervals rule out gains larger than +0.03 (standard) and
+        +0.015 (dense), not gains of +0.01.
+  (ii)  Only the detector with the hard rule and +SC corrections; it was not tested with the T3 refinement nor with
+        the JHD terms of C11. With better timing and position the signal would lie closer to the DC manifold and the
+        loss of 6.1 could drop; this is not measured.
+  (iii) The deflation always used the 6-parameter fit. Deflating with the DC fit was not tested.
+  (iv)  The generator imposes site factors of sd 0.5; with calibrated sites the amplitude loss (6.2) would drop
+        from 1.7-2.5 to 1 unit. That would improve the balance by 1 unit out of 45, 2% of energy: that alone does
+        not change the conclusion either.
+  (v)   The null with strong clutter is not Gaussian; the theory gets the threshold ratio right (0.89-0.90) but not
+        for a demonstrated reason: it is an empirical regularity of this clutter (isotropic directions).
+  (vi)  No multiplicity correction: 5 contrasts, 2 designs, 2 rules, 2 caps, 9 groupings = 360
+        intervals. The 6 that exclude 0 (one in 4.3, five in 5, all in terciles) are read as noise or
+        redistribution.
+What remains of the idea. (a) The analytical piece, for the thesis as the calibration of a mechanism test. (b) The
+observation that the amplitude margin given by any restriction of the source subspace is about 5% at most: the
+37-39% of isolated events missed because of amplitude (C10) is not recovered along this path. (c) The MIXED rule
+as a possible cheap re-scoring of weak events in dense sequences (+0.01 to +0.02 in the lower tercile), which
+only deserves follow-up if it appears again in another study without having been looked for.
+
+----------------------------------------------------------------------------------------------------------------------
+9. FILES (all in /home/claude/work/explore_contrib; outputs in out/)
+----------------------------------------------------------------------------------------------------------------------
+  c12_lib.py            statistics s6, s5, sdc; optimiser over the DC manifold; greedy loop; tube constants and
+                        tail; window stream with amplitudes (sha256 22da5dcdeb88b358ad8d...)
+  c12_run.py            runs eval / nullc / nulln, one part per (type, regime, cell, network) in out/c12_parts
+                        (resumable); c12_queue.sh the single-process queue (sha256 c2532faf041008a1497e...)
+  c12_analyze.py        -> out/c12_analysis_STD.txt, out/c12_analysis_DENSE.txt, out/c12_null.txt
+                        (sha256 7146800041f728e33faa...)
+  c12_validate.py       -> out/c12_validation.txt
+  c12_mech.py           -> out/c12_mech.txt (post hoc)
+  out/c12_queue.log     log of the run

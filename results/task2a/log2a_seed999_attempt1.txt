@@ -1,0 +1,5 @@
+seed 999: 30 pending jobs (20 windows per network)
+   done seed 999 strong unilateral_c40 network 0 in 343 s (total 343 s); resid SC rms 0.235 s; checks {'fw_identity': 2, 'fw_sc_identity': 2, 'node_sc_identity': 2, 'qm_identity': 1} :: MT-FW+SC 0.25/0.40/0.45 | QM-3C+SC 0.15/0.15/0.15
+   done seed 999 strong unilateral_c40 network 1 in 350 s (total 350 s); resid SC rms 0.368 s; checks {'fw_identity': 2, 'fw_sc_identity': 2, 'node_sc_identity': 2, 'qm_identity': 1} :: MT-FW+SC 0.73/0.73/0.73 | QM-3C+SC 0.09/0.09/0.36
+   done seed 999 strong unilateral_c40 network 2 in 368 s (total 712 s); resid SC rms 0.391 s; checks {'fw_identity': 2, 'fw_sc_identity': 2, 'node_sc_identity': 2, 'qm_identity': 1} :: MT-FW+SC 0.32/0.47/0.53 | QM-3C+SC 0.21/0.26/0.37
+   done seed 999 strong unilateral_c40 network 3 in 310 s (total 712 s); resid SC rms 0.275 s; checks {'fw_identity': 2, 'fw_sc_identity': 2, 'node_sc_identity': 2, 'qm_identity': 1} :: MT-FW+SC 0.47/0.53/0.59 | QM-3C+SC 0.12/0.12/0.12

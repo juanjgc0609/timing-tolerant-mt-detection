@@ -1,0 +1,41 @@
+[task1r_seed2024_r200_exact.json]
+2024 one-sided, 8 st.  events  172 :: KIN-LR 0.31/0.43 | PHYS-LR 0.46/0.55 | PHYS-SH 0.39/0.47 | WAVE-P 0.36/0.48 | TOL-TB 0.17/0.28 | GAMMA 0.35/0.39 | PYOCTO 0.23/0.28
+     variants: KIN-LR KIN-LR@0.1@0.05, PHYS-LR PHYS-LR@0.1@0.05, PHYS-SH PHYS-SH@0.1@0.05
+     PHYS-LR - KIN-LR @0.25: +0.116 [+0.065, +0.174]
+     PHYS-LR - PHYS-SH @0.25: +0.081 [+0.041, +0.126]
+     PHYS-SH - KIN-LR @0.25: +0.035 [+0.000, +0.071]
+     PHYS-LR - GAMMA @0.25: +0.157 [+0.095, +0.222]
+2024 4 stations        events  170 :: KIN-LR 0.08/0.13 | PHYS-LR 0.23/0.32 | PHYS-SH 0.18/0.22 | WAVE-P 0.21/0.30 | TOL-TB 0.08/0.11 | GAMMA 0.05/0.08 | PYOCTO 0.02/0.09
+     variants: KIN-LR KIN-LR@0.2@0.05, PHYS-LR PHYS-LR@0.1@0.2, PHYS-SH PHYS-SH@0.2@0.2
+     PHYS-LR - KIN-LR @0.25: +0.188 [+0.111, +0.271]
+     PHYS-LR - PHYS-SH @0.25: +0.100 [+0.036, +0.166]
+     PHYS-SH - KIN-LR @0.25: +0.088 [+0.038, +0.146]
+     PHYS-LR - GAMMA @0.25: +0.235 [+0.166, +0.305]
+2024 6 stations        events  180 :: KIN-LR 0.17/0.23 | PHYS-LR 0.27/0.47 | PHYS-SH 0.21/0.31 | WAVE-P 0.31/0.46 | TOL-TB 0.13/0.17 | GAMMA 0.16/0.19 | PYOCTO 0.11/0.21
+     variants: KIN-LR KIN-LR@0.1@0.05, PHYS-LR PHYS-LR@0.2@0.1, PHYS-SH PHYS-SH@0.2@0.05
+     PHYS-LR - KIN-LR @0.25: +0.239 [+0.171, +0.304]
+     PHYS-LR - PHYS-SH @0.25: +0.167 [+0.110, +0.222]
+     PHYS-SH - KIN-LR @0.25: +0.072 [+0.022, +0.124]
+     PHYS-LR - GAMMA @0.25: +0.278 [+0.198, +0.353]
+   seed 2024: R-a cells 3/3 (CI excludes 0: True); R-b cells 1/3; R-d cells 3/3
+[task1r_seed7331_r200_exact.json]
+7331 one-sided, 8 st.  events  153 :: KIN-LR 0.36/0.42 | PHYS-LR 0.45/0.60 | PHYS-SH 0.37/0.48 | WAVE-P 0.42/0.55 | TOL-TB 0.15/0.26 | GAMMA 0.35/0.36 | PYOCTO 0.28/0.35
+     variants: KIN-LR KIN-LR@0.1@0.05, PHYS-LR PHYS-LR@0.1@0.2, PHYS-SH PHYS-SH@0.1@0.05
+     PHYS-LR - KIN-LR @0.25: +0.183 [+0.119, +0.257]
+     PHYS-LR - PHYS-SH @0.25: +0.118 [+0.065, +0.170]
+     PHYS-SH - KIN-LR @0.25: +0.065 [+0.013, +0.120]
+     PHYS-LR - GAMMA @0.25: +0.242 [+0.175, +0.315]
+7331 4 stations        events  151 :: KIN-LR 0.07/0.15 | PHYS-LR 0.25/0.33 | PHYS-SH 0.20/0.32 | WAVE-P 0.25/0.35 | TOL-TB 0.04/0.08 | GAMMA 0.11/0.11 | PYOCTO 0.02/0.06
+     variants: KIN-LR KIN-LR@0.1@0.1, PHYS-LR PHYS-LR@0.1@0.1, PHYS-SH PHYS-SH@0.1@0.05
+     PHYS-LR - KIN-LR @0.25: +0.185 [+0.120, +0.252]
+     PHYS-LR - PHYS-SH @0.25: +0.007 [-0.044, +0.064]
+     PHYS-SH - KIN-LR @0.25: +0.179 [+0.117, +0.241]
+     PHYS-LR - GAMMA @0.25: +0.219 [+0.144, +0.298]
+7331 6 stations        events  155 :: KIN-LR 0.17/0.32 | PHYS-LR 0.44/0.54 | PHYS-SH 0.29/0.39 | WAVE-P 0.44/0.53 | TOL-TB 0.18/0.24 | GAMMA 0.17/0.19 | PYOCTO 0.08/0.24
+     variants: KIN-LR KIN-LR@0.1@0.05, PHYS-LR PHYS-LR@0.1@0.2, PHYS-SH PHYS-SH@0.1@0.05
+     PHYS-LR - KIN-LR @0.25: +0.219 [+0.151, +0.288]
+     PHYS-LR - PHYS-SH @0.25: +0.155 [+0.091, +0.221]
+     PHYS-SH - KIN-LR @0.25: +0.065 [+0.015, +0.117]
+     PHYS-LR - GAMMA @0.25: +0.348 [+0.267, +0.434]
+   seed 7331: R-a cells 3/3 (CI excludes 0: True); R-b cells 0/3; R-d cells 3/3
+R-a: True  R-b: False  R-d: True

@@ -1,0 +1,20 @@
+superiority, STD LOC+T @0.25 (pilot SD 0.0282 at 30 networks per cell and regime)
+   n =   60  SD 0.0199  true +0.030: bound 0.32, point>=0.03 0.50; true +0.040: bound 0.52, point>=0.03 0.69; true +0.050: bound 0.71, point>=0.03 0.84; true +0.060: bound 0.85, point>=0.03 0.93
+   n =  100  SD 0.0154  true +0.030: bound 0.49, point>=0.03 0.50; true +0.040: bound 0.74, point>=0.03 0.74; true +0.050: bound 0.90, point>=0.03 0.90; true +0.060: bound 0.97, point>=0.03 0.97
+   n =  160  SD 0.0122  true +0.030: bound 0.69, point>=0.03 0.50; true +0.040: bound 0.91, point>=0.03 0.79; true +0.050: bound 0.98, point>=0.03 0.95; true +0.060: bound 1.00, point>=0.03 0.99
+   n =  240  SD 0.0100  true +0.030: bound 0.85, point>=0.03 0.50; true +0.040: bound 0.98, point>=0.03 0.84; true +0.050: bound 1.00, point>=0.03 0.98; true +0.060: bound 1.00, point>=0.03 1.00
+non-inferiority margin 0.02, STD LOC @0.25 (pilot SD 0.0244 at 30 networks per cell and regime)
+   n =   60  SD 0.0173  true -0.010: 0.14; true +0.000: 0.31; true +0.010: 0.54; true +0.020: 0.75
+   n =  100  SD 0.0134  true -0.010: 0.18; true +0.000: 0.44; true +0.010: 0.73; true +0.020: 0.91
+   n =  160  SD 0.0106  true -0.010: 0.24; true +0.000: 0.60; true +0.010: 0.88; true +0.020: 0.98
+   n =  240  SD 0.0086  true -0.010: 0.31; true +0.000: 0.75; true +0.010: 0.97; true +0.020: 1.00
+non-inferiority margin 0.02, DENSE LOC+T @0.25 (pilot SD 0.0151 at 30 networks per cell and regime)
+   n =   60  SD 0.0107  true -0.010: 0.24; true +0.000: 0.59; true +0.010: 0.88; true +0.020: 0.98
+   n =  100  SD 0.0083  true -0.010: 0.33; true +0.000: 0.78; true +0.010: 0.98; true +0.020: 1.00
+   n =  160  SD 0.0065  true -0.010: 0.45; true +0.000: 0.92; true +0.010: 1.00; true +0.020: 1.00
+   n =  240  SD 0.0053  true -0.010: 0.59; true +0.000: 0.98; true +0.010: 1.00; true +0.020: 1.00
+non-inferiority margin 0.02, DENSE LOC @0.25 (pilot SD 0.0179 at 30 networks per cell and regime)
+   n =   60  SD 0.0127  true -0.010: 0.20; true +0.000: 0.47; true +0.010: 0.77; true +0.020: 0.94
+   n =  100  SD 0.0098  true -0.010: 0.27; true +0.000: 0.65; true +0.010: 0.92; true +0.020: 0.99
+   n =  160  SD 0.0078  true -0.010: 0.36; true +0.000: 0.83; true +0.010: 0.99; true +0.020: 1.00
+   n =  240  SD 0.0063  true -0.010: 0.47; true +0.000: 0.94; true +0.010: 1.00; true +0.020: 1.00

@@ -1,0 +1,21 @@
+# Calibration of f for TS-SFW+SC (Task 2E), seed 999, networks 0-4 of 2A, 20 windows per network: 600 windows
+(6 cells x regime x 100). Recall at <= 0.1 / <= 0.25 false detections per window (exact FROC curve, operating point on the calibration itself). Rule: the f with the highest recall at 0.25 over the 600 pooled windows (one curve); ties go to the smaller value.
+
+Controls: 30 networks; network, catalogue and corrections equal to 2A and MT-FW+SC exact in windows 0-1: passed; MT-FW+SC with positions equal to the saved one in 600/600 windows; kernels [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+
+| Cell (regime) | TS-SFW+SC f=0.01 | TS-SFW+SC f=0.03 | TS-SFW+SC f=0.1 | TS-SFW+SC f=0.3 | BOMP-PK-SLIDE+SC | BOMP-PK+SC | MT-FW+SC |
+|:--|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| ladder_4 (thin) | 0.321/0.568 | 0.370/0.593 | 0.074/0.198 | 0.074/0.148 | 0.321/0.568 | 0.309/0.531 | 0.383/0.469 |
+| ladder_6 (thin) | 0.463/0.657 | 0.403/0.672 | 0.075/0.403 | 0.060/0.254 | 0.463/0.657 | 0.433/0.657 | 0.493/0.627 |
+| unilateral_c40 (thin) | 0.636/0.675 | 0.571/0.636 | 0.104/0.312 | 0.104/0.286 | 0.636/0.675 | 0.571/0.623 | 0.623/0.662 |
+| ladder_4 (strong) | 0.189/0.230 | 0.189/0.230 | 0.054/0.162 | 0.054/0.162 | 0.189/0.230 | 0.176/0.230 | 0.149/0.230 |
+| ladder_6 (strong) | 0.268/0.381 | 0.196/0.361 | 0.072/0.124 | 0.072/0.103 | 0.258/0.351 | 0.175/0.309 | 0.216/0.402 |
+| unilateral_c40 (strong) | 0.488/0.524 | 0.476/0.524 | 0.220/0.293 | 0.134/0.207 | 0.476/0.512 | 0.439/0.512 | 0.451/0.512 |
+| pooled (600) | 0.358/0.475 | 0.341/0.464 | 0.069/0.251 | 0.067/0.184 | 0.364/0.467 | 0.331/0.441 | 0.354/0.454 |
+| mean of the 6 cells at 0.25 | 0.506 | 0.503 | 0.248 | 0.193 | 0.499 | 0.477 | 0.484 |
+
+chosen f: 0.01 (pooled recall at 0.25 = 0.4749; f=0.01: 0.4749, f=0.03: 0.4644, f=0.1: 0.2510, f=0.3: 0.1841)
+- f = 0.01: lambda / sqrt(2 s_1) (fraction of the certificate of the first atom) median 0.045, P10 0.035, P90 0.083; fraction of atoms with zero amplitude 0.000
+- f = 0.03: lambda / sqrt(2 s_1) (fraction of the certificate of the first atom) median 0.136, P10 0.104, P90 0.248; fraction of atoms with zero amplitude 0.001
+- f = 0.1: lambda / sqrt(2 s_1) (fraction of the certificate of the first atom) median 0.453, P10 0.346, P90 0.825; fraction of atoms with zero amplitude 0.132
+- f = 0.3: lambda / sqrt(2 s_1) (fraction of the certificate of the first atom) median 1.359, P10 1.038, P90 2.475; fraction of atoms with zero amplitude 0.879

@@ -1,0 +1,88 @@
+C15 - ORIGIN-TIME ERROR OF WELL-LOCATED ATOMS: SET-VALUED ARGMAX, SECOND-STAGE RELOCATION (EDT)
+AND CYCLIC RE-ESTIMATION (explore_contrib) - REPORT
+======================================================================================================================
+Status: EXPLORATORY, NOT CONFIRMATORY. Nothing below tests a registered hypothesis.
+Date: Friday 9 October 2026, 13:10-14:25 (-05). 2-core machine, OPENBLAS_NUM_THREADS=1,
+OPENBLAS_CORETYPE=Prescott. Seed 999 only.
+Networks: task2a_confirm.network(999, cell, j), j = 1800-1802 (development; never used before; prior grep of 18xx as
+index or TAG in *.py, *.sh, *.txt of explore_contrib: no occurrences). Cells ladder_4, ladder_6, unilateral_c40;
+regimes thin and strong; registered +SC corrections. New TAGs 1851 (STD windows, xc.draw_sources, kmax 5) and 1852
+(DENSE, c2_run.draw_dense, kmax 7), 20 + 20 windows per network, cell and regime (720 windows; 286 STD events, 1436
+DENSE). No separate evaluation network was used: everything below is development and therefore optimistic.
+Code: c15_lib.py, c15_run.py, c15_analyze.py, c15_diag.py. Detector: MT-FW with cap 6 and hard rule +-0.25 s
+(c10_lib.mt_loop), reproduced bit for bit by c15_lib.mt_loop15 (checked on the first 2 windows of each type in
+each part) and by c15_lib.mt_loop_cyc with zero cycles (checked on 3 dense windows).
+Motivation: C14 found that the largest class of false events under LOC+T at the operating point consists of real, well
+located events with the wrong origin (in its development networks the majority; in the evaluation ones one third in STD
+and two thirds in DENSE).
+
+----------------------------------------------------------------------------------------------------------------------
+1. SET-VALUED ARGMAX HYPOTHESIS: REFUTED
+----------------------------------------------------------------------------------------------------------------------
+With the hard rule, the statistic of a hypothesis depends only on the samples read; if shifting the origin does not
+change any reading, the statistic is identical and np.argmax returns the earliest origin of the plateau. Measured:
+the maximum is unique in 97.8% of the accepted atoms (mean plateau size 1.023). The exact plateau does not explain the
+error. Reporting the plateau midpoint (MID) does not change the recall (differences +0.000).
+
+----------------------------------------------------------------------------------------------------------------------
+2. DECOMPOSITION OF THE ORIGIN ERROR (c15_diag.py; ground truth used only here)
+----------------------------------------------------------------------------------------------------------------------
+Detector atoms within <= 5 km of a real event (all scores), fraction with |origin error| <= 0.5 s:
+                                                         STD (n 230)    DENSE (n 972)
+  origin reported by the detector                          0.657          0.583
+  detector readings + TRUE location + true
+    model (gradient) + true statics                        0.935          0.773
+  detector readings + TRUE location + engine
+    model (straight rays + +SC corrections)                0.930          0.761
+  detector readings at the atom NODE (= LSO)                0.678          0.578
+Weighted readings (energy read - 3 > 0) minus true arrival: median +0.003 s (STD), |.| median 0.185 s;
+within 1 sample 36%, within 0.25 s 56% (DENSE: 0.292 s, 28%, 47%).
+Conclusion: the detector readings and the engine model suffice for the origin if the location is correct (93%);
+the origin error comes from the location error. By epicentral error: 0-1.5 km 0.915, 1.5-3 km 0.684, 3-5 km 0.467
+(STD); 0.778, 0.627, 0.430 (DENSE). Correlation origin error - depth error -0.40 (STD), -0.21 (DENSE).
+
+----------------------------------------------------------------------------------------------------------------------
+3. SECOND-STAGE RELOCATION FROM THE READINGS (without changing the detection)
+----------------------------------------------------------------------------------------------------------------------
+Estimators (they only replace the atom's (x, tau); scores, exclusion and deflation untouched):
+  LSO   weighted median of the delays read at the node; LSOs with sub-sample parabolic interpolation
+  LSX   robust (Huber) Gauss-Newton step in (x, y, z, tau) with a prior centred on the node
+  EDT   equal differential time likelihood (Font et al. 2004; Lomax 2005), independent of the origin and
+        robust to outlying readings, on a +-6 km (0.5 km) grid and depths 1-17 km (1 km), sigma 0.2 s
+  EDT2  EDT, re-reading of the energy peaks within +-0.25 s of the times predicted at the new location, EDT again
+        (2 rounds)
+Paired differences against BASE, LOC+T recall with <= 0.25 false events per window [95%], hierarchical bootstrap B = 100:
+                 STD                         DENSE
+  LSO     +0.021 [-0.012, +0.069]     +0.003 [-0.008, +0.021]
+  LSOs    +0.028 [-0.012, +0.079]     +0.003 [-0.008, +0.021]
+  LSX     +0.042 [-0.005, +0.075]     +0.005 [-0.017, +0.037]
+  EDT     +0.024 [-0.019, +0.082]     -0.003 [-0.033, +0.026]
+  EDT2    +0.038 [-0.020, +0.092]     -0.002 [-0.034, +0.033]
+Under LOC none of them changes anything (-0.009 to +0.007). No interval excludes zero, and these are development
+figures (C14 showed shrinkages of 3 to 6 times when moving to new networks). Reason: with 8-16 readings per atom, about
+half of which are noise or another event, the location cannot be refined; with the true location the origin comes out
+right because it is a single parameter and the median absorbs the outliers.
+
+----------------------------------------------------------------------------------------------------------------------
+4. CYCLIC BLOCK RE-ESTIMATION (NOMP-type feedback; Mamandipoor, Ramasamy and Madhow 2016)
+----------------------------------------------------------------------------------------------------------------------
+After the greedy selection, each atom is returned to the residual and (node, origin) is chosen again with the others
+deflated, outside 5 km of the others; 1, 2 or 4 cycles; score of the last cycle (CYC) or the greedy one (CYC2g).
+Networks 1800 and 1802 complete (1801 was stopped halfway because the result was null; 13 parts of 18).
+  LOC+T <= 0.25:  STD  CYC1 -0.032 [-0.105,+0.034]  CYC2 -0.064 [-0.109,+0.044]  CYC2g -0.048  CYC4 -0.043
+                  DENSE CYC1 +0.022 [-0.009,+0.050]  CYC2 +0.011  CYC2g -0.003  CYC4 +0.001
+  LOC <= 0.25:    STD  -0.037 to -0.085;  DENSE -0.017 to -0.033 (CYC2g -0.026 [-0.067,-0.003])
+Cost: about 3-5 times the greedy detector. Verdict: NULL or NEGATIVE; when the competition is removed, low-score false
+atoms rise in score.
+
+----------------------------------------------------------------------------------------------------------------------
+5. VERDICT AND CONSEQUENCE
+----------------------------------------------------------------------------------------------------------------------
+NULL for recall. The useful piece is diagnostic: in this generator the origin error of the well-located atoms is
+a LOCATION error (not a reading error, nor a model error, nor the argmax plateau), and the readings of a single atom in
+a network of 4-8 stations carry no information to correct it. Together with C9 (Cramer-Rao bounds: the time channel is
+the only one that locates), C10 (the remaining margin is calibration and amplitude), C12-C14 (DC statistic, decoys,
+self-interference), this indicates that the detector is close to what the information of this generator allows and that
+algorithmic refinements within the same benchmark yield few points. No confirmation is proposed.
+What would change the evidence is leaving the generator: real noise with injected events (second noise model and
+real geometry) and the test with real data.

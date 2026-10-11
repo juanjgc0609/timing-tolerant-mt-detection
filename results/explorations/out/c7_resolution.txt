@@ -1,0 +1,26 @@
+EXACT: 150 noise-free single-event windows (3 cells x 2 networks x 25)
+   detector     P(global max > 5 km)   sidelobe ratio median [P25, P75]   captured fraction median
+   BOMP-PK         0.007              0.686 [0.600, 0.780]            0.805
+   PH              0.007              0.698 [0.602, 0.788]            0.840
+   PH-FULL         0.007              0.708 [0.618, 0.788]            0.861
+   PHF             0.007              0.698 [0.602, 0.786]            0.919
+   CAP             0.000              0.678 [0.583, 0.778]            0.732
+   PH-CAP          0.007              0.685 [0.592, 0.770]            0.756
+   paired sidelobe ratio PH / BOMP-PK: median 1.007, fraction > 1: 0.607
+   paired sidelobe ratio PH-FULL / BOMP-PK: median 1.010, fraction > 1: 0.640
+   paired sidelobe ratio PHF / BOMP-PK: median 1.008, fraction > 1: 0.640
+   paired sidelobe ratio CAP / BOMP-PK: median 1.000, fraction > 1: 0.333
+   paired sidelobe ratio PH-CAP / BOMP-PK: median 0.997, fraction > 1: 0.460
+REAL: 150 noise-free single-event windows (3 cells x 2 networks x 25)
+   detector     P(global max > 5 km)   sidelobe ratio median [P25, P75]   captured fraction median
+   BOMP-PK         0.027              0.763 [0.673, 0.850]            0.497
+   PH              0.013              0.781 [0.671, 0.858]            0.511
+   PH-FULL         0.007              0.783 [0.686, 0.859]            0.529
+   PHF             0.020              0.803 [0.677, 0.885]            0.547
+   CAP             0.027              0.740 [0.642, 0.814]            0.398
+   PH-CAP          0.007              0.730 [0.652, 0.835]            0.396
+   paired sidelobe ratio PH / BOMP-PK: median 1.006, fraction > 1: 0.600
+   paired sidelobe ratio PH-FULL / BOMP-PK: median 1.009, fraction > 1: 0.587
+   paired sidelobe ratio PHF / BOMP-PK: median 1.024, fraction > 1: 0.653
+   paired sidelobe ratio CAP / BOMP-PK: median 0.999, fraction > 1: 0.307
+   paired sidelobe ratio PH-CAP / BOMP-PK: median 0.979, fraction > 1: 0.360

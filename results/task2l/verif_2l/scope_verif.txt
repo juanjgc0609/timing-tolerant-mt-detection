@@ -1,0 +1,55 @@
+# 1. Per cell (and per cell x regime): MT@S2+T3 - MT@S0+T3, cap 0.25, operating point per subset; own bootstrap 400 reps
+std   LOC+T ladder_4        7171: 0.215->0.236 +0.021 [-0.010, +0.056] | 9393: 0.236->0.254 +0.018 [-0.013, +0.049]
+std   LOC+T ladder_6        7171: 0.413->0.460 +0.048 [+0.006, +0.090] | 9393: 0.416->0.444 +0.027 [-0.025, +0.072]
+std   LOC+T unilateral_c40  7171: 0.415->0.523 +0.108 [+0.053, +0.155] | 9393: 0.421->0.533 +0.113 [+0.061, +0.163]
+std   LOC   ladder_4        7171: 0.332->0.342 +0.010 [-0.022, +0.045] | 9393: 0.335->0.366 +0.030 [-0.012, +0.068]
+std   LOC   ladder_6        7171: 0.539->0.575 +0.036 [-0.003, +0.071] | 9393: 0.554->0.569 +0.015 [-0.020, +0.057]
+std   LOC   unilateral_c40  7171: 0.624->0.680 +0.056 [+0.023, +0.094] | 9393: 0.611->0.689 +0.078 [+0.045, +0.122]
+dense LOC+T ladder_4        7171: 0.094->0.095 +0.000 [-0.018, +0.024] | 9393: 0.092->0.088 -0.005 [-0.019, +0.016]
+dense LOC+T ladder_6        7171: 0.137->0.164 +0.027 [-0.004, +0.056] | 9393: 0.131->0.158 +0.026 [-0.004, +0.058]
+dense LOC+T unilateral_c40  7171: 0.147->0.213 +0.066 [+0.037, +0.102] | 9393: 0.146->0.200 +0.054 [+0.025, +0.086]
+dense LOC   ladder_4        7171: 0.202->0.190 -0.012 [-0.039, +0.010] | 9393: 0.192->0.203 +0.011 [-0.014, +0.030]
+dense LOC   ladder_6        7171: 0.291->0.293 +0.002 [-0.032, +0.039] | 9393: 0.285->0.311 +0.026 [+0.002, +0.059]
+dense LOC   unilateral_c40  7171: 0.353->0.415 +0.062 [+0.030, +0.092] | 9393: 0.361->0.413 +0.052 [+0.008, +0.088]
+std   LOC+T ladder_4        thin   7171: 0.337->0.398 +0.062 [-0.003, +0.123] | 9393: 0.372->0.410 +0.037 [-0.032, +0.102]
+std   LOC+T ladder_4        strong 7171: 0.166->0.164 -0.002 [-0.042, +0.036] | 9393: 0.176->0.198 +0.022 [-0.018, +0.065]
+std   LOC+T ladder_6        thin   7171: 0.496->0.561 +0.065 [-0.002, +0.131] | 9393: 0.485->0.531 +0.046 [-0.021, +0.124]
+std   LOC+T ladder_6        strong 7171: 0.359->0.358 -0.002 [-0.052, +0.070] | 9393: 0.379->0.393 +0.014 [-0.059, +0.077]
+std   LOC+T unilateral_c40  thin   7171: 0.480->0.608 +0.128 [+0.056, +0.185] | 9393: 0.499->0.641 +0.141 [+0.069, +0.201]
+std   LOC+T unilateral_c40  strong 7171: 0.351->0.464 +0.113 [+0.042, +0.185] | 9393: 0.352->0.458 +0.106 [+0.047, +0.175]
+
+# 2. Per-network decomposition at the POOLED operating points (thresholds of the pooled FROC at cap 0.25, per seed and window type, LOC+T)
+#    hits = events detected above the method's pooled threshold; d = (hits S2+T3 - hits S0+T3); networks split by the sign of the
+#    change of the term rms error (err S2 - err S0, median removed, vs the true statics: truth used only for this split)
+7171 std: total hits S0+T3 1323 S2+T3 1542 (diff +219 of 3826 events = +0.0572); false/window S0+T3 0.250 S2+T3 0.250
+    S2 terms WORSE than S0  : 0.225 of networks (216), events 838, recall change +0.0191 (networks with net loss 0.21, net gain 0.25, tie 0.54)
+    S2 terms better         : 0.775 of networks (744), events 2988, recall change +0.0679 (networks with net loss 0.12, net gain 0.31, tie 0.58)
+    ladder_4       : S2 worse in 0.341; recall change where worse +0.0023, where better +0.0352; cell total +0.0239
+    ladder_6       : S2 worse in 0.184; recall change where worse -0.0191, where better +0.0722; cell total +0.0573
+    unilateral_c40 : S2 worse in 0.150; recall change where worse +0.0974, where better +0.0883; cell total +0.0896
+    quartiles of error reduction (err S0 - err S2): Q1 mean red. -0.047 s: recall change +0.0203 | Q2 mean red. +0.029 s: recall change +0.0529 | Q3 mean red. +0.074 s: recall change +0.0456 | Q4 mean red. +0.137 s: recall change +0.1082
+    Spearman(error reduction, per-network recall change) = +0.167 over 960 networks
+7171 dense: total hits S0+T3 1487 S2+T3 1942 (diff +455 of 11978 events = +0.0380); false/window S0+T3 0.249 S2+T3 0.250
+    S2 terms WORSE than S0  : 0.220 of networks (132), events 2638, recall change +0.0258 (networks with net loss 0.15, net gain 0.42, tie 0.42)
+    S2 terms better         : 0.780 of networks (468), events 9340, recall change +0.0414 (networks with net loss 0.13, net gain 0.51, tie 0.36)
+    ladder_4       : S2 worse in 0.320; recall change where worse +0.0165, where better +0.0151; cell total +0.0156
+    ladder_6       : S2 worse in 0.165; recall change where worse +0.0237, where better +0.0305; cell total +0.0294
+    unilateral_c40 : S2 worse in 0.175; recall change where worse +0.0451, where better +0.0737; cell total +0.0688
+    quartiles of error reduction (err S0 - err S2): Q1 mean red. -0.046 s: recall change +0.0252 | Q2 mean red. +0.030 s: recall change +0.0253 | Q3 mean red. +0.074 s: recall change +0.0423 | Q4 mean red. +0.139 s: recall change +0.0591
+    Spearman(error reduction, per-network recall change) = +0.166 over 600 networks
+9393 std: total hits S0+T3 1351 S2+T3 1589 (diff +238 of 3863 events = +0.0616); false/window S0+T3 0.250 S2+T3 0.250
+    S2 terms WORSE than S0  : 0.216 of networks (207), events 837, recall change -0.0012 (networks with net loss 0.23, net gain 0.22, tie 0.56)
+    S2 terms better         : 0.784 of networks (753), events 3026, recall change +0.0790 (networks with net loss 0.13, net gain 0.35, tie 0.53)
+    ladder_4       : S2 worse in 0.303; recall change where worse +0.0000, where better +0.0487; cell total +0.0343
+    ladder_6       : S2 worse in 0.225; recall change where worse -0.0490, where better +0.0585; cell total +0.0344
+    unilateral_c40 : S2 worse in 0.119; recall change where worse +0.0751, where better +0.1212; cell total +0.1151
+    quartiles of error reduction (err S0 - err S2): Q1 mean red. -0.047 s: recall change -0.0031 | Q2 mean red. +0.034 s: recall change +0.0593 | Q3 mean red. +0.077 s: recall change +0.0721 | Q4 mean red. +0.137 s: recall change +0.1172
+    Spearman(error reduction, per-network recall change) = +0.181 over 960 networks
+9393 dense: total hits S0+T3 1445 S2+T3 1811 (diff +366 of 12000 events = +0.0305); false/window S0+T3 0.250 S2+T3 0.250
+    S2 terms WORSE than S0  : 0.203 of networks (122), events 2459, recall change +0.0252 (networks with net loss 0.16, net gain 0.40, tie 0.44)
+    S2 terms better         : 0.797 of networks (478), events 9541, recall change +0.0319 (networks with net loss 0.14, net gain 0.46, tie 0.39)
+    ladder_4       : S2 worse in 0.290; recall change where worse +0.0086, where better +0.0110; cell total +0.0103
+    ladder_6       : S2 worse in 0.200; recall change where worse +0.0149, where better +0.0259; cell total +0.0237
+    unilateral_c40 : S2 worse in 0.120; recall change where worse +0.0816, where better +0.0540; cell total +0.0574
+    quartiles of error reduction (err S0 - err S2): Q1 mean red. -0.046 s: recall change +0.0241 | Q2 mean red. +0.038 s: recall change +0.0178 | Q3 mean red. +0.080 s: recall change +0.0332 | Q4 mean red. +0.138 s: recall change +0.0470
+    Spearman(error reduction, per-network recall change) = +0.127 over 600 networks

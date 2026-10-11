@@ -1,0 +1,35 @@
+Fri Oct  9 18:16:09 -05 2026
+C16 FREEZE - written after development (REAL arm, networks 2400-2401, 6 windows per design) and the validation
+(out/c16_validation.txt, all checks passed), BEFORE any window of the held-out networks 2402-2413 was generated.
+The GEN development arm was started and stopped before it wrote any part (to free the core); no GEN dev number was read.
+Frozen configuration: networks 2402-2413 per cell (12 per cell, 36 per arm); NWIN = 12 STD (kmax 5) + 12 DENSE (kmax 7)
++ 12 noise-only (kmax 7) windows per network; arms REAL and GEN (thin clutter + generator noise), one process each;
+methods c16_lib.METHODS; analysis c16_analyze.py with B = 1000 (transfer B = 500).
+Primary readings: G1-R = DENSE, LOC, @0.25, REAL arm: MT@S0 - BOMP@S0 and HUBER-N@S0 - BOMP@S0.
+                  G1-C = STD, LOC+T, @0.25, REAL arm: MT@S2+T3 - MT@S0+T3.
+Survival rule (descriptive, fixed now): an ordering 'survives' if the REAL-arm point estimate has the sign of the
+registered result and its 95% interval excludes 0; 'not contradicted' if the point has the sign but the interval
+includes 0; 'reversed' if the point has the opposite sign with the interval excluding 0.
+Amplitude rule, subset rule, slot rule, preprocessing: c16_data.py / c16_lib.py docstrings (fixed before any detection run).
+No constant was changed after the development run.
+d951527c8b814528ca2bbf716ec2cdaa68a3dd97f3ff262c870900e254f001dd  c16_data.py
+af0d3e2f610df7bcf36df8055a1d408886dc90d7c0ac7910f5843da261759326  c16_lib.py
+36b5ae34f2b169b56e366b8a2c940bcc2536503fe0eb8de66f0f092066fd41b6  c16_run.py
+06c57a0c91a1b8acb71cc4ec67220bc6c69e3151bb21000efe37c683841b09c0  c16_validate.py
+11a004e84696c244fdec06837a960d67dd4a9989438249cdbb9a14b51648ae82  c16_analyze.py
+315e7fc89ba5be9ce5d83bc327e1834cfa212f0ee5f9cb5e7ac7472a13e59541  c16_queue_dev.sh
+c30ef66843ee1bf6c7e3d78294cfc02e4dd94b31a5ebbf5dc978b5be9523f7a5  c16_queue_eval.sh
+3d98f7da51c6a4331daea3187369259034a887d6c506302c12c8696c264ae763  c10_lib.py
+c7bd0b4d35bc09f62befa038468e7774bccabc3ed306ec4cf5c7e68fe9268322  c10_run.py
+4337b1f2ebad752489f4b60f075f4f574ea91a2c8186155882e2a22bee811651  c10_analyze.py
+bb6f7be91071de52a803f9fba21f2d0f54ed2dcc5374038e1d98dc3fbbbe55c7  c11_lib.py
+7fee7c33d0129c6e09b27645cb17176c5a4a02ab8204354e041a19762a34ad3c  c8_lib.py
+3b4bfd3ae445694dc2ef8d6c210a7335ec91b04935f8646e883c4a818dae7067  c9_run.py
+e7340b0a86435705bd15359e2d694d5f1fb5107c488b1e36a35bc39771807518  c2_run.py
+09e2a5c4af46df0881582aea3f4b381d7483f1892a2f09c81e3204f29c76b16c  xc.py
+40c7613bb58e7fb14d661dc2483718b1c4fae94457e80b7c59d2428cee2d43d5  ../gen_realistic.py
+90395b706a601612c5933e0612f15290d1787c19640caa4c6aeba73b8db39b41  ../station_corrections.py
+a792a156b623457cf48c9c999d437e86eec6d3a096ebf1e0ccb03570b0de10b6  ../task0_common.py
+7a5c51432f8b22471bb8bde5ac3f960731ab5c982e68b9b825f5f21f5f72346f  ../task2a_confirm.py
+a2cc53d3faa4adbed1df6204b15e369b8994971fc90e533d9df1bc229ac3d1fb  out/c16_noise/c16_noise.npy
+a1296708024abfebeab4e0398f25b81697c42f9d9b304a681f1e4376d8f69755  out/c16_noise/c16_meta.json

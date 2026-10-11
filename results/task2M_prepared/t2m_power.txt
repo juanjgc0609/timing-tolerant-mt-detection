@@ -1,0 +1,24 @@
+C16 REAL DENSE LOC @0.25, B = 1000: (a) 432 windows (12 nets x 12 windows per cell), (b) 216 (12 x 6), (c) 216 (6 x 12)
+  MT@S0 - BOMP@S0: point +0.259; sd (a) 0.0514 (b) 0.0609 (c) 0.0631; s_net^2 0.0569 s_win^2 0.4598 (share of var(a) from networks 0.60); predicted (c) 0.0727; lower-tail inflation 1.26
+  HUBER-N@S0 - BOMP@S0: point +0.294; sd (a) 0.0458 (b) 0.0646 (c) 0.0642; s_net^2 0.0013 s_win^2 0.8926 (share of var(a) from networks 0.02); predicted (c) 0.0648; lower-tail inflation 1.29
+  HUBER-N@S0 - MT@S0: point +0.035; sd (a) 0.0309 (b) 0.0433 (c) 0.0419; s_net^2 0.0013 s_win^2 0.3981 (share of var(a) from networks 0.04); predicted (c) 0.0437; lower-tail inflation 0.92
+
+Projected sd and power per seed / both seeds (rule: 2.5th percentile > 0 and point >= 0.03), N networks per cell (3 cells), n DENSE windows per network; effects: C16 REAL point, half of it, C16 GEN point (0.069 / 0.113)
+  N 12 n  8  MT@S0: sd_eff 0.0713 power 0.95|0.91 / 0.43|0.18 / 0.12|0.01   HUBER-N: sd_eff 0.0724 power 0.98|0.96 / 0.52|0.27 / 0.32|0.10
+  N 12 n 12  MT@S0: sd_eff 0.0650 power 0.98|0.96 / 0.50|0.25 / 0.14|0.02   HUBER-N: sd_eff 0.0593 power 1.00|1.00 / 0.70|0.48 / 0.46|0.21
+  N 12 n 16  MT@S0: sd_eff 0.0617 power 0.99|0.98 / 0.55|0.30 / 0.16|0.02   HUBER-N: sd_eff 0.0515 power 1.00|1.00 / 0.81|0.66 / 0.58|0.34
+  N 16 n  8  MT@S0: sd_eff 0.0617 power 0.99|0.97 / 0.55|0.30 / 0.16|0.02   HUBER-N: sd_eff 0.0627 power 1.00|0.99 / 0.65|0.42 / 0.42|0.18
+  N 16 n 12  MT@S0: sd_eff 0.0563 power 1.00|0.99 / 0.63|0.39 / 0.19|0.04   HUBER-N: sd_eff 0.0513 power 1.00|1.00 / 0.82|0.67 / 0.58|0.34
+  N 16 n 16  MT@S0: sd_eff 0.0534 power 1.00|1.00 / 0.68|0.46 / 0.21|0.04   HUBER-N: sd_eff 0.0446 power 1.00|1.00 / 0.91|0.83 / 0.71|0.51
+  N 20 n  8  MT@S0: sd_eff 0.0552 power 1.00|0.99 / 0.65|0.42 / 0.19|0.04   HUBER-N: sd_eff 0.0561 power 1.00|1.00 / 0.74|0.55 / 0.51|0.26
+  N 20 n 12  MT@S0: sd_eff 0.0504 power 1.00|1.00 / 0.73|0.53 / 0.23|0.05   HUBER-N: sd_eff 0.0459 power 1.00|1.00 / 0.89|0.80 / 0.69|0.47
+  N 20 n 16  MT@S0: sd_eff 0.0478 power 1.00|1.00 / 0.77|0.60 / 0.26|0.07   HUBER-N: sd_eff 0.0399 power 1.00|1.00 / 0.96|0.92 / 0.81|0.65
+  N 24 n  8  MT@S0: sd_eff 0.0504 power 1.00|1.00 / 0.73|0.53 / 0.23|0.05   HUBER-N: sd_eff 0.0512 power 1.00|1.00 / 0.82|0.67 / 0.59|0.34
+  N 24 n 12  MT@S0: sd_eff 0.0460 power 1.00|1.00 / 0.80|0.65 / 0.28|0.08   HUBER-N: sd_eff 0.0419 power 1.00|1.00 / 0.94|0.88 / 0.77|0.59
+  N 24 n 16  MT@S0: sd_eff 0.0436 power 1.00|1.00 / 0.84|0.71 / 0.31|0.09   HUBER-N: sd_eff 0.0364 power 1.00|1.00 / 0.98|0.96 / 0.87|0.76
+  N 28 n  8  MT@S0: sd_eff 0.0467 power 1.00|1.00 / 0.79|0.63 / 0.27|0.07   HUBER-N: sd_eff 0.0474 power 1.00|1.00 / 0.87|0.76 / 0.66|0.43
+  N 28 n 12  MT@S0: sd_eff 0.0426 power 1.00|1.00 / 0.86|0.74 / 0.32|0.10   HUBER-N: sd_eff 0.0388 power 1.00|1.00 / 0.97|0.93 / 0.83|0.68
+  N 28 n 16  MT@S0: sd_eff 0.0404 power 1.00|1.00 / 0.90|0.80 / 0.36|0.13   HUBER-N: sd_eff 0.0337 power 1.00|1.00 / 0.99|0.98 / 0.92|0.84
+  N 32 n  8  MT@S0: sd_eff 0.0436 power 1.00|1.00 / 0.84|0.71 / 0.31|0.09   HUBER-N: sd_eff 0.0443 power 1.00|1.00 / 0.91|0.83 / 0.72|0.51
+  N 32 n 12  MT@S0: sd_eff 0.0398 power 1.00|1.00 / 0.90|0.82 / 0.37|0.13   HUBER-N: sd_eff 0.0363 power 1.00|1.00 / 0.98|0.96 / 0.87|0.76
+  N 32 n 16  MT@S0: sd_eff 0.0378 power 1.00|1.00 / 0.93|0.87 / 0.40|0.16   HUBER-N: sd_eff 0.0315 power 1.00|1.00 / 1.00|0.99 / 0.95|0.90

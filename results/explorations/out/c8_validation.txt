@@ -1,0 +1,16 @@
+C8 VALIDATION
+V1 generate_site == generate_real (5 dense windows, max |dD|) 0.0e+00  PASS
+V2 WNet(default world) catalogue == xc.NetCfg: max |dD| 0.0e+00, max |dcorr| 0.0e+00  PASS
+   IDX equal to ModelOps: True; Qst equal: False
+V3 mtfw_general(ls, cap 6) == c6_lib.mtfw_dense: 6/6; uncapped: 6/6  PASS
+V4 unit site scaling == unscaled: 3/3  PASS
+V5 Huber(c -> inf) == LS: max rel 6.2e-14; GAIN(sp -> 0) == LS: max rel 4.0e-07
+   ordering (should hold per candidate up to IRLS/grid tolerance): GAIN-FREE >= GAIN(0.5): 0.9995; GAIN(0.5) >= LS: 1.0000; HUBER-N <= LS (not implied): 0.8958
+V6 pers world (sigma 0.5), 32 single events with noise (no clutter), captured fraction at the true node (mean): LS 0.430, ORACLE 0.503, SITE-CAT 0.456, SITE-CAT-ST 0.447
+V7 catalogue amplitude terms vs true log site (pers, 8 networks): corr per network [0.66, 0.78, 0.83, 0.81, 0.75, 0.71, 0.81, 0.85] mean 0.774
+V8 bound-ordered argmax == full-lattice argmax (GAIN, GAIN-FREE, 4 windows): 8/8  PASS
+   engine huber_n {}: 7 atoms, hits [-1, 0, 1, -1, -1, 4, -1], 0.98 s
+   engine huber_s {}: 7 atoms, hits [-1, 1, -1, -1, -1, -1, -1], 0.99 s
+   engine gain {'sp': 0.5}: 7 atoms, hits [1, 0, -1, -1, -1, -1, -1], 1.86 s
+   engine gain {'sp': inf}: 7 atoms, hits [-1, 1, -1, -1, -1, 3, -1], 0.61 s
+total 19 s

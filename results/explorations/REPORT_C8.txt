@@ -1,0 +1,387 @@
+C8 - PER-STATION AMPLITUDE (SITE) TERMS AND ROBUST FITS INSIDE THE MOMENT-TENSOR CERTIFICATE (explore_contrib) - REPORT
+======================================================================================================================
+Status: EXPLORATORY, NOT CONFIRMATORY. Nothing here tests a registered hypothesis.
+Dates: Mon Sep 28 2026 02:20-03:38 (-05; interrupted, the machine restarted) and Fri Oct 2 2026 11:08-12:55.
+Machine: 2 cores. Compute: 2 h 42 min wall on 2 cores (sum of per-network wall times 19137 s = 5.3 CPU-hours), plus
+about 6 min of analysis. Under the 3 h budget.
+
+Seeds and data (seed 999 ONLY; seeds 2024, 7331, 4242, 8888 and any other seed were never generated, read or touched):
+  networks  task2a_confirm.network(999, cell, j); main designs j = 60-79, sensitivity designs j = 80-89; cells
+            ladder_4 (4 stations), ladder_6 (6), unilateral_c40 (8); regimes thin and strong; statics sd 0.3 s; 20-event
+            catalogue per network and regime (the registered streams [999, 2003, ci, j, ri]) for the +SC corrections.
+            Never used before: 2A/2E 0-4, C1-C3 and verif_2f 10-15, C6/C6b 20-29, leak2 30-35, C7 40-59.
+            j = 99 (unilateral_c40, strong) was built once for a setup timing; no window, no result.
+  window stream TAGs, all new (streams [999, TAG, ci, j, ri, 41|233|61]):
+            3801 DENSE-IID, 3802 STD-IID, 3803 DENSE-PERS, 3804 STD-PERS, 3805 DENSE-IID-S25, 3806 DENSE-IID-S80,
+            3809 persistent site draws (rng [999, 3809, ci, j]), 3810 validation windows (network 60).
+            Reserved and NOT run (dropped for time): 3807, 3808 (PERS sigma 0.8), 3811, 3812 (P factor = S factor).
+            Used before: 3001-3008 (C1-C6b, leak, verif_2f), 3701-3706 (C7).
+Protocol as C7/2F: 3 km x 3 depths grid (675 nodes), origins 5.0-8.0 s step 0.1, +-4-sample peak search, 5 km
+exclusion, hit = epicentre within 5 km, kmax 7 (dense, c2_run.draw_dense, 3-5 events) or 5 (standard, draw_sources,
+0-2 events), exact FROC, recall at <= 0.1 and <= 0.25 realised false events per window, hierarchical bootstrap (strata
+regime x cell, networks then windows, 1000 replicates, operating point re-chosen per replicate). All differences are
+paired (same windows). Numbers below are "recall @0.25" unless stated; intervals are 95%.
+
+----------------------------------------------------------------------------------------------------------------------
+0. SUMMARY
+----------------------------------------------------------------------------------------------------------------------
+(1) A fact about the generator that changes the question. gen_realistic draws the site factors exp(N(0, 0.5)) per
+    station and phase AT EVERY CALL, i.e. anew in every window and in every catalogue event. They are not station
+    terms. In the world where 2F was confirmed ("IID"), catalogue-estimated amplitude terms cannot work by
+    construction. I therefore ran two worlds: IID (the default generator, unchanged) and PERS (the same factors fixed
+    per network, shared by catalogue and windows: the physically meaningful case).
+(2) Catalogue amplitude terms (SITE-CAT) do not replace the cap. IID: SITE-CAT - MT-FW(cap 6) = -0.066 [-0.108,
+    -0.028]. PERS: -0.040 [-0.078, +0.007]; the terms recover a small, uncertain part of the oracle gain (SITE-CAT -
+    uncapped +0.020 [-0.014, +0.048]; oracle +0.052 [+0.012, +0.104]). With the cap added, SITE-CAT-CAP equals MT-FW
+    (+0.006 [-0.015, +0.043]).
+(3) Removing the TRUE site factors (ORACLE, no cap) reaches MT-FW only in PERS at sigma 0.5 (-0.008 [-0.049, +0.055])
+    and falls short elsewhere (IID 0.5: -0.011 [-0.056, +0.044]; sigma 0.25: -0.044; sigma 0.8: -0.043). The cap still
+    adds +0.03 to +0.09 on top of the oracle. At sigma 0.25 the oracle gains nothing over BOMP-PK (-0.001) while the
+    cap still gains +0.043. So site amplification explains part of the cap's effect, not all of it.
+(4) The best principled variant is HUBER-N: a Huber M-estimate of the moment tensor on the station/phase residual
+    norms with the threshold fixed at 2.7955 noise sd (sqrt of the chi-square(3) 0.95 quantile). Dense windows,
+    sigma 0.5:  HUBER-N - MT-FW    IID +0.022 [-0.014, +0.055]   PERS +0.005 [-0.025, +0.048]
+                HUBER-N - BOMP-PK  IID +0.064 [+0.028, +0.105]   PERS +0.066 [+0.024, +0.105]
+    Headroom captured (IID): HUBER-N 0.21 [0.09, 0.39], MT-FW 0.14 [0.01, 0.29]. Standard windows: HUBER-N - BOMP-PK
+    -0.014 [-0.050, +0.042] (IID) and -0.005 [-0.077, +0.070] (PERS); the cap gives -0.041 [-0.086, +0.029] in IID.
+    BUT at sigma 0.8 HUBER-N is below the cap: -0.043 [-0.113, -0.001] (still +0.076 [+0.011, +0.136] over BOMP-PK).
+(5) Threshold sensitivity (post hoc sweep): the HUBER-N gain over BOMP-PK is flat from 1.5 to 3.4 noise sd (+0.059 to
+    +0.091), halves at 5 (+0.043) and vanishes at 8 (+0.004). The cap's window is narrower and has a harmful low end
+    (cap 3: -0.050; 6: +0.042; 8: +0.028; 12: -0.025). HUBER-N does not remove the dependence on a level; it widens
+    the usable range about twofold and takes the level from the noise distribution instead of a calibration.
+(6) The other principled variants fail: HUBER-S (scale-adaptive threshold), GAIN / GAIN-FREE (per-block gains with or
+    without a log-normal prior) and NORM-TR (trace normalisation) are all below MT-FW and close to BOMP-PK.
+Judgement: MODEST, PLAUSIBLE design contribution for HUBER-N ("matches MT-FW cap 6 at the nominal site spread without
+a calibrated cap, and does not hurt isolated events"), NOT a contribution for the site-term idea itself. See section 9.
+
+----------------------------------------------------------------------------------------------------------------------
+1. DESIGN (code: c8_lib.py; runner c8_run.py; analysis c8_analyze.py)
+----------------------------------------------------------------------------------------------------------------------
+Worlds (c8_lib.generate_site = gen_realistic.generate_real copied so that the site factors are returned and can be
+overridden; same rng consumption):
+  IID   site factors redrawn at every call (default generator). sigma 0.5 (main), 0.25 and 0.8 (sensitivity).
+  PERS  site factors exp(sigma z) fixed per network (station, phase), z from rng [999, 3809, ci, j], shared by both
+        regimes, used by the catalogue and by every window.
+  In both worlds the P and S factors of a station are independent (the generator's own choice), so "site factors that
+  differ between P and S" is the default. The opposite case (P = S) was planned and not run.
+Detector engine (c8_lib.mtfw_general): the c6_lib.mtfw_dense loop (energy peak search on the residual, statistic over
+the whole node x origin lattice, running minimum, 5 km exclusion, deflation of the fitted prediction at the peak
+samples) with a pluggable statistic. v_b is the 3-component matched-filter vector of station/phase block b in noise-sd
+units, G the radiation operator of the candidate node, Q an orthonormal basis of G.
+  MT-FW, MT-FW-NOCAP, MT-FW-C3/C8/C12   ||Q^T v||^2/2 with |v_b| clipped at 6 / not clipped / at 3, 8, 12.
+  ORACLE, ORACLE-CAP    the same with the rows of G multiplied by the TRUE site factors of the window (the exact
+                        whitened GLRT with known gains); without and with the cap 6. Not a detector: a bound.
+  SITE-CAT, SITE-CAT-CAP   rows of G multiplied by exp(u), u the catalogue amplitude terms per station and phase.
+  SITE-CAT-ST           one catalogue term per station (both phases).
+  HUBER-N               T = sum_b rho_c(|v_b|) - min_a sum_b rho_c(|v_b - Q_b a|), rho_c the Huber function of the
+                        block residual NORM (quadratic below c, linear above); a by IRLS, 4 passes from the LS fit;
+                        deflation with the IRLS fit. c = sqrt(chi2_3 quantile 0.95) = 2.7955 in noise-sd units: a
+                        pure-noise block is left unweighted with probability 0.95. No cap on the data.
+  HUBER-S               the same with c = 2.7955 x max(1, median_b |r_b| / 1.5382), the robust scale of the LS
+                        residual of the candidate (concomitant scale).
+  GAIN                  profile likelihood with a positive gain per block and a log-normal prior of sd 0.5 (the
+                        generator's nominal value): T = |v|^2/2 - min_{m,u} [sum_b |v_b - e^{u_b} G_b m|^2/2 +
+                        sum_b u_b^2/(2 0.25)]; alternating, 3 rounds. GAIN-FREE: gains free and >= 0 (only the
+                        polarisation direction and sign of each block are modelled).
+  SITE-CAT-GAIN         GAIN with the prior centred on the catalogue terms (PERS designs only).
+  NORM-TR               each station trace divided by its peak amplitude in the window (times the median peak), then
+                        the uncapped statistic. Back-projection practice; heuristic.
+  BOMP-PK               registered BOMP-PK+SC (task2d_methods.bomp_pk_record).   CEIL-GD   verif_2e ceiling (c6_ceil).
+Catalogue amplitude terms (c8_lib.site_terms): per catalogue event, peak times by c6_lib.pick_event (+-1 s around the
+homogeneous prediction plus the +SC correction), the 3-component vector at the peak, gate energy >= 25 (the +SC gate);
+l = log|v| - log A, A the RMS amplitude of the model over 300 random double couples at the catalogue location;
+event term (median over the event's gated blocks) removed; u = median over events (>= 3 picks, else 0), re-centred;
+3 rounds.
+Designs and sample:
+  DENSE-IID   j 60-79, 5 windows: 600 windows, 2410 events      STD-IID   j 60-79, 4 windows: 480 windows, 368 events
+  DENSE-PERS  j 60-79, 4 windows: 480 windows, 1919 events      STD-PERS  j 60-69, 4 windows: 240 windows, 195 events
+  DENSE-IID-S25, DENSE-IID-S80   j 80-89, 4 windows: 240 windows each (970 / 960 events); no CEIL-GD.
+  Supplements on the DENSE-IID windows (records of MT-FW and HUBER-N regenerated identically, 1200/1200 and 600/600):
+  HSWEEP (all 600 windows; c = 2.5003 and 3.3682, the 0.90 and 0.99 quantiles), HWIDE (j 60-69, 300 windows; c =
+  1.5, 5, 8).
+
+----------------------------------------------------------------------------------------------------------------------
+2. WHAT WAS FIXED BEFORE THE RESULTS AND WHAT WAS NOT
+----------------------------------------------------------------------------------------------------------------------
+Fixed before any detection run: all method definitions above, including the HUBER-N constant 2.7955 (rule: chi-square
+  0.95 quantile for a 3-component block, noise sd = 1), the HUBER-S scale rule, the GAIN prior sd 0.5, the designs.
+  No HUBER constant was tried on any window before the DENSE-IID run. HUBER-N was NOT tuned on seed 999.
+Chosen on seed-999 data, without detection results: the catalogue amplitude estimator. c8_sitedev.py compared four
+  estimators on the catalogues of networks 60-63 (PERS, thin) against the true site factors (correlation 0.42 for a
+  per-event moment-tensor ratio, 0.74 for the radiation-averaged one, which was kept). Networks 60-63 are part of the
+  evaluation set, so SITE-CAT in the PERS designs is mildly favoured. It does not matter for the conclusion (SITE-CAT
+  is null).
+Post hoc, after seeing the DENSE-IID results:
+  (a) HUBER-N had been left out of STD-IID, STD-PERS and the sensitivity designs to save compute; it was put back
+      before those designs ran. HUBER-N was not declared the primary beforehand: I had named HUBER-S as the primary
+      Huber variant (standard concomitant scale). HUBER-N is therefore the best of 11 candidates on DENSE-IID, and its
+      DENSE-IID estimate carries a selection bias. DENSE-PERS, STD and the sigma designs are other windows (and partly
+      other networks), run with the same frozen definition.
+  (b) HSWEEP and HWIDE (the threshold sweeps) are post hoc.
+  (c) The sensitivity arm was cut from 4 designs to 2 (IID sigma 0.25 and 0.8) because of the interruption.
+  (d) MT-FW-C4 was dropped before the run (time). 11 candidates x 6 designs: no multiplicity correction anywhere.
+
+----------------------------------------------------------------------------------------------------------------------
+3. VALIDATION (c8_validate.py -> out/c8_validation.txt; all pass)
+----------------------------------------------------------------------------------------------------------------------
+  V1 generate_site equals generate_real bit for bit (5 dense windows, max difference 0).
+  V2 the default-world catalogue and +SC corrections equal xc.NetCfg's exactly.
+  V3 mtfw_general (cap 6 / uncapped) reproduces c6_lib.mtfw_dense hits, locations and scores: 6/6 and 6/6 windows.
+  V4 unit site scaling equals the unscaled statistic: 3/3.
+  V5 limits: Huber with c -> infinity equals the LS statistic (6e-14 relative); GAIN with prior sd -> 0 equals LS
+     (4e-7 with the final code).
+  V6 PERS, 32 single events with noise: captured energy fraction at the true node LS 0.430, ORACLE 0.503, SITE-CAT
+     0.456, SITE-CAT-ST 0.447. Even the true site factors raise the captured fraction by only 0.07: site amplification
+     is one of several model errors (medium, polarisation deviation, pulse, residual statics).
+  V7 catalogue terms against the true log site factors: in the runs, correlation per network median 0.72 (IQR 0.41 to
+     0.85, 120 network-regimes); only 76% of the station/phase blocks have the 3 picks needed for a term.
+  V8 the bound-ordered search used for GAIN / GAIN-FREE returns the full-lattice argmax: 8/8.
+  Site factors are redrawn per window in IID: log-factor sd across the windows of one network 0.42 (stored per row).
+  Not validated: the convergence of GAIN-FREE (3 alternations; scores of the top candidates still move by up to 10%
+  with a 4th), so GAIN-FREE is a lower bound for that idea.
+
+----------------------------------------------------------------------------------------------------------------------
+4. DENSE WINDOWS, SIGMA 0.5 (out/c8_analysis_DENSE-IID.txt, c8_analysis_DENSE-PERS.txt)
+----------------------------------------------------------------------------------------------------------------------
+Recall @0.1 / @0.25, pooled thin + strong:
+                  DENSE-IID (600 w)                           DENSE-PERS (480 w)
+  BOMP-PK         0.104 [.074,.131]  0.200 [.167,.236]        0.105 [.064,.135]  0.200 [.166,.245]
+  MT-FW (cap 6)   0.154 [.129,.192]  0.242 [.215,.275]        0.155 [.127,.198]  0.261 [.221,.289]
+  MT-FW-NOCAP     0.104 [.073,.132]  0.197 [.167,.234]        0.105 [.071,.139]  0.201 [.168,.239]
+  MT-FW-C3        0.089              0.150 [.117,.172]        0.101              0.141 [.116,.165]
+  MT-FW-C8        0.163              0.228 [.198,.261]        0.143              0.225 [.187,.268]
+  MT-FW-C12       0.120              0.175 [.151,.214]        0.116              0.204 [.170,.237]
+  ORACLE          0.131 [.101,.164]  0.231 [.190,.284]        0.147 [.097,.197]  0.253 [.214,.309]
+  ORACLE-CAP      0.185 [.140,.228]  0.287 [.253,.316]        0.183 [.140,.226]  0.293 [.255,.331]
+  SITE-CAT        0.082 [.052,.109]  0.176 [.143,.210]        0.124 [.082,.158]  0.221 [.185,.256]
+  SITE-CAT-CAP    0.151 [.113,.180]  0.239 [.211,.269]        0.158 [.125,.202]  0.267 [.231,.310]
+  SITE-CAT-ST     0.097              0.204 [.164,.234]        0.114              0.215 [.170,.255]
+  SITE-CAT-GAIN   -                  -                        0.114              0.223 [.178,.264]
+  HUBER-N         0.172 [.140,.210]  0.264 [.228,.301]        0.170 [.125,.217]  0.266 [.234,.301]
+  HUBER-S         0.118 [.096,.169]  0.216 [.184,.246]        0.144 [.104,.178]  0.224 [.185,.272]
+  GAIN            0.100 [.069,.141]  0.207 [.164,.250]        0.116 [.080,.160]  0.228 [.186,.265]
+  GAIN-FREE       0.094 [.050,.122]  0.198 [.147,.249]        0.110 [.073,.162]  0.218 [.178,.256]
+  NORM-TR         0.131 [.095,.159]  0.193 [.168,.241]        0.127 [.098,.157]  0.184 [.157,.219]
+  CEIL-GD         0.362 [.277,.444]  0.499 [.417,.599]        0.437 [.367,.557]  0.605 [.495,.699]
+Paired differences @0.1 / @0.25:
+                               DENSE-IID                                       DENSE-PERS
+  MT-FW - BOMP-PK              +0.051 [+0.015,+0.094] / +0.042 [+0.004,+0.083]   +0.051 [+0.020,+0.110] / +0.061 [+0.008,+0.098]
+  MT-FW-NOCAP - BOMP-PK        +0.000 / -0.003 [-0.015,+0.008]                   +0.001 / +0.001 [-0.015,+0.012]
+  ORACLE - MT-FW-NOCAP         +0.027 [+0.001,+0.058] / +0.034 [-0.005,+0.079]   +0.042 [-0.003,+0.087] / +0.052 [+0.012,+0.104]
+  ORACLE - MT-FW               -0.024 [-0.067,+0.013] / -0.011 [-0.056,+0.044]   -0.008 [-0.072,+0.040] / -0.008 [-0.049,+0.055]
+  ORACLE-CAP - MT-FW           +0.031 [-0.011,+0.070] / +0.045 [+0.009,+0.074]   +0.028 [-0.019,+0.065] / +0.032 [+0.003,+0.073]
+  SITE-CAT - MT-FW-NOCAP       -0.022 [-0.048,+0.003] / -0.021 [-0.054,+0.007]   +0.018 [-0.009,+0.045] / +0.020 [-0.014,+0.048]
+  SITE-CAT - MT-FW             -0.072 [-0.117,-0.040] / -0.066 [-0.108,-0.028]   -0.032 [-0.087,+0.006] / -0.040 [-0.078,+0.007]
+  SITE-CAT - ORACLE            -0.049 [-0.084,-0.018] / -0.055 [-0.105,-0.013]   -0.024 [-0.065,+0.016] / -0.032 [-0.082,-0.002]
+  SITE-CAT-CAP - MT-FW         -0.003 [-0.036,+0.015] / -0.002 [-0.026,+0.022]   +0.003 [-0.034,+0.034] / +0.006 [-0.015,+0.043]
+  SITE-CAT-ST - MT-FW          -0.058 [-0.100,-0.018] / -0.038 [-0.087,-0.003]   -0.042 [-0.098,-0.003] / -0.046 [-0.091,+0.002]
+  SITE-CAT-GAIN - MT-FW        -                                                 -0.042 [-0.087,-0.001] / -0.038 [-0.085,+0.010]
+  HUBER-N - MT-FW              +0.017 [-0.020,+0.054] / +0.022 [-0.014,+0.055]   +0.015 [-0.029,+0.048] / +0.005 [-0.025,+0.048]
+  HUBER-N - BOMP-PK            +0.068 [+0.034,+0.106] / +0.064 [+0.028,+0.105]   +0.066 [+0.023,+0.121] / +0.066 [+0.024,+0.105]
+  HUBER-N - ORACLE-CAP         -0.014 [-0.063,+0.043] / -0.023 [-0.058,+0.019]   -0.013 [-0.067,+0.036] / -0.027 [-0.069,+0.018]
+  HUBER-S - MT-FW              -0.037 [-0.076,+0.018] / -0.026 [-0.065,+0.007]   -0.011 [-0.066,+0.023] / -0.037 [-0.077,+0.011]
+  GAIN - MT-FW                 -0.054 [-0.097,-0.009] / -0.035 [-0.080,+0.006]   -0.039 [-0.090,+0.009] / -0.033 [-0.076,+0.017]
+  GAIN-FREE - MT-FW            -0.061 [-0.116,-0.025] / -0.044 [-0.104,+0.008]   -0.045 [-0.093,+0.001] / -0.043 [-0.083,+0.008]
+  NORM-TR - MT-FW              -0.024 [-0.066,+0.003] / -0.049 [-0.074,-0.007]   -0.028 [-0.075,+0.004] / -0.077 [-0.108,-0.032]
+  Bootstrap SD @0.25: HUBER-N - MT-FW 0.0178 (IID), 0.0188 (PERS); HUBER-N - BOMP-PK 0.0194, 0.0211.
+Per regime @0.25: HUBER-N - MT-FW thin +0.040 [-0.012,+0.087] (IID), +0.002 [-0.061,+0.062] (PERS); strong +0.007
+  [-0.045,+0.056] (IID), +0.026 [-0.016,+0.074] (PERS). HUBER-N - BOMP-PK thin +0.062 [-0.005,+0.112] / +0.080 [-0.008,
+  +0.152]; strong +0.071 [+0.017,+0.127] / +0.060 [+0.015,+0.105]. In DENSE-IID thin the cap itself is weak in this
+  sample (MT-FW - BOMP-PK +0.022 [-0.039,+0.085] at 0.25, +0.051 at 0.1).
+Fraction of the CEIL-GD headroom captured @0.25:
+              MT-FW              ORACLE             ORACLE-CAP         SITE-CAT           SITE-CAT-CAP       HUBER-N
+  DENSE-IID   0.14 [0.01,0.29]   0.10 [-0.02,0.27]  0.29 [0.14,0.46]   -0.08 [-0.20,0.02] 0.13 [0.01,0.27]   0.21 [0.09,0.39]
+  DENSE-PERS  0.15 [0.02,0.26]   0.13 [0.03,0.27]   0.23 [0.11,0.36]   0.05 [-0.04,0.12]  0.17 [0.05,0.29]   0.16 [0.06,0.28]
+  HUBER-S, GAIN, GAIN-FREE 0.02 to 0.07 with intervals including 0; NORM-TR -0.02 / -0.04. Nothing gets beyond a
+  quarter of the headroom, the oracle with the cap included.
+Replication note: MT-FW - BOMP-PK is +0.042 here against +0.068 (C7) and +0.070 (C2) on other seed-999 networks; the
+  intervals overlap.
+
+----------------------------------------------------------------------------------------------------------------------
+5. STANDARD WINDOWS, SIGMA 0.5 (out/c8_analysis_STD-IID.txt, c8_analysis_STD-PERS.txt): the no-harm check
+----------------------------------------------------------------------------------------------------------------------
+Recall @0.1 / @0.25 pooled:        STD-IID (480 w, 368 ev)                 STD-PERS (240 w, 195 ev)
+  BOMP-PK         0.397 [.322,.480]  0.511 [.432,.576]        0.328 [.223,.443]  0.410 [.322,.527]
+  MT-FW (cap 6)   0.359 [.292,.450]  0.470 [.403,.549]        0.359 [.250,.461]  0.451 [.363,.553]
+  MT-FW-NOCAP     0.397              0.511                    0.328              0.415
+  MT-FW-C3        0.185              0.258 [.206,.315]        (not tabulated)
+  ORACLE          0.413              0.527 [.463,.604]        0.415              0.492 [.389,.602]
+  SITE-CAT        0.364              0.486 [.414,.557]        0.369              0.441 [.335,.545]
+  SITE-CAT-CAP    0.356              0.484 [.417,.562]        0.333              0.431 [.335,.534]
+  HUBER-N         0.421 [.340,.487]  0.497 [.432,.564]        0.323 [.230,.426]  0.405 [.317,.528]
+  HUBER-S         0.372              0.486                    0.354              0.451
+  GAIN            0.391              0.511                    0.374              0.451
+  NORM-TR         0.293              0.378 [.312,.445]        0.221              0.303 [.212,.402]
+  CEIL-GD         0.524              0.652 [.559,.720]        -
+Paired differences @0.25 (95% interval; 90% interval for the 0.05-margin reading):
+  STD-IID   HUBER-N - BOMP-PK      -0.014 [-0.050, +0.042]   90% [-0.042, +0.035]   (at 0.1: +0.024 [-0.044, +0.077])
+            MT-FW - BOMP-PK        -0.041 [-0.086, +0.029]   90% [-0.078, +0.020]
+            HUBER-N - MT-FW        +0.027 [-0.038, +0.084]
+            SITE-CAT - BOMP-PK     -0.024 [-0.059, +0.026];  SITE-CAT-CAP - BOMP-PK -0.027 [-0.085, +0.045]
+            MT-FW-C3 - BOMP-PK     -0.253 [-0.316, -0.171];  NORM-TR - BOMP-PK -0.133 [-0.203, -0.063]
+            per regime HUBER-N - BOMP-PK: thin -0.016 [-0.090, +0.074], strong -0.011 [-0.080, +0.053]
+  STD-PERS  HUBER-N - BOMP-PK      -0.005 [-0.077, +0.070]   90% [-0.063, +0.060]
+            MT-FW - BOMP-PK        +0.041 [-0.023, +0.101];  HUBER-N - MT-FW -0.046 [-0.104, +0.026]
+            SITE-CAT - BOMP-PK     +0.031 [-0.034, +0.081];  SITE-CAT-CAP - BOMP-PK +0.021 [-0.054, +0.077]
+            ORACLE - BOMP-PK       +0.082 [-0.005, +0.147];  SITE-CAT-GAIN - BOMP-PK +0.046 [-0.045, +0.106]
+Reading. On isolated events HUBER-N equals BOMP-PK within 0.05 in STD-IID (90% interval inside the margin); STD-PERS
+is too small to say (interval +-0.07). The cap costs -0.04 in STD-IID, as 2F-c saw in the strong regime, and is
++0.04 in STD-PERS: the two samples disagree in sign and both intervals include 0. A low cap (3) and NORM-TR destroy
+isolated-event recall. The oracle helps isolated events in PERS (+0.08), the catalogue terms +0.03 with an interval
+including 0.
+
+----------------------------------------------------------------------------------------------------------------------
+6. SENSITIVITY TO THE SITE SPREAD (IID world, dense, networks 80-89, 240 windows each; out/c8_analysis_DENSE-IID-S*.txt)
+----------------------------------------------------------------------------------------------------------------------
+Differences to BOMP-PK @0.25 (BOMP-PK recall 0.206 / 0.200 / 0.104 at sigma 0.25 / 0.5 / 0.8):
+                   sigma 0.25                sigma 0.5 (section 4)     sigma 0.8
+  MT-FW cap 3      -0.060 [-0.139, +0.022]   -0.050 [-0.095, -0.015]   +0.030 [-0.042, +0.115]
+  MT-FW cap 6      +0.043 [-0.026, +0.099]   +0.042 [+0.004, +0.083]   +0.119 [+0.055, +0.207]
+  MT-FW cap 8      +0.031 [-0.020, +0.087]   +0.028 [-0.005, +0.068]   +0.104 [+0.036, +0.183]
+  MT-FW cap 12     -0.001 [-0.036, +0.031]   -0.025 [-0.048, +0.007]   +0.079 [+0.007, +0.154]
+  ORACLE           -0.001 [-0.030, +0.052]   +0.031 [-0.007, +0.078]   +0.076 [+0.012, +0.148]
+  ORACLE-CAP       +0.040 [-0.034, +0.111]   +0.087 [+0.043, +0.125]   +0.167 [+0.099, +0.249]
+  HUBER-N          +0.045 [-0.011, +0.093]   +0.064 [+0.028, +0.105]   +0.076 [+0.011, +0.136]
+  HUBER-S          +0.021 [-0.032, +0.079]   +0.016 [-0.018, +0.048]   +0.030 [-0.019, +0.089]
+  GAIN             -0.011 [-0.069, +0.046]   +0.007 [-0.029, +0.043]   +0.061 [+0.005, +0.116]
+  GAIN-FREE        -0.023 [-0.081, +0.052]   -0.002 [-0.050, +0.045]   +0.068 [+0.004, +0.124]
+  NORM-TR          -0.036 [-0.091, +0.043]   -0.007 [-0.043, +0.045]   +0.056 [-0.008, +0.141]
+  SITE-CAT-CAP     +0.029 [-0.046, +0.093]   +0.039 [+0.002, +0.079]   +0.123 [+0.045, +0.204]
+HUBER-N - MT-FW:   +0.002 [-0.035, +0.048]   +0.022 [-0.014, +0.055]   -0.043 [-0.113, -0.001]
+Reading.
+  (a) Cap 6 stays the best of the caps tried at all three spreads; the wider the spread, the more tolerant the cap
+      level (at 0.8 even cap 12 helps). The cap level is less arbitrary than feared, but cap 3 and cap 12 bracket a
+      window of about a factor 2 at sigma 0.25-0.5.
+  (b) The oracle's gain grows with sigma (0, +0.03, +0.08) as it should. The cap's gain is already +0.04 at sigma
+      0.25, where the oracle has none. The cap is therefore not only a site-factor remedy. This narrows the mechanism
+      statement of the 2F verification (which removed clutter and site factors together and still saw +0.023).
+  (c) HUBER-N follows the cap at 0.25 and 0.5 and falls behind at 0.8 (interval just excludes 0). At a spread of 0.8
+      the mismatch is mostly multiplicative; a threshold on the residual in noise units reacts later than a clip on the
+      amplitude itself.
+The PERS sensitivity designs and the P = S case were not run. Nothing is known about SITE-CAT at other spreads in PERS.
+
+----------------------------------------------------------------------------------------------------------------------
+7. HUBER THRESHOLD SENSITIVITY (POST HOC; out/c8_analysis_DENSE-IID+H.txt, +W.txt)
+----------------------------------------------------------------------------------------------------------------------
+DENSE-IID, differences @0.25. "all" = 600 windows; "sub" = networks 60-69, 300 windows (MT-FW - BOMP-PK there +0.060).
+  c (noise sd)        1.5 (sub)               2.50 (all)              2.7955 (all | sub)                 3.37 (all)
+  - BOMP-PK           +0.081 [+0.030,+0.134]  +0.059 [+0.023,+0.101]  +0.064 [+0.028,+0.105] | +0.091    +0.064 [+0.024,+0.094]
+  - MT-FW             +0.021 [-0.029,+0.066]  +0.017 [-0.016,+0.051]  +0.022 [-0.014,+0.055] | +0.032    +0.022 [-0.017,+0.051]
+  - HUBER-N           -0.011 [-0.046,+0.016]  -0.005 [-0.018,+0.008]  0                                  +0.000 [-0.025,+0.014]
+  c (noise sd)        5 (sub)                 8 (sub)                 HUBER-S (c >= 2.80, adaptive; all)
+  - BOMP-PK           +0.043 [+0.008,+0.094]  +0.004 [-0.018,+0.043]  +0.016 [-0.018,+0.048]
+  - MT-FW             -0.017 [-0.062,+0.039]  -0.056 [-0.108,+0.004]  -0.026 [-0.065,+0.007]
+  - HUBER-N           -0.048 [-0.095,-0.002]  -0.087 [-0.142,-0.032]
+The pre-declared constant sits on a plateau from 1.5 to 3.4; the three quantile choices 0.90, 0.95, 0.99 give the same
+result within 0.005. Above about 4 the gain decays and is gone at 8, where the statistic approaches the uncapped LS one.
+Values below 1.5 were not tried. The sweep was run only in DENSE-IID at sigma 0.5; whether a smaller constant would
+have rescued HUBER-N at sigma 0.8, and what a small constant costs in standard windows, is not known.
+
+----------------------------------------------------------------------------------------------------------------------
+8. RUNTIME (s/window, 2 processes on 2 cores; dense | standard)
+----------------------------------------------------------------------------------------------------------------------
+  BOMP-PK 0.70 | 0.42     MT-FW and every LS variant (caps, ORACLE, SITE-CAT) 0.11-0.12 | 0.08
+  HUBER-N 1.07 | 0.68     HUBER-S 1.10 | 0.70     GAIN 1.84-1.94 | 1.68     GAIN-FREE 0.67-0.73 | 0.65
+  SITE-CAT-GAIN 1.97 (dense)     NORM-TR 0.11 | 0.08     CEIL-GD 0.46-0.50 | 0.22 (genie)
+  Catalogue amplitude terms: about 0.2 s per network. HUBER-N costs 9 times MT-FW (IRLS over the whole lattice, numpy,
+  not optimised) and 1.5 times the registered BOMP-PK.
+
+----------------------------------------------------------------------------------------------------------------------
+9. JUDGEMENT
+----------------------------------------------------------------------------------------------------------------------
+Criterion: plausible contribution if a principled variant matches or beats MT-FW (cap 6) without a tuned cap, and/or
+captures a substantial fraction of the CEIL-GD headroom.
+  Site terms (the physics idea of the task): NOT MET. In the confirmed generator the site factors are not station
+    terms at all, so there is nothing for a catalogue to learn. Where they are (PERS), 20 catalogue events on 4-8
+    stations give terms that correlate 0.72 with the truth, cover 76% of the blocks and recover +0.020 [-0.014,
+    +0.048] of an oracle gain of +0.052; the uncapped SITE-CAT stays -0.040 below the cap. Even the oracle only
+    equals the cap, and the cap adds to the oracle. Site terms do not replace the cap; with the cap they add nothing
+    measurable (+0.006 [-0.015, +0.043]).
+  Nuisance gains with a prior (GAIN, GAIN-FREE, SITE-CAT-GAIN), scale-adaptive Huber (HUBER-S), trace normalisation
+    (NORM-TR): NOT MET. All below MT-FW by 0.03-0.08; NORM-TR loses 0.13 on isolated events.
+  HUBER-N: MET at the nominal spread, with qualifications. It matches the cap in three dense samples at sigma <= 0.5
+    (+0.022, +0.005, +0.002; never significantly different), beats BOMP-PK by +0.064 [+0.028, +0.105] and +0.066
+    [+0.024, +0.105], captures 0.21 [0.09, 0.39] and 0.16 [0.06, 0.28] of the headroom against 0.14 and 0.15 for the
+    cap, and shows no cost on isolated events in STD-IID (-0.014, 90% interval inside +-0.05) where the cap has
+    -0.041. Its threshold comes from a textbook rule and the result is flat over 1.5-3.4 noise sd.
+    Qualifications: (i) it was not the pre-named primary, so DENSE-IID carries selection among 11 candidates; (ii) it
+    is behind the cap at sigma 0.8 (-0.043 [-0.113, -0.001]); (iii) it has a level too, only a wider and better
+    motivated one: the gain is gone at 8 noise sd; (iv) no interval for HUBER-N - MT-FW excludes 0 in its favour, so
+    the claim is equivalence, not superiority; (v) it captures about a fifth of the headroom, like the cap: the
+    remaining four fifths are untouched by any amplitude treatment, the oracle included; (vi) the hit rule ignores
+    origin time (2F verification, section 2e), which inflates dense recall for every method alike.
+Novelty caveats. Station amplitude terms are standard in magnitude estimation and in amplitude-based location; Huber
+and other M-estimators are standard in moment-tensor inversion and robust stacking. What would be new is only the
+measured statement: inside a moment-tensor subspace certificate used for detection with deflation, bounding the
+influence of each station/phase block is what pays in dense sequences, it can be done on the residual with a
+noise-derived constant instead of a calibrated clip on the data, and explicit site terms (estimated or even known) do
+not substitute for it. This is a design result on one synthetic generator, not a new method.
+Recommendation: do not pursue the site-term variants. If the thesis wants to remove the "arbitrary cap 6" objection to
+2F, confirm HUBER-N as an equivalence claim against MT-FW and a superiority claim against BOMP-PK (section 10), and
+report the sigma 0.8 weakness as a registered secondary arm. Keep MT-FW cap 6 as the reference detector: it is 9 times
+cheaper and at least as good at every spread tried.
+
+----------------------------------------------------------------------------------------------------------------------
+10. DRAFT CONFIRMATORY PREREGISTRATION (Task 2I; to be appended to PREREGISTRO_1j_1k.txt and hashed BEFORE any code is
+    run on the new seeds; nothing below has been run; seeds 5151 and 6262 have never been used: check with a grep
+    before registering, as the 2F verification did for 4242/8888)
+----------------------------------------------------------------------------------------------------------------------
+Question: does a moment-tensor certificate with a per-station/phase Huber-weighted fit and a noise-scaled threshold
+  fixed by rule (HUBER-N) (a) beat BOMP-PK+SC in dense windows, (b) match MT-FW+SC with cap 6 there, and (c) leave
+  isolated-event recall unchanged?
+Data: seeds 5151 and 6262 (independent replications). Networks task2a_confirm.network(seed, cell, j), j = 0..79 (80
+  per cell and regime), 3 cells, regimes thin and strong; +SC from 20 catalogue events as in 2A; default gen_realistic
+  (site factors redrawn per window, sd 0.5); 5 dense windows (c2_run.draw_dense, kmax 7) and 5 standard windows
+  (draw_sources, kmax 5) per network from two new TAGs. 2400 dense and 2400 standard windows per seed.
+Methods (code frozen and hashed: c8_lib.py, c8_run.py, c6_lib.py, task2d_methods.py, xc.py):
+  BOMP-PK+SC; MT-FW+SC cap 6 (c8_lib.mtfw_general "ls", capv 6 = c6_lib.mtfw_dense); MT-FW-NOCAP; HUBER-N =
+  mtfw_general "huber_n": Huber function of the residual norm of each station/phase 3-vector, threshold c = sqrt of the
+  chi-square(3) 0.95 quantile = 2.7955 in matched-filter noise-sd units, 4 IRLS passes from the LS fit, statistic =
+  Huber loss of the data minus Huber loss of the residual, deflation with the robust fit. The constant was set by this
+  rule before any run and was not tuned; a post hoc sweep on seed 999 (c = 1.5 to 8) is disclosed in REPORT_C8.txt.
+Endpoint: recall at <= 0.25 realised false events per window (primary) and <= 0.1 (secondary); exact FROC; operating
+  point per method; hierarchical bootstrap (strata regime x cell, networks then windows, 2000 replicates); pooled over
+  regimes and cells, per seed.
+Rules (each must hold in BOTH seeds; Holm over the two seeds within a rule):
+  2I-a superiority, dense: HUBER-N - BOMP-PK, lower one-sided 97.5% bound > 0 and point >= 0.03.
+  2I-b non-inferiority, dense: HUBER-N - MT-FW, lower one-sided 97.5% bound > -0.03.
+  2I-c equivalence, standard: HUBER-N - BOMP-PK, 90% interval inside [-0.05, +0.05] (TOST).
+  The claim "a noise-scaled Huber fit replaces the calibrated cap" requires a, b and c. If a holds and b fails: HUBER-N
+  helps but the cap is better. If a fails: the pilot was a selection artefact.
+Secondary, descriptive (no rule): thresholds at the 0.90 and 0.99 quantiles (2.5003, 3.3682) and c = 5; the same
+  design with site sd 0.8 and 0.25 on 20 networks per cell and regime (the pilot expects HUBER-N below MT-FW at 0.8);
+  per regime; the hit rule with |origin error| <= 0.5 s added.
+Optional arm, persistent-site world (only if the thesis wants the negative on registered data): c8_lib World("pers",
+  0.5), 40 networks per cell and regime, 5 dense windows; SITE-CAT and SITE-CAT-CAP (c8_lib.site_terms, frozen) against
+  MT-FW-NOCAP and MT-FW; rule 2I-d: SITE-CAT - MT-FW upper 97.5% bound < 0 (site terms do not replace the cap) and
+  SITE-CAT-CAP - MT-FW 90% interval inside [-0.05, +0.05]. Pilot: -0.040 (SD 0.0218) and +0.006 (SD 0.0143) with 20
+  networks x 4 windows; at 40 x 5 the SDs are about 0.014 and 0.009: power about 0.8 for the first if the true value
+  is -0.04, and above 0.99 for the second if the true value is 0.
+Power (pilot seed 999, 20 networks per cell and regime; bootstrap SD of the pooled difference @0.25; SD scales with
+  1/sqrt(networks), and with 1/sqrt(windows) for the standard arm, which had 4 windows in the pilot):
+  2I-a  pilot +0.064 (IID) and +0.066 (PERS), SD 0.0194. At 80 networks SD 0.0097: the bound is cleared with power
+        > 0.98 for a true +0.04; the point >= 0.03 condition binds: power 0.85 for a true +0.04, > 0.99 for +0.064.
+        The pilot estimate is selected (best of 11): plan on +0.04.
+  2I-b  pilot +0.022, SD 0.0178. At 80 networks SD 0.0089: power 0.92 if the true difference is 0, 0.61 if it is
+        -0.01, above 0.99 if it is +0.02. This rule sets the sample size (n = 20 (0.0178 x 3.24 / 0.03)^2 = 74).
+  2I-c  pilot -0.014, SD 0.0233 (20 networks x 4 windows). At 80 x 5 SD 0.0104: power 0.96 if the true value is
+        -0.014, above 0.99 if it is 0.
+  Joint power for a, b and c (treated as independent): per seed about 0.75 with true values +0.04, 0 and -0.014
+  (0.56 for both seeds); per seed about 0.88 with +0.064, 0, -0.014 (0.78 for both seeds). 120 networks per cell and
+  regime would give about 0.90 per seed in the first case (3.3 CPU-hours per seed).
+Cost: BOMP-PK 0.70, MT-FW and NOCAP 0.23, HUBER-N 1.07 s per dense window (0.42, 0.16, 0.68 standard): about 2 s x
+  2400 + 1.3 s x 2400 = 2.2 CPU-hours per seed; secondary thresholds +3.2 s per dense window (+2.1 h); sigma arms 2 x
+  600 dense windows (+0.7 h); PERS arm 1200 windows (+0.6 h). About 2.5 h wall per seed on 2 cores with everything.
+Nothing is changed after seeing 5151/6262.
+
+----------------------------------------------------------------------------------------------------------------------
+11. FILES (all in /home/claude/work/explore_contrib; outputs in out/)
+----------------------------------------------------------------------------------------------------------------------
+  c8_lib.py        generator copy with site factors returned/overridden, worlds, catalogue amplitude terms, engine
+  c8_sitedev.py    -> out/c8_sitedev.txt (choice of the catalogue amplitude estimator, networks 60-63)
+  c8_validate.py   -> out/c8_validation.txt
+  c8_run.py        -> out/c8_{DESIGN}_{thin,strong}.json; logs out/c8_{thin,strong}{,3,4}.log
+  c8_queue.sh (first session, interrupted), c8_queue3.sh (resume), c8_queue4.sh (HWIDE); c8_queue2.sh never ran
+  c8_analyze.py    -> out/c8_analysis_{DENSE-IID, DENSE-IID+H, DENSE-IID+W, DENSE-PERS, STD-IID, STD-PERS,
+                      DENSE-IID-S25, DENSE-IID-S80}.txt
+  No registered file, no 2A-2F part, no verif file and no earlier explore_contrib output was modified.

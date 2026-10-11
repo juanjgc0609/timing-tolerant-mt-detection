@@ -1,0 +1,54 @@
+# Validation of task2e_methods.py (seed 999; {'OPENBLAS_CORETYPE': 'Prescott', 'blas': [('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so')]})
+
+## V1 identities
+- max |continuous AC - AC| at the samples 1.1e-16; max |rad_op - radiation_operator| 5.6e-17; max |MFc(n DT) - MFn[n]| 8.9e-16; continuous Gram and correlation at integer times against PKDict (3 peak atoms): max rel. diff. K 3.6e-16, b 4.9e-16 -> passed
+
+## V2 gradients against central finite differences (step 1e-5 km, 1e-6 s)
+- ladder_4 1 atom(s), lambda 0.0: J -0.4036, ||g_fd - g|| / ||g_fd|| = 3.9e-10
+- ladder_4 1 atom(s), lambda 2.5: J 1.2818, ||g_fd - g|| / ||g_fd|| = 3.9e-10
+- ladder_4 refinement with 0 active atom(s): -E/2 -1.6059, relative error 6.4e-10
+- ladder_6 2 atom(s), lambda 0.0: J -0.5264, ||g_fd - g|| / ||g_fd|| = 1.2e-09
+- ladder_6 2 atom(s), lambda 2.5: J 1.8316, ||g_fd - g|| / ||g_fd|| = 1.2e-09
+- ladder_6 refinement with 1 active atom(s): -E/2 -3.2528, relative error 8.4e-10
+- unilateral_c40 3 atom(s), lambda 0.0: J -0.7726, ||g_fd - g|| / ||g_fd|| = 9.8e-10
+- unilateral_c40 3 atom(s), lambda 2.5: J 3.3117, ||g_fd - g|| / ||g_fd|| = 9.7e-10
+- unilateral_c40 refinement with 2 active atom(s): -E/2 -11.9575, relative error 1.2e-09
+- ladder_4 1 atom(s), lambda 0.0: J 0.9872, ||g_fd - g|| / ||g_fd|| = 9.4e-10
+- ladder_4 1 atom(s), lambda 2.5: J 3.4654, ||g_fd - g|| / ||g_fd|| = 9.4e-10
+- ladder_4 refinement with 0 active atom(s): -E/2 -1.0870, relative error 1.4e-09
+- ladder_6 2 atom(s), lambda 0.0: J 0.5725, ||g_fd - g|| / ||g_fd|| = 9.1e-10
+- ladder_6 2 atom(s), lambda 2.5: J 3.0572, ||g_fd - g|| / ||g_fd|| = 9.1e-10
+- ladder_6 refinement with 1 active atom(s): -E/2 -2.2470, relative error 5.1e-10
+- unilateral_c40 3 atom(s), lambda 0.0: J -0.0290, ||g_fd - g|| / ||g_fd|| = 6.3e-10
+- unilateral_c40 3 atom(s), lambda 2.5: J 8.8180, ||g_fd - g|| / ||g_fd|| = 6.1e-10
+- unilateral_c40 refinement with 2 active atom(s): -E/2 -2.3114, relative error 1.2e-09
+- maximum relative error 1.4e-09 -> passed
+
+## V3 convex step against the explicit dictionary in the data domain
+- 2 random atoms: |A^T A - K| rel 4.2e-11, |A^T y - b| rel 7.2e-16, ||y||^2 rel 9.6e-16; lambda = 0: |m - lstsq(A, y)| rel 5.0e-11; lambda = 0.05 c_max: rel gap 3.6e-16, KKT 1.0e-14, zero groups 0, J(method) - J(FISTA) = -9.1e-13 (rel -1.6e-16); lambda = 0.3 c_max: rel gap 1.3e-16, KKT 2.3e-16, zero groups 0, J(method) - J(FISTA) = -9.1e-13 (rel -1.6e-16); lambda = 0.8 c_max: rel gap 1.2e-15, KKT 1.7e-16, zero groups 0, J(method) - J(FISTA) = -1.8e-12 (rel -3.2e-16); lambda = 1e-9 c_max against lambda = 0: |dm| rel 1.2e-09
+- 3 random atoms: |A^T A - K| rel 4.5e-11, |A^T y - b| rel 1.4e-15, ||y||^2 rel 9.6e-16; lambda = 0: |m - lstsq(A, y)| rel 3.6e-11; lambda = 0.05 c_max: rel gap 2.0e-15, KKT 7.5e-14, zero groups 0, J(method) - J(FISTA) = +0.0e+00 (rel +0.0e+00); lambda = 0.3 c_max: rel gap 9.4e-16, KKT 3.4e-15, zero groups 0, J(method) - J(FISTA) = +0.0e+00 (rel +0.0e+00); lambda = 0.8 c_max: rel gap -1.5e-15, KKT 1.9e-16, zero groups 0, J(method) - J(FISTA) = +9.1e-13 (rel +1.6e-16); lambda = 1e-9 c_max against lambda = 0: |dm| rel 1.1e-09
+- 4 random atoms: |A^T A - K| rel 3.0e-11, |A^T y - b| rel 1.7e-15, ||y||^2 rel 9.6e-16; lambda = 0: |m - lstsq(A, y)| rel 2.5e-11; lambda = 0.05 c_max: rel gap 2.3e-15, KKT 9.4e-14, zero groups 0, J(method) - J(FISTA) = -9.1e-13 (rel -1.6e-16); lambda = 0.3 c_max: rel gap 1.5e-15, KKT 8.0e-15, zero groups 0, J(method) - J(FISTA) = +0.0e+00 (rel +0.0e+00); lambda = 0.8 c_max: rel gap 1.6e-15, KKT 2.5e-16, zero groups 2, J(method) - J(FISTA) = +9.1e-13 (rel +1.6e-16); lambda = 1e-9 c_max against lambda = 0: |dm| rel 1.2e-09
+- worst (weighted) discrepancy 5.0e-11 -> passed
+
+## V4 single source off the grid, without noise, injected shifts |delta| in [0.1, 0.2] s (random sign)
+Shift error: max |(delta_est - mean) - (delta_true - mean)| (the common shift is exactly confounded with t0: T = d/V + t0 + corr + delta); also max |T_est - T_true| of the arrival times. Recovery criterion: 3D error < 0.5 km and shifts < 0.02 s.
+- ladder_4 source [1.5, -1.5, 7.0] t0 6.33: BOMP-PK first atom at the node [-2.63, 0.37, 13.0] (3D error 7.52 km, epicentral 4.53 km); TS-SFW lambda=0: 5.191 km, 0.4575 s, times 1.1157 s; TS-SFW f=0.01: 5.191 km, 0.4575 s, times 1.1157 s; TS-SFW f=0.03: 5.191 km, 0.4575 s, times 1.1157 s; TS-SFW f=0.1: 5.191 km, 0.4575 s, times 1.1157 s; TS-SFW f=0.3: 5.191 km, 0.4575 s, times 1.1157 s
+- ladder_6 source [-7.4, 4.6, 11.0] t0 6.02: BOMP-PK first atom at the node [-5.63, 3.37, 13.0] (3D error 2.94 km, epicentral 2.16 km); TS-SFW lambda=0: 1.177 km, 0.3567 s, times 0.4505 s; TS-SFW f=0.01: 1.174 km, 0.3565 s, times 0.4505 s; TS-SFW f=0.03: 1.167 km, 0.3566 s, times 0.4506 s; TS-SFW f=0.1: 1.167 km, 0.3568 s, times 0.4506 s; TS-SFW f=0.3: 0.436 km, 0.2581 s, times 0.4505 s
+- unilateral_c40 source [10.3, 8.8, 6.1] t0 5.87: BOMP-PK first atom at the node [9.37, 9.37, 5.0] (3D error 1.55 km, epicentral 1.09 km); TS-SFW lambda=0: 0.569 km, 0.3390 s, times 0.4549 s; TS-SFW f=0.01: 0.574 km, 0.3383 s, times 0.4548 s; TS-SFW f=0.03: 0.571 km, 0.3388 s, times 0.4549 s; TS-SFW f=0.1: 1.358 km, 0.3874 s, times 0.4570 s; TS-SFW f=0.3: 1.358 km, 0.3874 s, times 0.4570 s
+- ladder_6 source [4.4, -10.6, 9.3] t0 7.11: BOMP-PK first atom at the node [6.37, -11.63, 9.0] (3D error 2.24 km, epicentral 2.22 km); TS-SFW lambda=0: 1.052 km, 0.3333 s, times 0.4550 s; TS-SFW f=0.01: 1.076 km, 0.3245 s, times 0.4550 s; TS-SFW f=0.03: 1.067 km, 0.3326 s, times 0.4536 s; TS-SFW f=0.1: 1.535 km, 0.1528 s, times 0.4646 s; TS-SFW f=0.3: 1.535 km, 0.1528 s, times 0.4646 s
+- 30 random sources per cell (x, y in U[-15, 15], z in U[5, 13], t0 in U[5.5, 7.5], random double couple), recovered fraction (3D error < 0.5 km and shifts < 0.02 s) and median of the 3D error:
+  - TS-SFW lambda=0: recovered 12/90; 3D error median 0.53 km, P90 1.91 km; arrival times with error < 0.02 s in 41/90
+  - TS-SFW f=0.01: recovered 12/90; 3D error median 0.52 km, P90 1.87 km; arrival times with error < 0.02 s in 41/90
+  - TS-SFW f=0.03: recovered 14/90; 3D error median 0.51 km, P90 1.89 km; arrival times with error < 0.02 s in 41/90
+  - TS-SFW f=0.1: recovered 5/90; 3D error median 0.95 km, P90 2.38 km; arrival times with error < 0.02 s in 26/90
+  - TS-SFW f=0.3: recovered 2/90; 3D error median 1.00 km, P90 2.40 km; arrival times with error < 0.02 s in 23/90
+  - BOMP-PK (first atom on the grid): 3D error < 0.5 km in 0/90; median 2.45 km
+- Basin of the local optimiser (refinement and sliding, lambda = 0), from the exact truth: recovered 94/94; 3D error median 0.000 km, max 0.000 km; shifts max 0.0000 s
+- Basin of the local optimiser (refinement and sliding, lambda = 0), position + 0.2-0.4 km, true delta + U(-0.03, 0.03) s: recovered 85/94; 3D error median 0.038 km, max 1.859 km; shifts max 0.3102 s
+- Basin of the local optimiser (refinement and sliding, lambda = 0), position + 0.5-1 km, true delta: recovered 55/94; 3D error median 0.081 km, max 9.493 km; shifts max 0.4367 s
+- Criterion prespecified by the assignment (TS-SFW recovers < 0.5 km and < 0.02 s where BOMP-PK does not) in the 4 fixed cases: NO; for the random sources see the fractions. The local optimiser converges within its basin: yes.
+
+## V5 without sliding: first atom = BOMP-PK; oracle = MT-FW-NOCAP+SC
+- 24 windows (4 per cell and regime, network 0): the oracle (MT-FW without cap) picks the same block and the same peak samples as BOMP-PK in 24/24 (the rest differ only by the metric: G^T G against K(I) with the P/S overlap); in those, max rel. diff. of the first-atom amplitudes 2.4e-13. With the BOMP-PK statistic in the oracle, the complete record (5 atoms, least-squares refit with fixed times) is that of BOMP-PK in 24/24. First value of the oracle = MT-FW-NOCAP+SC in 24/24 -> passed
+
+Overall result of the implementation checks (V1, V2, V3, V4 basin, V5): PASSED; V4 recovery criterion in the fixed cases: NOT met (159 s)

@@ -1,0 +1,11 @@
+MT-FW - BOMP-PK: pilot 180 windows, 6 networks per stratum
+  cap 0.1: point +0.079, 95% CI [-0.020, +0.155], bootstrap SD 0.0458
+    delta 0.040, power 80%: 62 networks per stratum (x 10 windows)
+    delta 0.040, power 90%: 83 networks per stratum (x 10 windows)
+    delta 0.050, power 80%: 40 networks per stratum (x 10 windows)
+    delta 0.050, power 90%: 53 networks per stratum (x 10 windows)
+  cap 0.25: point +0.051, 95% CI [-0.010, +0.131], bootstrap SD 0.0353
+    delta 0.026, power 80%: 87 networks per stratum (x 10 windows)
+    delta 0.026, power 90%: 117 networks per stratum (x 10 windows)
+    delta 0.050, power 80%: 24 networks per stratum (x 10 windows)
+    delta 0.050, power 90%: 32 networks per stratum (x 10 windows)

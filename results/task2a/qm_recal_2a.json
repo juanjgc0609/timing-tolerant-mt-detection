@@ -1,0 +1,172 @@
+{
+ "QM": {
+  "cfg": {
+   "bp_p": [
+    1.0,
+    6.0,
+    2
+   ],
+   "bp_s": [
+    1.0,
+    6.0,
+    2
+   ],
+   "stalta_p": [
+    0.4,
+    6.0
+   ],
+   "stalta_s": [
+    0.4,
+    6.0
+   ],
+   "scan_window": [
+    3.0,
+    11.5
+   ],
+   "trigger_window": [
+    5.12,
+    8.12
+   ],
+   "threshold": 1.964294,
+   "normalise_coalescence": true,
+   "smooth_coa": false,
+   "marginal_window": 0.25,
+   "min_event_interval": 0.5
+  },
+  "best_row": {
+   "ci": 12,
+   "bp": [
+    1.0,
+    6.0
+   ],
+   "stalta": [
+    0.4,
+    6.0
+   ],
+   "lag": 0.12,
+   "n_lag": 10,
+   "norm": true,
+   "floor_q": 0.9,
+   "threshold": 1.964294,
+   "mw": 0.25,
+   "mei": 0.5,
+   "smooth": false,
+   "recall_at": {
+    "0.05": 0.13636363636363635,
+    "0.1": 0.1590909090909091,
+    "0.25": 0.20454545454545456
+   },
+   "n_events": 19,
+   "phase": "a"
+  },
+  "n_rows": 624,
+  "n_ties": 2,
+  "tied_onsets": [
+   [
+    [
+     1.0,
+     6.0
+    ],
+    [
+     0.4,
+     6.0
+    ]
+   ]
+  ],
+  "package_default_best": {
+   "0.05": 0.0,
+   "0.1": 0.0,
+   "0.25": 0.022727272727272728
+  },
+  "trigger_seconds": 420.5617825984955
+ },
+ "QM-3C": {
+  "cfg": {
+   "bp_p": [
+    1.0,
+    6.0,
+    2
+   ],
+   "bp_s": [
+    1.0,
+    6.0,
+    2
+   ],
+   "stalta_p": [
+    0.8,
+    6.0
+   ],
+   "stalta_s": [
+    0.8,
+    6.0
+   ],
+   "scan_window": [
+    3.0,
+    11.5
+   ],
+   "channel_maps": {
+    "P": "*[Z,N,E]",
+    "S": "*[Z,N,E]"
+   },
+   "channel_counts": {
+    "P": 3,
+    "S": 3
+   },
+   "trigger_window": [
+    5.36,
+    8.36
+   ],
+   "threshold": 1.310475,
+   "normalise_coalescence": true,
+   "smooth_coa": false,
+   "marginal_window": 0.25,
+   "min_event_interval": 0.5
+  },
+  "best_row": {
+   "ci": 14,
+   "bp": [
+    1.0,
+    6.0
+   ],
+   "stalta": [
+    0.8,
+    6.0
+   ],
+   "lag": 0.36,
+   "n_lag": 18,
+   "norm": true,
+   "floor_q": 0.5,
+   "threshold": 1.310475,
+   "mw": 0.25,
+   "mei": 0.5,
+   "smooth": false,
+   "recall_at": {
+    "0.05": 0.25,
+    "0.1": 0.29545454545454547,
+    "0.25": 0.36363636363636365
+   },
+   "n_events": 34,
+   "phase": "a"
+  },
+  "n_rows": 624,
+  "n_ties": 4,
+  "tied_onsets": [
+   [
+    [
+     1.0,
+     6.0
+    ],
+    [
+     0.8,
+     6.0
+    ]
+   ]
+  ],
+  "package_default_best": {
+   "0.05": 0.022727272727272728,
+   "0.1": 0.022727272727272728,
+   "0.25": 0.06818181818181818
+  },
+  "trigger_seconds": 360.6153712272644
+ }
+}

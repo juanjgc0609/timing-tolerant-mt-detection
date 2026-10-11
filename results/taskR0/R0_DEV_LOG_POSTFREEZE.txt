@@ -1,0 +1,25 @@
+R0 - diagnostics after the freeze, with CAL data only (they do not change the frozen run)
+2026-10-09 19:47  Spatial structure of the peak-time residuals after +SC (N8, 16 CAL events with M >= 2.0,
+  132 readings with energy >= 25): robust sd 0.200 s. Semivariogram over pairs of events at the same station and phase:
+  0.254 (0-3 km between events), 0.327 (3-6), 0.396 (6-10), 0.421 (10-30); robust sd of the difference 0.323, 0.379,
+  0.456, 0.758 s. The P residual correlates with event depth (-0.50); the S residual with distance (-0.26).
+  Reading: the timing error is not a constant term per station; it has a part that grows with the separation
+  between sources (source-dependent corrections) and a depth dependence (1-D model), plus a
+  large nugget (readings contaminated by overlapping events).
+2026-10-09 20:10  C17a (c17_loo.py, CAL, N8): leave-one-event-out prediction of the peak-time residuals
+  (132 readings, 16 events). Constant term per station and phase: robust sd 0.235 s, rms 0.657, |e| <= 0.25 s in
+  59 %; Gaussian kriging over the source position (exponential covariance fitted to the semivariogram of the other
+  events): 0.309, 0.630, 54 %; linear in depth and distance: 0.517, 0.765, 40 %. With 16 events and readings
+  contaminated by overlapping events, source-dependent corrections do not improve on the constant; the
+  semivariogram structure does not translate into prediction with this catalogue size.
+2026-10-10 13:15  Resumption after the container restart of 9 Oct 21:07 (-05): N8 complete (M1, M2, M5, M6 and
+  M3) before the interruption; frozen code verified (sha256sum -c with no differences); what was missing was relaunched with
+  queue_resume.sh (same code; outputs per method subset in run/parts, joined with merge_parts.py), with the
+  primary (M2 and comparators) first.
+2026-10-10 13:16  POST HOC diagnostic on EVAL, N8 (does not change any rule): fraction of the 45 target events with
+  an atom at <= 3 s and, of those, the nearest at <= 5 km: M1 0.22, M2 0.22, M6 0.36, M5 0.11, M3 0.42, PyOcto 0.76;
+  median distance of the nearest 17.9, 12.8, 9.6, 18.2, 8.2 and 1.5 km. Among the well-located atoms, the fraction of
+  atoms with a higher score is 0.14-0.20 in the pick-free detectors (about 130 of ~900 in 44 min) and 0.00 in PyOcto:
+  the pick-free detectors fail on location (timing model and straight-ray radiation operator) and on
+  ranking (the score of a real event does not separate from that of spurious atoms in a sequence that fills every
+  window with energy; the cap saturates with large events).

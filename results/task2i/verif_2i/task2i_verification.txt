@@ -1,0 +1,155 @@
+TASK 2I - INDEPENDENT ADVERSARIAL VERIFICATION (looking for a false positive)
+Written Fri Oct 2 2026, ~22:16 UTC. Scripts/outputs in verif_2i/ (suffix _verif). No 2I file and no registry file was
+modified. The background job (run_queue_2i.sh, secondary arms) was alive at every poll (3 processes); never relaunched.
+
+Claim tested: preregistered Task 2I passes rules a, b, c in both fresh seeds (5151, 6262):
+  2I-a HUBER-N+SC - BOMP-PK+SC, dense windows, recall at <= 0.25 false/window: +0.058 / +0.053, lower bound > 0, point >= 0.03
+  2I-b HUBER-N+SC - MT-FW+SC (cap 6), dense: lower one-sided 97.5 bound > -0.03
+  2I-c HUBER-N+SC - BOMP-PK+SC, standard windows: 90% interval inside [-0.05, +0.05]
+
+VERDICT: CONFIRMED POSITIVE (not a false positive) for the registered claim, with three scope notes found by the
+exploratory checks (section 4): (i) under the stricter origin-time hit rule the absolute gain over BOMP-PK shrinks to
++0.031 / +0.019 (still significantly > 0 in both seeds, but below the 0.03 point criterion in seed 6262); (ii) in
+thin-regime standard windows of seed 6262 HUBER-N is lower than BOMP-PK by 0.032 (95% interval excludes 0; not in 5151);
+(iii) the gain is NOT mainly cross-window score reliability: about half is score reliability and about half is better
+atom selection (first atom).
+
+------------------------------------------------------------------------------------------------------------------
+1. PROVENANCE
+------------------------------------------------------------------------------------------------------------------
+1.1 sha256sum -c task2i_code_hashes.txt: 27 files, 0 failures.  -> OK
+1.2 Registry hash chain: sha256 of successive line-prefixes of PREREGISTRO_1j_1k.txt reproduces all 11 recorded hashes
+    (prefix ends at lines 431, 437, 448, 497, 502, 509, 543, 551, 558, 589, 597). a983beac...6f97 = prefix through line
+    589 = end of the "Task 2I" section (dated 18:00:05 UTC); fbb9c579... = whole current file (results paragraph,
+    22:08:07 UTC). The 2I section is byte-identical to what was hashed.  -> OK
+    Not verifiable from disk: that the hash was sent to the user before the run (chat-side fact). PREREGISTRO_hashes.txt
+    itself has an mtime of 22:08 because the results hash was appended.
+1.3 Order of events (UTC): registry 18:00:05; task2i_run.py 18:04:58, analyze_2i.py 18:06:53, task2i_control.py 18:07:46
+    (written after the registry text, before the freeze; the registry allows "and whatever is added"); c8_lib.py (the
+    HUBER-N engine) last modified Sep 28; freeze 18:14:44; first job on 5151/6262 launched 18:14:45; first part
+    18:14:58, last 22:04:25. No 5151/6262 part predates the freeze (oldest: prim_seed5151_strong_ladder_4_net0.json,
+    18:14:58.228). Part mtime and the host_time_utc stored inside each part agree within 1.0 s for all 1440 parts.
+    log2i.txt lines before the freeze (18:03, 18:10) are the seed-999 control runs only (66 parts, 0 mentions of
+    5151/6262).  -> OK
+1.4 Interruptions: stored timestamps show exactly two gaps > 60 s (82 s before 20:34:47; 2599 s before 21:29:34),
+    matching task2i_freeze_time.txt and the three "pending jobs" lines of log2i.txt (1440, 339, 256).
+    Parts per session: 1101 / 83 / 256. Six parts regenerated from scratch, each in its own fresh process
+    (regen_verif.py, output only in verif_2i/regen_parts_verif), compared with == on records, positions, truth,
+    origins, site sd, station corrections and metadata:
+      session 1: 6262 thin unilateral_c40 net45 (19:25:53); 6262 thin ladder_6 net91 (20:33:25, last before stop 1)
+      session 2: 5151 thin ladder_6 net95 (20:40:39); 6262 strong ladder_4 net98 (20:46:15, last before stop 2)
+      session 3: 5151 strong unilateral_c40 net109 (21:47:12); 6262 strong ladder_6 net98 (21:29:34, first after stop 2)
+    All six IDENTICAL. Extra: the 26 thr-arm parts written by the current (4th) session contain HUBER-N+SC on the same
+    windows as prim: 260 windows, 0 differences.  -> OK
+1.5 Earlier data with seeds 5151/6262: no file or directory named after them outside task2i_parts (find over the
+    filesystem); text mentions only in the 2I code/outputs, the registry, REPORT_C8.txt (plan, 17:58) and
+    edits/y25_text.md. TAGs 5201/5202 appear only in 2I files. No analysis output on these seeds earlier than
+    analyze_2i_primary_out.txt (22:07:53); sample size fixed at 120 networks, no optional stopping possible.  -> OK
+    Note: REPORT_C8.txt planned j = 0..79; the registry (which governs) says 0..119; the run used 0..119.
+1.6 task2i_control.txt (seed 999): the runner reproduces the pilot records exactly; Pool equals the pilot FROC.  -> OK
+
+------------------------------------------------------------------------------------------------------------------
+2. SYMMETRY
+------------------------------------------------------------------------------------------------------------------
+2.1 Code reading (task2i_run.run_job / run_methods): the four methods are called in sequence on the same window
+    (same MFn, same truth), each works on its own copy (MFn.copy()); same xc.Ops (grid 3 km x 3 depths, DEFAULT_TAUS
+    5.0..8.0 s step 0.1, same station corrections net.corr); DOps is built from that same Ops; same kmax (7 dense, 5
+    standard); same exclusion (nodes within 5 km epicentral of an accepted atom); same hit function
+    (task2c_methods.hit_of: nearest true epicentre, <= 5 km; no origin-time condition); score recorded as the running
+    minimum for all methods; duplicate hits on one event count once and are not counted false, for all methods.
+    Differences are the methods themselves (BOMP: joint LS refit; MT-FW/HUBER: template deflation; HUBER: IRLS weights,
+    4 passes, c = 2.7955 = sqrt(chi2_3 0.95), statistic = Huber loss of data minus Huber loss of residual, as registered).
+2.2 From the parts: every part has the same metadata (TAG 5201/5202, site sd 0.5, kmax 7/5, 5 windows, 4 methods,
+    Prescott kernel); every record has exactly kmax atoms for every method (7.0 / 5.0 per window); scores
+    non-increasing; minimum epicentral separation between atoms 6.0 km; stored hit labels equal my own recomputation
+    from stored positions for all atoms (0 differences).  -> OK
+2.3 Score scales: HUBER-N scores are on a different scale from the LS energies. The registered endpoint handles this
+    by a per-method operating point (one pooled threshold per method, chosen on the evaluation as the best recall with
+    realized false events per window <= cap, re-chosen in every bootstrap replicate). analyze_2i.py does exactly that
+    (analyze_2f.Pool). The in-sample choice of threshold is the same for every method. My per-cell-operating-point
+    variant gives the same answer (section 4).  -> OK, as registered
+2.4 Completeness: 120 networks x 5 windows = 600 windows in each of the 12 (kind x regime x cell) cells, both seeds;
+    0 missing parts; dense k in {3,4,5} (14477 / 14407 events), standard k in {0,1,2} (2938 / 2891 events).  -> OK
+
+------------------------------------------------------------------------------------------------------------------
+3. STATISTICS (own loader, own FROC, own hierarchical bootstrap and RNG; stats_verif.py, run_stats_verif.py; B = 600)
+------------------------------------------------------------------------------------------------------------------
+Point recalls at 0.1 / 0.25 agree to 4 decimals with analyze_2i_primary_out.txt for all 4 methods, both kinds, both
+seeds, and with a brute-force explicit threshold loop.
+                                       mine (B=600)                         registered analysis (B=2000)
+  2I-a 5151 dense H - BOMP   +0.0582 [+0.0402, +0.0753]            +0.058 [+0.039, +0.076]     pass
+  2I-a 6262                  +0.0528 [+0.0362, +0.0691]            +0.053 [+0.037, +0.070]     pass
+  2I-b 5151 dense H - MT-FW  -0.0079 [-0.0247, +0.0055]            -0.008 [-0.023, +0.006]     pass (> -0.03)
+  2I-b 6262                  -0.0023 [-0.0194, +0.0129]            -0.002 [-0.018, +0.012]     pass
+  2I-c 5151 std H - BOMP     +0.0099, 90% [-0.0096, +0.0277]       +0.0099, 90% [-0.0100, +0.0272]  pass
+  2I-c 6262                  +0.0073, 90% [-0.0125, +0.0234]       +0.0073, 90% [-0.0132, +0.0235]  pass
+All three rules reproduced in both seeds; margins are not close to the limits (2I-b: lower bound -0.023/-0.025 against
+-0.03 is the tightest). Secondary cap 0.1: H - MT-FW in seed 5151 is -0.018 [-0.034, -0.003], i.e. at the stricter cap
+the calibrated cap 6 is slightly better (already printed in the analysis output; not a rule).
+Minor: the registry results paragraph prints the 6262 90% upper limit as +0.024, the output as +0.0235 (rounding).
+
+------------------------------------------------------------------------------------------------------------------
+4. ROBUSTNESS (EXPLORATORY, stored parts only; run_explore_verif.py; B = 400)
+------------------------------------------------------------------------------------------------------------------
+4.1 Stricter hit rule (<= 5 km AND |origin-time error| <= 0.5 s; origins are stored). Only ~57% of location hits of
+    any method are within 0.5 s (median error 0.41 s, same for all methods), so all recalls fall by ~60%.
+      dense H - BOMP @0.25:  5151 0.097 - 0.066 = +0.031 [+0.023, +0.042];  6262 0.095 - 0.076 = +0.019 [+0.010, +0.030]
+      dense H - MT-FW @0.25: 5151 -0.004 [-0.016, +0.007];                  6262 -0.009 [-0.018, +0.002]
+      std   H - BOMP @0.25:  5151 +0.030, 90% [+0.012, +0.048];             6262 +0.013, 90% [-0.009, +0.028]
+    The superiority survives (interval > 0 in both seeds; relative gain +47% / +25%), but the absolute point criterion
+    >= 0.03 of 2I-a would be met only marginally in 5151 and NOT in 6262 under this rule; in standard windows of 5151
+    HUBER-N is then better than BOMP-PK (interval excludes 0, still inside +-0.05). With a 1.0 s tolerance:
+    +0.054 / +0.047 (dense H - BOMP). These agree with the analysis's own secondary section. The registered rule is
+    the location-only one, so this does not change the verdict; it limits how the size of the gain should be quoted.
+4.2 Per regime (dense, H - BOMP @0.25): thin +0.068 [+0.037, +0.097] / +0.054 [+0.034, +0.078]; strong +0.051
+    [+0.026, +0.072] / +0.050 [+0.025, +0.071]. H - MT-FW: thin -0.014 / -0.015, strong -0.003 / +0.001 (all intervals
+    include 0). Standard windows per regime, H - BOMP: thin +0.006 (5151) but -0.032 [-0.064, -0.003] (6262; 90%
+    interval [-0.060, -0.008] leaves the +-0.05 band); strong -0.003 / +0.003. So equivalence on isolated events is
+    shown pooled (as registered) but not regime by regime: one of four regime x seed cells shows a small loss.
+4.3 Per cell (dense, H - BOMP @0.25): positive in all 12 cell x seed combinations; smallest for 4 stations
+    (thin +0.039 / +0.045; strong +0.010 [-0.009, +0.056] / +0.030), largest for 6 stations and one-sided 8
+    (+0.054 .. +0.080). The gain is therefore weak or unresolved in the 4-station strong-clutter cell.
+    Mean of per-cell contrasts with a per-cell operating point: +0.053 [+0.036, +0.073] / +0.054 [+0.036, +0.071]:
+    the pooled result is not an artefact of mixing cells under one threshold.
+4.4 Mechanism (is it, like the cap in 2F, mainly cross-window score reliability?). Partly, not mainly:
+    - threshold-free (first n atoms of every window): recall nearly equal (n=1: 0.188 vs 0.200; n=3: 0.447 vs 0.455;
+      all atoms: 0.623 vs 0.622 in 5151, 0.628 vs 0.616 in 6262), so HUBER-N does not find more events overall;
+    - but the first atom is a true event more often (0.757 -> 0.804; 0.764 -> 0.798), and its score separates
+      hit-windows from false-windows better (AUC 0.59 -> 0.67; 0.60 -> 0.69; MT-FW cap 6: 0.71);
+    - rank-matched score swap (both records are non-increasing in rank, so only cross-window calibration changes):
+        BOMP atoms with HUBER scores - BOMP:        +0.027 [+0.016, +0.039] / +0.029 [+0.019, +0.039]  (score reliability)
+        HUBER atoms with BOMP scores - BOMP:        +0.030 [+0.014, +0.049] / +0.018 [+0.004, +0.034]  (atom selection)
+        HUBER - HUBER atoms with BOMP scores:       +0.029 / +0.035
+      The total (+0.058 / +0.053) splits roughly half and half in 5151 and about 60/40 for score reliability in 6262.
+      HUBER-N and BOMP-PK choose the same first node in only 55% of dense windows.
+    - standard windows: HUBER scores help slightly (+0.010), HUBER atoms hurt slightly (-0.012 / -0.013; first-atom
+      hit rate 0.398 -> 0.391, 0.400 -> 0.388), which cancel into the registered equivalence.
+4.5 Cost: HUBER-N takes 0.93 s per dense window against 0.10 s (MT-FW) and 0.60 s (BOMP-PK): 9x the capped detector.
+
+------------------------------------------------------------------------------------------------------------------
+5. THE "prim std: BOMP-PK+SC 0.416 MT-FW+SC 0.074 ... HUBER-N+SC 0.658" LINE
+------------------------------------------------------------------------------------------------------------------
+These are runtimes, not recalls: line 323 of analyze_2i_primary_out.txt, under the header "## Times (s per window,
+mean; one process per core, 2 processes in parallel)", for seed 6262 standard windows. I recomputed the mean of the
+"sec" field of the parts: BOMP-PK 0.416, MT-FW 0.074, MT-FW-NOCAP 0.073, HUBER-N 0.658 s per window (5151: 0.425, 0.074,
+0.072, 0.657) - exact match. The standard-window recalls at 0.25 are 0.488 / 0.485 / 0.488 / 0.496 (6262) and 0.479 /
+0.469 / 0.480 / 0.489 (5151), which I reproduced. Nothing is mislabelled in the file; the line only looks like recalls
+when quoted without its header. Any summary quoting it should say "seconds per window".
+
+------------------------------------------------------------------------------------------------------------------
+6. HONEST SCOPE
+------------------------------------------------------------------------------------------------------------------
+- Synthetic data only, one generator family (gen_realistic, i.i.d. per-window site factors with log-sd 0.5, three
+  network cells, two clutter regimes); the two seeds are independent draws from that same family, not independent
+  evidence about real data. Secondary arms (other thresholds, site sd 0.25 / 0.8) were still running; not verified.
+- Huber-weighted fitting is standard robust statistics. The contribution is the measured design result: inside a
+  moment-tensor subspace detector, a per-station/phase Huber fit whose level is fixed by rule from the noise
+  (c = sqrt(chi2_3 0.95) = 2.7955) recovers the gain of the calibrated cap 6 over BOMP-PK in dense windows
+  (non-inferior within 0.03) without a tuned constant, at about 9x the runtime of the capped detector.
+- HUBER-N was the best of 11 pilot candidates (selection declared); the confirmatory effect (+0.058 / +0.053) is close
+  to the pilot's +0.064, so little regression.
+- Absolute recalls are low (0.18 -> 0.24-0.25 in dense windows at 0.25 false/window; ~0.10 with the 0.5 s origin rule).
+- Operating points are chosen in-sample per method (registered, symmetric); no held-out threshold was tested.
+- The size of the gain depends on the hit rule (+0.05-0.06 location-only; +0.02-0.03 with origin time within 0.5 s),
+  is weakest for 4-station networks under strong clutter, and the mechanism is mixed (score reliability and first-atom
+  selection), not purely score reliability.

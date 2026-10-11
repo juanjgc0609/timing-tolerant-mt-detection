@@ -1,0 +1,21 @@
+C2 dense overlaps (3-5 events, kmax 7)  windows 180, events 718, networks 18
+  BOMP-PK                      recall@0.1 0.135 [0.073,0.189]   @0.25 0.230 [0.163,0.293]
+  TS-SFW                       recall@0.1 0.143 [0.084,0.214]   @0.25 0.241 [0.181,0.319]
+  SLIDE                        recall@0.1 0.135 [0.070,0.205]   @0.25 0.260 [0.178,0.331]
+  MT-FW                        recall@0.1 0.212 [0.155,0.316]   @0.25 0.304 [0.248,0.372]
+  MASK6g3                      recall@0.1 0.166 [0.095,0.227]   @0.25 0.245 [0.169,0.324]
+  CEIL-A                       recall@0.1 0.185 [0.108,0.246]   @0.25 0.326 [0.240,0.400]
+  CEIL-B                       recall@0.1 0.762 [0.639,0.856]   @0.25 0.872 [0.818,0.917]
+  TS-SFW - BOMP-PK: @0.1 +0.008 [-0.016, +0.062]   @0.25 +0.011 [-0.038, +0.078]
+  SLIDE - BOMP-PK: @0.1 +0.000 [-0.042, +0.057]   @0.25 +0.031 [-0.028, +0.088]
+  MT-FW - BOMP-PK: @0.1 +0.077 [+0.018, +0.199]   @0.25 +0.074 [+0.004, +0.163]
+  MASK6g3 - BOMP-PK: @0.1 +0.031 [-0.019, +0.087]   @0.25 +0.015 [-0.054, +0.103]
+  CEIL-A - BOMP-PK: @0.1 +0.050 [+0.029, +0.071]   @0.25 +0.096 [+0.067, +0.127]
+  CEIL-B - BOMP-PK: @0.1 +0.627 [+0.510, +0.744]   @0.25 +0.642 [+0.567, +0.721]
+    ladder_4: BOMP-PK 0.06/0.15  TS-SFW 0.07/0.14  SLIDE 0.06/0.14  MT-FW 0.18/0.25  MASK6g3 0.06/0.21  CEIL-A 0.09/0.24  CEIL-B 0.76/0.82
+    ladder_6: BOMP-PK 0.09/0.21  TS-SFW 0.12/0.20  SLIDE 0.08/0.20  MT-FW 0.24/0.27  MASK6g3 0.14/0.19  CEIL-A 0.13/0.32  CEIL-B 0.74/0.87
+    unilateral_c40: BOMP-PK 0.23/0.31  TS-SFW 0.29/0.41  SLIDE 0.27/0.43  MT-FW 0.33/0.39  MASK6g3 0.27/0.35  CEIL-A 0.30/0.42  CEIL-B 0.89/0.94
+{'BOMP-PK': 0.602, 'TS-SFW': 2.134, 'SLIDE': 2.052, 'MT-FW': 0.255, 'MASK6g3': 0.596}
+  k=3 (60 windows) any-threshold recall: BOMP-PK 0.728  TS-SFW 0.694  SLIDE 0.683  MT-FW 0.694  MASK6g3 0.650  
+  k=4 (62 windows) any-threshold recall: BOMP-PK 0.649  TS-SFW 0.677  SLIDE 0.657  MT-FW 0.714  MASK6g3 0.609  
+  k=5 (58 windows) any-threshold recall: BOMP-PK 0.621  TS-SFW 0.586  SLIDE 0.572  MT-FW 0.634  MASK6g3 0.524  

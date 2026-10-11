@@ -1,0 +1,217 @@
+# Task 2E - group BLASSO with off-grid shifts (TS-SFW+SC) versus block search with the same temporal tolerance (analyze_2e.py)
+
+Event recall at realized false events per window <= 0.1 / <= 0.25 (exact FROC curve, operating point chosen per method on the evaluation itself), 400 windows (5 networks x 20 + 25 networks x 12) per cell, seed and regime. Differences: point [95% CI H] (hierarchical bootstrap: networks and windows; 2000 replicates; operating point re-chosen in each replicate); one-sided p H = (1 + #{d* <= 0}) / 2001.
+
+## Controls
+
+- thin 2024 4 st.: 30 networks, 400 windows; network, catalogue, corrections and exact MT-FW+SC in windows 0-1 correct; windows differing from the saved ones 0; BOMP-PK+SC recomputed = 2D in 100/100 windows of networks 0-4; MT-FW+SC with positions = saved in 400/400; required core ['Prescott'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- thin 2024 6 st.: 30 networks, 400 windows; network, catalogue, corrections and exact MT-FW+SC in windows 0-1 correct; windows differing from the saved ones 0; BOMP-PK+SC recomputed = 2D in 100/100 windows of networks 0-4; MT-FW+SC with positions = saved in 400/400; required core ['Prescott'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- thin 2024 one-sided 8: 30 networks, 400 windows; network, catalogue, corrections and exact MT-FW+SC in windows 0-1 correct; windows differing from the saved ones 0; BOMP-PK+SC recomputed = 2D in 100/100 windows of networks 0-4; MT-FW+SC with positions = saved in 400/400; required core ['Prescott'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- thin 7331 4 st.: 30 networks, 400 windows; network, catalogue, corrections and exact MT-FW+SC in windows 0-1 correct; windows differing from the saved ones 0; BOMP-PK+SC recomputed = 2D in 100/100 windows of networks 0-4; MT-FW+SC with positions = saved in 400/400; required core ['Prescott', 'SkylakeX'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so')), (('SkylakeX', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('SkylakeX', 'libscipy_openblas-6cdc3b4a.so'))]
+- thin 7331 6 st.: 30 networks, 400 windows; network, catalogue, corrections and exact MT-FW+SC in windows 0-1 correct; windows differing from the saved ones 0; BOMP-PK+SC recomputed = 2D in 100/100 windows of networks 0-4; MT-FW+SC with positions = saved in 400/400; required core ['Prescott', 'SkylakeX'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so')), (('SkylakeX', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('SkylakeX', 'libscipy_openblas-6cdc3b4a.so'))]
+- thin 7331 one-sided 8: 30 networks, 400 windows; network, catalogue, corrections and exact MT-FW+SC in windows 0-1 correct; windows differing from the saved ones 0; BOMP-PK+SC recomputed = 2D in 100/100 windows of networks 0-4; MT-FW+SC with positions = saved in 400/400; required core ['Prescott'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- strong 2024 4 st.: 30 networks, 400 windows; network, catalogue, corrections and exact MT-FW+SC in windows 0-1 correct; windows differing from the saved ones 0; BOMP-PK+SC recomputed = 2D in 100/100 windows of networks 0-4; MT-FW+SC with positions = saved in 400/400; required core ['Prescott'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- strong 2024 6 st.: 30 networks, 400 windows; network, catalogue, corrections and exact MT-FW+SC in windows 0-1 correct; windows differing from the saved ones 0; BOMP-PK+SC recomputed = 2D in 100/100 windows of networks 0-4; MT-FW+SC with positions = saved in 400/400; required core ['Prescott'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- strong 2024 one-sided 8: 30 networks, 400 windows; network, catalogue, corrections and exact MT-FW+SC in windows 0-1 correct; windows differing from the saved ones 0; BOMP-PK+SC recomputed = 2D in 100/100 windows of networks 0-4; MT-FW+SC with positions = saved in 400/400; required core ['Prescott'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- strong 7331 4 st.: 30 networks, 400 windows; network, catalogue, corrections and exact MT-FW+SC in windows 0-1 correct; windows differing from the saved ones 0; BOMP-PK+SC recomputed = 2D in 100/100 windows of networks 0-4; MT-FW+SC with positions = saved in 400/400; required core ['Prescott', 'SkylakeX'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so')), (('SkylakeX', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('SkylakeX', 'libscipy_openblas-6cdc3b4a.so'))]
+- strong 7331 6 st.: 30 networks, 400 windows; network, catalogue, corrections and exact MT-FW+SC in windows 0-1 correct; windows differing from the saved ones 0; BOMP-PK+SC recomputed = 2D in 100/100 windows of networks 0-4; MT-FW+SC with positions = saved in 400/400; required core ['Prescott', 'SkylakeX'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so')), (('SkylakeX', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('SkylakeX', 'libscipy_openblas-6cdc3b4a.so'))]
+- strong 7331 one-sided 8: 30 networks, 400 windows; network, catalogue, corrections and exact MT-FW+SC in windows 0-1 correct; windows differing from the saved ones 0; BOMP-PK+SC recomputed = 2D in 100/100 windows of networks 0-4; MT-FW+SC with positions = saved in 400/400; required core ['Prescott'], loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]
+- f of TS-SFW+SC in all parts: [(0.01,)]
+
+## Regime thin
+
+### Table 1 (thin). Recall at <= 0.1 / <= 0.25
+
+| Cell (seed) | events | TS-SFW+SC | BOMP-PK-SLIDE+SC | BOMP-PK+SC | MT-FW+SC |
+|:--|--:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | 308 | 0.334/0.558 | 0.328/0.562 | 0.279/0.519 | 0.458/0.562 |
+| 6 st. (2024) | 313 | 0.473/0.597 | 0.473/0.601 | 0.438/0.569 | 0.492/0.623 |
+| one-sided 8 (2024) | 314 | 0.465/0.634 | 0.490/0.634 | 0.439/0.608 | 0.548/0.656 |
+| 4 st. (7331) | 307 | 0.352/0.485 | 0.332/0.472 | 0.270/0.469 | 0.319/0.466 |
+| 6 st. (7331) | 308 | 0.568/0.701 | 0.584/0.708 | 0.516/0.672 | 0.568/0.685 |
+| one-sided 8 (7331) | 326 | 0.580/0.687 | 0.543/0.699 | 0.528/0.672 | 0.537/0.638 |
+
+### Table 2 (thin). 2E-a: TS-SFW+SC - BOMP-PK+SC [95% CI H] one-sided p H
+
+| Cell (seed) | at 0.1 | at 0.25 | cell counts (point >= 0.05 and bound > 0 at 0.25) |
+|:--|:-:|:-:|:-:|
+| 4 st. (2024) | +0.055 [-0.068, +0.138] p=0.2764 | +0.039 [-0.025, +0.122] p=0.1349 | no |
+| 6 st. (2024) | +0.035 [-0.033, +0.170] p=0.1524 | +0.029 [-0.025, +0.087] p=0.1489 | no |
+| one-sided 8 (2024) | +0.025 [-0.089, +0.110] p=0.5052 | +0.025 [-0.042, +0.094] p=0.2204 | no |
+| 4 st. (7331) | +0.081 [-0.028, +0.191] p=0.1079 | +0.016 [-0.038, +0.094] p=0.3273 | no |
+| 6 st. (7331) | +0.052 [-0.039, +0.147] p=0.0910 | +0.029 [-0.024, +0.078] p=0.2354 | no |
+| one-sided 8 (7331) | +0.052 [-0.050, +0.121] p=0.2599 | +0.015 [-0.035, +0.091] p=0.2414 | no |
+
+### Table 3 (thin). 2E-b: TS-SFW+SC - BOMP-PK-SLIDE+SC [95% CI H] one-sided p H
+
+| Cell (seed) | at 0.1 | at 0.25 | cell counts (point >= 0.05 at 0.25) |
+|:--|:-:|:-:|:-:|
+| 4 st. (2024) | +0.006 [-0.061, +0.037] p=0.7171 | -0.003 [-0.036, +0.028] p=0.6012 | no |
+| 6 st. (2024) | +0.000 [-0.091, +0.049] p=0.5932 | -0.003 [-0.048, +0.030] p=0.6087 | no |
+| one-sided 8 (2024) | -0.025 [-0.093, +0.025] p=0.7876 | +0.000 [-0.040, +0.026] p=0.6447 | no |
+| 4 st. (7331) | +0.020 [-0.028, +0.069] p=0.3123 | +0.013 [-0.020, +0.045] p=0.2049 | no |
+| 6 st. (7331) | -0.016 [-0.088, +0.025] p=0.7496 | -0.006 [-0.038, +0.018] p=0.7246 | no |
+| one-sided 8 (7331) | +0.037 [-0.061, +0.053] p=0.5867 | -0.012 [-0.042, +0.026] p=0.6772 | no |
+
+### Table 4 (thin, descriptive). Differences at 0.1 / 0.25 [95% CI H]
+
+| Cell (seed) | TS-SFW+SC - MT-FW+SC | BOMP-PK-SLIDE+SC - BOMP-PK+SC | BOMP-PK-SLIDE+SC - MT-FW+SC | BOMP-PK+SC - MT-FW+SC |
+|:--|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | -0.123 [-0.264, +0.050] / -0.003 [-0.100, +0.085] | +0.049 [-0.066, +0.143] / +0.042 [-0.027, +0.125] | -0.130 [-0.249, +0.052] / +0.000 [-0.102, +0.086] | -0.179 [-0.310, +0.009] / -0.042 [-0.141, +0.031] |
+| 6 st. (2024) | -0.019 [-0.140, +0.153] / -0.026 [-0.095, +0.055] | +0.035 [-0.016, +0.170] / +0.032 [-0.022, +0.091] | -0.019 [-0.127, +0.155] / -0.022 [-0.089, +0.060] | -0.054 [-0.204, +0.102] / -0.054 [-0.122, +0.017] |
+| one-sided 8 (2024) | -0.083 [-0.211, +0.027] / -0.022 [-0.087, +0.055] | +0.051 [-0.046, +0.120] / +0.025 [-0.034, +0.097] | -0.057 [-0.181, +0.040] / -0.022 [-0.080, +0.064] | -0.108 [-0.208, +0.000] / -0.048 [-0.107, +0.020] |
+| 4 st. (7331) | +0.033 [-0.143, +0.133] / +0.020 [-0.060, +0.132] | +0.062 [-0.038, +0.177] / +0.003 [-0.050, +0.079] | +0.013 [-0.149, +0.115] / +0.007 [-0.072, +0.118] | -0.049 [-0.187, +0.068] / +0.003 [-0.071, +0.098] |
+| 6 st. (7331) | +0.000 [-0.139, +0.094] / +0.016 [-0.046, +0.082] | +0.068 [+0.006, +0.160] / +0.036 [-0.018, +0.081] | +0.016 [-0.099, +0.101] / +0.023 [-0.033, +0.090] | -0.052 [-0.182, +0.047] / -0.013 [-0.074, +0.068] |
+| one-sided 8 (7331) | +0.043 [-0.106, +0.132] / +0.049 [-0.020, +0.137] | +0.015 [-0.037, +0.122] / +0.028 [-0.025, +0.090] | +0.006 [-0.080, +0.134] / +0.061 [-0.012, +0.140] | -0.009 [-0.106, +0.076] / +0.034 [-0.033, +0.098] |
+
+- Rule 2E-a (thin; point >= 0.05 and lower bound > 0, at 0.25, >= 2 of 3 cells in both seeds): seed 2024: 0/3 (4 st. no +0.039 [bound -0.025], 6 st. no +0.029 [bound -0.025], one-sided 8 no +0.025 [bound -0.042]); seed 7331: 0/3 (4 st. no +0.016 [bound -0.038], 6 st. no +0.029 [bound -0.024], one-sided 8 no +0.015 [bound -0.035]) -> NOT MET
+
+- Rule 2E-b (thin; point >= 0.05, at 0.25, >= 2 of 3 cells in both seeds): seed 2024: 0/3 (4 st. no -0.003 [bound -0.036], 6 st. no -0.003 [bound -0.048], one-sided 8 no +0.000 [bound -0.040]); seed 7331: 0/3 (4 st. no +0.013 [bound -0.020], 6 st. no -0.006 [bound -0.038], one-sided 8 no -0.012 [bound -0.042]) -> NOT MET (exploratory: points >= 0.05 in >= 2 of 3 cells per seed in 0% of the H replicates)
+
+### Table 5 (thin). 2E-a, strict reading: Holm over the 6 cell x seed tests (one-sided, level 0.025)
+
+| Cell (seed) | point at 0.25 | p H | p Holm | rejection | counts (rejection and point >= 0.05) |
+|:--|:-:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | +0.039 | 0.1349 | 0.8096 | no | no |
+| 6 st. (2024) | +0.029 | 0.1489 | 0.8096 | no | no |
+| one-sided 8 (2024) | +0.025 | 0.2204 | 0.8816 | no | no |
+| 4 st. (7331) | +0.016 | 0.3273 | 0.8816 | no | no |
+| 6 st. (7331) | +0.029 | 0.2354 | 0.8816 | no | no |
+| one-sided 8 (7331) | +0.015 | 0.2414 | 0.8816 | no | no |
+
+- 2E-a (thin) strict reading with Holm: seed 2024: 0/3; seed 7331: 0/3 -> NOT MET
+
+### Table 6 (thin, descriptive). Location error of the hits at the operating point at 0.25: median epicentral (km) [n hits]; for the continuous methods also median 3D and median depth bias
+
+| Cell (seed) | TS-SFW+SC | BOMP-PK-SLIDE+SC | BOMP-PK+SC | MT-FW+SC |
+|:--|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | 2.14 [172]; 3D 3.90; dz +0.89 | 2.14 [173]; 3D 4.01; dz +0.99 | 1.92 [160] | 2.02 [173] |
+| 6 st. (2024) | 1.46 [187]; 3D 3.22; dz +0.36 | 1.50 [188]; 3D 3.29; dz +0.35 | 1.57 [178] | 1.78 [195] |
+| one-sided 8 (2024) | 1.79 [199]; 3D 3.29; dz +1.07 | 1.82 [199]; 3D 3.17; dz +1.14 | 2.00 [191] | 2.05 [206] |
+| 4 st. (7331) | 2.05 [149]; 3D 3.90; dz +0.34 | 1.97 [145]; 3D 3.92; dz +0.26 | 2.29 [144] | 2.17 [143] |
+| 6 st. (7331) | 1.54 [216]; 3D 2.74; dz +0.49 | 1.53 [218]; 3D 2.87; dz +0.35 | 1.74 [207] | 1.77 [211] |
+| one-sided 8 (7331) | 1.72 [224]; 3D 2.94; dz +1.29 | 1.80 [228]; 3D 2.91; dz +0.97 | 1.83 [219] | 1.77 [208] |
+
+- All cells (thin): median epicentral error TS-SFW+SC 1.79 km (P90 3.96, n 1147); BOMP-PK-SLIDE+SC 1.80 km (P90 3.98, n 1151); BOMP-PK+SC 1.88 km (P90 3.98, n 1099); MT-FW+SC 1.88 km (P90 3.99, n 1136)
+
+### Table 7 (thin). Convergence diagnostics of the continuous methods
+
+| Method | Cell (seed) | rel. gap max / median | KKT max | mean alternations (frac. = 5) | L-BFGS-B sliding: steps, frac. with 50 it., median it. | refinement frac. with 50 it. | frac. shifts at the bound | frac. atoms with m = 0 | lambda / sqrt(2 s_1) median |
+|:--|:--|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| TS-SFW+SC | 4 st. (2024) | 2.9e-10 / 1.6e-15 | 9.7e-11 | 4.97 (0.99) | 9944, 0.74, 50 | 0.84 | 0.341 | 0.000 | 0.038 |
+| TS-SFW+SC | 6 st. (2024) | 5.6e-10 / 1.3e-15 | 7.5e-10 | 5.00 (1.00) | 9996, 0.80, 50 | 0.94 | 0.283 | 0.000 | 0.043 |
+| TS-SFW+SC | one-sided 8 (2024) | 2.0e-10 / 2.0e-15 | 5.3e-10 | 5.00 (1.00) | 9996, 0.83, 50 | 0.96 | 0.247 | 0.000 | 0.047 |
+| TS-SFW+SC | 4 st. (7331) | 1.8e-10 / 1.5e-15 | 8.5e-10 | 4.99 (0.99) | 9973, 0.73, 50 | 0.83 | 0.340 | 0.000 | 0.038 |
+| TS-SFW+SC | 6 st. (7331) | 2.5e-10 / 1.5e-15 | 7.9e-10 | 5.00 (1.00) | 9996, 0.80, 50 | 0.93 | 0.284 | 0.000 | 0.048 |
+| TS-SFW+SC | one-sided 8 (7331) | 5.4e-10 / 1.9e-15 | 4.1e-10 | 5.00 (1.00) | 9997, 0.83, 50 | 0.97 | 0.245 | 0.000 | 0.047 |
+| BOMP-PK-SLIDE+SC | 4 st. (2024) | 0.0e+00 / 0.0e+00 | 5.6e-14 | 4.97 (0.99) | 9944, 0.74, 50 | 0.83 | 0.340 | 0.000 | 0.000 |
+| BOMP-PK-SLIDE+SC | 6 st. (2024) | 0.0e+00 / 0.0e+00 | 3.1e-14 | 5.00 (1.00) | 9997, 0.80, 50 | 0.94 | 0.282 | 0.000 | 0.000 |
+| BOMP-PK-SLIDE+SC | one-sided 8 (2024) | 0.0e+00 / 0.0e+00 | 2.2e-13 | 5.00 (1.00) | 9995, 0.83, 50 | 0.97 | 0.244 | 0.000 | 0.000 |
+| BOMP-PK-SLIDE+SC | 4 st. (7331) | 0.0e+00 / 0.0e+00 | 7.9e-14 | 4.99 (0.99) | 9974, 0.73, 50 | 0.83 | 0.336 | 0.000 | 0.000 |
+| BOMP-PK-SLIDE+SC | 6 st. (7331) | 0.0e+00 / 0.0e+00 | 8.7e-14 | 5.00 (1.00) | 9995, 0.81, 50 | 0.93 | 0.279 | 0.000 | 0.000 |
+| BOMP-PK-SLIDE+SC | one-sided 8 (7331) | 0.0e+00 / 0.0e+00 | 1.9e-13 | 5.00 (1.00) | 9993, 0.83, 50 | 0.97 | 0.243 | 0.000 | 0.000 |
+
+## Regime strong
+
+### Table 1 (strong). Recall at <= 0.1 / <= 0.25
+
+| Cell (seed) | events | TS-SFW+SC | BOMP-PK-SLIDE+SC | BOMP-PK+SC | MT-FW+SC |
+|:--|--:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | 325 | 0.212/0.274 | 0.206/0.277 | 0.197/0.274 | 0.175/0.249 |
+| 6 st. (2024) | 304 | 0.316/0.474 | 0.316/0.467 | 0.306/0.441 | 0.326/0.431 |
+| one-sided 8 (2024) | 305 | 0.413/0.511 | 0.413/0.531 | 0.377/0.495 | 0.367/0.489 |
+| 4 st. (7331) | 313 | 0.179/0.243 | 0.182/0.246 | 0.173/0.240 | 0.131/0.208 |
+| 6 st. (7331) | 329 | 0.331/0.474 | 0.325/0.480 | 0.310/0.459 | 0.347/0.459 |
+| one-sided 8 (7331) | 329 | 0.486/0.587 | 0.517/0.596 | 0.438/0.568 | 0.453/0.556 |
+
+### Table 2 (strong). 2E-a: TS-SFW+SC - BOMP-PK+SC [95% CI H] one-sided p H
+
+| Cell (seed) | at 0.1 | at 0.25 | cell counts (point >= 0.05 and bound > 0 at 0.25) |
+|:--|:-:|:-:|:-:|
+| 4 st. (2024) | +0.015 [-0.032, +0.050] p=0.3918 | +0.000 [-0.033, +0.030] p=0.5667 | no |
+| 6 st. (2024) | +0.010 [-0.026, +0.086] p=0.2694 | +0.033 [-0.013, +0.083] p=0.0975 | no |
+| one-sided 8 (2024) | +0.036 [-0.019, +0.125] p=0.1459 | +0.016 [-0.026, +0.059] p=0.3128 | no |
+| 4 st. (7331) | +0.006 [-0.035, +0.045] p=0.4463 | +0.003 [-0.027, +0.039] p=0.4273 | no |
+| 6 st. (7331) | +0.021 [-0.014, +0.104] p=0.1514 | +0.015 [-0.024, +0.058] p=0.3608 | no |
+| one-sided 8 (7331) | +0.049 [-0.014, +0.115] p=0.0760 | +0.018 [-0.044, +0.080] p=0.3233 | no |
+
+### Table 3 (strong). 2E-b: TS-SFW+SC - BOMP-PK-SLIDE+SC [95% CI H] one-sided p H
+
+| Cell (seed) | at 0.1 | at 0.25 | cell counts (point >= 0.05 at 0.25) |
+|:--|:-:|:-:|:-:|
+| 4 st. (2024) | +0.006 [-0.045, +0.017] p=0.5867 | -0.003 [-0.024, +0.014] p=0.7246 | no |
+| 6 st. (2024) | +0.000 [-0.045, +0.036] p=0.6692 | +0.007 [-0.026, +0.026] p=0.4293 | no |
+| one-sided 8 (2024) | +0.000 [-0.060, +0.041] p=0.7381 | -0.020 [-0.045, +0.007] p=0.9275 | no |
+| 4 st. (7331) | -0.003 [-0.033, +0.009] p=0.8996 | -0.003 [-0.020, +0.006] p=0.9620 | no |
+| 6 st. (7331) | +0.006 [-0.053, +0.044] p=0.6227 | -0.006 [-0.038, +0.036] p=0.5642 | no |
+| one-sided 8 (7331) | -0.030 [-0.090, +0.010] p=0.9285 | -0.009 [-0.045, +0.010] p=0.8716 | no |
+
+### Table 4 (strong, descriptive). Differences at 0.1 / 0.25 [95% CI H]
+
+| Cell (seed) | TS-SFW+SC - MT-FW+SC | BOMP-PK-SLIDE+SC - BOMP-PK+SC | BOMP-PK-SLIDE+SC - MT-FW+SC | BOMP-PK+SC - MT-FW+SC |
+|:--|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | +0.037 [-0.050, +0.096] / +0.025 [-0.041, +0.100] | +0.009 [-0.020, +0.051] / +0.003 [-0.026, +0.033] | +0.031 [-0.054, +0.107] / +0.028 [-0.040, +0.105] | +0.022 [-0.059, +0.095] / +0.025 [-0.042, +0.110] |
+| 6 st. (2024) | -0.010 [-0.093, +0.105] / +0.043 [-0.036, +0.113] | +0.010 [-0.024, +0.088] / +0.026 [-0.016, +0.083] | -0.010 [-0.084, +0.108] / +0.036 [-0.036, +0.108] | -0.020 [-0.107, +0.080] / +0.010 [-0.074, +0.088] |
+| one-sided 8 (2024) | +0.046 [-0.077, +0.121] / +0.023 [-0.049, +0.094] | +0.036 [-0.013, +0.132] / +0.036 [-0.010, +0.076] | +0.046 [-0.065, +0.130] / +0.043 [-0.033, +0.104] | +0.010 [-0.117, +0.085] / +0.007 [-0.059, +0.080] |
+| 4 st. (7331) | +0.048 [-0.044, +0.112] / +0.035 [-0.031, +0.100] | +0.010 [-0.023, +0.050] / +0.006 [-0.022, +0.041] | +0.051 [-0.038, +0.117] / +0.038 [-0.028, +0.102] | +0.042 [-0.047, +0.105] / +0.032 [-0.034, +0.094] |
+| 6 st. (7331) | -0.015 [-0.140, +0.100] / +0.015 [-0.056, +0.097] | +0.015 [-0.010, +0.110] / +0.021 [-0.030, +0.062] | -0.021 [-0.135, +0.105] / +0.021 [-0.043, +0.092] | -0.036 [-0.166, +0.076] / +0.000 [-0.066, +0.089] |
+| one-sided 8 (7331) | +0.033 [-0.056, +0.121] / +0.030 [-0.037, +0.080] | +0.079 [+0.006, +0.156] / +0.027 [-0.028, +0.093] | +0.064 [-0.022, +0.150] / +0.040 [-0.020, +0.090] | -0.015 [-0.098, +0.066] / +0.012 [-0.052, +0.063] |
+
+- Rule 2E-a (strong; point >= 0.05 and lower bound > 0, at 0.25, >= 2 of 3 cells in both seeds): seed 2024: 0/3 (4 st. no +0.000 [bound -0.033], 6 st. no +0.033 [bound -0.013], one-sided 8 no +0.016 [bound -0.026]); seed 7331: 0/3 (4 st. no +0.003 [bound -0.027], 6 st. no +0.015 [bound -0.024], one-sided 8 no +0.018 [bound -0.044]) -> NOT MET
+
+- Rule 2E-b (strong; point >= 0.05, at 0.25, >= 2 of 3 cells in both seeds): seed 2024: 0/3 (4 st. no -0.003 [bound -0.024], 6 st. no +0.007 [bound -0.026], one-sided 8 no -0.020 [bound -0.045]); seed 7331: 0/3 (4 st. no -0.003 [bound -0.020], 6 st. no -0.006 [bound -0.038], one-sided 8 no -0.009 [bound -0.045]) -> NOT MET (exploratory: points >= 0.05 in >= 2 of 3 cells per seed in 0% of the H replicates)
+
+### Table 5 (strong). 2E-a, strict reading: Holm over the 6 cell x seed tests (one-sided, level 0.025)
+
+| Cell (seed) | point at 0.25 | p H | p Holm | rejection | counts (rejection and point >= 0.05) |
+|:--|:-:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | +0.000 | 0.5667 | 1.0000 | no | no |
+| 6 st. (2024) | +0.033 | 0.0975 | 0.5847 | no | no |
+| one-sided 8 (2024) | +0.016 | 0.3128 | 1.0000 | no | no |
+| 4 st. (7331) | +0.003 | 0.4273 | 1.0000 | no | no |
+| 6 st. (7331) | +0.015 | 0.3608 | 1.0000 | no | no |
+| one-sided 8 (7331) | +0.018 | 0.3233 | 1.0000 | no | no |
+
+- 2E-a (strong) strict reading with Holm: seed 2024: 0/3; seed 7331: 0/3 -> NOT MET
+
+### Table 6 (strong, descriptive). Location error of the hits at the operating point at 0.25: median epicentral (km) [n hits]; for the continuous methods also median 3D and median depth bias
+
+| Cell (seed) | TS-SFW+SC | BOMP-PK-SLIDE+SC | BOMP-PK+SC | MT-FW+SC |
+|:--|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | 2.33 [89]; 3D 3.52; dz -0.07 | 2.20 [90]; 3D 3.40; dz -0.12 | 2.31 [89] | 2.25 [81] |
+| 6 st. (2024) | 2.02 [144]; 3D 3.47; dz +0.84 | 1.91 [142]; 3D 3.36; dz +0.84 | 2.03 [134] | 2.37 [131] |
+| one-sided 8 (2024) | 1.90 [156]; 3D 3.22; dz +0.59 | 1.92 [162]; 3D 3.33; dz +0.73 | 2.35 [151] | 2.02 [149] |
+| 4 st. (7331) | 1.75 [76]; 3D 3.27; dz +0.44 | 1.78 [77]; 3D 3.12; dz +0.19 | 1.99 [75] | 2.06 [65] |
+| 6 st. (7331) | 2.01 [156]; 3D 2.88; dz +0.59 | 2.00 [158]; 3D 2.86; dz +0.65 | 1.93 [151] | 2.08 [151] |
+| one-sided 8 (7331) | 2.06 [193]; 3D 3.20; dz +1.34 | 2.04 [196]; 3D 3.26; dz +1.28 | 2.20 [187] | 2.24 [183] |
+
+- All cells (strong): median epicentral error TS-SFW+SC 2.01 km (P90 4.05, n 814); BOMP-PK-SLIDE+SC 1.98 km (P90 4.06, n 825); BOMP-PK+SC 2.15 km (P90 4.18, n 787); MT-FW+SC 2.19 km (P90 4.18, n 760)
+
+### Table 7 (strong). Convergence diagnostics of the continuous methods
+
+| Method | Cell (seed) | rel. gap max / median | KKT max | mean alternations (frac. = 5) | L-BFGS-B sliding: steps, frac. with 50 it., median it. | refinement frac. with 50 it. | frac. shifts at the bound | frac. atoms with m = 0 | lambda / sqrt(2 s_1) median |
+|:--|:--|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| TS-SFW+SC | 4 st. (2024) | 5.8e-11 / 1.7e-15 | 5.1e-10 | 4.98 (0.99) | 9967, 0.73, 50 | 0.83 | 0.349 | 0.000 | 0.046 |
+| TS-SFW+SC | 6 st. (2024) | 5.7e-11 / 1.3e-15 | 5.5e-10 | 5.00 (1.00) | 10000, 0.80, 50 | 0.94 | 0.293 | 0.000 | 0.045 |
+| TS-SFW+SC | one-sided 8 (2024) | 3.0e-11 / 2.0e-15 | 6.3e-11 | 5.00 (1.00) | 9997, 0.83, 50 | 0.97 | 0.254 | 0.000 | 0.046 |
+| TS-SFW+SC | 4 st. (7331) | 5.1e-11 / 1.8e-15 | 2.7e-10 | 4.98 (0.99) | 9964, 0.74, 50 | 0.85 | 0.350 | 0.000 | 0.046 |
+| TS-SFW+SC | 6 st. (7331) | 3.9e-11 / 1.5e-15 | 6.0e-10 | 5.00 (1.00) | 9997, 0.81, 50 | 0.94 | 0.293 | 0.000 | 0.049 |
+| TS-SFW+SC | one-sided 8 (7331) | 4.1e-11 / 2.1e-15 | 7.9e-10 | 5.00 (1.00) | 9997, 0.83, 50 | 0.97 | 0.251 | 0.000 | 0.049 |
+| BOMP-PK-SLIDE+SC | 4 st. (2024) | 0.0e+00 / 0.0e+00 | 2.3e-13 | 4.99 (0.99) | 9970, 0.73, 50 | 0.85 | 0.345 | 0.000 | 0.000 |
+| BOMP-PK-SLIDE+SC | 6 st. (2024) | 0.0e+00 / 0.0e+00 | 2.7e-14 | 5.00 (1.00) | 10000, 0.80, 50 | 0.93 | 0.289 | 0.000 | 0.000 |
+| BOMP-PK-SLIDE+SC | one-sided 8 (2024) | 0.0e+00 / 0.0e+00 | 2.6e-13 | 5.00 (1.00) | 9997, 0.83, 50 | 0.97 | 0.253 | 0.000 | 0.000 |
+| BOMP-PK-SLIDE+SC | 4 st. (7331) | 0.0e+00 / 0.0e+00 | 3.3e-13 | 4.98 (0.99) | 9957, 0.73, 50 | 0.84 | 0.348 | 0.000 | 0.000 |
+| BOMP-PK-SLIDE+SC | 6 st. (7331) | 0.0e+00 / 0.0e+00 | 5.9e-14 | 5.00 (1.00) | 9997, 0.80, 50 | 0.94 | 0.290 | 0.000 | 0.000 |
+| BOMP-PK-SLIDE+SC | one-sided 8 (7331) | 0.0e+00 / 0.0e+00 | 1.0e-13 | 5.00 (1.00) | 9999, 0.83, 50 | 0.97 | 0.251 | 0.000 | 0.000 |
+
+## Verdicts
+
+| Rule | thin | strong |
+|:--|:-:|:-:|
+| 2E-a | not met | not met |
+| 2E-a_holm | not met | not met |
+| 2E-b | not met | not met |
+
+Cases within 0.005 of the threshold or of 0: none
+
+Preregistered reading: 2E-a fails in both regimes: G1-M is refuted in this synthetic design.

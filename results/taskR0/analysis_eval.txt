@@ -1,0 +1,84 @@
+R0 analysis, segment eval [900.0, 3560.0) s, 45 target events (M >= 2.0), 45 blocks of 60 s, B = 2000
+
+Recall per subnet and method (point estimate), rule / rate per hour:
+  LOC+T  10/h  M1:0.022,0.000,0.000,0.000  M2:0.000,0.000,0.000,0.000  M3:0.000,nan,nan,nan  M5:0.000,0.000,0.000,0.000  M6:0.000,0.000,0.000,0.000  GaMMA:0.378,0.356,0.000,0.000  PyOcto:0.400,0.511,0.000,0.000  GaMMA+SC:0.000,0.022,0.000,0.000  PyOcto+SC:0.000,0.000,0.000,0.000  BESTPICK:0.400,0.511,0.000,0.000
+  LOC+T  30/h  M1:0.044,0.000,0.000,0.000  M2:0.022,0.000,0.000,0.000  M3:0.022,nan,nan,nan  M5:0.000,0.000,0.000,0.000  M6:0.000,0.000,0.000,0.022  GaMMA:0.489,0.511,0.000,0.222  PyOcto:0.600,0.667,0.000,0.289  GaMMA+SC:0.133,0.333,0.000,0.044  PyOcto+SC:0.200,0.133,0.000,0.000  BESTPICK:0.600,0.667,0.000,0.289
+  LOC+T  60/h  M1:0.044,0.000,0.000,0.000  M2:0.022,0.000,0.000,0.000  M3:0.022,nan,nan,nan  M5:0.000,0.000,0.000,0.000  M6:0.022,0.000,0.000,0.044  GaMMA:0.511,0.578,0.111,0.333  PyOcto:0.644,0.667,0.178,0.333  GaMMA+SC:0.400,0.400,0.044,0.067  PyOcto+SC:0.311,0.311,0.089,0.089  BESTPICK:0.644,0.667,0.178,0.333
+  LOC    10/h  M1:0.022,0.000,0.000,0.000  M2:0.000,0.000,0.000,0.000  M3:0.022,nan,nan,nan  M5:0.000,0.000,0.000,0.022  M6:0.000,0.000,0.000,0.000  GaMMA:0.533,0.556,0.000,0.000  PyOcto:0.578,0.511,0.000,0.000  GaMMA+SC:0.556,0.444,0.000,0.000  PyOcto+SC:0.533,0.489,0.000,0.000  BESTPICK:0.578,0.556,0.000,0.000
+  LOC    30/h  M1:0.044,0.000,0.000,0.000  M2:0.022,0.000,0.000,0.000  M3:0.089,nan,nan,nan  M5:0.044,0.000,0.022,0.044  M6:0.000,0.000,0.022,0.022  GaMMA:0.711,0.689,0.000,0.222  PyOcto:0.711,0.689,0.000,0.289  GaMMA+SC:0.711,0.511,0.000,0.333  PyOcto+SC:0.711,0.578,0.000,0.422  BESTPICK:0.711,0.689,0.000,0.422
+  LOC    60/h  M1:0.067,0.044,0.000,0.000  M2:0.022,0.022,0.000,0.000  M3:0.178,nan,nan,nan  M5:0.067,0.022,0.044,0.044  M6:0.022,0.000,0.044,0.044  GaMMA:0.756,0.733,0.200,0.356  PyOcto:0.778,0.711,0.200,0.356  GaMMA+SC:0.733,0.578,0.044,0.400  PyOcto+SC:0.756,0.644,0.089,0.489  BESTPICK:0.778,0.733,0.200,0.489
+
+Contrasts (pooled = mean of the 4 subnets), point [95% block-bootstrap interval]; per subnet points:
+  M2-BESTPICK LOC+T  10/h  -0.228 [-0.321, -0.119]   per subnet N8:-0.400 N6:-0.511 N4:+0.000 U8:+0.000
+  M2-BESTPICK LOC+T  30/h  -0.383 [-0.481, -0.310]   per subnet N8:-0.578 N6:-0.667 N4:+0.000 U8:-0.289
+  M2-BESTPICK LOC+T  60/h  -0.450 [-0.542, -0.380]   per subnet N8:-0.622 N6:-0.667 N4:-0.178 U8:-0.333
+  M2-BESTPICK LOC    10/h  -0.283 [-0.414, -0.214]   per subnet N8:-0.578 N6:-0.556 N4:+0.000 U8:+0.000
+  M2-BESTPICK LOC    30/h  -0.450 [-0.563, -0.385]   per subnet N8:-0.689 N6:-0.689 N4:+0.000 U8:-0.422
+  M2-BESTPICK LOC    60/h  -0.539 [-0.627, -0.445]   per subnet N8:-0.756 N6:-0.711 N4:-0.200 U8:-0.489
+  M2-M1       LOC+T  10/h  -0.006 [-0.017, +0.013]   per subnet N8:-0.022 N6:+0.000 N4:+0.000 U8:+0.000
+  M2-M1       LOC+T  30/h  -0.006 [-0.022, +0.014]   per subnet N8:-0.022 N6:+0.000 N4:+0.000 U8:+0.000
+  M2-M1       LOC+T  60/h  -0.006 [-0.028, +0.017]   per subnet N8:-0.022 N6:+0.000 N4:+0.000 U8:+0.000
+  M2-M1       LOC    10/h  -0.006 [-0.017, +0.013]   per subnet N8:-0.022 N6:+0.000 N4:+0.000 U8:+0.000
+  M2-M1       LOC    30/h  -0.006 [-0.023, +0.019]   per subnet N8:-0.022 N6:+0.000 N4:+0.000 U8:+0.000
+  M2-M1       LOC    60/h  -0.017 [-0.039, +0.011]   per subnet N8:-0.044 N6:-0.022 N4:+0.000 U8:+0.000
+  M2-M5       LOC+T  10/h  +0.000 [+0.000, +0.016]   per subnet N8:+0.000 N6:+0.000 N4:+0.000 U8:+0.000
+  M2-M5       LOC+T  30/h  +0.006 [+0.000, +0.019]   per subnet N8:+0.022 N6:+0.000 N4:+0.000 U8:+0.000
+  M2-M5       LOC+T  60/h  +0.006 [+0.000, +0.024]   per subnet N8:+0.022 N6:+0.000 N4:+0.000 U8:+0.000
+  M2-M5       LOC    10/h  -0.006 [-0.019, +0.013]   per subnet N8:+0.000 N6:+0.000 N4:+0.000 U8:-0.022
+  M2-M5       LOC    30/h  -0.022 [-0.052, +0.017]   per subnet N8:-0.022 N6:+0.000 N4:-0.022 U8:-0.044
+  M2-M5       LOC    60/h  -0.033 [-0.076, +0.010]   per subnet N8:-0.044 N6:+0.000 N4:-0.044 U8:-0.044
+  M1-BESTPICK LOC+T  10/h  -0.222 [-0.323, -0.116]   per subnet N8:-0.378 N6:-0.511 N4:+0.000 U8:+0.000
+  M1-BESTPICK LOC+T  30/h  -0.378 [-0.482, -0.304]   per subnet N8:-0.556 N6:-0.667 N4:+0.000 U8:-0.289
+  M1-BESTPICK LOC+T  60/h  -0.444 [-0.537, -0.368]   per subnet N8:-0.600 N6:-0.667 N4:-0.178 U8:-0.333
+  M1-BESTPICK LOC    10/h  -0.278 [-0.414, -0.210]   per subnet N8:-0.556 N6:-0.556 N4:+0.000 U8:+0.000
+  M1-BESTPICK LOC    30/h  -0.444 [-0.562, -0.377]   per subnet N8:-0.667 N6:-0.689 N4:+0.000 U8:-0.422
+  M1-BESTPICK LOC    60/h  -0.522 [-0.615, -0.428]   per subnet N8:-0.711 N6:-0.689 N4:-0.200 U8:-0.489
+  M6-BESTPICK LOC+T  10/h  -0.228 [-0.326, -0.121]   per subnet N8:-0.400 N6:-0.511 N4:+0.000 U8:+0.000
+  M6-BESTPICK LOC+T  30/h  -0.383 [-0.484, -0.311]   per subnet N8:-0.600 N6:-0.667 N4:+0.000 U8:-0.267
+  M6-BESTPICK LOC+T  60/h  -0.439 [-0.533, -0.368]   per subnet N8:-0.622 N6:-0.667 N4:-0.178 U8:-0.289
+  M6-BESTPICK LOC    10/h  -0.283 [-0.419, -0.217]   per subnet N8:-0.578 N6:-0.556 N4:+0.000 U8:+0.000
+  M6-BESTPICK LOC    30/h  -0.444 [-0.564, -0.383]   per subnet N8:-0.711 N6:-0.689 N4:+0.022 U8:-0.400
+  M6-BESTPICK LOC    60/h  -0.522 [-0.619, -0.426]   per subnet N8:-0.756 N6:-0.733 N4:-0.156 U8:-0.444
+  M6-M2       LOC+T  10/h  +0.000 [-0.016, +0.000]   per subnet N8:+0.000 N6:+0.000 N4:+0.000 U8:+0.000
+  M6-M2       LOC+T  30/h  +0.000 [-0.016, +0.019]   per subnet N8:-0.022 N6:+0.000 N4:+0.000 U8:+0.022
+  M6-M2       LOC+T  60/h  +0.011 [-0.017, +0.038]   per subnet N8:+0.000 N6:+0.000 N4:+0.000 U8:+0.044
+  M6-M2       LOC    10/h  +0.000 [-0.016, +0.000]   per subnet N8:+0.000 N6:+0.000 N4:+0.000 U8:+0.000
+  M6-M2       LOC    30/h  +0.006 [-0.021, +0.023]   per subnet N8:-0.022 N6:+0.000 N4:+0.022 U8:+0.022
+  M6-M2       LOC    60/h  +0.017 [-0.021, +0.047]   per subnet N8:+0.000 N6:-0.022 N4:+0.044 U8:+0.044
+
+REGISTERED DECISION: R0-a (lower bound > -0.02): False; R0-b (>= 2 of 4 subnets): False; superiority (lower bound > 0): False
+
+Descriptive: detections in segment per subnet and method (after de-duplication / per config max):
+  N4 GaMMA   detections   122   LOC+T hits on M>=2 (any score) 7
+  N4 GaMMA+SC detections   124   LOC+T hits on M>=2 (any score) 4
+  N4 M1      detections   891   LOC+T hits on M>=2 (any score) 0
+  N4 M2      detections   892   LOC+T hits on M>=2 (any score) 0
+  N4 M5      detections   909   LOC+T hits on M>=2 (any score) 0
+  N4 M6      detections   906   LOC+T hits on M>=2 (any score) 0
+  N4 PyOcto  detections   136   LOC+T hits on M>=2 (any score) 10
+  N4 PyOcto+SC detections   133   LOC+T hits on M>=2 (any score) 5
+  N6 GaMMA   detections   149   LOC+T hits on M>=2 (any score) 26
+  N6 GaMMA+SC detections   152   LOC+T hits on M>=2 (any score) 20
+  N6 M1      detections   948   LOC+T hits on M>=2 (any score) 1
+  N6 M2      detections   917   LOC+T hits on M>=2 (any score) 2
+  N6 M5      detections   897   LOC+T hits on M>=2 (any score) 2
+  N6 M6      detections   915   LOC+T hits on M>=2 (any score) 3
+  N6 PyOcto  detections   148   LOC+T hits on M>=2 (any score) 31
+  N6 PyOcto+SC detections   151   LOC+T hits on M>=2 (any score) 16
+  N8 GaMMA   detections   164   LOC+T hits on M>=2 (any score) 24
+  N8 GaMMA+SC detections   159   LOC+T hits on M>=2 (any score) 19
+  N8 M1      detections   893   LOC+T hits on M>=2 (any score) 5
+  N8 M2      detections   855   LOC+T hits on M>=2 (any score) 5
+  N8 M3      detections   738   LOC+T hits on M>=2 (any score) 11
+  N8 M5      detections   879   LOC+T hits on M>=2 (any score) 0
+  N8 M6      detections   937   LOC+T hits on M>=2 (any score) 8
+  N8 PyOcto  detections   160   LOC+T hits on M>=2 (any score) 30
+  N8 PyOcto+SC detections   160   LOC+T hits on M>=2 (any score) 16
+  U8 GaMMA   detections   146   LOC+T hits on M>=2 (any score) 17
+  U8 GaMMA+SC detections   147   LOC+T hits on M>=2 (any score) 4
+  U8 M1      detections  1028   LOC+T hits on M>=2 (any score) 4
+  U8 M2      detections   958   LOC+T hits on M>=2 (any score) 5
+  U8 M5      detections   926   LOC+T hits on M>=2 (any score) 1
+  U8 M6      detections   978   LOC+T hits on M>=2 (any score) 6
+  U8 PyOcto  detections   155   LOC+T hits on M>=2 (any score) 18
+  U8 PyOcto+SC detections   154   LOC+T hits on M>=2 (any score) 6

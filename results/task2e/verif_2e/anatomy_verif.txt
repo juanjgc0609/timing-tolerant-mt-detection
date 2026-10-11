@@ -1,0 +1,2 @@
+BOMP-PK+SC: 99 detectable-but-never-hit events; nearest atom epicentral distance median 7.3 km; in (5, 10] km: 0.80; in (10, 15] km: 0.17; > 15 km: 0.03; nearest atom is a false atom whose score >= the event's near-truth grid score: 0.48; nearest atom duplicates another event: 0.01
+TS-SFW+SC: 110 detectable-but-never-hit events; nearest atom epicentral distance median 6.8 km; in (5, 10] km: 0.85; in (10, 15] km: 0.13; > 15 km: 0.03; nearest atom is a false atom whose score >= the event's near-truth grid score: 0.45; nearest atom duplicates another event: 0.02

@@ -1,0 +1,33 @@
+2024 one-sided, 8 st.  events  172 :: WAVE-E 0.24/0.32 | WAVE-P 0.31/0.45 | WAVE-PSH 0.27/0.40 || GAMMA 0.35/0.39
+     WAVE-P - WAVE-E @0.25: +0.128 [+0.082, +0.181]
+     WAVE-P - WAVE-PSH @0.25: +0.052 [-0.012, +0.117]
+     WAVE-PSH - WAVE-E @0.25: +0.076 [+0.018, +0.135]
+     WAVE-P - GAMMA @0.25: +0.058 [-0.017, +0.133]
+2024 4 stations        events  170 :: WAVE-E 0.01/0.12 | WAVE-P 0.20/0.26 | WAVE-PSH 0.01/0.12 || GAMMA 0.05/0.08
+     WAVE-P - WAVE-E @0.25: +0.141 [+0.092, +0.200]
+     WAVE-P - WAVE-PSH @0.25: +0.141 [+0.078, +0.211]
+     WAVE-PSH - WAVE-E @0.25: +0.000 [-0.053, +0.053]
+     WAVE-P - GAMMA @0.25: +0.182 [+0.103, +0.263]
+2024 6 stations        events  180 :: WAVE-E 0.01/0.18 | WAVE-P 0.22/0.39 | WAVE-PSH 0.01/0.24 || GAMMA 0.16/0.19
+     WAVE-P - WAVE-E @0.25: +0.211 [+0.153, +0.274]
+     WAVE-P - WAVE-PSH @0.25: +0.150 [+0.093, +0.210]
+     WAVE-PSH - WAVE-E @0.25: +0.061 [+0.000, +0.119]
+     WAVE-P - GAMMA @0.25: +0.194 [+0.125, +0.265]
+   seed 2024: T-a cells 3/3, CI excludes 0: True; T-b: True; T-c cells 2/3
+7331 one-sided, 8 st.  events  153 :: WAVE-E 0.20/0.27 | WAVE-P 0.40/0.47 | WAVE-PSH 0.21/0.47 || GAMMA 0.35/0.36
+     WAVE-P - WAVE-E @0.25: +0.196 [+0.138, +0.261]
+     WAVE-P - WAVE-PSH @0.25: +0.000 [-0.058, +0.055]
+     WAVE-PSH - WAVE-E @0.25: +0.196 [+0.126, +0.274]
+     WAVE-P - GAMMA @0.25: +0.111 [+0.036, +0.185]
+7331 4 stations        events  151 :: WAVE-E 0.01/0.15 | WAVE-P 0.24/0.31 | WAVE-PSH 0.01/0.17 || GAMMA 0.11/0.11
+     WAVE-P - WAVE-E @0.25: +0.159 [+0.097, +0.224]
+     WAVE-P - WAVE-PSH @0.25: +0.139 [+0.077, +0.205]
+     WAVE-PSH - WAVE-E @0.25: +0.020 [-0.032, +0.070]
+     WAVE-P - GAMMA @0.25: +0.199 [+0.117, +0.283]
+7331 6 stations        events  155 :: WAVE-E 0.01/0.30 | WAVE-P 0.34/0.48 | WAVE-PSH 0.21/0.30 || GAMMA 0.17/0.19
+     WAVE-P - WAVE-E @0.25: +0.181 [+0.118, +0.249]
+     WAVE-P - WAVE-PSH @0.25: +0.174 [+0.107, +0.243]
+     WAVE-PSH - WAVE-E @0.25: +0.006 [-0.063, +0.069]
+     WAVE-P - GAMMA @0.25: +0.284 [+0.198, +0.368]
+   seed 7331: T-a cells 3/3, CI excludes 0: True; T-b: False; T-c cells 2/3
+T-a: True  T-b: False  T-c: {2024: True, 7331: True}

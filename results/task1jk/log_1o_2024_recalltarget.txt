@@ -1,0 +1,68 @@
+   done unilateral_c40/consistent in 839 s
+   done ladder_4/consistent in 793 s
+   done ladder_6/consistent in 528 s
+   done unilateral_c40/jit0.5 in 544 s
+   done ladder_4/jit0.5 in 524 s
+   done ladder_6/jit0.5 in 522 s
+
+=== unilateral_c40 | consistent | seed 2024 | events 53, windows 60, empty 18 | f/g per |cos| class: 0.18 0.11 0.27 0.26 0.17 0.24 0.41 0.93 1.70 5.97
+   TOL-TB   recall 0.72  false/window 4.05  TOL-TB  NOT reached
+   KIN-LR   recall 0.77  false/window 4.13  KIN-LR@0.1  NOT reached
+   PHYS-LR  recall 0.87  false/window 3.98  PHYS-LR@0.1  NOT reached
+   WAVE-E   recall 0.89  false/window 3.85  WAVE-E  NOT reached
+   WAVE-P   recall 0.91  false/window 3.92  WAVE-P  NOT reached
+      false KIN-LR vs PHYS-LR: 8/2 sign p=0.1094
+      false KIN-LR vs WAVE-P: 16/4 sign p=0.0118
+      false WAVE-E vs WAVE-P: 5/6 sign p=1.0000
+
+=== ladder_4 | consistent | seed 2024 | events 55, windows 60, empty 20 | f/g per |cos| class: 0.10 0.32 0.31 0.23 0.32 0.35 0.34 0.69 1.35 6.35
+   TOL-TB   recall 0.51  false/window 4.38  TOL-TB  NOT reached
+   KIN-LR   recall 0.49  false/window 4.42  KIN-LR@0.2  NOT reached
+   PHYS-LR  recall 0.78  false/window 4.12  PHYS-LR@0.1  NOT reached
+   WAVE-E   recall 0.69  false/window 4.17  WAVE-E  NOT reached
+   WAVE-P   recall 0.91  false/window 3.92  WAVE-P  NOT reached
+      false KIN-LR vs PHYS-LR: 22/5 sign p=0.0015
+      false KIN-LR vs WAVE-P: 26/4 sign p=0.0001
+      false WAVE-E vs WAVE-P: 18/5 sign p=0.0106
+
+=== ladder_6 | consistent | seed 2024 | events 53, windows 60, empty 17 | f/g per |cos| class: 0.16 0.30 0.24 0.23 0.32 0.28 0.51 0.77 1.09 6.82
+   TOL-TB   recall 0.74  false/window 4.17  TOL-TB  NOT reached
+   KIN-LR   recall 0.75  false/window 4.25  KIN-LR@0.2  NOT reached
+   PHYS-LR  recall 0.87  false/window 3.95  PHYS-LR@0.2  NOT reached
+   WAVE-E   recall 0.81  false/window 4.03  WAVE-E  NOT reached
+   WAVE-P   recall 0.89  false/window 1.57  WAVE-P  ok
+      false KIN-LR vs PHYS-LR: 17/2 sign p=0.0007
+      false KIN-LR vs WAVE-P: 47/2 sign p=0.0000
+      false WAVE-E vs WAVE-P: 47/0 sign p=0.0000
+
+=== unilateral_c40 | jit0.5 | seed 2024 | events 53, windows 60, empty 18 | f/g per |cos| class: 0.62 0.79 0.69 0.58 0.71 0.76 0.67 1.20 1.48 2.60
+   TOL-TB   recall 0.98  false/window 1.28  TOL-TB  ok
+   KIN-LR   recall 0.98  false/window 1.03  KIN-LR@0.4  ok
+   PHYS-LR  recall 0.92  false/window 0.73  PHYS-LR@0.4  ok
+   WAVE-E   recall 0.89  false/window 3.85  WAVE-E  NOT reached
+   WAVE-P   recall 0.91  false/window 3.92  WAVE-P  NOT reached
+      false KIN-LR vs PHYS-LR: 18/8 sign p=0.0755
+      false KIN-LR vs WAVE-P: 2/52 sign p=0.0000
+      false WAVE-E vs WAVE-P: 5/6 sign p=1.0000
+
+=== ladder_4 | jit0.5 | seed 2024 | events 55, windows 60, empty 20 | f/g per |cos| class: 0.66 0.71 0.62 0.60 0.71 0.76 0.74 1.12 1.13 3.10
+   TOL-TB   recall 0.87  false/window 3.88  TOL-TB  NOT reached
+   KIN-LR   recall 0.87  false/window 3.78  KIN-LR@0.4  NOT reached
+   PHYS-LR  recall 0.89  false/window 3.75  PHYS-LR@0.4  NOT reached
+   WAVE-E   recall 0.69  false/window 4.17  WAVE-E  NOT reached
+   WAVE-P   recall 0.91  false/window 3.92  WAVE-P  NOT reached
+      false KIN-LR vs PHYS-LR: 13/9 sign p=0.5235
+      false KIN-LR vs WAVE-P: 14/10 sign p=0.5413
+      false WAVE-E vs WAVE-P: 18/5 sign p=0.0106
+
+=== ladder_6 | jit0.5 | seed 2024 | events 53, windows 60, empty 17 | f/g per |cos| class: 0.84 0.80 0.56 0.67 0.67 0.83 0.93 0.81 1.16 2.93
+   TOL-TB   recall 0.94  false/window 1.23  TOL-TB  ok
+   KIN-LR   recall 0.87  false/window 0.52  KIN-LR@0.4  ok
+   PHYS-LR  recall 0.85  false/window 0.52  PHYS-LR@0.4  ok
+   WAVE-E   recall 0.81  false/window 4.03  WAVE-E  NOT reached
+   WAVE-P   recall 0.89  false/window 1.57  WAVE-P  ok
+      false KIN-LR vs PHYS-LR: 6/6 sign p=1.0000
+      false KIN-LR vs WAVE-P: 4/26 sign p=0.0001
+      false WAVE-E vs WAVE-P: 47/0 sign p=0.0000
+
+written task1o_seed2024.json

@@ -1,0 +1,2 @@
+V3 bomp_c9 = xc.bomp_pk (scores, hits, locations): 9/9 windows
+V4 mtfw_c9 = c8_lib.mtfw_general ls cap 6 (scores, hits, locations): 9/9 windows; first-atom score recomputed from the stored vectors with the c9 basis: equal

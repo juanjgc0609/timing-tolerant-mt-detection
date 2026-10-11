@@ -1,0 +1,1 @@
+calls 80: without seed, (hits, false events) differing between two RNG states: 15; with seed, catalogue differing between routes: 0; between repetitions: 0

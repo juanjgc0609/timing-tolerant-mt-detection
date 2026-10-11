@@ -1,0 +1,35 @@
+# Check 1 (verif_2e): continuous atom model vs grid model, independent gradients, sign conventions
+
+## 1A. theta on the grid node, shifts = BOMP-PK peak offsets: TS-SFW atom vs BOMP-PK block (5-atom BOMP-PK solutions on real seed-999 windows)
+- 120 BOMP-PK atoms in 24 windows (network 1, 4 per cell x regime): max rel. difference sampled prediction 1.4e-15, Gram 9.0e-16, correlation 5.7e-16, joint LS objective 9.9e-16 -> IDENTICAL
+- refinement energy E/2 at the grid init = oracle value s (MT-FW-NOCAP statistic): max rel. diff 6.1e-14; BOMP-PK's e/2 = h^T K(I)^+ h / 2 differs from s by the P/S cross term only: median rel. 1.1e-15, max 6.7e-14
+- peak offsets outside +-0.25 s in continuous time (BOMP-PK reads idx + [-4, 4] samples with idx = floor(T0/DT), i.e. [-0.25 - frac, 0.25 - frac] s; TS-SFW clips to [-0.25, 0.25]): 182/1440 (0.126); a clipped shift moves the read time by < 1 sample (0.0625 s)
+
+## 1C. objective and gradient vs an independent data-domain implementation (own ricker, own travel times, task1x_mtglrt.radiation_operator; central differences on the independent J)
+- ladder_4 thin, 1 atom(s), lambda 0.0: J(method) + ||y||^2/2 = 3610.346105, J(independent) = 3610.346105 (rel 2.0e-15); ||g_fd(indep) - g(method)|| / ||g_fd|| = 3.8e-08
+- ladder_4 thin, 1 atom(s), lambda 1.7: J(method) + ||y||^2/2 = 3611.294615, J(independent) = 3611.294615 (rel 7.7e-15); ||g_fd(indep) - g(method)|| / ||g_fd|| = 3.8e-08
+- ladder_6 strong, 2 atom(s), lambda 0.0: J(method) + ||y||^2/2 = 5724.694555, J(independent) = 5724.694555 (rel 2.1e-15); ||g_fd(indep) - g(method)|| / ||g_fd|| = 3.9e-08
+- ladder_6 strong, 2 atom(s), lambda 1.7: J(method) + ||y||^2/2 = 5726.162230, J(independent) = 5726.162230 (rel 6.8e-15); ||g_fd(indep) - g(method)|| / ||g_fd|| = 3.9e-08
+  refinement energy with 1 active atom(s): method 5.836540, independent 5.836540 (rel 1.1e-13)
+- unilateral_c40 thin, 3 atom(s), lambda 0.0: J(method) + ||y||^2/2 = 7959.780513, J(independent) = 7959.780513 (rel 4.9e-15); ||g_fd(indep) - g(method)|| / ||g_fd|| = 4.5e-08
+- unilateral_c40 thin, 3 atom(s), lambda 1.7: J(method) + ||y||^2/2 = 7963.645715, J(independent) = 7963.645715 (rel 1.5e-14); ||g_fd(indep) - g(method)|| / ||g_fd|| = 4.5e-08
+  refinement energy with 2 active atom(s): method 14.929504, independent 14.929504 (rel 4.8e-15)
+- ladder_4 strong, 1 atom(s), lambda 0.0: J(method) + ||y||^2/2 = 3559.718436, J(independent) = 3559.718436 (rel 2.9e-15); ||g_fd(indep) - g(method)|| / ||g_fd|| = 3.4e-08
+- ladder_4 strong, 1 atom(s), lambda 1.7: J(method) + ||y||^2/2 = 3560.857528, J(independent) = 3560.857528 (rel 1.0e-14); ||g_fd(indep) - g(method)|| / ||g_fd|| = 3.4e-08
+- ladder_6 thin, 2 atom(s), lambda 0.0: J(method) + ||y||^2/2 = 5582.439727, J(independent) = 5582.439727 (rel 2.8e-15); ||g_fd(indep) - g(method)|| / ||g_fd|| = 3.9e-08
+- ladder_6 thin, 2 atom(s), lambda 1.7: J(method) + ||y||^2/2 = 5584.183316, J(independent) = 5584.183316 (rel 9.9e-15); ||g_fd(indep) - g(method)|| / ||g_fd|| = 3.9e-08
+  refinement energy with 1 active atom(s): method 3.910486, independent 3.910486 (rel 4.3e-15)
+- unilateral_c40 strong, 3 atom(s), lambda 0.0: J(method) + ||y||^2/2 = 7240.025790, J(independent) = 7240.025790 (rel 3.0e-15); ||g_fd(indep) - g(method)|| / ||g_fd|| = 3.4e-08
+- unilateral_c40 strong, 3 atom(s), lambda 1.7: J(method) + ||y||^2/2 = 7242.787949, J(independent) = 7242.787949 (rel 1.1e-14); ||g_fd(indep) - g(method)|| / ||g_fd|| = 3.4e-08
+  refinement energy with 2 active atom(s): method 49.145005, independent 49.145005 (rel 2.3e-13)
+- max objective discrepancy 2.3e-13; max gradient discrepancy 4.5e-08 (FD truncation level for these steps) -> CORRECT
+
+## 1D. sign conventions: noise-free source ON a grid node, origin on the tau grid, real network corrections, data built with own code at T = d/V + t0 + corr + delta_true (delta_true = +0.12 s on P of station 0, -0.08 s on S of station 1, 0 elsewhere)
+- ladder_6: BOMP-PK first atom node = true node, origin != true; peak offsets I - idx on (P, st0) +4, (S, st1) +1 samples; expected round(T_true/DT) - idx: +4, +1; all offsets equal expected: True
+  TS-SFW refinement (500 it.): position error 0.0323 km, t0 error -0.0986 s, max |T_est - T_true| 0.0000 s; estimated delta(P, st0) - common +0.1258 s (true +0.12), delta(S, st1) - common -0.0654 s (true -0.08)
+  joint objective at the truth (m = LS fit): ||grad|| 7.0e-07; at delta = 0: dJ/d delta(P, st0) = -293.443 (negative => increasing delta lowers J, toward +0.12), dJ/d delta(S, st1) = +1392.008 (positive => toward -0.08)
+- unilateral_c40: BOMP-PK first atom node = true node, origin != true; peak offsets I - idx on (P, st0) +4, (S, st1) +1 samples; expected round(T_true/DT) - idx: +4, +1; all offsets equal expected: True
+  TS-SFW refinement (500 it.): position error 0.0338 km, t0 error -0.0954 s, max |T_est - T_true| 0.0001 s; estimated delta(P, st0) - common +0.1179 s (true +0.12), delta(S, st1) - common -0.0755 s (true -0.08)
+  joint objective at the truth (m = LS fit): ||grad|| 6.9e-07; at delta = 0: dJ/d delta(P, st0) = -583.549 (negative => increasing delta lowers J, toward +0.12), dJ/d delta(S, st1) = +597.892 (positive => toward -0.08)
+
+(check 1 runtime 23 s)

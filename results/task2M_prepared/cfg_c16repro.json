@@ -1,0 +1,4 @@
+{"name": "C16 reproduction (seed 999, day 100723, networks 2400-2413, 12/12/12 windows, all seven methods)",
+ "seed": 999, "noise_dirs": ["/home/claude/work/t2m_out/noise/100723"], "j0": 2400, "nblocks": [14],
+ "nwin": {"STD": 12, "DENSE": 12, "NOISE": 12},
+ "methods": ["MT@S0", "MT@S0+T3", "MT@S2", "MT@S2+T3", "MT@ORA+T3", "BOMP@S0", "HUBER-N@S0"]}

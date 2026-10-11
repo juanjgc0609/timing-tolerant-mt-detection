@@ -1,0 +1,173 @@
+"""C11 analysis: term errors, recall at <= 0.1 / <= 0.25 realised false events per window under both hit rules, paired
+differences to S0, fraction of the oracle gain, location / origin-time error of hits, runtime.  Hierarchical bootstrap
+(strata regime x cell, networks then windows, operating point re-chosen per replicate; c10_analyze.Boot).
+    python c11_analyze.py DESIGN [B] [prefix]   ->  out/<prefix>_analysis_DESIGN.txt"""
+import json
+import sys
+
+import numpy as np
+
+import c10_analyze as A
+import c10_lib as C
+
+REGIMES = ("thin", "strong")
+CELLS = ("ladder_4", "ladder_6", "unilateral_c40")
+
+
+def load(design, prefix):
+    rows, nets = [], []
+    for reg in REGIMES:
+        d = json.load(open(f"out/{prefix}_{reg}.json"))
+        for r in d["rows"]:
+            if r["design"] == design:
+                r["regime"] = reg
+                rows.append(r)
+        nets += d["nets"]
+    return rows, nets
+
+
+def build(rows, names, tol_t):
+    recs = {}
+    for nm in names:
+        out = []
+        for r in rows:
+            at = A.atoms_of(r, nm)
+            out.append(C.record(at, C.label(at, [np.array(t) for t in r["truth"]], r["taus"], tol_t), "s"))
+        recs[nm] = out
+    return recs
+
+
+def fmt(p, ci):
+    return f"{p:+.3f} [{ci[0]:+.3f},{ci[1]:+.3f}]"
+
+
+def frac(bt, x, base, ora, k=1):
+    den = bt.pt[ora][k] - bt.pt[base][k]
+    num = bt.pt[x][k] - bt.pt[base][k]
+    dd = bt.rep[ora][:, k] - bt.rep[base][:, k]
+    r = (bt.rep[x][:, k] - bt.rep[base][:, k]) / np.where(np.abs(dd) < 1e-9, np.nan, dd)
+    return (num / den if abs(den) > 1e-9 else np.nan), np.nanpercentile(r, [2.5, 97.5]), float(np.mean(dd <= 0))
+
+
+def term_table(nets, P):
+    P("== station terms: rms error against the true statics, median removed (s): median over networks [quartiles]; "
+      "'better' = share of the networks with a smaller error than S0; offset = median over networks of |median(term - "
+      "static)|")
+    keys = list(nets[0]["info"]["err"])
+    for reg in REGIMES:
+        P(f"   regime {reg}")
+        for k in keys:
+            s = f"   {k:8s}"
+            allv, all0, offs = [], [], []
+            for cell in CELLS:
+                v = np.array([n["info"]["err"][k] for n in nets if n["regime"] == reg and n["cell"] == cell])
+                s += f" {cell}: {np.median(v):.3f}"
+                allv += v.tolist()
+                all0 += [n["info"]["err"]["S0"] for n in nets if n["regime"] == reg and n["cell"] == cell]
+                offs += [abs(n["info"]["off"][k]) for n in nets if n["regime"] == reg and n["cell"] == cell]
+            allv, all0 = np.array(allv), np.array(all0)
+            s += (f" | all {np.median(allv):.3f} [{np.percentile(allv, 25):.3f},{np.percentile(allv, 75):.3f}] mean "
+                  f"{allv.mean():.3f}; better {np.mean(allv < all0):.2f}; offset {np.median(offs):.3f}")
+            P(s)
+        s3 = [n["info"]["S3"] for n in nets if n["regime"] == reg]
+        P(f"   S3: atoms selected per network {np.mean([x['n_sel'] for x in s3]):.1f}, entering the estimate "
+          f"{np.mean([x['n_det_used'] for x in s3]):.1f}; catalogue events relocated (S2) "
+          f"{np.mean([n['info']['S2']['n_ev'] for n in nets if n['regime'] == reg]):.1f} of 20; T3 timing level (s) by the "
+          "catalogue rule: " + ", ".join(f"{k} {np.median([n['info']['sigT3'][k][0] for n in nets if n['regime'] == reg]):.3f}"
+                                         for k in nets[0]["info"]["sigT3"]))
+
+
+def geometry(rows, names, P):
+    P("")
+    P("== hits (all atoms, location rule): median epicentral error (km) and median |origin-time error| (s) of the hit "
+      "atoms [95%, bootstrap over networks], share of the hits with |origin error| <= 0.5 s, share of the events hit")
+    gk = {}
+    for i, r in enumerate(rows):
+        gk.setdefault((r["regime"], r["cell"], r["net"]), []).append(i)
+    gl = list(gk.values())
+    rng = np.random.default_rng(777)
+    draws = [rng.integers(0, len(gl), len(gl)) for _ in range(400)]
+    for nm in names:
+        per = []
+        for r in rows:
+            at = A.atoms_of(r, nm)
+            tr = [np.array(t) for t in r["truth"]]
+            lab = C.label(at, tr, r["taus"], None)
+            e = [(float(np.linalg.norm(a["x"][:2] - tr[h][:2])), abs(a["tau"] - r["taus"][h])) for a, h in zip(at, lab)
+                 if h >= 0]
+            per.append((e, len(set(h for h in lab if h >= 0)), len(tr)))
+
+        def st(ws):
+            e = np.array([x for w in ws for x in per[w][0]]).reshape(-1, 2)
+            return (np.median(e[:, 0]), np.median(e[:, 1]), np.mean(e[:, 1] <= 0.5),
+                    sum(per[w][1] for w in ws) / max(1, sum(per[w][2] for w in ws)))
+        pt = st(range(len(rows)))
+        bs = np.array([st([w for g in d for w in gl[g]]) for d in draws])
+        lo, hi = np.percentile(bs, [2.5, 97.5], axis=0)
+        P(f"   {nm:14s} epi {pt[0]:.2f} [{lo[0]:.2f},{hi[0]:.2f}] km   |dt| {pt[1]:.3f} [{lo[1]:.3f},{hi[1]:.3f}] s   "
+          f"within 0.5 s {pt[2]:.3f} [{lo[2]:.3f},{hi[2]:.3f}]   events hit {pt[3]:.3f}")
+
+
+def main(design, B=2000, prefix="c11_eval"):
+    rows, nets = load(design, prefix)
+    names = list(rows[0]["atoms"])
+    lines = []
+
+    def P(s=""):
+        print(s, flush=True)
+        lines.append(s)
+    P(f"C11 ANALYSIS {design} ({prefix}): {len(rows)} windows, {sum(r['k'] for r in rows)} events, {len(nets)} network x "
+      f"regime setups; bootstrap B = {B}")
+    term_table(nets, P)
+    for rule, tol in (("LOC+T0.5", 0.5), ("LOC", None)):
+        recs = build(rows, names, tol)
+        for grp in ("both",) + REGIMES:
+            bt = A.Boot(rows, recs, (lambda r: True) if grp == "both" else (lambda r, g=grp: r["regime"] == g), B)
+            P("")
+            P(f"== hit rule {rule}, regimes {grp}: {len(bt.idx)} windows, {int(bt.ks.sum())} events")
+            P("   recall @0.1 / @0.25 [95%]")
+            for m in bt.methods:
+                c = bt.ci(m)
+                P(f"   {m:14s} {bt.pt[m][0]:.3f} [{c[0][0]:.3f},{c[0][1]:.3f}]  {bt.pt[m][1]:.3f} "
+                  f"[{c[1][0]:.3f},{c[1][1]:.3f}]")
+            P("   paired differences @0.1 / @0.25 [95%] (bootstrap SD @0.1 / @0.25)")
+            for fam in ("MT", "BOMP"):
+                b0, b3 = f"{fam}@S0", f"{fam}@S0+T3"
+                for m in bt.methods:
+                    if not m.startswith(fam + "@") or m == b0:
+                        continue
+                    s = f"   {m:14s}"
+                    for b_ in ([b0] if not m.endswith("+T3") else [b0, b3]):
+                        if b_ == m:
+                            continue
+                        p, c, sd = bt.diff(m, b_)
+                        s += f" - {b_}: {fmt(p[0], c[0])} / {fmt(p[1], c[1])} (sd {sd[0]:.4f} / {sd[1]:.4f});"
+                    P(s)
+            P("   fraction of the oracle gain @0.1 / @0.25 [95%] (share of replicates with oracle gain <= 0 @0.25): hard = (X - S0) / "
+              "(ORA - S0); T3 = (X+T3 - S0+T3) / (ORA+T3 - S0+T3); total = (X+T3 - S0) / (ORA+T3 - S0)")
+            for fam in ("MT", "BOMP"):
+                tn = sorted({m.split("@", 1)[1].replace("+T3", "") for m in bt.methods if m.startswith(fam + "@")}
+                            - {"S0", "ORA"})
+                for x in tn:
+                    s = f"   {fam}@{x:6s}"
+                    for lab, (a, b_, o) in (("hard", (f"{fam}@{x}", f"{fam}@S0", f"{fam}@ORA")),
+                                            ("T3", (f"{fam}@{x}+T3", f"{fam}@S0+T3", f"{fam}@ORA+T3")),
+                                            ("total", (f"{fam}@{x}+T3", f"{fam}@S0", f"{fam}@ORA+T3"))):
+                        f0, c0, _ = frac(bt, a, b_, o, 0)
+                        f1, c1, pneg = frac(bt, a, b_, o, 1)
+                        s += f" {lab}: {f0:+.2f} [{c0[0]:+.2f},{c0[1]:+.2f}] / {f1:+.2f} [{c1[0]:+.2f},{c1[1]:+.2f}] ({pneg:.3f});"
+                    P(s)
+    geometry(rows, names, P)
+    P("")
+    P("== runtime, s per window (mean; two processes on two cores): " +
+      "; ".join(f"{m} {np.mean([r['sec'][m] for r in rows]):.2f}" for m in names))
+    tk = list(nets[0]["info"]["t"])
+    P("   calibration, s per network: " + "; ".join(f"{k} {np.mean([n['info']['t'][k] for n in nets]):.2f}" for k in tk) +
+      f"; network setup {np.mean([n['t_setup'] for n in nets]):.1f}; all calibration (catalogue of 80, S1, S2, S2@40, "
+      f"S2@80, S3 pass) {np.mean([n['t_cal'] for n in nets]):.1f}")
+    with open(f"out/{prefix}_analysis_{design}.txt", "w") as fh:
+        fh.write("\n".join(lines) + "\n")
+
+
+if __name__ == "__main__":
+    main(sys.argv[1], int(sys.argv[2]) if len(sys.argv) > 2 else 2000, sys.argv[3] if len(sys.argv) > 3 else "c11_eval")

@@ -1,0 +1,41 @@
+[task1t_seed2024_r200_exact.json]
+2024 one-sided, 8 st.  events  172 :: WAVE-E 0.24/0.35 | WAVE-P 0.36/0.48 | WAVE-PSH 0.31/0.42 || GAMMA 0.35/0.39 PYOCTO 0.23/0.28
+     registered sweep: WAVE-E 0.24/0.32 | WAVE-P 0.31/0.45 | WAVE-PSH 0.27/0.40
+     WAVE-P - WAVE-E @0.25: +0.134 [+0.088, +0.190]
+     WAVE-P - WAVE-PSH @0.25: +0.058 [+0.000, +0.121]
+     WAVE-PSH - WAVE-E @0.25: +0.076 [+0.013, +0.137]
+     WAVE-P - GAMMA @0.25: +0.093 [+0.023, +0.165]
+2024 4 stations        events  170 :: WAVE-E 0.10/0.16 | WAVE-P 0.21/0.30 | WAVE-PSH 0.10/0.16 || GAMMA 0.05/0.08 PYOCTO 0.02/0.09
+     registered sweep: WAVE-E 0.01/0.12 | WAVE-P 0.20/0.26 | WAVE-PSH 0.01/0.12
+     WAVE-P - WAVE-E @0.25: +0.135 [+0.086, +0.190]
+     WAVE-P - WAVE-PSH @0.25: +0.135 [+0.075, +0.194]
+     WAVE-PSH - WAVE-E @0.25: +0.000 [-0.055, +0.053]
+     WAVE-P - PYOCTO @0.25: +0.206 [+0.121, +0.285]
+2024 6 stations        events  180 :: WAVE-E 0.14/0.24 | WAVE-P 0.31/0.46 | WAVE-PSH 0.13/0.29 || GAMMA 0.16/0.19 PYOCTO 0.11/0.21
+     registered sweep: WAVE-E 0.01/0.18 | WAVE-P 0.22/0.39 | WAVE-PSH 0.01/0.24
+     WAVE-P - WAVE-E @0.25: +0.211 [+0.156, +0.267]
+     WAVE-P - WAVE-PSH @0.25: +0.167 [+0.109, +0.230]
+     WAVE-PSH - WAVE-E @0.25: +0.044 [-0.011, +0.101]
+     WAVE-P - PYOCTO @0.25: +0.244 [+0.158, +0.328]
+   seed 2024: T-a cells 3/3, CI excludes 0: True; T-b: True; T-c cells 2/3
+[task1t_seed7331_r200_exact.json]
+7331 one-sided, 8 st.  events  153 :: WAVE-E 0.23/0.37 | WAVE-P 0.42/0.55 | WAVE-PSH 0.23/0.48 || GAMMA 0.35/0.36 PYOCTO 0.28/0.35
+     registered sweep: WAVE-E 0.20/0.27 | WAVE-P 0.40/0.47 | WAVE-PSH 0.21/0.47
+     WAVE-P - WAVE-E @0.25: +0.183 [+0.120, +0.246]
+     WAVE-P - WAVE-PSH @0.25: +0.072 [+0.019, +0.132]
+     WAVE-PSH - WAVE-E @0.25: +0.111 [+0.044, +0.185]
+     WAVE-P - GAMMA @0.25: +0.190 [+0.113, +0.267]
+7331 4 stations        events  151 :: WAVE-E 0.11/0.17 | WAVE-P 0.25/0.35 | WAVE-PSH 0.10/0.17 || GAMMA 0.11/0.11 PYOCTO 0.02/0.06
+     registered sweep: WAVE-E 0.01/0.15 | WAVE-P 0.24/0.31 | WAVE-PSH 0.01/0.17
+     WAVE-P - WAVE-E @0.25: +0.179 [+0.114, +0.248]
+     WAVE-P - WAVE-PSH @0.25: +0.179 [+0.119, +0.243]
+     WAVE-PSH - WAVE-E @0.25: +0.000 [-0.051, +0.046]
+     WAVE-P - GAMMA @0.25: +0.238 [+0.154, +0.324]
+7331 6 stations        events  155 :: WAVE-E 0.17/0.33 | WAVE-P 0.44/0.53 | WAVE-PSH 0.23/0.37 || GAMMA 0.17/0.19 PYOCTO 0.08/0.24
+     registered sweep: WAVE-E 0.01/0.30 | WAVE-P 0.34/0.48 | WAVE-PSH 0.21/0.30
+     WAVE-P - WAVE-E @0.25: +0.200 [+0.135, +0.268]
+     WAVE-P - WAVE-PSH @0.25: +0.155 [+0.084, +0.223]
+     WAVE-PSH - WAVE-E @0.25: +0.045 [-0.037, +0.119]
+     WAVE-P - PYOCTO @0.25: +0.290 [+0.194, +0.384]
+   seed 7331: T-a cells 3/3, CI excludes 0: True; T-b: True; T-c cells 3/3
+T-a: True  T-b: True  T-c: {2024: True, 7331: True}

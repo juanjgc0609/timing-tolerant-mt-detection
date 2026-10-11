@@ -1,0 +1,196 @@
+TASK 2F - PER-STATION CAP IN DENSE OVERLAPPING SEQUENCES (H-CAP) - CONFIRMATORY REPORT
+====================================================================================
+Registry: PREREGISTRO_1j_1k.txt, section "Task 2F" (Mon Sep 28 03:34:51 UTC 2026), SHA-256
+3d8e4c9b2f7106c34c7d1f832bd4802db2ac119f48cf27630847640b82da2f5f (matches the last line of PREREGISTRO_hashes.txt and
+the file on disk at the start of this task and at the end). The registry was NOT modified: no infrastructure problem
+required a change, so no dated note was added.
+Outputs: analyze_2f_out.txt (all rules and tables), task2f_control.txt (seed-999 controls), task2f_parts/ (1392 part
+files: 48 control + 1344 confirmatory), log2f.txt and log2f_run_stdout.txt (run logs), task2f_code_hashes.txt,
+task2f_freeze_time.txt.
+
+----------------------------------------------------------------------------------------------------------------------
+1. VERDICTS
+----------------------------------------------------------------------------------------------------------------------
+  2F-a (primary), thin    PASSES  (strict Holm reading: PASSES)
+  2F-a (primary), strong  PASSES  (strict Holm reading: PASSES)
+  2F-b (mechanism)        PASSES
+  2F-c (no harm, TOST)    PASSES
+Registered interpretation: "2F-a and 2F-b are met -> the per-station cap is a confirmed contribution for
+dense sequences", in both clutter regimes, in this synthetic design.
+
+----------------------------------------------------------------------------------------------------------------------
+2. DESIGN AS IMPLEMENTED (task2f_run.py)
+----------------------------------------------------------------------------------------------------------------------
+Seeds 4242 and 8888, each an independent replication. Cells ladder_4, ladder_6, unilateral_c40; regimes thin (clutter
+0.35) and strong (1.75).
+Networks: task2a_confirm.network(seed, cell, j) (geometry [s, 2001, ci, j], statics N(0, 0.3 s) [s, 2002, ci, j]),
+  shared by the two regimes as in 2A. Dense arm j = 0..95 (96 per cell, regime and seed); equivalence arm j = 96..111
+  (16 per cell and regime).
+Catalogue and +SC: task2a_confirm.catalogue_real, 20 events, seeds [s, 2003, ci, j, ri] (one catalogue per network and
+  regime, exactly as 2A was implemented), station_corrections.estimate_station_corrections.
+Windows: gen_realistic.generate_real with the network statics, matched filter task1o_consistent.matched; streams
+  [s, TAG, ci, j, ri, 41|233|61] (xc.window_stream with the seed as a parameter). 10 windows per network and regime.
+  Dense arm: TAG 4201, c2_run.draw_dense (3-5 events, separations >= 5 km within 9 km, origins in [5.2, 7.8] s, gaps
+  >= 0.5 s), kmax 7. Equivalence arm: TAG 4202, task1o_consistent.draw_sources (0/1/2 events, 0.4/0.4/0.2), kmax 5.
+  TAG choice: all TAG values and rng entropy tags in the code base were grepped (2001-2005, 2097-2099, 2601, 2603,
+  2610-2613, 2701, 2704, 2710-2714, 2801, 3001-3008, 3701-3706); 4201 and 4202 appear nowhere before this task.
+Per seed: dense 5760 windows (4242: 23013 events; 8888: 22996), standard 960 windows (766 / 749 events).
+Operators: c6_lib.ModelOps(STA, xc.make_grid(), c6_lib.Homog(), corr) (3 km x 3 depths grid, 675 nodes, origins
+  DEFAULT_TAUS, the registered homogeneous model), c2_ablate.PKDictCap(ops.BD).
+Methods (the calls of explore_contrib/c2_ablate.py, unchanged):
+  MT-FW+SC        c6_lib.mtfw_dense(ops, MFn, truth, kmax)
+  MT-FW-NOCAP+SC  c6_lib.mtfw_dense(..., cap=False)
+  BOMP-PK+SC      c6_lib.bomp_pk_m(ops, ...) = task2d_methods.bomp_pk_record on ops.PD (PKDict)
+  BOMP-PK-CAP+SC  task2d_methods.bomp_pk_record(c2_ablate.PKDictCap(ops.BD), ...) (cap CAPV = 6 in the selection
+                  statistic only; refit and deflation unchanged)
+  Same grid, origins, +-0.25 s peak tolerance, 5 km exclusion and hit rule (epicentre within 5 km) as 2A-2E.
+OpenBLAS: OPENBLAS_CORETYPE=Prescott in every process; every job checked with threadpoolctl that numpy's OpenBLAS
+  loaded "Prescott" (abort otherwise) and stored the kernel info in its part. All 1392 parts record numpy Prescott
+  (scipy's separate OpenBLAS reports "Katmai"; it is not used by these methods, as in 2C-2E).
+Execution: setsid nohup, 2 worker processes, one part per (seed, arm, regime, cell, network), resumable; a watchdog
+  would have relaunched the runner if it died (it never did: one launch, 0 errors, no FAIL file).
+Analysis (analyze_2f.py): exact FROC (every record score as threshold); pooled recall uses a single threshold per
+  method over the pooled windows (as the pilot); hierarchical bootstrap, 2000 replicates, cells as strata, networks
+  then windows within network, same resamples for all methods, operating point re-chosen in every replicate; 95% CI =
+  percentiles 2.5/97.5; one-sided p = (1 + #{d* <= 0}) / 2001 (floor 0.0005).
+
+----------------------------------------------------------------------------------------------------------------------
+3. CONTROLS (seed 999 only; task2f_control.txt, all PASS)
+----------------------------------------------------------------------------------------------------------------------
+(1) Pilot reproduction: task2f_run.py regenerated the 360 dense pilot windows (networks 10-15, TAG 3002, both
+    regimes) and reproduced the stored c2_ablate records bit for bit (== after JSON) in 180/180 thin and 180/180
+    strong windows for all five methods (MT-FW, MT-FW-NOCAP, BOMP-PK, BOMP-PK-CAP, BOMP-PK-SEQ). The pooled recalls
+    equal the published pilot numbers exactly:
+      thin   BOMP-PK 0.135/0.230, MT-FW 0.212/0.304, MT-FW-NOCAP 0.131/0.233, BOMP-PK-CAP 0.180/0.291
+      strong BOMP-PK 0.085/0.190, MT-FW 0.164/0.241, MT-FW-NOCAP 0.085/0.183, BOMP-PK-CAP 0.144/0.215
+    The pilot's kernel was not recorded; with Prescott the reproduction is exact, so no difference to explain.
+(2) Uncapped MT-FW = BOMP-PK with sequential deflation: MT-FW-NOCAP+SC and BOMP-PK-SEQ+SC have identical hit sequences
+    in 180/180 thin and 180/180 strong windows (as the pilot found).
+(3) Standard-window path: C6 HOM records (networks 20-21, TAG 3006, draw_sources, kmax 5) reproduced bit for bit
+    (MT-FW:HOM and BOMP-PK:HOM, 60/60 windows per regime; k, truth and origins identical).
+(4) analyze_2f.Pool (fast exact FROC) equals froc_exact.exact_HF + analyze_2c.val (the 2C-2E recall) on the point and
+    200 hierarchical resamples, 4 methods, 2 regimes, 2 caps: max difference 0.0. After the run, the pooled headline
+    recalls were also recomputed with xc.recall_caps and analyze_2c.val: identical.
+(5) explore_contrib/power.py re-run on the pilot files reproduces the registry's pilot SDs (thin 0.0383, strong 0.0353).
+    analyze_2f.py was also dry-run on the seed-999 control parts before freezing; on the pilot it gives MT-FW - BOMP-PK
+    +0.074 [+0.004, +0.156] thin and +0.070 [+0.016, +0.129] pooled (pilot report: [+0.004, +0.163], [+0.020, +0.128]).
+Runtime estimate from the controls: 5.95 CPU-h, about 3.0 h wall; actual 3 h 03 min wall.
+
+----------------------------------------------------------------------------------------------------------------------
+4. CODE FREEZE AND CLOCK TIMES (date -u, container clock)
+----------------------------------------------------------------------------------------------------------------------
+  03:39:10 UTC  seed-999 control run started (task2f_run.py control)
+  03:49:08 UTC  task2f_code_hashes.txt written (sha256sum of all 26 local modules loaded by task2f_run.py,
+                task2f_control.py and analyze_2f.py, plus explore_contrib/power.py); SHA-256 of the hash file
+                9fb2e49b984b540540fe14eb0ec9dcfd85fe396a10d37daa57bcc3527dfd2d0d
+  03:49:14 UTC  first (and only) launch on seeds 4242/8888 (task2f_run.py run --seeds 4242,8888 --workers 2)
+  06:52:31 UTC  last part written (1344/1344)
+  06:53:11 UTC  sha256sum -c task2f_code_hashes.txt: 26/26 OK (no code changed after the freeze)
+  06:54:13 UTC  analyze_2f.py run once -> analyze_2f_out.txt (SHA-256 3c0916e1...8739840f)
+Hashed files: task2f_run.py, task2f_control.py, analyze_2f.py, analyze_2c.py, froc_exact.py, explore_contrib/
+c6_lib.py, c2_run.py, c2_ablate.py, xc.py, power.py, task2d_methods.py, task2a_confirm.py, task2c_methods.py,
+task2e_methods.py, certified_fw.py, task1x_mtglrt.py, gen_realistic.py, station_corrections.py, task0_common.py,
+task1o_consistent.py, task1y_clutter.py, task1r_fair.py, task1r_baselines.py, task1w_mech.py, qm_wrapper.py,
+real_picker.py (full list with hashes in task2f_code_hashes.txt). The analysis code was frozen with the rest, before
+any 4242/8888 data existed. No bug was found after seeing results; nothing was rerun.
+
+----------------------------------------------------------------------------------------------------------------------
+5. DEVIATIONS AND IMPLEMENTATION CHOICES (all fixed in frozen code before any 4242/8888 run)
+----------------------------------------------------------------------------------------------------------------------
+ a. 2F-b does not name the cap; the primary cap 0.25 is used (cap 0.1 reported descriptively).
+ b. TOST (2F-c) implemented with the hierarchical bootstrap: equivalent if p(d* <= -0.05) < 0.05 and
+    p(d* >= +0.05) < 0.05, p = (1 + count) / 2001 (equivalent to the 90% percentile CI inside (-0.05, +0.05)).
+ c. Strict reading of 2F-a: Holm step-down over the 4 one-sided p-values (2 regimes x 2 seeds), level 0.025; a regime
+    passes if Holm rejects in both seeds and the point estimate is >= 0.03 in both.
+ d. Networks j are shared by the two regimes (2A construction), so a resampled network is used in both regimes (windows
+    resampled separately per regime). For a single regime this is exactly "cells as strata, networks, windows"; when
+    regimes are pooled (2F-b, 2F-c) the network is the replication unit. RNG default_rng([seed, cell index, 4201|4202]).
+ e. BOMP-PK-SEQ+SC (c2_ablate.bomp_seq) was run only in the seed-999 control, not on 4242/8888 (not a registered
+    method).
+ f. "Station corrections ... as in 2A": one 20-event catalogue per network AND regime, which is how 2A was
+    actually implemented (declared deviation of 2A); identical to the pilot (xc.NetCfg).
+ g. The integers 4242 appear as generic rng seeds in unrelated older scripts (rft_threshold.py, c1_csdm.py, c1c.py,
+    task2e_validate.py); no network, catalogue or window of this design had ever been generated with 4242 or 8888 (no
+    parts or files with those seeds existed before this task).
+ h. Timestamps are the container clock (the registry entry itself is stamped Mon Sep 28 03:34:51 UTC 2026).
+
+----------------------------------------------------------------------------------------------------------------------
+6. RESULTS (analyze_2f_out.txt; recall @0.1 / @0.25; differences point [95% hierarchical CI])
+----------------------------------------------------------------------------------------------------------------------
+6.1 Recall, dense arm, pooled over the 3 cells (2880 windows, ~11500 events per row)
+                    MT-FW+SC      BOMP-PK+SC    BOMP-PK-CAP+SC  MT-FW-NOCAP+SC
+  thin   4242       0.187/0.289   0.102/0.217   0.174/0.274     0.104/0.215
+  thin   8888       0.183/0.287   0.094/0.213   0.183/0.283     0.092/0.209
+  strong 4242       0.135/0.220   0.080/0.169   0.136/0.218     0.079/0.169
+  strong 8888       0.130/0.220   0.070/0.178   0.127/0.215     0.072/0.177
+
+6.2 Rule 2F-a: MT-FW+SC - BOMP-PK+SC at cap 0.25, pooled over cells
+                    difference                 p (1-sided)  Holm adj. p  Holm rejects  boot SD (pilot SD)
+  thin   4242       +0.072 [+0.048, +0.092]    0.0005       0.0020       yes           0.0113 (0.0383)
+  thin   8888       +0.074 [+0.052, +0.100]    0.0005       0.0020       yes           0.0125 (0.0383)
+  strong 4242       +0.051 [+0.032, +0.070]    0.0005       0.0020       yes           0.0098 (0.0353)
+  strong 8888       +0.043 [+0.022, +0.066]    0.0005       0.0020       yes           0.0112 (0.0353)
+  All lower bounds > 0 and all points >= 0.03 -> passes in both regimes, also under Holm.
+  Cap 0.1 (secondary): thin +0.085 [+0.063, +0.109] / +0.089 [+0.066, +0.114]; strong +0.055 [+0.038, +0.076] /
+  +0.060 [+0.040, +0.077] (4242 / 8888).
+
+6.3 Rule 2F-b (pooled over cells and regimes, cap 0.25)
+                    MT-FW+SC - MT-FW-NOCAP+SC   MT-FW-NOCAP+SC - BOMP-PK+SC
+  4242              +0.060 [+0.046, +0.076]      -0.001 [-0.005, +0.002]
+  8888              +0.059 [+0.044, +0.075]      -0.002 [-0.006, +0.003]
+  Lower bound > 0 and |NOCAP - BOMP-PK| <= 0.02 in both seeds -> passes. (MT-FW+SC - BOMP-PK+SC pooled: +0.060
+  [+0.044, +0.074] / +0.058 [+0.042, +0.074].) At cap 0.1: +0.070 / +0.074 and -0.000 / +0.000.
+
+6.4 Rule 2F-c (standard windows, pooled over cells and regimes, cap 0.25, margin 0.05)
+                    windows  events  difference  90% CI             95% CI             p(d<=-0.05)  p(d>=+0.05)
+  4242              960      766     -0.008      [-0.039, +0.034]   [-0.046, +0.041]   0.0170       0.0105
+  8888              960      749     -0.013      [-0.048, +0.027]   [-0.055, +0.035]   0.0405       0.0070
+  Equivalent in both seeds -> passes. By regime (cap 0.25): thin +0.031 / -0.003, strong -0.026 / -0.032 (all CIs
+  include 0); cap 0.1 pooled +0.030 / +0.025.
+
+6.5 Descriptive (dense arm)
+  Per cell, MT-FW+SC - BOMP-PK+SC is positive in 12/12 cell x regime x seed cases at both caps; at cap 0.25 it ranges
+  from +0.023 [-0.009, +0.051] (strong 8888, 4 stations; the only per-cell CI including 0 at 0.25) to +0.110 (thin
+  4242, 6 stations). The 4-station ladder gains least in the strong regime (+0.028, +0.023).
+  Cap in BOMP-PK: BOMP-PK-CAP+SC - BOMP-PK+SC pooled +0.052 [+0.036, +0.067] / +0.051 [+0.037, +0.068] at 0.25;
+  MT-FW+SC - BOMP-PK-CAP+SC pooled +0.008 [-0.001, +0.017] / +0.006 [-0.002, +0.014] (thin 4242 alone +0.015
+  [+0.002, +0.030]). Adding the cap to BOMP-PK's selection statistic recovers about 85-90% of the gap.
+  Runtime (s/window, 2 processes on 2 cores): dense MT-FW 0.105-0.118, MT-FW-NOCAP 0.102-0.115, BOMP-PK 0.640-0.674,
+  BOMP-PK-CAP 0.698-0.733; standard 0.076-0.083 vs 0.468-0.492. MT-FW is about 6x faster than BOMP-PK.
+  Power check: observed bootstrap SDs 0.0098-0.0125 vs the planned 0.0096 (thin) / 0.0088 (strong) (pilot SD scaled to
+  96 networks); observed effects 0.043-0.074 exceed the planning delta 0.035.
+
+----------------------------------------------------------------------------------------------------------------------
+7. INTERPRETATION (per the registry, with the limits that apply)
+----------------------------------------------------------------------------------------------------------------------
+H-CAP is confirmed in this synthetic design, in both regimes and both independent seeds: in windows with 3-5
+overlapping events, MT-FW+SC detects more events than BOMP-PK+SC at equal realised false-event rate (+0.04 to +0.07
+recall at cap 0.25, +0.06 to +0.09 at cap 0.1), and the gain is due to the per-station cap: removing the cap brings
+MT-FW exactly down to BOMP-PK (difference within +-0.002), and adding the cap to BOMP-PK's selection statistic recovers
+most of the gap. Joint refitting (OMP) versus sequential deflation, and the P/S cross term, make no measurable
+difference here. In standard 0-2 event windows the cap does no harm beyond the 0.05 margin.
+The pilot effect was not a selection artefact: the confirmatory estimates (thin +0.072/+0.074, strong +0.051/+0.043)
+are close to the pilot point estimates (+0.074 thin, +0.051 strong) on fresh seeds with 16x more networks.
+Limits, stated plainly:
+  - The gain is modest in absolute terms: even with the cap, recall at 0.25 false events per window is only 0.22-0.29
+    in dense windows; most overlapping events are still missed by both detectors.
+  - 2F-c passes, but narrowly in seed 8888 (p = 0.0405 for the lower margin; its 95% CI reaches -0.055), and the
+    point estimates in the strong regime of the standard arm are negative (-0.026, -0.032; per cell as low as -0.067
+    on the 4-station ladder, all CIs including 0). A small cost of the cap for isolated events in strong clutter
+    (of order 0.03) is not excluded by this arm (16 networks per cell).
+  - Synthetic design only (gen_realistic generator, homogeneous detector model, catalogue corrections). The cap value
+    CAPV = 6 was fixed in 1x and not tuned here.
+  - Novelty, as declared in the registry: clipping or normalising per-station contributions is known practice in
+    robust stacking; the contribution is the measured and explained effect of the cap in moment-tensor subspace
+    detection of overlapping events, and the negative results that joint refitting and the P/S Gram term do not matter.
+  - The hypothesis was selected among several explored candidates (C1-C7, mostly null) on seed 999; the confirmatory
+    seeds 4242/8888 were untouched by that selection.
+
+----------------------------------------------------------------------------------------------------------------------
+8. FILES
+----------------------------------------------------------------------------------------------------------------------
+  task2f_run.py          runner (control and run modes), parts in task2f_parts/
+  task2f_control.py      seed-999 controls -> task2f_control.txt
+  analyze_2f.py          rules and tables -> analyze_2f_out.txt
+  task2f_code_hashes.txt, task2f_freeze_time.txt, log2f.txt, log2f_run_stdout.txt
+  No proposal document, registry file, earlier part or explore_contrib file was modified.

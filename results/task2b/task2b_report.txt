@@ -1,0 +1,215 @@
+TASK 2B - ABLATION OF THE RADIATION PATTERN INSIDE THE MT-FW SOLVER: REPORT
+===========================================================================
+
+Preregistration: PREREGISTRO_1j_1k.txt, section "Task 2B" (Sat Sep 26 2026, 14:30 UTC), not modified.
+Code: task2b_ablation.py (runs), analyze_2b.py (rule and tables), task2b_kernel_check.py (exploratory numerical
+sensitivity). Outputs: task2b_parts/ (60 per-network files), task2b_seed{2024,7331}_{thin,strong}.json,
+task2b_selfcheck.txt, analyze_2b_out.txt / analyze_2b_out.json, task2b_kernel_check.txt, log2b.txt,
+log2b_attempt1.txt and task2b_control_failed_attempt1.txt (first attempt, see section 3).
+No Task 2A file was modified.
+
+
+1. VERDICT
+----------
+
+Rule 2B (MT-FW+SC - MT-FW-FREE+SC >= 0.05 at both caps in >= 2 of 3 cells, both seeds), point estimates:
+
+  thin    seed 2024: 2/3 cells, seed 7331: 2/3 cells  -> MET (at the minimum; the one-sided 8-station cell
+          fails in both seeds)
+  strong  seed 2024: 3/3 cells, seed 7331: 3/3 cells  -> MET
+
+Preregistered interpretation: 2B holds in both regimes, so the 2A gain is NOT attributed solely to pick-free
+migration with deflation; within the same solver the radiation operator adds >= 0.05 recall at both caps in
+most cells. Qualifications in section 6: the thin verdict is fragile, and the identity ablation removes the
+whole operator (signed pattern, polarisation and amplitude geometry), not only the sign.
+
+
+2. DESIGN AS IMPLEMENTED
+------------------------
+
+Windows, networks, catalogues, station corrections. For each seed (2024, 7331), regime (thin, strong), cell
+(ladder_4, ladder_6, unilateral_c40) and network (0-4), task2b_ablation.py rebuilds everything with
+task2a_confirm's own functions, which it imports rather than copies: net_setup, network, catalogue_real with
+seeds [s, 2003, ci, j, ri], estimate_station_corrections, window_rngs, generate_window, matched,
+certified_fw_record and task1x_mtglrt.radiation_operator / basis. The windows consume only rng, rng_m and
+rng_h (window_rngs[:3]). The picker, degrade_y (rng_d) and the node map (rng_n) that run_job also calls do not
+touch those streams, so skipping them reproduces the window sequence exactly. The number of windows is
+20 per network, 100 per cell, 1200 in total.
+
+MT-FW+SC is the stored 2A record (task2a_parts, identical to the 2A JSON). MT-FW-FREE+SC uses the same call,
+certified_fw_record(STA, MF/sd, default_grid(), DEFAULT_TAUS, Gs, Qs, truth, tcorr=corr), with the defaults
+kmax 5, min_sep 5 km and CAPV 6 (task1x_mtglrt.CAPV, used in node_vectors). The only change is
+Gs = Qs = [I] * 675 nodes, where I = eye(2*ns*3). Shapes checked: v is (31, 2, ns, 3), vf = v.reshape(31, -1)
+is (31, 6ns) in (phase, station, component) order, G is (6ns, 6), I is (6ns, 6ns), and
+(I @ vf).reshape(2, ns, 3) == v exactly. The statistic is ||vt||^2 / 2, half the total capped peak-vector
+energy. It is sign-invariant, m = lstsq(I, vf) = vf, and the deflation subtracts the observed peak vectors
+convolved with the matched-filter autocorrelation.
+
+Endpoint and statistics (analyze_2b.py), as in analyze_2a.py:
+- Recall at <= 0.1 and <= 0.25 realised false events per window on the exact FROC (froc_exact.exact_HF),
+  with the operating point chosen on the evaluation itself.
+- The rule uses point estimates with the threshold 0.05 - 1e-9.
+- Paired window bootstrap: 2000 replicates, default_rng([s, ci, ri]). These are the same resamples as
+  analyze_2a.py, so the 2A-b intervals in Table 4 of analyze_2b_out.txt reproduce analyze_2a_out.txt exactly.
+- Additional reading: network bootstrap, 2000 replicates, 5 networks drawn with replacement,
+  default_rng([s, ci, 77]) as in verif_2a/cluster_boot_verif.py.
+- The operating point, and the maximum over comparators, are re-chosen in every replicate.
+- The window pairing between the 2A and 2B JSON is asserted: k, network, truth, origin times and the
+  MT-FW+SC records are all identical.
+
+Compute: 60 network jobs, 8 s each on average (495 s CPU in total), 2 workers.
+
+
+3. CONTROLS
+-----------
+
+Selfcheck (task2b_selfcheck.txt; seed 2024, thin, ladder_6, net 0, window 0, 1 source, 6 stations).
+(a) Over all 675 x 31 hypotheses, the FREE score equals ||vt||^2/2 to a relative 6.8e-16. The first FREE
+    record score (73.9898) equals the maximum of ||vt||^2/2 over all hypotheses (relative 1.9e-16).
+(b) The score is unchanged, bit for bit, when one station's vector changes sign.
+(c) I lstsq(I, vf) - vf = 0 exactly.
+(d) Flipping the sign of the waveform of any one of the 6 stations leaves the FREE records bit-identical
+    (6/6) and changes the MT-FW+SC records (6/6). In the unflipped window MT-FW+SC misses the event and FREE
+    detects it, which shows the ablation is not trivially weaker window by window.
+
+Per-network control (all 60 networks, recorded in every part file and asserted again in analyze_2b.py):
+- STA, statics, number of catalogue draws, catalogue locations and origins, and station corrections are
+  bit-identical to task2a_parts (60/60).
+- Truth and origin times are identical in 1200/1200 windows.
+- MT-FW+SC recomputed on windows 0 and 1 of every network equals the stored records EXACTLY (120/120
+  windows).
+- Certified FREE equals dense FREE (dense_fw_record_c) exactly (120/120).
+
+Incident (first attempt, log2b_attempt1.txt, task2b_control_failed_attempt1.txt). The first run stopped on a
+control failure, as required. 32 networks had passed. The 7331 ladder_6 networks produced in the resumed 2A
+sessions failed: MT-FW+SC scores differed in the last 1-2 digits (relative <= 6e-15, identical hits and
+order), and in one network one correction differed by 8.9e-16 s.
+
+Cause: numpy's OpenBLAS (DYNAMIC_ARCH) selects the Prescott kernel on this machine by default. The 18
+networks that 2A wrote in its resumed seed-7331 sessions (after 23:30) were produced with the AVX-512
+(SkylakeX) kernel:
+- 7331 strong ladder_6 net 2-4
+- 7331 thin ladder_6 net 0-4
+- 7331 ladder_4, both regimes
+
+Verified: with OPENBLAS_CORETYPE=SkylakeX the corrections and records of these networks reproduce bit for
+bit, and with Prescott they do not. Haswell, Sandybridge and Zen do not reproduce them either. The other 42
+networks reproduce bit for bit with the default kernel.
+
+The final run (run_queue_2b.sh, log2b.txt) therefore ran those 18 networks with OPENBLAS_CORETYPE=SkylakeX and
+the rest with the default kernel. Every network then passed the unchanged, exact control. The kernel is
+recorded in each new part file. The 32 parts from the first attempt carry no field, but they ran with the
+default kernel. No threshold or tolerance was relaxed.
+
+Kernel sensitivity (exploratory, task2b_kernel_check.py, task2b_kernel_check.txt). The 18 affected networks
+were recomputed with the default kernel, all 20 windows each:
+- MT-FW+SC: every record differs at relative <= 6e-15, with no change of hits or order in any window.
+- MT-FW-FREE+SC: the records diverge in later Frank-Wolfe steps in some windows (score differences up to
+  17 percent, from near-equal candidates flipping under rounding). Hits or order change in only 2 of 360
+  windows.
+- Recall at 0.1 and 0.25 is identical for both methods in all 4 affected cells.
+- Exact ties of the FREE maximum are rare. At the first step, in 60 sampled windows, 0 ties in ladder_6
+  and 1 tie in 20 windows in unilateral_c40, the tied nodes sharing the same epicentre.
+Consequence for 2A: its per-network results mix two BLAS kernels, and the effect on MT-FW is at rounding
+level only.
+
+
+4. KEY TABLES
+-------------
+
+Recall at <= 0.1 / <= 0.25. Diff = MT-FW+SC - MT-FW-FREE+SC, point [95% CI]; window = paired window bootstrap,
+network = network bootstrap. P = network-bootstrap probability that the difference is < 0.05. Best 2A =
+max(GaMMA-STALTA(+SC), PyOcto-STALTA(+SC), QM, QM-3C, QM-3C+SC), per cap.
+
+THIN (clutter 0.35)
+cell (seed)          ev  MT-FW+SC   FREE+SC    diff 0.1 window        diff 0.25 window       diff 0.1 network     P    diff 0.25 network    P    cell
+4 st. (2024)         87  0.32/0.52  0.15/0.24  +0.17 [+0.06,+0.37]    +0.28 [+0.13,+0.45]    +0.17 [+0.12,+0.25] 0.00  +0.28 [+0.16,+0.43] 0.00  yes
+6 st. (2024)         72  0.46/0.56  0.28/0.44  +0.18 [-0.06,+0.37]    +0.11 [-0.05,+0.28]    +0.18 [-0.02,+0.34] 0.23  +0.11 [-0.11,+0.26] 0.24  yes
+one-sided 8 (2024)   71  0.55/0.65  0.56/0.66  -0.01 [-0.17,+0.21]    -0.01 [-0.14,+0.11]    -0.01 [-0.14,+0.37] 0.71  -0.01 [-0.13,+0.10] 0.83  no
+4 st. (7331)         78  0.32/0.51  0.17/0.27  +0.15 [+0.00,+0.32]    +0.24 [+0.06,+0.38]    +0.15 [+0.01,+0.35] 0.11  +0.24 [+0.05,+0.39] 0.03  yes
+6 st. (7331)         68  0.72/0.79  0.46/0.68  +0.26 [+0.04,+0.46]    +0.12 [-0.02,+0.33]    +0.26 [+0.04,+0.39] 0.03  +0.12 [-0.02,+0.28] 0.12  yes
+one-sided 8 (7331)   81  0.64/0.77  0.60/0.72  +0.04 [-0.13,+0.18]    +0.05 [-0.09,+0.18]    +0.04 [-0.21,+0.22] 0.58  +0.05 [-0.07,+0.19] 0.50  no
+(one-sided 8 7331 at 0.25: +0.0494, within 0.005 of the threshold; the cell fails at 0.1 regardless)
+
+STRONG (clutter 1.75)
+4 st. (2024)         77  0.31/0.39  0.06/0.13  +0.25 [+0.08,+0.35]    +0.26 [+0.13,+0.39]    +0.25 [+0.14,+0.29] 0.00  +0.26 [+0.19,+0.37] 0.00  yes
+6 st. (2024)         74  0.38/0.49  0.05/0.14  +0.32 [+0.19,+0.48]    +0.35 [+0.23,+0.51]    +0.32 [+0.25,+0.45] 0.00  +0.35 [+0.29,+0.48] 0.00  yes
+one-sided 8 (2024)   83  0.31/0.42  0.14/0.20  +0.17 [+0.01,+0.37]    +0.22 [+0.07,+0.37]    +0.17 [-0.04,+0.48] 0.13  +0.22 [-0.00,+0.49] 0.08  yes
+4 st. (7331)         78  0.13/0.22  0.06/0.10  +0.06 [-0.02,+0.20]    +0.12 [+0.01,+0.24]    +0.06 [+0.00,+0.16] 0.16  +0.12 [+0.04,+0.18] 0.04  yes
+6 st. (7331)         84  0.36/0.42  0.10/0.25  +0.26 [+0.06,+0.39]    +0.17 [+0.01,+0.35]    +0.26 [+0.00,+0.35] 0.03  +0.17 [-0.03,+0.37] 0.13  yes
+one-sided 8 (7331)   75  0.63/0.71  0.29/0.37  +0.33 [+0.18,+0.51]    +0.33 [+0.18,+0.49]    +0.33 [+0.24,+0.41] 0.00  +0.33 [+0.20,+0.44] 0.00  yes
+
+Fraction of bootstrap replicates in which rule 2B would hold (exploratory; independent resamples per cell):
+thin 0.59 (window bootstrap) and 0.62 (network bootstrap); strong 0.98 and 0.97.
+
+Exploratory: MT-FW-FREE+SC - best 2A comparator, point estimates at 0.1 / 0.25:
+  thin    4 st. -0.03/-0.01 (2024), +0.01/+0.10 (7331); 6 st. +0.00/+0.14, +0.22/+0.34; one-sided 8 +0.21/+0.28,
+          +0.14/+0.23
+  strong  4 st. -0.05/-0.01, +0.03/+0.05; 6 st. -0.07/-0.03, -0.08/+0.00; one-sided 8 -0.01/+0.01, +0.04/+0.08
+Exploratory: MT-FW-FREE+SC - WAVE-PT@20 (no SC, sign-free P-on-ray / S-transverse energy):
+  thin     -0.06 to +0.19
+  strong   -0.23 to -0.01
+Intervals are in analyze_2b_out.txt, Tables 3 and 4.
+
+
+5. WHAT THE RESULTS SAY
+-----------------------
+
+(i) Strong clutter: the radiation operator carries the 2A result. MT-FW+SC beats FREE by +0.06 to +0.35 in all
+6 cell-seed pairs. FREE is at the level of the best 2A comparator (QuakeMigrate), within -0.08 to +0.08, and
+below WAVE-PT@20. Without the operator, the pick-free solver with deflation and SC does not beat the state of
+the art in strong clutter. The rule holds in 97-98 percent of bootstrap replicates.
+
+(ii) Thin clutter: mixed.
+- The operator helps clearly in the 4-station cells of both seeds, with the network-bootstrap intervals above
+  0 at 0.25.
+- In the 6-station cells the gain is positive but uncertain. For 2024 the intervals include 0 in both
+  bootstraps.
+- In the one-sided 8-station cell FREE equals MT-FW+SC in both seeds (-0.01/-0.01 and +0.04/+0.05).
+- The rule passes at its minimum (2/3 in each seed) and would hold in only about 60 percent of bootstrap
+  replicates.
+- A large part of the thin-clutter 2A advantage over QuakeMigrate needs no radiation pattern. FREE alone
+  beats the best comparator by +0.10 to +0.34 at cap 0.25 in 5 of 6 cell-seed pairs (all except 4 st. 2024,
+  at -0.01). In those cells the gain over QuakeMigrate comes mainly from pick-free migration
+  with deflation and SC.
+
+(iii) Scope of the ablation. Replacing G by the identity removes the whole physical operator:
+- the signed double-couple pattern across stations;
+- the polarisation constraint (P along the ray, S in the transverse plane);
+- the 1/d and P/S amplitude geometry.
+2B therefore establishes that the operator matters. It does not isolate the sign, which was the audit's
+question.
+
+The comparison with WAVE-PT@20, which is sign-free but polarisation-constrained, suggests that polarisation
+is a substantial part of the operator's value in strong clutter, where clutter transients are randomly
+polarised. In strong clutter FREE is 0.01 to 0.23 below WAVE-PT@20 even though WAVE-PT@20 has no deflation
+and no SC.
+
+2A-b, the other-node subspace, keeps the dimension but scrambles geometry and polarisation together, so it
+does not isolate the sign either. Separating the sign from the polarisation would need a further ablation
+that is not preregistered: for example, free amplitude along the ray for P and in the transverse plane for S,
+i.e. Q = the block-diagonal ray projectors, called "FREE-PT". Any such run must be declared exploratory.
+
+Wording for the proposal, per the preregistration: 2B holds in both regimes, so the gain is attributed to
+the radiation operator within the solver, not solely to pick-free migration with deflation. It should add
+that:
+- in thin clutter the attribution is marginal (2 of 3 cells per seed, with no gain in the one-sided
+  8-station cell);
+- in thin clutter most of the advantage over QuakeMigrate survives without the operator (at cap 0.25);
+- the ablation does not separate the sign of the pattern from the polarisation constraint.
+
+
+6. LIMITATIONS
+--------------
+
+L1. Five networks per cell. The per-window intervals ignore clustering, and the network bootstrap with 5
+    clusters is coarse. Several individual cells have intervals that include 0 even where the point estimate
+    passes (thin 6 st. both seeds; strong 4 st. 7331 at 0.1; strong one-sided 8 2024 in the network
+    bootstrap).
+L2. The rule is decided on point estimates, as preregistered. Thin passes at the minimum count.
+L3. The operating point is chosen on the evaluation itself for both methods, as in 2A. This is symmetric.
+L4. FREE inherits the MT-FW solver choices (CAPV 6 per station and phase, 5 km exclusion, kmax 5, deflation
+    with the matched-filter autocorrelation), which were tuned with the moment-tensor statistic. A retuned
+    energy detector might do somewhat better. The preregistered ablation deliberately keeps the solver fixed.
+L5. The BLAS kernel is a process-level numerical setting. It was matched per network to reproduce 2A exactly,
+    and it does not change any recall value (section 3).

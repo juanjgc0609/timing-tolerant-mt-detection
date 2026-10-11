@@ -1,0 +1,379 @@
+TASK 2D - EQUAL TIME TOLERANCE FOR THE 2C COMPARATORS, ABLATIONS OF MT-FW, AND A DEPLOYABLE (SPLIT-CONFORMAL)
+THRESHOLD: REPORT
+=====================================================================================================================
+
+Preregistration: PREREGISTRO_1j_1k.txt, section "Task 2D" (Sat Sep 26 2026, 21:13 UTC; SHA-256 6e8510b3...bf88 in
+PREREGISTRO_hashes.txt). The only change made to the file is the budget note required by the rule, appended at
+Sun Sep 27 02:41:50 UTC 2026 (clock time from `date -u`), before any seed-2024/7331 computation, with a fresh line
+in PREREGISTRO_hashes.txt (dc8cf708...e32b, 02:41:50 UTC). The rule did not trigger. Nothing else in the file was
+changed. No proposal document was edited.
+
+Timeline (UTC, Sep 27): code written 02:25-02:29; validation 02:29-02:36; smoke test 02:37-02:38; budget note and
+hash 02:41:50; code hashes recorded 02:41:59 (task2d_code_hashes.txt, includes analyze_2d.py); first part file
+(seed 999, part ii) 02:42:47; first seed-2024/7331 part file 02:53:04; last 03:25:19. analyze_2d.py was written
+before any 2D result existed; see deviation 9 for the one line changed afterwards.
+
+Code (new):
+- task2d_methods.py: BOMP-PK+SC, MTSTACK-PK+SC, GL-FW-PK+SC, MT-FW-EX+SC, MT-FW-NOCAP+SC. Built on
+  task2c_methods (BlockDict, GLPath, solve_restricted), certified_fw (_idx_node, node_vectors_c) and task1x_mtglrt.
+- task2d_run.py: runner (validate / smoke / run --part 1|2), reusing task2b_ablation.setup_net, task2a_confirm
+  (window_rngs, generate_window, run_qm_variants, certified_fw_record) and task2c_run (kernel functions, ops).
+- task2d_validate.py: validation on seed 999 (V1-V6).
+- analyze_2d.py: rules, tables, hierarchical bootstrap, Holm (reuses analyze_2c.HF / val / point / holm).
+- task2d_explore.py, task2d_explore_sum.py: post-hoc exploratory diagnostics (declared as such).
+- run_queue_2d.sh, run_queue_2d_explore.sh: launchers.
+
+Outputs:
+- task2d_parts/ (60 part-(i) files p1_*, 30 part-(ii) files p2_seed999_*).
+- task2d_validation.txt, task2d_smoke.txt, task2d_code_hashes.txt.
+- analyze_2d_out.txt / analyze_2d_out.json.
+- task2d_explore_e1.txt, task2d_explore_e2.txt, task2d_explore_parts/.
+- Logs: log2d.txt, log2d_validate.txt, log2d_smoke.txt, log2d_explore.txt (stderr files empty).
+
+
+1. VERDICTS
+-----------
+
+Point estimates decide 2D-a and 2D-b (the 2A-2C convention), threshold 0.05 - 1e-9. No case lies within 0.005 of
+a threshold. Cells are listed in the order 4 stations, 6 stations, one-sided 8.
+
+2D-a: MT-FW+SC - max(BOMP-PK+SC, MTSTACK-PK+SC) >= 0.05 at cap 0.25 in >= 2/3 cells, both seeds.
+  thin    2024: 2/3 (+0.080, +0.042, +0.056)   7331: 1/3 (+0.090, -0.029, +0.025)   -> NOT MET
+  strong  2024: 1/3 (+0.091, +0.000, -0.036)   7331: 0/3 (-0.051, -0.155, -0.053)   -> NOT MET
+  The best comparator is BOMP-PK+SC in every cell at 0.25. Re-applied in every hierarchical replicate the rule
+  holds in 11% (thin) and 0.1% (strong) of replicates. With Holm: 0/3 in every seed and regime.
+
+2D-b: MT-FW+SC - MT-FW-EX+SC >= 0.05 at cap 0.25 in >= 2/3 cells, both seeds.
+  thin    2024: 3/3 (+0.230, +0.153, +0.310)   7331: 3/3 (+0.218, +0.412, +0.407)   -> MET
+  strong  2024: 3/3 (+0.156, +0.149, +0.241)   7331: 3/3 (+0.064, +0.167, +0.293)   -> MET
+  Holds in 99% (thin) and 95% (strong) of hierarchical replicates. Holm reading (rejection and point >= 0.05):
+  thin 1/3 and 0/3, strong 0/3 and 1/3 -> not met (see section 8: only 5 networks per cell).
+
+Descriptive (2D-b):
+  MT-FW-NOCAP+SC - MT-FW+SC at 0.25: thin -0.080, -0.042, -0.070 / -0.090, +0.044, -0.025;
+                                     strong -0.091, +0.000, +0.036 / +0.051, +0.131, +0.053 (all CIs include 0).
+  GL-FW-PK+SC - MT-FW+SC at 0.25:    thin -0.276, -0.167, -0.155 / -0.244, -0.147, -0.296;
+                                     strong -0.156, -0.203, -0.108 / +0.013, -0.119, -0.133.
+
+2D-c: with the frozen split-conformal thresholds, the realised false rate of MT-FW+SC on empty windows <= 2 alpha
+AND its recall exceeds QM-3C+SC's by >= 0.05, in >= 2/3 cells, both seeds, both alpha.
+  Primary (per-cell) reading:
+    thin    alpha 0.1: 2024 3/3, 7331 2/3; alpha 0.25: 2024 3/3, 7331 3/3   -> MET
+    strong  alpha 0.1: 2024 3/3, 7331 3/3; alpha 0.25: 2024 3/3, 7331 3/3   -> MET
+  Strict reading (rate <= 2 alpha in ALL cells, seeds and alpha; difference in >= 2/3):
+    thin: NOT MET (7331 6 st., alpha 0.1: 10 false events in 45 empty windows = 0.222 > 0.2; one event over)
+    strong: MET
+  The recall condition alone holds in 12/12 cell x seed x alpha cases in each regime (+0.08 to +0.49).
+  Holm reading (Holm rejection of the recall difference, plus the rate condition): not met in either regime.
+
+Preregistered interpretation (literal):
+- 2D-a fails in both regimes. Per the preregistration: "the advantage of MT-FW over [129] and [122] is attributed to the
+  peak search and not to another element of the method, and the proposal declares it."
+- 2D-b holds in both regimes: the peak search matters.
+- 2D-c holds under the per-cell reading in both regimes (strict reading: strong only). Section 8 explains why this
+  does NOT by itself make MT-FW+SC's conformal operating point deployable.
+
+
+2. DESIGN AS IMPLEMENTED
+------------------------
+
+Part (i). The 1200 windows of 2A (2 seeds x 2 regimes x 3 cells x networks 0-4 x 20 windows), regenerated bit
+for bit exactly as in 2C (task2b_ablation.setup_net, task2a_confirm.window_rngs / generate_window), with the same
+station corrections, the default_grid() nodes (675) x DEFAULT_TAUS (31), 5 km epicentral exclusion, at most 5
+events per window and fw_record's hit rule. Kernel pinning as 2C (section 4).
+
+Peak sampling ("PK"). For a residual R and the predicted sample idx = int((d/V + tau + corr)/DT) (clipped; the
+index node_vectors_c uses), the sample read is the argmax of the 3-component energy ||R_i[:, k]||^2 over the window
+clip(idx + o), |o| <= 4 samples (0.25 s), first maximum on ties: exactly node_vectors' rule. It is tabulated per
+residual (peak_table, the formula of certified_fw.LeafTables) and verified equal to node_vectors_c on every node,
+origin, station and phase (V1). No cap is applied in the PK variants (the 2C methods had none).
+
+An atom is (node n, origin t, read samples I (2 x ns)). Its column k predicts G_bi[:, k] AC(s - I_bi) in the
+matched-filter domain; the Gram between atoms is 2C's with I in place of the predicted samples; the block Gram
+K(I) = G^T G + P/S cross terms with AC(I_S - I_P). With I = predicted samples everything reduces to 2C (V2).
+
+- BOMP-PK+SC: at each step every non-excluded block (n, t) is read at the peaks of the CURRENT residual,
+  h = G^T v, e = h^T K(I_pk)^+ h (eigen-floor pseudo-inverse as BlockDict; recomputed only for blocks whose K
+  changes, V3). The block with the largest e enters with its read times FIXED at those peaks. Score e/2 at entry
+  (running minimum). Orthogonal least-squares refit of all active atoms at their fixed times; residual recomputed
+  from MFn.
+- MTSTACK-PK+SC: v = MFn at the peaks of MFn (no cap), m = pinv(G) v, stack ||G m||^2 / 2, max over tau, greedy
+  NMS at 20 km, at most 5, no deflation. (Its field equals WAVE-MT without cap; V4.)
+- GL-FW-PK+SC: 2C's group lasso (block-whitened group norm, 30-value geometric lambda path from lambda_max to
+  lambda_max/30, fully corrective Frank-Wolfe, exact restricted solver, score = entry lambda, early stop when the
+  5-event record is complete) on a GROWING dictionary: the FW oracle evaluates the certificate
+  c = sqrt(h^T K(I_pk)^+ h) of every block at the peaks of the current residual; the entering atom keeps those
+  times fixed; the restricted problem is over the fixed atoms. lambda_max = max c on MFn (so BOMP-PK's first
+  score = lambda_max^2 / 2, V4). The duality gap is reported for every solved lambda, w.r.t. the realised
+  dictionary (active atoms at their fixed times plus the peak atoms of the final residual).
+- MT-FW-EX+SC: fw_record (the loop of certified_fw.dense_fw_record_c) with node_vectors' peak search disabled:
+  each station and phase is read at the exact predicted sample, with the CAPV cap, and deflation is centred there.
+- MT-FW-NOCAP+SC: fw_record with the peak search and without the CAPV cap.
+- MT-FW+SC and QM-3C+SC are the stored 2A records; BOMP+SC, MTSTACK+SC, GL-FW+SC the stored 2C records (context).
+
+Part (ii). Split-conformal thresholds.
+- Calibration: the 5 seed-999 calibration networks of 2A per cell (same stations, statics and station corrections,
+  regenerated with setup_net(999, ...)), 40 empty windows per network = 200 per cell and regime, generated with
+  generate_real with no sources (clutter count and amplitude of the regime, noise) on new streams
+  [999, 2701, ci, j, ri, 41 | 233 | 61].
+- Scores: the per-window maximum of MT-FW+SC (first score of certified_fw_record, full record stored) and of
+  QM-3C+SC (frozen qm_recal_2a.json configuration with the corrections in the LUT; -inf when QuakeMigrate
+  triggers no event).
+- Threshold q = the ceil((n+1)(1-alpha))-th smallest of the n = 200 maxima (181st for alpha 0.1, 151st for 0.25);
+  an event is declared if its score > q. Frozen per cell, regime, method and alpha, and applied unchanged to the
+  2A evaluation windows (100 per cell and seed; 36-45 empty windows per cell).
+- Reported: recall; false events per empty window (the rule's "rate"); fraction of empty windows with any false
+  event (the quantity the conformal guarantee bounds); false events per window over all windows.
+
+Statistics (analyze_2d.py). Hierarchical bootstrap, 2000 replicates, default_rng([s, ci, ri, 2704]): the 5
+networks of the cell with replacement, then each drawn network's windows with replacement; same resamples for all
+methods of a cell. In part (i) the operating point and the max over comparators are re-chosen in every replicate;
+in 2D-c the thresholds stay fixed. Window bootstrap (analyze_2a's resamples) as a secondary reading. Holm:
+one-sided p = (1 + #{d* <= 0}) / 2001, level 0.025, family per regime = 2D-a (difference with the max) and 2D-b at
+both caps plus 2D-c at both alpha, x 3 cells x 2 seeds = 36.
+
+
+3. VALIDATION (seed 999 only; task2d_validation.txt, all V1-V5 checks pass)
+---------------------------------------------------------------------------
+
+On windows 0-1 of network 0 of the 2A seed-999 design, every regime and cell:
+V1 peak_table equals node_vectors_c's tpk in 0 mismatches out of 669,600-1,339,200 readings per cell (on MFn and
+   on a residual deflated by one MT-FW+SC step).
+V2 With peak reading disabled, BOMP-PK, MTSTACK-PK and GL-FW-PK return EXACTLY 2C's BOMP+SC, MTSTACK+SC and
+   GL-FW+SC records (12/12 windows each); fw_record_v(peak, cap) equals certified_fw_record exactly (12/12).
+V3 Explicit data-domain atoms at shifted read times (random +-4 samples, incl. overlapping pairs):
+   max |A^T y - h| / max|h| <= 1.2e-15, max |A^T A - K| / max|K| <= 6.4e-16, K_atom = gram([a]) to 3e-17, and the
+   subset pseudo-inverse of PKDict.energy equals pinv(K_atom) to 9e-13.
+V4 Independent code paths: MT-FW-NOCAP's first score = max of the MTSTACK-PK field (pinv(G) vs Q basis) to
+   3.3e-15; MT-FW-EX's first score = vectorised max of ||Q^T vt||^2/2 at exact capped samples to 4e-16; BOMP-PK's
+   first score = lambda_max^2/2 of GL-FW-PK to 2.2e-16; BOMP-PK refit orthogonality <= 7.9e-15.
+V5 GL-FW-PK solving 2 lambdas past the early stop: max oracle c/lambda = 1.000000000 (tolerance 1 + 1e-6), max
+   |c/lambda - 1| on the support <= 9.6e-10, max relative gap <= 3.6e-9, early-stop record = longer-path record
+   (12/12), 0 FW-step caps, 0 re-solves.
+V6 Injected timing error (descriptive). Ideal 1x generator, sources moved to the nearest node and origins to the
+   0.1 s grid (2C's E3), 30 windows per cell; detectors run with tcorr = 0 and with tcorr = +-0.2 s (random sign
+   per station and phase; 3.2 samples, inside the +-0.25 s window). Recall at 0.25, without -> with error:
+     4 st.:   MT-FW-EX 0.92 -> 0.36, BOMP 0.76 -> 0.52, GL-FW 0.52 -> 0.36;
+              MT-FW 0.88 -> 0.68, BOMP-PK 0.88 -> 0.84, GL-FW-PK 0.60 -> 0.52,
+              MTSTACK 0.28 -> 0.32, MTSTACK-PK 0.36 -> 0.48.
+     6 st.:   MT-FW-EX 0.96 -> 0.61, BOMP 0.96 -> 0.57, MTSTACK 0.78 -> 0.43, GL-FW 0.83 -> 0.57;
+              MT-FW 0.65 -> 0.83, BOMP-PK 0.65 -> 0.83, MTSTACK-PK 0.48 -> 0.48, GL-FW-PK 0.78 -> 0.87.
+     1-sided: MT-FW-EX 1.00 -> 0.81, BOMP 1.00 -> 0.81, GL-FW 1.00 -> 0.58;
+              MT-FW 1.00 -> 0.85, BOMP-PK 1.00 -> 0.85, MTSTACK-PK 0.73 -> 0.65 (MTSTACK 0.85 -> 0.73),
+              GL-FW-PK 0.96 -> 0.65.
+   With the error, the PK variant beats its exact-time counterpart in 11 of 12 method x cell cases
+   (+0.04 to +0.32); the exception is MTSTACK-PK in the one-sided cell (-0.08 = 2 of 26 events). Without error on
+   the 6-station cell the peak-reading methods are BELOW the exact ones (0.65 vs 0.96): with sources exactly on
+   nodes, the peak search costs recall (plausibly by locking onto clutter or coda; not verified). The samples
+   are small (23-26 events per cell); E2 (section 7) repeats V6 with 90 windows per cell.
+
+
+4. CONTROLS AND KERNELS
+-----------------------
+
+Part (i), all 60 networks: STA, statics, catalogue draws, locations, origins and corrections bit-identical to
+task2a_parts; truth, origins and k identical in 1200/1200 windows (asserted again in analyze_2d.py against 2A and
+2C); MT-FW+SC recomputed with certified_fw_record(tcorr = corr) equals the stored 2A records EXACTLY on windows 0
+and 1 of every network (120/120). No control failed; task2d_CONTROL_FAILED.txt was not written.
+Kernels: OPENBLAS_CORETYPE set explicitly per process (this machine's default is now "Cooperlake", neither
+Prescott nor SkylakeX): SkylakeX for the 18 networks of task2b_report.txt (7331 strong ladder_6 nets 2-4, 7331
+thin ladder_6, 7331 ladder_4 both regimes), Prescott for the other 42. The loaded numpy kernel was checked with
+threadpoolctl in every network and recorded in its part file.
+Part (ii), 30 calibration networks (Prescott): STA and statics equal to the seed-999 2A parts, corrections
+identical (max difference 0), and the pipeline reproduces the stored 2A MT-FW+SC and QM-3C+SC records on windows
+0-1 of every network (60/60 each), including the four strong one-sided files of 2A deviation D5.
+Exploratory E1: MT-FW+SC recomputed with the dense loop and node output equals the 2A records in 713/713
+windows with events.
+
+
+5. COMPUTE AND THE BUDGET RULE
+------------------------------
+
+Smoke test (task2d_smoke.txt; seed 999, 3 windows per cell and regime): estimate 1.28 h CPU = 0.64 h on 2 cores
+(< 6 h). The rule did not trigger; part (ii) used 200 empty windows per cell and regime (note in the
+preregistration file, 02:41:50 UTC).
+Actual: part (i) 3931 s CPU (per window: BOMP-PK 0.47 s, MTSTACK-PK 0.013 s, GL-FW-PK 1.76 s (p99 4.8, max 8.7),
+MT-FW-EX 0.23 s, MT-FW-NOCAP 0.76 s); part (ii) 1182 s CPU (MT-FW+SC 0.20 s and QM-3C+SC 0.72 s per empty window).
+Total 1.42 h CPU; wall clock 02:42-03:25 UTC with 2 workers (setsid nohup; no restart needed).
+
+
+6. KEY TABLES (full tables in analyze_2d_out.txt)
+-------------------------------------------------
+
+Table A. Part (i), recall at <= 0.1 / <= 0.25 (100 windows per cell). 2C exact-time methods for reference.
+
+  regime cell (seed)     MT-FW+SC   BOMP-PK    MTSTACK-PK GL-FW-PK   MT-FW-EX   MT-FW-NOCAP BOMP(2C)   QM-3C+SC
+  thin   4 st.   (2024)  0.32/0.52  0.24/0.44  0.13/0.22  0.09/0.24  0.17/0.29  0.24/0.44   0.16/0.23  0.18/0.25
+  thin   6 st.   (2024)  0.46/0.56  0.36/0.51  0.17/0.32  0.26/0.39  0.25/0.40  0.35/0.51   0.08/0.22  0.28/0.31
+  thin   1-sided (2024)  0.55/0.65  0.41/0.59  0.23/0.42  0.23/0.49  0.18/0.34  0.41/0.58   0.20/0.38  0.35/0.38
+  thin   4 st.   (7331)  0.32/0.51  0.21/0.42  0.18/0.26  0.17/0.27  0.17/0.29  0.21/0.42   0.15/0.28  0.15/0.17
+  thin   6 st.   (7331)  0.72/0.79  0.71/0.82  0.37/0.59  0.37/0.65  0.26/0.38  0.71/0.84   0.18/0.35  0.24/0.34
+  thin   1-sided (7331)  0.64/0.77  0.57/0.74  0.24/0.42  0.26/0.47  0.17/0.36  0.57/0.74   0.16/0.25  0.47/0.48
+  strong 4 st.   (2024)  0.31/0.39  0.23/0.30  0.09/0.23  0.08/0.23  0.17/0.23  0.23/0.30   0.19/0.26  0.12/0.13
+  strong 6 st.   (2024)  0.38/0.49  0.45/0.49  0.20/0.35  0.14/0.28  0.24/0.34  0.45/0.49   0.10/0.16  0.12/0.16
+  strong 1-sided (2024)  0.31/0.42  0.30/0.46  0.17/0.31  0.14/0.31  0.12/0.18  0.30/0.46   0.11/0.22  0.16/0.19
+  strong 4 st.   (7331)  0.13/0.22  0.17/0.27  0.09/0.21  0.10/0.23  0.14/0.15  0.17/0.27   0.10/0.14  0.04/0.05
+  strong 6 st.   (7331)  0.36/0.42  0.30/0.57  0.18/0.27  0.17/0.30  0.11/0.25  0.29/0.55   0.07/0.21  0.18/0.25
+  strong 1-sided (7331)  0.63/0.71  0.65/0.76  0.43/0.55  0.35/0.57  0.20/0.41  0.65/0.76   0.07/0.25  0.25/0.29
+
+Table B. 2D-a at cap 0.25: MT-FW+SC - max(BOMP-PK+SC, MTSTACK-PK+SC), point [hierarchical 95% CI]
+(best comparator BOMP-PK+SC everywhere).
+
+  thin   4 st.   2024 +0.080 [-0.136, +0.282]    7331 +0.090 [-0.029, +0.256]
+  thin   6 st.   2024 +0.042 [-0.092, +0.224]    7331 -0.029 [-0.125, +0.047]
+  thin   1-sided 2024 +0.056 [+0.000, +0.265]    7331 +0.025 [-0.084, +0.155]
+  strong 4 st.   2024 +0.091 [-0.048, +0.257]    7331 -0.051 [-0.206, +0.095]
+  strong 6 st.   2024 +0.000 [-0.138, +0.145]    7331 -0.155 [-0.277, +0.032]
+  strong 1-sided 2024 -0.036 [-0.130, +0.108]    7331 -0.053 [-0.158, +0.030]
+  MT-FW+SC - MTSTACK-PK+SC alone at 0.25: thin +0.21 to +0.35, strong +0.01 to +0.16.
+
+Table C. 2D-b at cap 0.25: MT-FW+SC - MT-FW-EX+SC, point [hierarchical 95% CI].
+
+  thin   4 st.   2024 +0.230 [+0.028, +0.388]    7331 +0.218 [-0.038, +0.378]
+  thin   6 st.   2024 +0.153 [-0.118, +0.348]    7331 +0.412 [+0.108, +0.597]
+  thin   1-sided 2024 +0.310 [+0.154, +0.515]    7331 +0.407 [+0.212, +0.619]
+  strong 4 st.   2024 +0.156 [+0.041, +0.355]    7331 +0.064 [-0.096, +0.240]
+  strong 6 st.   2024 +0.149 [+0.000, +0.327]    7331 +0.167 [-0.024, +0.410]
+  strong 1-sided 2024 +0.241 [+0.025, +0.433]    7331 +0.293 [+0.098, +0.472]
+
+Table D. Effect of peak reading, X-PK+SC - X+SC (2C) at 0.25:
+  BOMP +0.04 to +0.51 (12/12 positive), MTSTACK +0.05 to +0.37 (12/12), GL-FW +0.03 to +0.44 (12/12).
+  GL-FW-PK+SC - BOMP-PK+SC at 0.25: -0.04 to -0.27 (12/12 negative).
+  max(BOMP-PK, MTSTACK-PK) - QM-3C+SC at 0.25: +0.17 to +0.49 (12/12).
+
+Table E. 2D-c. Thresholds from 200 empty seed-999 windows; evaluation on the 2A windows. Recall MT-FW+SC /
+QM-3C+SC, difference [hierarchical CI], and MT-FW+SC false events per empty window.
+
+  regime cell (seed)     alpha 0.1                                       alpha 0.25
+  thin   4 st.   (2024)  0.67/0.23 +0.44 [+0.28,+0.57] rate 0.18        0.69/0.24 +0.45 [+0.28,+0.59] rate 0.41
+  thin   6 st.   (2024)  0.64/0.29 +0.35 [+0.12,+0.53] rate 0.05        0.68/0.31 +0.38 [+0.19,+0.53] rate 0.16
+  thin   1-sided (2024)  0.66/0.37 +0.30 [+0.10,+0.51] rate 0.07        0.69/0.38 +0.31 [+0.12,+0.50] rate 0.19
+  thin   4 st.   (7331)  0.59/0.15 +0.44 [+0.30,+0.58] rate 0.18        0.63/0.18 +0.45 [+0.32,+0.58] rate 0.41
+  thin   6 st.   (7331)  0.82/0.34 +0.49 [+0.29,+0.66] rate 0.22 (>0.2) 0.82/0.34 +0.49 [+0.29,+0.66] rate 0.42
+  thin   1-sided (7331)  0.84/0.48 +0.36 [+0.17,+0.57] rate 0.05        0.84/0.48 +0.36 [+0.17,+0.57] rate 0.26
+  strong 4 st.   (2024)  0.22/0.13 +0.09 [-0.03,+0.21] rate 0.03        0.40/0.14 +0.26 [+0.16,+0.37] rate 0.20
+  strong 6 st.   (2024)  0.42/0.14 +0.28 [+0.16,+0.43] rate 0.00        0.51/0.16 +0.35 [+0.21,+0.51] rate 0.02
+  strong 1-sided (2024)  0.53/0.19 +0.34 [+0.15,+0.55] rate 0.05        0.59/0.19 +0.40 [+0.23,+0.61] rate 0.19
+  strong 4 st.   (7331)  0.12/0.04 +0.08 [+0.00,+0.19] rate 0.00        0.22/0.05 +0.17 [+0.06,+0.31] rate 0.11
+  strong 6 st.   (7331)  0.50/0.24 +0.26 [+0.06,+0.44] rate 0.03        0.60/0.25 +0.35 [+0.13,+0.53] rate 0.17
+  strong 1-sided (7331)  0.77/0.29 +0.48 [+0.26,+0.66] rate 0.08        0.77/0.29 +0.48 [+0.26,+0.66] rate 0.38
+
+  MT-FW+SC false events per window over ALL windows: thin 0.73-1.18 (alpha 0.1) and 0.98-1.46 (alpha 0.25);
+  strong 0.05-0.56 and 0.26-0.94. QM-3C+SC: thin 0.15-0.23 / 0.16-0.31; strong 0.14-0.23 / 0.22-0.34.
+  Empty-window rate of MT-FW+SC above alpha in 3 of 6 thin cells at alpha 0.1 (one of them above 2 alpha) and in
+  4 of 6 at 0.25; in strong above alpha in 0 of 6 at 0.1 and 1 of 6 at 0.25.
+
+
+7. EXPLORATORY DIAGNOSTICS (post hoc, not preregistered)
+--------------------------------------------------------
+
+E1 (task2d_explore_e1.txt). Where MT-FW+SC's false events fall at the conformal thresholds, in 2A windows WITH
+   events (which the empty-window calibration never sees). Thin: 1.21-1.87 false per window with events at
+   alpha 0.1 and 1.41-2.19 at 0.25; 79-92% of them lie 5-20 km from a true source (residual energy of a real event
+   after deflation, 5 km exclusion and the model mismatch). QM-3C+SC: 0.18-0.36 per window. Strong: MT-FW+SC
+   0.07-0.88 (alpha 0.1) and 0.35-1.32 (0.25), QM-3C+SC 0.17-0.38. For comparison, the 2A-e MT-FW+SC thresholds
+   (calibrated on ALL windows at a false-events-per-window budget) are 34.6-42.9 in thin and 44.7-53.2 in strong;
+   the conformal ones are 23.7-29.8 and 36.2-52.1.
+E3 (analyze_2d_out.txt, last table). The same frozen thresholds applied to the 30 networks per cell of 2C (2A
+   networks plus the 25 new part-(ii) networks of 2C, 150-169 empty windows per cell): MT-FW+SC - QM-3C+SC recall
+   +0.36 to +0.47 (thin) and +0.03 to +0.40 (strong); MT-FW+SC empty-window rate 0.055-0.139 at alpha 0.1 and
+   0.21-0.35 at alpha 0.25 in thin, 0.006-0.092 and 0.10-0.33 in strong: on more networks the empty-window rate is
+   close to or somewhat above alpha, and below 2 alpha everywhere.
+
+E2 (task2d_explore_e2.txt): V6 repeated with 90 windows per cell (63-74 events per cell; the first 30 windows
+    are V6's). Recall at 0.25, without -> with the +-0.2 s error:
+      4 st.:   MT-FW-EX 0.84 -> 0.41, BOMP 0.80 -> 0.39, MTSTACK 0.43 -> 0.27, GL-FW 0.62 -> 0.28;
+               MT-FW 0.81 -> 0.68, BOMP-PK 0.80 -> 0.77, MTSTACK-PK 0.35 -> 0.36, GL-FW-PK 0.66 -> 0.51.
+      6 st.:   MT-FW-EX 0.97 -> 0.62, BOMP 0.97 -> 0.76, MTSTACK 0.84 -> 0.48, GL-FW 0.94 -> 0.51;
+               MT-FW 0.83 -> 0.86, BOMP-PK 0.83 -> 0.86, MTSTACK-PK 0.62 -> 0.62, GL-FW-PK 0.83 -> 0.76.
+      1-sided: MT-FW-EX 0.97 -> 0.72, BOMP 0.99 -> 0.72, MTSTACK 0.85 -> 0.55, GL-FW 0.97 -> 0.49;
+               MT-FW 0.87 -> 0.82, BOMP-PK 0.88 -> 0.82, MTSTACK-PK 0.66 -> 0.60, GL-FW-PK 0.88 -> 0.75.
+    The exact-time methods lose 0.16-0.48 with the error; the peak-reading variants lose -0.03 to +0.15, and beat
+    their exact counterparts with the error in 12/12 method x cell cases (+0.04 to +0.38). This is the expected
+    behaviour ("PK variants recover what exact variants lose"). The price: without timing error, on the 6- and
+    8-station cells the peak search costs recall (MT-FW 0.83-0.87 vs MT-FW-EX 0.97; BOMP-PK 0.83-0.88 vs BOMP
+    0.97-0.99; MTSTACK-PK 0.62-0.66 vs 0.84-0.85), plausibly because the +-0.25 s window can lock onto clutter or
+    coda energy (not verified). MT-FW-NOCAP and BOMP-PK are nearly identical here too.
+
+
+8. HONEST INTERPRETATION
+------------------------
+
+- 2D-a fails, clearly. Given the same +-0.25 s tolerance, block-OMP moment-tensor inversion in the manner of [129]
+  (BOMP-PK+SC) is statistically indistinguishable from MT-FW+SC: at 0.25 the difference is -0.16 to +0.09, every
+  hierarchical CI contains 0, and in strong clutter BOMP-PK+SC is equal or better in 5 of 6 cells. The large 2C-a
+  margins (+0.08 to +0.52) were almost entirely the missing tolerance. As preregistered, MT-FW's advantage over [129]
+  and [122] is attributed to the peak search and to no other element of the method, and the proposal must say so.
+  The moment-tensor stacking of [122] with the tolerance (MTSTACK-PK+SC) stays below MT-FW+SC (+0.21 to +0.35 in
+  thin, +0.01 to +0.16 in strong): what separates them is deflation, not the tolerance.
+- 2D-b holds: removing the peak search costs 0.06-0.41 recall at 0.25 in all 12 cell x seed cases. The sign is
+  consistent, but with 5 networks per cell the hierarchical CIs are wide: the lower bound exceeds 0 in 7 of 12 cases
+  and Holm rejects in 2 of 12. The rule is decided by point estimates as preregistered; the network-level
+  statistical support for individual cells is weak.
+- The cap (descriptive): MT-FW-NOCAP+SC is within -0.09 to +0.13 of MT-FW+SC (all CIs include 0); the cap helps a
+  little in thin (5 of 6 negative differences) and not in strong. MT-FW-NOCAP+SC and BOMP-PK+SC have almost
+  identical recall in every cell: without the cap, MT-FW is essentially BOMP with peak reading (they differ only by
+  the P/S Gram terms and by deflation vs orthogonal refit). The cap is therefore MT-FW's only element beyond
+  [129] + tolerance, and its effect is small and not significant.
+- GL-FW-PK+SC (descriptive): the convex method with the same tolerance improves over 2C's GL-FW+SC (+0.03 to
+  +0.44) but remains below MT-FW+SC (-0.11 to -0.30 at 0.25 in 11 of 12 cases) and below BOMP-PK+SC (-0.04 to
+  -0.27). The 2C conclusion stands with equal tolerance: the convex problem on the grid, solved to certified
+  optimality for its (realised) dictionary, is not what delivers the performance. Caveat: the PK oracle is a
+  heuristic per-station peak, so GL-FW-PK is certified only for the dictionary it builds, not over all time shifts.
+- With the tolerance, [129]-style inversion also beats QuakeMigrate (+0.17 to +0.49 at 0.25). The advantage over
+  the state of the art established in 2A/2C belongs to peak-tolerant moment-tensor migration with deflation as a
+  family, not specifically to MT-FW.
+- 2D-c holds under the per-cell reading (strong also under the strict reading; thin misses the strict reading by
+  one false event in one cell). Two qualifications are necessary:
+  (a) The threshold is calibrated on empty windows, so it controls only false alarms in windows without events.
+      At these thresholds MT-FW+SC produces 1.2-2.2 false events per window WITH events in thin (mostly 5-20 km
+      from a real event; E1), so its false rate over all windows is 0.7-1.5 per window in thin, 3-8 times
+      QuakeMigrate's. The recall gain in 2D-c is partly bought with these event-adjacent false detections. As a
+      deployable operating point for the full catalogue, the 2A-e thresholds (calibrated on all windows) remain the
+      honest reference; the conformal threshold is deployable only for the question "is there an event in this
+      window", not for a false-event-rate budget.
+  (b) The conformal guarantee assumes the evaluation windows are exchangeable with the calibration windows. They
+      come from different networks: the realised empty-window rate exceeded alpha in 3 of 6 thin cells at 0.1
+      (up to 2.2 alpha) and 4 of 6 at 0.25 (up to 1.7 alpha), and on 30 networks (E3) it is close to or slightly above
+      alpha. Five calibration networks per cell do not capture the network-to-network variation of the score
+      distribution; the preregistered 2 alpha tolerance absorbed it except in one thin cell.
+- What the proposal can claim after 2D: moment-tensor migration with a +-0.25 s peak search and greedy deflation
+  (MT-FW, or equivalently BOMP with peak reading) is robust to grid and timing errors and beats QuakeMigrate on
+  this benchmark; the peak search is the decisive element (2D-b), the cap is marginal, and MT-FW is not superior to
+  [129] once [129] is given the same tolerance (2D-a). The peak search is a trade-off, not a free gain: with
+  exact timing and on-node sources it costs 0.10-0.14 recall on 6-8 stations (E2). The convex formulation
+  remains a motivating framework, not the best-performing method.
+
+
+9. DEVIATIONS AND PROBLEMS
+--------------------------
+
+1. PK variants carry no cap (the 2C methods had none; only the reading time changes). BOMP-PK and GL-FW-PK use the
+   block Gram at the peak read times, including the P/S AC cross-term at the peak lag; this is our reading of
+   "identical to 2C except that the sample ... at the ... peak".
+2. GL-FW-PK: the dictionary grows with the fixed-time atoms; two atoms with the same (node, origin) and different
+   times may coexist; the record deduplicates by node (5 km). The duality gap is w.r.t. the realised dictionary,
+   and the per-station peak oracle is not a global maximiser over time shifts. FW steps per lambda capped at 400
+   (never reached).
+3. MT-FW-EX and MT-FW-NOCAP use the dense fw_record loop, not the certified branch and bound (the bound would need
+   adapting). The same loop with peak and cap reproduces the 2A records exactly (V2 and all 120 part-(i) controls).
+4. 2D-c readings fixed before seeing results (analyze_2d.py docstring): events declared at score > q (strict);
+   "realized false-event rate on empty windows" = false events per empty window (>= the fraction of empty windows
+   with a false event, also reported); the per-cell reading is primary, the strict reading is reported; the
+   calibration uncertainty is not in the CI (thresholds fixed in the bootstrap).
+5. Empty windows: new stream tag 2701 (not used before), 40 per calibration network; thresholds pool the 5
+   networks of a cell.
+6. Hierarchical bootstrap with only 5 networks per cell is coarse (as in the network bootstrap of 2C part (i)).
+   Bootstrap p-values have resolution 1/2001; the first Holm step can reach at best 36/2001 = 0.018.
+7. Holm family (36 per regime) and level (one-sided 0.025) are our reading of "Holm within regime"; 2D-a
+   enters Holm through the difference with the max. Descriptive quantities are not in the family.
+8. Kernels as in 2C; this machine's default OpenBLAS kernel is now Cooperlake, so the kernel is always set
+   explicitly and checked.
+9. analyze_2d.py was modified once after the part files existed: a diagnostics-only line crashed (the BOMP-PK
+   shift lists have per-atom length 2 ns and needed flattening). The fix changes that one line; no rule,
+   threshold, bootstrap or table computation changed. Hash before: 110aa893...73a7 (task2d_code_hashes.txt,
+   02:41:59 UTC); after: 8dd5013b...d2b4.
+10. V6 is descriptive and small; one of 12 PK-vs-exact comparisons is negative (MTSTACK-PK, one-sided, -0.08).
+    E2 repeats it with 90 windows.
+11. Sections 7 and parts of 8 use post-hoc exploratory analyses (E1-E3), declared as such. The verdicts do not
+    depend on them.

@@ -1,0 +1,20 @@
+C10 DIAGNOSTIC: first-iteration separability (no deflation).  Per true event: best node statistic within 5 km versus
+the best statistic of the window among nodes farther than 5 km from every true event.  [95%: bootstrap over networks]
+== STD: 178 windows with events, 235 events, 60 network x regime
+   regimes both: share of events whose best value beats the best false alternative; median margin
+      hard      share 0.485 [0.420,0.544]  - hard +0.000 [+0.000,+0.000]  margin -0.36 [-2.07,+0.90]
+      T2w-cat   share 0.489 [0.410,0.558]  - hard +0.004 [-0.067,+0.067]  margin -0.10 [-1.38,+1.75]
+      T2w-ora   share 0.609 [0.540,0.674]  - hard +0.123 [+0.073,+0.172]  margin +4.39 [+2.49,+7.44]
+      fine-ora  share 0.634 [0.586,0.678]  - hard +0.149 [+0.097,+0.204]  margin +3.38 [+1.51,+6.01]
+   regimes thin: share of events whose best value beats the best false alternative; median margin
+      hard      share 0.536 [0.453,0.610]  - hard +0.000 [+0.000,+0.000]  margin +0.19 [-1.00,+2.53]
+      T2w-cat   share 0.609 [0.537,0.675]  - hard +0.073 [-0.022,+0.161]  margin +2.82 [+1.09,+5.69]
+      T2w-ora   share 0.664 [0.579,0.738]  - hard +0.127 [+0.057,+0.198]  margin +5.98 [+2.66,+9.82]
+      fine-ora  share 0.645 [0.565,0.722]  - hard +0.109 [+0.023,+0.202]  margin +4.45 [+1.52,+6.72]
+   regimes strong: share of events whose best value beats the best false alternative; median margin
+      hard      share 0.440 [0.351,0.529]  - hard +0.000 [+0.000,+0.000]  margin -2.07 [-4.37,+0.23]
+      T2w-cat   share 0.384 [0.292,0.490]  - hard -0.056 [-0.137,+0.032]  margin -2.09 [-4.45,-0.08]
+      T2w-ora   share 0.560 [0.465,0.652]  - hard +0.120 [+0.039,+0.193]  margin +3.29 [-0.26,+7.32]
+      fine-ora  share 0.624 [0.555,0.691]  - hard +0.184 [+0.111,+0.241]  margin +3.00 [+0.88,+6.60]
+   maximum of the oracle joint objective (1 km lattice) within 10 km of each true event: median distance to the event 1.85 km; within 1 / 2 / 5 km: 0.35 / 0.52 / 0.77
+      among events that beat the best false alternative under the hard rule (0.49): median 0.90 km, within 2 km 0.70; among the others: median 3.74 km, within 2 km 0.35

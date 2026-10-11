@@ -1,0 +1,3 @@
+   done unilateral_c40/strong in 860 s (clutter/true picks 34.2/4.9) :: WAVE-PT@5 0.17/0.19/0.29 | WAVE-PT@20 0.39/0.44/0.52 | WAVE-MT@5 0.27/0.36/0.52 | WAVE-MT@20 0.56/0.63/0.65 | MT-FW 0.52/0.61/0.69 | MT-FW-NODE 0.12/0.27/0.44 | GAMMA 0.29/0.33/0.33
+   done ladder_4/strong in 537 s (clutter/true picks 28.8/2.4) :: WAVE-PT@5 0.03/0.03/0.09 | WAVE-PT@20 0.01/0.01/0.15 | WAVE-MT@5 0.04/0.10/0.17 | WAVE-MT@20 0.12/0.15/0.26 | MT-FW 0.12/0.15/0.24 | MT-FW-NODE 0.03/0.04/0.07 | GAMMA 0.05/0.05/0.06
+   done ladder_6/strong in 630 s (clutter/true picks 29.2/3.5) :: WAVE-PT@5 0.14/0.19/0.36 | WAVE-PT@20 0.30/0.35/0.38 | WAVE-MT@5 0.22/0.27/0.35 | WAVE-MT@20 0.46/0.51/0.59 | MT-FW 0.38/0.47/0.55 | MT-FW-NODE 0.07/0.15/0.20 | GAMMA 0.18/0.19/0.19

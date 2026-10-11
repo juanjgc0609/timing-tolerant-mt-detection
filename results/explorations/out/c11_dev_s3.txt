@@ -1,0 +1,28 @@
+C11 DEV S3 (networks 200-209; unlabelled stream TAG 4103; layout as c11_dev_s2.txt).  purity = share of the selected atoms within 5 km of a true event (descriptive; uses the truth; not used by any rule)
+S0                                 0.138 0.139 0.103 | 0.133 || 0.145 0.187 0.217 | 0.190 ||
+S2 of the detection pass           0.106 0.067 0.061 | 0.068 || 0.159 0.125 0.109 | 0.135 ||
+S2 final (start of S3)             0.070 0.076 0.048 | 0.062 || 0.148 0.095 0.111 | 0.111 ||
+S3 default                         0.077 0.082 0.054 | 0.066 || 0.163 0.092 0.102 | 0.106 ||
+                                   selected atoms per network 30.0, used 15.7, purity 0.54
+S3 n_unl=20                        0.072 0.083 0.048 | 0.056 || 0.163 0.099 0.116 | 0.126 ||
+                                   selected atoms per network 20.0, used 10.3, purity 0.54
+S3 n_unl=40                        0.074 0.082 0.052 | 0.063 || 0.171 0.089 0.108 | 0.119 ||
+                                   selected atoms per network 40.0, used 21.2, purity 0.55
+S3 q_det=0.6                       0.077 0.079 0.050 | 0.066 || 0.147 0.083 0.106 | 0.114 ||
+                                   selected atoms per network 60.0, used 22.8, purity 0.31
+S3 q_det=0.7                       0.077 0.078 0.051 | 0.066 || 0.147 0.101 0.111 | 0.112 ||
+                                   selected atoms per network 45.0, used 19.7, purity 0.40
+S3 q_det=0.9                       0.082 0.084 0.046 | 0.065 || 0.157 0.087 0.103 | 0.117 ||
+                                   selected atoms per network 15.0, used 9.4, purity 0.76
+S3 sx_det=1.5                      0.083 0.078 0.050 | 0.059 || 0.160 0.092 0.116 | 0.117 ||
+                                   selected atoms per network 30.0, used 15.7, purity 0.54
+S3 sx_det=6                        0.075 0.085 0.055 | 0.068 || 0.167 0.093 0.094 | 0.104 ||
+                                   selected atoms per network 30.0, used 15.6, purity 0.54
+S3 min_arr_det=4                   0.089 0.086 0.054 | 0.071 || 0.144 0.092 0.104 | 0.111 ||
+                                   selected atoms per network 30.0, used 25.7, purity 0.54
+S3 min_arr_det=8                   0.070 0.077 0.053 | 0.065 || 0.154 0.087 0.105 | 0.113 ||
+                                   selected atoms per network 30.0, used 7.9, purity 0.54
+S3 n_pass_s3=1                     0.077 0.086 0.054 | 0.060 || 0.163 0.092 0.105 | 0.113 ||
+                                   selected atoms per network 30.0, used 15.8, purity 0.54
+S3 n_pass_s3=3                     0.079 0.081 0.054 | 0.060 || 0.163 0.097 0.103 | 0.115 ||
+                                   selected atoms per network 30.0, used 15.8, purity 0.54

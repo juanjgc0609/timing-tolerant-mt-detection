@@ -1,0 +1,116 @@
+CERTIFIED ORACLE FOR FRANK-WOLFE (MT-FW) - Component B
+Code: certified_fw.py  (certified_fw_record, certified_oracle, cell_bounds, node_tau_bounds, leaf_enclosure,
+check_bound; `python certified_fw.py [out.txt]` reruns the verification below, about 6 min on one core)
+======================================================================================================
+
+SUMMARY
+* certified_fw_record(STA, MFn, grid, taus, Gs, Qs, truth, kmax=5, min_sep=5.0, mode=...) returns EXACTLY the
+  records of task1x_mtglrt.fw_record (bitwise equal (score, hit) lists) in 72 of 72 windows of
+  task1y_clutter.generate_y (pert; weak and strong clutter; random 4, random 6, one-sided 8 stations; seed-999
+  streams), in all three modes: 'lipschitz' (the bound of Appendix Z), 'box' (same bound with exact
+  station-to-cell distance ranges) and 'enclosure' (default; subspace-aware leaves).
+* The energy bound is VALID (proof below; 0 violations on 48 residual fields x 300 random cells, raw and
+  deflated, and on 1,004,400 single hypotheses) but it is TOO LOOSE TO PRUNE: over the 72 windows it avoids only
+  4% of exact node evaluations (215,982 of 225,444) and, with the bound bookkeeping, is 3x SLOWER than the dense
+  loop (172 s vs 56 s).  It prunes only when a strong event sets a high incumbent (first iteration, 4 stations:
+  70% of nodes evaluated); in the noise-dominated later iterations it evaluates 93-100% of nodes.  Median
+  (cell bound / true cell maximum) = 4.6-5.0.
+* With a subspace-aware leaf enclosure (the statistic recomputed in batch plus a rigorous floating-point error
+  bound; see 2), exact evaluations with fw_record's own call fall to exactly one node per Frank-Wolfe iteration
+  (360 vs 225,444, 626x fewer) and wall time falls 4.3x (13.1 s vs 55.9 s).  Frank accounting: this mode still
+  recomputes the statistic for ~100% of hypotheses (6.97 M batched evaluations); the saving comes from
+  CERTIFIED VECTORISATION, not from pruning the hypothesis space.
+
+1. THE BOUND AND WHY THE CAP, THE ARGMAX AND DEFLATION DO NOT BREAK IT
+  T(theta) = ||Q_g^T vt(theta)||^2 / 2, vt = per station i and phase b the signed 3-vector R_i[:, k*] at the
+  energy argmax k* of the window W(theta) = {clip(floor(t_bi(theta)/DT) + o) : |o| <= 4}, capped at |v| <= 6.
+  (a) Q_g has orthonormal columns, so ||Q_g^T w|| <= ||w||:  T <= (1/2) sum_bi ||vt_bi||^2.
+  (b) ||vt_bi||^2 = min(36, E_i(k*)) = min(36, max_{k in W(theta)} E_i(k)), E_i(k) = ||R_i[:, k]||^2: the
+      selected sample has the largest energy of its window and the cap only rescales it.  Since
+      e -> min(36, e) is non-decreasing, for any W' containing W(theta):  ||vt_bi||^2 <= min(36, max_{W'} E_i).
+      So the argmax selection and the cap cannot break the bound: the selected vector of any sub-window has
+      energy <= the maximum energy of the enlarged window, hence capped norm^2 <= min(cap^2, max energy).
+  (c) For a cell with centre c, spatial radius h and origin-time half-width dtau, the triangle inequality
+      (the eikonal Lipschitz property; 1/V_min in a heterogeneous medium) gives |t_bi(theta) - t_bi(c)| <=
+      h/V_b + dtau for every theta in the cell; floor and clip are monotone, so every window of the cell lies in
+      [clip(floor((t_c - D)/DT) - 4), clip(floor((t_c + D)/DT) + 4)].  UB(cell) = (1/2) sum_bi min(36, max
+      energy in that enlarged window) >= max_cell T.  Range maxima in O(1) by a sparse table.  The 'box' variant
+      uses [dist(station, box), farthest corner] instead of |c - s| +- h (a subset, hence also valid).
+  (d) Deflation: the bound only uses the energies of the CURRENT residual R.  After each Frank-Wolfe step the
+      fitted contribution is subtracted, E and the sparse table are rebuilt from the new R, and (a)-(c) apply
+      verbatim.  Verified directly on deflated residuals (section 6 of the tables).
+  (e) Floating point: +1e-6 s on window limits and x(1 + 1e-9) + 1e-12 on bounds.
+  Why the energy bound cannot be much tighter: any bound that uses only per-block energies must dominate
+  max{||Q^T v||^2 : ||v_bi|| = a_bi}, which equals sum a_bi^2 whenever range(Q) contains a vector with those
+  block norms.  Under noise the true T is ~ (6 / 6ns) of ||v||^2, so the bound exceeds typical values by a
+  factor ~ns and exceeds the global maximum of noise-dominated iterations (T ~ 19-37) at most hypotheses.
+  Tightening requires the directions of the candidate vectors, which is what the enclosure uses.
+
+2. EXACTNESS AND THE ENCLOSURE
+  * Best-first search, pruning only cells whose bound is STRICTLY below the incumbent, so every node carrying a
+    hypothesis equal to the global maximum is evaluated.  The winner is chosen with fw_record's tie rule
+    (ascending node index, first tau, strict improvement).  Exclusion (min_sep), deflation and the record are
+    fw_record's code.
+  * Exact evaluation must use fw_record's own call (node_vectors over all 31 taus, then vf @ Qs[g]): BLAS matmul
+    rounds a row differently depending on the number of rows (measured: bit mismatches in 5-90% of random
+    trials for subsets of 1-16 rows of a 31-row product).  Evaluating tau subsets would change the last bits
+    of the scores and could flip near-ties.  So a node is the unit of exact evaluation (x31 hypotheses).
+  * Enclosure mode: on cells of <= 16 nodes, the statistic of every hypothesis is recomputed in batch (einsum)
+    from the same argmax and cap tables.  Both floating-point evaluations of ||Q^T v||^2/2 are within 60u||v||^2
+    (u = 1.1e-16) of the exact value, so value + 1e-11(||v||^2 + 1) is a certified upper bound on fw_record's
+    computed value (measured slack <= 3.5e-9, 0 violations).  Hypotheses whose sample index (t/DT within 1e-9 of
+    an integer) or window argmax (top-2 energy tie within 1e-12) is not certifiable fall back to the energy
+    bound.  Coarse cells use the 'box' energy bound.  Only nodes whose enclosure reaches the incumbent are
+    evaluated with fw_record's call, which in all 360 iterations was exactly the winning node.
+  * tcorr (ns, 2) optional station/phase time corrections (used by Component C); with tcorr the certified
+    oracle was checked against a dense corrected loop (dense_fw_record_c).
+
+3. IMPLICATIONS FOR SECTION 7.5 / APPENDIX Z
+  The statement "the energy of the three-component records in a time window widened by h/Vmin + dtau bounds eta
+  over a whole cell" is correct and makes the oracle certifiable, but on this grid it does not make it faster:
+  after the first strong event, the Frank-Wolfe maxima are at the noise level, where the energy bound exceeds
+  the incumbent almost everywhere.  A practical certified oracle today is "batched evaluation + certified
+  floating-point enclosure + exact recheck of the winner" (4.3x faster than fw_record, identical records).
+  Pruning that pays in noise-dominated iterations needs subspace-aware cell bounds (the union of the moment-
+  tensor subspaces reachable from a cell and the directions of the candidate peak vectors), which remains open.
+
+------------------------------------------------------------------------------------------------------
+TABLES (generated by certified_fw.py)
+------------------------------------------------------------------------------------------------------
+3. VERIFICATION: task1y_clutter.generate_y (pert), seed 999 streams (rng 999+41+25000, rng_m 999+233,
+   rng_h 999+61+25000, networks make_network(kind, n, 999+25000+k)), 12 windows per cell, 0-2 sources.
+
+cell            clutter  win |  identical records (lip / box / encl)
+ladder_4        thin      12 |            12 /  12 /  12  of 12
+ladder_4        strong    12 |            12 /  12 /  12  of 12
+ladder_6        thin      12 |            12 /  12 /  12  of 12
+ladder_6        strong    12 |            12 /  12 /  12  of 12
+unilateral_c40  thin      12 |            12 /  12 /  12  of 12
+unilateral_c40  strong    12 |            12 /  12 /  12  of 12
+TOTAL                     72 |            72 /  72 /  72  of 72
+
+4. COST.  Exact evaluations = nodes evaluated with fw_record's call (x31 taus each).  'Batched hyp.' =
+   hypotheses whose statistic was recomputed in batch for the enclosure (not bit-exact, certified by the
+   error bound).  Bounds = cell + node-level bound evaluations.  Wall time: one core, same windows.
+cell            clutter |  dense    lip    box  encl | batched hyp. (of dense) | t_dense  t_lip  t_box t_encl | speed-up lip/box/encl
+ladder_4        thin    |  37506  33783  33783    60 |      1145523       0.99 |    7.2s  25.2s  25.9s   1.8s |  0.29x  0.28x  3.98x
+ladder_4        strong  |  37632  35285  35285    60 |      1161240       1.00 |    7.3s  26.0s  26.2s   1.9s |  0.28x  0.28x  3.90x
+ladder_6        thin    |  37542  36442  36442    60 |      1163115       1.00 |    9.4s  28.6s  29.7s   2.2s |  0.33x  0.32x  4.28x
+ladder_6        strong  |  37569  37043  37043    60 |      1164639       1.00 |    9.4s  28.2s  28.5s   2.1s |  0.33x  0.33x  4.45x
+unilateral_c40  thin    |  37560  36221  36221    60 |      1163892       1.00 |   10.9s  32.2s  32.6s   2.5s |  0.34x  0.33x  4.28x
+unilateral_c40  strong  |  37635  37208  37208    60 |      1166685       1.00 |   11.7s  32.2s  33.7s   2.5s |  0.36x  0.35x  4.64x
+TOTAL                   | 225444 215982 215982   360 |      6965094       1.00 |   55.9s 172.3s 176.6s  13.1s |  0.32x  0.32x  4.28x
+   Reduction of exact node evaluations: Lipschitz 1.04x, box 1.04x, enclosure 626x.
+
+5. WHERE THE ENERGY BOUND PRUNES.  Fraction of non-excluded nodes evaluated exactly (box mode), per
+   Frank-Wolfe iteration, with the median oracle value (global maximum of T at that iteration):
+stations        iteration 1        iteration 2        iteration 3        iteration 4        iteration 5
+       4     0.70 (T= 44.4)     0.93 (T= 30.9)     0.99 (T= 25.3)     1.00 (T= 21.0)     1.00 (T= 18.8)
+       6     0.90 (T= 36.8)     1.00 (T= 28.7)     1.00 (T= 25.2)     1.00 (T= 23.5)     1.00 (T= 21.8)
+       8     0.91 (T= 45.9)     0.98 (T= 36.7)     1.00 (T= 32.5)     1.00 (T= 29.1)     1.00 (T= 25.5)
+
+6. DIRECT TEST OF THE BOUNDS on random cells (sizes 1..full per axis), raw residual and after one
+   deflation: 48 residual fields x 300 cells; violations: Lipschitz 0, box 0;
+   single-hypothesis energy bound 0 and enclosure 0 violations over 1004400 hypotheses; max enclosure slack 3.5e-09.
+   Median (cell bound / true cell maximum): Lipschitz 4.99, box 4.64.
+

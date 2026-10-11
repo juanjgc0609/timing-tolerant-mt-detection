@@ -1,0 +1,12 @@
+ladder_6 true sources 32 detected picks per source: mean 5.4; frac with >=3: 0.84, >=4: 0.75, >=5: 0.69
+  cfg {'min_picks': 3, 'sigma': 1.0}: tol5 rec 0.12 fr 0.23 | tol10 rec 0.25 fr 0.12 | missed@5: 28, of which nearest GaMMA event in (5,10] km: 4, (10,20]: 4, none: 20
+  cfg {'min_picks': 3, 'sigma': 2.0}: tol5 rec 0.12 fr 0.25 | tol10 rec 0.25 fr 0.15 | missed@5: 28, of which nearest GaMMA event in (5,10] km: 4, (10,20]: 5, none: 19
+  cfg {'min_picks': 4, 'sigma': 1.0}: tol5 rec 0.12 fr 0.23 | tol10 rec 0.25 fr 0.12 | missed@5: 28, of which nearest GaMMA event in (5,10] km: 4, (10,20]: 4, none: 20
+  cfg {'min_picks': 4, 'sigma': 2.0}: tol5 rec 0.12 fr 0.23 | tol10 rec 0.25 fr 0.12 | missed@5: 28, of which nearest GaMMA event in (5,10] km: 4, (10,20]: 4, none: 20
+  cfg {'min_picks': 5, 'sigma': 1.0}: tol5 rec 0.12 fr 0.17 | tol10 rec 0.25 fr 0.07 | missed@5: 28, of which nearest GaMMA event in (5,10] km: 4, (10,20]: 3, none: 21
+  cfg {'min_picks': 5, 'sigma': 2.0}: tol5 rec 0.12 fr 0.17 | tol10 rec 0.25 fr 0.07 | missed@5: 28, of which nearest GaMMA event in (5,10] km: 4, (10,20]: 3, none: 21
+  cfg {'min_picks': 6, 'sigma': 1.0}: tol5 rec 0.12 fr 0.12 | tol10 rec 0.25 fr 0.03 | missed@5: 28, of which nearest GaMMA event in (5,10] km: 4, (10,20]: 2, none: 22
+  cfg {'min_picks': 6, 'sigma': 2.0}: tol5 rec 0.12 fr 0.17 | tol10 rec 0.25 fr 0.07 | missed@5: 28, of which nearest GaMMA event in (5,10] km: 4, (10,20]: 3, none: 21
+  cfg {'min_picks': 8, 'sigma': 1.0}: tol5 rec 0.06 fr 0.07 | tol10 rec 0.16 fr 0.00 | missed@5: 30, of which nearest GaMMA event in (5,10] km: 3, (10,20]: 1, none: 26
+  cfg {'min_picks': 8, 'sigma': 2.0}: tol5 rec 0.12 fr 0.07 | tol10 rec 0.22 fr 0.00 | missed@5: 28, of which nearest GaMMA event in (5,10] km: 3, (10,20]: 2, none: 23
+  time 257.14416313171387

@@ -1,0 +1,3 @@
+   done unilateral_c40/ideal in 952 s :: WAVE-E 0.20/0.25/0.35 | WAVE-PT 0.25/0.34/0.44 | WAVE-MT 0.39/0.47/0.59 | WAVE-MT-NODE 0.29/0.34/0.44 | MT-FW 0.85/0.87/0.89 | GAMMA 0.00/0.00/0.28
+   done ladder_4/ideal in 780 s :: WAVE-E 0.07/0.09/0.16 | WAVE-PT 0.09/0.10/0.19 | WAVE-MT 0.16/0.22/0.35 | WAVE-MT-NODE 0.07/0.11/0.23 | MT-FW 0.52/0.57/0.64 | GAMMA 0.06/0.07/0.08
+   done ladder_6/ideal in 632 s :: WAVE-E 0.10/0.13/0.25 | WAVE-PT 0.17/0.24/0.36 | WAVE-MT 0.31/0.41/0.60 | WAVE-MT-NODE 0.07/0.12/0.24 | MT-FW 0.77/0.83/0.87 | GAMMA 0.05/0.05/0.14

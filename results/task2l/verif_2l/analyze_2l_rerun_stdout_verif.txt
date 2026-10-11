@@ -1,0 +1,492 @@
+# Task 2L - pick-free JHD station terms (S2) in the refined detector (T3) (analyze_2l.py)
+
+Event recall at realised false events per window <= 0.1 / <= 0.25 (exact FROC, operating point per method over the evaluation; pooled = one threshold per method). Paired differences: point [hierarchical 95% CI: strata regime x cell, networks and windows; 2000 replicates; operating point re-chosen in each replicate]. One-sided lower bound 97.5 = percentile 2.5; one-sided lower bound 95 = percentile 5. Hit rules: LOC+T (epicentre within 5 km and |origin error| <= 0.5 s; primary) and LOC (epicentre only).
+Networks per cell and regime: standard 160, dense 100, BOMP family (standard) 60, oracle 30; 5 windows per network.
+
+Data checks:
+  seed 7171, standard: 160 networks x 3 cells x 2 regimes, 4800 windows, 3826 events, k in [0, 1, 2]; windows per method {'BOMP@ORA+T3': 900, 'BOMP@S0': 1800, 'BOMP@S0+T3': 1800, 'BOMP@S2+T3': 1800, 'MT@ORA+T3': 900, 'MT@S0': 4800, 'MT@S0+T3': 4800, 'MT@S2+T3': 4800}
+  seed 7171, dense: 100 networks x 3 cells x 2 regimes, 3000 windows, 11978 events, k in [3, 4, 5]; windows per method {'MT@ORA+T3': 900, 'MT@S0': 3000, 'MT@S0+T3': 3000, 'MT@S2+T3': 3000}
+      (TAG standard, TAG dense) [(6101, 6102)]; OPENBLAS_CORETYPE ['Prescott']; OpenBLAS loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]; 960 parts written between 2026-10-04 21:25:19 and 2026-10-05 01:47:57 UTC
+  seed 9393, standard: 160 networks x 3 cells x 2 regimes, 4800 windows, 3863 events, k in [0, 1, 2]; windows per method {'BOMP@ORA+T3': 900, 'BOMP@S0': 1800, 'BOMP@S0+T3': 1800, 'BOMP@S2+T3': 1800, 'MT@ORA+T3': 900, 'MT@S0': 4800, 'MT@S0+T3': 4800, 'MT@S2+T3': 4800}
+  seed 9393, dense: 100 networks x 3 cells x 2 regimes, 3000 windows, 12000 events, k in [3, 4, 5]; windows per method {'MT@ORA+T3': 900, 'MT@S0': 3000, 'MT@S0+T3': 3000, 'MT@S2+T3': 3000}
+      (TAG standard, TAG dense) [(6101, 6102)]; OPENBLAS_CORETYPE ['Prescott']; OpenBLAS loaded [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]; 960 parts written between 2026-10-04 21:26:54 and 2026-10-05 01:48:15 UTC
+
+## Recall per method (MT family, all networks), cap 0.1 / cap 0.25, with CI 95
+  standard LOC+T both   7171: 4800 windows, 3826 events
+      MT@S0       0.212 [0.190, 0.236]   0.315 [0.290, 0.339]
+      MT@S0+T3    0.244 [0.219, 0.270]   0.346 [0.323, 0.370]
+      MT@S2+T3    0.297 [0.271, 0.325]   0.403 [0.379, 0.427]
+  standard LOC+T both   9393: 4800 windows, 3863 events
+      MT@S0       0.186 [0.167, 0.207]   0.292 [0.267, 0.315]
+      MT@S0+T3    0.237 [0.213, 0.262]   0.350 [0.328, 0.375]
+      MT@S2+T3    0.293 [0.267, 0.319]   0.411 [0.389, 0.434]
+  standard LOC+T thin   7171: 2400 windows, 1906 events
+      MT@S0       0.261 [0.225, 0.303]   0.378 [0.345, 0.412]
+      MT@S0+T3    0.317 [0.273, 0.352]   0.428 [0.395, 0.461]
+      MT@S2+T3    0.394 [0.348, 0.436]   0.512 [0.475, 0.546]
+  standard LOC+T thin   9393: 2400 windows, 1914 events
+      MT@S0       0.230 [0.199, 0.264]   0.357 [0.322, 0.391]
+      MT@S0+T3    0.302 [0.255, 0.342]   0.433 [0.395, 0.468]
+      MT@S2+T3    0.364 [0.330, 0.418]   0.510 [0.474, 0.546]
+  standard LOC+T strong 7171: 2400 windows, 1920 events
+      MT@S0       0.176 [0.147, 0.203]   0.262 [0.235, 0.298]
+      MT@S0+T3    0.191 [0.156, 0.225]   0.292 [0.259, 0.327]
+      MT@S2+T3    0.235 [0.202, 0.268]   0.330 [0.298, 0.361]
+  standard LOC+T strong 9393: 2400 windows, 1949 events
+      MT@S0       0.153 [0.126, 0.178]   0.240 [0.210, 0.270]
+      MT@S0+T3    0.195 [0.162, 0.228]   0.292 [0.264, 0.325]
+      MT@S2+T3    0.239 [0.214, 0.278]   0.348 [0.315, 0.382]
+  standard LOC   both   7171: 4800 windows, 3826 events
+      MT@S0       0.367 [0.342, 0.393]   0.474 [0.452, 0.497]
+      MT@S0+T3    0.385 [0.361, 0.413]   0.494 [0.471, 0.518]
+      MT@S2+T3    0.423 [0.394, 0.447]   0.530 [0.507, 0.553]
+  standard LOC   both   9393: 4800 windows, 3863 events
+      MT@S0       0.354 [0.329, 0.381]   0.470 [0.444, 0.495]
+      MT@S0+T3    0.369 [0.338, 0.399]   0.488 [0.464, 0.515]
+      MT@S2+T3    0.421 [0.393, 0.451]   0.537 [0.514, 0.560]
+  standard LOC   thin   7171: 2400 windows, 1906 events
+      MT@S0       0.453 [0.416, 0.488]   0.566 [0.533, 0.599]
+      MT@S0+T3    0.490 [0.448, 0.525]   0.612 [0.578, 0.642]
+      MT@S2+T3    0.524 [0.492, 0.557]   0.636 [0.602, 0.672]
+  standard LOC   thin   9393: 2400 windows, 1914 events
+      MT@S0       0.460 [0.415, 0.495]   0.580 [0.545, 0.615]
+      MT@S0+T3    0.481 [0.441, 0.512]   0.611 [0.573, 0.645]
+      MT@S2+T3    0.527 [0.489, 0.566]   0.646 [0.612, 0.682]
+  standard LOC   strong 7171: 2400 windows, 1920 events
+      MT@S0       0.311 [0.279, 0.347]   0.429 [0.397, 0.461]
+      MT@S0+T3    0.326 [0.294, 0.361]   0.434 [0.405, 0.467]
+      MT@S2+T3    0.382 [0.347, 0.413]   0.472 [0.438, 0.503]
+  standard LOC   strong 9393: 2400 windows, 1949 events
+      MT@S0       0.294 [0.260, 0.330]   0.405 [0.375, 0.438]
+      MT@S0+T3    0.305 [0.273, 0.338]   0.426 [0.395, 0.463]
+      MT@S2+T3    0.355 [0.321, 0.393]   0.481 [0.449, 0.512]
+  dense    LOC+T both   7171: 3000 windows, 11978 events
+      MT@S0       0.050 [0.042, 0.059]   0.102 [0.091, 0.114]
+      MT@S0+T3    0.066 [0.056, 0.076]   0.124 [0.112, 0.136]
+      MT@S2+T3    0.092 [0.082, 0.104]   0.162 [0.148, 0.175]
+  dense    LOC+T both   9393: 3000 windows, 12000 events
+      MT@S0       0.056 [0.049, 0.066]   0.109 [0.098, 0.120]
+      MT@S0+T3    0.065 [0.055, 0.074]   0.120 [0.110, 0.133]
+      MT@S2+T3    0.084 [0.073, 0.094]   0.151 [0.138, 0.164]
+  dense    LOC+T thin   7171: 1500 windows, 5982 events
+      MT@S0       0.053 [0.042, 0.069]   0.115 [0.099, 0.131]
+      MT@S0+T3    0.077 [0.062, 0.092]   0.144 [0.127, 0.164]
+      MT@S2+T3    0.116 [0.096, 0.136]   0.196 [0.175, 0.219]
+  dense    LOC+T thin   9393: 1500 windows, 5963 events
+      MT@S0       0.068 [0.054, 0.083]   0.126 [0.111, 0.143]
+      MT@S0+T3    0.075 [0.061, 0.092]   0.136 [0.121, 0.161]
+      MT@S2+T3    0.089 [0.073, 0.105]   0.169 [0.151, 0.194]
+  dense    LOC+T strong 7171: 1500 windows, 5996 events
+      MT@S0       0.045 [0.036, 0.055]   0.089 [0.077, 0.104]
+      MT@S0+T3    0.057 [0.043, 0.066]   0.105 [0.089, 0.121]
+      MT@S2+T3    0.074 [0.060, 0.087]   0.133 [0.114, 0.150]
+  dense    LOC+T strong 9393: 1500 windows, 6037 events
+      MT@S0       0.047 [0.038, 0.058]   0.091 [0.077, 0.107]
+      MT@S0+T3    0.055 [0.043, 0.066]   0.107 [0.090, 0.122]
+      MT@S2+T3    0.078 [0.063, 0.093]   0.134 [0.117, 0.152]
+  dense    LOC   both   7171: 3000 windows, 11978 events
+      MT@S0       0.153 [0.139, 0.167]   0.252 [0.236, 0.267]
+      MT@S0+T3    0.179 [0.160, 0.200]   0.276 [0.260, 0.293]
+      MT@S2+T3    0.199 [0.184, 0.222]   0.296 [0.280, 0.313]
+  dense    LOC   both   9393: 3000 windows, 12000 events
+      MT@S0       0.159 [0.143, 0.175]   0.255 [0.240, 0.269]
+      MT@S0+T3    0.177 [0.155, 0.196]   0.272 [0.258, 0.293]
+      MT@S2+T3    0.200 [0.184, 0.218]   0.307 [0.292, 0.322]
+  dense    LOC   thin   7171: 1500 windows, 5982 events
+      MT@S0       0.181 [0.160, 0.210]   0.286 [0.264, 0.305]
+      MT@S0+T3    0.220 [0.184, 0.250]   0.323 [0.299, 0.351]
+      MT@S2+T3    0.240 [0.208, 0.269]   0.342 [0.319, 0.368]
+  dense    LOC   thin   9393: 1500 windows, 5963 events
+      MT@S0       0.187 [0.163, 0.215]   0.284 [0.257, 0.306]
+      MT@S0+T3    0.215 [0.187, 0.244]   0.321 [0.297, 0.346]
+      MT@S2+T3    0.241 [0.213, 0.262]   0.340 [0.318, 0.367]
+  dense    LOC   strong 7171: 1500 windows, 5996 events
+      MT@S0       0.125 [0.106, 0.146]   0.218 [0.198, 0.241]
+      MT@S0+T3    0.145 [0.122, 0.175]   0.232 [0.214, 0.256]
+      MT@S2+T3    0.173 [0.148, 0.197]   0.258 [0.238, 0.279]
+  dense    LOC   strong 9393: 1500 windows, 6037 events
+      MT@S0       0.134 [0.113, 0.157]   0.233 [0.212, 0.254]
+      MT@S0+T3    0.144 [0.123, 0.172]   0.243 [0.222, 0.262]
+      MT@S2+T3    0.171 [0.148, 0.195]   0.274 [0.251, 0.302]
+
+## Rule 2L-a (superiority, standard windows, LOC+T, pooled): MT@S2+T3 - MT@S0+T3 at cap 0.25
+  7171: +0.057 [+0.034, +0.081]; one-sided lower bound 97.5 = +0.0338 > 0: YES; point +0.0572 >= +0.03: YES; p(d* <= 0) = 0.0005; bootstrap SD 0.0119 -> MET
+  9393: +0.062 [+0.036, +0.083]; one-sided lower bound 97.5 = +0.0356 > 0: YES; point +0.0616 >= +0.03: YES; p(d* <= 0) = 0.0005; bootstrap SD 0.0121 -> MET
+  -> 2L-a MET (per seed: ['YES', 'YES'])
+
+## Rule 2L-b (superiority, dense windows, LOC+T, pooled): MT@S2+T3 - MT@S0+T3 at cap 0.25
+  7171: +0.038 [+0.024, +0.054]; one-sided lower bound 97.5 = +0.0236 > 0: YES; p(d* <= 0) = 0.0005; bootstrap SD 0.0077 -> MET
+  9393: +0.030 [+0.015, +0.044]; one-sided lower bound 97.5 = +0.0153 > 0: YES; p(d* <= 0) = 0.0005; bootstrap SD 0.0073 -> MET
+  -> 2L-b MET (per seed: ['YES', 'YES'])
+
+## Rule 2L-c (non-inferiority, margin 0.02, per regime, LOC+T, standard and dense): MT@S2+T3 - MT@S0+T3 at cap 0.25, one-sided lower bound 95
+  7171 standard thin  : +0.083 [+0.045, +0.116]; one-sided lower bound 95 = +0.0517 > -0.02: YES; p(d* <= -0.02) = 0.0005; bootstrap SD 0.0177
+  7171 standard strong: +0.038 [+0.002, +0.072]; one-sided lower bound 95 = +0.0069 > -0.02: YES; p(d* <= -0.02) = 0.0020; bootstrap SD 0.0182
+  7171 dense    thin  : +0.052 [+0.028, +0.076]; one-sided lower bound 95 = +0.0315 > -0.02: YES; p(d* <= -0.02) = 0.0005; bootstrap SD 0.0124
+  7171 dense    strong: +0.029 [+0.005, +0.049]; one-sided lower bound 95 = +0.0106 > -0.02: YES; p(d* <= -0.02) = 0.0005; bootstrap SD 0.0108
+  7171: -> MET
+  9393 standard thin  : +0.077 [+0.041, +0.117]; one-sided lower bound 95 = +0.0461 > -0.02: YES; p(d* <= -0.02) = 0.0005; bootstrap SD 0.0197
+  9393 standard strong: +0.056 [+0.019, +0.088]; one-sided lower bound 95 = +0.0254 > -0.02: YES; p(d* <= -0.02) = 0.0005; bootstrap SD 0.0172
+  9393 dense    thin  : +0.033 [+0.005, +0.057]; one-sided lower bound 95 = +0.0102 > -0.02: YES; p(d* <= -0.02) = 0.0005; bootstrap SD 0.0129
+  9393 dense    strong: +0.027 [+0.008, +0.048]; one-sided lower bound 95 = +0.0113 > -0.02: YES; p(d* <= -0.02) = 0.0005; bootstrap SD 0.0103
+  9393: -> MET
+  -> 2L-c MET (per seed: ['YES', 'YES'])
+
+## Rule 2L-d (non-inferiority, margin 0.02, LOC rule, pooled, standard and dense): MT@S2+T3 - MT@S0+T3 at cap 0.25, one-sided lower bound 95
+  7171 standard: +0.036 [+0.014, +0.056]; one-sided lower bound 95 = +0.0176 > -0.02: YES; p(d* <= -0.02) = 0.0005; bootstrap SD 0.0107
+  7171 dense   : +0.020 [+0.002, +0.039]; one-sided lower bound 95 = +0.0048 > -0.02: YES; p(d* <= -0.02) = 0.0005; bootstrap SD 0.0094
+  7171: -> MET
+  9393 standard: +0.050 [+0.027, +0.069]; one-sided lower bound 95 = +0.0293 > -0.02: YES; p(d* <= -0.02) = 0.0005; bootstrap SD 0.0110
+  9393 dense   : +0.035 [+0.013, +0.049]; one-sided lower bound 95 = +0.0166 > -0.02: YES; p(d* <= -0.02) = 0.0005; bootstrap SD 0.0092
+  9393: -> MET
+  -> 2L-d MET (per seed: ['YES', 'YES'])
+
+## Registered secondary: BOMP@S2+T3 - BOMP@S0+T3, standard, LOC+T, 60 networks, cap 0.25 (one-sided lower bound 97.5 > 0)
+  7171: 1800 windows, 1451 events; recall BOMP@S0 0.297 [0.253, 0.336]  BOMP@S0+T3 0.325 [0.286, 0.370]  BOMP@S2+T3 0.393 [0.351, 0.437]
+      +0.068 [+0.026, +0.107]; one-sided lower bound 97.5 = +0.0262 > 0: YES; p(d* <= 0) = 0.0010; bootstrap SD 0.0212
+  9393: 1800 windows, 1442 events; recall BOMP@S0 0.284 [0.249, 0.318]  BOMP@S0+T3 0.352 [0.308, 0.393]  BOMP@S2+T3 0.422 [0.381, 0.466]
+      +0.071 [+0.029, +0.114]; one-sided lower bound 97.5 = +0.0287 > 0: YES; p(d* <= 0) = 0.0005; bootstrap SD 0.0217
+  -> BOMP secondary MET (per seed: ['YES', 'YES'])
+
+## Verdicts
+  2L-a: MET    2L-b: MET    2L-c: MET    2L-d: MET    BOMP secondary: MET
+  Registered interpretation: a, b, c and d are met -> contribution confirmed (calibration plus refinement, for origin-time-consistent detection).
+
+## Descriptive: MT family contrasts, cap 0.1 and cap 0.25 (CI 95), pooled and per regime, both rules
+   terms = MT@S2+T3 - MT@S0+T3 (the contrast of the rules); total = MT@S2+T3 - MT@S0 (against the registered detector); T3 = MT@S0+T3 - MT@S0
+  standard LOC+T both   7171 terms   : cap 0.1 +0.053 [+0.025, +0.082]; cap 0.25 +0.057 [+0.034, +0.081]; bound 95 at 0.25 +0.038
+  standard LOC+T both   7171 total   : cap 0.1 +0.085 [+0.056, +0.115]; cap 0.25 +0.088 [+0.063, +0.116]; bound 95 at 0.25 +0.067
+  standard LOC+T both   7171 T3      : cap 0.1 +0.032 [+0.006, +0.056]; cap 0.25 +0.030 [+0.010, +0.055]; bound 95 at 0.25 +0.014
+  standard LOC+T both   9393 terms   : cap 0.1 +0.057 [+0.029, +0.084]; cap 0.25 +0.062 [+0.036, +0.083]; bound 95 at 0.25 +0.040
+  standard LOC+T both   9393 total   : cap 0.1 +0.108 [+0.078, +0.137]; cap 0.25 +0.120 [+0.093, +0.146]; bound 95 at 0.25 +0.098
+  standard LOC+T both   9393 T3      : cap 0.1 +0.051 [+0.027, +0.073]; cap 0.25 +0.058 [+0.038, +0.083]; bound 95 at 0.25 +0.041
+  standard LOC+T thin   7171 terms   : cap 0.1 +0.077 [+0.027, +0.127]; cap 0.25 +0.083 [+0.045, +0.116]; bound 95 at 0.25 +0.052
+  standard LOC+T thin   7171 total   : cap 0.1 +0.133 [+0.077, +0.184]; cap 0.25 +0.134 [+0.095, +0.170]; bound 95 at 0.25 +0.101
+  standard LOC+T thin   7171 T3      : cap 0.1 +0.056 [+0.006, +0.095]; cap 0.25 +0.050 [+0.019, +0.087]; bound 95 at 0.25 +0.024
+  standard LOC+T thin   9393 terms   : cap 0.1 +0.062 [+0.022, +0.120]; cap 0.25 +0.077 [+0.041, +0.117]; bound 95 at 0.25 +0.046
+  standard LOC+T thin   9393 total   : cap 0.1 +0.133 [+0.092, +0.194]; cap 0.25 +0.154 [+0.111, +0.194]; bound 95 at 0.25 +0.119
+  standard LOC+T thin   9393 T3      : cap 0.1 +0.072 [+0.026, +0.114]; cap 0.25 +0.076 [+0.041, +0.111]; bound 95 at 0.25 +0.045
+  standard LOC+T strong 7171 terms   : cap 0.1 +0.045 [+0.006, +0.085]; cap 0.25 +0.038 [+0.002, +0.072]; bound 95 at 0.25 +0.007
+  standard LOC+T strong 7171 total   : cap 0.1 +0.059 [+0.021, +0.098]; cap 0.25 +0.068 [+0.027, +0.100]; bound 95 at 0.25 +0.032
+  standard LOC+T strong 7171 T3      : cap 0.1 +0.015 [-0.018, +0.046]; cap 0.25 +0.030 [-0.006, +0.060]; bound 95 at 0.25 -0.001
+  standard LOC+T strong 9393 terms   : cap 0.1 +0.044 [+0.012, +0.081]; cap 0.25 +0.056 [+0.019, +0.088]; bound 95 at 0.25 +0.025
+  standard LOC+T strong 9393 total   : cap 0.1 +0.086 [+0.057, +0.128]; cap 0.25 +0.109 [+0.073, +0.144]; bound 95 at 0.25 +0.078
+  standard LOC+T strong 9393 T3      : cap 0.1 +0.042 [+0.014, +0.075]; cap 0.25 +0.053 [+0.024, +0.083]; bound 95 at 0.25 +0.029
+  standard LOC   both   7171 terms   : cap 0.1 +0.038 [+0.010, +0.060]; cap 0.25 +0.036 [+0.014, +0.056]; bound 95 at 0.25 +0.018
+  standard LOC   both   7171 total   : cap 0.1 +0.055 [+0.029, +0.079]; cap 0.25 +0.056 [+0.034, +0.078]; bound 95 at 0.25 +0.038
+  standard LOC   both   7171 T3      : cap 0.1 +0.018 [-0.001, +0.041]; cap 0.25 +0.020 [+0.003, +0.039]; bound 95 at 0.25 +0.006
+  standard LOC   both   9393 terms   : cap 0.1 +0.052 [+0.026, +0.081]; cap 0.25 +0.050 [+0.027, +0.069]; bound 95 at 0.25 +0.029
+  standard LOC   both   9393 total   : cap 0.1 +0.067 [+0.041, +0.095]; cap 0.25 +0.068 [+0.046, +0.091]; bound 95 at 0.25 +0.049
+  standard LOC   both   9393 T3      : cap 0.1 +0.015 [-0.011, +0.039]; cap 0.25 +0.018 [-0.000, +0.039]; bound 95 at 0.25 +0.003
+  standard LOC   thin   7171 terms   : cap 0.1 +0.034 [+0.005, +0.069]; cap 0.25 +0.024 [-0.002, +0.058]; bound 95 at 0.25 +0.002
+  standard LOC   thin   7171 total   : cap 0.1 +0.070 [+0.038, +0.107]; cap 0.25 +0.070 [+0.040, +0.103]; bound 95 at 0.25 +0.044
+  standard LOC   thin   7171 T3      : cap 0.1 +0.037 [+0.004, +0.068]; cap 0.25 +0.046 [+0.017, +0.069]; bound 95 at 0.25 +0.022
+  standard LOC   thin   9393 terms   : cap 0.1 +0.046 [+0.019, +0.083]; cap 0.25 +0.036 [+0.006, +0.070]; bound 95 at 0.25 +0.011
+  standard LOC   thin   9393 total   : cap 0.1 +0.066 [+0.035, +0.110]; cap 0.25 +0.066 [+0.035, +0.100]; bound 95 at 0.25 +0.039
+  standard LOC   thin   9393 T3      : cap 0.1 +0.020 [-0.008, +0.054]; cap 0.25 +0.030 [+0.001, +0.059]; bound 95 at 0.25 +0.005
+  standard LOC   strong 7171 terms   : cap 0.1 +0.056 [+0.024, +0.086]; cap 0.25 +0.037 [+0.005, +0.064]; bound 95 at 0.25 +0.011
+  standard LOC   strong 7171 total   : cap 0.1 +0.070 [+0.038, +0.102]; cap 0.25 +0.043 [+0.011, +0.072]; bound 95 at 0.25 +0.017
+  standard LOC   strong 7171 T3      : cap 0.1 +0.014 [-0.011, +0.043]; cap 0.25 +0.005 [-0.018, +0.033]; bound 95 at 0.25 -0.014
+  standard LOC   strong 9393 terms   : cap 0.1 +0.049 [+0.017, +0.086]; cap 0.25 +0.055 [+0.021, +0.082]; bound 95 at 0.25 +0.026
+  standard LOC   strong 9393 total   : cap 0.1 +0.061 [+0.027, +0.094]; cap 0.25 +0.076 [+0.045, +0.104]; bound 95 at 0.25 +0.049
+  standard LOC   strong 9393 T3      : cap 0.1 +0.011 [-0.020, +0.039]; cap 0.25 +0.021 [-0.004, +0.053]; bound 95 at 0.25 +0.001
+  dense    LOC+T both   7171 terms   : cap 0.1 +0.026 [+0.014, +0.040]; cap 0.25 +0.038 [+0.024, +0.054]; bound 95 at 0.25 +0.026
+  dense    LOC+T both   7171 total   : cap 0.1 +0.042 [+0.030, +0.057]; cap 0.25 +0.060 [+0.044, +0.075]; bound 95 at 0.25 +0.047
+  dense    LOC+T both   7171 T3      : cap 0.1 +0.017 [+0.006, +0.027]; cap 0.25 +0.022 [+0.008, +0.035]; bound 95 at 0.25 +0.010
+  dense    LOC+T both   9393 terms   : cap 0.1 +0.019 [+0.007, +0.032]; cap 0.25 +0.030 [+0.015, +0.044]; bound 95 at 0.25 +0.018
+  dense    LOC+T both   9393 total   : cap 0.1 +0.027 [+0.013, +0.040]; cap 0.25 +0.042 [+0.028, +0.057]; bound 95 at 0.25 +0.029
+  dense    LOC+T both   9393 T3      : cap 0.1 +0.009 [-0.003, +0.019]; cap 0.25 +0.012 [-0.000, +0.025]; bound 95 at 0.25 +0.002
+  dense    LOC+T thin   7171 terms   : cap 0.1 +0.039 [+0.017, +0.061]; cap 0.25 +0.052 [+0.028, +0.076]; bound 95 at 0.25 +0.031
+  dense    LOC+T thin   7171 total   : cap 0.1 +0.063 [+0.040, +0.084]; cap 0.25 +0.080 [+0.056, +0.107]; bound 95 at 0.25 +0.060
+  dense    LOC+T thin   7171 T3      : cap 0.1 +0.024 [+0.007, +0.038]; cap 0.25 +0.028 [+0.011, +0.051]; bound 95 at 0.25 +0.013
+  dense    LOC+T thin   9393 terms   : cap 0.1 +0.014 [-0.006, +0.032]; cap 0.25 +0.033 [+0.005, +0.057]; bound 95 at 0.25 +0.010
+  dense    LOC+T thin   9393 total   : cap 0.1 +0.022 [+0.001, +0.042]; cap 0.25 +0.043 [+0.020, +0.069]; bound 95 at 0.25 +0.024
+  dense    LOC+T thin   9393 T3      : cap 0.1 +0.007 [-0.010, +0.026]; cap 0.25 +0.010 [-0.008, +0.035]; bound 95 at 0.25 -0.006
+  dense    LOC+T strong 7171 terms   : cap 0.1 +0.017 [+0.002, +0.036]; cap 0.25 +0.029 [+0.005, +0.049]; bound 95 at 0.25 +0.011
+  dense    LOC+T strong 7171 total   : cap 0.1 +0.029 [+0.013, +0.043]; cap 0.25 +0.044 [+0.021, +0.062]; bound 95 at 0.25 +0.025
+  dense    LOC+T strong 7171 T3      : cap 0.1 +0.012 [-0.003, +0.022]; cap 0.25 +0.015 [-0.003, +0.033]; bound 95 at 0.25 -0.001
+  dense    LOC+T strong 9393 terms   : cap 0.1 +0.023 [+0.006, +0.041]; cap 0.25 +0.027 [+0.008, +0.048]; bound 95 at 0.25 +0.011
+  dense    LOC+T strong 9393 total   : cap 0.1 +0.031 [+0.013, +0.049]; cap 0.25 +0.043 [+0.023, +0.063]; bound 95 at 0.25 +0.026
+  dense    LOC+T strong 9393 T3      : cap 0.1 +0.008 [-0.006, +0.021]; cap 0.25 +0.016 [-0.003, +0.032]; bound 95 at 0.25 +0.000
+  dense    LOC   both   7171 terms   : cap 0.1 +0.020 [-0.003, +0.047]; cap 0.25 +0.020 [+0.002, +0.039]; bound 95 at 0.25 +0.005
+  dense    LOC   both   7171 total   : cap 0.1 +0.046 [+0.029, +0.071]; cap 0.25 +0.044 [+0.027, +0.064]; bound 95 at 0.25 +0.029
+  dense    LOC   both   7171 T3      : cap 0.1 +0.026 [+0.008, +0.047]; cap 0.25 +0.024 [+0.008, +0.041]; bound 95 at 0.25 +0.010
+  dense    LOC   both   9393 terms   : cap 0.1 +0.023 [+0.002, +0.048]; cap 0.25 +0.035 [+0.013, +0.049]; bound 95 at 0.25 +0.017
+  dense    LOC   both   9393 total   : cap 0.1 +0.041 [+0.022, +0.062]; cap 0.25 +0.052 [+0.036, +0.069]; bound 95 at 0.25 +0.038
+  dense    LOC   both   9393 T3      : cap 0.1 +0.017 [-0.004, +0.036]; cap 0.25 +0.017 [+0.005, +0.037]; bound 95 at 0.25 +0.007
+  dense    LOC   thin   7171 terms   : cap 0.1 +0.020 [-0.019, +0.061]; cap 0.25 +0.019 [-0.008, +0.047]; bound 95 at 0.25 -0.004
+  dense    LOC   thin   7171 total   : cap 0.1 +0.059 [+0.017, +0.092]; cap 0.25 +0.056 [+0.032, +0.084]; bound 95 at 0.25 +0.037
+  dense    LOC   thin   7171 T3      : cap 0.1 +0.039 [+0.001, +0.068]; cap 0.25 +0.037 [+0.016, +0.064]; bound 95 at 0.25 +0.020
+  dense    LOC   thin   9393 terms   : cap 0.1 +0.026 [-0.008, +0.056]; cap 0.25 +0.019 [-0.008, +0.049]; bound 95 at 0.25 -0.003
+  dense    LOC   thin   9393 total   : cap 0.1 +0.053 [+0.020, +0.083]; cap 0.25 +0.056 [+0.030, +0.090]; bound 95 at 0.25 +0.035
+  dense    LOC   thin   9393 T3      : cap 0.1 +0.028 [-0.002, +0.058]; cap 0.25 +0.037 [+0.012, +0.067]; bound 95 at 0.25 +0.017
+  dense    LOC   strong 7171 terms   : cap 0.1 +0.028 [-0.006, +0.055]; cap 0.25 +0.026 [+0.001, +0.046]; bound 95 at 0.25 +0.005
+  dense    LOC   strong 7171 total   : cap 0.1 +0.048 [+0.020, +0.073]; cap 0.25 +0.039 [+0.015, +0.063]; bound 95 at 0.25 +0.019
+  dense    LOC   strong 7171 T3      : cap 0.1 +0.020 [-0.001, +0.048]; cap 0.25 +0.014 [-0.008, +0.038]; bound 95 at 0.25 -0.004
+  dense    LOC   strong 9393 terms   : cap 0.1 +0.027 [-0.002, +0.054]; cap 0.25 +0.030 [+0.007, +0.060]; bound 95 at 0.25 +0.011
+  dense    LOC   strong 9393 total   : cap 0.1 +0.037 [+0.008, +0.066]; cap 0.25 +0.041 [+0.016, +0.070]; bound 95 at 0.25 +0.021
+  dense    LOC   strong 9393 T3      : cap 0.1 +0.010 [-0.014, +0.035]; cap 0.25 +0.010 [-0.012, +0.031]; bound 95 at 0.25 -0.009
+
+## Descriptive: per cell (regimes pooled) and per cell and regime, cap 0.25 (CI 95)
+  standard LOC+T 7171 4 st.        both   (1600 w., 1257 ev.): MT@S0 0.200  MT@S0+T3 0.215  MT@S2+T3 0.236 | terms +0.021 [-0.013, +0.055]; total +0.036 [+0.004, +0.069]
+  standard LOC+T 7171 4 st.        thin   (800 w., 630 ev.): MT@S0 0.311  MT@S0+T3 0.337  MT@S2+T3 0.398 | terms +0.062 [+0.002, +0.126]; total +0.087 [+0.031, +0.154]
+  standard LOC+T 7171 4 st.        strong (800 w., 627 ev.): MT@S0 0.144  MT@S0+T3 0.166  MT@S2+T3 0.164 | terms -0.002 [-0.040, +0.042]; total +0.021 [-0.020, +0.071]
+  standard LOC+T 7171 6 st.        both   (1600 w., 1275 ev.): MT@S0 0.360  MT@S0+T3 0.413  MT@S2+T3 0.460 | terms +0.048 [+0.005, +0.089]; total +0.100 [+0.047, +0.149]
+  standard LOC+T 7171 6 st.        thin   (800 w., 635 ev.): MT@S0 0.436  MT@S0+T3 0.496  MT@S2+T3 0.561 | terms +0.065 [-0.002, +0.126]; total +0.124 [+0.043, +0.190]
+  standard LOC+T 7171 6 st.        strong (800 w., 640 ev.): MT@S0 0.316  MT@S0+T3 0.359  MT@S2+T3 0.358 | terms -0.002 [-0.053, +0.074]; total +0.042 [-0.012, +0.125]
+  standard LOC+T 7171 one-sided 8  both   (1600 w., 1294 ev.): MT@S0 0.379  MT@S0+T3 0.415  MT@S2+T3 0.523 | terms +0.108 [+0.057, +0.151]; total +0.145 [+0.091, +0.197]
+  standard LOC+T 7171 one-sided 8  thin   (800 w., 641 ev.): MT@S0 0.426  MT@S0+T3 0.480  MT@S2+T3 0.608 | terms +0.128 [+0.057, +0.179]; total +0.183 [+0.119, +0.245]
+  standard LOC+T 7171 one-sided 8  strong (800 w., 653 ev.): MT@S0 0.337  MT@S0+T3 0.351  MT@S2+T3 0.464 | terms +0.113 [+0.040, +0.184]; total +0.127 [+0.057, +0.193]
+  standard LOC+T 9393 4 st.        both   (1600 w., 1282 ev.): MT@S0 0.211  MT@S0+T3 0.236  MT@S2+T3 0.254 | terms +0.018 [-0.016, +0.054]; total +0.043 [+0.005, +0.081]
+  standard LOC+T 9393 4 st.        thin   (800 w., 647 ev.): MT@S0 0.334  MT@S0+T3 0.372  MT@S2+T3 0.410 | terms +0.037 [-0.031, +0.096]; total +0.076 [-0.003, +0.143]
+  standard LOC+T 9393 4 st.        strong (800 w., 635 ev.): MT@S0 0.145  MT@S0+T3 0.176  MT@S2+T3 0.198 | terms +0.022 [-0.020, +0.065]; total +0.054 [+0.007, +0.098]
+  standard LOC+T 9393 6 st.        both   (1600 w., 1278 ev.): MT@S0 0.337  MT@S0+T3 0.416  MT@S2+T3 0.444 | terms +0.027 [-0.023, +0.069]; total +0.106 [+0.060, +0.157]
+  standard LOC+T 9393 6 st.        thin   (800 w., 652 ev.): MT@S0 0.382  MT@S0+T3 0.485  MT@S2+T3 0.531 | terms +0.046 [-0.033, +0.126]; total +0.149 [+0.071, +0.230]
+  standard LOC+T 9393 6 st.        strong (800 w., 626 ev.): MT@S0 0.294  MT@S0+T3 0.379  MT@S2+T3 0.393 | terms +0.014 [-0.064, +0.078]; total +0.099 [+0.026, +0.165]
+  standard LOC+T 9393 one-sided 8  both   (1600 w., 1303 ev.): MT@S0 0.351  MT@S0+T3 0.421  MT@S2+T3 0.533 | terms +0.113 [+0.067, +0.157]; total +0.182 [+0.130, +0.230]
+  standard LOC+T 9393 one-sided 8  thin   (800 w., 615 ev.): MT@S0 0.423  MT@S0+T3 0.499  MT@S2+T3 0.641 | terms +0.141 [+0.076, +0.201]; total +0.218 [+0.143, +0.296]
+  standard LOC+T 9393 one-sided 8  strong (800 w., 688 ev.): MT@S0 0.298  MT@S0+T3 0.352  MT@S2+T3 0.458 | terms +0.106 [+0.043, +0.166]; total +0.160 [+0.095, +0.230]
+  standard LOC   7171 4 st.        both   (1600 w., 1257 ev.): MT@S0 0.322  MT@S0+T3 0.332  MT@S2+T3 0.342 | terms +0.010 [-0.022, +0.046]; total +0.020 [-0.012, +0.057]
+  standard LOC   7171 4 st.        thin   (800 w., 630 ev.): MT@S0 0.467  MT@S0+T3 0.511  MT@S2+T3 0.521 | terms +0.010 [-0.040, +0.062]; total +0.054 [-0.002, +0.106]
+  standard LOC   7171 4 st.        strong (800 w., 627 ev.): MT@S0 0.241  MT@S0+T3 0.246  MT@S2+T3 0.258 | terms +0.013 [-0.032, +0.055]; total +0.018 [-0.029, +0.067]
+  standard LOC   7171 6 st.        both   (1600 w., 1275 ev.): MT@S0 0.524  MT@S0+T3 0.539  MT@S2+T3 0.575 | terms +0.036 [-0.005, +0.075]; total +0.051 [+0.008, +0.092]
+  standard LOC   7171 6 st.        thin   (800 w., 635 ev.): MT@S0 0.630  MT@S0+T3 0.668  MT@S2+T3 0.677 | terms +0.009 [-0.032, +0.067]; total +0.047 [-0.008, +0.106]
+  standard LOC   7171 6 st.        strong (800 w., 640 ev.): MT@S0 0.463  MT@S0+T3 0.467  MT@S2+T3 0.505 | terms +0.037 [-0.025, +0.092]; total +0.042 [-0.017, +0.097]
+  standard LOC   7171 one-sided 8  both   (1600 w., 1294 ev.): MT@S0 0.596  MT@S0+T3 0.624  MT@S2+T3 0.680 | terms +0.056 [+0.021, +0.093]; total +0.084 [+0.050, +0.121]
+  standard LOC   7171 one-sided 8  thin   (800 w., 641 ev.): MT@S0 0.613  MT@S0+T3 0.671  MT@S2+T3 0.735 | terms +0.064 [+0.010, +0.107]; total +0.122 [+0.066, +0.165]
+  standard LOC   7171 one-sided 8  strong (800 w., 653 ev.): MT@S0 0.577  MT@S0+T3 0.593  MT@S2+T3 0.652 | terms +0.060 [+0.014, +0.109]; total +0.075 [+0.022, +0.138]
+  standard LOC   9393 4 st.        both   (1600 w., 1282 ev.): MT@S0 0.330  MT@S0+T3 0.335  MT@S2+T3 0.366 | terms +0.030 [-0.011, +0.062]; total +0.036 [-0.009, +0.071]
+  standard LOC   9393 4 st.        thin   (800 w., 647 ev.): MT@S0 0.496  MT@S0+T3 0.532  MT@S2+T3 0.546 | terms +0.014 [-0.038, +0.068]; total +0.049 [-0.011, +0.109]
+  standard LOC   9393 4 st.        strong (800 w., 635 ev.): MT@S0 0.263  MT@S0+T3 0.257  MT@S2+T3 0.298 | terms +0.041 [-0.005, +0.081]; total +0.035 [-0.012, +0.079]
+  standard LOC   9393 6 st.        both   (1600 w., 1278 ev.): MT@S0 0.495  MT@S0+T3 0.554  MT@S2+T3 0.569 | terms +0.015 [-0.022, +0.062]; total +0.074 [+0.030, +0.116]
+  standard LOC   9393 6 st.        thin   (800 w., 652 ev.): MT@S0 0.594  MT@S0+T3 0.646  MT@S2+T3 0.664 | terms +0.018 [-0.035, +0.083]; total +0.071 [+0.010, +0.135]
+  standard LOC   9393 6 st.        strong (800 w., 626 ev.): MT@S0 0.431  MT@S0+T3 0.487  MT@S2+T3 0.505 | terms +0.018 [-0.035, +0.068]; total +0.073 [+0.018, +0.130]
+  standard LOC   9393 one-sided 8  both   (1600 w., 1303 ev.): MT@S0 0.594  MT@S0+T3 0.611  MT@S2+T3 0.689 | terms +0.078 [+0.048, +0.120]; total +0.095 [+0.063, +0.139]
+  standard LOC   9393 one-sided 8  thin   (800 w., 615 ev.): MT@S0 0.685  MT@S0+T3 0.689  MT@S2+T3 0.787 | terms +0.098 [+0.043, +0.144]; total +0.102 [+0.046, +0.150]
+  standard LOC   9393 one-sided 8  strong (800 w., 688 ev.): MT@S0 0.516  MT@S0+T3 0.538  MT@S2+T3 0.632 | terms +0.094 [+0.039, +0.146]; total +0.116 [+0.057, +0.173]
+  dense    LOC+T 7171 4 st.        both   (1000 w., 3983 ev.): MT@S0 0.085  MT@S0+T3 0.094  MT@S2+T3 0.095 | terms +0.000 [-0.019, +0.022]; total +0.010 [-0.008, +0.030]
+  dense    LOC+T 7171 4 st.        thin   (500 w., 1975 ev.): MT@S0 0.100  MT@S0+T3 0.122  MT@S2+T3 0.129 | terms +0.008 [-0.027, +0.041]; total +0.029 [-0.005, +0.059]
+  dense    LOC+T 7171 4 st.        strong (500 w., 2008 ev.): MT@S0 0.067  MT@S0+T3 0.073  MT@S2+T3 0.072 | terms -0.001 [-0.024, +0.019]; total +0.005 [-0.017, +0.025]
+  dense    LOC+T 7171 6 st.        both   (1000 w., 3984 ev.): MT@S0 0.122  MT@S0+T3 0.137  MT@S2+T3 0.164 | terms +0.027 [-0.004, +0.055]; total +0.042 [+0.012, +0.068]
+  dense    LOC+T 7171 6 st.        thin   (500 w., 1982 ev.): MT@S0 0.142  MT@S0+T3 0.149  MT@S2+T3 0.176 | terms +0.027 [-0.032, +0.075]; total +0.034 [-0.021, +0.085]
+  dense    LOC+T 7171 6 st.        strong (500 w., 2002 ev.): MT@S0 0.106  MT@S0+T3 0.125  MT@S2+T3 0.151 | terms +0.026 [-0.005, +0.058]; total +0.045 [+0.014, +0.076]
+  dense    LOC+T 7171 one-sided 8  both   (1000 w., 4011 ev.): MT@S0 0.113  MT@S0+T3 0.147  MT@S2+T3 0.213 | terms +0.066 [+0.037, +0.099]; total +0.099 [+0.072, +0.131]
+  dense    LOC+T 7171 one-sided 8  thin   (500 w., 2025 ev.): MT@S0 0.123  MT@S0+T3 0.172  MT@S2+T3 0.267 | terms +0.095 [+0.041, +0.140]; total +0.144 [+0.094, +0.189]
+  dense    LOC+T 7171 one-sided 8  strong (500 w., 1986 ev.): MT@S0 0.096  MT@S0+T3 0.119  MT@S2+T3 0.167 | terms +0.048 [+0.014, +0.086]; total +0.071 [+0.035, +0.102]
+  dense    LOC+T 9393 4 st.        both   (1000 w., 3981 ev.): MT@S0 0.083  MT@S0+T3 0.092  MT@S2+T3 0.088 | terms -0.005 [-0.020, +0.017]; total +0.004 [-0.013, +0.023]
+  dense    LOC+T 9393 4 st.        thin   (500 w., 1982 ev.): MT@S0 0.102  MT@S0+T3 0.127  MT@S2+T3 0.109 | terms -0.018 [-0.053, +0.021]; total +0.007 [-0.025, +0.043]
+  dense    LOC+T 9393 4 st.        strong (500 w., 1999 ev.): MT@S0 0.068  MT@S0+T3 0.067  MT@S2+T3 0.074 | terms +0.007 [-0.014, +0.030]; total +0.007 [-0.016, +0.031]
+  dense    LOC+T 9393 6 st.        both   (1000 w., 4011 ev.): MT@S0 0.126  MT@S0+T3 0.131  MT@S2+T3 0.158 | terms +0.026 [-0.005, +0.058]; total +0.032 [+0.001, +0.063]
+  dense    LOC+T 9393 6 st.        thin   (500 w., 1999 ev.): MT@S0 0.139  MT@S0+T3 0.148  MT@S2+T3 0.188 | terms +0.041 [-0.011, +0.085]; total +0.050 [-0.002, +0.091]
+  dense    LOC+T 9393 6 st.        strong (500 w., 2012 ev.): MT@S0 0.114  MT@S0+T3 0.120  MT@S2+T3 0.138 | terms +0.018 [-0.019, +0.056]; total +0.024 [-0.012, +0.061]
+  dense    LOC+T 9393 one-sided 8  both   (1000 w., 4008 ev.): MT@S0 0.127  MT@S0+T3 0.146  MT@S2+T3 0.200 | terms +0.054 [+0.025, +0.085]; total +0.073 [+0.039, +0.104]
+  dense    LOC+T 9393 one-sided 8  thin   (500 w., 1982 ev.): MT@S0 0.152  MT@S0+T3 0.160  MT@S2+T3 0.209 | terms +0.049 [+0.011, +0.101]; total +0.057 [+0.013, +0.113]
+  dense    LOC+T 9393 one-sided 8  strong (500 w., 2026 ev.): MT@S0 0.104  MT@S0+T3 0.130  MT@S2+T3 0.189 | terms +0.059 [+0.016, +0.098]; total +0.085 [+0.039, +0.127]
+  dense    LOC   7171 4 st.        both   (1000 w., 3983 ev.): MT@S0 0.185  MT@S0+T3 0.202  MT@S2+T3 0.190 | terms -0.012 [-0.035, +0.012]; total +0.005 [-0.019, +0.032]
+  dense    LOC   7171 4 st.        thin   (500 w., 1975 ev.): MT@S0 0.234  MT@S0+T3 0.239  MT@S2+T3 0.245 | terms +0.006 [-0.038, +0.042]; total +0.011 [-0.037, +0.055]
+  dense    LOC   7171 4 st.        strong (500 w., 2008 ev.): MT@S0 0.158  MT@S0+T3 0.183  MT@S2+T3 0.152 | terms -0.031 [-0.060, +0.005]; total -0.006 [-0.034, +0.029]
+  dense    LOC   7171 6 st.        both   (1000 w., 3984 ev.): MT@S0 0.261  MT@S0+T3 0.291  MT@S2+T3 0.293 | terms +0.002 [-0.032, +0.034]; total +0.032 [-0.003, +0.060]
+  dense    LOC   7171 6 st.        thin   (500 w., 1982 ev.): MT@S0 0.294  MT@S0+T3 0.337  MT@S2+T3 0.336 | terms -0.001 [-0.051, +0.060]; total +0.042 [-0.008, +0.091]
+  dense    LOC   7171 6 st.        strong (500 w., 2002 ev.): MT@S0 0.231  MT@S0+T3 0.265  MT@S2+T3 0.250 | terms -0.014 [-0.052, +0.040]; total +0.019 [-0.022, +0.062]
+  dense    LOC   7171 one-sided 8  both   (1000 w., 4011 ev.): MT@S0 0.315  MT@S0+T3 0.353  MT@S2+T3 0.415 | terms +0.062 [+0.029, +0.097]; total +0.100 [+0.065, +0.142]
+  dense    LOC   7171 one-sided 8  thin   (500 w., 2025 ev.): MT@S0 0.352  MT@S0+T3 0.411  MT@S2+T3 0.460 | terms +0.049 [-0.002, +0.092]; total +0.108 [+0.056, +0.160]
+  dense    LOC   7171 one-sided 8  strong (500 w., 1986 ev.): MT@S0 0.267  MT@S0+T3 0.300  MT@S2+T3 0.361 | terms +0.061 [+0.017, +0.130]; total +0.094 [+0.038, +0.153]
+  dense    LOC   9393 4 st.        both   (1000 w., 3981 ev.): MT@S0 0.178  MT@S0+T3 0.192  MT@S2+T3 0.203 | terms +0.011 [-0.016, +0.032]; total +0.025 [-0.002, +0.045]
+  dense    LOC   9393 4 st.        thin   (500 w., 1982 ev.): MT@S0 0.217  MT@S0+T3 0.238  MT@S2+T3 0.242 | terms +0.004 [-0.033, +0.041]; total +0.024 [-0.013, +0.063]
+  dense    LOC   9393 4 st.        strong (500 w., 1999 ev.): MT@S0 0.156  MT@S0+T3 0.157  MT@S2+T3 0.175 | terms +0.019 [-0.009, +0.050]; total +0.019 [-0.008, +0.047]
+  dense    LOC   9393 6 st.        both   (1000 w., 4011 ev.): MT@S0 0.274  MT@S0+T3 0.285  MT@S2+T3 0.311 | terms +0.026 [+0.001, +0.062]; total +0.037 [+0.014, +0.072]
+  dense    LOC   9393 6 st.        thin   (500 w., 1999 ev.): MT@S0 0.295  MT@S0+T3 0.329  MT@S2+T3 0.353 | terms +0.025 [-0.028, +0.071]; total +0.059 [+0.005, +0.101]
+  dense    LOC   9393 6 st.        strong (500 w., 2012 ev.): MT@S0 0.255  MT@S0+T3 0.249  MT@S2+T3 0.297 | terms +0.048 [+0.007, +0.083]; total +0.042 [+0.003, +0.079]
+  dense    LOC   9393 one-sided 8  both   (1000 w., 4008 ev.): MT@S0 0.316  MT@S0+T3 0.361  MT@S2+T3 0.413 | terms +0.052 [+0.009, +0.089]; total +0.097 [+0.054, +0.129]
+  dense    LOC   9393 one-sided 8  thin   (500 w., 1982 ev.): MT@S0 0.354  MT@S0+T3 0.401  MT@S2+T3 0.463 | terms +0.062 [+0.011, +0.111]; total +0.108 [+0.056, +0.159]
+  dense    LOC   9393 one-sided 8  strong (500 w., 2026 ev.): MT@S0 0.275  MT@S0+T3 0.317  MT@S2+T3 0.357 | terms +0.040 [-0.008, +0.098]; total +0.082 [+0.027, +0.137]
+
+## Descriptive: BOMP family (standard, 60 networks) and MT family on the same networks; cap 0.1 / 0.25
+  LOC+T both   7171 (1800 w., 1451 ev.): recall 0.1/0.25 MT@S0 0.215/0.301  MT@S0+T3 0.238/0.327  MT@S2+T3 0.285/0.398  BOMP@S0 0.148/0.297  BOMP@S0+T3 0.183/0.325  BOMP@S2+T3 0.242/0.393
+      BOMP terms   : cap 0.1 +0.059 [+0.014, +0.108]; cap 0.25 +0.068 [+0.026, +0.107]
+      BOMP total   : cap 0.1 +0.094 [+0.034, +0.140]; cap 0.25 +0.096 [+0.056, +0.142]
+      BOMP T3      : cap 0.1 +0.035 [-0.010, +0.068]; cap 0.25 +0.028 [-0.006, +0.071]
+      MT terms     : cap 0.1 +0.048 [+0.009, +0.097]; cap 0.25 +0.071 [+0.025, +0.108]
+  LOC+T both   9393 (1800 w., 1442 ev.): recall 0.1/0.25 MT@S0 0.183/0.277  MT@S0+T3 0.203/0.327  MT@S2+T3 0.288/0.406  BOMP@S0 0.159/0.284  BOMP@S0+T3 0.208/0.352  BOMP@S2+T3 0.251/0.422
+      BOMP terms   : cap 0.1 +0.043 [-0.005, +0.099]; cap 0.25 +0.071 [+0.029, +0.114]
+      BOMP total   : cap 0.1 +0.092 [+0.039, +0.156]; cap 0.25 +0.139 [+0.098, +0.185]
+      BOMP T3      : cap 0.1 +0.049 [+0.009, +0.089]; cap 0.25 +0.068 [+0.030, +0.105]
+      MT terms     : cap 0.1 +0.085 [+0.038, +0.140]; cap 0.25 +0.079 [+0.036, +0.127]
+  LOC+T thin   7171 (900 w., 723 ev.): recall 0.1/0.25 MT@S0 0.253/0.362  MT@S0+T3 0.303/0.425  MT@S2+T3 0.373/0.488  BOMP@S0 0.195/0.362  BOMP@S0+T3 0.209/0.402  BOMP@S2+T3 0.284/0.487
+      BOMP terms   : cap 0.1 +0.075 [+0.006, +0.162]; cap 0.25 +0.084 [+0.021, +0.150]
+      BOMP total   : cap 0.1 +0.089 [+0.012, +0.186]; cap 0.25 +0.124 [+0.057, +0.199]
+      BOMP T3      : cap 0.1 +0.014 [-0.051, +0.084]; cap 0.25 +0.040 [-0.025, +0.111]
+      MT terms     : cap 0.1 +0.071 [+0.008, +0.164]; cap 0.25 +0.064 [+0.009, +0.125]
+  LOC+T thin   9393 (900 w., 704 ev.): recall 0.1/0.25 MT@S0 0.256/0.359  MT@S0+T3 0.263/0.403  MT@S2+T3 0.372/0.527  BOMP@S0 0.197/0.342  BOMP@S0+T3 0.273/0.443  BOMP@S2+T3 0.315/0.518
+      BOMP terms   : cap 0.1 +0.043 [-0.049, +0.111]; cap 0.25 +0.075 [+0.016, +0.150]
+      BOMP total   : cap 0.1 +0.118 [+0.016, +0.193]; cap 0.25 +0.176 [+0.109, +0.249]
+      BOMP T3      : cap 0.1 +0.075 [+0.014, +0.145]; cap 0.25 +0.101 [+0.035, +0.160]
+      MT terms     : cap 0.1 +0.109 [+0.033, +0.194]; cap 0.25 +0.124 [+0.049, +0.184]
+  LOC+T strong 7171 (900 w., 728 ev.): recall 0.1/0.25 MT@S0 0.181/0.250  MT@S0+T3 0.177/0.282  MT@S2+T3 0.231/0.323  BOMP@S0 0.117/0.242  BOMP@S0+T3 0.154/0.279  BOMP@S2+T3 0.206/0.332
+      BOMP terms   : cap 0.1 +0.052 [-0.020, +0.110]; cap 0.25 +0.054 [-0.004, +0.106]
+      BOMP total   : cap 0.1 +0.089 [+0.014, +0.155]; cap 0.25 +0.091 [+0.028, +0.145]
+      BOMP T3      : cap 0.1 +0.037 [-0.003, +0.089]; cap 0.25 +0.037 [-0.009, +0.084]
+      MT terms     : cap 0.1 +0.054 [-0.010, +0.118]; cap 0.25 +0.041 [-0.016, +0.100]
+  LOC+T strong 9393 (900 w., 738 ev.): recall 0.1/0.25 MT@S0 0.134/0.215  MT@S0+T3 0.145/0.271  MT@S2+T3 0.232/0.333  BOMP@S0 0.125/0.245  BOMP@S0+T3 0.153/0.290  BOMP@S2+T3 0.222/0.371
+      BOMP terms   : cap 0.1 +0.069 [+0.004, +0.140]; cap 0.25 +0.081 [+0.022, +0.148]
+      BOMP total   : cap 0.1 +0.098 [+0.028, +0.173]; cap 0.25 +0.126 [+0.072, +0.192]
+      BOMP T3      : cap 0.1 +0.028 [-0.024, +0.085]; cap 0.25 +0.045 [-0.005, +0.102]
+      MT terms     : cap 0.1 +0.087 [+0.020, +0.141]; cap 0.25 +0.062 [+0.007, +0.128]
+  LOC   both   7171 (1800 w., 1451 ev.): recall 0.1/0.25 MT@S0 0.356/0.458  MT@S0+T3 0.380/0.481  MT@S2+T3 0.410/0.520  BOMP@S0 0.327/0.482  BOMP@S0+T3 0.374/0.507  BOMP@S2+T3 0.427/0.538
+      BOMP terms   : cap 0.1 +0.053 [+0.005, +0.095]; cap 0.25 +0.030 [+0.000, +0.066]
+      BOMP total   : cap 0.1 +0.100 [+0.050, +0.141]; cap 0.25 +0.056 [+0.023, +0.094]
+      BOMP T3      : cap 0.1 +0.047 [+0.005, +0.089]; cap 0.25 +0.025 [-0.003, +0.060]
+      MT terms     : cap 0.1 +0.030 [-0.010, +0.073]; cap 0.25 +0.039 [+0.001, +0.073]
+  LOC   both   9393 (1800 w., 1442 ev.): recall 0.1/0.25 MT@S0 0.333/0.449  MT@S0+T3 0.332/0.475  MT@S2+T3 0.411/0.536  BOMP@S0 0.324/0.453  BOMP@S0+T3 0.370/0.529  BOMP@S2+T3 0.429/0.560
+      BOMP terms   : cap 0.1 +0.059 [+0.013, +0.099]; cap 0.25 +0.031 [-0.001, +0.070]
+      BOMP total   : cap 0.1 +0.105 [+0.064, +0.154]; cap 0.25 +0.107 [+0.070, +0.143]
+      BOMP T3      : cap 0.1 +0.046 [+0.015, +0.092]; cap 0.25 +0.076 [+0.039, +0.105]
+      MT terms     : cap 0.1 +0.078 [+0.027, +0.124]; cap 0.25 +0.061 [+0.023, +0.090]
+  LOC   thin   7171 (900 w., 723 ev.): recall 0.1/0.25 MT@S0 0.430/0.546  MT@S0+T3 0.484/0.595  MT@S2+T3 0.512/0.614  BOMP@S0 0.398/0.574  BOMP@S0+T3 0.422/0.603  BOMP@S2+T3 0.491/0.643
+      BOMP terms   : cap 0.1 +0.069 [-0.022, +0.134]; cap 0.25 +0.040 [-0.009, +0.094]
+      BOMP total   : cap 0.1 +0.093 [+0.000, +0.157]; cap 0.25 +0.069 [+0.018, +0.128]
+      BOMP T3      : cap 0.1 +0.024 [-0.055, +0.105]; cap 0.25 +0.029 [-0.018, +0.078]
+      MT terms     : cap 0.1 +0.028 [-0.032, +0.094]; cap 0.25 +0.019 [-0.031, +0.068]
+  LOC   thin   9393 (900 w., 704 ev.): recall 0.1/0.25 MT@S0 0.450/0.589  MT@S0+T3 0.464/0.591  MT@S2+T3 0.545/0.648  BOMP@S0 0.385/0.568  BOMP@S0+T3 0.460/0.642  BOMP@S2+T3 0.491/0.672
+      BOMP terms   : cap 0.1 +0.031 [-0.041, +0.112]; cap 0.25 +0.030 [-0.021, +0.082]
+      BOMP total   : cap 0.1 +0.107 [+0.034, +0.202]; cap 0.25 +0.104 [+0.044, +0.176]
+      BOMP T3      : cap 0.1 +0.075 [+0.024, +0.147]; cap 0.25 +0.074 [+0.021, +0.134]
+      MT terms     : cap 0.1 +0.081 [+0.025, +0.167]; cap 0.25 +0.057 [+0.003, +0.113]
+  LOC   strong 7171 (900 w., 728 ev.): recall 0.1/0.25 MT@S0 0.298/0.409  MT@S0+T3 0.323/0.409  MT@S2+T3 0.368/0.468  BOMP@S0 0.277/0.407  BOMP@S0+T3 0.328/0.451  BOMP@S2+T3 0.387/0.485
+      BOMP terms   : cap 0.1 +0.059 [-0.008, +0.107]; cap 0.25 +0.034 [-0.012, +0.071]
+      BOMP total   : cap 0.1 +0.110 [+0.045, +0.174]; cap 0.25 +0.078 [+0.027, +0.124]
+      BOMP T3      : cap 0.1 +0.051 [+0.014, +0.109]; cap 0.25 +0.044 [+0.008, +0.086]
+      MT terms     : cap 0.1 +0.045 [+0.003, +0.092]; cap 0.25 +0.059 [+0.008, +0.098]
+  LOC   strong 9393 (900 w., 738 ev.): recall 0.1/0.25 MT@S0 0.266/0.370  MT@S0+T3 0.287/0.415  MT@S2+T3 0.339/0.466  BOMP@S0 0.280/0.396  BOMP@S0+T3 0.316/0.459  BOMP@S2+T3 0.377/0.522
+      BOMP terms   : cap 0.1 +0.061 [+0.003, +0.136]; cap 0.25 +0.062 [+0.016, +0.111]
+      BOMP total   : cap 0.1 +0.096 [+0.037, +0.176]; cap 0.25 +0.126 [+0.074, +0.172]
+      BOMP T3      : cap 0.1 +0.035 [-0.011, +0.094]; cap 0.25 +0.064 [+0.016, +0.102]
+      MT terms     : cap 0.1 +0.051 [-0.006, +0.106]; cap 0.25 +0.051 [+0.004, +0.105]
+
+## Descriptive: oracle arm (30 networks per cell and regime) and fraction of the gain captured
+   T3 form = (S2+T3 - S0+T3) / (ORA+T3 - S0+T3); total form = (S2+T3 - S0) / (ORA+T3 - S0); [CI 95 of the ratio per replicate]; (fraction of replicates with oracle gain <= 0)
+  standard LOC+T 7171 (900 w., 697 ev.)
+      MT: recall 0.1/0.25 MT@S0 0.211/0.306  MT@S0+T3 0.228/0.333  MT@S2+T3 0.288/0.397  MT@ORA+T3 0.363/0.449
+        cap 0.1: S2+T3 - S0+T3 +0.060 [-0.003, +0.147]; ORA+T3 - S0+T3 +0.135 [+0.079, +0.221]; ORA+T3 - S2+T3 +0.075 [+0.015, +0.140]; fraction T3 +0.45 [-0.03, +0.88] (0.000); total +0.51 [+0.12, +0.89] (0.000)
+        cap 0.25: S2+T3 - S0+T3 +0.065 [+0.003, +0.122]; ORA+T3 - S0+T3 +0.116 [+0.054, +0.178]; ORA+T3 - S2+T3 +0.052 [+0.006, +0.102]; fraction T3 +0.56 [+0.04, +0.94] (0.000); total +0.64 [+0.27, +0.96] (0.000)
+      BOMP: recall 0.1/0.25 BOMP@S0 0.131/0.290  BOMP@S0+T3 0.152/0.317  BOMP@S2+T3 0.211/0.397  BOMP@ORA+T3 0.263/0.452
+        cap 0.1: S2+T3 - S0+T3 +0.059 [-0.010, +0.137]; ORA+T3 - S0+T3 +0.110 [+0.035, +0.199]; ORA+T3 - S2+T3 +0.052 [-0.027, +0.140]; fraction T3 +0.53 [-0.11, +1.41] (0.001); total +0.61 [+0.03, +1.37] (0.000)
+        cap 0.25: S2+T3 - S0+T3 +0.080 [+0.019, +0.141]; ORA+T3 - S0+T3 +0.135 [+0.081, +0.199]; ORA+T3 - S2+T3 +0.055 [+0.008, +0.112]; fraction T3 +0.60 [+0.17, +0.93] (0.000); total +0.66 [+0.32, +0.94] (0.000)
+  standard LOC+T 9393 (900 w., 716 ev.)
+      MT: recall 0.1/0.25 MT@S0 0.190/0.289  MT@S0+T3 0.218/0.330  MT@S2+T3 0.303/0.422  MT@ORA+T3 0.372/0.482
+        cap 0.1: S2+T3 - S0+T3 +0.085 [+0.010, +0.147]; ORA+T3 - S0+T3 +0.154 [+0.092, +0.212]; ORA+T3 - S2+T3 +0.068 [+0.013, +0.135]; fraction T3 +0.55 [+0.08, +0.90] (0.000); total +0.62 [+0.23, +0.92] (0.000)
+        cap 0.25: S2+T3 - S0+T3 +0.092 [+0.027, +0.162]; ORA+T3 - S0+T3 +0.152 [+0.094, +0.217]; ORA+T3 - S2+T3 +0.060 [-0.003, +0.119]; fraction T3 +0.61 [+0.21, +1.03] (0.000); total +0.69 [+0.41, +1.02] (0.000)
+      BOMP: recall 0.1/0.25 BOMP@S0 0.155/0.288  BOMP@S0+T3 0.203/0.362  BOMP@S2+T3 0.222/0.409  BOMP@ORA+T3 0.355/0.497
+        cap 0.1: S2+T3 - S0+T3 +0.020 [-0.039, +0.108]; ORA+T3 - S0+T3 +0.152 [+0.068, +0.232]; ORA+T3 - S2+T3 +0.133 [+0.044, +0.199]; fraction T3 +0.13 [-0.39, +0.65] (0.001); total +0.34 [+0.09, +0.77] (0.000)
+        cap 0.25: S2+T3 - S0+T3 +0.047 [-0.009, +0.099]; ORA+T3 - S0+T3 +0.135 [+0.070, +0.198]; ORA+T3 - S2+T3 +0.088 [+0.037, +0.142]; fraction T3 +0.35 [-0.10, +0.68] (0.000); total +0.58 [+0.34, +0.80] (0.000)
+  standard LOC   7171 (900 w., 697 ev.)
+      MT: recall 0.1/0.25 MT@S0 0.349/0.462  MT@S0+T3 0.385/0.491  MT@S2+T3 0.423/0.535  MT@ORA+T3 0.462/0.560
+        cap 0.1: S2+T3 - S0+T3 +0.039 [-0.011, +0.107]; ORA+T3 - S0+T3 +0.077 [+0.016, +0.129]; ORA+T3 - S2+T3 +0.039 [-0.032, +0.081]; fraction T3 +0.50 [-0.36, +1.87] (0.004); total +0.66 [+0.26, +1.46] (0.001)
+        cap 0.25: S2+T3 - S0+T3 +0.044 [-0.010, +0.092]; ORA+T3 - S0+T3 +0.069 [+0.013, +0.110]; ORA+T3 - S2+T3 +0.024 [-0.024, +0.068]; fraction T3 +0.65 [-0.33, +1.79] (0.009); total +0.75 [+0.25, +1.35] (0.000)
+      BOMP: recall 0.1/0.25 BOMP@S0 0.331/0.479  BOMP@S0+T3 0.370/0.514  BOMP@S2+T3 0.445/0.538  BOMP@ORA+T3 0.449/0.568
+        cap 0.1: S2+T3 - S0+T3 +0.075 [+0.016, +0.155]; ORA+T3 - S0+T3 +0.079 [-0.006, +0.147]; ORA+T3 - S2+T3 +0.004 [-0.086, +0.059]; fraction T3 +0.95 [-2.37, +5.18] (0.036); total +0.96 [+0.41, +3.17] (0.013)
+        cap 0.25: S2+T3 - S0+T3 +0.024 [-0.019, +0.081]; ORA+T3 - S0+T3 +0.055 [+0.003, +0.107]; ORA+T3 - S2+T3 +0.030 [-0.022, +0.070]; fraction T3 +0.45 [-0.86, +2.08] (0.020); total +0.66 [+0.24, +1.38] (0.001)
+  standard LOC   9393 (900 w., 716 ev.)
+      MT: recall 0.1/0.25 MT@S0 0.346/0.472  MT@S0+T3 0.356/0.490  MT@S2+T3 0.432/0.559  MT@ORA+T3 0.443/0.564
+        cap 0.1: S2+T3 - S0+T3 +0.075 [+0.007, +0.134]; ORA+T3 - S0+T3 +0.087 [+0.022, +0.147]; ORA+T3 - S2+T3 +0.011 [-0.038, +0.064]; fraction T3 +0.87 [+0.18, +1.86] (0.004); total +0.88 [+0.38, +1.59] (0.001)
+        cap 0.25: S2+T3 - S0+T3 +0.068 [+0.013, +0.114]; ORA+T3 - S0+T3 +0.074 [+0.018, +0.123]; ORA+T3 - S2+T3 +0.006 [-0.039, +0.054]; fraction T3 +0.92 [+0.24, +2.18] (0.006); total +0.94 [+0.49, +1.66] (0.000)
+      BOMP: recall 0.1/0.25 BOMP@S0 0.331/0.462  BOMP@S0+T3 0.387/0.535  BOMP@S2+T3 0.429/0.554  BOMP@ORA+T3 0.471/0.591
+        cap 0.1: S2+T3 - S0+T3 +0.042 [-0.012, +0.111]; ORA+T3 - S0+T3 +0.084 [+0.014, +0.152]; ORA+T3 - S2+T3 +0.042 [-0.030, +0.101]; fraction T3 +0.50 [-0.26, +1.96] (0.009); total +0.70 [+0.34, +1.32] (0.000)
+        cap 0.25: S2+T3 - S0+T3 +0.020 [-0.024, +0.071]; ORA+T3 - S0+T3 +0.056 [+0.008, +0.113]; ORA+T3 - S2+T3 +0.036 [-0.004, +0.077]; fraction T3 +0.35 [-0.95, +1.17] (0.012); total +0.72 [+0.37, +1.04] (0.000)
+  dense    LOC+T 7171 (900 w., 3622 ev.)
+      MT: recall 0.1/0.25 MT@S0 0.051/0.101  MT@S0+T3 0.063/0.119  MT@S2+T3 0.093/0.163  MT@ORA+T3 0.125/0.199
+        cap 0.1: S2+T3 - S0+T3 +0.030 [+0.000, +0.058]; ORA+T3 - S0+T3 +0.062 [+0.028, +0.088]; ORA+T3 - S2+T3 +0.033 [-0.003, +0.063]; fraction T3 +0.48 [+0.00, +1.07] (0.001); total +0.56 [+0.23, +1.05] (0.000)
+        cap 0.25: S2+T3 - S0+T3 +0.044 [+0.014, +0.071]; ORA+T3 - S0+T3 +0.080 [+0.051, +0.104]; ORA+T3 - S2+T3 +0.036 [+0.004, +0.062]; fraction T3 +0.55 [+0.22, +0.94] (0.000); total +0.63 [+0.41, +0.95] (0.000)
+  dense    LOC+T 9393 (900 w., 3606 ev.)
+      MT: recall 0.1/0.25 MT@S0 0.067/0.119  MT@S0+T3 0.063/0.120  MT@S2+T3 0.074/0.141  MT@ORA+T3 0.120/0.195
+        cap 0.1: S2+T3 - S0+T3 +0.011 [-0.012, +0.030]; ORA+T3 - S0+T3 +0.056 [+0.026, +0.083]; ORA+T3 - S2+T3 +0.045 [+0.016, +0.074]; fraction T3 +0.20 [-0.30, +0.58] (0.000); total +0.14 [-0.49, +0.59] (0.000)
+        cap 0.25: S2+T3 - S0+T3 +0.021 [-0.006, +0.049]; ORA+T3 - S0+T3 +0.075 [+0.044, +0.101]; ORA+T3 - S2+T3 +0.054 [+0.024, +0.082]; fraction T3 +0.28 [-0.11, +0.63] (0.000); total +0.29 [-0.04, +0.64] (0.000)
+  dense    LOC   7171 (900 w., 3622 ev.)
+      MT: recall 0.1/0.25 MT@S0 0.153/0.252  MT@S0+T3 0.173/0.264  MT@S2+T3 0.206/0.298  MT@ORA+T3 0.225/0.318
+        cap 0.1: S2+T3 - S0+T3 +0.033 [-0.009, +0.069]; ORA+T3 - S0+T3 +0.052 [+0.013, +0.086]; ORA+T3 - S2+T3 +0.019 [-0.015, +0.050]; fraction T3 +0.63 [-0.39, +1.54] (0.006); total +0.74 [+0.30, +1.30] (0.000)
+        cap 0.25: S2+T3 - S0+T3 +0.034 [+0.002, +0.064]; ORA+T3 - S0+T3 +0.053 [+0.022, +0.085]; ORA+T3 - S2+T3 +0.020 [-0.009, +0.051]; fraction T3 +0.63 [+0.04, +1.24] (0.000); total +0.70 [+0.26, +1.19] (0.000)
+  dense    LOC   9393 (900 w., 3606 ev.)
+      MT: recall 0.1/0.25 MT@S0 0.164/0.264  MT@S0+T3 0.171/0.276  MT@S2+T3 0.199/0.314  MT@ORA+T3 0.226/0.324
+        cap 0.1: S2+T3 - S0+T3 +0.028 [-0.012, +0.061]; ORA+T3 - S0+T3 +0.055 [+0.015, +0.089]; ORA+T3 - S2+T3 +0.028 [-0.009, +0.058]; fraction T3 +0.50 [-0.46, +1.25] (0.003); total +0.55 [+0.07, +1.19] (0.000)
+        cap 0.25: S2+T3 - S0+T3 +0.037 [+0.002, +0.062]; ORA+T3 - S0+T3 +0.048 [+0.009, +0.080]; ORA+T3 - S2+T3 +0.011 [-0.018, +0.043]; fraction T3 +0.78 [+0.01, +1.89] (0.009); total +0.82 [+0.38, +1.52] (0.001)
+
+## Descriptive: station terms; rms error against the true delays, median removed (s): median over networks [quartiles], mean; 'better' = fraction of networks with error smaller than S0; |offset| = median of |median(term - delay)|
+  7171 thin   S0: 4 st. 0.122 6 st. 0.151 one-sided 8 0.163 | all (480) 0.147 [0.119, 0.181] mean 0.151; better 0.00; |offset| 0.044
+  7171 thin   S2: 4 st. 0.092 6 st. 0.086 one-sided 8 0.064 | all (480) 0.082 [0.057, 0.112] mean 0.092; better 0.85; |offset| 0.050
+  7171 thin   catalogue events relocated by S2: mean 18.8 of 20; final residual scale of S2 (median) 0.050 s; T3 timing level (median, s): S0 0.141, S2 0.131, ORA 0.049; events drawn per catalogue (mean) 72.3
+  7171 strong S0: 4 st. 0.186 6 st. 0.215 one-sided 8 0.241 | all (480) 0.216 [0.166, 0.268] mean 0.221; better 0.00; |offset| 0.050
+  7171 strong S2: 4 st. 0.157 6 st. 0.155 one-sided 8 0.151 | all (480) 0.155 [0.107, 0.246] mean 0.185; better 0.70; |offset| 0.055
+  7171 strong catalogue events relocated by S2: mean 19.1 of 20; final residual scale of S2 (median) 0.075 s; T3 timing level (median, s): S0 0.227, S2 0.209, ORA 0.049; events drawn per catalogue (mean) 50.1
+  9393 thin   S0: 4 st. 0.128 6 st. 0.158 one-sided 8 0.164 | all (480) 0.151 [0.120, 0.185] mean 0.155; better 0.00; |offset| 0.045
+  9393 thin   S2: 4 st. 0.095 6 st. 0.096 one-sided 8 0.060 | all (480) 0.084 [0.058, 0.116] mean 0.094; better 0.84; |offset| 0.045
+  9393 thin   catalogue events relocated by S2: mean 18.8 of 20; final residual scale of S2 (median) 0.050 s; T3 timing level (median, s): S0 0.144, S2 0.134, ORA 0.050; events drawn per catalogue (mean) 70.6
+  9393 strong S0: 4 st. 0.192 6 st. 0.206 one-sided 8 0.221 | all (480) 0.207 [0.165, 0.266] mean 0.221; better 0.00; |offset| 0.042
+  9393 strong S2: 4 st. 0.167 6 st. 0.157 one-sided 8 0.132 | all (480) 0.153 [0.103, 0.239] mean 0.181; better 0.73; |offset| 0.050
+  9393 strong catalogue events relocated by S2: mean 19.0 of 20; final residual scale of S2 (median) 0.071 s; T3 timing level (median, s): S0 0.220, S2 0.205, ORA 0.049; events drawn per catalogue (mean) 48.9
+
+## Descriptive: hit atoms (all atoms, LOC rule): median of the epicentral error (km) and of |origin error| (s) [CI 95, bootstrap of networks per stratum, 400 replicates], fraction of hits with |origin error| <= 0.5 s, fraction of events touched
+  standard 7171, first 160 networks per cell and regime
+      MT@S0        epi 2.29 [2.24, 2.35] km   |dt| 0.351 [0.339, 0.362] s   at 0.5 s 0.659 [0.642, 0.674]   events touched 0.710
+      MT@S0+T3     epi 2.05 [1.98, 2.14] km   |dt| 0.325 [0.311, 0.337] s   at 0.5 s 0.696 [0.681, 0.713]   events touched 0.742
+      MT@S2+T3     epi 1.81 [1.71, 1.90] km   |dt| 0.282 [0.270, 0.291] s   at 0.5 s 0.727 [0.712, 0.744]   events touched 0.763
+  standard 7171, first 60 networks per cell and regime
+      BOMP@S0      epi 2.30 [2.18, 2.42] km   |dt| 0.358 [0.339, 0.383] s   at 0.5 s 0.661 [0.633, 0.687]   events touched 0.709
+      BOMP@S0+T3   epi 2.00 [1.84, 2.10] km   |dt| 0.331 [0.313, 0.348] s   at 0.5 s 0.685 [0.662, 0.711]   events touched 0.725
+      BOMP@S2+T3   epi 1.78 [1.66, 1.91] km   |dt| 0.280 [0.264, 0.301] s   at 0.5 s 0.714 [0.685, 0.740]   events touched 0.735
+  standard 7171, first 30 networks per cell and regime
+      MT@S0+T3     epi 2.29 [2.15, 2.47] km   |dt| 0.327 [0.305, 0.352] s   at 0.5 s 0.691 [0.652, 0.728]   events touched 0.730
+      MT@S2+T3     epi 1.93 [1.74, 2.12] km   |dt| 0.289 [0.270, 0.316] s   at 0.5 s 0.694 [0.656, 0.729]   events touched 0.760
+      MT@ORA+T3    epi 1.51 [1.37, 1.76] km   |dt| 0.246 [0.226, 0.270] s   at 0.5 s 0.768 [0.735, 0.803]   events touched 0.789
+      BOMP@S2+T3   epi 1.81 [1.68, 2.03] km   |dt| 0.291 [0.271, 0.322] s   at 0.5 s 0.692 [0.650, 0.729]   events touched 0.736
+      BOMP@ORA+T3  epi 1.57 [1.38, 1.74] km   |dt| 0.251 [0.234, 0.278] s   at 0.5 s 0.748 [0.712, 0.791]   events touched 0.783
+  standard 9393, first 160 networks per cell and regime
+      MT@S0        epi 2.36 [2.28, 2.45] km   |dt| 0.373 [0.358, 0.392] s   at 0.5 s 0.631 [0.611, 0.648]   events touched 0.715
+      MT@S0+T3     epi 2.06 [1.98, 2.13] km   |dt| 0.315 [0.302, 0.331] s   at 0.5 s 0.703 [0.689, 0.720]   events touched 0.749
+      MT@S2+T3     epi 1.75 [1.67, 1.82] km   |dt| 0.280 [0.269, 0.291] s   at 0.5 s 0.740 [0.724, 0.755]   events touched 0.771
+  standard 9393, first 60 networks per cell and regime
+      BOMP@S0      epi 2.33 [2.17, 2.47] km   |dt| 0.383 [0.354, 0.407] s   at 0.5 s 0.624 [0.595, 0.652]   events touched 0.708
+      BOMP@S0+T3   epi 1.92 [1.81, 2.06] km   |dt| 0.316 [0.291, 0.342] s   at 0.5 s 0.707 [0.682, 0.733]   events touched 0.742
+      BOMP@S2+T3   epi 1.78 [1.68, 1.87] km   |dt| 0.277 [0.260, 0.294] s   at 0.5 s 0.750 [0.728, 0.773]   events touched 0.761
+  standard 9393, first 30 networks per cell and regime
+      MT@S0+T3     epi 2.03 [1.86, 2.20] km   |dt| 0.332 [0.306, 0.364] s   at 0.5 s 0.692 [0.660, 0.728]   events touched 0.756
+      MT@S2+T3     epi 1.57 [1.45, 1.75] km   |dt| 0.283 [0.251, 0.307] s   at 0.5 s 0.746 [0.714, 0.779]   events touched 0.779
+      MT@ORA+T3    epi 1.44 [1.26, 1.61] km   |dt| 0.250 [0.226, 0.272] s   at 0.5 s 0.784 [0.754, 0.815]   events touched 0.796
+      BOMP@S2+T3   epi 1.80 [1.59, 1.97] km   |dt| 0.294 [0.265, 0.318] s   at 0.5 s 0.727 [0.688, 0.762]   events touched 0.772
+      BOMP@ORA+T3  epi 1.35 [1.20, 1.54] km   |dt| 0.232 [0.204, 0.263] s   at 0.5 s 0.796 [0.769, 0.828]   events touched 0.786
+  dense    7171, first 100 networks per cell and regime
+      MT@S0        epi 2.67 [2.62, 2.73] km   |dt| 0.408 [0.396, 0.422] s   at 0.5 s 0.572 [0.561, 0.582]   events touched 0.630
+      MT@S0+T3     epi 2.54 [2.49, 2.59] km   |dt| 0.376 [0.365, 0.386] s   at 0.5 s 0.605 [0.595, 0.614]   events touched 0.652
+      MT@S2+T3     epi 2.29 [2.24, 2.34] km   |dt| 0.334 [0.324, 0.343] s   at 0.5 s 0.651 [0.642, 0.661]   events touched 0.662
+  dense    7171, first 30 networks per cell and regime
+      MT@S0+T3     epi 2.54 [2.48, 2.63] km   |dt| 0.379 [0.356, 0.405] s   at 0.5 s 0.597 [0.575, 0.618]   events touched 0.638
+      MT@S2+T3     epi 2.30 [2.21, 2.42] km   |dt| 0.330 [0.318, 0.349] s   at 0.5 s 0.653 [0.639, 0.670]   events touched 0.652
+      MT@ORA+T3    epi 2.05 [1.96, 2.15] km   |dt| 0.282 [0.267, 0.297] s   at 0.5 s 0.693 [0.676, 0.709]   events touched 0.676
+  dense    9393, first 100 networks per cell and regime
+      MT@S0        epi 2.66 [2.62, 2.71] km   |dt| 0.403 [0.391, 0.413] s   at 0.5 s 0.581 [0.571, 0.592]   events touched 0.636
+      MT@S0+T3     epi 2.56 [2.52, 2.60] km   |dt| 0.381 [0.370, 0.393] s   at 0.5 s 0.606 [0.597, 0.615]   events touched 0.653
+      MT@S2+T3     epi 2.28 [2.24, 2.34] km   |dt| 0.342 [0.333, 0.350] s   at 0.5 s 0.641 [0.631, 0.649]   events touched 0.674
+  dense    9393, first 30 networks per cell and regime
+      MT@S0+T3     epi 2.55 [2.48, 2.61] km   |dt| 0.383 [0.369, 0.406] s   at 0.5 s 0.608 [0.587, 0.626]   events touched 0.663
+      MT@S2+T3     epi 2.32 [2.25, 2.40] km   |dt| 0.343 [0.323, 0.359] s   at 0.5 s 0.634 [0.616, 0.653]   events touched 0.678
+      MT@ORA+T3    epi 2.07 [1.99, 2.13] km   |dt| 0.285 [0.271, 0.297] s   at 0.5 s 0.695 [0.678, 0.711]   events touched 0.693
+
+## Bootstrap SD of the rule contrasts versus the planned one (pilot SD x sqrt(30 / networks))
+  7171 standard LOC+T pooled: SD 0.0119; planned 0.0122 (pilot 0.0282)
+  7171 standard LOC   pooled: SD 0.0107; planned 0.0106 (pilot 0.0244)
+  7171 dense    LOC+T pooled: SD 0.0077; planned 0.0083 (pilot 0.0151)
+  7171 dense    LOC   pooled: SD 0.0094; planned 0.0098 (pilot 0.0179)
+  7171 BOMP standard LOC+T: SD 0.0212; planned 0.0215 (pilot 0.0304)
+  9393 standard LOC+T pooled: SD 0.0121; planned 0.0122 (pilot 0.0282)
+  9393 standard LOC   pooled: SD 0.0110; planned 0.0106 (pilot 0.0244)
+  9393 dense    LOC+T pooled: SD 0.0073; planned 0.0083 (pilot 0.0151)
+  9393 dense    LOC   pooled: SD 0.0092; planned 0.0098 (pilot 0.0179)
+  9393 BOMP standard LOC+T: SD 0.0217; planned 0.0215 (pilot 0.0304)
+
+## Timings (s per window, mean; one process per core, 2 processes in parallel)
+  7171 standard: BOMP@ORA+T3 0.899  BOMP@S0 0.458  BOMP@S0+T3 0.909  BOMP@S2+T3 0.910  MT@ORA+T3 0.388  MT@S0 0.130  MT@S0+T3 0.398  MT@S2+T3 0.399
+  7171 dense   : MT@ORA+T3 0.557  MT@S0 0.180  MT@S0+T3 0.560  MT@S2+T3 0.560
+  7171 preparation per part (network, catalogue, S0, engines) 1.12 s; S2 0.38 s; total per part 16.3 s; sum 4.34 h of CPU
+  9393 standard: BOMP@ORA+T3 0.906  BOMP@S0 0.448  BOMP@S0+T3 0.893  BOMP@S2+T3 0.888  MT@ORA+T3 0.392  MT@S0 0.130  MT@S0+T3 0.400  MT@S2+T3 0.400
+  9393 dense   : MT@ORA+T3 0.557  MT@S0 0.180  MT@S0+T3 0.560  MT@S2+T3 0.561
+  9393 preparation per part (network, catalogue, S0, engines) 1.12 s; S2 0.37 s; total per part 16.2 s; sum 4.33 h of CPU
+

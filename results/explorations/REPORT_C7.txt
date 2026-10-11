@@ -1,0 +1,336 @@
+C7 - SOURCE-PULSE-INVARIANT MOMENT-TENSOR SUBSPACE DETECTORS (explore_contrib) - REPORT
+========================================================================================
+Status: EXPLORATORY, NOT CONFIRMATORY. Nothing here tests a registered hypothesis.
+Date: Sun Sep 27 2026, 21:02-22:40 local (-05). Machine: 2 cores. New compute: about 1 h 20 min wall on 2 cores
+(about 2.6 CPU-hours), under the 3 h budget.
+
+Seeds and data (seed 999 ONLY; seeds 2024, 7331, 4242 and 8888 were never generated, read or touched):
+  networks  task2a_confirm.network(999, cell, j), j = 40-59 (20 per cell and regime), cells ladder_4, ladder_6,
+            unilateral_c40, regimes thin and strong; statics sd 0.3 s; 20-event catalogue per network for +SC.
+            These j were never used before (2A/2E calibration 0-4, C1-C3 10-15, C6/C6b 20-29, leak2 30-35).
+  window stream TAGs (all new; streams [999, TAG, ci, j, ri, 41|233|61]):
+            3701 STD (draw_sources, 0-2 events), 3702 DENSE (c2_run.draw_dense, 3-5 events), 3703 GABOR90,
+            3704 BERLAGE90 (out-of-family pulses, draw_sources). 3705: validation windows (network 40).
+            3706: sources of the resolution diagnostic (networks 40-41, rng [999, 3706, ci, j, 0|1]).
+  Out-of-family designs rebuild the catalogue and the +SC corrections with the out-of-family pulse (same world).
+Common protocol (as results/explorations/REPORT.txt): 3 km x 3 depths grid (675 nodes), origins 5.0-8.0 s step 0.1,
++-4-sample (+-0.25 s) peak search, 5 km exclusion, hit = epicentre within 5 km, kmax 5 (7 in DENSE), exact FROC, recall
+at <= 0.1 and <= 0.25 realised false events per window, hierarchical bootstrap (strata = regime x cell, networks then
+windows, 1000 replicates, operating point re-chosen per replicate). All differences are paired (same windows).
+Sample: per design 600 windows (100 per cell and regime; 20 networks x 5 windows). Events: STD 465, DENSE 2389,
+GABOR90 449, BERLAGE90 465.
+
+----------------------------------------------------------------------------------------------------------------------
+0. SUMMARY
+----------------------------------------------------------------------------------------------------------------------
+NEGATIVE. Making the moment-tensor subspace detector invariant to the source pulse does not raise recall; in the
+design family (STD) it lowers it. Pooled over regimes, recall difference to BOMP-PK+SC (@0.1 / @0.25, 95% CI):
+  STD    BOMP-PK-PH  -0.114 [-0.203, -0.017] / -0.084 [-0.148, -0.023]
+         BOMP-PK-PHF -0.140 [-0.241, -0.022] / -0.080 [-0.142, -0.005]
+  DENSE  BOMP-PK-PH  -0.004 [-0.035, +0.022] / -0.021 [-0.057, +0.018]
+         BOMP-PK-PHF -0.022 [-0.056, +0.003] / -0.046 [-0.083, -0.006]
+  With the cap: BOMP-PK-PH-CAP - BOMP-PK-CAP  STD -0.097 [-0.168, -0.021] / -0.075 [-0.134, -0.023];
+                                              DENSE -0.008 [-0.038, +0.035] / -0.006 [-0.048, +0.033].
+  Out of family (pooled): GABOR90 PH -0.029 [-0.089, +0.047] / -0.004 [-0.069, +0.058], PHF -0.024 at 0.25;
+                          BERLAGE90 PH +0.047 [-0.039, +0.120] / +0.026 [-0.025, +0.098], PHF -0.015 at 0.25.
+Fraction of the CEIL-GD headroom captured at 0.25: STD PH -0.53 [-1.31, -0.15], PHF -0.51 [-1.30, -0.03];
+DENSE PH -0.05 [-0.15, +0.04], PHF -0.12 [-0.23, -0.02]. No variant meets the ">= 0.05 recall with an interval
+excluding 0" criterion in any design. Judgement: NOT A CONTRIBUTION (section 8).
+By-products: (i) a clean replication of C2-CAP on fresh networks (DENSE, MT-FW - BOMP-PK +0.068 [+0.029, +0.109] at
+0.25; section 4.3); (ii) BOMP-PK's P/S Gram cross term is numerically immaterial: the c7 code without it reproduces
+BOMP-PK's hits, locations and scores (rel. <= 1e-12) in 2400/2400 windows at about 10x lower cost (section 6).
+
+----------------------------------------------------------------------------------------------------------------------
+1. DESIGN (code: c7_lib.py; runner c7_run.py; analysis c7_analyze.py)
+----------------------------------------------------------------------------------------------------------------------
+Generator pulse (gen_realistic): w = cos(phi) r_fc - sin(phi) H[r_fc], fc ~ U[1.4, 2.8] Hz, phi ~ U[-45, 45] deg; the
+detectors correlate with a fixed 2 Hz Ricker (MF).
+Pulse bases (orthonormal rows on a +-2 s support, 65 samples):
+  Q1   the registered MF kernel KER/sqrt(E_r) (q = 1).
+  PH   {Ricker 2 Hz, its Hilbert transform} (q = 2): spans every constant phase rotation of the 2 Hz Ricker exactly.
+  PHF  first q right singular vectors of the unit-norm design family (57 fc x 37 phi). q was fixed BEFORE any detection
+       run by the rule "smallest q whose worst-case captured energy over the family is >= 0.95": captured energy
+       (worst / mean) q=1 0.358/0.740, q=2 0.716/0.914, q=3 0.845/0.980, q=4 0.975/0.995 -> q = 4. For comparison
+       the 2 Hz MF captures 0.366/0.734 and PH 0.732/0.906 of the family at zero lag. PHF3 (q = 3) is run as a
+       declared sensitivity arm.
+Whitened model (the task2c identities extended to q pulses): y = D sqrt(E_r)/sd; filter outputs F_j = y (x) psi_j
+(F_1 = MFn for Q1); an atom column (k, j) read at sample I_bi is the data waveform G_bi[:, k] psi_j(t - I_bi), its
+F_j' image is G_bi[:, k] X[j', j](s - I_bi) with X the cross-correlation kernels of the basis; the exact Gram between
+columns is G.G X[j, J](I_a - I_b) (P/S and inter-atom terms included).
+Detector BOMP-PK-Q (everything else identical to BOMP-PK+SC: grid, origins, corrections, +-4-sample search, 5 km
+exclusion, kmax, running-minimum score, hit rule):
+  peak search: argmax of the ENVELOPE energy sum_j ||F_j,i(:, k)||^2 in the +-4-sample window (phase-invariant);
+  statistic: V (6ns x q) = residual filter outputs at the peak samples, Y = Q^T V (Q orthonormal basis of G);
+    R1 (primary, the physical rank-1 model u = m c^T, one moment tensor and one source time function per event):
+    e = lambda_max(Y^T Y) = max_{|c|=1} ||Q^T V c||^2;  FULL (relaxed 6q block): e = ||Y||_F^2. Score e/2.
+    No P/S cross term in the statistic (as MT-FW; see section 6 for why this is exact to 1e-12 here).
+  refit: joint least squares over all active atoms with the exact 6q Gram; R1 by alternating (bilinear) least squares
+    of u_a = m_a c_a^T from c_a = top eigenvector of the entry statistic; FULL unconstrained.
+  cap (optional, selection statistic only, as BOMP-PK-CAP of c2_ablate): each station/phase 3q-vector clipped at norm
+    CAPV = 6 (the MT-FW value, not tuned).
+Variants: BOMP-PK (registered code), BOMP-PK-NX (c7 code, q = 1: control), BOMP-PK-CAP (NX + cap), BOMP-PK-PH and
+BOMP-PK-PHF (PRIMARIES, R1), BOMP-PK-PH-FULL, BOMP-PK-PHF-FULL (relaxations), BOMP-PK-PHF3 (sensitivity),
+BOMP-PK-PH-CAP, BOMP-PK-PHF-CAP (the requested combination with the C2 cap), MT-FW (dense, c6_lib), MT-FW-PH /
+MT-FW-PHF (dense MT-FW with q filters: envelope peak search, 3q cap, R1 statistic, sequential rank-1 deflation from the
+top singular pair of the capped Y), CEIL-GD (verif_2e ceiling, c6_ceil: truth-start refined oracle deflation with the
+2 Hz continuous atom, HOM BOMP-PK statistic).
+Out-of-family pulses (c7_lib.OOFPulse; the generator's fc and phi draws are unchanged in rng consumption, the phase
+range is widened to +-90 deg, and each pulse is scaled to the energy of the design Ricker of the same fc, so the SNR
+design and the coda energy are unchanged):
+  GABOR90   exp(-(t/s)^2) cos(2 pi f0 t + th), s = 0.6/f0 (narrower band, more cycles than a Ricker), th in +-90 deg.
+  BERLAGE90 causal t^2 exp(-2 pi f0 t) sin(2 pi f0 t + th), t >= 0 (onset at the arrival, asymmetric), th in +-90.
+  At zero lag with +-4-sample shifts they are captured by the bases as (Q1 / PH / PHF4): Gabor f0 = 2, th = 90:
+  0.774 / 0.958 / 0.960; Gabor f0 = 1.4: 0.448-0.567 / 0.567 / 0.917; Berlage f0 = 2.8, th = 90: 0.642 / 0.662 /
+  0.838 (a genuine out-of-family test: the subspaces capture more than the MF but not all).
+
+----------------------------------------------------------------------------------------------------------------------
+2. VALIDATION (c7_validate.py -> out/c7_validation.txt; c7_resolution.py -> out/c7_resolution.txt). ALL PASS.
+----------------------------------------------------------------------------------------------------------------------
+A. Structure.
+  A1 q = 1 kernel equals task1x AC exactly; PH psi_1 autocorrelation = AC to 2.2e-16; X(0) = I to 2e-15;
+     X[j, J](tau) = X[J, j](-tau) to 1e-16.
+  A2 q = 1 cross Gram, atom correlations and residual equal task2d PKDict's exactly (0.0 difference).
+  A3 MT-FW-Q with q = 1 reproduces c6_lib.mtfw_dense hits, locations and scores (rel. 1e-12): 6/6 windows.
+  A4 PH and PHF4: filter outputs of explicitly synthesised data-domain atoms equal the model prediction to 2e-16; the
+     6q Gram equals explicit data-domain inner products to 2e-16; correlations to 1e-16.
+  A5 BOMP-PK-NX vs BOMP-PK: identical hit/location sequences (6/6); on the full runs 2400/2400 windows (section 6).
+  A6 rank-1 alternating least squares: full-fit residual <= rank-1 residual <= first ALS pass (1-3 atoms).
+B. Noise-free invariance (source on a grid node, origin on the tau grid, the detectors' own homogeneous medium, no
+   statics, site, polarisation, coda, clutter or noise; 3 cells x 3 sources; statistic = first-iteration block value
+   at the best block within 5 km divided by the whitened signal energy, i.e. the captured fraction):
+                                 BOMP-PK            PH                 PHF4
+   design family mean [min,max]  0.795 [0.599,0.962] 0.830 [0.691,0.980] 0.943 [0.868,0.985]
+   coefficient of variation      0.129              0.125              0.027
+   phase -45..45 at fc 2.0       0.869-0.935        0.950 (flat)       0.953 (flat)
+   fc 1.4 / 2.0 / 2.8 at phase 0 0.701/0.935/0.693  0.708/0.950/0.708  0.950/0.953/0.910
+   phase +-90 (outside design)   0.625 (CV 0.154)   0.789 (CV 0.146)   0.937 (CV 0.028)
+   Gabor, out of family          0.649 (CV 0.219)   0.739 (CV 0.202)   0.913 (CV 0.022)
+   Berlage, out of family        0.705 (CV 0.118)   0.744 (CV 0.110)   0.866 (CV 0.035)
+   FULL relaxations capture 0.01-0.02 more than R1. As designed: PH removes the phase dependence (the MF already
+   recovers much of it through the peak search, 0.87-0.94), not the frequency dependence; PHF4 is nearly invariant to
+   both (CV 0.027 vs 0.129) and also to the out-of-family pulses.
+C. Resolution / realism diagnostic (post hoc, added after the STD results; 150 noise-free, clutter-free single-event
+   windows per setting, networks 40-41):
+                       P(global max > 5 km)   sidelobe ratio max(5-10 km)/max(<=5 km), median   captured fraction
+   EXACT physics       BOMP-PK 0.007  PH 0.007  PHF 0.007  |  0.686 / 0.698 / 0.698          0.805 / 0.840 / 0.919
+   REAL generator      BOMP-PK 0.027  PH 0.013  PHF 0.020  |  0.763 / 0.781 / 0.803          0.497 / 0.511 / 0.547
+   (REAL = default gen_realistic: gradient medium, site factors, polarisation deviation, coda, network statics, +SC
+   corrections, no noise.) In realistic windows the true block captures only about half of the signal energy and the
+   pulse invariance adds 0.014 (PH) to 0.050 (PHF): the pulse is a small part of the model mismatch once site factors
+   (lognormal 0.5), polarisation, medium and residual statics are present. The sidelobe ratio rises slightly with the
+   larger subspace (paired ratio to BOMP-PK: median 1.006 PH, 1.024 PHF; > 1 in 60-65% of cases).
+
+----------------------------------------------------------------------------------------------------------------------
+3. STANDARD WINDOWS (STD, 0-2 events; out/c7_analysis_STD.txt)
+----------------------------------------------------------------------------------------------------------------------
+Recall @0.1 / @0.25 (95% CI):
+                     thin (300 w, 228 ev)                 strong (300 w, 237 ev)               pooled (600 w, 465 ev)
+  BOMP-PK            0.404 [.304,.512] 0.504 [.422,.618]  0.312 [.164,.478] 0.485 [.373,.571]  0.363 [.256,.461] 0.480 [.418,.542]
+  BOMP-PK-PH         0.342 [.224,.450] 0.482 [.367,.604]  0.232 [.123,.338] 0.363 [.249,.473]  0.249 [.180,.367] 0.396 [.324,.467]
+  BOMP-PK-PHF        0.294 [.198,.406] 0.443 [.330,.571]  0.203 [.127,.305] 0.388 [.248,.502]  0.224 [.160,.331] 0.400 [.331,.477]
+  BOMP-PK-CAP        0.491 [.402,.586] 0.596 [.496,.687]  0.376 [.257,.518] 0.485 [.404,.577]  0.441 [.345,.505] 0.499 [.443,.563]
+  BOMP-PK-PH-CAP     0.408 [.322,.517] 0.526 [.442,.626]  0.300 [.206,.410] 0.388 [.299,.502]  0.344 [.259,.409] 0.424 [.359,.488]
+  MT-FW              0.474 [.386,.580] 0.583 [.487,.678]  0.371 [.246,.512] 0.489 [.408,.584]  0.434 [.345,.502] 0.503 [.445,.566]
+  MT-FW-PH           0.408 [.331,.528] 0.535 [.450,.633]  0.308 [.202,.408] 0.376 [.295,.485]  0.340 [.272,.404] 0.422 [.358,.480]
+  CEIL-GD            0.596 [.455,.736] 0.741 [.632,.828]  0.414 [.202,.617] 0.624 [.426,.720]  0.497 [.256,.617] 0.637 [.563,.712]
+Paired differences @0.1 / @0.25:
+  PH - BOMP-PK         thin -0.061 [-0.182,+0.025] / -0.022 [-0.151,+0.083]; strong -0.080 [-0.230,+0.034] /
+                       -0.122 [-0.226,-0.029]; pooled -0.114 [-0.203,-0.017] / -0.084 [-0.148,-0.023]
+  PHF - BOMP-PK        thin -0.110 [-0.223,+0.000] / -0.061 [-0.198,+0.053]; strong -0.110 / -0.097 [-0.230,+0.029];
+                       pooled -0.140 [-0.241,-0.022] / -0.080 [-0.142,-0.005]
+  PH-FULL - BOMP-PK    pooled -0.088 [-0.175,+0.024] / -0.054 [-0.126,+0.009]
+  PHF-FULL - BOMP-PK   pooled -0.097 [-0.210,-0.002] / -0.047 [-0.113,+0.027]
+  PHF3 - BOMP-PK       pooled -0.095 [-0.186,+0.005] / -0.039 [-0.112,+0.030]
+  PH-CAP - BOMP-PK     pooled -0.019 [-0.124,+0.078] / -0.056 [-0.118,+0.000]
+  PH-CAP - BOMP-PK-CAP pooled -0.097 [-0.168,-0.021] / -0.075 [-0.134,-0.023]
+  PHF-CAP - BOMP-PK-CAP pooled -0.144 [-0.221,-0.050] / -0.095 [-0.161,-0.027]
+  PH - MT-FW           pooled -0.185 [-0.256,-0.068] / -0.108 [-0.175,-0.044]
+  PHF - MT-FW          pooled -0.211 [-0.289,-0.087] / -0.103 [-0.178,-0.023]
+  MT-FW-PH - MT-FW     pooled -0.095 [-0.154,-0.020] / -0.082 [-0.139,-0.032]
+  MT-FW-PHF - MT-FW    pooled -0.120 [-0.210,-0.041] / -0.101 [-0.177,-0.033]
+  reference contrasts: MT-FW - BOMP-PK +0.071 [-0.025,+0.168] / +0.024 [-0.020,+0.075]; BOMP-PK-CAP - BOMP-PK
+                       +0.077 [-0.020,+0.175] / +0.019 [-0.025,+0.070] (thin alone +0.092 [+0.004,+0.162] at 0.25);
+                       CEIL-GD - BOMP-PK +0.133 [-0.047,+0.263] / +0.157 [+0.089,+0.228].
+Fraction of the CEIL-GD headroom captured (per replicate; point, [2.5, 97.5] %) at 0.25, pooled:
+  PH -0.53 [-1.31,-0.15], PHF -0.51 [-1.30,-0.03], PH-CAP -0.36 [-0.98,+0.00], PHF-CAP -0.48 [-1.19,-0.06],
+  MT-FW +0.15 [-0.15,+0.48], MT-FW-PH -0.37 [-1.03,-0.03]. (At 0.1 the ratio intervals span about -8 to +6 and are uninformative.)
+Recall by pulse parameters (per-event, each method at its pooled cap-0.25 threshold), BOMP-PK / PH / PHF:
+  |phase| 0-15 0.467/0.360/0.353, 15-30 0.509/0.466/0.436, 30-45 0.461/0.355/0.408;
+  fc < 1.75 0.584/0.480/0.568, 1.75-2.25 0.520/0.444/0.368, >= 2.25 0.361/0.284/0.308.
+  The invariant detectors do not recover the events with large phase rotation or off-2 Hz frequency preferentially;
+  they lose everywhere, including where the pulse matches the MF best.
+
+----------------------------------------------------------------------------------------------------------------------
+4. DENSE OVERLAPPING WINDOWS (DENSE, 3-5 events within 9 km, kmax 7; out/c7_analysis_DENSE.txt)
+----------------------------------------------------------------------------------------------------------------------
+4.1 Recall @0.1 / @0.25:
+                     thin (300 w, 1217 ev)                strong (300 w, 1172 ev)              pooled (600 w, 2389 ev)
+  BOMP-PK            0.066 [.023,.111] 0.176 [.094,.235]  0.096 [.054,.150] 0.187 [.147,.234]  0.075 [.049,.110] 0.179 [.141,.220]
+  BOMP-PK-PH         0.052 [.022,.086] 0.131 [.087,.184]  0.107 [.062,.156] 0.177 [.139,.232]  0.071 [.048,.100] 0.159 [.125,.192]
+  BOMP-PK-PHF        0.037 [.014,.075] 0.122 [.070,.166]  0.073 [.044,.117] 0.154 [.107,.201]  0.053 [.033,.080] 0.133 [.106,.165]
+  BOMP-PK-CAP        0.178 [.125,.228] 0.256 [.214,.316]  0.143 [.097,.184] 0.224 [.170,.270]  0.160 [.127,.187] 0.239 [.212,.273]
+  BOMP-PK-PH-CAP     0.165 [.128,.207] 0.247 [.200,.314]  0.142 [.109,.186] 0.211 [.169,.270]  0.152 [.128,.179] 0.232 [.195,.273]
+  MT-FW              0.184 [.109,.228] 0.250 [.208,.316]  0.146 [.102,.191] 0.241 [.193,.288]  0.152 [.118,.195] 0.247 [.216,.281]
+  MT-FW-PH           0.165 [.134,.215] 0.264 [.213,.310]  0.129 [.101,.176] 0.208 [.173,.254]  0.149 [.126,.180] 0.231 [.199,.266]
+  CEIL-GD            0.415 [.101,.585] 0.577 [.467,.741]  0.430 [.260,.552] 0.567 [.461,.689]  0.418 [.235,.530] 0.571 [.497,.674]
+4.2 Paired differences (pooled; per regime in the analysis file):
+  PH - BOMP-PK          -0.004 [-0.035,+0.022] / -0.021 [-0.057,+0.018]   (thin -0.044 at 0.25, strong -0.009)
+  PHF - BOMP-PK         -0.022 [-0.056,+0.003] / -0.046 [-0.083,-0.006]
+  PH-FULL - BOMP-PK     +0.003 [-0.028,+0.026] / -0.005 [-0.037,+0.034];  PHF-FULL -0.007 / -0.033 [-0.078,+0.006]
+  PHF3 - BOMP-PK        -0.022 [-0.053,+0.006] / -0.030 [-0.069,+0.006]
+  PH-CAP - BOMP-PK      +0.077 [+0.037,+0.111] / +0.053 [+0.011,+0.099]   (all of it is the cap:)
+  PH-CAP - BOMP-PK-CAP  -0.008 [-0.038,+0.035] / -0.006 [-0.048,+0.033]
+  PHF-CAP - BOMP-PK-CAP -0.017 [-0.059,+0.023] / -0.021 [-0.056,+0.014]
+  PH-CAP - MT-FW        +0.000 [-0.045,+0.038] / -0.015 [-0.055,+0.029]
+  MT-FW-PH - MT-FW      -0.003 [-0.050,+0.039] / -0.015 [-0.052,+0.020];  MT-FW-PHF - MT-FW -0.016 / -0.032 [-0.069,+0.007]
+  Headroom captured at 0.25: PH -0.05 [-0.15,+0.04], PHF -0.12 [-0.23,-0.02], PH-CAP +0.14 [+0.03,+0.25] (= the cap's
+  share), MT-FW +0.17 [+0.07,+0.28].
+4.3 Replication of C2-CAP (not the question of C7, but unselected and on fresh networks j = 40-59, TAG 3702):
+  MT-FW - BOMP-PK       thin +0.118 [+0.030,+0.174] / +0.074 [+0.019,+0.171]; strong +0.049 [-0.011,+0.108] /
+                        +0.054 [+0.006,+0.100]; pooled +0.077 [+0.030,+0.122] / +0.068 [+0.029,+0.109]
+  BOMP-PK-CAP - BOMP-PK pooled +0.085 [+0.038,+0.117] / +0.059 [+0.022,+0.102]
+  The C2 pilot estimate (+0.074 / +0.070 pooled, networks 10-15) is reproduced almost exactly with 1.7x more windows (600 vs 360)
+  and narrower intervals; the cap alone again carries the effect (cap-only BOMP-PK-CAP here has no P/S Gram term, which
+  is immaterial, section 6).
+
+----------------------------------------------------------------------------------------------------------------------
+5. FALSE-ALARM BEHAVIOUR (does the larger subspace raise noise scores?)
+----------------------------------------------------------------------------------------------------------------------
+Empty STD windows (k = 0, 255 windows): top-atom score median / P90 / max, mean ratio to the q = 1 statistic, and the
+pooled cap-0.25 threshold:
+  BOMP-PK (= NX) 28.1 / 41.3 / 102.9, ratio 1.000, thr 47.1     PH-FULL  30.1 / 43.9 / 109.0, ratio 1.085, thr 50.4
+  PH             25.1 / 39.0 / 107.5, ratio 0.913, thr 46.2     PHF-FULL 39.8 / 52.0 / 117.7, ratio 1.416, thr 58.8
+  PHF            27.1 / 37.2 / 103.7, ratio 0.968, thr 46.4     PHF3     27.9 / 38.0 / 107.6, ratio 0.990, thr 45.5
+  BOMP-PK-CAP    28.1 / 39.5 /  54.1, thr 41.5                  PH-CAP   24.9 / 36.1 / 48.2, ratio 0.888, thr 37.5
+  (GABOR90 and BERLAGE90 give the same pattern: R1 ratios 0.87-0.99, FULL 1.09 and 1.42-1.43.)
+  The rank-1 (separable) statistic does NOT raise the noise/clutter scores (the rank-1 constraint and the envelope
+  reading keep the empty-window maxima at or below the q = 1 level); the relaxed full 6q block does (PHF-FULL +42%).
+Where the false alarms come from, at each method's pooled cap-0.25 threshold (STD, both regimes): false atoms per
+window in empty | event windows: BOMP-PK 0.039 | 0.388, PH 0.031 | 0.403, PHF 0.031 | 0.397. Almost all false alarms
+at the operating point are event-induced (mislocated atoms and leakage), not noise. First-atom hit rate in event
+windows: BOMP-PK 0.649, CAP 0.675, PH 0.609, PHF 0.577, PH-FULL 0.632, PHF3 0.620; coverage (event with an atom within
+5 km at any score) 0.714 / 0.738 / 0.684 / 0.630. DENSE: first-atom hit 0.745 (BOMP-PK), 0.690 (PH), 0.665 (PHF),
+0.787 (PH-CAP), 0.785 (CAP). The invariant detectors lose by placing the first atom beyond 5 km more often.
+
+----------------------------------------------------------------------------------------------------------------------
+6. RUNTIME (s/window, 2 processes on 2 cores; STD / DENSE)
+----------------------------------------------------------------------------------------------------------------------
+  BOMP-PK (registered code) 0.470 / 0.686     BOMP-PK-NX 0.044 / 0.064     BOMP-PK-CAP 0.082 / 0.119
+  BOMP-PK-PH 0.084 / 0.129                    BOMP-PK-PHF 0.264 / 0.401    BOMP-PK-PH-CAP 0.137 / 0.202
+  BOMP-PK-PH-FULL 0.121 / 0.185               BOMP-PK-PHF-FULL 0.220 / 0.375
+  MT-FW 0.078 / 0.112                         MT-FW-PH 0.211 / 0.302       MT-FW-PHF 0.455 / 0.657
+  CEIL-GD 0.244 / 0.479 (genie; not a detector). q filters cost 0.002 s/window.
+  Side finding: BOMP-PK-NX (the c7 code with q = 1: statistic ||Q^T v||^2 without BOMP-PK's P/S cross term, same
+  joint refit) reproduces the registered BOMP-PK hits and locations in 2400/2400 windows (all four designs) with scores
+  equal to <= 1.0e-12 relative, at 10.7x lower cost. The P/S cross term AC(t_S - t_P) is numerically negligible at the
+  S-P lags of this geometry, and the registered code spends most of its time re-inverting 6x6 Grams for it.
+
+----------------------------------------------------------------------------------------------------------------------
+7. ROBUSTNESS TO OUT-OF-FAMILY PULSES (out/c7_analysis_GABOR90.txt, c7_analysis_BERLAGE90.txt)
+----------------------------------------------------------------------------------------------------------------------
+Honesty caveat: the generator's pulse family was designed by us, so a detector built for exactly that family risks
+circularity (a gain could be an artefact of matching our own simulation choice). The test was therefore run on two
+families outside the design (different wavelet shapes, phases up to +-90 deg; section 1).
+Recall @0.1 / @0.25 pooled (600 windows each):
+  GABOR90   BOMP-PK 0.261/0.394, PH 0.232/0.390, PHF 0.241/0.370, CAP 0.303/0.423, PH-CAP 0.281/0.410, MT-FW 0.316/0.441,
+            CEIL-GD 0.376/0.526
+  BERLAGE90 BOMP-PK 0.277/0.398, PH 0.325/0.424, PHF 0.245/0.383, CAP 0.329/0.389, PH-CAP 0.342/0.413, MT-FW 0.320/0.398,
+            CEIL-GD 0.406/0.557
+Paired differences (pooled; thin / strong in the files):
+  GABOR90   PH - BOMP-PK -0.029 [-0.089,+0.047] / -0.004 [-0.069,+0.058]; PHF -0.020 [-0.092,+0.038] / -0.024 [-0.088,
+            +0.069]; PH-FULL +0.007 at 0.25; PHF3 +0.020 [-0.048,+0.090] at 0.25; PH-CAP - CAP -0.013 [-0.073,+0.050] at
+            0.25; MT-FW-PH - MT-FW -0.033 [-0.090,+0.036] at 0.25.
+  BERLAGE90 PH - BOMP-PK +0.047 [-0.039,+0.120] / +0.026 [-0.025,+0.098]; PHF -0.032 / -0.015 [-0.085,+0.059];
+            PH-FULL +0.039 [-0.020,+0.102] at 0.25; PH-CAP - CAP +0.024 [-0.019,+0.074] at 0.25; MT-FW-PH - MT-FW
+            +0.017 [-0.024,+0.068] at 0.25.
+  Headroom captured at 0.25: GABOR90 PH -0.03 [-0.84,+0.38], PHF -0.19 [-1.14,+0.48]; BERLAGE90 PH +0.16 [-0.23,+0.61],
+  PHF -0.09 [-0.80,+0.35].
+Reading. There is no in-family gain for the out-of-family test to confirm. Out of family the invariant detectors are
+indistinguishable from BOMP-PK (all intervals include 0; the largest point estimate, PH on Berlage pulses, +0.026 at
+0.25, is below the 0.05 threshold and its interval includes 0). Across the three standard-window designs the PH effect
+at 0.25 is -0.084, -0.004, +0.026: heterogeneous, never a gain with an interval excluding 0. Descriptively (unpaired,
+different windows and catalogues), BOMP-PK drops from 0.480 (STD) to 0.394/0.398 (OOF) at 0.25 while PH stays at
+0.396 -> 0.390/0.424, i.e. the invariant detector is less sensitive to the pulse family, but only because it is
+already lower in the design family.
+
+----------------------------------------------------------------------------------------------------------------------
+8. INTERPRETATION AND JUDGEMENT
+----------------------------------------------------------------------------------------------------------------------
+Why invariance does not help (evidence-based, the mechanism part is an interpretation):
+  (a) The pulse is a small part of the model error in realistic windows. Noise-free, with the generator's full
+      realism, the true block captures only about 50% of the signal energy with the 2 Hz MF; pulse invariance adds
+      1.4 (PH) to 5.0 (PHF) percentage points (section 2C). The rest is site amplification, polarisation deviation,
+      medium and residual statics - consistent with C6b, where removing the pulse mismatch alone did not close the
+      BOMP-PK headroom (PULSE variant within +-0.05).
+  (b) The extra pulse degrees of freedom are paid for in spatial selectivity, not in noise. Empty-window maxima do not
+      rise for the rank-1 statistic. Noise-free, the global maximum is within 5 km for every detector in >= 97% of
+      windows (PH is even mislocated slightly less often, 0.013 vs 0.027), but the margin over nearby wrong nodes is
+      thinner (sidelobe ratio +0.6 to +2.4%). With noise, clutter and overlapping events the first atom then lands
+      beyond 5 km more often (STD first-atom hit 0.649 -> 0.609 PH / 0.577 PHF). Since almost all false alarms at the
+      operating point are event-induced, this costs recall directly. This link is plausible but not proven: the
+      noise-free diagnostic shows only a small resolution change, and the size of the recall loss is larger than it
+      alone would suggest.
+  (c) The relaxed 6q block (FULL) additionally raises the noise scores (PHF-FULL +42%) and is no better.
+  (d) The cap (C2) and pulse invariance do not combine: PH-CAP = CAP within 0.01 in DENSE and worse in STD.
+Criterion (plausible real contribution: >= 0.05 recall with an interval excluding 0 AND surviving the out-of-family
+test): NOT MET by any variant in any design. Several variants are significantly WORSE than BOMP-PK in the design
+family (STD pooled PH -0.084 [-0.148, -0.023], PHF -0.080 [-0.142, -0.005] at 0.25). Headroom captured is negative
+(STD) or about zero (DENSE, OOF). C7 is NOT A CONTRIBUTION in this benchmark. It is a useful negative: the source time
+function is not where the detector's headroom is; together with C6 (velocity model: null) it indicates that "more
+physics in the atom" does not pay here, while robust per-station statistics (the cap) do.
+Selection caveats: all 13 variants are reported; the two primaries and the q rule were fixed before any detection run;
+PHF3 and FULL were declared as sensitivity/relaxation arms. While testing the analysis script I looked at a partial STD
+analysis (115 windows per regime, 30 bootstrap replicates); nothing in the methods was changed afterwards. The
+resolution and false-atom split diagnostics (sections 2C, 5) were added after seeing the STD results and are
+descriptive. CEIL-GD uses the 2 Hz continuous atom by definition (verif_2e); it is a ceiling for the 2 Hz grid block
+detector, so a pulse-adaptive detector could in principle exceed it - none came close.
+
+----------------------------------------------------------------------------------------------------------------------
+9. DRAFT CONFIRMATORY PREREGISTRATION (Task 2H; to be appended to PREREGISTRO_1j_1k.txt and hashed BEFORE any code for
+   it is run on seeds 4242/8888; nothing below has been run on those seeds)
+----------------------------------------------------------------------------------------------------------------------
+Recommendation first: do NOT spend a confirmatory budget on C7 as a positive hypothesis; the pilot excludes a +0.05 gain
+in the design family (STD upper bounds -0.023 / -0.005 at 0.25). If the thesis wants the negative claim ("pulse-
+invariant subspaces do not improve, and may degrade, the moment-tensor detector") on registered data, the cheapest
+route is to add the C7 arms as SECONDARY/descriptive comparisons to Task 2F (section 7.1 of REPORT.txt), whose dense
+windows and networks already exist in its plan (cost about +0.35 s/window). A stand-alone draft follows.
+Question (H-C7): does replacing the 2 Hz matched-filter block by the phase-invariant rank-1 block (BOMP-PK-PH) change
+  recall relative to BOMP-PK+SC at equal realised false-event rate, in standard 0-2-event windows?
+Data: seeds 4242 and 8888 (independent replications), FRESH networks task2a_confirm.network(seed, cell, j) disjoint from
+  any 2F/2G allocation (e.g. j = 120..219), 3 cells, regimes thin and strong, 5 windows per network drawn with
+  draw_sources from a TAG not used before; +SC from 20 catalogue events as in 2A; default gen_realistic.
+Methods (code frozen and hashed: c7_lib.py, c7_run.py with its BASES/BOMPS definitions, task2d_methods.bomp_pk_record):
+  BOMP-PK+SC (comparator), BOMP-PK-PH (primary), BOMP-PK-PHF (q = 4, secondary), BOMP-PK-CAP and BOMP-PK-PH-CAP
+  (interaction with the cap, secondary), MT-FW (reference). Registered grid, origins, +-0.25 s tolerance, 5 km exclusion,
+  hit rule, kmax 5.
+Endpoint: recall at <= 0.25 realised false events per window (primary), <= 0.1 (secondary); exact FROC; operating point
+  per method; hierarchical bootstrap (strata regime x cell, networks then windows, 2000 replicates).
+Rules (two-sided, per seed, pooled over regimes and cells):
+  2H-a (gain): BOMP-PK-PH - BOMP-PK lower 95% bound > 0 and point >= 0.03 in BOTH seeds -> pulse invariance helps.
+  2H-b (harm): upper 95% bound < 0 in BOTH seeds -> pulse invariance degrades the detector (the pilot's direction).
+  2H-c (equivalence, TOST margin 0.05): both one-sided 95% bounds inside [-0.05, +0.05] in both seeds -> no effect of
+  practical size. Otherwise inconclusive. Holm over the 2 seeds x 2 caps for the strict reading.
+Out-of-family arm (descriptive, required for any positive claim): the same networks with the BERLAGE90 and GABOR90
+  generators (c7_lib.OOF, new TAGs), 40 networks per cell and regime; a 2H-a pass counts only if the pooled OOF point
+  estimate is >= 0.03 in the same direction.
+Sample size (c7_power.py -> out/c7_power.txt; pilot seed 999, 20 networks per cell and regime, 5 windows each, pooled
+  bootstrap SD of BOMP-PK-PH - BOMP-PK at 0.25 = 0.0306, at 0.1 = 0.0461): n = n_pilot (SD (z_0.975 + z_pow)/delta)^2.
+  delta 0.05, power 0.95 per seed: 196 networks per cell over both regimes = 98 per cell and regime; delta 0.03, power
+  0.90: 220 per cell and regime. Recommended: 100 networks per cell and regime per seed (power 0.95 at delta 0.05,
+  0.59 at 0.03 for the gain/harm tests; the equivalence test at margin 0.05 has power about 0.9 if the true effect is 0,
+  and none if it is -0.08 as in the pilot, in which case 2H-b decides). 600 networks x 5 windows = 3000 windows per seed;
+  about 1.2 s/window for the six methods (BOMP-PK can use the BOMP-PK-NX implementation, identical to 1e-12, if that is
+  registered in advance; otherwise +0.4 s) -> about 1 h per seed on one core; OOF arm 2 x 1200 windows, about 0.8 h.
+Interpretation: 2H-b passes -> registered negative: pulse invariance costs recall; 2H-c passes -> no practical effect;
+  2H-a passes (unexpected) -> re-examine with the OOF arm before any claim. Nothing is changed after seeing 4242/8888.
+
+----------------------------------------------------------------------------------------------------------------------
+10. FILES (all in /home/claude/work/explore_contrib; outputs in out/)
+----------------------------------------------------------------------------------------------------------------------
+  c7_lib.py        bases, filters, kernels, QDict, bomp_q (R1/FULL, cap), mtfw_q, rank-1 ALS, out-of-family pulses
+  c7_validate.py   -> out/c7_validation.txt (structural checks, noise-free invariance, timing)
+  c7_resolution.py -> out/c7_resolution.txt (noise-free mislocation / sidelobe / captured-fraction diagnostic)
+  c7_run.py        -> out/c7_{STD,DENSE,GABOR90,BERLAGE90}_{thin,strong}.json (+ .log)
+  c7_analyze.py    -> out/c7_analysis_{STD,DENSE,GABOR90,BERLAGE90}.txt, out/c7_bootsd_*.json
+  c7_power.py      -> out/c7_power.txt
+  No registered file, no 2A-2E part, no verif_2e file and no earlier explore_contrib output was modified.

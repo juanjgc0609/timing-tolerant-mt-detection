@@ -1,0 +1,10 @@
+task2c_explore.py (EXPLORATORY, post hoc); kernel ['Prescott', 'Katmai']
+E1 ideal ladder_4        60 windows, 59 events: MT-FW 0.627/0.712 | BOMP 0.220/0.458 | MTSTACK 0.119/0.169 | GL-FW 0.136/0.237  (38 s)
+E1 pert  ladder_4        60 windows, 59 events: MT-FW 0.322/0.525 | BOMP 0.034/0.203 | MTSTACK 0.017/0.051 | GL-FW 0.034/0.085  (38 s)
+E1 ideal ladder_6        60 windows, 44 events: MT-FW 0.864/0.886 | BOMP 0.182/0.432 | MTSTACK 0.091/0.182 | GL-FW 0.114/0.273  (48 s)
+E1 pert  ladder_6        60 windows, 44 events: MT-FW 0.705/0.795 | BOMP 0.136/0.227 | MTSTACK 0.068/0.136 | GL-FW 0.091/0.159  (48 s)
+E1 ideal unilateral_c40  60 windows, 58 events: MT-FW 0.810/0.810 | BOMP 0.500/0.672 | MTSTACK 0.483/0.603 | GL-FW 0.414/0.500  (57 s)
+E1 pert  unilateral_c40  60 windows, 58 events: MT-FW 0.690/0.759 | BOMP 0.224/0.328 | MTSTACK 0.069/0.241 | GL-FW 0.052/0.259  (56 s)
+E2 2024 thin ladder_4        100 windows: MT-FW+SC 0.322/0.517 | BOMP+SC 0.161/0.230 | MT-FW+oracleSC 0.345/0.563 | BOMP+oracleSC 0.172/0.264  (28 s)
+E2 2024 thin ladder_6        100 windows: MT-FW+SC 0.458/0.556 | BOMP+SC 0.083/0.222 | MT-FW+oracleSC 0.403/0.528 | BOMP+oracleSC 0.153/0.264  (32 s)
+E2 2024 thin unilateral_c40  100 windows: MT-FW+SC 0.549/0.648 | BOMP+SC 0.197/0.380 | MT-FW+oracleSC 0.592/0.732 | BOMP+oracleSC 0.183/0.465  (35 s)

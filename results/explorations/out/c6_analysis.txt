@@ -1,0 +1,201 @@
+======================================================================================================================
+REGIME thin  (out/c6_thin.json)
+  CAL-H params median [IQR]: 3.024 [2.983, 3.046], 1.737 [1.716, 1.760]
+  CAL-G params median [IQR]: 2.816 [2.789, 2.848], 0.040 [0.034, 0.045], 1.747 [1.720, 1.763]
+  CAL-2L params median [IQR]: 2.943 [2.916, 2.970], 3.167 [3.126, 3.213], 6.350 [5.850, 7.152], 1.728 [1.715, 1.756]
+  median |corrections - true statics| (s): HOM 0.102, ORA 0.082, ORA-TS 0.000, CAL-H 0.153, CAL-G 0.114, CAL-2L 0.124
+  median JHD pick rms (s): CAL-H 0.0351, CAL-G 0.0301, CAL-2L 0.0450
+  s/window: BOMP-PK:HOM 0.825, MT-FW:HOM 0.129, BOMP-PK:ORA 0.821, MT-FW:ORA 0.129, BOMP-PK:ORA-TS 0.809, MT-FW:ORA-TS 0.130, BOMP-PK:CAL-H 0.821, MT-FW:CAL-H 0.130, BOMP-PK:CAL-G 0.818, MT-FW:CAL-G 0.129, BOMP-PK:CAL-2L 0.823, MT-FW:CAL-2L 0.129, CEIL 0.650
+  setup s/network (6 models incl. JHD): 31.3; JHD s: H 0.38 G 0.69 2L 12.49
+
+thin pooled (3 cells): windows 300, events 224, networks 30
+  recall @0.1 / @0.25 with 95% CI
+    BOMP-PK:HOM        0.429 [0.245, 0.554]   0.580 [0.452, 0.691]
+    BOMP-PK:ORA        0.411 [0.222, 0.563]   0.558 [0.432, 0.670]
+    BOMP-PK:ORA-TS     0.540 [0.319, 0.690]   0.661 [0.562, 0.767]
+    BOMP-PK:CAL-H      0.473 [0.290, 0.603]   0.607 [0.504, 0.725]
+    BOMP-PK:CAL-G      0.442 [0.238, 0.602]   0.612 [0.512, 0.725]
+    BOMP-PK:CAL-2L     0.308 [0.162, 0.511]   0.554 [0.409, 0.674]
+    MT-FW:HOM          0.464 [0.342, 0.600]   0.603 [0.494, 0.720]
+    MT-FW:ORA          0.460 [0.339, 0.571]   0.562 [0.459, 0.668]
+    MT-FW:ORA-TS       0.540 [0.388, 0.679]   0.652 [0.547, 0.772]
+    MT-FW:CAL-H        0.513 [0.400, 0.624]   0.612 [0.518, 0.714]
+    MT-FW:CAL-G        0.509 [0.382, 0.636]   0.607 [0.514, 0.707]
+    MT-FW:CAL-2L       0.429 [0.315, 0.564]   0.598 [0.483, 0.691]
+    CEIL-GD            0.647 [0.339, 0.795]   0.786 [0.656, 0.876]
+    CEIL-GD-O          0.670 [0.297, 0.803]   0.786 [0.682, 0.872]
+    CEIL-GD-TT         0.362 [0.094, 0.573]   0.562 [0.439, 0.738]
+  differences (paired, same bootstrap replicates)
+    BOMP-PK:ORA    - BOMP-PK:HOM  @0.1 -0.018 [-0.149, +0.116] P(<=0) 0.636   @0.25 -0.022 [-0.123, +0.081] P(<=0) 0.699
+    BOMP-PK:ORA-TS - BOMP-PK:HOM  @0.1 +0.112 [-0.031, +0.266] P(<=0) 0.062   @0.25 +0.080 [-0.005, +0.188] P(<=0) 0.037
+    BOMP-PK:CAL-H  - BOMP-PK:HOM  @0.1 +0.045 [-0.055, +0.168] P(<=0) 0.161   @0.25 +0.027 [-0.046, +0.123] P(<=0) 0.193
+    BOMP-PK:CAL-G  - BOMP-PK:HOM  @0.1 +0.013 [-0.126, +0.163] P(<=0) 0.421   @0.25 +0.031 [-0.061, +0.147] P(<=0) 0.235
+    BOMP-PK:CAL-2L - BOMP-PK:HOM  @0.1 -0.121 [-0.248, +0.071] P(<=0) 0.890   @0.25 -0.027 [-0.145, +0.089] P(<=0) 0.651
+    MT-FW:ORA      - MT-FW:HOM    @0.1 -0.004 [-0.114, +0.096] P(<=0) 0.552   @0.25 -0.040 [-0.141, +0.050] P(<=0) 0.810
+    MT-FW:ORA-TS   - MT-FW:HOM    @0.1 +0.076 [-0.072, +0.212] P(<=0) 0.126   @0.25 +0.049 [-0.057, +0.167] P(<=0) 0.166
+    MT-FW:CAL-H    - MT-FW:HOM    @0.1 +0.049 [-0.043, +0.146] P(<=0) 0.175   @0.25 +0.009 [-0.062, +0.082] P(<=0) 0.390
+    MT-FW:CAL-G    - MT-FW:HOM    @0.1 +0.045 [-0.082, +0.176] P(<=0) 0.277   @0.25 +0.004 [-0.099, +0.108] P(<=0) 0.433
+    MT-FW:CAL-2L   - MT-FW:HOM    @0.1 -0.036 [-0.158, +0.095] P(<=0) 0.672   @0.25 -0.004 [-0.120, +0.074] P(<=0) 0.583
+    MT-FW:HOM      - BOMP-PK:HOM  @0.1 +0.036 [-0.055, +0.207] P(<=0) 0.214   @0.25 +0.022 [-0.038, +0.102] P(<=0) 0.290
+    MT-FW:CAL-G    - BOMP-PK:HOM  @0.1 +0.080 [-0.048, +0.256] P(<=0) 0.102   @0.25 +0.027 [-0.066, +0.145] P(<=0) 0.288
+    CEIL-GD        - BOMP-PK:HOM  @0.1 +0.219 [-0.005, +0.413] P(<=0) 0.026   @0.25 +0.205 [+0.082, +0.330] P(<=0) 0.000
+    CEIL-GD-O      - BOMP-PK:HOM  @0.1 +0.241 [-0.029, +0.427] P(<=0) 0.029   @0.25 +0.205 [+0.084, +0.330] P(<=0) 0.000
+    CEIL-GD        - MT-FW:HOM    @0.1 +0.183 [-0.121, +0.358] P(<=0) 0.050   @0.25 +0.183 [+0.063, +0.289] P(<=0) 0.001
+  fraction of the CEIL-GD headroom (CEIL-GD - HOM of the same detector) captured by the model
+    BOMP-PK:ORA    @0.1 -0.082 [-1.182, +0.548]   @0.25 -0.109 [-1.051, +0.357]
+    BOMP-PK:ORA-TS @0.1 +0.510 [-0.455, +1.400]   @0.25 +0.391 [-0.038, +0.889]
+    BOMP-PK:CAL-H  @0.1 +0.204 [-0.327, +0.909]   @0.25 +0.130 [-0.321, +0.628]
+    BOMP-PK:CAL-G  @0.1 +0.061 [-0.968, +0.613]   @0.25 +0.152 [-0.471, +0.600]
+    BOMP-PK:CAL-2L @0.1 -0.551 [-2.064, +0.436]   @0.25 -0.130 [-1.333, +0.352]
+    MT-FW:ORA      @0.1 -0.024 [-1.373, +0.750]   @0.25 -0.220 [-1.468, +0.250]
+    MT-FW:ORA-TS   @0.1 +0.415 [-0.889, +2.000]   @0.25 +0.268 [-0.500, +0.895]
+    MT-FW:CAL-H    @0.1 +0.268 [-0.809, +1.141]   @0.25 +0.049 [-0.573, +0.429]
+    MT-FW:CAL-G    @0.1 +0.244 [-1.375, +1.274]   @0.25 +0.024 [-0.935, +0.517]
+    MT-FW:CAL-2L   @0.1 -0.195 [-1.824, +0.732]   @0.25 -0.024 [-1.201, +0.365]
+  hits at the cap-0.25 operating point: median epicentral / depth error (km), n hits; atom coverage (event has an atom within 5 km at any score), median nearest-atom distance of the rest
+    BOMP-PK:HOM        epi  1.93  depth  1.87  n  135   coverage 0.754  far-median  6.75
+    BOMP-PK:ORA        epi  2.01  depth  1.94  n  130   coverage 0.705  far-median  7.68
+    BOMP-PK:ORA-TS     epi  1.58  depth  1.88  n  151   coverage 0.804  far-median  7.55
+    BOMP-PK:CAL-H      epi  2.06  depth  1.84  n  142   coverage 0.759  far-median  7.48
+    BOMP-PK:CAL-G      epi  1.70  depth  2.00  n  142   coverage 0.763  far-median  7.44
+    BOMP-PK:CAL-2L     epi  1.86  depth  2.00  n  127   coverage 0.728  far-median  6.72
+    MT-FW:HOM          epi  2.08  depth  1.66  n  143   coverage 0.768  far-median  6.72
+    MT-FW:ORA          epi  1.86  depth  1.88  n  132   coverage 0.737  far-median  7.94
+    MT-FW:ORA-TS       epi  1.63  depth  2.00  n  155   coverage 0.790  far-median  6.95
+    MT-FW:CAL-H        epi  2.10  depth  1.93  n  146   coverage 0.759  far-median  7.85
+    MT-FW:CAL-G        epi  1.70  depth  1.95  n  140   coverage 0.790  far-median  7.55
+    MT-FW:CAL-2L       epi  1.80  depth  2.00  n  143   coverage 0.732  far-median  7.92
+  per cell (point estimates @0.1/@0.25):
+    ladder_4 (100 windows, 75 events): BOMP-PK:HOM 0.37/0.52  BOMP-PK:ORA 0.36/0.47  BOMP-PK:ORA-TS 0.53/0.59  BOMP-PK:CAL-H 0.41/0.52  BOMP-PK:CAL-G 0.33/0.57  BOMP-PK:CAL-2L 0.40/0.57  MT-FW:HOM 0.48/0.57  MT-FW:ORA 0.41/0.51  MT-FW:ORA-TS 0.44/0.57  MT-FW:CAL-H 0.45/0.49  MT-FW:CAL-G 0.51/0.63  MT-FW:CAL-2L 0.36/0.55  CEIL-GD 0.67/0.73  CEIL-GD-O 0.68/0.75  CEIL-GD-TT 0.32/0.52
+    ladder_6 (100 windows, 80 events): BOMP-PK:HOM 0.35/0.55  BOMP-PK:ORA 0.34/0.53  BOMP-PK:ORA-TS 0.44/0.64  BOMP-PK:CAL-H 0.38/0.59  BOMP-PK:CAL-G 0.38/0.59  BOMP-PK:CAL-2L 0.26/0.57  MT-FW:HOM 0.42/0.59  MT-FW:ORA 0.42/0.53  MT-FW:ORA-TS 0.64/0.70  MT-FW:CAL-H 0.47/0.65  MT-FW:CAL-G 0.36/0.53  MT-FW:CAL-2L 0.49/0.62  CEIL-GD 0.70/0.88  CEIL-GD-O 0.74/0.84  CEIL-GD-TT 0.45/0.70
+    unilateral_c40 (100 windows, 69 events): BOMP-PK:HOM 0.61/0.62  BOMP-PK:ORA 0.59/0.70  BOMP-PK:ORA-TS 0.70/0.80  BOMP-PK:CAL-H 0.68/0.74  BOMP-PK:CAL-G 0.62/0.74  BOMP-PK:CAL-2L 0.43/0.62  MT-FW:HOM 0.55/0.68  MT-FW:ORA 0.57/0.67  MT-FW:ORA-TS 0.70/0.74  MT-FW:CAL-H 0.68/0.72  MT-FW:CAL-G 0.68/0.74  MT-FW:CAL-2L 0.55/0.62  CEIL-GD 0.67/0.75  CEIL-GD-O 0.67/0.83  CEIL-GD-TT 0.42/0.65
+======================================================================================================================
+REGIME strong  (out/c6_strong.json)
+  CAL-H params median [IQR]: 2.945 [2.890, 3.031], 1.752 [1.636, 1.807]
+  CAL-G params median [IQR]: 2.696 [2.406, 2.857], 0.046 [0.021, 0.065], 1.750 [1.666, 1.832]
+  CAL-2L params median [IQR]: 2.964 [2.902, 3.006], 3.211 [3.089, 3.229], 6.639 [6.098, 7.859], 1.739 [1.704, 1.808]
+  median |corrections - true statics| (s): HOM 0.135, ORA 0.123, ORA-TS 0.000, CAL-H 0.276, CAL-G 0.355, CAL-2L 0.228
+  median JHD pick rms (s): CAL-H 0.2059, CAL-G 0.1977, CAL-2L 0.2129
+  s/window: BOMP-PK:HOM 0.816, MT-FW:HOM 0.130, BOMP-PK:ORA 0.807, MT-FW:ORA 0.128, BOMP-PK:ORA-TS 0.804, MT-FW:ORA-TS 0.128, BOMP-PK:CAL-H 0.808, MT-FW:CAL-H 0.127, BOMP-PK:CAL-G 0.802, MT-FW:CAL-G 0.128, BOMP-PK:CAL-2L 0.814, MT-FW:CAL-2L 0.128, CEIL 0.645
+  setup s/network (6 models incl. JHD): 32.6; JHD s: H 0.57 G 1.16 2L 13.26
+
+strong pooled (3 cells): windows 300, events 251, networks 30
+  recall @0.1 / @0.25 with 95% CI
+    BOMP-PK:HOM        0.375 [0.284, 0.460]   0.466 [0.383, 0.555]
+    BOMP-PK:ORA        0.371 [0.279, 0.468]   0.470 [0.371, 0.566]
+    BOMP-PK:ORA-TS     0.378 [0.268, 0.465]   0.490 [0.405, 0.577]
+    BOMP-PK:CAL-H      0.323 [0.228, 0.407]   0.402 [0.319, 0.513]
+    BOMP-PK:CAL-G      0.287 [0.192, 0.380]   0.363 [0.274, 0.478]
+    BOMP-PK:CAL-2L     0.307 [0.207, 0.430]   0.422 [0.321, 0.526]
+    MT-FW:HOM          0.359 [0.280, 0.451]   0.442 [0.364, 0.528]
+    MT-FW:ORA          0.311 [0.231, 0.410]   0.402 [0.316, 0.502]
+    MT-FW:ORA-TS       0.402 [0.314, 0.513]   0.490 [0.397, 0.595]
+    MT-FW:CAL-H        0.303 [0.224, 0.411]   0.398 [0.320, 0.489]
+    MT-FW:CAL-G        0.283 [0.191, 0.356]   0.375 [0.278, 0.463]
+    MT-FW:CAL-2L       0.347 [0.217, 0.448]   0.414 [0.332, 0.527]
+    CEIL-GD            0.422 [0.261, 0.517]   0.502 [0.404, 0.620]
+    CEIL-GD-O          0.394 [0.266, 0.523]   0.514 [0.404, 0.643]
+    CEIL-GD-TT         0.291 [0.165, 0.420]   0.410 [0.332, 0.531]
+  differences (paired, same bootstrap replicates)
+    BOMP-PK:ORA    - BOMP-PK:HOM  @0.1 -0.004 [-0.084, +0.081] P(<=0) 0.474   @0.25 +0.004 [-0.079, +0.080] P(<=0) 0.488
+    BOMP-PK:ORA-TS - BOMP-PK:HOM  @0.1 +0.004 [-0.104, +0.093] P(<=0) 0.520   @0.25 +0.024 [-0.054, +0.113] P(<=0) 0.238
+    BOMP-PK:CAL-H  - BOMP-PK:HOM  @0.1 -0.052 [-0.141, +0.021] P(<=0) 0.929   @0.25 -0.064 [-0.130, +0.034] P(<=0) 0.889
+    BOMP-PK:CAL-G  - BOMP-PK:HOM  @0.1 -0.088 [-0.194, +0.004] P(<=0) 0.974   @0.25 -0.104 [-0.202, +0.013] P(<=0) 0.963
+    BOMP-PK:CAL-2L - BOMP-PK:HOM  @0.1 -0.068 [-0.166, +0.039] P(<=0) 0.901   @0.25 -0.044 [-0.130, +0.050] P(<=0) 0.860
+    MT-FW:ORA      - MT-FW:HOM    @0.1 -0.048 [-0.131, +0.039] P(<=0) 0.859   @0.25 -0.040 [-0.129, +0.057] P(<=0) 0.801
+    MT-FW:ORA-TS   - MT-FW:HOM    @0.1 +0.044 [-0.032, +0.141] P(<=0) 0.159   @0.25 +0.048 [-0.031, +0.147] P(<=0) 0.118
+    MT-FW:CAL-H    - MT-FW:HOM    @0.1 -0.056 [-0.121, +0.023] P(<=0) 0.921   @0.25 -0.044 [-0.117, +0.023] P(<=0) 0.909
+    MT-FW:CAL-G    - MT-FW:HOM    @0.1 -0.076 [-0.182, +0.000] P(<=0) 0.979   @0.25 -0.068 [-0.175, +0.019] P(<=0) 0.946
+    MT-FW:CAL-2L   - MT-FW:HOM    @0.1 -0.012 [-0.141, +0.078] P(<=0) 0.710   @0.25 -0.028 [-0.101, +0.063] P(<=0) 0.667
+    MT-FW:HOM      - BOMP-PK:HOM  @0.1 -0.016 [-0.095, +0.083] P(<=0) 0.607   @0.25 -0.024 [-0.098, +0.054] P(<=0) 0.745
+    MT-FW:CAL-G    - BOMP-PK:HOM  @0.1 -0.092 [-0.206, +0.000] P(<=0) 0.980   @0.25 -0.092 [-0.206, +0.000] P(<=0) 0.976
+    CEIL-GD        - BOMP-PK:HOM  @0.1 +0.048 [-0.112, +0.140] P(<=0) 0.278   @0.25 +0.036 [-0.054, +0.159] P(<=0) 0.247
+    CEIL-GD-O      - BOMP-PK:HOM  @0.1 +0.020 [-0.112, +0.156] P(<=0) 0.368   @0.25 +0.048 [-0.057, +0.179] P(<=0) 0.202
+    CEIL-GD        - MT-FW:HOM    @0.1 +0.064 [-0.109, +0.149] P(<=0) 0.274   @0.25 +0.060 [-0.045, +0.176] P(<=0) 0.159
+  fraction of the CEIL-GD headroom (CEIL-GD - HOM of the same detector) captured by the model
+    BOMP-PK:ORA    @0.1 -0.083 [-4.658, +4.333]   @0.25 +0.111 [-6.000, +4.930]
+    BOMP-PK:ORA-TS @0.1 +0.083 [-5.825, +4.000]   @0.25 +0.667 [-6.000, +7.825]
+    BOMP-PK:CAL-H  @0.1 -1.083 [-8.412, +6.825]   @0.25 -1.778 [-9.767, +14.000]
+    BOMP-PK:CAL-G  @0.1 -1.833 [-15.000, +14.500]   @0.25 -2.889 [-20.000, +19.825]
+    BOMP-PK:CAL-2L @0.1 -1.417 [-11.737, +8.825]   @0.25 -1.222 [-11.000, +12.650]
+    MT-FW:ORA      @0.1 -0.750 [-8.333, +7.000]   @0.25 -0.667 [-6.000, +6.442]
+    MT-FW:ORA-TS   @0.1 +0.687 [-6.000, +6.612]   @0.25 +0.800 [-4.883, +5.721]
+    MT-FW:CAL-H    @0.1 -0.875 [-6.667, +6.612]   @0.25 -0.733 [-7.395, +6.412]
+    MT-FW:CAL-G    @0.1 -1.187 [-13.633, +12.408]   @0.25 -1.133 [-13.800, +10.663]
+    MT-FW:CAL-2L   @0.1 -0.187 [-6.890, +7.500]   @0.25 -0.467 [-4.260, +5.717]
+  hits at the cap-0.25 operating point: median epicentral / depth error (km), n hits; atom coverage (event has an atom within 5 km at any score), median nearest-atom distance of the rest
+    BOMP-PK:HOM        epi  1.85  depth  1.75  n  119   coverage 0.685  far-median  7.99
+    BOMP-PK:ORA        epi  2.11  depth  1.79  n  120   coverage 0.701  far-median  7.64
+    BOMP-PK:ORA-TS     epi  1.61  depth  1.72  n  123   coverage 0.709  far-median  7.41
+    BOMP-PK:CAL-H      epi  2.23  depth  1.66  n  106   coverage 0.685  far-median  8.31
+    BOMP-PK:CAL-G      epi  2.55  depth  1.81  n   95   coverage 0.625  far-median  7.64
+    BOMP-PK:CAL-2L     epi  1.93  depth  1.94  n  106   coverage 0.693  far-median  7.65
+    MT-FW:HOM          epi  2.15  depth  1.89  n  115   coverage 0.705  far-median  8.51
+    MT-FW:ORA          epi  1.98  depth  1.86  n  105   coverage 0.697  far-median  7.35
+    MT-FW:ORA-TS       epi  1.79  depth  1.75  n  125   coverage 0.729  far-median  8.54
+    MT-FW:CAL-H        epi  2.06  depth  1.88  n  102   coverage 0.677  far-median  7.99
+    MT-FW:CAL-G        epi  2.11  depth  1.91  n   98   coverage 0.669  far-median  7.60
+    MT-FW:CAL-2L       epi  1.82  depth  2.13  n  104   coverage 0.701  far-median  7.53
+  per cell (point estimates @0.1/@0.25):
+    ladder_4 (100 windows, 72 events): BOMP-PK:HOM 0.25/0.35  BOMP-PK:ORA 0.25/0.36  BOMP-PK:ORA-TS 0.26/0.39  BOMP-PK:CAL-H 0.25/0.33  BOMP-PK:CAL-G 0.15/0.25  BOMP-PK:CAL-2L 0.19/0.32  MT-FW:HOM 0.25/0.32  MT-FW:ORA 0.18/0.26  MT-FW:ORA-TS 0.26/0.35  MT-FW:CAL-H 0.14/0.22  MT-FW:CAL-G 0.12/0.24  MT-FW:CAL-2L 0.19/0.28  CEIL-GD 0.40/0.53  CEIL-GD-O 0.35/0.53  CEIL-GD-TT 0.32/0.50
+    ladder_6 (100 windows, 83 events): BOMP-PK:HOM 0.36/0.43  BOMP-PK:ORA 0.35/0.45  BOMP-PK:ORA-TS 0.30/0.48  BOMP-PK:CAL-H 0.27/0.33  BOMP-PK:CAL-G 0.25/0.27  BOMP-PK:CAL-2L 0.22/0.33  MT-FW:HOM 0.29/0.35  MT-FW:ORA 0.28/0.40  MT-FW:ORA-TS 0.36/0.46  MT-FW:CAL-H 0.24/0.40  MT-FW:CAL-G 0.20/0.28  MT-FW:CAL-2L 0.33/0.40  CEIL-GD 0.29/0.40  CEIL-GD-O 0.30/0.41  CEIL-GD-TT 0.18/0.40
+    unilateral_c40 (100 windows, 96 events): BOMP-PK:HOM 0.47/0.56  BOMP-PK:ORA 0.50/0.59  BOMP-PK:ORA-TS 0.50/0.60  BOMP-PK:CAL-H 0.46/0.55  BOMP-PK:CAL-G 0.47/0.51  BOMP-PK:CAL-2L 0.50/0.59  MT-FW:HOM 0.50/0.61  MT-FW:ORA 0.44/0.53  MT-FW:ORA-TS 0.56/0.60  MT-FW:CAL-H 0.51/0.55  MT-FW:CAL-G 0.45/0.49  MT-FW:CAL-2L 0.44/0.59  CEIL-GD 0.47/0.57  CEIL-GD-O 0.50/0.64  CEIL-GD-TT 0.40/0.51
+======================================================================================================================
+
+BOTH REGIMES pooled (6 strata): windows 600, events 475, networks 60
+  recall @0.1 / @0.25 with 95% CI
+    BOMP-PK:HOM        0.362 [0.296, 0.445]   0.482 [0.422, 0.563]
+    BOMP-PK:ORA        0.368 [0.287, 0.449]   0.493 [0.413, 0.568]
+    BOMP-PK:ORA-TS     0.402 [0.320, 0.498]   0.552 [0.482, 0.638]
+    BOMP-PK:CAL-H      0.347 [0.270, 0.435]   0.486 [0.416, 0.554]
+    BOMP-PK:CAL-G      0.312 [0.245, 0.402]   0.444 [0.370, 0.537]
+    BOMP-PK:CAL-2L     0.291 [0.215, 0.400]   0.457 [0.369, 0.547]
+    MT-FW:HOM          0.379 [0.312, 0.455]   0.484 [0.423, 0.564]
+    MT-FW:ORA          0.356 [0.284, 0.431]   0.469 [0.405, 0.541]
+    MT-FW:ORA-TS       0.421 [0.353, 0.517]   0.552 [0.476, 0.628]
+    MT-FW:CAL-H        0.385 [0.309, 0.457]   0.493 [0.416, 0.556]
+    MT-FW:CAL-G        0.328 [0.264, 0.413]   0.453 [0.393, 0.550]
+    MT-FW:CAL-2L       0.354 [0.286, 0.435]   0.476 [0.407, 0.548]
+    CEIL-GD            0.436 [0.305, 0.564]   0.589 [0.505, 0.683]
+    CEIL-GD-O          0.446 [0.308, 0.564]   0.596 [0.503, 0.691]
+    CEIL-GD-TT         0.284 [0.154, 0.411]   0.467 [0.378, 0.571]
+  differences (paired, same bootstrap replicates)
+    BOMP-PK:ORA    - BOMP-PK:HOM  @0.1 +0.006 [-0.066, +0.065] P(<=0) 0.521   @0.25 +0.011 [-0.059, +0.064] P(<=0) 0.492
+    BOMP-PK:ORA-TS - BOMP-PK:HOM  @0.1 +0.040 [-0.036, +0.121] P(<=0) 0.181   @0.25 +0.069 [+0.004, +0.141] P(<=0) 0.021
+    BOMP-PK:CAL-H  - BOMP-PK:HOM  @0.1 -0.015 [-0.085, +0.056] P(<=0) 0.658   @0.25 +0.004 [-0.064, +0.049] P(<=0) 0.547
+    BOMP-PK:CAL-G  - BOMP-PK:HOM  @0.1 -0.051 [-0.126, +0.017] P(<=0) 0.928   @0.25 -0.038 [-0.114, +0.038] P(<=0) 0.828
+    BOMP-PK:CAL-2L - BOMP-PK:HOM  @0.1 -0.072 [-0.150, +0.015] P(<=0) 0.947   @0.25 -0.025 [-0.108, +0.041] P(<=0) 0.796
+    MT-FW:ORA      - MT-FW:HOM    @0.1 -0.023 [-0.097, +0.043] P(<=0) 0.733   @0.25 -0.015 [-0.084, +0.038] P(<=0) 0.745
+    MT-FW:ORA-TS   - MT-FW:HOM    @0.1 +0.042 [-0.015, +0.130] P(<=0) 0.075   @0.25 +0.067 [-0.008, +0.135] P(<=0) 0.041
+    MT-FW:CAL-H    - MT-FW:HOM    @0.1 +0.006 [-0.049, +0.055] P(<=0) 0.468   @0.25 +0.008 [-0.057, +0.051] P(<=0) 0.554
+    MT-FW:CAL-G    - MT-FW:HOM    @0.1 -0.051 [-0.116, +0.027] P(<=0) 0.888   @0.25 -0.032 [-0.100, +0.057] P(<=0) 0.781
+    MT-FW:CAL-2L   - MT-FW:HOM    @0.1 -0.025 [-0.100, +0.046] P(<=0) 0.686   @0.25 -0.008 [-0.082, +0.048] P(<=0) 0.716
+    MT-FW:HOM      - BOMP-PK:HOM  @0.1 +0.017 [-0.061, +0.092] P(<=0) 0.420   @0.25 +0.002 [-0.050, +0.055] P(<=0) 0.487
+    MT-FW:CAL-G    - BOMP-PK:HOM  @0.1 -0.034 [-0.119, +0.063] P(<=0) 0.778   @0.25 -0.029 [-0.100, +0.058] P(<=0) 0.756
+    CEIL-GD        - BOMP-PK:HOM  @0.1 +0.074 [-0.043, +0.181] P(<=0) 0.070   @0.25 +0.107 [+0.017, +0.191] P(<=0) 0.011
+    CEIL-GD-O      - BOMP-PK:HOM  @0.1 +0.084 [-0.051, +0.188] P(<=0) 0.117   @0.25 +0.114 [+0.018, +0.204] P(<=0) 0.013
+    CEIL-GD        - MT-FW:HOM    @0.1 +0.057 [-0.065, +0.179] P(<=0) 0.118   @0.25 +0.105 [+0.016, +0.184] P(<=0) 0.009
+  fraction of the CEIL-GD headroom (CEIL-GD - HOM of the same detector) captured by the model
+    BOMP-PK:ORA    @0.1 +0.086 [-2.018, +1.862]   @0.25 +0.098 [-1.127, +0.778]
+    BOMP-PK:ORA-TS @0.1 +0.543 [-1.924, +3.199]   @0.25 +0.647 [+0.000, +2.232]
+    BOMP-PK:CAL-H  @0.1 -0.200 [-3.581, +2.504]   @0.25 +0.039 [-1.325, +0.584]
+    BOMP-PK:CAL-G  @0.1 -0.686 [-6.025, +3.500]   @0.25 -0.353 [-3.204, +0.432]
+    BOMP-PK:CAL-2L @0.1 -0.971 [-6.336, +3.442]   @0.25 -0.235 [-2.381, +0.437]
+    MT-FW:ORA      @0.1 -0.407 [-3.667, +5.050]   @0.25 -0.140 [-2.000, +0.395]
+    MT-FW:ORA-TS   @0.1 +0.741 [-3.556, +4.653]   @0.25 +0.640 [-0.200, +2.449]
+    MT-FW:CAL-H    @0.1 +0.111 [-1.867, +2.000]   @0.25 +0.080 [-1.072, +0.723]
+    MT-FW:CAL-G    @0.1 -0.889 [-5.537, +7.685]   @0.25 -0.300 [-2.902, +0.576]
+    MT-FW:CAL-2L   @0.1 -0.444 [-4.134, +4.914]   @0.25 -0.080 [-2.000, +0.438]
+  hits at the cap-0.25 operating point: median epicentral / depth error (km), n hits; atom coverage (event has an atom within 5 km at any score), median nearest-atom distance of the rest
+    BOMP-PK:HOM        epi  1.97  depth  1.79  n  234   coverage 0.718  far-median  7.59
+    BOMP-PK:ORA        epi  2.01  depth  1.87  n  241   coverage 0.703  far-median  7.68
+    BOMP-PK:ORA-TS     epi  1.61  depth  1.76  n  263   coverage 0.754  far-median  7.53
+    BOMP-PK:CAL-H      epi  2.09  depth  1.79  n  239   coverage 0.720  far-median  7.87
+    BOMP-PK:CAL-G      epi  2.09  depth  1.95  n  217   coverage 0.691  far-median  7.55
+    BOMP-PK:CAL-2L     epi  1.96  depth  1.88  n  221   coverage 0.709  far-median  7.44
+    MT-FW:HOM          epi  2.02  depth  1.84  n  240   coverage 0.735  far-median  7.66
+    MT-FW:ORA          epi  1.91  depth  1.88  n  230   coverage 0.716  far-median  7.64
+    MT-FW:ORA-TS       epi  1.65  depth  1.85  n  270   coverage 0.758  far-median  7.48
+    MT-FW:CAL-H        epi  2.10  depth  1.92  n  242   coverage 0.716  far-median  7.97
+    MT-FW:CAL-G        epi  1.82  depth  1.90  n  222   coverage 0.726  far-median  7.58
+    MT-FW:CAL-2L       epi  1.83  depth  2.01  n  229   coverage 0.716  far-median  7.64

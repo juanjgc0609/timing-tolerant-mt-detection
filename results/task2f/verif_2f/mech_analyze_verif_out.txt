@@ -1,0 +1,40 @@
+re-implementation check vs c6_lib.mtfw_dense (cap 6 and uncapped), base condition: 216/216 identical
+base thin: 180 windows, 718 events
+   MTFW_cap2 0.054/0.095  MTFW_cap3 0.138/0.175  MTFW_cap6 0.212/0.304  MTFW_cap12 0.166/0.238  MTFW_cap24 0.128/0.221  MTFW_nocap 0.131/0.233  SELcap6_SCOREnocap 0.201/0.294  SELnocap_SCOREcap6 0.202/0.259  BOMP-PK 0.135/0.230
+   vs BOMP-PK (cap 0.1/0.25): MTFW_cap2 -0.081/-0.135  MTFW_cap3 +0.003/-0.054  MTFW_cap6 +0.077/+0.074  MTFW_cap12 +0.031/+0.008  MTFW_cap24 -0.007/-0.008  MTFW_nocap -0.004/+0.003  SELcap6_SCOREnocap +0.065/+0.064  SELnocap_SCOREcap6 +0.067/+0.029
+base strong: 180 windows, 721 events
+   MTFW_cap2 0.037/0.075  MTFW_cap3 0.096/0.126  MTFW_cap6 0.164/0.241  MTFW_cap12 0.118/0.201  MTFW_cap24 0.086/0.187  MTFW_nocap 0.085/0.183  SELcap6_SCOREnocap 0.110/0.207  SELnocap_SCOREcap6 0.122/0.208  BOMP-PK 0.085/0.190
+   vs BOMP-PK (cap 0.1/0.25): MTFW_cap2 -0.047/-0.115  MTFW_cap3 +0.011/-0.064  MTFW_cap6 +0.079/+0.051  MTFW_cap12 +0.033/+0.011  MTFW_cap24 +0.001/-0.003  MTFW_nocap +0.000/-0.007  SELcap6_SCOREnocap +0.025/+0.017  SELnocap_SCOREcap6 +0.037/+0.018
+base thin+strong: 360 windows, 1439 events
+   MTFW_cap2 0.046/0.086  MTFW_cap3 0.114/0.151  MTFW_cap6 0.183/0.278  MTFW_cap12 0.142/0.218  MTFW_cap24 0.107/0.199  MTFW_nocap 0.107/0.208  SELcap6_SCOREnocap 0.145/0.247  SELnocap_SCOREcap6 0.153/0.233  BOMP-PK 0.110/0.208
+   vs BOMP-PK (cap 0.1/0.25): MTFW_cap2 -0.064/-0.122  MTFW_cap3 +0.004/-0.056  MTFW_cap6 +0.074/+0.070  MTFW_cap12 +0.033/+0.010  MTFW_cap24 -0.003/-0.008  MTFW_nocap -0.003/+0.001  SELcap6_SCOREnocap +0.035/+0.039  SELnocap_SCOREcap6 +0.043/+0.025
+   MTFW_cap6 - MTFW_nocap @0.25: +0.069 [+0.023, +0.128]
+   MTFW_cap6 - BOMP-PK @0.25: +0.070 [+0.016, +0.131]
+   SELnocap_SCOREcap6 - MTFW_nocap @0.25: +0.024 [-0.010, +0.081]
+   SELcap6_SCOREnocap - MTFW_nocap @0.25: +0.038 [-0.003, +0.100]
+noclut thin: 180 windows, 711 events
+   MTFW_cap2 0.068/0.084  MTFW_cap3 0.101/0.155  MTFW_cap6 0.174/0.335  MTFW_cap12 0.113/0.217  MTFW_cap24 0.083/0.201  MTFW_nocap 0.086/0.200  SELcap6_SCOREnocap 0.145/0.276  SELnocap_SCOREcap6 0.158/0.295  BOMP-PK 0.090/0.201
+   vs BOMP-PK (cap 0.1/0.25): MTFW_cap2 -0.023/-0.117  MTFW_cap3 +0.011/-0.046  MTFW_cap6 +0.084/+0.134  MTFW_cap12 +0.023/+0.015  MTFW_cap24 -0.007/+0.000  MTFW_nocap -0.004/-0.001  SELcap6_SCOREnocap +0.055/+0.075  SELnocap_SCOREcap6 +0.068/+0.094
+noclut strong: 180 windows, 716 events
+   MTFW_cap2 0.028/0.080  MTFW_cap3 0.060/0.128  MTFW_cap6 0.191/0.288  MTFW_cap12 0.096/0.177  MTFW_cap24 0.064/0.159  MTFW_nocap 0.064/0.165  SELcap6_SCOREnocap 0.126/0.239  SELnocap_SCOREcap6 0.166/0.250  BOMP-PK 0.077/0.168
+   vs BOMP-PK (cap 0.1/0.25): MTFW_cap2 -0.049/-0.088  MTFW_cap3 -0.017/-0.039  MTFW_cap6 +0.115/+0.120  MTFW_cap12 +0.020/+0.010  MTFW_cap24 -0.013/-0.008  MTFW_nocap -0.013/-0.003  SELcap6_SCOREnocap +0.049/+0.071  SELnocap_SCOREcap6 +0.089/+0.082
+noclut thin+strong: 360 windows, 1427 events
+   MTFW_cap2 0.048/0.082  MTFW_cap3 0.083/0.140  MTFW_cap6 0.194/0.317  MTFW_cap12 0.107/0.198  MTFW_cap24 0.078/0.179  MTFW_nocap 0.076/0.178  SELcap6_SCOREnocap 0.133/0.256  SELnocap_SCOREcap6 0.162/0.273  BOMP-PK 0.084/0.180
+   vs BOMP-PK (cap 0.1/0.25): MTFW_cap2 -0.036/-0.098  MTFW_cap3 -0.001/-0.040  MTFW_cap6 +0.110/+0.137  MTFW_cap12 +0.022/+0.018  MTFW_cap24 -0.006/-0.001  MTFW_nocap -0.008/-0.002  SELcap6_SCOREnocap +0.049/+0.076  SELnocap_SCOREcap6 +0.078/+0.093
+   MTFW_cap6 - MTFW_nocap @0.25: +0.139 [+0.073, +0.190]
+   MTFW_cap6 - BOMP-PK @0.25: +0.137 [+0.058, +0.183]
+   SELnocap_SCOREcap6 - MTFW_nocap @0.25: +0.095 [+0.039, +0.136]
+   SELcap6_SCOREnocap - MTFW_nocap @0.25: +0.078 [+0.007, +0.134]
+noclut_nosite thin: 180 windows, 711 events
+   MTFW_cap2 0.055/0.107  MTFW_cap3 0.146/0.200  MTFW_cap6 0.264/0.361  MTFW_cap12 0.163/0.316  MTFW_cap24 0.195/0.333  MTFW_nocap 0.195/0.333  SELcap6_SCOREnocap 0.214/0.326  SELnocap_SCOREcap6 0.241/0.342  BOMP-PK 0.197/0.335
+   vs BOMP-PK (cap 0.1/0.25): MTFW_cap2 -0.142/-0.228  MTFW_cap3 -0.051/-0.135  MTFW_cap6 +0.068/+0.027  MTFW_cap12 -0.034/-0.018  MTFW_cap24 -0.001/-0.001  MTFW_nocap -0.001/-0.001  SELcap6_SCOREnocap +0.017/-0.008  SELnocap_SCOREcap6 +0.044/+0.007
+noclut_nosite strong: 180 windows, 716 events
+   MTFW_cap2 0.047/0.091  MTFW_cap3 0.113/0.173  MTFW_cap6 0.186/0.275  MTFW_cap12 0.147/0.261  MTFW_cap24 0.148/0.271  MTFW_nocap 0.148/0.271  SELcap6_SCOREnocap 0.163/0.268  SELnocap_SCOREcap6 0.169/0.288  BOMP-PK 0.147/0.270
+   vs BOMP-PK (cap 0.1/0.25): MTFW_cap2 -0.099/-0.179  MTFW_cap3 -0.034/-0.096  MTFW_cap6 +0.039/+0.006  MTFW_cap12 +0.000/-0.008  MTFW_cap24 +0.001/+0.001  MTFW_nocap +0.001/+0.001  SELcap6_SCOREnocap +0.017/-0.001  SELnocap_SCOREcap6 +0.022/+0.018
+noclut_nosite thin+strong: 360 windows, 1427 events
+   MTFW_cap2 0.050/0.100  MTFW_cap3 0.129/0.181  MTFW_cap6 0.224/0.319  MTFW_cap12 0.161/0.287  MTFW_cap24 0.170/0.295  MTFW_nocap 0.170/0.295  SELcap6_SCOREnocap 0.188/0.295  SELnocap_SCOREcap6 0.208/0.315  BOMP-PK 0.169/0.296
+   vs BOMP-PK (cap 0.1/0.25): MTFW_cap2 -0.119/-0.196  MTFW_cap3 -0.040/-0.114  MTFW_cap6 +0.055/+0.023  MTFW_cap12 -0.008/-0.009  MTFW_cap24 +0.001/-0.001  MTFW_nocap +0.001/-0.001  SELcap6_SCOREnocap +0.019/-0.001  SELnocap_SCOREcap6 +0.039/+0.020
+   MTFW_cap6 - MTFW_nocap @0.25: +0.024 [-0.037, +0.067]
+   MTFW_cap6 - BOMP-PK @0.25: +0.023 [-0.040, +0.069]
+   SELnocap_SCOREcap6 - MTFW_nocap @0.25: +0.020 [-0.032, +0.048]
+   SELcap6_SCOREnocap - MTFW_nocap @0.25: +0.000 [-0.059, +0.050]

@@ -1,0 +1,356 @@
+EXPLORATORY CONTRIBUTION STUDY (explore_contrib) - FINAL REPORT
+================================================================
+Status: EXPLORATORY, NOT CONFIRMATORY. Nothing here tests a registered hypothesis. All numbers are pilot estimates that
+were looked at while the study was being designed; they must not be quoted as confirmatory evidence.
+Date: Sun Sep 27 2026, 19:37-21:00 local (-05). Machine: 2 cores.
+
+Seeds and data used (seed 999 ONLY; seeds 2024, 7331, 4242 and 8888 were never generated, read or touched):
+  networks  task2a_confirm.network(999, cell, j); cells ladder_4, ladder_6, unilateral_c40; statics sd 0.3 s;
+            catalogue of 20 events per network (task2a catalogue_real, errors 1 km / 0.1 s) for the +SC corrections.
+  j = 0-4    2A/2E calibration networks: NOT used for new computation (only the stored verif_2e check-4 parts were
+             read, to validate the ceiling code).
+  j = 10-15  C1 (TAG 3001), C2 (TAG 3002), C3 (TAG 3003), leak pilot (TAG 3001 windows), C2 ablation (TAG 3002, thin
+             re-generated bit-identically, strong new).
+  j = 20-29  C6 (TAG 3006) and C6b (TAG 3008).
+  j = 30-35  leak2 replication of arrival masking (TAG 3007).
+  Window stream seeds are [999, TAG, cell index, j, regime index, 41|233|61]; every TAG above was new when used.
+  Note: the never-run script c5_run.py also names TAG 3006 (different window drawer). If C5 is ever run, change its TAG.
+Common protocol: 3 km x 3 depths grid (675 nodes), origins 5.0-8.0 s step 0.1, +-0.25 s peak tolerance, 5 km exclusion,
+hit = epicentre within 5 km, kmax 5 (7 in the dense design), exact FROC, recall at <= 0.1 and <= 0.25 realised false
+events per window, hierarchical bootstrap (cells as strata, networks then windows, 1000-2000 replicates, operating
+point re-chosen per replicate). All differences are paired (same windows).
+Total new compute in this session: about 1 h 25 min wall on 2 cores (about 2.7 CPU-hours), well under the 5 h budget.
+
+----------------------------------------------------------------------------------------------------------------------
+0. RANKING (details in sections 1-6; "@0.1 / @0.25" = recall difference at the two false-alarm caps, 95% CI)
+----------------------------------------------------------------------------------------------------------------------
+ 1. C2-CAP  Capped (per-station/phase clipped) moment-tensor subspace statistic in dense overlapping sequences
+            (MT-FW+SC vs BOMP-PK+SC, 3-5 events within 9 km, kmax 7). Both regimes pooled, 36 networks, 360 windows,
+            1439 events: +0.074 [+0.016, +0.136] / +0.070 [+0.020, +0.128].
+            Thin: +0.077 [+0.018, +0.199] / +0.074 [+0.004, +0.163]. Strong (new): +0.079 [-0.024, +0.158] / +0.051 [-0.013, +0.133].
+            Mechanism isolated by ablation: the cap explains all of it (section 2). Meets the >= 0.05 criterion with an
+            interval excluding 0 in the pooled pilot. PLAUSIBLE CONTRIBUTION (modest novelty; see caveat).
+ 2. MASK    Arrival masking inside BOMP-PK (each arrival explained by at most one event). Clean replication on fresh
+            networks 30-35 (variant fixed beforehand): thin +0.149 [-0.007, +0.265] / +0.084 [+0.000, +0.163];
+            strong -0.007 [-0.099, +0.085] / +0.014 [-0.070, +0.108]. Regime-dependent; CI touches 0.
+            BORDERLINE, thin regime only.
+ 3. SPEED   MT-FW+SC with the dense vectorised oracle: equal recall to BOMP-PK+SC in standard windows (C6, 600 windows:
+            +0.017 [-0.061, +0.092] / +0.002 [-0.050, +0.055]) at 6.3x lower runtime (0.13 vs 0.82 s/window under
+            identical load; 0.105 vs 0.662 s in C2). Meets ">= 3x speed at equal recall", but it compares two existing
+            methods; engineering, not a new method.
+ 4. C6      Physics (1D velocity model with curved rays inside BOMP-PK/MT-FW). NULL. Oracle medium: +0.006 [-0.066,
+            +0.065] / +0.011 [-0.059, +0.064] (BOMP-PK, both regimes); calibrated models do not help and hurt in the
+            strong regime (CAL-G -0.104 [-0.202, +0.013] at 0.25). Only the unattainable oracle medium + TRUE statics
+            gains (+0.069 [+0.004, +0.141] at 0.25). The attribution run C6b shows the headroom persists when the medium
+            is exact. NOT A CONTRIBUTION in this design.
+ 5. C3      Large timing errors: wider peak search or within-window shared shifts help only with 0.8 s statics and NO
+            catalogue corrections (BOMP-PK-12 +0.156 [+0.015, +0.284] / +0.148 [+0.000, +0.315]); with catalogue
+            corrections nothing beats BOMP-PK+SC. NOT A CONTRIBUTION (trivial fix for an unrealistic setting).
+ 6. C1      Coarse grids: grid methods lose about 0.37 recall at 9 km spacing; off-grid TS-SFW recovers only
+            +0.03 to +0.10 (CIs mostly include 0), and is slower than BOMP-PK on the fine grid. NOT A CONTRIBUTION.
+ C4/C5: never run (scripts c4_run.py, c5_run.py exist; no outputs). Nothing to report.
+
+Recommended confirmatory test: C2-CAP (section 7.1). Optional second test: MASK in the thin regime (section 7.2).
+
+----------------------------------------------------------------------------------------------------------------------
+1. C1 - GRID SPACING (pilot by the previous agent; out/c1_thin_analysis.txt)
+----------------------------------------------------------------------------------------------------------------------
+Design: thin regime, networks 10-15, 10 windows per network and cell (TAG 3001), 180 windows, 145 events. Grids 3/6/9 km
+x 3 or 2 depth levels; BOMP-PK+SC, TS-SFW+SC (f = 0.01, frozen in 2E), MT-FW+SC; at 6 and 9 km also "-W" variants with
+the peak tolerance widened to the grid half-cell (+-0.5 s, +-0.75 s).
+Numbers (recall @0.1 / @0.25):
+  3 km x 3 depths: BOMP-PK 0.455/0.628, TS-SFW 0.517/0.648, MT-FW 0.517/0.586.
+  9 km x 3 depths: BOMP-PK 0.131/0.248, TS-SFW 0.159/0.297, MT-FW 0.214/0.338 (BOMP-PK loses -0.324 [-0.524, -0.052] /
+  -0.379 [-0.512, -0.174] relative to the 3 km grid).
+  TS-SFW - BOMP-PK on the same coarse grid: 6 km +0.041 to +0.069, 9 km +0.028 to +0.076, e.g. 9 km x 2 depths
+  +0.069 [+0.000, +0.176] / +0.076 [+0.000, +0.218]; wide-tolerance TS-SFW-W - BOMP-PK-W up to +0.097 [-0.016, +0.230].
+  TS-SFW on any coarse grid vs BOMP-PK on the 3 km grid: -0.07 to -0.33 (worse).
+Runtime (s/window): BOMP-PK 0.438 (3 km) -> 0.048 (9 km); TS-SFW about 1.2 on every grid; MT-FW 0.19 -> 0.03.
+Judgement: off-grid sliding recovers only a small part of the coarse-grid loss and never reaches the fine-grid BOMP-PK;
+no speed gain at equal recall. Not a contribution. Novelty caveat: off-grid (sliding Frank-Wolfe / continuous BLASSO)
+refinement is established (Denoyelle et al. 2019 and successors); the thesis-specific part would have been its use with
+per-station time shifts, which 2E and C1 show adds little.
+
+----------------------------------------------------------------------------------------------------------------------
+2. C2 - DENSE OVERLAPS AND THE FOLLOW-UP ABLATION (out/c2_thin_analysis.txt, c2_ablate_analysis.txt,
+   c2_ablate_strong_analysis.txt, power_c2*.txt; code c2_run.py, c2_ablate.py, c2_ablate_analyze.py)
+----------------------------------------------------------------------------------------------------------------------
+Design: 3-5 events per window, epicentral separations >= 5 km, clustered within 9 km of a centre, origin times in
+[5.2, 7.8] s with gaps >= 0.5 s; kmax 7 for every method. Networks 10-15, 10 windows per network and cell.
+Thin pilot (previous agent): 180 windows, 718 events. BOMP-PK 0.135/0.230, TS-SFW 0.143/0.241, SLIDE 0.135/0.260,
+MT-FW 0.212/0.304; MT-FW - BOMP-PK +0.077 [+0.018, +0.199] / +0.074 [+0.004, +0.163]. CEIL-B - BOMP-PK +0.63/+0.64
+(huge genie headroom).
+New strong-regime pilot (same design, fresh windows): 180 windows, 721 events. BOMP-PK 0.085/0.190, MT-FW 0.164/0.241;
+MT-FW - BOMP-PK +0.079 [-0.024, +0.158] / +0.051 [-0.013, +0.133].
+Both regimes pooled (6 strata): +0.074 [+0.016, +0.136] / +0.070 [+0.020, +0.128] (bootstrap SD 0.031 / 0.027).
+Contrast: in STANDARD 2A-type windows (0-2 events) MT-FW and BOMP-PK are equal (C6, 600 windows: +0.017 [-0.061,
++0.092] / +0.002 [-0.050, +0.055]; leak2 thin +0.045/-0.013, strong -0.014/-0.007). The gain is specific to overlaps.
+
+Why MT-FW beats BOMP-PK. The two detectors differ in exactly three ways (the running-minimum "prefix" score is the same
+in both, so it cannot be the cause):
+  (1) MT-FW clips each station/phase peak vector at norm CAPV = 6 (energy 36) before projecting on the 6-D moment-tensor
+      subspace (statistic and amplitude fit); BOMP-PK does not;
+  (2) MT-FW's statistic ||Q^T v||^2/2 has no P/S cross term in the Gram; BOMP-PK uses h^T K(I)^+ h with AC(t_S - t_P);
+  (3) MT-FW deflates sequentially (subtracts only the new atom's fit); BOMP-PK refits all atoms jointly (OMP).
+Ablations on the same windows (the regenerated windows reproduce the stored c2 records exactly: 180/180 for both):
+                                  thin @0.1 / @0.25                                 strong @0.1 / @0.25
+  MT-FW - MT-FW-NOCAP (1)         +0.081 [+0.016, +0.199] / +0.071 [+0.010, +0.163]   +0.079 [-0.021, +0.158] / +0.058 [-0.013, +0.137]
+  MT-FW-NOCAP - BOMP-PK           -0.004 [-0.016, +0.008] / +0.003 [-0.028, +0.034]
+  BOMP-PK-CAP - BOMP-PK (1)       +0.045 [-0.013, +0.152] / +0.061 [-0.028, +0.141]   +0.060 [-0.036, +0.135] / +0.025 [-0.043, +0.126]
+  MT-FW - BOMP-PK-CAP             +0.032 [-0.012, +0.100] / +0.013 [-0.012, +0.076]   +0.019 [-0.012, +0.056] / +0.026 [-0.025, +0.062]
+  BOMP-PK-SEQ - BOMP-PK (3)       -0.004 [-0.016, +0.008] / +0.003 [-0.028, +0.034]   +0.000 [-0.015, +0.006] / -0.007 [-0.040, +0.014]
+  MT-FW-NOCAP and BOMP-PK-SEQ (BOMP-PK with sequential deflation) produce IDENTICAL hit sequences in 360/360 windows:
+  without the cap, MT-FW is BOMP-PK with sequential deflation, i.e. difference (2) is immaterial here, and difference (3)
+  does not change recall (hit sequences differ in 84/180 thin windows but recall moves by <= 0.007).
+Conclusion: the per-station cap is the whole effect. Removing it from MT-FW brings MT-FW exactly down to BOMP-PK;
+adding it to BOMP-PK's selection statistic recovers most of the gap (the rest is plausibly the cap in the amplitude fit
+and deflation, which BOMP-PK-CAP does not use). Interpretation: in overlapping sequences a few near-station or
+site-amplified arrivals (site factors are lognormal, sigma 0.5) dominate the unclipped statistic and pull atoms to wrong
+nodes; clipping makes the statistic demand agreement across many stations (a robust, Huber-like statistic).
+Runtime: MT-FW 0.105 s/window vs BOMP-PK 0.662 s (thin), 0.147 vs 0.941 (strong).
+Judgement: plausible real contribution (pooled +0.07 at both caps, CI excluding 0, mechanism identified). Novelty
+caveat: MT-FW and its cap already exist in the thesis (1t/1x); clipping or normalising per-station contributions is
+standard robust practice in stacking/back-projection detectors (per-trace normalisation, clipped or sign stacking).
+The contribution would be the demonstration that, inside a moment-tensor subspace detector with deflation, per-station
+clipping is what makes it resolve dense overlapping sequences (+0.07 recall) while costing nothing in isolated events,
+and the negative results that joint refitting (OMP vs sequential) and the P/S Gram term do not matter.
+
+----------------------------------------------------------------------------------------------------------------------
+3. C3 - LARGE TIMING ERRORS (analysed now; out/c3_thin_analysis.txt; code c3_run.py, c3_analyze.py)
+----------------------------------------------------------------------------------------------------------------------
+Design: thin, networks 10-15, per network 20 burn-in windows (online learning only) + 10 evaluation windows (TAG 3003),
+180 evaluation windows, 128 events, same sources in every condition. Conditions: statics sd 0.3/0.5/0.8 s with (sc) or
+without (nc) catalogue station corrections, and a 7.5 % slower true medium (V75). Methods: BOMP-PK (+-0.25 s),
+BOMP-PK-8 (+-0.5 s), BOMP-PK-12 (+-0.75 s), BOMP-SS (within-window shared shifts: wide pass, median shift of confident
+atoms, narrow second pass), BOMP-OL (online station terms learned from confident detections of previous windows).
+Results, difference to BOMP-PK (@0.1 / @0.25):
+  S03sc (reference, BOMP-PK 0.523/0.633): every variant is worse or equal; BOMP-PK-12 -0.180 [-0.352, -0.023] / -0.156.
+  S05nc (BOMP-PK 0.344/0.508): no variant better (BOMP-OL +0.031 [-0.143, +0.188] at 0.25).
+  S08nc (BOMP-PK 0.164/0.312): BOMP-PK-12 +0.156 [+0.015, +0.284] / +0.148 [+0.000, +0.315];
+         BOMP-SS +0.180 [+0.008, +0.343] / +0.133 [-0.008, +0.301]; BOMP-OL +0.070 / +0.078 (CIs include 0).
+  S08sc (BOMP-PK 0.305/0.469): gains shrink to +0.03 to +0.09, all CIs include 0.
+  V75sc (BOMP-PK 0.398/0.625): no loss relative to S03sc; no variant better. The catalogue corrections absorb a uniform
+         7.5 % velocity error (median |corr - statics| 0.45 s: the corrections carry the velocity error, as intended).
+  V75nc (BOMP-PK 0.312/0.477): BOMP-PK-8 +0.102 [-0.103, +0.273] / +0.102 [-0.059, +0.244].
+  Online station terms reach the catalogue's accuracy (median |corr - statics| 0.109-0.529 s vs 0.100-0.529 s) but never
+  beat BOMP-PK (|diff| <= 0.08, all CIs include 0). CEIL-A/CEIL-B headroom stays large in every condition.
+Runtime (s/window): BOMP-PK 0.39-0.46, BOMP-PK-12 0.45-0.51, BOMP-SS 0.64-0.75, BOMP-OL 0.80-0.90.
+Judgement: not a contribution. Widening the tolerance is the obvious fix for large uncorrected statics and costs recall
+whenever statics are corrected; with a 20-event catalogue, BOMP-PK+SC is already adequate. Novelty caveat: station
+terms from catalogues and adaptive/online station corrections are standard in location practice.
+
+----------------------------------------------------------------------------------------------------------------------
+4. LEAKAGE SUPPRESSION: ARRIVAL MASKING (pilot by the previous agent: out/leak_thin_analysis.txt; replication run now:
+   out/leak2_analysis.txt, leak2_strong_analysis.txt, power_mask_thin.txt; code leak_test.py, leak2.py)
+----------------------------------------------------------------------------------------------------------------------
+Design: after an atom is accepted, the +-6 samples around each of its read arrivals whose fitted amplitude is >= 3
+(matched-filter units) are removed from the search residual of later iterations (each arrival explains at most one
+event); refit and scores otherwise as BOMP-PK (MASK6g3); the same rule inside MT-FW (MT-FW-MASK).
+Pilot (C1 windows, networks 10-15, thin; variant MASK6g3 CHOSEN among 4 masking and 8 ratio-rule variants, so its pilot
+estimate is selection-biased): +0.145 [+0.008, +0.330] / +0.021 [-0.020, +0.137].
+Replication with the variant fixed in advance (networks 30-35, TAG 3007, 10 windows per network and cell):
+  thin (180 windows, 154 events): BOMP-PK 0.481/0.636, BOMP-PK-MASK 0.630/0.721;
+     BOMP-PK-MASK - BOMP-PK +0.149 [-0.007, +0.265] / +0.084 [+0.000, +0.163];
+     MT-FW-MASK - MT-FW +0.091 [+0.006, +0.224] / +0.084 [-0.007, +0.138].
+  strong (180 windows, 144 events): BOMP-PK 0.333/0.438, BOMP-PK-MASK 0.326/0.451;
+     BOMP-PK-MASK - BOMP-PK -0.007 [-0.099, +0.085] / +0.014 [-0.070, +0.108]; MT-FW-MASK - MT-FW +0.007 / -0.021.
+  In dense overlaps (C2 thin) masking gives +0.031 [-0.019, +0.087] / +0.015 [-0.054, +0.103]: masking and the cap act
+  in different settings (masking: isolated events, thin clutter; cap: overlaps).
+Runtime: BOMP-PK-MASK = BOMP-PK (0.58-0.60 s/window); MT-FW-MASK 1.1 s (it uses the certified oracle).
+Judgement: borderline. Replicated point estimate in the thin regime (+0.15 at 0.1, +0.08 at 0.25) but the interval
+touches 0 and the strong regime shows nothing. Novelty caveat: exclusive assignment of picks to events is standard in
+pick associators (GaMMA, PyOcto, REAL); the novelty would be this "explaining-away" constraint inside a pick-free
+waveform-domain greedy detector, and only in thin clutter.
+
+----------------------------------------------------------------------------------------------------------------------
+5. C6 - PHYSICS CANDIDATE: 1D VELOCITY MODELS INSIDE THE MOMENT-TENSOR DETECTORS (highest priority of this session)
+   (out/c6_analysis.txt, c6_percell.txt, c6_validation.txt, c6_ttresid.txt, c6b_analysis.txt;
+    code c6_lib.py, c6_validate.py, c6_run.py, c6_ceil.py, c6_analyze.py, c6_percell.py, c6b_run.py, c6b_analyze.py)
+----------------------------------------------------------------------------------------------------------------------
+5.1 Design
+Networks j = 20-29 per cell and regime (not 2A calibration, not the C1-C3 pilots), 10 windows each (TAG 3006, the 2A
+window design: draw_sources, 0-2 events), 300 windows per regime (100 per cell), 224 events thin, 251 strong. Generator:
+gen_realistic default (gradient medium VS0 2.8 km/s, g 0.04 1/s, vp/vs 1.73, curved rays; per-event Ricker 1.4-2.8 Hz
+rotated +-45 deg; coda; site factors lognormal 0.5; 10 deg polarisation deviation; statics sd 0.3 s).
+Models, each replacing BOTH the travel times (sample indices of every block) and the radiation operator (take-off
+direction at the source, arrival direction and SV/SH transport at the station) in BOMP-PK+SC and MT-FW+SC, with its own
+station corrections (the registered +SC median-delay rule re-referenced to the model):
+  HOM     homogeneous VS 3.0, vp/vs 1.73 (the registered detectors; reproduces them to 1e-13)
+  ORA     (a) the generator's own gradient medium with curved rays (oracle physics), catalogue corrections
+  ORA-TS  ORA with the TRUE statics as corrections (ceiling of any travel-time correction; not attainable)
+  CAL-H   homogeneous (vs, vp/vs) calibrated by JHD on the 20 catalogue events (control: calibration without curvature)
+  CAL-G   (b) gradient (v0, g, vp/vs) calibrated by JHD
+  CAL-2L  (c) two-layer (v1, v2, h, vp/vs; mis-specified family) calibrated by JHD
+JHD calibration: joint P/S matched-filter energy peaks within +-1 s of the model prediction (gate 25, the +SC picking
+rule), then soft-L1 least squares over the model parameters, per station/phase terms, per-event relocation (prior 1 km)
+and origin shift (prior 0.1 s), pick sd 0.05 s; 2 pick/fit rounds; starts at the detectors' homogeneous values.
+Ceilings: CEIL-GD exactly as verif_2e check 4 (true events scored by the best HOM block statistic within 5 km; false
+candidates = greedy block maxima after the oracle joint LS deflation with truth-start refined continuous atoms);
+c6_ceil.py reproduces the stored verif_2e check-4 g_true/g_resid to 7.5e-5. CEIL-GD-O: the same with the ORA statistic.
+Validation (c6_validation.txt, all PASS): homogeneous model = registered travel times and radiation operator (<= 6e-17);
+gradient model = gen_realistic.travel_time_gradient and radiation_gradient (<= 3e-17); two-layer reduces to homogeneous
+when v1 = v2 and satisfies dT/dX = sin(i_r)/v1; ModelOps(HOM) reproduces the registered BlockDict indices exactly and
+the BOMP-PK records to 3e-13; the dense MT-FW reproduces certified_fw_record to 8e-14 (and all 180 stored C2 MT-FW
+records exactly).
+
+5.2 Calibration quality (median [IQR] over the 30 networks of each regime; truth 2.8 / 0.04 / 1.73)
+  thin:   CAL-G 2.816 [2.789, 2.848] / 0.040 [0.034, 0.045] / 1.747 [1.720, 1.763]; pick rms 0.030 s.
+          CAL-H 3.024 / 1.737; CAL-2L 2.943 / 3.167 / h 6.35 km / 1.728.
+  strong: CAL-G 2.696 [2.406, 2.857] / 0.046 [0.021, 0.065] / 1.750 [1.666, 1.832]; pick rms 0.20 s (clutter picks);
+          4-station networks sometimes hit the bounds (vs0 2.0, g 0, vp/vs 1.5 or 1.94).
+  median |corrections - true statics| (s): thin HOM 0.102, ORA 0.082, CAL-H 0.153, CAL-G 0.114, CAL-2L 0.124;
+                                           strong HOM 0.135, ORA 0.123, CAL-H 0.276, CAL-G 0.355, CAL-2L 0.228.
+  In the thin regime the gradient medium is recovered well; in the strong regime the catalogue picks are contaminated by
+  clutter and the calibrated corrections are worse than the registered homogeneous ones.
+
+5.3 Detection (recall @0.1 / @0.25; differences to HOM of the same detector, 95% CI)
+  THIN (300 windows, 224 events)       BOMP-PK         MT-FW          | diff BOMP-PK                       diff MT-FW
+    HOM                                0.429/0.580     0.464/0.603    |
+    ORA                                0.411/0.558     0.460/0.562    | -0.018 [-0.149,+0.116] / -0.022 [-0.123,+0.081]   -0.004 / -0.040 [-0.141,+0.050]
+    ORA-TS                             0.540/0.661     0.540/0.652    | +0.112 [-0.031,+0.266] / +0.080 [-0.005,+0.188]   +0.076 / +0.049 [-0.057,+0.167]
+    CAL-H                              0.473/0.607     0.513/0.612    | +0.045 [-0.055,+0.168] / +0.027 [-0.046,+0.123]   +0.049 / +0.009
+    CAL-G                              0.442/0.612     0.509/0.607    | +0.013 [-0.126,+0.163] / +0.031 [-0.061,+0.147]   +0.045 / +0.004 [-0.099,+0.108]
+    CAL-2L                             0.308/0.554     0.429/0.598    | -0.121 [-0.248,+0.071] / -0.027 [-0.145,+0.089]   -0.036 / -0.004
+    CEIL-GD 0.647/0.786 (headroom over BOMP-PK:HOM +0.219 [-0.005,+0.413] / +0.205 [+0.082,+0.330]); CEIL-GD-O 0.670/0.786.
+  STRONG (300 windows, 251 events)
+    HOM                                0.375/0.466     0.359/0.442    |
+    ORA                                0.371/0.470     0.311/0.402    | -0.004 [-0.084,+0.081] / +0.004 [-0.079,+0.080]   -0.048 / -0.040 [-0.129,+0.057]
+    ORA-TS                             0.378/0.490     0.402/0.490    | +0.004 [-0.104,+0.093] / +0.024 [-0.054,+0.113]   +0.044 / +0.048 [-0.031,+0.147]
+    CAL-H                              0.323/0.402     0.303/0.398    | -0.052 [-0.141,+0.021] / -0.064 [-0.130,+0.034]   -0.056 / -0.044
+    CAL-G                              0.287/0.363     0.283/0.375    | -0.088 [-0.194,+0.004] / -0.104 [-0.202,+0.013]   -0.076 / -0.068 [-0.175,+0.019]
+    CAL-2L                             0.307/0.422     0.347/0.414    | -0.068 [-0.166,+0.039] / -0.044 [-0.130,+0.050]   -0.012 / -0.028
+    CEIL-GD 0.422/0.502 (headroom +0.048 [-0.112,+0.140] / +0.036 [-0.054,+0.159]): little headroom on these networks.
+  BOTH REGIMES (600 windows, 475 events), BOMP-PK: ORA +0.006 [-0.066,+0.065] / +0.011 [-0.059,+0.064];
+    ORA-TS +0.040 [-0.036,+0.121] / +0.069 [+0.004,+0.141]; CAL-H -0.015 / +0.004 [-0.064,+0.049];
+    CAL-G -0.051 [-0.126,+0.017] / -0.038 [-0.114,+0.038]; CAL-2L -0.072 / -0.025 [-0.108,+0.041].
+    MT-FW: ORA -0.023 / -0.015 [-0.084,+0.038]; ORA-TS +0.042 / +0.067 [-0.008,+0.135]; CAL-G -0.051 / -0.032.
+    CEIL-GD - BOMP-PK:HOM +0.074 [-0.043,+0.181] / +0.107 [+0.017,+0.191].
+  Fraction of the CEIL-GD headroom captured (ratio per bootstrap replicate), @0.25:
+    thin   BOMP-PK: ORA -0.11 [-1.05, +0.36], ORA-TS +0.39 [-0.04, +0.89], CAL-H +0.13 [-0.32, +0.63],
+           CAL-G +0.15 [-0.47, +0.60], CAL-2L -0.13 [-1.33, +0.35]; MT-FW: ORA -0.22, ORA-TS +0.27, CAL-G +0.02.
+    both   BOMP-PK: ORA +0.10 [-1.13, +0.78], ORA-TS +0.65 [+0.00, +2.23], CAL-G -0.35 [-3.20, +0.43].
+    strong: undefined in practice (headroom about 0; ratios with intervals spanning -10 to +10).
+  Per cell (c6_percell.txt): no cell shows an ORA or CAL gain with an interval excluding 0; the largest point gains are
+  thin unilateral_c40 (CAL-H/CAL-G +0.116 at 0.25, CIs [-0.05/-0.07, +0.23/+0.25]); strong ladder_6 CAL-G is the worst
+  (-0.108 [-0.337, -0.014] at 0.1). Thin per-cell headroom: ladder_4 +0.213 [+0.032, +0.390], ladder_6 +0.325 [+0.043,
+  +0.542], unilateral_c40 +0.130 [-0.050, +0.354]; strong: +0.181, -0.036, +0.010.
+5.4 Location of hits at the cap-0.25 operating point (both regimes; median epicentral / depth error, km)
+  BOMP-PK: HOM 1.97/1.79, ORA 2.01/1.87, ORA-TS 1.61/1.76, CAL-H 2.09/1.79, CAL-G 2.09/1.95, CAL-2L 1.96/1.88.
+  MT-FW:   HOM 2.02/1.84, ORA 1.91/1.88, ORA-TS 1.65/1.85, CAL-G 1.82/1.90, CAL-2L 1.83/2.01.
+  The physics correction does not improve the location of hits (depth resolution is limited by the 4 km depth spacing);
+  only exact statics do (-0.36 km epicentral). Atom coverage (event with an atom within 5 km at any score) is 0.70-0.72
+  for HOM, ORA and CAL, 0.75 for ORA-TS; the misses' nearest atom stays at a median 7.4-7.9 km for every model.
+5.5 Why the physics correction does not help (diagnostics)
+  (i) Size of the medium mismatch (c6_ttresid.txt): over sources uniform in the target volume, |tt_gradient - tt_hom|
+      averages 0.12 s; a per-station/phase constant removes almost none of the variation (mean 0.118 s, P95 0.30 s
+      remain). The mismatch is real and of the order of the +-0.25 s tolerance, yet correcting it exactly (ORA) does
+      not change recall: the peak search already absorbs it.
+  (ii) Attribution run C6b (networks 20-29, 5 windows each, TAG 3008, 150 windows per regime x 5 generator variants
+      sharing sources/mechanisms/statics/clutter/noise; each variant removes ONE mismatch). Thin regime, headroom
+      CEIL-GD - BOMP-PK:HOM at 0.25: DEF +0.129 [-0.037, +0.228], homogeneous medium (MED) +0.194 [+0.081, +0.312],
+      matched 2 Hz pulse (PULSE) +0.177 [+0.045, +0.308], no site/polarisation perturbation (SITE) +0.153 [+0.047,
+      +0.288], no coda (CODA) +0.242 [+0.032, +0.366]. Removing any single mismatch does not close the headroom; with
+      an exact medium the detectors still miss what the genie finds. Variant - DEF effects on BOMP-PK:HOM are all within
+      +-0.05 at 0.25 in the thin regime (CIs +-0.15); MT-FW gains +0.13 [0.00, +0.30] with a matched pulse. Strong:
+      headroom about 0 in every variant; MED raises BOMP-PK by +0.147 [-0.018, +0.250] at 0.25. ORA - HOM within the
+      PULSE and SITE variants: +0.03 to +0.06 at 0.25 (CIs include 0).
+      Reading: the 5-10 km mislocations behind the headroom are not caused by the travel-time model; they persist with
+      exact travel times and are more plausibly the greedy detector's own ambiguity (sparse 4-8 station geometries, a
+      +-0.25 s tolerance that lets a node 7 km away explain the same peaks, clutter). The genie avoids it only because it
+      knows the source positions. The one clearly measurable physics lever is the station-static error left by a
+      20-event catalogue (ORA-TS vs ORA, +0.06 at 0.25).
+  (iii) Methodological note on the ceiling: deflating the genie at the TRUE arrival times with the 2 Hz atom
+      (CEIL-GD-TT, kept in the records) gives a much lower ceiling (thin 0.562 vs 0.786 at 0.25) than the verif_2e
+      definition with refined shifts: the per-event pulse (1.4-2.8 Hz, +-45 deg phase) moves the matched-filter peak
+      away from the true arrival, so a genie that does not adapt the shifts leaves large residual energy. CEIL-GD values
+      above use the verif_2e definition.
+5.6 Runtime
+  Per window (4 processes on 2 cores): BOMP-PK 0.80-0.83 s, dense MT-FW 0.13 s, for every model (tables precomputed; the
+  model does not change detection cost). Setup per network: operators 0.6 s per model; JHD 0.4 s (H), 0.7-1.2 s (G),
+  12-13 s (two-layer, bisection ray tracing). Single-process validation: dense MT-FW 0.070 s vs certified MT-FW 0.200 s.
+5.7 Judgement
+  Not a contribution in this design. The oracle medium captures -0.11 to +0.10 of the headroom (intervals from about -1
+  to +0.8), JHD-calibrated gradient or two-layer models capture nothing and hurt when the catalogue is clutter-
+  contaminated (strong regime). Only exact station statics help (+0.07, CI just excluding 0, pooled), and they are not
+  attainable. Novelty caveat: minimum 1D models and station terms from JHD (VELEST-type) are standard in location; the
+  novelty would have been doing it inside the pick-free moment-tensor detector and its certificate and quantifying the
+  gain. The quantified gain is about zero, which is itself a useful negative for the thesis: "more physics" in the
+  travel times is not where the detector's headroom is. If the thesis wants a physics lever, the evidence points to
+  (a) better station statics (more or better catalogue events; ORA-TS - ORA about +0.06), and (b) the source pulse /
+  radiation-amplitude model (C6b PULSE and SITE: MT-FW +0.10 to +0.13 when removed), not the velocity model.
+
+----------------------------------------------------------------------------------------------------------------------
+6. SUMMARY OF JUDGEMENTS (criterion: >= 0.05 recall with interval excluding 0, or a substantial fraction of the
+   headroom, or >= 3x speed at equal recall)
+----------------------------------------------------------------------------------------------------------------------
+  C2-CAP   meets it (pooled +0.074 [+0.016, +0.136] / +0.070 [+0.020, +0.128]); mechanism identified. Modest novelty.
+  MASK     thin only; +0.149 / +0.084 with lower bounds -0.007 / 0.000; strong null. Borderline.
+  SPEED    MT-FW 6.3x faster than BOMP-PK at equal recall in standard windows (equivalence within +-0.055 at 0.25);
+           existing methods, engineering only.
+  C6       no (both oracle and calibrated physics about 0; calibrated harmful in strong clutter).
+  C3       no (only helps in the uncorrected 0.8 s statics setting).
+  C1       no.
+  Selection caveat: C2-CAP was one of 5 comparisons in the C2 pilot and MASK was the best of 12 leak variants; the MASK
+  replication and the C2 strong pilot are the only unselected estimates. Point estimates are expected to shrink.
+
+----------------------------------------------------------------------------------------------------------------------
+7. DRAFT CONFIRMATORY PREREGISTRATIONS (to be appended to PREREGISTRO_1j_1k.txt and hashed BEFORE any code for them is
+   run on seeds 4242/8888; nothing below has been run on those seeds)
+----------------------------------------------------------------------------------------------------------------------
+7.1 Task 2F (primary recommendation): the per-station cap in dense overlapping sequences
+Question (H-CAP): in windows with 3-5 overlapping events, MT-FW+SC (capped moment-tensor subspace statistic, sequential
+  deflation) detects more events than BOMP-PK+SC at equal realised false-event rate, and the gain is due to the cap.
+Data: seeds 4242 and 8888 (each an independent replication), FRESH networks task2a_confirm.network(seed, cell, j),
+  j = 0..47 (48 networks per cell, regime and seed), 3 cells, regimes thin and strong, 10 windows per network drawn with
+  c2_run.draw_dense (3-5 events, separations >= 5 km within 9 km, origins in [5.2, 7.8] s with gaps >= 0.5 s) from a
+  TAG not used before; catalogue corrections (+SC) from 20 catalogue events per network as in 2A. 2880 windows per seed.
+Methods (code frozen and hashed before running; c6_lib.mtfw_dense and task2d_methods.bomp_pk_record, kmax 7 for all):
+  MT-FW+SC (primary), BOMP-PK+SC (comparator), BOMP-PK-CAP+SC and MT-FW-NOCAP+SC (mechanism), all with the registered
+  grid, origins, +-0.25 s tolerance, 5 km exclusion and hit rule.
+Endpoint: recall at <= 0.25 realised false events per window (primary) and <= 0.1 (secondary); exact FROC; operating
+  point per method on the evaluation data; hierarchical bootstrap (cells as strata, networks then windows, 2000
+  replicates, operating point re-chosen per replicate).
+Rule 2F-a (primary), per regime: MT-FW+SC - BOMP-PK+SC at cap 0.25, pooled over the 3 cells, with lower bound of the
+  95% CI > 0 in BOTH seeds, and pooled point estimate >= 0.03 in both seeds. Strict reading: Holm over the 4 tests
+  (2 regimes x 2 seeds), one-sided 0.025.
+Rule 2F-b (mechanism): MT-FW+SC - MT-FW-NOCAP+SC lower bound > 0 in both seeds (pooled over regimes), and
+  |MT-FW-NOCAP+SC - BOMP-PK+SC| <= 0.02 (point) in both seeds.
+Descriptive: per-cell differences with CIs; cap 0.1; BOMP-PK-CAP - BOMP-PK; runtime ratio; equivalence on standard
+  2A-type windows (optional arm: 10 networks per cell with draw_sources, TOST margin 0.05).
+Sample size (power.py; pilot seed 999, 6 networks per cell and regime, bootstrap SD of the pooled-over-cells difference
+  at cap 0.25: thin 0.0383, strong 0.0353): n = 6 (SD (z_0.975 + z_power) / delta)^2 networks per cell.
+  Planning effect delta = 0.035 (half the pooled pilot estimate 0.070, against the winner's curse) and power 0.95 per
+  seed (about 0.90 for passing in both seeds): thin 6 (0.0383 x 3.605 / 0.035)^2 = 94 networks per cell, strong 80.
+  With delta = 0.05 (the registry's usual effect of interest): thin 46, strong 39. Recommended: 48 networks per cell,
+  regime and seed (power per seed about 0.96-0.98 at delta 0.05 and 0.73-0.80 at delta 0.035); if the budget allows, 96
+  per cell covers delta 0.035. Expected runtime at 48 networks: 2880 windows per seed x about 2.2 s (BOMP-PK, BOMP-PK-CAP,
+  MT-FW, MT-FW-NOCAP at kmax 7) = 1.8 h per seed on one core, about 1.8 h for both seeds on 2 cores.
+Interpretation: 2F-a and 2F-b pass -> the per-station cap is a confirmed contribution for dense sequences; 2F-a passes
+  and 2F-b fails -> the gain is real but its cause is not the cap; 2F-a fails -> the pilot effect was a selection
+  artefact. Nothing is changed after seeing 4242/8888; every added analysis is declared exploratory.
+
+7.2 Task 2G (optional): arrival masking in the thin regime
+Question (H-MASK): BOMP-PK+SC with arrival masking (MASK6g3: after each accepted atom, the +-6 samples around each of its
+  read arrivals with fitted amplitude >= 3 are removed from later searches) detects more events than BOMP-PK+SC in
+  standard 2A-type windows in the thin regime.
+Data: seeds 4242 and 8888, fresh networks j = 48..119 (72 per cell and seed, disjoint from 2F), thin only, 10 windows
+  per network (draw_sources), new TAG; +SC as in 2A. Strong regime as a descriptive arm only (12 networks per cell).
+Endpoint and CI as 2F. Rule 2G-a: BOMP-PK-MASK+SC - BOMP-PK+SC at cap 0.1 (primary, where the pilot and replication
+  agree) pooled over cells, lower bound > 0 in both seeds; secondary at cap 0.25.
+Sample size: replication SD at cap 0.1 0.071 and at cap 0.25 0.040 (6 networks per cell). delta 0.075 at cap 0.1 (half
+  of the replicated +0.149), power 0.95 per seed: 6 (0.071 x 3.605 / 0.075)^2 = 70 networks per cell; at cap 0.25,
+  delta 0.042: 71. Recommended 72 per cell and seed. Runtime about 2160 windows x 1.2 s = 0.7 h per seed.
+
+----------------------------------------------------------------------------------------------------------------------
+8. FILES (all in /home/claude/work/explore_contrib; outputs in out/)
+----------------------------------------------------------------------------------------------------------------------
+  c3_analyze.py -> out/c3_thin_analysis.txt
+  c2_ablate.py, c2_ablate_analyze.py -> out/c2_ablate_thin.json, c2_ablate_analysis.txt, c2_ablate_strong.json,
+     c2_ablate_strong_analysis.txt
+  leak2.py, leak2_analyze.py -> out/leak2_thin.json/_analysis.txt, out/leak2_strong.json, leak2_strong_analysis.txt
+  c6_lib.py (models, operators, dense MT-FW, JHD), c6_validate.py -> out/c6_validation.txt
+  c6_run.py -> out/c6_thin.json, c6_strong.json (+ .log); c6_ceil.py -> out/c6_ceil_thin.json, c6_ceil_strong.json
+  c6_analyze.py -> out/c6_analysis.txt; c6_percell.py -> out/c6_percell.txt; c6_ttresid.py -> out/c6_ttresid.txt
+  c6b_run.py, c6b_analyze.py -> out/c6b_thin.json, c6b_strong.json, c6b_analysis.txt
+  power.py -> out/power_c2.txt (both regimes), power_c2_strong.txt, power_mask_thin.txt
+  No registered file, no 2A-2E part and no verif_2e file was modified.

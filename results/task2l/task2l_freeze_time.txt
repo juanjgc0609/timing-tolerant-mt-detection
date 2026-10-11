@@ -1,0 +1,5 @@
+Sun Oct  4 21:24:48 UTC 2026
+first job on 7171/9393 launched: Sun Oct  4 21:24:53 UTC 2026 (./run_queue_2l.sh: OPENBLAS_CORETYPE=Prescott python3 task2l_run.py run --seeds 7171,9393 --workers 2; budget rule NOT triggered: estimate 4.62 h on 2 cores, task2l_control.txt)
+resumed Sun Oct  4 22:48:13 UTC 2026 (interrupted 22:47:19 UTC when the session was suspended; code unchanged, sha256sum -c OK)
+relaunched Sun Oct  4 22:49:32 UTC 2026 (code unchanged)
+relaunched Sun Oct  4 23:07:22 UTC 2026 (code unchanged)

@@ -1,0 +1,35 @@
+{
+ "name": "Task 2M seed 3141: noise days 2010-02-10 and 2010-02-11 pooled (8 stations, QC qc1), 17 networks per cell",
+ "seed": 3141,
+ "noise_dirs": [
+  "/home/claude/work/t2m_out/noise/100210",
+  "/home/claude/work/t2m_out/noise/100211"
+ ],
+ "j0": 2900,
+ "nblocks": [
+  10,
+  7
+ ],
+ "nwin": {
+  "STD": 6,
+  "DENSE": 16,
+  "NOISE": 4
+ },
+ "methods": [
+  "MT@S0",
+  "MT@S0+T3",
+  "MT@S2+T3",
+  "BOMP@S0",
+  "HUBER-N@S0"
+ ],
+ "gen_nets": [
+  2900,
+  2901,
+  2902,
+  2903,
+  2904,
+  2905,
+  2906,
+  2907
+ ]
+}

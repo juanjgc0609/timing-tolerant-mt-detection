@@ -1,0 +1,194 @@
+TASK 2F - INDEPENDENT ADVERSARIAL VERIFICATION (looking for a false positive)
+============================================================================
+Date: Mon Sep 28 2026 (container clock). Scope: registry section "Task 2F" of PREREGISTRO_1j_1k.txt (registration
+hash 3d8e4c9b...2f5f), task2f_report.txt, analyze_2f_out.txt, task2f_control.txt, task2f_parts/ (1392 parts), code
+listed in task2f_code_hashes.txt, pilot material in explore_contrib/. No 2F file and no registry file was modified;
+everything new is in verif_2f/ (scripts *_verif.py, outputs *_verif*.txt, mech_parts/). Compute used: about 25 min
+wall on 2 cores.
+
+VERDICT: CONFIRMED POSITIVE for the registered claim. I found no leakage, asymmetry, scoring artefact or provenance
+problem that could produce the result. Rules 2F-a, 2F-b and 2F-c were re-derived independently and hold. Two
+qualifications do not overturn the test but narrow what it means. First, the gain depends strongly on the cap
+level: it peaks at the fixed CAPV = 6 and is near zero at 12 or more, and negative at 3 or less. Second, the gain
+mostly compensates the generator's unmodelled lognormal site-amplification factors, not clutter. Section 7 states the
+honest scope.
+
+----------------------------------------------------------------------------------------------------------------------
+1. PROVENANCE (verif_2f/provenance_verif_out.txt)
+----------------------------------------------------------------------------------------------------------------------
+1a. Code freeze: sha256sum -c task2f_code_hashes.txt -> 26/26 OK. The OK list includes task2f_run.py,
+    analyze_2f.py, c6_lib.py, c2_ablate.py, c2_run.py, xc.py, task2d_methods.py and task2a_confirm.py. It was
+    re-checked at the end of this verification: still OK.
+1b. Registry hash chain: each of the 8 hashes in PREREGISTRO_hashes.txt equals the SHA-256 of a line-terminated
+    prefix of the current PREREGISTRO_1j_1k.txt. The prefix lengths increase strictly (39694, ..., 50804, 51545
+    bytes), so the file only grew by appending. The registration hash 3d8e4c9b...2f5f is the prefix that ends
+    exactly at the end of the "Task 2F" section, before "Result of 2F". The current file hash is dc46cb38...7376,
+    the last line of the hash file. The registered text was not edited after results. I cannot see the chat, so
+    I cannot verify that the hash reached the user before the run.
+1c. Clock order (TZ=UTC, full-iso mtimes): registry section stamped 03:34:51, control run 03:39:12,
+    task2f_code_hashes.txt written 03:49:08.64, runner launch logged 03:49:16, first confirmatory part 03:49:29.26,
+    last part 06:52:31.33. No confirmatory part predates the freeze. There are 1344 confirmatory and 48 control
+    parts, and log2f.txt shows one launch. These are container-clock mtimes: they are consistent but not
+    tamper-proof.
+1d. Untouched seeds: outside task2f_parts/ there is no file named *4242* or *8888* except pip/npm cache blobs and
+    my own verif outputs. No JSON anywhere outside task2f_parts/ has "seed": 4242 or 8888. The integers 4242 and
+    8888 appear only as generic rng seeds in unrelated scripts (rft_threshold.py, c1_csdm.py, c1c.py,
+    task2e_validate.py), as the 2F report declares.
+1e. Reproducibility and call order (repro_verif_out.txt): I regenerated 3 parts from scratch in a fresh process:
+    dense 4242 thin ladder_6 net 5, dense 8888 strong unilateral_c40 net 77, and std 8888 strong ladder_4 net 101.
+    This time BOMP-PK ran BEFORE MT-FW. Truth and all four methods' records were identical in 30/30 windows, so no
+    shared state or method-order effect exists. My own re-implementation of MT-FW also reproduces
+    c6_lib.mtfw_dense bit for bit: 216/216 checks at CAPV 6 and uncapped. It reproduces the stored control records
+    too.
+
+----------------------------------------------------------------------------------------------------------------------
+2. LEAKAGE / ASYMMETRY (code reading plus checks)
+----------------------------------------------------------------------------------------------------------------------
+2a. Both methods get the same inputs: the same ModelOps object (grid 675 nodes, DEFAULT_TAUS 5.0-8.0 s step 0.1,
+    station corrections from the same 20-event catalogue, the same Gs and IDX table), the same MFn (each method
+    copies it), the same kmax (7 dense, 5 std), the same 5 km exclusion (excl_mask vs an equivalent inline rule,
+    both "<= 5 km"), the same +-4-sample peak window (D2.II_TAB) and the same hit rule (task2c_methods.hit_of:
+    nearest true epicentre within TOL_KM = 5). "truth" enters both only through hit_of (labelling). There is no
+    oracle use. The seed-999 validation (c6_validation.txt) shows ModelOps BOMP-PK equals the registered BOMP-PK+SC
+    (records to 3e-13).
+2b. Scoring: the FROC uses one threshold per method over pooled windows, so score scale differences between methods
+    are irrelevant. Ties are admitted together, and the running minimum is applied identically in both methods.
+    Duplicate atoms on an already-hit event count as neither hit nor false. That is the 2A-2E rule, and it does
+    not favour MT-FW. Counting duplicates as false changes MT-FW - BOMP-PK at 0.25 from +0.072/+0.051/+0.074/+0.043
+    to +0.068/+0.042/+0.075/+0.043 (thin 4242, strong 4242, thin 8888, strong 8888; points_verif_out.txt).
+    MT-FW's duplicate counts are similar to or above BOMP-PK's (e.g. 829 vs 847, 903 vs 771).
+2c. kmax: the records are sequential, so the kmax = 5/3/2 record is a prefix of the kmax = 7 record. Truncating
+    gives MT-FW - BOMP-PK at 0.25 of +0.073/+0.075/+0.064 (thin 4242), +0.053/+0.055/+0.048 (strong 4242),
+    +0.076/+0.088/+0.082 (thin 8888) and +0.042/+0.044/+0.033 (strong 8888) for kmax 5/3/2
+    (diag_verif_out.txt). kmax = 7 does not create the effect.
+2d. Event count: the gain is positive for k = 3, 4 and 5 separately in every regime x seed (+0.030 to +0.106 at 0.25).
+2e. Hit rule (hitrule_verif_out.txt). The registered rule ignores origin time, and in dense windows all events lie
+    within 9 km, so the rule is loose. For example, in the first stored window an MT-FW "hit" has a 2.5 s origin
+    error. I recomputed hits from the stored atom locations and origins. The recomputed registered rule matches
+    the stored labels exactly (0 mismatches). Stricter rules give these MT-FW - BOMP-PK values at 0.25:
+      5 km & |dt| <= 1.0 s : +0.063 / +0.052 / +0.084 / +0.041
+      5 km & |dt| <= 0.5 s : +0.045 / +0.024 / +0.043 / +0.027
+      3 km & |dt| <= 0.5 s : +0.035 / +0.013 / +0.027 / +0.020   (thin 4242, strong 4242, thin 8888, strong 8888)
+    MT-FW - MT-FW-NOCAP moves the same way. Absolute recall falls a lot under origin matching: at 5 km and 0.5 s,
+    MT-FW is 0.09-0.13 and BOMP-PK 0.07-0.08. So about half of the registered "hits" in dense windows have an origin
+    error above 0.5 s. The direction and relative size of the gain survive (MT-FW/BOMP-PK about 1.3-1.6x). The
+    absolute +0.04 to +0.07 is partly inflated by the location-only rule. This is a registered rule applied equally
+    to both methods, so it is not a false positive.
+
+----------------------------------------------------------------------------------------------------------------------
+3. STATISTICS (stats_verif.py; own FROC and bootstrap code, no reuse of analyze_2f/froc_exact)
+----------------------------------------------------------------------------------------------------------------------
+3a. Point estimates, 2F-a (dense, pooled cells, cap 0.25). I re-derived all four regime-seed pools; the task asked
+    for at least two. MT-FW - BOMP-PK = +0.0722 (thin 4242), +0.0510 (strong 4242), +0.0744 (thin 8888) and
+    +0.0425 (strong 8888). The per-method recalls match analyze_2f_out.txt to the third decimal in all 16
+    method x pool cells (e.g. thin 4242 MT-FW 0.1869/0.2887, BOMP-PK 0.1016/0.2166). At cap 0.1: +0.085, +0.055,
+    +0.089, +0.060.
+3b. Hierarchical bootstrap (own implementation: cells as strata, networks with replacement, windows within network,
+    2000 replicates, operating point re-chosen, different RNG). For dense thin 4242: +0.0722, 95% CI
+    [+0.0491, +0.0924], SD 0.0114, p(d<=0) = 0.0005. The registered result is [+0.048, +0.092], SD 0.0113.
+3c. Networks shared across regimes: analyze_2f.counts draws the network index once per cell and replicate and uses
+    it in both regimes, with windows resampled per regime. For single-regime pools (2F-a) this is exactly the
+    registered "cells as strata, networks and windows". For pooled-regime rules (2F-b, 2F-c) the network is the
+    replication unit, so the correlation is respected. This is correct as registered.
+3d. Holm: the four one-sided p-values are all 0.0005 (the bootstrap floor 1/2001). The smallest threshold is
+    0.025/4 = 0.00625 and the adjusted p is 0.002, so all four are rejected. The 2F-a point estimates (>= 0.03) and
+    lower bounds (> 0) hold in both seeds and both regimes. 2F-a passes, and passes under the strict reading.
+3e. 2F-b points (pooled regimes, 0.25): MT-FW - NOCAP = +0.0602 / +0.0593 and NOCAP - BOMP-PK = -0.0007 / -0.0017
+    (4242 / 8888). This matches the registered +0.060/+0.059 and -0.001/-0.002. The lower bounds are about +0.045
+    by the registered bootstrap, far from 0. 2F-b passes.
+3f. Power sanity: the observed bootstrap SDs (about 0.010-0.012) are consistent with the pilot SD scaled to 96
+    networks.
+
+----------------------------------------------------------------------------------------------------------------------
+4. 2F-c EQUIVALENCE ARM (standard 0-2 event windows, pooled cells and regimes, TOST margin 0.05, cap 0.25)
+----------------------------------------------------------------------------------------------------------------------
+Points: -0.0078 (4242) and -0.0134 (8888), which match the registered -0.008 and -0.013. My bootstrap uses networks
+as the unit, windows of both regimes within a network, and a different RNG. It gives:
+  4242: 90% CI [-0.039, +0.034], p(d <= -0.05) = 0.020, p(d >= +0.05) = 0.009 -> equivalent
+  8888: 90% CI [-0.049, +0.026], p(d <= -0.05) = 0.047, p(d >= +0.05) = 0.009 -> equivalent (barely)
+The registered values for 8888 are 90% CI [-0.048, +0.027] and p = 0.0405. 2F-c passes under both implementations,
+but its lower margin in 8888 depends on the resampling details. In the strong regime the standard-arm points are
+-0.026 and -0.032, and in std thin the cap gives +0.08 at cap 0.1. So "no harm" means "no harm beyond 0.05, pooled".
+A cost of about 0.03 for isolated events in strong clutter is not excluded, as the 2F report itself says.
+
+----------------------------------------------------------------------------------------------------------------------
+5. MECHANISM, EXPLORATORY (seed 999 only; dense pilot windows, networks 10-15, TAG 3002, 360 windows per condition;
+   mech_verif.py, mech_analyze_verif_out.txt, capfine_analyze_verif_out.txt; CIs: own hierarchical bootstrap,
+   B = 500)
+----------------------------------------------------------------------------------------------------------------------
+5a. Cap level (MT-FW minus BOMP-PK, cap 0.1 / 0.25, thin+strong pooled; BOMP-PK 0.110/0.208):
+      CAPV 2  -0.064/-0.122   CAPV 3  +0.004/-0.056   CAPV 4  +0.040/+0.017   CAPV 5  +0.058/+0.047
+      CAPV 6  +0.074/+0.070   CAPV 8  +0.058/+0.046   CAPV 12 +0.033/+0.010   CAPV 24 -0.003/-0.008   none -0.003/+0.001
+    The effect has a single peak at about 5-8 noise-sd units, with its maximum exactly at the fixed CAPV = 6. It is
+    harmful at 3 or less and gone at 24. CAPV = 6 was fixed in Task 1x (cal_capv.py, a different generator, standard
+    windows) as the best of {6, 12, 24, none}. No value below 6 was tried. It was not tuned on dense windows or on
+    4242/8888, so there is no leakage. But the confirmed gain belongs to this cap level, not to "a per-station cap"
+    in general. The data do not say how a user would choose the level without calibration. At CAPV 5 or 8 the seed
+    999 gain (about +0.047) would still clear the 0.03 bar.
+5b. Clutter removed (n_clutter = 0): the gain INCREASES. MT-FW(6) - BOMP-PK = +0.137 [+0.058, +0.183] and
+    MT-FW(6) - NOCAP = +0.139 [+0.073, +0.190] at 0.25, against +0.070 [+0.016, +0.131] and +0.069 [+0.023, +0.128]
+    with clutter. Clipping clutter spikes is therefore NOT the cause. The regime difference (thin > strong) comes
+    from clutter partly defeating the cap.
+5c. Clutter AND lognormal site factors removed (site_sd = 0): BOMP-PK recall rises from 0.180 to 0.296 at 0.25, and
+    the cap's gain shrinks to +0.023 [-0.040, +0.069] at 0.25 (+0.055 at 0.1). CAPV 12, 24 and none are then equal to
+    BOMP-PK. Most of the gain is the cap robustifying the detector against per-station amplitude factors that its
+    radiation model does not contain (generator site factors lognormal, sigma 0.5). This agrees with the pilot
+    report's stated mechanism ("site-amplified arrivals dominate the unclipped statistic"). The size of the gain
+    therefore depends on the generator's assumed site-amplification spread.
+5d. Selection vs score (swap variants on the same residuals, 0.25, pooled; 5b values in brackets):
+    - Selecting with the cap and scoring uncapped: +0.039 over BOMP-PK (+0.076).
+    - Selecting uncapped and scoring with the cap: +0.025 (+0.093).
+    - The full cap: +0.070 (+0.137).
+    Both parts contribute and they combine more than additively. On the confirmatory data (diag_verif_out.txt), the
+    within-window, threshold-free gain is small: unique hits among the first k atoms rise by +0.001 to +0.012. The
+    first-atom hit rate rises by +0.02 to +0.05 (e.g. 0.833 vs 0.795). The largest difference is in the reliability
+    of high scores: among the top 20% of first-atom scores, MT-FW is correct 0.90-0.96 of the time and BOMP-PK
+    0.79-0.84. The uncapped first-atom scores spread 5x (p90/p10) against 2x capped. Much of the FROC gain at 0.25
+    false/window is therefore better cross-window calibration of the statistic under a single global threshold.
+    That is legitimate for the registered endpoint, which is a single-threshold detector. It is not purely
+    "resolving overlapping events more correctly within a window", so the 2F report's wording should say so.
+
+----------------------------------------------------------------------------------------------------------------------
+6. CHECKLIST SUMMARY
+----------------------------------------------------------------------------------------------------------------------
+  Code freeze (sha256sum -c)                         PASS (26/26, before and after this verification)
+  No part predates the freeze                        PASS (first confirmatory part 20 s after the freeze file)
+  Registry hash chain (prefixes, append-only)        PASS (8/8; 3d8e4c9b = end of the Task 2F section)
+  No earlier 4242/8888 data                          PASS
+  Same data, grid, origins, SC, kmax, exclusion, hit PASS (code reading; fresh regeneration 30/30 identical)
+  Cap vs FROC scoring, ties, running min, duplicates PASS (no asymmetry; the result is robust to duplicate
+                                                     treatment and kmax)
+  2F-a points re-derived (own FROC)                  PASS (4/4 pools)
+  Hierarchical bootstrap re-run (one pool)           PASS (thin 4242: [+0.049, +0.092] vs registered [+0.048, +0.092])
+  Shared networks across regimes                     PASS (as registered)
+  Holm                                               PASS
+  2F-b                                               PASS
+  2F-c (TOST)                                        PASS, fragile in 8888 (p = 0.047 in my bootstrap, 0.041 registered)
+  Stricter hit rules                                 gain persists, smaller in absolute terms
+  Cap level                                          CAVEAT: narrow optimum at the fixed CAPV = 6
+  Clutter removed                                    gain larger: not a clutter artefact
+  Site factors removed                               CAVEAT: gain mostly vanishes; it depends on unmodelled site gains
+
+----------------------------------------------------------------------------------------------------------------------
+7. HONEST SCOPE OF THE CLAIM
+----------------------------------------------------------------------------------------------------------------------
+Supported: in this synthetic generator (gen_realistic, homogeneous detector model, catalogue station corrections,
+lognormal site factors sigma 0.5, thin/strong Ricker clutter), in windows with 3-5 events clustered within 9 km, MT-FW+SC
+with the per-station/phase cap CAPV = 6 has higher recall than BOMP-PK+SC at <= 0.25 (and <= 0.1) realised false events
+per window. The gain is +0.04 to +0.07 under the registered location-only hit rule, and +0.02 to +0.05 when the
+origin must also match within 0.5 s. It replicates in two untouched seeds and both clutter regimes. Removing the cap
+removes the gain, and putting it into BOMP-PK's selection statistic recovers most of it.
+Not supported or not tested:
+  (i) any real-data claim;
+  (ii) "a per-station cap" at an arbitrary level: the effect needs a level near 5-8 noise-sd units and reverses at
+      3 or less;
+  (iii) robustness to clutter as the mechanism: it is not; the mechanism is mainly robustness to unmodelled
+      per-station amplitude (site) factors, plus better cross-window score calibration;
+  (iv) absolute detection quality: recall stays 0.22-0.29, and about half of the location-only "hits" have origin
+      errors above 0.5 s;
+  (v) no harm on isolated events in strong clutter: a cost of about 0.03 is not excluded.
+Novelty: clipping, normalising or sign-stacking per-station contributions is established robust-stacking and
+back-projection practice. The defensible contribution is empirical: inside a moment-tensor subspace detector with
+deflation, the clip level interacts with unmodelled site amplification and sets how well dense sequences are
+detected under a global threshold, while joint refitting and the P/S Gram term do not matter. It is a measured
+design result, not a new method.

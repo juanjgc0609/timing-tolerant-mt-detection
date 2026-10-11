@@ -1,0 +1,358 @@
+C16 - REAL NOISE AND REAL GEOMETRY: SEMI-SYNTHETIC INJECTION BENCHMARK FOR THE G1-R AND G1-C ORDERINGS
+(explore_contrib) - REPORT
+======================================================================================================================
+Status: EXPLORATORY, NOT CONFIRMATORY. Nothing of what follows tests a registered hypothesis. Seed 999 only.
+Dates (container clock, -05): code and data preparation on Friday 9 Oct 2026, 14:18-15:03; the session was
+cut off then (API limit) and the container restarted; at that moment NO detection run had been executed
+(there were no parts, no validation, no freeze on disk; I checked this on resuming). Resumed 18:08:
+development and validation 18:08-18:16, FREEZE 18:16 (C16_FREEZE.txt), evaluation of the held-out networks
+18:16-20:00 (103 min) (two processes, one per arm; the second core was free), analysis and writing afterwards.
+2-core machine, OPENBLAS_NUM_THREADS=1, OPENBLAS_CORETYPE=Prescott. The preregistration was not edited, nor anything in
+/mnt/user-data/outputs, any real-data file or any earlier explore_contrib file (only new files
+c16_*, C16_FREEZE.txt, REPORT_C16.txt and out/c16_*).
+
+Evaluation sample per arm: 36 new networks (12 per cell), 432 STD windows (347 events), 432 DENSE (1720
+events) and 432 windows without events; the two arms have exactly the same signals. All parts finished;
+nothing was excluded.
+
+----------------------------------------------------------------------------------------------------------------------
+0. SUMMARY AND VERDICT
+----------------------------------------------------------------------------------------------------------------------
+(1) G1-R (bounded influence) SURVIVES with real noise, and becomes stronger. Dense windows, LOC rule, <= 0.25
+    false events per window, REAL arm:
+        MT@S0 (cap 6) - BOMP@S0         +0.259 [+0.131, +0.321]   (recall 0.314 versus 0.055)
+        HUBER-N@S0 - BOMP@S0            +0.294 [+0.178, +0.355]   (0.349 versus 0.055)
+        HUBER-N@S0 - MT@S0              +0.035 [-0.020, +0.097]   (non-inferior; 2I-b required bound > -0.03)
+    LOC+T: +0.085 [+0.030, +0.124] and +0.133 [+0.082, +0.174]. At <= 0.1, LOC: +0.183 [+0.134, +0.248] and +0.233
+    [+0.144, +0.293]. In the GEN arm (same geometry and signals, Gaussian noise + thin clutter): +0.069 [-0.009,
+    +0.158] and +0.113 [+0.052, +0.199]. REAL - GEN difference of the contrast (joint bootstrap): +0.190 [+0.037,
+    +0.276] and +0.181 [+0.037, +0.264]. Mechanism: BOMP-PK (uncapped energies) collapses with real noise (recall
+    DENSE LOC 0.312 -> 0.055; STD LOC 0.813 -> 0.248), because the transients of real noise (excess kurtosis of the
+    filtered noise: median 3.0, 90th percentile = 42; max |MF| > 10 standard deviations in 41% of the windows) give it
+    false atoms with huge scores (99th percentile of the first atom in windows without events 7536 versus 33 with
+    generator noise). MT-FW with cap 6 and HUBER-N, whose influence per station and phase is bounded, lose much less.
+    This is exactly the property that G1-R asserts, now with a type of contamination (real transients) that the
+    generator did not have.
+(2) G1-C (calibration) IS NOT CONTRADICTED BUT IS NOT REPRODUCED at the resolution of this sample. Standard windows,
+    LOC+T, <= 0.25, REAL arm:
+        MT@S2+T3 - MT@S0+T3             +0.049 [-0.083, +0.149]   (0.464 -> 0.513; bootstrap sd 0.060)
+        oracle MT@ORA+T3 - MT@S0+T3     +0.095 [-0.035, +0.205]
+    GEN arm: +0.023 [-0.058, +0.106], oracle +0.023 [-0.075, +0.135]; REAL - GEN of the contrast +0.026 [-0.134,
+    +0.154]. DENSE LOC+T: REAL +0.019 [-0.029, +0.059] (oracle +0.067 [+0.016, +0.119]); GEN -0.033 [-0.081, +0.044].
+    Under LOC in STD the contrast is -0.037 [-0.095, +0.048] (REAL). The registered sign (+) is preserved in the REAL arm
+    in STD and DENSE, but every interval includes 0: with 36 networks x 12 windows the deviation of the contrast (0.060) is
+    five times that of 2L (0.012), and the registered effect (+0.06) cannot be resolved. What is seen: (a) S2 improves
+    the terms with real noise as with the generator (median rms error S0 0.153 -> S2 0.080 s REAL; 0.115 -> 0.052
+    GEN; better than S0 in 83% and 92% of the networks); (b) in this real geometry (stations at 5-31 km from the
+    sources, not at 10-45) the margin of the oracle over S0+T3 in STD is small even with generator noise
+    (+0.023), so that the geometry, not the noise, limits what G1-C can deliver here.
+(3) TRANSFER OF THE OPERATING POINT. With the threshold fixed on the windows with events of the REAL arm, the realised
+    false events in real-noise windows WITHOUT events are: MT family 0.000 (DENSE, LOC), 0.007-0.009 (STD, LOC+T, at
+    <= 0.25) and 0.014-0.023 (STD, LOC, at <= 0.25), far below the nominal budget (the budget of the operating
+    point is spent by detections induced by the events, as in C14); BOMP@S0 0.12-0.20 and HUBER-N@S0 0.03-0.10
+    per window, which are pure-noise detections. With the threshold fixed on the SYNTHETIC benchmark (GEN arm) and
+    applied to real noise (X): MT 0.000 (DENSE), 0.014-0.060 (STD LOC+T at 0.25), 0.13-0.19 (STD LOC at 0.25); HUBER-N 0.06-0.29; BOMP 0.29-0.86 per
+    window. With generator noise the windows without events give 0.000 for all methods. The operating point
+    of the capped detector transfers to real noise reasonably (the excess is <= 0.06 per window with the primary
+    rule); that of BOMP-PK does not transfer (noise false events of 0.3 to 0.9 per window at a nominal level of 0.25).
+(4) The signals are the same and their per-arrival SNR with real noise is almost that of the generator noise (paired
+    ratio REAL / GEN median 0.96, quartiles 0.88-1.08, 5-95% 0.73-1.49): the amplitude rule worked. Even so the
+    recall drops for all methods with real noise (MT@S0 DENSE LOC 0.381 -> 0.314, -0.067 [-0.126, -0.001]; STD LOC 0.810 ->
+    0.666), which measures the cost of the non-Gaussianity and non-stationarity of real noise at equal in-band level.
+VERDICT: the G1-R ordering survives the second noise model and the real geometry (and real noise
+reinforces it, through a mechanism that is that of the hypothesis itself); the G1-C ordering keeps the sign but can be
+neither asserted nor denied with this sample (intervals that include 0, and a small oracle margin in this geometry).
+The operating point of the capped detector transfers to real noise with a small excess; that of BOMP-PK does not.
+
+----------------------------------------------------------------------------------------------------------------------
+1. REAL DATA AND THEIR TREATMENT (c16_data.py, executed with python -I; output out/c16_noise/)
+----------------------------------------------------------------------------------------------------------------------
+Data: /home/claude/realdata/pympa37_altotiberina_100723 (treated as untrusted data; read-only with obspy
+1.5.1): 24 h of 2010-07-23, 14 three-component stations of the IV network (ATBU, ATCA, ATCC, ATFO, ATLO, ATPC,
+ATPI, ATVO, BADI, FRON, MURB, PARC, PIEI, SSFR; EH* or HH*), 25 Hz, without gaps (checked: 0 samples filled in
+the 42 channels). Coordinates from inv.IV (StationXML, station level; epoch active that day; ATCA and PIEI are not in
+stations.list). Catalogue: the 32 rows of templates.zmap for that day (M -0.8 to 1.9, almost all from the cluster at 43.315 N,
+12.388 E at 3 km) and the 8 detections of 200.100723.cat (one, 22:32:10, is not in templates.zmap): 40 origins.
+Treatment, fixed before any detection:
+  (a) per channel: mean and linear trend removed; Butterworth high-pass 0.5 Hz (order 4) and anti-alias low-pass 6.5 Hz
+      (order 8), both zero-phase at 25 Hz; resampling 25 -> 16 Hz (= 1/DT of the project, task0_common) with
+      scipy.signal.resample_poly(16, 25). The analysis band of the project is that of the matched filter (Ricker of 2 Hz,
+      xc.matched / task1o_consistent._KER; useful energy between ~0.7 and ~4 Hz) and the generator pulse (Ricker of 1.4 to
+      2.8 Hz); 0.5-6.5 Hz contains it entirely. The high-pass removes the microseism (0.1-0.3 Hz), which the matched filter already
+      attenuates strongly but not completely at broadband stations.
+  (b) components to the generator frame: x = East, y = North, z = DOWN (-Z).
+  (c) coordinates: flat earth around 43.315 N, 12.388 E and shifted by the centroid of the 14 stations
+      (fixed shift), so that the source box of the generator ([-15, 15]^2 km, 5-13 km depth) and the
+      detection grid (+-21 km) lie inside the real network. The stations lie between 5 and 31 km from the origin
+      (in the synthetic generator, 10-45 km). Elevations IGNORED (z = 0 for all, like the generator stations),
+      consistently in signal, catalogue and detectors.
+  (d) slots of 40 s (640 samples = NT of the project) starting at 0, 40, 80 ... s. Eligible = does not overlap
+      [t - 60 s, t + 60 s] of any catalogued origin and is more than 60 s from the ends of the day: 2037 of 2160.
+  (e) AMPLITUDE RULE (one, fixed before any detection): per channel, s_ch = median over the 2037 eligible
+      slots of the robust in-band level of the slot (median |MF| / 0.6745, MF = the matched filter of the project);
+      the channel is multiplied by SD_GEN / s_ch, SD_GEN = the in-band level of the generator white noise (0.14 per
+      sample). Thus the TYPICAL level of each channel over the day is that of the generator; the variations of the
+      level over the day, the transients, the spectral colour within the band, the non-Gaussianity and the
+      correlation between components are preserved, and the gain differences between instruments are lost (in counts; without
+      instrument response they are not comparable). Relative level of the slots with respect to the median of their channel:
+      quantiles 5/25/50/75/95/99 % = 0.41 / 0.78 / 1.00 / 1.24 / 2.34 / 6.35.
+  No synthetic clutter or Gaussian noise is added in the REAL arm.
+
+----------------------------------------------------------------------------------------------------------------------
+2. DESIGN (c16_lib.py, c16_run.py, c16_analyze.py; all fixed before the freeze)
+----------------------------------------------------------------------------------------------------------------------
+Signal. Events generated exactly as in the project (c8_lib.generate_site = gen_realistic.generate_real, literal
+logic, split into two functions: c16_lib.gen_signal = signal + coda up to the end of the event loop;
+c16_lib.add_gen_noise = clutter + Gaussian noise in the same order): same sources (xc.draw_sources for STD, 0-2
+events, kmax 5; c2_run.draw_dense for DENSE, 3-5 events within 9 km, kmax 7), random double pairs, Ricker pulse
+1.4-2.8 Hz with phase rotation, medium with gradient, coda, lognormal site factors (0.5, drawn per window),
+polarisation deviation of 10 degrees, statics N(0, 0.3 s) per station and phase fixed per network.
+Arms, on the SAME networks and the SAME signals (paired):
+  REAL  signal + real-noise segment (no clutter, no Gaussian noise). The clutter and noise draws of the
+        generator are consumed and discarded, so that the sources of each subsequent window and of each catalogue
+        candidate are the same as in GEN.
+  GEN   signal + clutter of the thin regime (amplitude 0.35; 35 spikes per window in ladder, 40 in unilateral) + generator
+        Gaussian noise = the standard chain of the project on the real geometry (bit-for-bit identical to
+        c8_lib.generate_site; section 3).
+Networks (rules fixed before any detection; subset stream [999, 5165, ci, j]):
+  ladder_4 / ladder_6   uniform subset of 4 / 6 of the 14 stations.
+  unilateral_c40        one-sided coverage: direction theta ~ U(0, 2 pi) and the 8 stations whose azimuth (seen from
+                        the centroid) is closest to theta. With 14 real stations this leaves a maximum azimuthal
+                        gap of 167-202 degrees (in the synthetic c40 cell, >= 234): it is less unilateral than the synthetic
+                        cell, and several subsets repeat (8 distinct in the 12 evaluation networks).
+  In ladder_4 networks 2403 and 2404 drew the same subset (chance; different hours, statics and signals).
+  NEW network indices: development j = 2400, 2401; evaluation j = 2402-2413 (12 per cell). New TAGs: 5161 STD, 5162
+  DENSE, 5163 catalogue, 5164 statics, 5165 subsets, 5166 windows without events of the GEN arm. Prior grep over
+  *.py, *.sh, *.txt, *.md of the working directory: none of 2400-2413 or of 5161-5166 appears as an index or TAG
+  (only as window counts in outputs of 2L). Those used before (0-239, 1400-1411, 1600-1621, 1800-1802; TAGs
+  1401-1406, 1651-1652, 1851-1852, 2003, 2610-2613, 2701-2714, 3001-4105) are not touched.
+Noise per network: the 2037 eligible slots, in temporal order, are split into 14 consecutive blocks (1.6-1.8 h
+  each); network j uses block j - 2400 in the three cells (the cells share hours; the networks of a cell do not).
+  Within the block, the slot at position p goes to: p % 4 = 0 catalogue candidates, 1 STD windows, 2 DENSE windows,
+  3 windows without events (36-37 slots per use). The development networks use the hours 00:00-03:35, the
+  evaluation ones 03:35-24:00 (never seen in development).
+Catalogue of each network: 20 events generated in the same way (logic of xc.catalogue_cfg: uniform source, energy gate 25
+  on >= 3 arrivals, recorded errors 1 km and 0.1 s) with the noise of the arm; from it come +SC (S0), S2 (c11_lib, pick-free
+  JHD, constants of C11) and the time levels of T3 (catalogue rule of C10). Oracle: true statics.
+Windows per network: 12 STD + 12 DENSE + 12 WITHOUT EVENTS (kmax 7; for the STD thresholds their first 5 atoms are used,
+  identical to those of kmax 5 because the greedy loop does not depend on kmax). 36 networks per arm: 432 + 432 + 432 windows.
+Methods (code paths unchanged): MT@S0 (MT-FW cap 6, hard rule +-0.25 s, +SC; c10_lib.mt_loop), MT@S0+T3,
+  MT@S2, MT@S2+T3, MT@ORA+T3 (true statics and oracle level), BOMP@S0 (BOMP-PK +SC; c10_lib.bomp_loop),
+  HUBER-N@S0 (c8_lib.mtfw_general "huber_n", c = 2.7955, +SC).
+Measure (as C11/C14): exact FROC, recall at <= 0.1 and <= 0.25 realised false events per window (operating point
+  per method, re-chosen in each replicate), rules LOC+T (epicentre <= 5 km and |origin error| <= 0.5 s) and LOC
+  (<= 5 km); hierarchical bootstrap (strata = cell; networks and then windows; c10_analyze.Boot), 1000 replicates,
+  95 % percentile intervals, paired differences. The REAL - GEN difference of a contrast is resampled
+  jointly (same networks and windows).
+Primary readings (C16_FREEZE.txt): G1-R = DENSE, LOC, <= 0.25, REAL arm: MT@S0 - BOMP@S0 and HUBER-N@S0 - BOMP@S0.
+  G1-C = STD, LOC+T, <= 0.25, REAL arm: MT@S2+T3 - MT@S0+T3. Descriptive rule for "survives", fixed at the
+  freeze: point with the registered sign and interval that excludes 0; "not contradicted" if the point has the sign and the
+  interval includes 0; "inverted" if the sign is the opposite with an interval that excludes 0.
+Transfer of the operating point: score threshold t of the operating point (<= 0.1 / <= 0.25) fixed on the
+  windows with events of the arm (DENSE with LOC; STD with LOC+T and with LOC) and false events per window in the windows without
+  events of the same arm with that t; in addition X = the REAL windows without events with the threshold of the GEN arm (synthetic
+  operating point applied to real noise). Bootstrap of networks (same draw for windows with and without events) and
+  windows, 500 replicates.
+
+----------------------------------------------------------------------------------------------------------------------
+3. VALIDATION OF THE INJECTION CODE (out/c16_validation.txt; development network 2400 of each cell; before the freeze)
+----------------------------------------------------------------------------------------------------------------------
+  V1 catalogue of the GEN arm = xc.catalogue_cfg (the standard chain) BIT FOR BIT (traces, hypocentres and origins of the
+     catalogue) and identical +SC: 3/3 cells.
+  V2 STD and DENSE windows of the GEN arm = c8_lib.generate_site with the same streams BIT FOR BIT: 8/8 per cell; windows
+     without events 4/4; atoms of the 7 methods identical on the traces of the standard chain 8/8; MT@S0 of c16 =
+     c8_lib.mtfw_general (ls, cap 6; the registered engine) atom by atom 8/8.
+  V3 REAL arm: sources, origins and signal traces identical to GEN in 12/12 windows per cell; the injected noise is
+     the stored segment; the events accepted into the catalogue of each arm are a subsequence of the same list
+     of candidates (the energy gate accepts differently with different noise).
+  V4 slots: eligible, at >= 60 s from every catalogued origin, disjoint within a network and between networks of a cell;
+     36-37 slots per use and network. The REAL catalogue needed up to 38 candidates (36 in its list); the 2 extra ones
+     came from the end of the list without events, without overlapping the 12 slots without events used (checked).
+  Since the GEN chain is bit-for-bit identical to the standard one, the statistical validation requested by the assignment ("with
+  generator noise the detector must give the same as the standard chain") is satisfied exactly, not only statistically:
+  the GEN arm IS the standard chain on the real geometry. The only difference between arms is the noise (and the
+  absence of synthetic clutter in REAL).
+
+----------------------------------------------------------------------------------------------------------------------
+4. DEVELOPMENT (networks 2400-2401, REAL arm, 6 windows per design; chain check only)
+----------------------------------------------------------------------------------------------------------------------
+There are detections in all methods and cells; times: 53 / 69 / 83 s per network (ladder_4 / ladder_6 / unilateral) with
+18 windows, which fixed 12 windows per design and network for the evaluation (budget). Per-arrival SNR in development
+(hours 00:00-03:35): median 7.2 (STD), higher than in the evaluation (3.5) because the early morning is quiet (in-band
+level of the stations 0.48 of the median level of the day): the amplitude rule is at the DAILY MEDIAN level, so
+the quiet hours give higher SNR and the noisy ones lower; this is an intended property (real variation of the noise) and
+was not changed. The development GEN arm was launched and stopped before writing any part (to free the
+core); no development GEN number was read. No constant was changed after development.
+FREEZE: C16_FREEZE.txt (18:16), with sha256 of c16_data.py, c16_lib.py, c16_run.py, c16_validate.py,
+c16_analyze.py, the two launchers, the project libraries they load (c10_lib, c10_run, c10_analyze, c11_lib,
+c8_lib, c9_run, c2_run, xc, gen_realistic, station_corrections, task0_common, task2a_confirm) and the processed data
+(c16_noise.npy, c16_meta.json). Verified with sha256sum -c at the end of the evaluation: all OK. Networks 2402-2413 were
+generated for the first time after the freeze.
+Declaration: during the evaluation I ran c16_analyze.py ONCE on a copy of the parts already finished (some 14
+of 72) only to check that the two-arm analysis code did not fail; the output went to
+out/c16_analysis_codetest_unread.txt and I did not read it (I only counted headers). It changes nothing.
+
+----------------------------------------------------------------------------------------------------------------------
+5. SNR AND NOISE: REAL VERSUS THE SYNTHETIC THIN REGIME (same signal, same geometry)
+----------------------------------------------------------------------------------------------------------------------
+Per-true-arrival SNR = peak of |MF(signal)| (3 components) within +-0.25 s of the arrival / noise level of the
+window with which the detector normalises (median |MF| / 0.6745 of the whole window). Quantiles 10/25/50/75/90 and
+fraction > 3 and > 6:
+                     n      10%    25%    50%    75%    90%    >3     >6
+  REAL  STD        4104    0.72   1.70   3.47   6.19  10.75   0.558  0.259
+  GEN   STD        4104    0.77   1.78   3.53   6.25  10.82   0.567  0.263
+  REAL  DENSE     20584    1.22   2.34   4.35   7.64  12.43   0.659  0.352
+  GEN   DENSE     20584    1.35   2.49   4.54   7.76  12.54   0.680  0.365
+Paired ratio REAL / GEN of the same arrival: STD median 0.961 (quartiles 0.881-1.078; 5-95% 0.732-1.491); DENSE
+0.957 (0.868-1.058; 0.703-1.408) (post hoc: the frozen analysis gave nan in DENSE because of one arrival with SNR 0 in both
+arms; recomputed excluding that arrival, 1 of 20584). The SNR distributions are practically equal: what
+changes between arms is not the level but the SHAPE of the noise.
+Noise of the windows (noise part, filtered):
+                         level per station / generator level          excess kurtosis        max |MF| / robust sd
+                         5%    25%   50%   75%   95%                    median    p90          median    p90
+  REAL (no clutter)      0.63  0.88  1.04  1.24  2.04                   3.04      41.7         9.1       30.6
+  GEN (thin clutter)     0.95  0.98  1.01  1.04  1.08                   0.03      0.14         4.1       4.6
+Level per evaluation network (median): 0.68 (2402, 03:35-05:13) to 1.22 (2413, 22:01-23:58). Post hoc: in the REAL
+windows without events the score of the first BOMP-PK atom follows the maximum of the window (Spearman 0.74; MT 0.54,
+HUBER-N 0.58); 50/90/99 percentiles of the first atom: BOMP 44 / 151 / 7536, MT 35 / 45 / 58, HUBER-N 30 / 43 / 92
+(GEN: BOMP 26 / 30 / 33, MT 26 / 30 / 33).
+
+----------------------------------------------------------------------------------------------------------------------
+6. STATION TERMS (rms error against the true statics, median removed; median [quartiles] over networks)
+----------------------------------------------------------------------------------------------------------------------
+                     S0 (+SC)              S2 (JHD)              S2 better  candidates   T3 level S0 / S2 (s)
+  REAL ladder_4      0.130 [0.101,0.168]   0.063 [0.054,0.115]   0.92       27.5         0.239 / 0.225
+  REAL ladder_6      0.151 [0.140,0.171]   0.072 [0.059,0.097]   0.75       22.2         0.207 / 0.209
+  REAL unilateral    0.154 [0.130,0.194]   0.122 [0.073,0.153]   0.83       20.8         0.229 / 0.213
+  REAL all           0.153 [0.126,0.184]   0.080 [0.057,0.133]   0.83       23.5         0.222 / 0.210
+  GEN  all           0.115 [0.087,0.139]   0.052 [0.041,0.063]   0.92       25.8         0.152 / 0.144
+With real noise the terms worsen (S0 0.153 versus 0.115; S2 0.080 versus 0.052) and the T3 time level
+rises (0.22 versus 0.15 s): the energy peaks of the catalogue are less reliable with transients. Pick-free JHD
+still halves the error, but in the real unilateral cell only by 21%.
+
+----------------------------------------------------------------------------------------------------------------------
+7. DETECTION RESULTS (out/c16_analysis_eval.txt; B = 1000; 432 windows per design and arm)
+----------------------------------------------------------------------------------------------------------------------
+7.1 Recall at <= 0.1 / <= 0.25 [95% CI], DENSE (1720 events)
+                    REAL LOC+T                         REAL LOC                           GEN LOC                 GEN LOC+T
+  MT@S0             0.063 / 0.109 [0.081,0.146]        0.189 / 0.314 [0.275,0.356]        0.237 / 0.381           0.080 / 0.152
+  MT@S0+T3          0.067 / 0.138                      0.209 / 0.326                      0.263 / 0.433           0.108 / 0.216
+  MT@S2             0.084 / 0.148                      0.219 / 0.331                      0.267 / 0.431           0.097 / 0.173
+  MT@S2+T3          0.087 / 0.156                      0.210 / 0.326                      0.296 / 0.448           0.095 / 0.183
+  MT@ORA+T3         0.117 / 0.205                      0.249 / 0.358                      0.296 / 0.444           0.123 / 0.213
+  BOMP@S0           0.002 / 0.024 [0.003,0.077]        0.006 / 0.055 [0.012,0.182]        0.130 / 0.312           0.034 / 0.103
+  HUBER-N@S0        0.069 / 0.157                      0.240 / 0.349 [0.292,0.413]        0.242 / 0.426           0.085 / 0.152
+7.2 Recall, STD (347 events)
+                    REAL LOC+T                         REAL LOC                           GEN LOC+T               GEN LOC
+  MT@S0             0.268 / 0.427                      0.573 / 0.666                      0.415 / 0.533           0.700 / 0.810
+  MT@S0+T3          0.303 / 0.464 [0.378,0.573]        0.576 / 0.720                      0.496 / 0.663           0.738 / 0.841
+  MT@S2             0.317 / 0.458                      0.576 / 0.692                      0.366 / 0.553           0.752 / 0.847
+  MT@S2+T3          0.395 / 0.513 [0.410,0.614]        0.562 / 0.683                      0.562 / 0.686           0.772 / 0.876
+  MT@ORA+T3         0.424 / 0.559                      0.631 / 0.695                      0.516 / 0.686           0.732 / 0.853
+  BOMP@S0           0.017 / 0.133                      0.037 / 0.248                      0.262 / 0.435           0.646 / 0.813
+  HUBER-N@S0        0.216 / 0.386                      0.493 / 0.622                      0.303 / 0.565           0.752 / 0.824
+7.3 G1-R: paired differences, DENSE (@0.1 / @0.25 [95% CI])
+                               REAL LOC (PRIMARY)                          REAL LOC+T
+  MT@S0 - BOMP@S0              +0.183 [+0.134,+0.248] / +0.259 [+0.131,+0.321]   +0.061 [+0.037,+0.083] / +0.085 [+0.030,+0.124]
+  HUBER-N@S0 - BOMP@S0         +0.233 [+0.144,+0.293] / +0.294 [+0.178,+0.355]   +0.067 [+0.040,+0.102] / +0.133 [+0.082,+0.174]
+  HUBER-N@S0 - MT@S0           +0.051 [-0.075,+0.116] / +0.035 [-0.020,+0.097]   +0.006 [-0.021,+0.045] / +0.048 [-0.005,+0.090]
+                               GEN LOC                                      GEN LOC+T
+  MT@S0 - BOMP@S0              +0.108 [+0.012,+0.192] / +0.069 [-0.009,+0.158]   +0.047 [+0.008,+0.083] / +0.048 [-0.004,+0.094]
+  HUBER-N@S0 - BOMP@S0         +0.113 [+0.043,+0.186] / +0.113 [+0.052,+0.199]   +0.051 [+0.016,+0.096] / +0.049 [+0.012,+0.095]
+  HUBER-N@S0 - MT@S0           +0.005 [-0.063,+0.081] / +0.045 [-0.025,+0.111]   +0.005 [-0.037,+0.050] / +0.001 [-0.039,+0.049]
+  REAL - GEN of the contrast, LOC @0.25: MT - BOMP +0.190 [+0.037,+0.276]; HUBER-N - BOMP +0.181 [+0.037,+0.264];
+  HUBER-N - MT -0.009 [-0.099,+0.080]. LOC+T @0.25: +0.037 [-0.036,+0.100]; +0.084 [+0.009,+0.135]; +0.047 [-0.024,+0.101].
+  Per cell (REAL, LOC @0.25): MT - BOMP ladder_4 +0.177 [+0.057,+0.262], ladder_6 +0.301 [+0.092,+0.375], unilateral
+  +0.316 [+0.071,+0.448]; HUBER-N - BOMP +0.155 [+0.055,+0.231], +0.329 [+0.123,+0.407], +0.413 [+0.197,+0.505]; all
+  exclude 0. In GEN per cell the intervals of MT - BOMP include 0 (unilateral +0.005 [-0.121,+0.187]).
+  In STD (descriptive; 2I-c required equivalence of HUBER-N and BOMP in isolated windows): REAL LOC MT - BOMP +0.418
+  [+0.244,+0.591], HUBER-N - BOMP +0.375 [+0.220,+0.522]; GEN LOC -0.003 [-0.062,+0.068] and +0.012 [-0.039,+0.074].
+  With real noise the equivalence on isolated events disappears: BOMP-PK loses there as well.
+7.4 G1-C: paired differences, STD (@0.1 / @0.25 [95% CI])
+                               REAL LOC+T (PRIMARY)                           GEN LOC+T
+  MT@S2+T3 - MT@S0+T3          +0.092 [-0.061,+0.223] / +0.049 [-0.083,+0.149]   +0.066 [-0.113,+0.211] / +0.023 [-0.058,+0.106]
+  MT@ORA+T3 - MT@S0+T3         +0.121 [-0.039,+0.280] / +0.095 [-0.035,+0.205]   +0.020 [-0.138,+0.182] / +0.023 [-0.075,+0.135]
+  MT@S2+T3 - MT@S0             +0.127 [-0.045,+0.263] / +0.086 [-0.062,+0.210]   +0.147 [+0.006,+0.347] / +0.153 [+0.059,+0.245]
+  MT@S0+T3 - MT@S0             +0.035 [-0.112,+0.177] / +0.037 [-0.078,+0.157]   +0.081 [-0.050,+0.322] / +0.130 [+0.037,+0.228]
+  MT@ORA+T3 - MT@S2+T3         +0.029 [-0.118,+0.181] / +0.046 [-0.040,+0.146]   -0.046 [-0.157,+0.096] / +0.000 [-0.070,+0.089]
+  Fraction of the oracle gain (REAL, @0.25): 0.52 [-2.69, 4.44] (not informative).
+  REAL - GEN of the primary contrast: +0.026 [-0.134, +0.154] (LOC+T @0.25); under LOC -0.072 [-0.149, +0.031].
+  REAL LOC @0.25: MT@S2+T3 - MT@S0+T3 -0.037 [-0.095,+0.048]; oracle -0.026 [-0.080,+0.068]; GEN LOC +0.035
+  [-0.017,+0.085].
+  Per cell (REAL, LOC+T @0.25): ladder_4 -0.043 [-0.175,+0.121], ladder_6 +0.039 [-0.152,+0.258], unilateral +0.088
+  [-0.091,+0.302] (the cell order of 2L: the gain, if any, is in the unilateral one). REAL STD LOC in ladder_4:
+  -0.111 [-0.206,-0.008] (one of many lines per cell, rule and level; without multiplicity correction).
+  DENSE (secondary), LOC+T @0.25: REAL +0.019 [-0.029,+0.059], oracle +0.067 [+0.016,+0.119]; GEN -0.033 [-0.081,
+  +0.044], oracle -0.003; LOC: REAL -0.001 [-0.067,+0.069], GEN +0.015.
+7.5 REAL - GEN per method (recall @0.25, joint bootstrap): DENSE LOC MT@S0 -0.067 [-0.126,-0.001], BOMP@S0 -0.257
+  [-0.325,-0.111], HUBER-N@S0 -0.076 [-0.155,+0.001]; STD LOC MT@S0 -0.144 [-0.224,-0.046], BOMP@S0 -0.565 [-0.734,
+  -0.359], HUBER-N@S0 -0.202 [-0.305,-0.093]. Every method loses with real noise at equal median SNR; BOMP loses
+  3 to 4 times more. Part of the STD loss may come from small real uncatalogued events (section 9).
+
+----------------------------------------------------------------------------------------------------------------------
+8. TRANSFER OF THE OPERATING POINT (out/c16_analysis_eval.txt, TRANSFER section; 500 replicates)
+----------------------------------------------------------------------------------------------------------------------
+False events per window in 432 windows WITHOUT events at the threshold t of the operating point fixed on the windows with events
+(@0.1 / @0.25). "own" = threshold of the same arm; "X" = threshold of the GEN arm (synthetic benchmark) applied to the
+REAL windows without events.
+                    DENSE (LOC)                           STD (LOC+T)                           STD (LOC)
+                    REAL own         X (GEN -> real)      REAL own         X (GEN -> real)      REAL own         X (GEN -> real)
+  MT@S0             0.000 / 0.000    0.000 / 0.000        0.000 / 0.007    0.000 / 0.014        0.005 / 0.014    0.014 / 0.130
+  MT@S0+T3          0.000 / 0.000    0.000 / 0.000        0.000 / 0.007    0.000 / 0.044        0.005 / 0.019    0.021 / 0.125
+  MT@S2             0.000 / 0.000    0.000 / 0.000        0.000 / 0.009    0.000 / 0.023        0.005 / 0.023    0.028 / 0.139
+  MT@S2+T3          0.000 / 0.000    0.000 / 0.000        0.000 / 0.009    0.007 / 0.035        0.005 / 0.019    0.028 / 0.157
+  MT@ORA+T3         0.000 / 0.000    0.000 / 0.000        0.000 / 0.007    0.002 / 0.060        0.005 / 0.019    0.016 / 0.188
+  BOMP@S0           0.120 / 0.162    0.185 / 0.289        0.116 / 0.178    0.234 / 0.470        0.118 / 0.197    0.495 / 0.859
+  HUBER-N@S0        0.035 / 0.053    0.035 / 0.058        0.030 / 0.060    0.046 / 0.127        0.049 / 0.097    0.132 / 0.294
+  Intervals: BOMP own DENSE @0.25 [0.054, 0.302]; X STD LOC @0.25 [0.597, 1.185]; HUBER-N X STD LOC @0.25 [0.161,
+  0.487]; MT@S0 X STD LOC @0.25 [0.058, 0.251]; the zeros of the MT family have interval [0, 0] in DENSE.
+  With generator noise, the windows without events give 0.000 for all methods and levels. Internal reference: the
+  170 STD windows with 0 events from the stream with events give, with the LOC+T threshold @0.25, MT 0.006-0.018, BOMP 0.165,
+  HUBER-N 0.071 (REAL) and 0 (GEN): consistent with the separate windows without events.
+Reading. (i) At the operating point of the benchmark (defined by the FROC with events), the false detections of the capped
+detector are atoms induced by the events (wrong place or time; C14), not noise detections: on pure real
+noise, at the same threshold, the MT family hardly fires (<= 0.02 per window). (ii) A threshold fixed on the synthetic
+benchmark transfers to real noise with an excess of 0.01-0.06 per window under LOC+T and of 0.13-0.19 under the lower
+threshold of LOC in STD; for HUBER-N 0.06-0.29; for BOMP-PK 0.29-0.86 per window, 1.2 to 3.4 times the nominal
+level of 0.25. (iii) Part of the "false detections" on real noise may be real uncatalogued microearthquakes (they affect
+all methods equally; section 9), so the real false detections are, if anything, lower than those listed.
+
+----------------------------------------------------------------------------------------------------------------------
+9. LIMITATIONS
+----------------------------------------------------------------------------------------------------------------------
+  (i)   One site (Alto Tiberina), one day (2010-07-23), 14 stations; the cells share hours (network j of each
+        cell uses the same block of 1.6-1.8 h), so that the bootstrap, which treats the cells as independent
+        strata, somewhat underestimates the uncertainty of the pooled lines.
+  (ii)  25 Hz resampled to 16 Hz with a 0.5 Hz high-pass and a 6.5 Hz anti-alias; no instrument response: the
+        amplitude rule equalises the daily median level per channel and erases the level differences between stations
+        (real and gain-related at the same time). Mix of EH (short-period) and HH (broadband) sensors.
+  (iii) Uncatalogued events: the real network records microearthquakes below the catalogue (the cluster at 43.315 N had 32
+        catalogued events that day, most of M < 1); those that fall in the windows cannot be separated from the
+        noise. They affect all methods of a window equally and both sides of each paired contrast; they inflate the
+        "false detections" of the windows without events and may lower the recall. The +-60 s exclusion only covers what is
+        catalogued (and 200.100723.cat).
+  (iv)  Sources, mechanisms, pulses, coda, gradient medium, site factors and statics remain synthetic
+        (the same generator family); only the noise and the geometry are real. The test does not cover wrong
+        velocity models or real waveforms.
+  (v)   The REAL arm has no synthetic clutter and the GEN arm does (thin): the REAL - GEN difference mixes "real noise" and
+        "no clutter". Since thin clutter is weak (amplitude 0.35), most of the difference is the noise.
+  (vi)  Real geometry: stations at 5-31 km from the origin, closer than in the generator (10-45 km); the real
+        "unilateral" cell leaves an azimuthal gap of 167-202 degrees (synthetic: >= 234) and repeats subsets (8
+        distinct in 12 networks); in ladder_4 two networks share a subset.
+  (vii) Small sample: 12 networks per cell and 12 windows per design and network (budget); the bootstrap deviation of the
+        G1-C contrast is 0.060 (2L: 0.012), which is why G1-C remains unresolved. G1-R has intervals far from 0.
+  (viii) One seed; no multiplicity correction outside the primary readings.
+  (ix)  Post hoc (declared): the paired SNR ratio in DENSE (the frozen one gave nan), the correlations and
+        percentiles of the first atom in section 5, and the levels per network. None changes a primary reading.
+
+----------------------------------------------------------------------------------------------------------------------
+10. FILES (explore_contrib)
+----------------------------------------------------------------------------------------------------------------------
+  c16_data.py          reading (obspy, python -I), filtering, resampling, coordinates, slots and amplitude rule ->
+                       out/c16_noise/c16_noise.npy, c16_meta.json
+  c16_lib.py           signal / generator-noise split, real networks, catalogue, engines (S0, S2, ORA), methods
+  c16_run.py           parts per (arm, cell, network) -> out/c16_dev_parts, out/c16_eval_parts; logs out/c16_*.log
+  c16_validate.py      -> out/c16_validation.txt
+  c16_analyze.py       -> out/c16_analysis_eval.txt (and out/c16_analysis_dev_REALonly.txt, development)
+  c16_queue_dev.sh, c16_queue_eval.sh   launchers;  C16_FREEZE.txt   freeze with sha256
+  out/c16_analysis_codetest_unread.txt   code test of the analysis during the evaluation (not read)

@@ -1,0 +1,11 @@
+ladder_4 net 2400: stations [2, 3, 9, 11]; V1 catalogue (20 events, 47 drawn) and +SC identical to xc.catalogue_cfg: True
+  V2 windows bit-identical to c8_lib.generate_site 8/8, noise-only 4/4; atoms of all 7 methods identical 8/8; MT@S0 = c8_lib.mtfw_general ls cap 6 8/8
+  V3 REAL arm: sources, origins and signal traces identical to GEN in 12/12 windows, injected noise = stored segment, catalogue truth a subsequence of the common candidate list (GEN 47 drawn, REAL 20): True
+ladder_6 net 2400: stations [0, 1, 3, 5, 11, 12]; V1 catalogue (20 events, 22 drawn) and +SC identical to xc.catalogue_cfg: True
+  V2 windows bit-identical to c8_lib.generate_site 8/8, noise-only 4/4; atoms of all 7 methods identical 8/8; MT@S0 = c8_lib.mtfw_general ls cap 6 8/8
+  V3 REAL arm: sources, origins and signal traces identical to GEN in 12/12 windows, injected noise = stored segment, catalogue truth a subsequence of the common candidate list (GEN 22 drawn, REAL 21): True
+unilateral_c40 net 2400: stations [0, 1, 5, 8, 9, 11, 12, 13]; V1 catalogue (20 events, 21 drawn) and +SC identical to xc.catalogue_cfg: True
+  V2 windows bit-identical to c8_lib.generate_site 8/8, noise-only 4/4; atoms of all 7 methods identical 8/8; MT@S0 = c8_lib.mtfw_general ls cap 6 8/8
+  V3 REAL arm: sources, origins and signal traces identical to GEN in 12/12 windows, injected noise = stored segment, catalogue truth a subsequence of the common candidate list (GEN 21 drawn, REAL 20): True
+V4 slots eligible, >= 60 s from every catalogued origin, disjoint within and between networks: True; slots per use and network min 36 max 37; block span (h) 0.02-1.80, 1.82-3.56, 3.58-5.22, 5.24-6.93, 7.00-8.80, 8.82-10.47, 10.49-12.13, 12.16-13.76, 13.77-15.37, 15.38-17.02, 17.03-18.63, 18.64-20.24, 20.26-22.01, 22.02-23.97
+ALL VALIDATION CHECKS PASSED

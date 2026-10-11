@@ -1,0 +1,8 @@
+# Time estimate of the 2E evaluation from the full calibration on seed 999 (f = 0.01; 30 networks, 600 windows)
+   thin   ladder_4        per window   2.48 s [TS-SFW+SC f=0.01 1.02, BOMP-PK-SLIDE+SC 0.97, BOMP-PK+SC 0.33, MT-FW+SC(loc) 0.16]; per network: control 0.3 s, preparation 0.7 s; cell 0.57 h of CPU
+   thin   ladder_6        per window   2.89 s [TS-SFW+SC f=0.01 1.17, BOMP-PK-SLIDE+SC 1.11, BOMP-PK+SC 0.43, MT-FW+SC(loc) 0.18]; per network: control 0.4 s, preparation 0.7 s; cell 0.66 h of CPU
+   thin   unilateral_c40  per window   3.33 s [TS-SFW+SC f=0.01 1.37, BOMP-PK-SLIDE+SC 1.30, BOMP-PK+SC 0.44, MT-FW+SC(loc) 0.22]; per network: control 0.4 s, preparation 0.7 s; cell 0.76 h of CPU
+   strong ladder_4        per window   2.41 s [TS-SFW+SC f=0.01 0.99, BOMP-PK-SLIDE+SC 0.94, BOMP-PK+SC 0.33, MT-FW+SC(loc) 0.16]; per network: control 0.3 s, preparation 0.6 s; cell 0.55 h of CPU
+   strong ladder_6        per window   2.91 s [TS-SFW+SC f=0.01 1.16, BOMP-PK-SLIDE+SC 1.11, BOMP-PK+SC 0.45, MT-FW+SC(loc) 0.18]; per network: control 0.4 s, preparation 0.6 s; cell 0.66 h of CPU
+   strong unilateral_c40  per window   3.34 s [TS-SFW+SC f=0.01 1.37, BOMP-PK-SLIDE+SC 1.31, BOMP-PK+SC 0.44, MT-FW+SC(loc) 0.21]; per network: control 0.4 s, preparation 0.8 s; cell 0.76 h of CPU
+   total estimate (30 networks per cell): 3.96 h of CPU, 1.98 h on 2 cores (threshold of the budget rule: 10 h); with 15 networks: 1.09 h on 2 cores

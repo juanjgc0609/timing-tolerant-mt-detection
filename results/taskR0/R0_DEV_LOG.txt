@@ -1,0 +1,37 @@
+R0 - development log (CAL data only; local time -05 unless stated otherwise)
+2026-10-09 18:59-19:04  r0_lib.py, r0_run.py written. Checks: patched VP/VS reach c10_lib, xc,
+  station_corrections and c11_lib (VINV 1/6.0 and 1.73/6.0); engine P sample table = floor((d/6.0 + tau + corr)/DT).
+  Frame centre (CAL events, all M): 35.67971 N, 117.53876 W. CAL: 35 events, 16 with M >= 2.0.
+  Per-station normalisation: each station is divided by its robust sd (MAD/0.6745 of the three components, 16 Hz
+  trace, CAL segment), because matched() normalises with a single sd per window and the real noise differs by up to 4 times
+  between stations (N8: 2.7e-7 to 1.2e-6 m/s). It is a necessary adaptation not written in the registration; it does not use EVAL.
+  N4: +SC corrections of 2 to 16 delays per station and phase; timing level sigma_catalogue 0.358 s (SC) and 0.412 s
+  (S2), against ~0.14 s in synthetic data: the homogeneous medium leaves large residuals.
+2026-10-09 19:03  Z polarity (registered convention E, N, -Z): |cos| between the read P vector and the straight ray
+  0.538 with -Z and 0.507 with +Z (51 CAL readings, N8): -Z is kept. The P vector is poorly aligned both with the straight
+  ray (median incidence 83 degrees from the vertical) and with the vertical (|cos| 0.482): the straight-ray radiation
+  operator is a poor approximation here. Nothing is changed (registered).
+2026-10-09 19:08  Measured cost (N8, 3 CAL windows, machine shared with another run, load 3 on 2 cores):
+  M1 2.23, M5 3.23, M2 3.26, M3 10.33, M4 12.0 s per window. EVAL projection (887 windows, 4 subnetworks with 26
+  stations in total): ~25 h of CPU, above 8 h on 2 cores. The registered reduction is applied: origins
+  2.0-11.9 s and kmax 6. M4 (HUBER-N) does not fit in the budget and is excluded (declared, as the registration allows).
+2026-10-09 19:10  r0_picks.py (PhaseNet + GaMMA + PyOcto) and r0_analyze.py written. Test on CAL, N4: PhaseNet 174 P
+  and 181 S in 15 min; the associators find the events in time (dt ~0.1 s) but place them 5-8 km away and
+  deep (z 11-15 km against 2-3 km in the catalogue) with the homogeneous medium of 6.0 km/s, because they have no station
+  corrections and the pick-free methods do. To equalise conditions, as in Task 2A (GaMMA-...+SC, PyOcto-...+SC),
+  each associator is also run with the picks corrected by the +SC corrections (pick time minus the
+  correction of its station and phase), and the comparator of the primary contrast (BESTPICK) is the best of the four
+  sets (GaMMA, PyOcto, with and without +SC) in each subnetwork and replicate. This is more favourable to the comparators than the
+  registration. Labelling: if a detection satisfies the rule with several events, the nearest one with M >= 2.0 is preferred
+  (this prevents a small neighbouring event from turning a hit into a neutral).
+2026-10-09 19:26  Development on CAL, N8 (M1 and M2 over 299 windows; comparators on N8 and N4). Registered detector:
+  305 atoms (M1) in 15 min; at any score only 3 LOC+T hits out of 16 events M >= 2.0 (M2: 1); recall 0 at
+  <= 60/h. Comparators on N8: PyOcto 0.625 and GaMMA 0.500 (LOC+T, 30/h); on N4 0.000. Diagnosis (without changing anything):
+  after +SC, the peak-time residuals of the CAL events exceed 0.5 s at several stations and phases (up to
+  1.8 s), the timing level is 0.35-0.41 s (0.14 s in synthetic data) and the registered reading of +-0.25 s does not cover it; the
+  scores saturate (median 67, p99 123) because the sequence fills every window with energy.
+  Verified that it is not a timing implementation error: sample table = floor((d/6.0 + tau + corr)/DT); the
+  absolute origin of each atom = window start + tau; the start of the traces coincides with 19:00:00.
+  Amendment (registered separately before the freeze): secondary arm M6 = MT-FW cap 6 + S2 + T3 with reading
+  half-width W = round(2 sigma_S2 / DT) samples per subnetwork (N8: sigma 0.354 s, W = 11, +-0.69 s), rule fixed without
+  running M6 on CAL (only a one-window smoke test to check that it runs). The primary does not change.

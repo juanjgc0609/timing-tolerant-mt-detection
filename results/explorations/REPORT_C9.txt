@@ -1,0 +1,489 @@
+C9 - TRAVEL-TIME-FREE PHYSICS (POLARIZATION, AMPLITUDES, S/P GEOMETRY) AS LOCATION EVIDENCE (explore_contrib) - REPORT
+======================================================================================================================
+Status: EXPLORATORY, NOT CONFIRMATORY. Nothing here tests a registered hypothesis.
+Date: Fri Oct 2 2026 19:50-22:25 (-05) = Sat Oct 3 2026 00:50-03:25 UTC. Machine: 2 cores, both occupied by the
+background job task2i_run.py (never touched; alive at every check, not relaunched, task2i_freeze_time.txt not
+modified). All C9 runs were one process at a time (three short low-priority looks at partial results ran beside the
+queue, see section 2). Wall time of C9 runs about 2 h 15 min; under the 3 h budget.
+
+Seeds and data (seed 999 ONLY; seeds 2024, 7331, 4242, 8888, 5151, 6262 and any other seed were never generated, read
+or touched):
+  networks  task2a_confirm.network(999, cell, j), j = 130-149 (20 per cell and regime), cells ladder_4 (4 stations),
+            ladder_6 (6), unilateral_c40 (8, one-sided); regimes thin and strong; statics sd 0.3 s; +SC corrections from
+            the registered 20-event catalogue of each network and regime (streams [999, 2003, ci, j, ri]).
+            Never used before: 2A/2E 0-4, C1-C3 and verif_2f 10-15, C6/C6b 20-29, leak2 30-35, C7 40-59, C8 60-89, 99.
+            j = 199: validation, amplitude calibration and setup timing only.
+  stream TAGs, all new: 3901 standalone single events ([999, 3901, ci, j, ev, 41|233|61]); 3902 noise-free validation
+            (net 199); 3903 sources and mechanisms of the Fisher study; 3904 amplitude calibration windows (net 199);
+            3905 Monte Carlo check of the bound; 3911 STD windows; 3912 DENSE windows ([999, TAG, ci, j, ri,
+            41|233|61]); 3913 detector validation windows (net 199).
+            Used before: 3001-3008, 3701-3706, 3801-3812.
+Protocol of P4 as C7/C8/2F: 3 km x 3 depths grid (675 nodes), origins 5.0-8.0 s step 0.1, +-4-sample (+-0.25 s) peak
+search, 5 km exclusion, hit = epicentre within 5 km, kmax 7 (dense, c2_run.draw_dense, 3-5 events) or 5 (standard,
+draw_sources, 0-2 events), exact FROC, recall at <= 0.1 and <= 0.25 realised false events per window, hierarchical
+bootstrap (strata regime x cell, networks then windows, 1000 replicates; 500 for the oracle worlds; operating point
+re-chosen per replicate). All differences are paired (same windows). Intervals are 95%.
+
+----------------------------------------------------------------------------------------------------------------------
+0. SUMMARY
+----------------------------------------------------------------------------------------------------------------------
+(1) Travel-time-free channels cannot relocate atoms in this benchmark, and the reason is information, not algorithm.
+    Bayesian Cramer-Rao bound on the epicentre (section 6): arrival times with the +-0.25 s tolerance give 0.4-0.7 km;
+    P polarization gives 7.8-9.2 km, amplitudes 7.8-9.2 km, the S/P ratio 10.5-11.8 km (no information: the prior alone
+    is 12.25 km), everything travel-time-free together 4.4-5.6 km. A joint estimator can improve the time-only bound
+    by 4-5% (7-9% with zero polarization deviation and zero amplitude factors). The limiting factor is not the 10 deg
+    deviation or the lognormal 0.5 factors but the waveform noise: the P arrival is 1.5-1.8 noise sd at these distances
+    (20-45 km), i.e. 32-39 deg of angular noise per station.
+(2) Measured on 600 single events (section 4): with the vectors read at the TRUE arrival samples, median epicentral
+    error is 12.7-15.2 km for P-polarization triangulation, 8.2-9.8 km for P+S polarization geometry, 7.7-8.4 km for
+    the moment-tensor projection with free times, 12.5-19.4 km for 1/r amplitudes (guessing the centre: 11.8 km),
+    against 0.5-0.7 km for arrival times. Fraction within the 5 km hit radius: 0.15-0.18, 0.26-0.27, 0.29-0.33, 0.04-
+    0.11 against 1.00. With zero deviation and zero amplitude factors the best channel reaches 5.4-7.5 km. Without
+    travel times the arrivals cannot even be identified (a blind reader finds the P peak at 20% of the stations).
+(3) Fusion as relocation (section 5): every relocation rule, post hoc or inside the loop, with the atom's own vectors or
+    with a +-1.5 s re-read, LOSES recall: dense windows -0.11 to -0.18 at 0.25 (e.g. MT-FW in-loop relocation by the
+    moment-tensor projection -0.107 [-0.149, -0.077]), standard windows -0.23 to -0.48. It moves 43-58% of the hits
+    out of the 5 km radius and converts 21-46% of the near misses, which is what a random move inside a 9 km cluster
+    does. The oracle variants do not rescue it: true amplitude factors -0.116 [-0.158, -0.081]; world with zero
+    deviation and zero factors -0.138 [-0.187, -0.089]. Median error of hits grows from 2.6-2.7 to 3.1-3.2 km.
+(4) Fusion as re-ranking / extra term: the only positive signal is NOT a location effect. The fraction of the read
+    energy that is polarization-admissible at the node (P along the ray, S transverse; rho_pol) separates hits from
+    false atoms (AUC 0.68 dense, 0.78 standard). Used as a factor of the MT-FW selection statistic (MT-FW+SELPOL, a
+    POST HOC variant, see section 2):
+        dense    - MT-FW  +0.046 [+0.007, +0.070]    - BOMP-PK  +0.045 [+0.003, +0.086]    headroom 0.12 [0.01, 0.24]
+        standard - MT-FW  +0.045 [-0.002, +0.089]    - BOMP-PK  +0.002 [-0.041, +0.064]
+    Post hoc re-ranking of MT-FW atoms by score x rho_pol: dense +0.028 [+0.005, +0.043]; of BOMP-PK atoms +0.010
+    [-0.006, +0.031]. The re-ranking gain depends on the polarization scatter: +0.031 at 0 deg, +0.028 at 10 deg,
+    +0.003 [-0.011, +0.023] at 20 deg, -0.015 [-0.025, +0.002] at 45 deg; SELPOL at 45 deg -0.014 [-0.029, +0.005].
+    No candidate reaches +0.05 with an interval excluding 0; the best is the best of about 50 and was added after a
+    first look. None captures more than about a tenth of the CEIL-GD headroom.
+Judgement: travel-time-free LOCATION evidence is not a plausible contribution in this benchmark at any noise level
+close to the nominal one (it would need about 10 times the signal-to-noise ratio and <= 2 deg of polarization scatter
+to reach 1 km). Polarization-admissibility weighting is a small, plausible false-alarm discriminator, conditional on
+polarization scatter <= 10 deg at most stations; on the real network (polarization reliable at 1 of 5 stations) the
+measured dependence predicts no gain. See sections 7 and 8.
+
+----------------------------------------------------------------------------------------------------------------------
+1. DESIGN (code: c9_lib.py; c9_standalone.py, c9_fisher.py, c9_run.py, c9_extra.py; analysis c9_standalone_analyze.py,
+   c9_analyze.py, c9_pairs.py)
+----------------------------------------------------------------------------------------------------------------------
+Travel-time-free statistics of a candidate position x, computed only from the per-station P and S peak vectors
+v (2, ns, 3) in matched-filter noise units (n_xi = ray from x to station i in the detectors' homogeneous model, G_x the
+registered radiation operator, Q_x its orthonormal basis):
+  P1  azim    closed-form weighted least-squares intersection of the horizontal lines through the stations along the
+              horizontal projection of the P vector (back-azimuth only; a line has no sign, so the polarity plays no
+              role in this form)
+      grid    argmax over x of - sum_i w_i sin^2 angle(v_Pi, n_xi), w_i = min(1, |v_Pi|^2 / 9) (back-azimuth and
+              incidence; also with the circular rays of the generator's gradient medium: "gradmodel")
+  P2  mt      ||Q_x^T v||^2: moment-tensor projection energy with the times free (1/r spreading, radiation pattern, P
+              and S polarization at once); also with |v| capped at 6
+      amp     - sum over phases of var_i (log max(|v_bi|, 1) + log d_xi): 1/r spreading only, no radiation pattern
+  P3  Strans  sum_i (|v_Si|^2 - (v_Si.n_xi)^2): S transverse to the ray
+      pol     sum_i (v_Pi.n_xi)^2 + Strans: P along the ray and S transverse (P1 + P3 in energy form)
+      gainfree  explained energy of v_i ~ a_i G_i(x) m with a free gain a_i >= 0 per STATION (S/P amplitude ratio and
+              P/S polarization geometry, no inter-station amplitudes); alternating, 3 rounds
+  Remark on P3: in this generator P and S share the ray and there is no attenuation, so the S/P amplitude ratio does
+  not depend on distance at all; it constrains the position only through the radiation pattern (take-off directions).
+Vector readers: TRUE = energy peak within +-2 samples of the true arrival (oracle read, isolates the channel from the
+  identification problem); BLIND = per station the pair of samples kP + 12 <= kS maximising E(kP) + E(kS) over the
+  whole window (no travel time); WIDE (P4) = energy peak within +-1.5 s of an atom's read sample, P before the P/S
+  midpoint and S after it. TIME reference: least-squares location from the same peak samples, homogeneous model,
+  origin time profiled out, with ("truestatics") or without the true station delays.
+P1-P3 standalone: 20 networks x 10 single events x 3 cells = 600 events, thin clutter (35 or 40 clutter arrivals,
+  amplitude 0.35), 1 km grid (|x|, |y| <= 21 km, depths 5, 9, 13 km). Each event regenerated from identical streams
+  under 7 generator settings (dir_deg, site_sd): (0, .5) (5, .5) (10, .5) (20, .5) (10, 0) (10, .25) (0, 0); the
+  settings are paired. Intervals: bootstrap over networks, 500 replicates.
+P4 fusion, on the atoms of BOMP-PK+SC and MT-FW+SC cap 6 (loops c9_lib.bomp_c9 / mtfw_c9, identical to the registered
+  ones; they also return each atom's read samples and residual vectors):
+  (a) re-ranking   RR-mt: score x rho_mt, rho_mt = ||Q^T v||^2 / |v|^2; RR-pol: score x rho_pol, rho_pol = pol / |v|^2
+                   (vectors capped at 6; no running minimum, "raw" is the base without running minimum).
+  (b) relocation   RL-{mt, pol, ppol, amp}-{n, w}: the atom is moved to the maximum of the statistic within 12 km
+                   (epicentral, 3 km grid, all depths) using its own vectors (n) or the wide re-read (w), capped at 6;
+                   scores and order unchanged, hits recomputed. "strict": a relocated atom within 5 km of an earlier
+                   atom counts as a FALSE event (the registered metric lets repeated hits go free).
+                   RLIN-mt / RLIN-pol: the same move INSIDE the loop, before exclusion and deflation (MT-FW both,
+                   BOMP-PK mt only): the atom (n, t, I) becomes (n', t, I).
+  (c) extra term   MT-FW+PEN: selection statistic s - 0.5 (|v|^2 / 2 - s) (unexplained energy penalised).
+                   MT-FW+SELPOL: s x rho_pol; MT-FW+PENPOL: s - 0.5 (polarization-inadmissible energy) / 2 (post hoc).
+  ORACLE variants  RL-mtos: relocation with the rows of G multiplied by the TRUE amplitude factors of the window;
+                   worlds POL0 (dir_deg 0), AMP0 (site_sd 0), BOTH0 (both), regenerated from the same streams (same
+                   sources, mechanisms, pulses, clutter, noise); +SC corrections of the nominal catalogue.
+  Sample per design: 20 networks x 5 windows x 3 cells x 2 regimes = 600 windows (DENSE 2388 events, STD 444 events).
+  CEIL-GD (verif_2e ceiling, c6_ceil) on the nominal DENSE and STD windows.
+P5: section 6.
+
+----------------------------------------------------------------------------------------------------------------------
+2. WHAT WAS FIXED BEFORE THE RESULTS AND WHAT WAS NOT
+----------------------------------------------------------------------------------------------------------------------
+Fixed before any detection run: all statistics of section 1, the relocation radius 12 km, the wide half-width 1.5 s,
+  the cap 6 inside the relocation statistics, the penalty weight 0.5 of PEN, the designs STD, DENSE, DENSE-POL0,
+  DENSE-AMP0, DENSE-BOTH0, STD-BOTH0, the strict duplicate rule.
+Chosen on validation data (network 199, noise-free): the minimum P-S gap of the blind reader, 12 samples instead of
+  the registered MIN_PS = 6 (with 6 the pair was the S peak and its own side lobe).
+Post hoc, after a first look at the DENSE thin results (300 windows, 60 bootstrap replicates):
+  (a) the exponents RR-pol^2, RR-pol^4 and RR-pol-only (rank by rho_pol alone);
+  (b) MT-FW+SELPOL and MT-FW+PENPOL (c9_extra.py; windows regenerated from the same streams; the MT-FW records of the
+      regeneration are identical to the main run, enforced by an assertion in c9_analyze.load);
+  (c) the worlds DENSE-POL20 and DENSE-POL45 (dependence on the polarization scatter);
+  (d) c9_pairs.py (differences across bases and per cell).
+  The extras were first queued for five designs and cut to DENSE, STD and DENSE-POL45 for time; SELPOL has no result at
+  0 and 20 deg. SELPOL is therefore the best of about 50 candidate records per base, selected after seeing that rho_pol
+  discriminates hits; its estimate carries a selection bias. No multiplicity correction anywhere.
+Looks at partial data: DENSE thin (60 replicates), DENSE pooled and STD pooled (150), DENSE-BOTH0 (100). They decided
+  (a)-(d) and nothing else. Network 130 was used for two timing pilots (2 events, 2 windows per cell); the same data
+  are part of the main sample.
+Not done: BOMP-PK versions of PEN / SELPOL; relocation radii other than 12 km; a per-station (rather than global)
+  polarization scatter; the P = S site case; persistent site factors (C8 "PERS" world).
+
+----------------------------------------------------------------------------------------------------------------------
+3. VALIDATION (out/c9_validation.txt, c9_validation_end.txt, c9_fisher.txt; all pass)
+----------------------------------------------------------------------------------------------------------------------
+  V1 vectorised operators: c9_lib.operators_hom equals task1x_mtglrt.radiation_operator (max difference 3e-16), the
+     projectors of the c9 bases equal those of the registered bases (2e-15), rays_grad equals gen_realistic._ray
+     (3e-16).
+  V2 noise-free recovery (straight rays, no deviation, no factors, no coda, no clutter, 2 Hz zero-phase pulse, noise
+     1e-4; 12 sources on grid nodes per cell, network 199), maximum epicentral error over the events:
+       TRUE read:  P1-grid 0-1 km, P3-Strans 0, P13-pol 0, P3-gainfree 0, P2-mt 0-1 km, TIME 0; P1-azim 1.5-1.9 km
+                   (nodal P stations); BLIND read: the same values after the gap fix.
+       P1-grid-gradmodel 2.2-8.5 km: the expected bias of a curved-ray model on straight-ray data (control).
+       P2-mt-cap6 fails here by construction (at this noise level every vector is capped and the amplitudes are lost).
+       P2b-amp fails noise-free (median 6.6-15.6 km): 1/r without the radiation pattern is not a consistent estimator;
+       the radiation pattern varies more between stations than the spreading does.
+  V3 bomp_c9 reproduces xc.bomp_pk (scores, hits, locations): 9/9 windows.
+  V4 mtfw_c9 reproduces c8_lib.mtfw_general "ls" cap 6: 9/9 windows; the score recomputed from the stored vectors
+     equals the loop score. V3 and V4 were repeated after the post hoc edits of c9_lib.py: 9/9 and 9/9.
+  V5 Fisher bound against Monte Carlo of the grid maximum-likelihood estimators (network 130, 300 sources, no waveform
+     noise): P polarization 10 deg, ML rms 6.3 / 6.3 / 4.7 km against bound rms 5.2 / 5.3 / 4.0 km; times 0.144 s, ML
+     rms 1.13 / 0.68 / 1.19 against 0.91 / 0.48 / 0.87 km. ML is above the bound by a factor 1.2-1.4 (1 km grid, non-
+     Gaussian tails), as it should be.
+  V6 amplitude calibration: |v| / |G m| = 74.4 noise sd per unit (IQR 63-89; 90 windows, network 199); the analytic
+     value for a matched 2 Hz pulse and a noise-only scale is 77.
+
+----------------------------------------------------------------------------------------------------------------------
+4. P1-P3: STANDALONE LOCATION OF SINGLE EVENTS (out/c9_standalone_analysis.txt)
+----------------------------------------------------------------------------------------------------------------------
+600 events, thin clutter. Median epicentral error in km [95%] and fraction within 5 km, columns ladder_4 | ladder_6 |
+unilateral_c40. Reference: guessing the centre of the source region gives 11.8 km and 0.09.
+Measured amplitudes at the true arrivals (nominal): |v_P| median 2.7 noise sd, |v_S| 3.5-3.7 (a pure-noise 3-vector
+has norm about 1.5; the signal part of P is 1.5-1.8, section 6).
+NOMINAL generator (deviation 10 deg, amplitude-factor sd 0.5), vectors read at the TRUE arrival samples:
+  P1-azim        19.8 [18.4, 22.0] 0.07 | 18.1 [15.3, 19.8] 0.07 | 20.5 [18.9, 22.9] 0.04
+  P1-grid        13.9 [11.9, 16.5] 0.15 | 15.2 [11.7, 17.0] 0.18 | 12.7 [ 9.8, 15.3] 0.16
+  P1-grid-gradmodel 14.9             0.16 | 15.4             0.16 | 13.2             0.12
+  P3-Strans      15.9 [13.7, 18.3] 0.10 | 14.3 [13.3, 15.8] 0.13 | 14.5 [12.8, 16.3] 0.15
+  P13-pol         9.8 [ 7.9, 12.8] 0.26 |  8.2 [ 6.9, 10.5] 0.27 |  8.9 [ 7.0, 10.4] 0.27
+  P3-gainfree     8.9 [ 7.1, 10.9] 0.26 |  8.1 [ 5.6, 10.6] 0.34 |  8.2 [ 6.3,  9.7] 0.32
+  P2-mt           8.4 [ 6.9, 10.4] 0.29 |  7.7 [ 5.9, 10.2] 0.33 |  8.1 [ 7.1, 10.0] 0.30
+  P2-mt-cap6      8.4 [ 7.1, 10.6] 0.28 |  6.6 [ 5.2,  9.5] 0.37 |  7.7 [ 6.7,  9.7] 0.31
+  P2b-amp        14.2 [12.8, 15.8] 0.07 | 12.5 [10.9, 14.2] 0.11 | 19.4 [17.8, 20.9] 0.04
+  TIME-raw        1.3 [ 1.0,  1.7] 0.98 |  0.9 [ 0.7,  1.0] 1.00 |  1.4 [ 1.1,  1.7] 1.00
+  TIME-truestatics 0.6 [0.6,  0.7] 1.00 |  0.5 [ 0.5,  0.6] 1.00 |  0.7 [ 0.6,  0.8] 1.00
+BLIND read (no travel time at all): the reader is within 3 samples of the true arrival for P at 0.19-0.20 of the
+  stations and for S at 0.23-0.27 (clutter and coda win). Every estimator is then at or beyond the guess level:
+  P1-grid 23.3 | 23.8 | 23.7 km; P13-pol 21.4 | 22.0 | 21.8; P2-mt 19.0 | 17.4 | 18.5; P2b-amp 13.4 | 11.4 | 22.5;
+  TIME 21.8 | 20.1 | 26.9. The identification of the arrivals is itself a travel-time problem.
+P1 / P3 against the polarization deviation (TRUE read, amplitude-factor sd 0.5), median km:
+  deviation      P1-grid               P13-pol               P3-gainfree           P2-mt
+   0 deg         12.4 | 12.6 | 10.5     7.5 |  6.3 |  6.3     7.9 |  6.5 |  6.2     7.6 |  6.8 |  8.1
+   5 deg         13.6 | 13.6 | 10.6     7.8 |  7.4 |  7.4     8.5 |  7.1 |  7.4     8.0 |  7.0 |  8.0
+  10 deg         13.9 | 15.2 | 12.7     9.8 |  8.2 |  8.9     8.9 |  8.1 |  8.2     8.4 |  7.7 |  8.1
+  20 deg         17.1 | 17.3 | 16.7    14.5 | 13.4 | 12.8    13.2 | 11.9 | 12.0    11.3 |  9.8 |  9.6
+  Fraction within 5 km for P13-pol: 0.33-0.42 at 0 deg, 0.35-0.36 at 5, 0.26-0.27 at 10, 0.12-0.15 at 20.
+  Removing the deviation entirely gains 2-3 km; the floor at 0 deg (6-12 km) is the waveform noise.
+P2 against the amplitude-factor sd (TRUE read, deviation 10 deg), median km:
+  sd      P2-mt                 P2-mt-cap6            P2b-amp               P3-gainfree
+  0        7.9 |  5.7 |  6.4     8.0 |  6.3 |  6.4    11.4 | 10.8 | 16.2    10.0 |  7.9 |  7.5
+  0.25     8.0 |  6.7 |  6.9     8.2 |  6.5 |  6.9    12.1 | 11.4 | 17.8    10.0 |  8.0 |  7.1
+  0.5      8.4 |  7.7 |  8.1     8.4 |  6.6 |  7.7    14.2 | 12.5 | 19.4     8.9 |  8.1 |  8.2
+  The amplitude factors cost 0.5-2 km. The pure 1/r fit is at the guess level even with no factors.
+ORACLE generator (deviation 0, factors 0; waveform noise, coda, clutter, pulse and medium mismatch remain):
+  P1-grid 13.1 | 12.9 | 11.5 km; P13-pol 8.7 | 7.8 | 6.6; P3-gainfree 8.8 | 7.5 | 6.5; P2-mt 7.5 [5.8, 9.3] | 5.4
+  [3.6, 7.7] | 6.5 [4.9, 7.6], within 5 km 0.31 | 0.49 | 0.41; TIME-truestatics 0.6 | 0.5 | 0.7.
+Per cell: more stations help little (4 -> 6 -> 8: P2-mt 8.4 -> 7.7 -> 8.1 km); the one-sided 8-station cell is not
+better than 4 stations, as triangulation needs aperture.
+Reading. Standalone travel-time-free location is 10-20 times less precise than arrival times in every cell and at
+every level of the two generator knobs, and at best one event in three falls inside the 5 km hit radius.
+
+----------------------------------------------------------------------------------------------------------------------
+5. P4: FUSION WITH BOMP-PK AND MT-FW (out/c9_analysis_*.txt, c9_pairs.txt)
+----------------------------------------------------------------------------------------------------------------------
+5.1 Baselines and ceiling, recall @0.1 / @0.25 pooled thin + strong:
+                  DENSE (600 w, 2388 ev)                      STD (600 w, 444 ev)
+  BOMP-PK         0.112 [.063,.154]  0.225 [.188,.256]        0.372 [.262,.469]  0.502 [.421,.577]
+  MT-FW (cap 6)   0.151 [.122,.188]  0.224 [.195,.262]        0.360 [.285,.442]  0.459 [.394,.531]
+  CEIL-GD         0.474 [.356,.552]  0.593 [.516,.671]        0.495              0.608
+  MT-FW - BOMP-PK +0.039 [-0.007,+0.099] / -0.001 [-0.030,+0.041]   -0.011 / -0.043 [-0.091,+0.018]
+  Replication note: the cap's dense gain at 0.25 is absent in this sample (+0.042 in C8, +0.068 in C7, +0.070 in C2;
+  here -0.001, +0.037 thin and -0.018 strong); at 0.1 it is +0.039. The intervals overlap with the earlier ones.
+  Median epicentral error of hits: BOMP-PK 2.69 km, MT-FW 2.60 km (dense); 2.44 and 2.62 km (standard).
+5.2 (b) Relocation, paired difference to the base @0.25 [95%] and median error of hits (km):
+                               DENSE, base BOMP-PK            DENSE, base MT-FW              STD, base MT-FW
+  RL-mt-n   (P2, own vectors)  -0.123 [-0.157,-0.084] 3.10    -0.116 [-0.153,-0.083] 3.09    -0.255 [-0.336,-0.183] 3.42
+  RL-pol-n  (P1+P3)            -0.144 [-0.182,-0.104] 3.24    -0.129 [-0.175,-0.093] 3.23    -0.277 [-0.357,-0.200]
+  RL-ppol-n (P1)               -0.152 [-0.192,-0.110] 3.20    -0.139 [-0.185,-0.107] 3.23    -0.342 [-0.421,-0.269]
+  RL-amp-n  (1/r)              -0.170 [-0.208,-0.128] 3.16    -0.170 [-0.214,-0.140] 3.14    -0.423 [-0.497,-0.358]
+  RL-mt-w   (wide re-read)     -0.172 [-0.207,-0.135] 3.23    -0.170 [-0.211,-0.135] 3.23    -0.327 [-0.407,-0.244]
+  RL-pol-w                     -0.155 [-0.193,-0.116] 3.17    -0.153 [-0.193,-0.120] 3.20    -0.318 [-0.401,-0.245]
+  RL-amp-w                     -0.162 [-0.196,-0.122] 3.12    -0.174 [-0.216,-0.145] 3.16    -0.435 [-0.508,-0.366]
+  RL-mtos-n (ORACLE factors)   -0.132 [-0.168,-0.092] 3.19    -0.116 [-0.158,-0.081] 3.09    -0.234 [-0.307,-0.168]
+  RLIN-mt   (in the loop)      -0.137 [-0.169,-0.096] 3.12    -0.107 [-0.149,-0.077] 3.11    -0.257 [-0.337,-0.191] 3.42
+  RLIN-pol  (in the loop)      -                              -0.129 [-0.172,-0.094] 3.25    -0.270 [-0.353,-0.192] 3.29
+  STD, base BOMP-PK: RL-mt-n -0.291 [-0.362,-0.207]; RLIN-mt -0.309 [-0.374,-0.226]. At 0.1 the losses are -0.07 to
+  -0.13 (dense) and -0.22 to -0.37 (standard). The strict duplicate rule lowers every relocation by a further 0.004-
+  0.015. Fraction of the CEIL-GD headroom: -0.29 to -0.49 (dense).
+  Diagnostics (dense, MT-FW atoms; 1680 hits, 1711 near misses at 5-15 km, 809 far atoms):
+    statistic   hits kept   near misses converted   far converted   near-miss median distance before -> after
+    mt-n        0.57        0.22                    0.00            8.7 -> 9.0 km
+    pol-n       0.50        0.27                    0.01            8.7 -> 8.7
+    ppol-n      0.46        0.25                    0.00            8.7 -> 9.2
+    amp-n       0.47        0.39                    0.01            8.7 -> 6.4
+    mt-w        0.43        0.31                    0.02            8.7 -> 8.2
+    pol-w       0.53        0.37                    0.01            8.7 -> 6.7
+    amp-w       0.49        0.46                    0.02            8.7 -> 5.4
+    mtos-n      0.56        0.26                    0.00            8.7 -> 8.6
+  Standard windows (isolated events, MT-FW atoms; 345 hits, 647 near misses): hits kept 0.07-0.39, near misses
+  converted 0.15-0.23. In the dense clusters a move of up to 12 km often lands within 5 km of SOME event, which is
+  why the conversion rates look high there; in the standard windows, where a conversion would be a real gain, the rate
+  is 0.15-0.23 and two thirds of the hits are lost. The relocation does not find the event; it scatters the atom.
+5.3 ORACLE worlds (dense, 600 paired windows each; difference to the base in the same world @0.25):
+                       BOMP-PK   MT-FW    MT-FW/RL-mt-n            MT-FW/RL-pol-n           MT-FW+RLIN-mt
+  nominal (10, 0.5)    0.225     0.224    -0.116 [-0.153,-0.083]   -0.129 [-0.175,-0.093]   -0.107 [-0.149,-0.077]
+  POL0    ( 0, 0.5)    0.242     0.250    -0.129 [-0.175,-0.095]   -0.131 [-0.182,-0.095]   -0.128 [-0.174,-0.090]
+  AMP0    (10, 0  )    0.274     0.276    -0.162 [-0.203,-0.127]   -0.176 [-0.217,-0.138]   -0.163 [-0.202,-0.128]
+  BOTH0   ( 0, 0  )    0.297     0.289    -0.149 [-0.198,-0.102]   -0.169 [-0.215,-0.126]   -0.138 [-0.187,-0.089]
+  POL20   (20, 0.5)    0.142     0.181    -0.094 [-0.129,-0.068]   -0.118 [-0.148,-0.092]   -0.093 [-0.124,-0.065]
+  POL45   (45, 0.5)    0.047     0.076    -0.038 [-0.054,-0.019]   -0.051 [-0.066,-0.033]   -0.038 [-0.052,-0.018]
+  STD-BOTH0: BOMP-PK 0.462, MT-FW 0.473; MT-FW/RL-mt-n -0.205 [-0.266,-0.125]; RLIN-mt -0.203 [-0.264,-0.120].
+  With perfect polarization and no amplitude factors the relocation is still strongly negative: the bound of every
+  channel is negative. By-products: (i) the detectors themselves gain +0.07 at 0.25 when both imperfections are
+  removed and lose 0.04-0.08 at 20 deg and 0.15-0.18 at 45 deg, i.e. polarization already enters the registered
+  statistic through G; (ii) without amplitude factors the cap has no dense effect (MT-FW - BOMP-PK +0.002 in AMP0,
+  -0.008 in BOTH0), with them and a large scatter it has (+0.039 [+0.005,+0.072] at 20 deg, +0.029 [+0.005,+0.049] at
+  45 deg), consistent with C8.
+5.4 (a) Re-ranking and (c) extra term. Consistency fractions of the accepted atoms, median hits / false, AUC:
+    DENSE  rho_mt   BOMP-PK 0.552 / 0.530  AUC 0.555     MT-FW 0.573 / 0.539  AUC 0.572
+           rho_pol  BOMP-PK 0.758 / 0.701  AUC 0.687     MT-FW 0.763 / 0.707  AUC 0.675
+    STD    rho_pol  MT-FW 0.785 / 0.685  AUC 0.781;  rho_mt  MT-FW 0.588 / 0.509  AUC 0.672
+  Paired differences @0.1 / @0.25:
+                               DENSE                                              STD
+  BOMP-PK/RR-mt  - BOMP-PK     +0.010 [-0.017,+0.038] / -0.007 [-0.026,+0.017]    -0.023 / -0.007 [-0.034,+0.032]
+  BOMP-PK/RR-pol - BOMP-PK     +0.016 [-0.002,+0.043] / +0.010 [-0.006,+0.031]    +0.011 / +0.018 [-0.004,+0.049]
+  BOMP-PK/RR-pol^2 (post hoc)  +0.032 [+0.005,+0.062] / +0.021 [-0.001,+0.048]    +0.018 / +0.016 [-0.011,+0.052]
+  BOMP-PK/RR-pol^4 (post hoc)  +0.030 [-0.005,+0.072] / +0.030 [+0.005,+0.055]    +0.000 / +0.002 [-0.027,+0.055]
+  MT-FW/RR-mt    - MT-FW       -0.012 [-0.040,+0.016] / +0.007 [-0.022,+0.032]    -0.025 / -0.005 [-0.057,+0.038]
+  MT-FW/RR-pol   - MT-FW       +0.010 [-0.012,+0.037] / +0.028 [+0.005,+0.043]    +0.016 / +0.032 [-0.007,+0.063]
+  MT-FW/RR-pol^2 (post hoc)    +0.019 [-0.015,+0.043] / +0.023 [-0.000,+0.044]    +0.027 / +0.027 [-0.018,+0.064]
+  MT-FW/RR-pol^4 (post hoc)    -0.007 / +0.005 [-0.026,+0.026]                    +0.000 / +0.000 [-0.056,+0.044]
+  RR-pol-only (post hoc)       -0.10 / -0.10 to -0.11 (both bases)                -0.24 / -0.20 to -0.26
+  MT-FW+PEN      - MT-FW       -0.018 [-0.049,+0.021] / -0.015 [-0.048,+0.015]    -0.034 / -0.034 [-0.094,+0.019]
+  MT-FW+SELPOL   - MT-FW       +0.018 [-0.012,+0.053] / +0.046 [+0.007,+0.070]    +0.034 / +0.045 [-0.002,+0.089]
+  MT-FW+SELPOL   - BOMP-PK     +0.057 [+0.009,+0.121] / +0.045 [+0.003,+0.086]    +0.023 / +0.002 [-0.041,+0.064]
+  MT-FW+PENPOL   - MT-FW       +0.007 [-0.019,+0.045] / +0.038 [+0.002,+0.058]    +0.025 / +0.047 [-0.013,+0.086]
+  MT-FW+PENPOL   - BOMP-PK     +0.046 [+0.000,+0.115] / +0.036 [-0.003,+0.076]    +0.014 / +0.005 [-0.051,+0.062]
+  Bootstrap SD @0.25 (dense): SELPOL - MT-FW 0.0157, SELPOL - BOMP-PK 0.0206; (standard) 0.0225, 0.0268.
+  Fraction of the CEIL-GD headroom @0.25 (dense): SELPOL 0.12 [0.01, 0.24], PENPOL 0.10 [-0.01, 0.21], MT-FW/RR-pol
+  0.07 [-0.03, 0.18], BOMP-PK/RR-pol^2 0.06 [-0.00, 0.13], MT-FW 0.00 [-0.09, 0.11]. Standard: all intervals span 0.
+  Median error of hits: SELPOL 2.64 km (dense), 2.38 km (standard): unchanged; the gain is in ordering and selection,
+  not in location.
+  Per regime (dense, - MT-FW @0.25): SELPOL thin +0.042 [-0.010,+0.087], strong +0.045 [+0.006,+0.086]; RR-pol thin
+  +0.027 [-0.002,+0.059], strong +0.011 [-0.014,+0.037]. Standard: SELPOL thin +0.035 [-0.027,+0.110], strong +0.046
+  [-0.017,+0.112].
+  Per cell (dense, both regimes, @0.25): SELPOL - MT-FW +0.004 [-0.031,+0.051] (4 stations), +0.036 [-0.022,+0.104]
+  (6), +0.035 [-0.013,+0.109] (8); SELPOL - BOMP-PK +0.020 [-0.018,+0.058], +0.082 [+0.017,+0.152], +0.060 [-0.041,
+  +0.160]. Nothing at 4 stations.
+  Dependence on the generator's polarization scatter (dense, - base in the same world @0.25):
+                       0 deg                   10 deg (nominal)        20 deg                  45 deg
+    MT-FW/RR-pol       +0.031 [+0.005,+0.048]  +0.028 [+0.005,+0.043]  +0.003 [-0.011,+0.023]  -0.015 [-0.025,+0.002]
+    BOMP-PK/RR-pol     +0.023 [-0.006,+0.038]  +0.010 [-0.006,+0.031]  +0.001 [-0.011,+0.016]  -0.003 [-0.008,+0.009]
+    BOMP-PK/RR-pol^2   +0.038 [+0.010,+0.056]  +0.021 [-0.001,+0.048]  +0.002 [-0.016,+0.017]  +0.003 [-0.010,+0.012]
+    MT-FW+SELPOL       not run                 +0.046 [+0.007,+0.070]  not run                 -0.014 [-0.029,+0.005]
+    MT-FW+PENPOL       not run                 +0.038 [+0.002,+0.058]  not run                 -0.022 [-0.034,-0.001]
+  and on the amplitude factors (dense, 10 deg): MT-FW/RR-pol +0.013 [-0.005,+0.030] at sd 0, +0.028 at sd 0.5; in
+  BOTH0 +0.012 [-0.009,+0.033]. The re-ranking helps most where the amplitude factors make large false atoms.
+  Reading. rho_mt (the full projection fraction, amplitudes included) carries no ranking information; rho_pol does,
+  because clutter and coda vectors are randomly polarized (expected admissible fraction 1/2) while true arrivals are
+  not. The effect is +0.03 as a re-ranking and +0.045 inside the selection, and it is gone at 20 deg.
+5.5 Runtime (s/window, dense | standard, one process beside the background job): BOMP-PK 0.61 | 0.45; MT-FW and every
+  MT-FW variant 0.10-0.11 | 0.07-0.08; BOMP-PK+RLIN 0.61; atom features 0.001 per atom; CEIL-GD 0.44 | 0.23. SELPOL and
+  PENPOL were not timed separately (the MT-FW loop plus one contraction over the lattice).
+
+----------------------------------------------------------------------------------------------------------------------
+6. P5: FISHER INFORMATION OF THE EPICENTRE PER CHANNEL (out/c9_fisher.txt)
+----------------------------------------------------------------------------------------------------------------------
+Model: homogeneous straight rays; parameters x, y, z, origin time and mechanism (double couple: 3 angles + log M0, or
+full moment tensor). Channels: T (P and S times, sd sigma_t); PP (P unit vector, variance per component tan^2(sigma_pol)
++ 1/A_P^2, A = amplitude in noise sd); SP (S unit vector, same form; depends on the mechanism); A (log amplitudes,
+variance sigma_a^2 + 1/A^2); RATIO (log A_S/A_P per station). Van Trees bound with the benchmark prior (x, y uniform on
++-15 km, z on 5-13 km, origin on 2 s). 200 sources per cell (20 networks x 10), random double couples. Entry = median
+over sources of sqrt(C_xx + C_yy) in km. Amplitudes at site factor 1: P median 1.8 / 1.5 / 1.8 noise sd (quartiles
+0.6-3.1), S 3.0 / 3.1 / 3.2; waveform-noise angular scatter 1/A: P 32 / 39 / 33 deg, S 19 / 19 / 18 deg.
+  channel                                           ladder_4 (4)   ladder_6 (6)   unilateral_c40 (8)
+  no data (prior only)                                 12.25          12.25          12.25
+  T  sigma_t 0.05 s                                     0.24           0.15           0.26
+  T  sigma_t 0.144 s (+-0.25 s tolerance, uniform)      0.68           0.43           0.69
+  T  sigma_t 0.15 s (medium residual, C6)               0.71           0.44           0.72
+  T  sigma_t 0.30 s (uncorrected statics)               1.34           0.84           1.29
+  PP  0 deg (waveform noise only)                       8.77           7.90           7.14
+  PP  5 deg                                             8.91           8.04           7.32
+  PP 10 deg (nominal)                                   9.23           8.53           7.79
+  PP 20 deg                                            10.11           9.55           8.86
+  PP 10 deg, no waveform noise                          4.99           4.07           3.82
+  PP  5 deg, no waveform noise                          2.76           2.15           2.05
+  PP  2 deg, no waveform noise                          1.15           0.88           0.85
+  PP+SP 10 deg (double couple)                          7.47           6.10           6.03
+  PP+SP  0 deg                                          6.63           5.22           5.21
+  A  sd 0.5  (double couple)                            9.18           7.75           9.11
+  A  sd 0.25                                            8.13           6.30           7.69
+  A  sd 0    (waveform noise only)                      7.33           5.31           6.77
+  A  sd 0.5  (full moment tensor)                      10.83           9.12          10.12
+  A  sd 0    (full moment tensor)                       9.78           7.07           8.58
+  RATIO S/P sd 0.5                                     11.77          10.46          10.88
+  RATIO S/P sd 0                                       11.47           9.76           9.94
+  ALL time-free, 10 deg, 0.5 (double couple)            5.59           4.35           4.81
+  ALL time-free, 10 deg, 0.5 (full moment tensor)       5.90           4.62           5.16
+  ALL time-free,  0 deg, 0   (= oracle world)           4.01           3.10           3.57
+  ALL time-free,  0 deg, 0, SNR x 3                     1.45           1.08           1.28
+  ALL time-free,  0 deg, 0, SNR x 10                    0.45           0.33           0.39
+  ALL time-free,  2 deg, 0.1, SNR x 10                  1.00           0.71           0.77
+  JOINT T 0.144 + ALL time-free nominal                 0.65           0.41           0.66
+  JOINT T 0.144 + ALL time-free oracle world            0.62           0.40           0.64
+  JOINT T 0.30  + ALL time-free nominal                 1.21           0.80           1.20
+  joint / time-only: nominal 0.960 | 0.962 | 0.953; oracle world 0.915 | 0.930 | 0.926; sigma_t 0.30 0.906 | 0.953 |
+  0.927.
+Break-even of PP+SP (km, 4 | 6 | 8 stations) against the scatter and an SNR multiplier:
+  SNR x 1    0 deg 6.1 | 5.2 | 5.0    2 deg 6.1 | 5.3 | 5.1    5 deg 6.4 | 5.5 | 5.3    10 deg 6.9 | 6.1 | 5.9
+  SNR x 3    0 deg 2.8 | 2.2 | 2.1    2 deg 2.9 | 2.4 | 2.2    5 deg 3.6 | 2.9 | 2.8    10 deg 5.0 | 4.1 | 3.8
+  SNR x 10   0 deg 1.0 | 0.7 | 0.7    2 deg 1.4 | 1.0 | 1.0    5 deg 2.4 | 1.9 | 1.8    10 deg 4.1 | 3.3 | 3.1
+  SNR x 30   0 deg 0.3 | 0.2 | 0.2    2 deg 1.0 | 0.8 | 0.7    5 deg 2.1 | 1.7 | 1.6    10 deg 4.0 | 3.2 | 2.9
+Reading.
+  (a) At 4, 6 and 8 stations alike the arrival times carry the location: 0.4-0.7 km against 4.4-5.6 km for everything
+      travel-time-free together, a factor 7-10 in error, i.e. 50-100 in information. The time channel stays ahead even
+      with uncorrected statics (0.8-1.3 km).
+  (b) Within the time-free channels the order is PP+SP (6.0-7.5) < A (7.8-9.2) ~ PP (7.8-9.2) < RATIO (10.5-11.8, no
+      information). With a full moment tensor instead of a double couple the amplitudes lose most of what they had
+      (9.1-10.8 km): the detectors' 6-parameter subspace is what P2 really fits.
+  (c) The generator knobs are not the limit. Polarization: 0 -> 20 deg moves PP from 7.1-8.8 to 8.9-10.1 km.
+      Amplitudes: sd 0 -> 0.5 moves A from 5.3-7.3 to 7.8-9.2 km. The waveform noise is: with it removed, 10 deg gives
+      3.8-5.0 km and 2 deg 0.9-1.2 km.
+  (d) What a joint estimator could give in principle: 4-5% lower epicentral error at the nominal levels, 7-9% in the
+      oracle world, 5-9% when the time channel is degraded to 0.30 s. A 5% change of a 0.5 km error does not move a
+      5 km hit rule.
+  (e) Travel-time-free physics would matter at about 10 times the present signal-to-noise ratio with <= 2 deg of
+      polarization scatter and <= 0.1 of amplitude-factor sd (0.7-1.0 km, comparable to the times), or wherever the
+      times are unusable. Neither is this benchmark.
+  (f) The measured standalone errors of section 4 (medians 7.7-8.4 km for P2-mt, 5.4-7.5 km in the oracle generator)
+      sit above the rms bounds (4.4-5.6 and 3.1-4.0 km) by the factor 1.5-1.9 expected from coda, clutter, the pulse
+      and medium mismatch and the 1 km grid, none of which the bound contains.
+Limits of P5: local (Gaussian) bound; homogeneous rays; site factor 1 in the amplitude (the lognormal factor raises
+the mean energy by 1.65 and makes some stations better and some worse); additive noise only from the calibration
+constant 74.4; sign (polarity) information not counted (it is discrete, not local).
+
+----------------------------------------------------------------------------------------------------------------------
+7. JUDGEMENT PER CHANNEL
+----------------------------------------------------------------------------------------------------------------------
+Criterion of the task: a candidate counts if it reaches +0.05 recall with an interval excluding 0, or gives a clear
+relocation gain.
+  P1 polarization triangulation: NOT a plausible contribution. Standalone 12.7-15.2 km (19.8 km azimuth-only), 0.15-
+     0.18 inside 5 km; bound 7.8-9.2 km; relocation by P polarization -0.139 to -0.152; no gain at 0 deg either. It
+     would need SNR x 10 and <= 2 deg. On the real network (polarization reliable at 1 of 5 stations) one reliable
+     station gives one line, not a location.
+  P2 amplitude-only location: NOT a plausible contribution. The moment-tensor projection with free times is the best
+     time-free locator (7.7-8.4 km, 0.29-0.33 inside 5 km; 5.4-7.5 km with no factors and no deviation) and is still an
+     order of magnitude behind the times; relocation by it -0.107 to -0.123, with the TRUE factors -0.116 to -0.132.
+     The pure 1/r fit is inconsistent even noise-free. The amplitude-factor sd changes little (0.5-2 km) because the
+     waveform noise and the unknown mechanism dominate.
+  P3 S/P ratio and S-P geometry: NOT a plausible contribution for location. The ratio has no distance dependence in a
+     medium without attenuation and the bound says it carries nothing (10.5-11.8 km against a 12.25 km prior). S
+     transversality alone locates to 14-16 km; together with P, 8.2-9.8 km. On real data attenuation would give the
+     ratio a distance dependence, but through Q, which is at least as uncertain as the amplitude factors here.
+  P4 relocation and in-loop relocation: NEGATIVE, clearly and in every variant, oracle included. Do not pursue.
+  P4 re-ranking / extra term by polarization admissibility (RR-pol, SELPOL): SMALL and CONDITIONAL. Criterion not met:
+     the best estimate is +0.046 [+0.007, +0.070] over MT-FW and +0.045 [+0.003, +0.086] over BOMP-PK in dense windows
+     (below +0.05, post hoc, best of about 50), +0.002 [-0.041, +0.064] over BOMP-PK in standard windows, nothing at 4
+     stations, 0.12 [0.01, 0.24] of the headroom. It is a clutter discriminator, not location physics, and it needs
+     the polarization scatter to be <= 10 deg: the re-ranking gain is +0.003 at 20 deg and negative at 45 deg. With
+     polarization reliable at 1 of 5 stations on the real network, the honest expectation there is zero or negative.
+     It also does not answer the question that motivated C9 (atoms mislocated by 5-10 km): hit errors are unchanged.
+  P5: the benchmark is time-dominated by a factor 50-100 in information at 4, 6 and 8 stations; a joint estimator is
+     bounded at a 4-9% error reduction.
+Caveats that must travel with any number above. (i) The 10 deg polarization scatter and the lognormal 0.5 amplitude
+factors are our own generator choices; the generator applies one deviation and one factor per station and phase per
+window, shared by all events of the window. (ii) The result that these two knobs matter little for location is
+conditional on the benchmark's signal-to-noise ratio (P about 1.7 noise sd at 20-45 km); at 10 times that SNR the
+knobs would decide. (iii) The dependence of the only positive effect on the scatter is steep (gone at 20 deg), and the
+real network had reliable polarization at 1 of 5 stations. (iv) The hit rule ignores origin time (2F verification).
+(v) One seed, 20 networks per cell and regime; MT-FW's own dense gain did not replicate at 0.25 in this sample.
+Novelty: polarization filters and rectilinearity weights are standard in single-station location and in polarization-
+weighted back-projection; nothing here is a new method. The reportable result is the negative one with its bound:
+in a sparse network at local distances and low SNR, a pick-free moment-tensor detector cannot be relocated by
+amplitude or polarization evidence, because the Fisher information of the epicentre is 50-100 times smaller than that
+of the times, and the residual 5-10 km mislocation is therefore not recoverable by travel-time-free physics.
+Recommendation: close the line. Report P5 (table of section 6) and the relocation negative as a boundary statement of
+the thesis ("what the missing headroom is not"). Do not spend a confirmatory run on SELPOL unless the thesis wants a
+registered statement about polarization weighting; if it does, section 8 is the design, and the 20 deg arm must be
+part of it.
+
+----------------------------------------------------------------------------------------------------------------------
+8. DRAFT CONFIRMATORY PREREGISTRATION (CONDITIONAL: no candidate met the criterion; draft kept only for MT-FW+SELPOL,
+   the closest one. To be appended to PREREGISTRO_1j_1k.txt and hashed BEFORE any code is run on the new seeds; nothing
+   below has been run)
+----------------------------------------------------------------------------------------------------------------------
+Seeds 7171 and 9393. Check made on Oct 3 2026: grep -rnwE "7171|9393" over *.py, *.txt, *.sh of the work directory
+  returns one line, "p=0.7171" (a p-value in analyze_2e_out.txt); no file name, no parts directory and no seed list
+  contains either number (the other matches are digit runs inside floating-point numbers of result json files).
+  Repeat the grep before registering.
+Question: does multiplying the MT-FW selection statistic by the polarization-admissible energy fraction of the read
+  vectors (SELPOL) (a) beat MT-FW+SC cap 6 and BOMP-PK+SC in dense windows, (b) leave isolated-event recall unchanged
+  against BOMP-PK+SC, and (c) survive a polarization scatter of 20 deg?
+Data: networks task2a_confirm.network(seed, cell, j), j = 0..79 (80 per cell and regime), 3 cells, regimes thin and
+  strong; +SC from 20 catalogue events as in 2A; default gen_realistic; 5 dense windows (c2_run.draw_dense, kmax 7) and
+  5 standard windows (draw_sources, kmax 5) per network from two new TAGs; 2400 + 2400 windows per seed.
+Methods (code frozen and hashed: c9_lib.py, c9_run.py, c9_extra.py, c8_lib.py, c6_lib.py, task2d_methods.py, xc.py):
+  BOMP-PK+SC; MT-FW+SC cap 6 (c9_lib.mtfw_c9 = c6_lib.mtfw_dense); MT-FW+SELPOL = mtfw_c9(sel="selpol"): selection
+  statistic s x rho_pol, rho_pol = [sum_i (v_Pi.n_i)^2 + sum_i (|v_Si|^2 - (v_Si.n_i)^2)] / |v|^2 with the capped read
+  vectors and the straight rays of the node; record score = the modified statistic, running minimum; deflation as
+  MT-FW. No free constant. The variant was chosen post hoc on seed 999 (REPORT_C9.txt, section 2).
+Endpoint: recall at <= 0.25 realised false events per window (primary) and <= 0.1 (secondary); exact FROC; operating
+  point per method; hierarchical bootstrap (strata regime x cell, networks then windows, 2000 replicates); pooled over
+  regimes and cells, per seed.
+Rules (each must hold in BOTH seeds; Holm over the two seeds within a rule):
+  2J-a superiority, dense: SELPOL - MT-FW, lower one-sided 97.5% bound > 0 and point >= 0.02.
+  2J-b superiority, dense: SELPOL - BOMP-PK, lower one-sided 97.5% bound > 0 and point >= 0.02.
+  2J-c non-inferiority, standard: SELPOL - BOMP-PK, lower one-sided 95% bound > -0.05.
+  Claim "polarization-admissibility weighting adds to the moment-tensor certificate" requires a, b and c.
+Registered secondary arm (required for any positive claim, descriptive): the same dense design with dir_deg 20 and
+  dir_deg 0 on 20 networks per cell and regime; the claim must be worded with the observed dependence ("holds for a
+  polarization scatter up to X deg"). Also descriptive: per cell (the pilot shows nothing at 4 stations), per regime,
+  the post hoc re-ranking RR-pol of both bases, PENPOL, and the hit rule with |origin error| <= 0.5 s.
+Not registered: any relocation variant (pilot: -0.11 to -0.18 dense, -0.23 to -0.48 standard, oracle included).
+Power (pilot seed 999, 20 networks per cell and regime; bootstrap SD of the pooled difference @0.25; SD scales with
+  1/sqrt(networks)):
+  2J-a  pilot +0.046, SD 0.0157; at 80 networks SD 0.0079. The pilot value is selected (best of about 50): plan on
+        +0.03. Bound cleared with power > 0.95; the point >= 0.02 condition binds: power 0.90 for a true +0.03, 0.50
+        for +0.02.
+  2J-b  pilot +0.045, SD 0.0206; at 80 networks SD 0.0103. This comparison inherits MT-FW - BOMP-PK, which was -0.001
+        here and +0.04 to +0.07 in C2/C7/C8. Power 0.83 for a true +0.03 (bound), 0.83 for the point condition.
+  2J-c  pilot +0.002, SD 0.0268; at 80 networks SD 0.0134: power 0.98 if the true value is 0, 0.91 if it is -0.01.
+  Joint power per seed about 0.7 for true values +0.03, +0.03, 0 (a and b are positively correlated; 0.73 if treated
+  as independent); about 0.5 for both seeds. With 120 networks about 0.8 per seed. The expected yield is a small
+  effect with a strong dependence on an arbitrary generator knob: low value for the cost.
+Cost: BOMP-PK 0.61, MT-FW 0.10, SELPOL about 0.12 s per dense window (0.45, 0.08, 0.09 standard): about 1 CPU-hour per
+  seed, plus 0.3 h for the secondary arms.
+Nothing is changed after seeing 7171/9393.
+
+----------------------------------------------------------------------------------------------------------------------
+9. FILES (all in /home/claude/work/explore_contrib; outputs in out/)
+----------------------------------------------------------------------------------------------------------------------
+  c9_lib.py                 geometry, time-free statistics, readers, detector loops with relocation / selection hooks
+  c9_standalone.py          P1-P3 -> out/c9_standalone.json (log c9_standalone.log); validate -> out/c9_validation.txt
+  c9_standalone_analyze.py  -> out/c9_standalone_analysis.txt
+  c9_fisher.py              P5 -> out/c9_fisher.txt
+  c9_run.py                 P4 -> out/c9_{DESIGN}_{thin,strong}.json (log c9_run.log); validate -> c9_validation.txt,
+                            c9_validation_end.txt
+  c9_extra.py               post hoc SELPOL / PENPOL -> out/c9x_{DENSE,STD,DENSE-POL45}_{thin,strong}.json
+  c9_analyze.py             -> out/c9_analysis_{DENSE, STD, DENSE-BOTH0, DENSE-POL0, DENSE-AMP0, STD-BOTH0, DENSE-POL20,
+                            DENSE-POL45}.txt
+  c9_pairs.py               -> out/c9_pairs.txt
+  c9_queue.sh, c9_queue2.sh, c9_queue3b.sh   run order (c9_queue3.sh and c9_queue4.sh were replaced by 3b; 3 ran only
+                            DENSE thin of the extras before it was stopped)
+  No registered file, no 2A-2I part, no verif file and no earlier explore_contrib file or output was modified.

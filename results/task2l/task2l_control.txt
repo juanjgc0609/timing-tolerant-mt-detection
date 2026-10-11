@@ -1,0 +1,77 @@
+Controls of Task 2L on seed 999 (task2l_control.py)
+Kernel of this process: {'OPENBLAS_CORETYPE': 'Prescott', 'blas': [('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so')]}
+
+(1) Reproduction of the C11 pilot (networks (210, 219, 228) x 3 cells x 2 regimes = 18 parts, 9 distinct networks)
+  terms S0                 identical (==) 18/18
+  level T3 S0              identical (==) 18/18
+  terms S2                 identical (==) 18/18
+  level T3 S2              identical (==) 18/18
+  terms ORA                identical (==) 18/18
+  level T3 ORA             identical (==) 18/18
+  rms error S0, S2         identical (==) 18/18
+  std truth and origins    identical (==) 90/90
+  std MT@S0                identical (==) 90/90
+  std MT@S0+T3             identical (==) 90/90
+  std MT@S2+T3             identical (==) 90/90
+  std MT@ORA+T3            identical (==) 90/90
+  std BOMP@S0              identical (==) 90/90
+  std BOMP@S0+T3           identical (==) 90/90
+  std BOMP@S2+T3           identical (==) 90/90
+  std BOMP@ORA+T3          identical (==) 90/90
+  dense truth and origins  identical (==) 90/90
+  dense MT@S0              identical (==) 90/90
+  dense MT@S0+T3           identical (==) 90/90
+  dense MT@S2+T3           identical (==) 90/90
+  dense MT@ORA+T3          identical (==) 90/90
+  -> OK
+
+(2) S0 = registered +SC
+  (a) task2a_confirm.catalogue_real + estimate_station_corrections versus the S0 of the control parts: identical (==) 18/18 -> OK
+  (b) xc.NetCfg.corr (j = 0..4) versus the +SC corrections saved by 2A on seed 999 (task2a_seed999_*.json): identical (==) 30/30; maximum difference 0.0e+00 s -> OK
+
+(3) Seed mechanism (test seed 31337; no registered seed)
+  ladder_4 thin network 0: network and delays = task2a_confirm.network(31337) True; different from 999 True; catalogue = catalogue_real([31337, 2003, ...]) True; first standard and dense window = streams [31337, TAG, ...] True
+  unilateral_c40 strong network 3: network and delays = task2a_confirm.network(31337) True; different from 999 True; catalogue = catalogue_real([31337, 2003, ...]) True; first standard and dense window = streams [31337, TAG, ...] True
+  -> OK
+
+(4) analyze_2l.py on the whole C11 evaluation set (30 networks per cell and regime) versus xc.recall_caps and REPORT_C11.txt (2000 replicates here; the pilot used another resampling generator)
+  std   LOC+T BOMP@ORA+T3  Pool 0.385 / 0.508; xc.recall_caps 0.385 / 0.508 equal; published 0.385 / 0.508 equal
+  std   LOC+T BOMP@S0      Pool 0.238 / 0.356; xc.recall_caps 0.238 / 0.356 equal; published 0.238 / 0.356 equal
+  std   LOC+T BOMP@S0+T3   Pool 0.256 / 0.398; xc.recall_caps 0.256 / 0.398 equal; published 0.256 / 0.398 equal
+  std   LOC+T BOMP@S2+T3   Pool 0.284 / 0.455; xc.recall_caps 0.284 / 0.455 equal; published 0.284 / 0.455 equal
+  std   LOC+T MT@ORA+T3    Pool 0.374 / 0.462; xc.recall_caps 0.374 / 0.462 equal; published 0.374 / 0.462 equal
+  std   LOC+T MT@S0        Pool 0.256 / 0.347; xc.recall_caps 0.256 / 0.347 equal; published 0.256 / 0.347 equal
+  std   LOC+T MT@S0+T3     Pool 0.256 / 0.371; xc.recall_caps 0.256 / 0.371 equal; published 0.256 / 0.371 equal
+  std   LOC+T MT@S2+T3     Pool 0.323 / 0.441; xc.recall_caps 0.323 / 0.441 equal; published 0.323 / 0.441 equal
+  std   LOC   MT@S0+T3     Pool 0.414 / 0.535; xc.recall_caps 0.414 / 0.535 equal
+  std   LOC   MT@S2+T3     Pool 0.444 / 0.552; xc.recall_caps 0.444 / 0.552 equal
+  dense LOC+T MT@ORA+T3    Pool 0.114 / 0.189; xc.recall_caps 0.114 / 0.189 equal; published 0.114 / 0.189 equal
+  dense LOC+T MT@S0        Pool 0.055 / 0.121; xc.recall_caps 0.055 / 0.121 equal; published 0.055 / 0.121 equal
+  dense LOC+T MT@S0+T3     Pool 0.048 / 0.112; xc.recall_caps 0.048 / 0.112 equal; published 0.048 / 0.112 equal
+  dense LOC+T MT@S2+T3     Pool 0.092 / 0.176; xc.recall_caps 0.092 / 0.176 equal; published 0.092 / 0.176 equal
+  dense LOC   MT@ORA+T3    Pool 0.211 / 0.322; xc.recall_caps 0.211 / 0.322 equal; published 0.211 / 0.322 equal
+  dense LOC   MT@S0        Pool 0.168 / 0.272; xc.recall_caps 0.168 / 0.272 equal; published 0.168 / 0.272 equal
+  dense LOC   MT@S0+T3     Pool 0.173 / 0.272; xc.recall_caps 0.173 / 0.272 equal; published 0.173 / 0.272 equal
+  dense LOC   MT@S2+T3     Pool 0.224 / 0.306; xc.recall_caps 0.224 / 0.306 equal; published 0.224 / 0.306 equal
+  differences at cap 0.25 (the point may differ by +-0.001 due to rounding of the published recalls):
+  std   LOC+T both   MT@S2+T3 - MT@S0+T3: +0.070 [+0.011, +0.120] SD 0.0275  |  published +0.070 [+0.010, +0.120] SD 0.0282  (point equal)
+  std   LOC+T both   MT@S2+T3 - MT@S0: +0.094 [+0.035, +0.150] SD 0.0301  |  published +0.094 [+0.035, +0.151] SD 0.0298  (point equal)
+  std   LOC+T both   MT@ORA+T3 - MT@S0+T3: +0.091 [+0.034, +0.142] SD 0.0277  |  published +0.091 [+0.031, +0.141]  (point equal)
+  std   LOC+T both   BOMP@S2+T3 - BOMP@S0+T3: +0.057 [-0.001, +0.117] SD 0.0303  |  published +0.057 [-0.003, +0.115] SD 0.0304  (point equal)
+  std   LOC+T both   fraction of the oracle gain (T3 form, MT): 0.77 [0.19, 1.47]  |  published 0.77 [0.18, 1.45]
+  std   LOC+T thin   MT@S2+T3 - MT@S0+T3: +0.073 [-0.023, +0.157] SD 0.0458  |  published +0.073 [-0.021, +0.161]  (point equal)
+  std   LOC+T strong MT@S2+T3 - MT@S0+T3: +0.075 [-0.025, +0.157] SD 0.0466  |  published +0.075 [-0.022, +0.160]  (point equal)
+  std   LOC   both   MT@S2+T3 - MT@S0+T3: +0.017 [-0.029, +0.066] SD 0.0241  |  published +0.017 [-0.028, +0.068] SD 0.0244  (point equal)
+  dense LOC+T both   MT@S2+T3 - MT@S0+T3: +0.065 [+0.033, +0.094] SD 0.0151  |  published +0.065 [+0.034, +0.094] SD 0.0151  (point equal)
+  dense LOC+T thin   MT@S2+T3 - MT@S0+T3: +0.063 [+0.017, +0.103] SD 0.0219  |  published +0.063 [+0.019, +0.104]  (point equal)
+  dense LOC+T strong MT@S2+T3 - MT@S0+T3: +0.061 [+0.023, +0.108] SD 0.0215  |  published +0.061 [+0.020, +0.110]  (point equal)
+  dense LOC   both   MT@S2+T3 - MT@S0+T3: +0.034 [-0.001, +0.073] SD 0.0184  |  published +0.034 [+0.001, +0.070] SD 0.0179  (point equal)
+
+(5) Time (control parts, 2 processes in parallel) and budget rule
+  per part (5 windows per design; mean of 18 parts): preparation + generation 1.7 s; standard MT x3 4.9 s, BOMP x3 12.6 s, oracle (MT and BOMP) 7.1 s; dense MT x3 6.7 s, oracle MT 2.9 s
+  main design (standard 160, dense 100, BOMP 60, oracle 30 networks): 1920 parts in the two seeds -> 9.24 h of CPU, 4.62 h on 2 cores (upper bound: the preparation of the parts without dense windows is smaller)
+  budget design (standard 120, dense 80, BOMP 60, oracle 30 networks): 1440 parts in the two seeds -> 7.92 h of CPU, 3.96 h on 2 cores (upper bound: the preparation of the parts without dense windows is smaller)
+  Budget rule (10 h on 2 cores): estimate 4.62 h -> NOT triggered: standard 160 networks and dense 100
+
+OpenBLAS kernels recorded in the control parts: ['{"OPENBLAS_CORETYPE": "Prescott", "blas": [["Prescott", "libopenblas64_p-r0-0cf96a72.3.23.dev.so"], ["Katmai", "libscipy_openblas-6cdc3b4a.so"]]}']
+OVERALL RESULT OF THE CONTROLS: OK

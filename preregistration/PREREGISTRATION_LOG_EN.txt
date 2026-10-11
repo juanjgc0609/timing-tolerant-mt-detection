@@ -1,0 +1,774 @@
+Preregistration of Tasks 1j and 1k. Written before running any evaluation run.
+
+1j. Protocol P3 of Task 0 (network per realization, relative threshold, calibration to recall 0.98),
+30 calibration realizations and 30 evaluation realizations per cell, seeds 2024 and 7331.
+Rule (fixed in AUDITORIA_PROPUESTA.md, K1): if in the two one-sided cells the difference in
+false-event rate between the best ablation without polarization with continuous tie-breaking (TOL-TB,
+TOL-K or CIII-TB) and PHYS is less than 0.05 in both seeds, the advantage of G1 in the one-sided
+cell is attributed to the tie-breaking and G1 is reformulated. Otherwise, the advantage is attributed to
+polarization.
+Note: choosing "the best" ablation among three favours the ablation; all three are reported.
+
+1k. Windows with K in {0,1,2} sources (0.4/0.4/0.2), absolute threshold calibrated to per-event recall
+0.90 on 60 calibration windows, 60 evaluation windows, seeds 2024 and 7331.
+Criterion of G1' (AUDITORIA_PROPUESTA.md, Section 5.1): PHYS (or PHYS-S) with at least 0.05 fewer false
+events per window than the best comparator (ablations with tie-breaking, tuned GaMMA and PyOcto)
+at non-inferior recall (margin 0.02), in at least half of the cells, in both
+seeds. Paired test: exact sign test on false events per window.
+Baselines: hyperparameter grid evaluated ONLY on calibration; configuration frozen.
+Wed Sep 23 02:14:26 UTC 2026
+
+Note added before running part k (Wed Sep 23 02:33:24 UTC 2026): because of compute time, the GaMMA grid in part k is reduced to min_picks {5,6,8,10,12} x time scale {1.0,2.0} s with clustering radius 10; PyOcto keeps its full grid.
+Note (Wed Sep 23 02:42:56 UTC 2026): the runs were stopped and restarted before producing any evaluation result. GaMMA grid, for j and k: min_picks {5,6,8,10,12,14} x time scale {1.0,2.0} s, clustering radius 10. PyOcto: n_picks {4,...,14} x tolerance {0.5,1.0,2.0}.
+
+Task 1j-b (added on Wed Sep 23 03:24:51 UTC 2026, after seeing 1j with seed 2024 and before running 1j-b; it is
+therefore an analysis designed in view of a result and is declared exploratory).
+Motivation: in 1j, seed 2024, a continuous residual score without polarization (TOL-K) matched PHYS
+in the one-sided cells and outperformed it on the 3- and 4-station ladder, with exact picks.
+Design: protocol P3, 30+30 realizations, cells unilateral_c40, ladder_4, ladder_6; pick-time
+noise 0.1 s and 0.2 s, and 0.1 s with a 5% velocity error in the inference; seeds 2024 and
+7331. Methods TOL-K, PHYS, PHYS-S and PHYS-K (squared-cosine residual kernel, with C-III);
+kernel scale chosen in calibration among 0.15, 0.3 and 0.6 s.
+Rule: polarization adds over the best continuous kinematic score if PHYS-K has at least
+0.05 lower false-event rate than TOL-K at non-inferior recall (margin 0.02) in at least half of the
+nine noisy cells, in both seeds.
+Note (Wed Sep 23 04:39:45 UTC 2026): the part k run with seed 2024 ended without writing results after completing three of four cells (cause not identified; no result of k was seen). It is repeated cell by cell, with per-cell error logging.
+Note (Wed Sep 23 04:50:49 UTC 2026), before running any cell of k: after seeing 1j-b (seed 2024), the method PHYS-K (0.3 s squared-cosine residual kernel, with C-III) is added to k, together with a condition with 0.2 s pick-time error in unilateral_c40 and ladder_4, both seeds. The preregistered G1 criterion applies unchanged; PHYS-K is declared as incorporated in view of 1j-b.
+Note (Wed Sep 23 07:18:48 UTC 2026): four cells of k (sparse 7331, ladder_6 2024, one-sided 7331 exact and with 0.2 s) failed because of a station with no pick at all in an empty window (IndexError in _precompute). This is fixed with a dummy pick outside the window and only those four cells are repeated; the eight completed cells do not contain that case.
+
+Task 1o (written on Wed Sep 23 14:23:44 UTC 2026, before any evaluation run of 1o).
+Motivation: question from the author about whether the Y results were an implementation defect. The
+diagnosis of the synthetic channel (diag_pol.py) gives AUC 0.78 between |cos| of true arrivals and of
+clutter, and only 0.47 of the P arrivals within 20 degrees in azimuth, because the amplitude over the noise is
+1.1-2.5 at the distant stations; with that same signal-to-noise ratio the generator detected all the
+arrivals with exact time. Consistent generator: detection Phi((a-2)/0.5), time error 3 x CRB.
+Methods: TOL-TB, KIN-LR, PHYS-LR (eq. 9d, f/g estimated in calibration), WAVE-E, WAVE-P (without picks).
+Cells unilateral_c40, ladder_4, ladder_6; 0-2 sources per window; 60+60; absolute threshold at per-event
+recall 0.90; seeds 2024 and 7331.
+R1 (positive control, condition jit0.5: all detected, error 0.5 s): PHYS-LR must have fewer
+false events per window than KIN-LR, with comparable recall, in at least 2 of 3 cells in both seeds.
+If not, the implemented polarization channel is suspect and 1o does not allow conclusions about the physics.
+R2 (G1 on the consistent generator): PHYS-LR with at least 0.05 fewer false events per window than KIN-LR at
+non-inferior recall (margin 0.02) in at least 2 of 3 cells in both seeds; sign test.
+R3 (physics without picks): WAVE-P reaches the target recall where KIN-LR and PHYS-LR do not, or has at least
+0.05 fewer false events per window than the best of them at non-inferior recall, in at least 2 of 3 cells
+in both seeds.
+
+Amendment to 1o (Wed Sep 23 14:56:20 UTC 2026), after seeing seed 2024 and before seeing any result of
+7331 (its run stopped without finishing any cell). On the consistent generator almost no
+method reaches the target recall of 0.90 in calibration, so it falls back to the most permissive threshold and the
+false events per window (~4) reflect that threshold, not the method: R1-R3 cannot be evaluated as they were
+written. The endpoint is replaced by the Neyman-Pearson one, which is the operational one: threshold
+calibrated for a budget of false events per window (0.05, 0.1, 0.25, 0.5) and per-event recall in
+evaluation; the scale of each method is chosen in calibration by the mean recall over those four
+budgets. Paired comparison per true event (exact McNemar) at budget 0.1.
+R1': in jit0.5, PHYS-LR with higher recall than KIN-LR at budget 0.1 in at least 2 of 3 cells in
+both seeds. R2': on the consistent generator, PHYS-LR with recall at least 0.05 higher than KIN-LR at
+budget 0.1 in at least 2 of 3 cells in both seeds. R3': the same for WAVE-P against the best of
+KIN-LR and PHYS-LR. Seed 2024 is exploratory for these rules (its results by recall
+threshold were seen); 7331 is the replication.
+
+1o-b (Wed Sep 23 15:51:09 UTC 2026): GaMMA and PyOcto tuned in calibration by budget of false events per window,
+on the same regenerated windows of 1o. Rule: PHYS-LR with recall at least 0.05 higher than the
+best of GaMMA and PyOcto at budget 0.1, in at least 2 of 3 cells of the consistent generator, in
+both seeds; it is also reported with the realized false-event rate.
+Note (Wed Sep 23 16:50:20 UTC 2026): because of compute time, seed 7331 of 1o-b runs only the cells of the consistent generator, which are the ones in the rule; 2024 also includes the jit0.5 control.
+
+Task 1r (Wed Sep 23 18:18:38 UTC 2026), written before running it, in response to the independent verification of 1o,
+which found: overshoot of the false-event budget by PHYS-LR, an unclean positive control, a wider search
+domain for GaMMA/PyOcto and a minimum of picks >=5, confounding between change of generator and
+change of likelihood form, and absence of a negative control.
+Design: task1r_fair.py and task1r_baselines.py; cells unilateral_c40, ladder_4, ladder_6; conditions
+consistent and exact (all detected, exact time); 60 calibration windows, 60 evaluation windows
+and 40 dedicated windows for f/g; seeds 2024 and 7331. KIN-LR, PHYS-LR and PHYS-SH (permuted cosines) with the
+same grid sigma {0.1,0.2,0.4} x eps {0.05,0.1,0.2}, variant chosen in calibration; threshold
+swept in evaluation (FROC). Baselines with the same domain and origin-time window, minimum
+picks from 3, oracle configuration on the evaluation.
+Endpoint: per-event recall at REALIZED false-event rate <= 0.1 and <= 0.25 per window.
+R-a (G1, consistent): PHYS-LR exceeds KIN-LR by >= 0.05 in recall at both caps in at least 2 of 3
+cells in both seeds, with a paired bootstrap 95% CI of the difference at cap 0.25 that excludes 0 in at
+least one cell per seed.
+R-b (negative control): |PHYS-SH - KIN-LR| < 0.05 at cap 0.25 in at least 2 of 3 cells per seed;
+if PHYS-SH improves as PHYS-LR does, the gain is not attributed to polarization.
+R-c (confounding): PHYS-LR against KIN-LR in the exact condition is reported; if it also wins there, the
+negative result of Y.2-Y.3 is attributed to the form of combination and not to the generator.
+R-d (state of the art): PHYS-LR exceeds the best of GaMMA and PyOcto (oracle) by >= 0.05 at both caps
+in at least 2 of 3 consistent cells in both seeds.
+
+Task 1s (Wed Sep 23 19:36:09 UTC 2026), written before running it. Question: does the physics (per-station
+polarization likelihood, f/g ratio of 9d) add over the strongest kinematic associator measured in 1r
+(GaMMA), and not over an in-house KIN-LR that 1r showed to be weak.
+Design: task1s_gamma_pol.py. GaMMA with the 1r grid (min_picks {3,4,5,6,8} x sigma {1,2}), same
+domain and origin window. Each emitted event is scored with the sum of log f/g over its picks
+assigned by GaMMA (f/g estimated on 40 dedicated windows); GAMMA+POL emits the events whose score
+exceeds a threshold (21 quantiles). GAMMA+SH: the same, with cosines drawn at random from the set of
+observed cosines (same number of threshold degrees of freedom as GAMMA+POL). Configuration and threshold with
+oracle on the evaluation for all three. Consistent cells of 1r, seeds 2024 and 7331.
+S-0 (implementation): with 60 windows (the same as in 1r), the recall of GAMMA at each cap must
+match task1r_baselines; AUC of the POL score between true and false GaMMA events > 0.6 in at
+least 2 of 3 cells per seed (the channel exists), and AUC of SH in [0.4, 0.6]. If S-0 fails, 1s is not
+interpreted.
+Primary analysis with 200 evaluation windows (the 60 of 1r plus 140 new ones; the f/g windows
+change because of the generator order, and this is declared).
+S-a (physics over the state of the art): GAMMA+POL - GAMMA+SH >= 0.05 and GAMMA+POL - GAMMA >= 0.05 at both
+caps (0.1 and 0.25) in at least 2 of 3 cells in both seeds, with a paired bootstrap 95% CI over
+windows (B=2000, fixed operating point) of GAMMA+POL - GAMMA+SH at cap 0.25 that excludes 0 in at
+least one cell per seed.
+S-b (negative control): GAMMA+SH - GAMMA < 0.05 at cap 0.25 in at least 2 of 3 cells per seed.
+If S-a holds and S-b also holds: G1 sustained on consistent synthetic data against the state of the art.
+If S-a fails: G1 remains not established on synthetic data and the question passes entirely to real data (1n, 1p).
+
+Amendment to 1s (Wed Sep 23 19:56:01 UTC 2026). The 60-window run stopped after the first cell of each
+seed: the recall of GAMMA did not reproduce that of task1r_baselines (2024 one-sided 0.36/0.42/0.43 against
+0.40/0.40/0.40; 7331 0.43/0.43/0.43 against 0.41/0.41/0.43). Cause identified in the GaMMA code
+(gamma/utils.py, line 638): the initialization of the components uses numpy's global RNG without a
+seed when there is no multiprocessing, so that its output depends on everything the process executed
+before. Fix: np.random.seed(42) before each call, the convention that GaMMA uses in its own
+multiprocessing mode, in task1s and in task1r_baselines. S-0 is replaced by a direct check
+(check_gamma_det.py): with a seed, the two code paths give the same catalogue in every window and
+configuration, and the amount by which GaMMA changes without a seed is measured. The GaMMA recalls of 1r keep that
+initialization noise and are reported as such. The result of GAMMA+POL in the first cell was seen
+(0.43/0.43/0.43 in both seeds) before this amendment; rules S-a and S-b do not change. task1r_baselines is
+also run with a seed and 200 windows so that the comparison with PHYS-LR uses the same
+deterministic GaMMA.
+
+Task 1t (Wed Sep 23 20:29:31 UTC 2026), written before running it. Declared motivation: in 1r the pick-free score WAVE-P
+was among the best in the consistent cells (seen before this registration). Question: does the
+three-component waveform migration projected onto the predicted polarization outperform
+the same migration without direction (WAVE-E, analogous to the coherence stackers QuakeMigrate, LOKI,
+MALMI) and the pick associators? Design: task1t_wave.py; WAVE-E, WAVE-P and WAVE-PSH (projection
+onto the direction predicted for another station, fixed permutation per window); same windows,
+grid and FROC endpoint as 1r; consistent cells; seeds 2024 and 7331.
+T-0 (implementation): with 60 windows, the recall of WAVE-P at each cap matches that of 1r.
+Primary analysis with 200 windows.
+T-a: WAVE-P - WAVE-E >= 0.05 at both caps in at least 2 of 3 cells in both seeds, with a paired bootstrap
+95% CI at cap 0.25 that excludes 0 in at least one cell per seed.
+T-b (control): WAVE-P - WAVE-PSH >= 0.05 at cap 0.25 in the cells where T-a holds; if WAVE-PSH
+matches WAVE-P, the gain is not attributed to the geometry of polarization.
+T-c (state of the art): WAVE-P exceeds the best of GaMMA and PyOcto (with seed, oracle, 200 windows)
+by >= 0.05 at both caps in at least 2 of 3 cells in both seeds.
+Limitation declared in advance: the generator uses a known pulse in a homogeneous medium, which
+favours every waveform score; a positive result here requires 1p (real picker) and real data
+before any claim.
+
+Task 1u (Wed Sep 23 21:33:50 UTC 2026), written before running it and after seeing WAVE-P with 200 windows in
+seed 2024 (T-a on its way to being met). Question: does the positive result of WAVE-P survive what a real medium
+adds and the homogeneous model does not predict? Design: task1u_hetero.py; per-station and per-phase delay
+N(0, 0.15 s) and deviation of the polarization direction of ~10 degrees, fixed per window, applied to
+the waveform and to the picks; WAVE-E, WAVE-P, WAVE-PSH and GaMMA with seed (1r grid, oracle);
+100 evaluation windows, consistent cells, seeds 2024 and 7331.
+U-a: WAVE-P - WAVE-E >= 0.05 at both caps in at least 2 of 3 cells in both seeds.
+U-b: WAVE-P - GAMMA >= 0.05 at both caps in at least 2 of 3 cells in both seeds.
+If U-a or U-b fail where T-a or T-c were met, the positive result of 1t is declared dependent on a known
+medium and is not claimed outside of it.
+
+Endpoint amendment (Wed Sep 23 22:43:25 UTC 2026), for 1r, 1t and 1u, before seeing any exact reading. On reviewing
+the 1t curve it was found that the registered sweep (80 quantiles, 0.85 to 1.0, of the pooled
+grid scores) samples the FROC curve with jumps of up to 0.14 false events per window at its strict
+end (WAVE-E, 4 stations: points at 0.00 and 0.14 false events per window), so that the reading at
+cap 0.1 depends on where the thresholds fall and can create or erase a difference. Fix
+(froc_exact.py): the catalogue at each threshold is the prefix of the complete greedy list, so the exact
+curve is obtained by evaluating all the scores of that list as thresholds; verified identical to
+_catalog_impl + score_events at every threshold. Rules R, T and U are evaluated on the exact curve and
+the reading with the registered sweep is also reported. GaMMA and PyOcto keep their grid of
+configurations (their curve is that of their configurations). Task 1s is not repeated: its conclusion does not
+depend on the sampling, because the recall of GAMMA+POL is bounded by the GaMMA ceiling (the highest recall
+of its configurations), which GaMMA reaches only with at most 0.21 false events per window in all
+cells, and at cap 0.1 the distance to the ceiling is less than 0.05 in all six cells.
+
+Note on the previous amendments (Thu Sep 24 01:22:23 UTC 2026). The endpoint amendment (exact FROC curve) was
+written after seeing, with the registered sweep, that T-b failed in one cell (7331 one-sided,
+WAVE-P - WAVE-PSH = 0.00 at cap 0.25). With the registered sweep R-d, U-a and U-b also fail; with the
+exact curve they are met. Both readings are reported in Appendix Y.
+
+Task 1w (Thu Sep 24 01:22:23 UTC 2026), written before running it, in response to the second independent
+verification, which found: (1) the generator gives the S wave pure SV polarization; with random
+double couples the advantage of WAVE-P over WAVE-E almost disappears in an exploratory test of 80 windows, and a
+mechanism-independent variant (P along the ray, S in the transverse plane) keeps a margin;
+(2) PHYS-SH is not a null control (it keeps the node's set of ratios); a control that takes the
+direction of another node falls to the level of KIN-LR in the only cell tested. Design: task1w_mech.py;
+sources with random double couple (radiation in the waveform, detection and time error); KIN-LR,
+PHYS-LR, PHYS-NODE (direction of another node more than 9 km away), WAVE-E, WAVE-P, WAVE-PT (P along the ray, S
+in the transverse plane), WAVE-PT-NODE (ray of another node), GaMMA with seed; 60
+calibration windows, 120 evaluation windows, 40 for f/g; consistent cells; seeds 2024 and 7331; exact FROC
+curve; paired bootstrap CI with the operating point re-chosen in each replicate (the verification
+showed that fixing it narrows the intervals by between 15 and 40 per cent).
+W-a (per-pick physics with a real mechanism): PHYS-LR - PHYS-NODE >= 0.05 at both caps in at least 2 of 3
+cells in both seeds, with a CI at cap 0.25 that excludes 0 in at least one cell per seed.
+W-b (mechanism-independent pick-free physics): WAVE-PT - WAVE-PT-NODE >= 0.05 and WAVE-PT - WAVE-E
+>= 0.05 at both caps in at least 2 of 3 cells in both seeds.
+W-c (state of the art): PHYS-LR - GAMMA >= 0.05 at both caps in at least 2 of 3 cells in both
+seeds; the same, separately, for WAVE-PT.
+WAVE-P (S along SV) is reported to show the dependence on the mechanism. If W-a fails, the per-pick claim
+is limited to the SV generator; if W-b fails, the pick-free claim is withdrawn.
+
+Replication 1w-R (Thu Sep 24 02:32:43 UTC 2026), written before running it and after seeing 1w in three of its six
+cell-seed pairs. Motivation: the first 80 evaluation windows of 1w and their mechanisms coincide with those
+of the exploratory test of the verification that proposed WAVE-PT; 1w is not by itself an
+independent confirmation of WAVE-PT. Design: task1w_mech.py --wave-only --evbase 9000 --moff 131;
+120 new windows per cell (networks, sources, clutter, detection and mechanisms from different random
+streams), WAVE-E, WAVE-P, WAVE-PT, WAVE-PT-NODE and GaMMA with seed; seeds 2024 and 7331.
+WR-a: WAVE-PT - WAVE-PT-NODE >= 0.05 and WAVE-PT - WAVE-E >= 0.05 at both caps in at least 2 of 3
+cells in both seeds. WR-b: WAVE-PT - GAMMA >= 0.05 at both caps in at least 2 of 3 cells in
+both seeds.
+
+Task 1x (Thu Sep 24 14:51:45 UTC 2026), written before running the evaluation. Question: does the GLRT with the moment
+tensor as a linear nuisance (projection of the signed three-component vectors of all the
+stations and phases onto the subspace of dimension 6 of the radiation pattern) outperform WAVE-PT, its
+control with the subspace of another node and GaMMA; and does Frank-Wolfe with deflation add over the GLRT?
+Design: task1x_mtglrt.py; double-couple sources; conditions ideal and pert (delays N(0, 0.15 s),
+~10 degrees, lognormal site factor sigma 0.5); 100 new windows per cell (evbase 15000,
+mechanisms moff 173); seeds 2024 and 7331; exact FROC curve; GaMMA with seed, grid, oracle.
+The per-station cap CAPV = 6 was fixed on dedicated calibration windows (evbase 20000, cal_capv.py):
+6 dominated 12, 24 and no cap in 5 of 6 cell-condition pairs.
+Per condition:
+X-a (physical coherence): WAVE-MT - WAVE-MT-NODE >= 0.05 and WAVE-MT - WAVE-PT >= 0.05 at both caps in
+at least 2 of 3 cells in both seeds.
+X-b (state of the art): WAVE-MT - GAMMA >= 0.05 at both caps in at least 2 of 3 cells in both seeds.
+X-c (Frank-Wolfe, exploratory): MT-FW - WAVE-MT >= 0.05 at cap 0.25 in at least one cell per seed.
+If X-a fails in pert, amplitude coherence is declared fragile against unmodelled amplitude
+errors and the method falls back to WAVE-PT on that rung of the ladder.
+
+Result of 1x and verification (vmThu Sep 24 16:55:30 UTC 2026). X-a was not met in any condition (seed 2024:
+1 of 3 cells); X-b and X-c were met. The independent verification found that since 1o the clutter
+picks were always delivered and with exact time even though their pulses are below the noise (E26):
+GaMMA was receiving ~90 per cent undetectable picks. X-b is invalidated. "MT-FW against GaMMA" was not
+registered. Most of the gain of MT-FW over WAVE-MT is side-lobe
+suppression (WAVE-MT with suppression at 20 km almost matches it).
+
+Task 1y (Thu Sep 24 16:55:30 UTC 2026), written before running it. Design: task1y_clutter.py; pert condition of 1x;
+clutter treated with the same detection and time-error rule as the true arrivals, in
+two regimes: thin (amplitude 0.35) and strong (amplitude 1.75, visible and detected transients); 100
+new windows per cell (evbase 25000, mechanisms moff 233); seeds 2024 and 7331; exact FROC curve.
+Per regime:
+Y-a (state of the art): MT-FW - GAMMA >= 0.05 at both caps in at least 2 of 3 cells in both seeds.
+Y-b (control of the full method): MT-FW - MT-FW-NODE >= 0.05 at both caps in at least 2 of 3 cells
+in both seeds.
+Y-c (deflation against tuned suppression): MT-FW - max(WAVE-MT@20, WAVE-PT@20) >= 0.05 at cap 0.25 in at
+least 2 of 3 cells in both seeds.
+WAVE-MT@20 - GAMMA and WAVE-PT@20 - GAMMA are also reported.
+
+Task 2A (Fri Sep 25 20:15:00 UTC 2026), written before any evaluation run of 2A. Seeds 2024 and
+7331 have never been used with gen_realistic.py, real_picker.py or qm_wrapper.py: the calibrations of the
+STA/LTA picker and of QuakeMigrate used only seed 999.
+Confirmatory question: with a generator that does not match the model of the detectors, picks from an operational
+picker and real comparators, does MT-FW with station corrections estimated from a catalogue outperform the best
+comparator?
+Design.
+Generator: gen_realistic.generate_real with DEFAULT_CFG (medium with gradient VS0 2.8 km/s, g 0.04 1/s, curved
+rays; Ricker source function with central frequency U[1.4, 2.8] Hz and phase rotation up to 45 degrees; scattered
+coda with energy ratio 0.3; polarization deviation ~10 degrees; lognormal site factor sigma
+0.5), except for the station delays, which are fixed per network, N(0, 0.3 s) per station and phase, instead of
+being drawn per window. All the detectors (MT-FW, WAVE-PT, GaMMA, PyOcto, QuakeMigrate) use the same
+homogeneous model VP = 1.73 x 3.0, VS = 3.0 km/s: the model mismatch is common to all of them.
+Cells: ladder_4, ladder_6 and unilateral_c40 (task1r_fair.SCEN); clutter regimes thin (amplitude 0.35) and
+strong (1.75).
+Networks: per seed, cell and regime, 5 fixed networks. Per network, a catalogue of 20 events generated with
+generate_real on that network (an event enters the catalogue with at least 3 arrivals above the energy gate 25
+of station_corrections.catalogue), with catalogue errors of 1 km per coordinate and 0.1 s in the origin
+time, and 20 evaluation windows (draw_sources: 0, 1 or 2 sources with probabilities 0.4/0.4/0.2): 100
+windows per cell.
+Station corrections (SC): station_corrections.estimate_station_corrections with the 20 events of the
+catalogue; the same corrections for every method that admits them: MT-FW (added to the predicted times),
+GaMMA and PyOcto (subtracted from the pick times per station and phase) and QuakeMigrate (added to its
+travel-time tables per station and phase if its API allows it; if not, QuakeMigrate is reported without SC and this is declared).
+Picks: real_picker.pick_waveforms(D, method="stalta") with the frozen configuration of seed 999. As an
+optimistic bound for the associators, degrade_y (task1y_clutter) on the true times and amplitudes of the
+generator (GaMMA-DY).
+Methods: MT-FW and MT-FW+SC (fw_record, or certified_fw_record, which gives identical records; kmax 5, min_sep 5 km,
+CAPV 6); MT-FW-NODE+SC (subspace of another node at >= 9 km, control of the full method); WAVE-PT@20 without SC
+(reference); GaMMA-STALTA and GaMMA-STALTA+SC (GAMMA_GRID, seed 42, configuration by oracle in each cell and
+cap, as in 1y); PyOcto-STALTA and PyOcto-STALTA+SC (PYOCTO_GRID, oracle); QM, QM-3C and QM-3C+SC
+(configurations recalibrated with the qm_wrapper procedure on generate_real windows of seed 999
+and frozen before the evaluation); GaMMA-DY and GaMMA-DY+SC (oracle).
+Primary endpoint: event recall at realized false events per window <= 0.1 and <= 0.25, exact FROC curve,
+operating point chosen per method on the evaluation itself, the same for all (the associators additionally choose
+their configuration with oracle, which favours them). CI: paired bootstrap over windows, 2000 replicates,
+re-choosing the operating point and configuration in each replicate.
+Rules, per clutter regime:
+2A-a (state of the art, primary): MT-FW+SC - max(GaMMA-STALTA, GaMMA-STALTA+SC, PyOcto-STALTA, PyOcto-STALTA+SC,
+QM, QM-3C, QM-3C+SC) >= 0.05 at both caps in at least 2 of 3 cells, in both seeds. The maximum is taken per
+cell and per cap.
+2A-b (control of the full method): MT-FW+SC - MT-FW-NODE+SC >= 0.05 at both caps in at least 2 of 3 cells in
+both seeds.
+2A-c (robustness to optimistic picks, secondary): MT-FW+SC - max(GaMMA-DY, GaMMA-DY+SC) >= 0.05 at cap 0.25 in at
+least 2 of 3 cells in both seeds.
+2A-d (station corrections, secondary): MT-FW+SC - MT-FW >= 0.05 at cap 0.25 in at least 2 of 3 cells in
+both seeds.
+2A-e (deployable operating point, secondary): the threshold of MT-FW+SC and the configurations and thresholds of
+GaMMA-STALTA+SC and of QM-3C+SC (or QM-3C) are fixed on calibration windows of seed 999 with the same design
+and different networks (5 networks x 20 windows per cell and regime) for the budgets 0.1 and 0.25 false events per
+window, and are frozen. In evaluation, recall and realized false-event rate are reported. It is met if the realized
+rate of MT-FW+SC does not exceed 2 times the budget and its recall exceeds that of the best frozen comparator by >= 0.05
+in at least 2 of 3 cells at both budgets, in both seeds.
+Interpretation: if 2A-a is met in both regimes, the advantage of 1y survives the mismatched generator, the
+real picker and QuakeMigrate. If it is met in only one regime, the claim is restricted to that regime. If it fails
+in both, the claim of superiority over the state of the art is withdrawn from the proposal and reported as a
+negative result. If 2A-b fails, the gain is not attributed to the radiation pattern.
+Compute budget: if the estimate made on seed 999 exceeds 10 hours on 2 cores, the number of
+evaluation windows per network drops to 12 (60 per cell) before any evaluation run, and the change is
+noted here with a date. Nothing registered is modified after seeing results of seeds 2024 or 7331;
+any analysis added afterwards is declared exploratory.
+
+Result of 2A (Sat Sep 26 2026, after running seeds 2024 and 7331 and after the independent verification
+task2a_report.txt). 2A-a is met in both regimes in the 3 cells of both seeds (MT-FW+SC minus the best
+comparator: +0.09 to +0.49 at cap 0.1 and +0.17 to +0.46 at cap 0.25; the best comparator is a variant of
+QuakeMigrate in all 24 cases). 2A-b is met in both regimes (strong 7331 ladder_4 by +0.0513). 2A-c is met
+(thin: 2 of 3 cells per seed; GaMMA-DY+SC ties in the one-sided 8-station cell). 2A-d is met in thin
+and not in strong. 2A-e: the recall condition is met in all cells; the realized rate exceeds 2 times the
+budget only in one-sided with 8 stations, seed 7331, budget 0.1 (0.22 and 0.23); with the per-cell reading
+it is met and with the strict reading it is not; both are reported. Deviations recorded in task2a_report.txt: one
+catalogue per network and regime (not one per network), which degrades the corrections in strong; four parts of seed
+999 from an earlier version of the code (null or marginal effect). The CIs over windows ignore the clustering by network;
+with bootstrap by network all cells stay above 0 at cap 0.25 and four include 0 at cap 0.1 (exploratory).
+
+Task 2B (Sat Sep 26 2026, 14:30 UTC), written before computing it. Motivation: the novelty audit pointed out that the
+advantage of a pick-free method may be due to not using picks and not to the radiation pattern; 2A-b (subspace of another
+node) controls the geometry but does not isolate the sign. Design: the same windows, networks, catalogues and corrections as
+2A (seeds 2024 and 7331, both regimes, regenerated deterministically; control: the regenerated MT-FW+SC records
+must match exactly those saved in task2a_parts). New method MT-FW-FREE+SC: the same
+greedy search with deflation, the same cap, 5 km exclusion and corrections, but with the radiation operator
+replaced by the identity (free three-component amplitude per station and phase): its statistic is the total
+energy of the peak vectors, invariant to the sign, and the deflation subtracts the observed vectors. It is the ablation
+of the radiation pattern within the same solver.
+Rule 2B, per regime: MT-FW+SC - MT-FW-FREE+SC >= 0.05 at both caps in at least 2 of 3 cells in both seeds.
+If it fails, the gain of 2A is attributed to the pick-free migration with deflation and not to the radiation pattern, and the
+proposal declares it. Endpoint and CI as in 2A (bootstrap over windows and, as an additional reading, by network).
+
+Result of 2B (Sat Sep 26 2026; task2b_report.txt, analyze_2b_out.txt). Rule 2B is met in both regimes:
+thin 2 of 3 cells in each seed (in the one-sided 8-station cell MT-FW-FREE+SC matches MT-FW+SC: -0.01 and
++0.04/+0.049), strong 3 of 3 in each seed. Re-applied in each bootstrap replicate it is met in ~60 per cent of
+replicates in thin and 97-98 per cent in strong: in thin the result is fragile. Exploratory: in thin MT-FW-FREE+SC
+exceeds the best comparator of 2A in 5 of 6 cell-seed pairs at cap 0.25, so that a good part of the advantage over
+QuakeMigrate in thin does not require the radiation pattern; in strong it stays at the level of the best comparator, and the advantage
+of 2A depends on the operator. Replacing it with the identity removes at once the sign, the polarization constraint and
+the amplitude geometry; 2B does not isolate the sign. Incident: the first attempt stopped at the exact control because
+18 networks of 2A (those of the resumed 7331 sessions) were computed with a different OpenBLAS kernel (SkylakeX); with that
+kernel they are reproduced bit for bit and were re-run that way, without relaxing the control; the effect of the kernel on recall is
+null in the 4 affected cells.
+
+Task 2C (Sat Sep 26 2026, 15:05 UTC), written before implementing it and before seeing any of its results, in response to the
+independent audit (56/100): the closest comparators are missing, the convex method that the thesis defends is not
+implemented and the inference does not respect the network as the unit of replication.
+Part (i), comparators and convex method, on the same 1200 windows of 2A regenerated bit for bit (control: the
+regenerated MT-FW+SC records match those saved). All with the same station corrections, the same
+grid of nodes and origin times, 5 km exclusion and at most 5 events per window:
+  BOMP+SC: block-sparse inversion of [129] (Vera Rodriguez, Sacchi and Gu 2012) in the matched-filter
+    domain: dictionary of blocks of 6 columns (one per moment-tensor component) at each node and origin
+    time, with the exact predicted times (without peak search or cap), selection by the largest energy of the
+    projection of the residual onto the block, least-squares refit of all the active blocks (orthogonal) and
+    score = energy explained by the block on entering.
+  MTSTACK+SC: mechanism-corrected stacking in the form of [122] (Anikiev et al. 2014): at each node and time,
+    least-squares moment-tensor inversion with the amplitudes at the exact predicted times and
+    stacking function = energy of the prediction; catalogue by maximum suppression at 20 km, without deflation.
+  GL-FW+SC: the convex problem of the thesis restricted to the grid, group BLASSO on the same dictionary as
+    BOMP, solved by fully corrective Frank-Wolfe with duality gap; the catalogue is obtained by traversing the
+    path in lambda (from lambda_max downwards, 30 geometric values down to lambda_max/30) and the score of each
+    atom is the largest lambda at which it enters the support with group norm greater than zero; the final duality gap
+    at each lambda is reported.
+Rule 2C-a (close comparators), per regime: MT-FW+SC - max(BOMP+SC, MTSTACK+SC) >= 0.05 at cap 0.25 in at least 2
+of 3 cells in both seeds. If it fails, the advantage of MT-FW is attributed to the moment tensor with deflation, already
+present in [129], and not to the elements specific to MT-FW (peak search and cap).
+Rule 2C-b (convex method, descriptive): GL-FW+SC - MT-FW+SC at both caps, per cell, with CI; there is no threshold: it is
+reported whether the convex method of the thesis matches (|dif| < 0.05), exceeds or falls below its greedy approximation.
+Part (ii), replication by network: 25 new networks per cell, seed and regime (network indices 5 to 29, same
+seed construction as 2A), 12 evaluation windows per network, methods MT-FW+SC, QM-3C+SC, BOMP+SC, MTSTACK+SC
+(not GaMMA and PyOcto, because in 2A they were left out by picker starvation). With the 5 networks of 2A (20 windows each) there are 30
+networks per cell. Rule 2C-c (primary for this part), per regime: the lower bound of the 95% CI by hierarchical bootstrap
+(networks and, within each network, windows; 2000 replicates; operating point re-chosen in each replicate) of MT-FW+SC -
+QM-3C+SC at cap 0.25 is greater than 0 in at least 2 of 3 cells in both seeds, and the point estimate is >= 0.05.
+The same is reported for MT-FW+SC - BOMP+SC and MT-FW+SC - MTSTACK+SC, and at cap 0.1, with Holm correction over the
+comparisons per regime.
+Compute budget: if the estimate on seed 999 exceeds 8 hours on 2 cores, part (ii) drops to 15 new networks
+(20 per cell), noted here with a date before running. Nothing is modified after seeing results of 2024/7331.
+2C budget note (Sat Sep 26 2026, 19:56 UTC), before running seeds 2024 and 7331: the smoke test on
+seed 999 (task2c_smoke.txt, 3 windows per cell and regime) estimates 0.79 h on 2 cores (part (i) 0.12 h of CPU,
+part (ii) with 25 networks 1.47 h of CPU), below 8 h: the budget rule is not triggered and part (ii) is run
+with 25 new networks per cell, seed and regime. No other changes.
+
+Result of 2C (Sat Sep 26 2026; task2c_report.txt, analyze_2c_out.txt). 2C-a is met in both regimes in 3 of 3
+cells per seed (MT-FW+SC minus the best of BOMP+SC and MTSTACK+SC at cap 0.25: +0.23 to +0.52 in thin, +0.08 to +0.45
+in strong; the best is BOMP+SC in all of them). 2C-c is met in both regimes with 30 networks per cell and hierarchical
+bootstrap (MT-FW+SC - QM-3C+SC at 0.25: +0.22 to +0.35 in thin, +0.10 to +0.30 in strong, lower bounds > 0); with Holm
+strong stays at 2 of 3 in seed 7331. 2C-b: the group BLASSO on the grid, solved with duality gap
+<= 1.4e-8, falls below MT-FW+SC (-0.06 to -0.61 in 23 of 24 cases). Exploratory, after seeing part (i):
+with sources on grid nodes BOMP exceeds MT-FW (0.97 against 0.76) and GL-FW comes close (0.73); the cause of the
+collapse of the exact-time methods is the 3 km / 0.1 s grid and the residual time errors, which the
++-0.25 s peak search of MT-FW absorbs. The sustainable claim is robustness to grid and time errors, not
+superiority over sparse moment-tensor inversion as such.
+
+Erratum on the 2B timestamp (Sat Sep 26 2026, 21:13 UTC, written after the second independent audit). The
+timestamp "14:30 UTC" of Task 2B was written without consulting a clock and is wrong. The text of 2B was added to this
+file immediately before launching the implementation: the first file of 2B, task2b_ablation.py, was created at
+14:16:49 UTC (file-system birth time) and the first result (task2b_selfcheck.txt) is from
+14:17:01 UTC; the writing of 2B therefore predates 14:16:49 UTC and any code or result of 2B. There is
+no independent record with a hash of that moment; the ordering rests only on the file-system
+timestamps. From 2D onwards each entry carries the time taken from a clock and a SHA-256 hash of the file, recorded in
+PREREGISTRO_hashes.txt.
+
+Task 2D (Sat Sep 26 2026, 21:13 UTC), written before implementing it. Motivation: the second independent audit points out
+that in 2C the exact-time comparators (BOMP+SC, MTSTACK+SC, GL-FW+SC) did not have the +-0.25 s time tolerance
+that MT-FW has, and that the ablation of the peak search is missing; and that the primary reading uses an operating point
+chosen on the evaluation.
+Part (i), equality of tolerance and ablation, on the same 1200 windows of 2A (regenerated bit for bit, with the OpenBLAS
+kernel fixed as in 2C): BOMP-PK+SC, MTSTACK-PK+SC and GL-FW-PK+SC, identical to 2C except that the sample of each
+station and phase is taken at the three-component energy peak within +-0.25 s of the predicted time, as in
+node_vectors of MT-FW (the dictionary of GL-FW-PK is built with those times, fixed by the residual when the
+atom enters); and MT-FW-EX+SC (MT-FW without peak search: exact times) and MT-FW-NOCAP+SC (MT-FW without cap).
+Rule 2D-a, per regime: MT-FW+SC - max(BOMP-PK+SC, MTSTACK-PK+SC) >= 0.05 at cap 0.25 in at least 2 of 3 cells in both
+seeds. If it fails, the advantage of MT-FW over [129] and [122] is attributed to the peak search and not to another element of the
+method, and the proposal declares it.
+Rule 2D-b, per regime: MT-FW+SC - MT-FW-EX+SC >= 0.05 at cap 0.25 in at least 2 of 3 cells in both seeds (the
+peak search matters). Descriptive: MT-FW-NOCAP+SC - MT-FW+SC and GL-FW-PK+SC - MT-FW+SC with CI.
+Part (ii), deployable threshold: for MT-FW+SC and QM-3C+SC, split-conformal threshold calibrated on 200 event-free windows
+of seed 999 per cell and regime (calibration networks of 2A, same stations and delays, clutter of the regime),
+at the quantile that gives level alpha = 0.1 and alpha = 0.25 for the maximum of the score per empty window; threshold frozen and
+applied to the evaluation windows of 2A. Recall and realized false-event rate are reported. Rule 2D-c, per regime:
+with the frozen threshold, the realized false-event rate of MT-FW+SC on empty windows does not exceed 2 x alpha and its recall exceeds
+that of QM-3C+SC with its frozen threshold by >= 0.05 in at least 2 of 3 cells in both seeds, at both alpha.
+Statistics: hierarchical bootstrap by network and windows as in 2C, Holm within regime.
+Budget: if the estimate on seed 999 exceeds 6 hours on 2 cores, part (ii) uses 100 empty windows per
+cell and regime, noted here with clock time before running 2024/7331.
+2D budget note (Sun Sep 27 02:41:50 UTC 2026), before running seeds 2024 and 7331: the smoke test on seed 999
+(task2d_smoke.txt: part (i) with 3 windows per cell and regime on network 0; part (ii) with 3 empty windows per cell and
+regime) estimates 0.64 h on 2 cores (part (i) 0.92 h of CPU; part (ii) with 200 empty windows per cell and regime
+0.36 h of CPU), below 6 h: the budget rule is not triggered and part (ii) uses 200 empty windows per cell
+and regime. No other changes.
+
+Result of 2D (Sun Sep 27 03:54:55 UTC 2026, task2d_report.txt, analyze_2d_out.txt). 2D-a is not met in any regime: with the same
++-0.25 s peak search, BOMP-PK+SC matches MT-FW+SC (differences at 0.25 between -0.155 and +0.091; all hierarchical
+CIs contain 0). As preregistered, the advantage of MT-FW over [129] and [122] is attributed to the peak
+search and not to another element of the method. 2D-b is met in both regimes (12 of 12 positive differences, +0.06 to +0.41).
+Descriptive: the cap does not change the result (CIs contain 0); GL-FW-PK+SC falls 0.11 to 0.30 below MT-FW+SC in 11
+of 12 cases; the moment-tensor methods with peak search and deflation exceed QM-3C+SC by +0.17 to +0.49.
+2D-c is met in the per-cell reading and not in the strict one in thin (one cell: 0.222 > 0.2); with Holm no rule is
+met. The conformal threshold on empty windows is not a deployable operating point: on windows with events it gives
+1.2 to 2.2 false events per window in thin. Only later change: one diagnostic line of analyze_2d.py (hashes before and
+after in task2d_report.txt); no rule or statistic changed.
+
+Task 2E (Sun Sep 27 14:44:14 UTC 2026, clock time), written before writing any code of 2E. Its SHA-256 is delivered to the user through the
+chat at the moment of registering it (timestamp external to the container) and is noted in PREREGISTRO_hashes.txt.
+Question (hypothesis G1-M): does the group BLASSO with per-station and per-phase time shifts, solved off the
+grid with sliding Frank-Wolfe, detect more events than the block orthogonal search with the same time
+tolerance (BOMP-PK+SC of 2D), at equal realized false-event rate?
+Data: 30 networks per cell, seed and regime: the 5 networks of 2A (20 windows each) and the 25 of 2C part (ii) (12
+windows each), regenerated bit for bit with the OpenBLAS kernel fixed as in 2C and 2D; 4800 windows in total.
+Same station corrections, initial grid, origin times, tolerance of +-0.25 s, 5 km exclusion, at
+most 5 events per window and hit rule as in 2A-2D.
+Methods:
+  TS-SFW+SC (the method of the thesis): residual r = data in the matched-filter domain. At each iteration k <= 5:
+    (a) oracle: maximum over nodes and origin times (excluding 5 km around accepted atoms) of the certificate
+        with shifts, that is, the energy of the projection onto the 6-dimensional subspace of the moment
+        tensor of the three-component vectors taken at the energy peak of each station and phase within
+        +-0.25 s (the statistic of MT-FW without cap);
+    (b) continuous refinement of the new atom: position (x, y, z), origin time and per-station and per-phase shifts
+        bounded to +-0.25 s, maximizing that projection energy with continuous interpolation of the matched-filter
+        traces (L-BFGS-B with bounds; depth in [1, 20] km);
+    (c) sliding step: joint minimization over all active atoms of 1/2 ||r0 - sum_k A(theta_k, delta_k)
+        m_k||^2 + lambda sum_k ||m_k||_G (block-whitened group norm, as in GL-FW of 2C), alternating the
+        convex step in the amplitudes m (proximal until relative gap <= 1e-6) and a local step in (theta_k, delta_k) of
+        all atoms (L-BFGS-B, at most 50 iterations per step, at most 5 alternations);
+    (d) residual = data minus the joint prediction.
+    lambda = f x (value of the oracle at the first iteration of the window), with f fixed in calibration.
+    Record score: cumulative minimum of the oracle value in (a) when each atom enters (monotone prefix, as in
+    fw_record); hit evaluated with the final position of each atom after the last iteration.
+  BOMP-PK-SLIDE+SC (control): identical to TS-SFW+SC with lambda = 0 (least-squares refit), to separate the
+    contribution of the group penalty from the contribution of off-grid sliding.
+  BOMP-PK+SC (reference comparator, 2D code unchanged) and MT-FW+SC (saved records of 2A and 2C).
+Calibration (seed 999 only, calibration networks of 2A, 5 networks x 20 windows per cell and regime): f in
+{0.01, 0.03, 0.1, 0.3} (strictly positive), chosen by the highest recall at cap 0.25 pooling cells and regimes;
+ties in favour of the smaller f. It is frozen before running 2024/7331 and noted here with clock time and hash.
+Endpoint: recall at realized false events per window <= 0.1 and <= 0.25, exact FROC curve, operating point per
+method on the evaluation (the same for all). CI: hierarchical bootstrap (networks, then windows; 2000 replicates; operating
+point re-chosen in each replicate).
+Rule 2E-a (primary), per regime: TS-SFW+SC - BOMP-PK+SC at cap 0.25 with point estimate >= 0.05 and lower bound
+of the hierarchical 95% CI > 0 in at least 2 of 3 cells in both seeds. Additional strict reading: Holm over the 6
+cell x seed tests of the regime (one-sided 0.025).
+Rule 2E-b (secondary), per regime: TS-SFW+SC - BOMP-PK-SLIDE+SC >= 0.05 at cap 0.25 in at least 2 of 3 cells in both
+seeds (point estimate).
+Descriptive: TS-SFW+SC - MT-FW+SC and BOMP-PK-SLIDE+SC - BOMP-PK+SC with CI, at both caps; median epicentral error of
+the hits per method; convergence diagnostics (gap, iterations, fraction of shifts at the bound).
+Interpretation: if 2E-a fails in both regimes, G1-M is refuted in this synthetic design: the BLASSO with
+shifts is not a better detector than the block search with the same tolerance, and the proposal declares it and
+reformulates its methodological contribution. If 2E-a is met and 2E-b fails, the gain is attributed to off-grid
+sliding and not to the group penalty. If both are met, G1-M is supported on synthetic data.
+Budget: if the estimate on seed 999 exceeds 10 hours on 2 cores, the 5 networks of 2A plus the first 10
+networks of 2C (15 per cell) are used, noted here with clock time before running 2024/7331. Nothing is modified after
+seeing results of 2024/7331; any added analysis is declared exploratory.
+2E calibration note (Sun Sep 27 15:38:20 UTC 2026), before running seeds 2024 and 7331: f = 0.01. Recall of TS-SFW+SC at cap 0.25
+over the 600 pooled calibration windows of seed 999 (networks 0-4 of 2A, 20 windows per network, both cells and
+regimes; one exact FROC curve): f = 0.01: 0.4749; f = 0.03: 0.4644; f = 0.1: 0.2510; f = 0.3: 0.1841 (task2e_calibration.txt,
+task2e_parts/cal_*). No other changes.
+
+Result of 2E (Sun Sep 27 17:45:17 UTC 2026; task2e_report.txt, analyze_2e_out.txt). 2E-a is not met in any regime: TS-SFW+SC - BOMP-PK+SC
+at cap 0.25 ranges from +0.000 to +0.039, all lower bounds of the hierarchical CIs below 0, 0 of 3 cells in
+both seeds; Holm rejects no test. 2E-b is not met (-0.020 to +0.013). As preregistered, G1-M is
+refuted in this synthetic design: the BLASSO with shifts solved off the grid is not a better detector than the
+block search with the same tolerance. Calibrated f = 0.01; with larger f the recall drops. The code of 2E did not change
+after starting the evaluation (sha256sum -c task2e_code_hashes.txt). Deviations declared in task2e_report.txt.
+
+Task 2F (Mon Sep 28 03:34:51 UTC 2026, clock time), written before running any code on seeds 4242 and 8888, which have never been
+used. Its SHA-256 is delivered to the user through the chat. Origin: exploration on seed 999 (explore_contrib/REPORT.txt,
+section 7.1, and replication on new networks in REPORT_C7.txt); the hypothesis was chosen among several explored candidates
+(C1-C7, almost all null), which is declared.
+Question (H-CAP): in windows with 3 to 5 overlapping events, does MT-FW+SC (moment-tensor subspace statistic with
+per-station cap and sequential deflation) detect more events than BOMP-PK+SC at equal realized false-event rate, and is the
+gain due to the cap?
+Data: seeds 4242 and 8888, each an independent replication; new networks task2a_confirm with j = 0..95 (96 per cell,
+regime and seed); 3 cells; regimes thin and strong; 10 dense windows per network with c2_run.draw_dense (3 to 5 events,
+separations >= 5 km within 9 km, origins in [5.2, 7.8] s with gaps >= 0.5 s), TAG not used before; station
+corrections from 20 catalogue events per network as in 2A. Equivalence arm: 16 networks per cell and regime (j = 96..111)
+with standard windows (draw_sources, 0 to 2 events), 10 per network.
+Methods (code frozen with SHA-256 hashes before running 4242/8888; c6_lib.mtfw_dense and
+task2d_methods.bomp_pk_record; kmax 7 in dense windows and 5 in standard ones): MT-FW+SC (primary), BOMP-PK+SC (comparator),
+BOMP-PK-CAP+SC and MT-FW-NOCAP+SC (mechanism); same grid, origins, tolerance of +-0.25 s, 5 km exclusion and
+hit rule as in 2A-2E.
+Endpoint: recall at <= 0.25 realized false events per window (primary) and <= 0.1 (secondary), exact FROC, operating
+point per method on the evaluation; hierarchical bootstrap (cells as strata, networks and windows, 2000 replicates,
+operating point re-chosen in each replicate).
+Rule 2F-a (primary), per regime: MT-FW+SC - BOMP-PK+SC at cap 0.25, pooling the 3 cells, with lower bound of the 95% CI
+> 0 and point estimate >= 0.03, in both seeds. Strict reading: Holm over the 4 tests (2 regimes x 2
+seeds), one-sided 0.025.
+Rule 2F-b (mechanism): MT-FW+SC - MT-FW-NOCAP+SC with lower bound > 0 in both seeds (pooling regimes), and
+|MT-FW-NOCAP+SC - BOMP-PK+SC| <= 0.02 (point) in both seeds.
+Rule 2F-c (no harm on standard windows): TOST equivalence with margin 0.05 of MT-FW+SC against BOMP-PK+SC at cap 0.25,
+pooling cells and regimes, in both seeds.
+Descriptive: differences per cell with CI; cap 0.1; BOMP-PK-CAP - BOMP-PK; times.
+Size: with the pilot SDs (0.0383 thin, 0.0353 strong), 96 networks per cell give power ~0.95 per seed for delta 0.035.
+Interpretation: 2F-a and 2F-b are met -> the per-station cap is a confirmed contribution for dense sequences; 2F-a
+is met and 2F-b is not -> the gain is real but is not due to the cap; 2F-a fails -> the pilot effect was a selection
+artefact. Declared novelty: clipping per-station contributions is a known practice in robust stacking; the
+contribution would be its measured and explained effect in moment-tensor detection of overlapping events. Nothing is modified
+after seeing 4242/8888; any added analysis is declared exploratory.
+
+Result of 2F (Mon Sep 28 06:59:18 UTC 2026; task2f_report.txt, analyze_2f_out.txt). 2F-a is met in both regimes and in both seeds,
+also with Holm: MT-FW+SC - BOMP-PK+SC at cap 0.25 on dense windows = +0.072 [+0.048, +0.092] and +0.074 [+0.052,
++0.100] (thin, 4242 and 8888), +0.051 [+0.032, +0.070] and +0.043 [+0.022, +0.066] (strong). 2F-b is met: MT-FW -
+MT-FW-NOCAP = +0.060 and +0.059 (bounds > 0); MT-FW-NOCAP - BOMP-PK = -0.001 and -0.002. 2F-c is met (TOST, margin 0.05),
+narrowly in 8888 and with negative estimates on standard windows with strong clutter. Code frozen at 03:49:08 UTC
+(task2f_code_hashes.txt), single run 03:49:14-06:52:31 UTC, without later changes. Pending: independent
+verification.
+
+Independent verification of 2F (Mon Sep 28 07:26:18 UTC 2026; verif_2f/task2f_verification.txt): positive result confirmed, with no leakage or asymmetry;
+estimates and bootstrap reproduced. Narrower scope than the 2F report: with origin-time matching
+(0.5 s) the gain is +0.024 to +0.045; the gain belongs to the fixed cap level (CAPV = 6, chosen in 1x on other
+data) and disappears above 12; the main mechanism is robustness to unmodelled per-station site
+amplification (without site factors the gain drops to +0.023 with a CI that includes 0), and the improvement is mostly in the
+reliability of the score across windows, not in the separation of events within the window (exploratory, seed 999).
+
+Task 2I (Fri Oct  2 18:00:05 UTC 2026, clock time), written before running any code on seeds 5151 and 6262, never used. Its
+SHA-256 is delivered to the user through the chat. Origin: exploration C8 on seed 999 (explore_contrib/REPORT_C8.txt,
+section 10); HUBER-N was the best of 11 candidates in the pilot (selection bias declared; planning uses +0.04).
+Question: does a moment-tensor certificate with per-station and per-phase Huber-weighted fit and a threshold fixed by a rule
+from the noise (HUBER-N), without a calibrated cap, (a) outperform BOMP-PK+SC on dense windows, (b) is it non-inferior to
+MT-FW+SC with cap 6 there, and (c) does it leave the recall of isolated events unchanged?
+Data: seeds 5151 and 6262 (independent replications); networks task2a_confirm with j = 0..119 (120 per cell and regime);
+3 cells; regimes thin and strong; +SC from 20 catalogue events as in 2A; default gen_realistic (site
+factors drawn per window, sd 0.5); 5 dense windows (c2_run.draw_dense, kmax 7) and 5 standard ones (draw_sources, kmax 5)
+per network, with two new TAGs.
+Methods (code frozen with hashes before running: c8_lib.py, c8_run.py, c6_lib.py, task2d_methods.py, xc.py and whatever
+is added): BOMP-PK+SC; MT-FW+SC cap 6 (c8_lib.mtfw_general "ls", capv 6); MT-FW-NOCAP+SC; HUBER-N+SC =
+mtfw_general "huber_n": Huber function of the residual norm of each 3-component vector per station and phase,
+threshold c = square root of the 0.95 quantile of chi-square(3) = 2.7955 in units of the noise deviation of the matched filter,
+4 IRLS passes from the least-squares fit, statistic = Huber loss of the data minus that of the residual,
+deflation with the robust fit. The constant was fixed by that rule before any run; the later sweep on
+seed 999 (c from 1.5 to 8) is declared in REPORT_C8.txt.
+Endpoint: recall at <= 0.25 realized false events per window (primary) and <= 0.1 (secondary); exact FROC; operating
+point per method; hierarchical bootstrap (strata regime x cell, networks and windows, 2000 replicates); pooled over
+regimes and cells, per seed.
+Rules (each must be met in BOTH seeds):
+2I-a superiority, dense: HUBER-N - BOMP-PK, one-sided 97.5 lower bound > 0 and point estimate >= 0.03.
+2I-b non-inferiority, dense: HUBER-N - MT-FW, one-sided 97.5 lower bound > -0.03.
+2I-c equivalence, standard: HUBER-N - BOMP-PK, 90% interval within [-0.05, +0.05] (TOST).
+The claim "a noise-scaled Huber fit replaces the calibrated cap" requires a, b and c. If a is met and b
+is not: HUBER-N helps but the cap is better. If a fails: the pilot was a selection artefact.
+Secondary, descriptive: thresholds 2.5003, 3.3682 and 5 on 20 networks per cell and regime; site sd 0.25 and 0.8 on 20 networks
+per cell and regime; per regime; hit rule with |origin error| <= 0.5 s; MT-FW - BOMP-PK (replication of 2F).
+Budget: if the estimate exceeds 8 hours on 2 cores the secondary arms are omitted, noted with clock time
+before running. Nothing is modified after seeing 5151/6262; any added analysis is declared exploratory.
+
+Result of 2I, primary arm (Fri Oct  2 22:08:07 UTC 2026; analyze_2i_primary_out.txt; the secondary arms are still running). All three
+rules are met in both seeds. 2I-a: HUBER-N+SC - BOMP-PK+SC on dense windows at 0.25 = +0.058 [+0.039, +0.076] (5151) and
++0.053 [+0.037, +0.070] (6262). 2I-b: HUBER-N+SC - MT-FW+SC = -0.008 [-0.023, +0.006] and -0.002 [-0.018, +0.012], lower
+bounds above -0.03. 2I-c: on standard windows HUBER-N+SC - BOMP-PK+SC = +0.010 (90% CI [-0.010, +0.027]) and
++0.007 (90% CI [-0.013, +0.024]). Code frozen at 18:14:44 UTC and unchanged (sha256sum -c); the run was
+interrupted twice by session suspension and was resumed from the parts (task2i_freeze_time.txt). Pending:
+independent verification and secondary arms.
+
+Independent verification of 2I (Fri Oct  2 22:16:47 UTC 2026; verif_2i/task2i_verification.txt): positive result confirmed; provenance, symmetry and
+statistics reproduced; six parts regenerated identically across the two interruptions. Scope: with the hit
+rule that requires |origin error| <= 0.5 s the gain over BOMP-PK drops to +0.031 and +0.019 (the point criterion of
+0.03 would fail in 6262); equivalence on standard windows holds pooled but not in thin 6262 (-0.032 [-0.064,
+-0.003]); the recall with all accepted atoms does not change: HUBER-N ranks and chooses better, it does not find more events; at
+cap 0.1 it falls somewhat below the cap in 5151 (-0.018); it costs ~9 times MT-FW. Secondary arms not yet verified.
+
+Result of 2I, secondary arms (Sat Oct  3 05:54:02 UTC 2026; analyze_2i_out.txt, frozen code unchanged). The primary rules do not
+change. Huber thresholds 2.50 to 3.37 are indistinguishable from the registered one (differences within +-0.006); c = 5 is worse.
+Amplitude dispersion: with sd 0.25 the cap does not contribute (+0.005/+0.009) and HUBER-N contributes +0.036/+0.002; with sd 0.8 HUBER-N
+beats BOMP-PK (+0.100/+0.072) but falls below the cap (-0.055/-0.069; non-inferiority is lost in 6262).
+Strict hit rule (origin within 0.5 s): HUBER-N - BOMP-PK = +0.031/+0.019 on dense windows. Standard windows thin 6262:
+-0.032 [-0.063, -0.004].
+
+Task 2L (Sun Oct  4 21:10:33 UTC 2026, clock time), written before running any code on seeds 7171 and 9393, never used (the
+drafts of C9 and C10 that named these seeds were neither registered nor run; this protocol absorbs that of C10
+and that of C9 is discarded). Its SHA-256 is delivered to the user through the chat. Origin: exploration C11 on seed 999
+(explore_contrib/REPORT_C11.txt, section 12; frozen plan C11_PLAN.txt, sha256 of the body 42e66138...1c5f). The
+primary contrast of the pilot was +0.070 [+0.010, +0.120]; planning uses +0.05 because the effects of C10 shrank
+on replication.
+Question: do the station terms estimated by the pick-free joint determination of hypocentres and terms (S2, JHD
+on the registered catalogue of 20 events) improve the origin-time-consistent detection of the refined detector
+(T3), without loss under the previous hit rule, on standard and dense windows?
+Primary hit rule: epicentre within 5 km and |origin-time error| <= 0.5 s (LOC+T). Secondary: epicentre only
+(LOC).
+Data: seeds 7171 and 9393 (independent replications); networks task2a_confirm j = 0..159 (standard design) and j = 0..99
+(dense design); 3 cells; regimes thin and strong; delays sd 0.3 s; catalogue of 20 events with errors of 1 km and 0.1 s
+as in 2A; default gen_realistic; 5 windows per network with two new TAGs (draw_sources, kmax 5; draw_dense, kmax 7).
+Methods (code frozen with hashes before running: c11_lib.py, c11_run.py, c10_lib.py, c10_run.py, c9_lib.py,
+c8_lib.py, c6_lib.py, xc.py, station_corrections.py and whatever is added): MT-FW family with cap 6 with S0 (the registered +SC)
+without refinement, S0 + T3 and S2 + T3 on all networks; BOMP-PK family with S0, S0 + T3 and S2 + T3 only in the
+standard design, networks j = 0..59 (secondary, because of compute budget); oracle arm (true delays + T3) on 30 networks
+per cell and regime, descriptive. Constants exactly those of c11_lib.P of the frozen plan; T3 as in C10. No
+free constant remains.
+Endpoint: recall at <= 0.25 realized false events per window (primary) and <= 0.1 (secondary); exact FROC; operating
+point per method; hierarchical bootstrap (strata regime x cell, networks and windows, 2000 replicates), per seed.
+Rules (each must be met in BOTH seeds):
+2L-a superiority, standard windows, LOC+T, pooled: MT@S2+T3 - MT@S0+T3, one-sided 97.5 lower bound > 0 and
+point estimate >= +0.03.
+2L-b superiority, dense windows, LOC+T, pooled: the same contrast, one-sided 97.5 lower bound > 0.
+2L-c non-inferiority, margin 0.02, PER REGIME (thin, strong), LOC+T, standard and dense: one-sided 95 lower bound >
+-0.02.
+2L-d non-inferiority, margin 0.02, LOC rule, pooled, standard and dense: one-sided 95 lower bound > -0.02.
+The claim "pick-free JHD station terms improve the origin-time-consistent detection of the
+refined detector at no cost under the previous rule" requires a, b, c and d. No superiority is registered under the LOC rule.
+Registered secondary: BOMP@S2+T3 - BOMP@S0+T3, standard, LOC+T, on the 60 networks (97.5 lower bound > 0).
+Descriptive: total contrasts against the registered detector (MT@S2+T3 - MT@S0); per cell; cap 0.1; error of the
+terms against the true delays; epicentral and origin error of the hits; fraction of the oracle
+gain captured.
+Interpretation: a-d are met -> confirmed contribution (calibration plus refinement, for origin-time-consistent
+detection). a or b fail -> the pilot was a selection artefact. c or d fail with a and b -> the gain exists
+but at a cost, and it is reported as such. Declared novelty: joint determination with station terms is classical in
+pick-based location; what would be new is estimating them and using them inside a pick-free moment-tensor subspace
+detector, with a measured effect on detection at a fixed false-event rate.
+Budget: if the estimate exceeds 10 hours on 2 cores, the standard design drops to 120 networks and the dense one to 80, noted
+with clock time before running. Nothing is modified after seeing 7171/9393.
+
+Result of 2L (Mon Oct  5 02:00:25 UTC 2026; analyze_2l_out.txt; frozen code unchanged, sha256sum -c OK; run interrupted by
+session suspension and resumed from the parts, task2l_freeze_time.txt). All rules are met in both
+seeds. 2L-a (standard, LOC+T): +0.057 [+0.034, +0.081] (7171) and +0.062 [+0.036, +0.083] (9393). 2L-b (dense,
+LOC+T): +0.038 [+0.024, +0.054] and +0.030 [+0.015, +0.044]. 2L-c: lower bounds per regime between +0.007 and +0.052.
+2L-d (LOC): standard +0.036 and +0.050, dense +0.020 and +0.035, bounds > -0.02. Secondary BOMP: +0.068 [+0.026, +0.107] and
++0.071 [+0.029, +0.114]. Descriptive: the gain is concentrated in the one-sided 8-station cell (+0.108 and +0.113);
+with 4 and 6 stations the CIs include 0 except in one case; fraction of the oracle gain 0.28 to 0.61. Pending:
+independent verification.
+
+Independent verification of 2L (Mon Oct  5 02:36:52 UTC 2026; verif_2l/task2l_verification.txt): positive result confirmed; no leakage (S2 recomputed
+without access to the true delays or catalogue is identical bit for bit in 300 of 300 units), symmetry and statistics
+reproduced with independent code, 6 parts regenerated identically. The gain survives hit windows from 0.3 to 1.0
+s and the origin-time bias correction. Scope: the pooled effect is essentially the one-sided 8-station
+cell (+0.108 and +0.113); with 4 stations there is no demonstrated gain; S2 worsens the terms in ~22 per cent of
+the networks; conditional on T3; it assumes a catalogue of 20 events with errors of 1 km and 0.1 s of known size. Note: the
+gauge of S2 is "median origin shift of the relocated events = 0" (declared in C11_PLAN.txt before
+freezing), not zero mean per phase.
+
+======================================================================================================================
+TASK R0 - PILOT WITH PUBLIC REAL DATA: RIDGECREST 2019 (registered Sat Oct 10 00:00:42 UTC 2026, before running any detector,
+picker or associator on these waveforms; approved by the author in the conversation of 9 October 2026)
+======================================================================================================================
+Declared prior state. Data downloaded by an agent from benchflow-ai/skillsbench (tasks/earthquake-phase-
+association, Apache-2.0 licence; network CI, SCSN catalogue): wave.mseed (sha256 in R0_data_hashes.txt), stations.csv,
+catalog.csv. Before this registration the inventory of the traces was read (stations, channels, 100 Hz sampling, window
+19:00-20:00 UTC of 2019-07-04, no gaps) and stations.csv; of the catalogue, the first 4 rows and aggregate
+statistics were seen (102 events, M 1.49-4.50, 23 with M >= 2.5, inter-event times) and its centroid (35.6773 N, 117.5418 W), used
+only to order stations. No waveform was filtered, seen or processed.
+
+Question. Does the advantage measured on synthetic data of the thesis detector (MT-FW with cap 6, S2 terms and T3 refinement;
+G1, G1-R, G1-C) over published associators fed by PhaseNet and over BOMP-PK transfer to real data with
+overlapping events? It is a pilot prior to G1' (which remains registered for the RSNC), in another region and another network.
+
+Data and partition. Three-component HH*. CAL = origins from 19:00:00 to 19:15:00; EVAL = origins from 19:15:00 to
+19:59:20 (44 min 20 s). Ground truth: SCSN catalogue; endpoint targets = events with M >= 2.0 and origin in EVAL.
+Subnetworks (rule fixed with distances and azimuths to the centroid): N8 = CLC, SRT, CCC, TOW2, LRL, WRC2, WBM, SLA (the 8
+closest HH); N6 = CLC, SRT, CCC, TOW2, LRL, WRC2; N4 = CLC, SRT, CCC, TOW2; U8 (narrowest azimuthal sector with
+8 HH, 256-6 degrees) = WBM, SRT, TOW2, JRC2, WCS2, CLC, WRC2, MPM.
+Common preprocessing. Counts to m/s with the scalar sensitivity of stations.csv; mean and trend removed; for the
+pick-free methods: zero-phase Butterworth bandpass of order 4, 0.5-6 Hz, resampling 100 -> 16 Hz (resample_poly 4/25),
+components (E, N, -Z) in the generator convention (z depth downwards); for PhaseNet: 100 Hz unfiltered.
+Frame: local plane in km centred on the centroid of the catalogued events in CAL (computed during development and noted
+before freezing); stations at z = 0. Lattice xc.make_grid(step 3, half 21) with depths 3, 7 and 11 km (published
+range of the sequence, not of this catalogue). Homogeneous medium VP = 6.0 km/s, VS = VP/1.73 for all methods
+(the pick-free ones via task0_common; GaMMA, PyOcto and QuakeMigrate with the same velocities).
+Continuous windows: 40 s, step 3 s; origins searched from 0.0 to 14.9 s (step 0.1) and each window only "owns" the atoms
+with origin in [5.0, 8.0) s, so that the earlier events are explained and deflated without being reported; kmax 8. Atoms of
+all windows together; an atom within <= 5 km and <= 1.0 s of another with a higher score is removed (the same for all
+pick-free methods). Budget: if during development the projected cost exceeds 8 h on 2 cores, the origins drop to
+2.0-11.9 s and kmax to 6, noted with time before freezing.
+Corrections. +SC (registered): peak delays of the catalogued events of CAL with M >= 2.0 (energy gate and
+>= 3 arrivals as in station_corrections). S2: c11_lib.s2_terms with the same events.
+
+Methods. Pick-free: M1 = MT-FW cap 6 +SC (registered); M2 = MT-FW cap 6 + S2 + T3 (the method of the thesis); M3 = BOMP-PK
++SC; M4 = HUBER-N +SC (if its cost fits in the budget; if not, it is declared); M5 = MT-FW cap 6 +SC +T3. Pick-based:
+PhaseNet (original model of the repository, as in real_picker.py, threshold 0.3 P and S) on the stations of the subnetwork over
+the full hour; GaMMA and PyOcto with their task1r/2A configuration adapted to the frame and to the VP/VS above, score =
+number of associated picks (ties broken by the associator's own score). QuakeMigrate as a secondary comparator if
+it runs within the budget.
+
+Hits and false events. LOC+T (primary): epicentre within <= 5 km and |origin error| <= 0.5 s of a catalogued event (any
+M). LOC (secondary): epicentre within <= 5 km and |origin error| <= 3.0 s. A detection that hits an event of M >= 2.0
+counts towards recall; one that only hits events of M < 2.0 is neutral (neither hit nor false); one without a match
+is false (conservative count: the catalogue is incomplete in the early sequence and that penalizes all methods).
+Primary endpoint: recall of M >= 2.0 in EVAL at <= 30 false events per hour (floor(30 x 44.33/60) = 22 false events), exact FROC,
+operating point per method in EVAL as in the benchmark. Secondary: 10 and 60 false events per hour; LOC rule; deployable
+threshold fixed in CAL at 30 per hour with its realized rate in EVAL.
+Uncertainty: bootstrap of 60 s blocks of EVAL (events and detections by origin block), 2000 replicates, operating
+point re-chosen in each replicate, 95 % percentile intervals. Pooled = mean of the four subnetworks.
+Primary contrast: M2 - best pick-based comparator (max of GaMMA and PyOcto in each subnetwork and replicate), LOC+T, 30/h.
+R0-a: pooled lower bound > -0.02 (non-inferiority). R0-b: M2 >= comparator (point) in at least 2 of 4 subnetworks.
+Superiority only if the pooled lower bound > 0. Secondary: M2 - M1 (transfer of G1-C), M1 - M3 (G1 against
+BOMP-PK), M4 - M3 (G1-R), M2 - M5 (effect of S2). Descriptive: per subnetwork, per magnitude (2.0-2.5, >= 2.5), overlapping
+events (another event within <= 10 s), epicentral and origin error of the hits, false events per hour.
+Development allowed before freezing: ONLY with CAL data (origins from 19:00 to 19:15 and the traces up to 19:15:35):
+debugging code, checking units, Z polarity and that the methods find CAL events, measuring the cost, fixing the
+centroid. No constant is tuned for recall; every change with respect to this registration is noted with time before
+freezing. Freeze: sha256 of the code and of the aggregate analysis added to this file before the first computation on EVAL; a
+single run; nothing is modified after seeing EVAL.
+Declared limitations: one hour, one sequence, one network; incomplete catalogue; scalar-only response; a positive result is
+evidence of transfer, not the confirmation of G1'; a negative result is reported all the same.
+
+Amendment of R0 before freezing (Sat Oct 10 00:27:36 UTC 2026), with development done only on CAL (r0/R0_DEV_LOG.txt):
+(1) Budget reduction foreseen in the registration: projected cost ~25 h of CPU (> 8 h); origins 2.0-11.9 s,
+kmax 6; M4 (HUBER-N) excluded because of cost. (2) Per-station normalization: each station is divided by its robust sd in
+CAL before the matched filter (the real noise differs by up to 4 times between stations). (3) Comparators also with picks
+corrected by +SC, as in 2A; BESTPICK = best of GaMMA, PyOcto, GaMMA+SC and PyOcto+SC in each subnetwork and replicate (more
+favourable to the comparators). (4) Labelling: among events that meet the rule, the closest one with M >= 2.0 is preferred.
+(5) Development finding, declared before seeing EVAL: in CAL (N8) the registered detector hits 3 of 16 events M >=
+2.0 at any score and has recall 0 at <= 60/h, against 0.625 for PyOcto; the time level after +SC is
+0.35-0.41 s (0.14 s on synthetic data) and the +-0.25 s reading does not cover it. The primary does not change. A
+SECONDARY, non-confirmatory arm is added: M6 = MT-FW cap 6 + S2 + T3 with reading half-width W = round(2 sigma_S2 / DT) samples
+per subnetwork, fixed by rule without running M6 on CAL; secondary contrasts M6 - BESTPICK and M6 - M2 (LOC+T, 30/h).
+Declared prediction: given what was seen in CAL, R0-a will probably fail for M2; it will be reported all the same.
+
+Freeze of R0 (Sat Oct 10 00:27:38 UTC 2026): r0/R0_FREEZE.txt, sha256 21900f008a808fa6abc4a330c3685f71953d4092be118b33cd2169efd3ecacf0, with the sha256 of
+r0_lib.py, r0_run.py, r0_picks.py, r0_analyze.py, queue_eval.sh, R0_DEV_LOG.txt, the project modules they execute,
+gamma_src and the three data files. No computation on EVAL before this line.
+
+Result of R0 (Sat Oct 10 19:12:30 UTC 2026; r0/run/analysis_eval.txt; frozen code unchanged, sha256sum -c OK). The run was
+cut short by a container restart on 9 Oct at 21:07 (-05) with N8 complete; it was resumed on 10 Oct at 12:58 with the
+same code (r0/queue_resume.sh; outputs per subset of methods merged with r0/merge_parts.py), the primary first.
+45 target events (M >= 2.0) in EVAL. PRIMARY (LOC+T, 30/h): M2 - BESTPICK = -0.383 [-0.481, -0.310] pooled; per
+subnetwork N8 -0.578, N6 -0.667, N4 +0.000 (both at 0.000), U8 -0.289. R0-a is NOT met; R0-b is NOT met. Recall of M2:
+0.022, 0.000, 0.000, 0.000; of PyOcto: 0.600, 0.667, 0.000, 0.289. Secondary M6 (reading +-0.69 s): -0.383 [-0.484,
+-0.311]; M6 - M2 +0.000 [-0.016, +0.019]. LOC rule: M2 - BESTPICK -0.450 [-0.563, -0.385]. Independent recomputation of
+the N8 and N6 points (own script): identical. The contrasts M2 - M1, M1 - M3 and M2 - M5 remain pending until
+M1/M5 finish on N4 and U8 and M3 on N6, N4 and U8. Post hoc diagnosis (R0_DEV_LOG_POSTFREEZE.txt): the pick-free
+detectors fail because of location (median distance of the closest atom within +-3 s, 8-18 km, against 1.5 km for PyOcto) and
+because of ranking (the real events do not score above the spurious atoms in a continuous sequence).
+Reading: the synthetic advantage of G1/G1-C does NOT transfer to these real data with the homogeneous medium and the registered
+reading. Pending: complete independent verification.
+
+Secondary results of R0 (Sat Oct 10 19:42:54 UTC 2026; r0/run/analysis_eval.txt, B = 2000, same code). LOC+T, 30/h, pooled: M2 - M1
+(effect of S2 + T3 on the registered detector) -0.006 [-0.022, +0.014]; M2 - M5 (effect of S2) +0.006 [+0.000,
++0.019]; M1 - BESTPICK -0.378 [-0.482, -0.304]; M6 - M2 +0.000 [-0.016, +0.019]. All the pick-free detectors have
+recall between 0.000 and 0.044 in all subnetworks, so these contrasts among them are not informative. M1 - M3 (against
+BOMP-PK) was NOT completed: M3 finished only on N8 (LOC+T 30/h: M1 0.044, M3 0.022; LOC: 0.044 and 0.089); the runs of
+M3 on N6, N4 and U8 were stopped by hand when closing the session and are declared not done. Complete independent verification:
+pending; only the own recomputation of the N8 and N6 points of the primary has been done.

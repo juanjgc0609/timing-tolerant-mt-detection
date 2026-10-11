@@ -1,0 +1,21 @@
+=== part k | dispersa_c40 | seed 2024 ===
+   windows 60 (empty 22), true events 52
+   TOL      recall 52/52=1.00  false/window 0.00  empty with emission 0/22  ok  threshold=1.0000
+   TOL-TB   recall 48/52=0.92  false/window 0.00  empty with emission 0/22  ok  threshold=0.9959
+   TOL-K    recall 52/52=1.00  false/window 0.02  empty with emission 0/22  ok  threshold=0.6916
+   CIII-TB  recall 48/52=0.92  false/window 0.00  empty with emission 0/22  ok  threshold=0.9959
+   PHYS     recall 47/52=0.90  false/window 0.27  empty with emission 0/22  ok  threshold=0.4545
+   PHYS-S   recall 50/52=0.96  false/window 0.03  empty with emission 0/22  ok  threshold=0.5299
+   PHYS-K   recall 50/52=0.96  false/window 0.08  empty with emission 0/22  ok  threshold=0.4037
+   GAMMA    recall 43/52=0.83  false/window 0.02  empty with emission 0/22  ok  config={'min_picks': 12, 'sigma': 1.0, 'eps': 10.0}
+   PYOCTO   recall 35/52=0.67  false/window 2.93  empty with emission 22/22  NOT reached  config={'n_picks': 4, 'tol': 0.5}
+      false per window TOL vs PHYS: 0/10  sign p=0.0020
+      false per window TOL-TB vs PHYS: 0/10  sign p=0.0020
+      false per window TOL-K vs PHYS: 1/10  sign p=0.0117
+      false per window CIII-TB vs PHYS: 0/10  sign p=0.0020
+      false per window PHYS-S vs PHYS: 0/10  sign p=0.0020
+      false per window PHYS-K vs PHYS: 0/8  sign p=0.0078
+      false per window GAMMA vs PHYS: 1/10  sign p=0.0117
+      false per window PYOCTO vs PHYS: 55/2  sign p=0.0000
+
+written k_dispersa_c40_2024_j0.json

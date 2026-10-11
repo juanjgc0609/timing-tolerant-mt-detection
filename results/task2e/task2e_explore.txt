@@ -1,0 +1,8 @@
+# EXPLORATORY (after the results): sliding of the atoms and actual run times of 2E
+
+- thin TS-SFW+SC: 12000 atoms; epicentral displacement from the entry node median 0.71 km, P90 1.77 km, > 1.5 km in 0.155, > 5 km in 0.004; hit status: false at the node -> hit at the end 98, hit at the node -> false at the end 62
+- thin BOMP-PK-SLIDE+SC: 12000 atoms; epicentral displacement from the entry node median 0.71 km, P90 1.76 km, > 1.5 km in 0.151, > 5 km in 0.005; hit status: false at the node -> hit at the end 92, hit at the node -> false at the end 68
+- strong TS-SFW+SC: 12000 atoms; epicentral displacement from the entry node median 0.70 km, P90 1.77 km, > 1.5 km in 0.151, > 5 km in 0.006; hit status: false at the node -> hit at the end 62, hit at the node -> false at the end 64
+- strong BOMP-PK-SLIDE+SC: 12000 atoms; epicentral displacement from the entry node median 0.71 km, P90 1.76 km, > 1.5 km in 0.149, > 5 km in 0.006; hit status: false at the node -> hit at the end 68, hit at the node -> false at the end 62
+
+Actual time per window (s, mean / P90) in the evaluation: BOMP-PK+SC 0.42 / 0.57; BOMP-PK-SLIDE+SC 1.14 / 1.37; MT-FW+SC(loc) 0.19 / 0.22; TS-SFW+SC 1.19 / 1.43; control MT-FW+SC 0.19 / 0.22

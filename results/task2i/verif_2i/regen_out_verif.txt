@@ -1,0 +1,7 @@
+prim_seed6262_thin_unilateral_c40_net45.json done 19.6s stored at 2026-10-02 19:25:53 IDENTICAL (records, loc, truth, taus, site, corr, meta)
+prim_seed6262_thin_ladder_6_net91.json done 17.2s stored at 2026-10-02 20:33:25 IDENTICAL (records, loc, truth, taus, site, corr, meta)
+prim_seed5151_thin_ladder_6_net95.json done 17.5s stored at 2026-10-02 20:40:39 IDENTICAL (records, loc, truth, taus, site, corr, meta)
+prim_seed6262_strong_ladder_4_net98.json done 11.5s stored at 2026-10-02 20:46:15 IDENTICAL (records, loc, truth, taus, site, corr, meta)
+prim_seed5151_strong_unilateral_c40_net109.json done 18.9s stored at 2026-10-02 21:47:12 IDENTICAL (records, loc, truth, taus, site, corr, meta)
+prim_seed6262_strong_ladder_6_net98.json done 19.1s stored at 2026-10-02 21:29:34 IDENTICAL (records, loc, truth, taus, site, corr, meta)
+DONE

@@ -1,0 +1,106 @@
+=== seed 5151 dense
+  [hit: <=5 km AND |dt|<=0.5s] HUBER-N+SC - BOMP-PK+SC @0.25: 0.0969 - 0.0658 = +0.0311 [95: +0.0227, +0.0416] [90: +0.0237, +0.0395] sd 0.0048 | @0.1 +0.0211 [+0.0153, +0.0283]
+  [hit: <=5 km AND |dt|<=0.5s] HUBER-N+SC - MT-FW+SC @0.25: 0.0969 - 0.1008 = -0.0039 [95: -0.0156, +0.0066] [90: -0.0134, +0.0051] sd 0.0057 | @0.1 -0.0059 [-0.0136, +0.0023]
+  [hit: <=5 km AND |dt|<=1.0s] HUBER-N+SC - BOMP-PK+SC @0.25: 0.1830 - 0.1294 = +0.0537 [95: +0.0396, +0.0686] [90: +0.0427, +0.0667] sd 0.0073 | @0.1 +0.0511 [+0.0398, +0.0644]
+  [hit: <=5 km AND |dt|<=1.0s] HUBER-N+SC - MT-FW+SC @0.25: 0.1830 - 0.1935 = -0.0105 [95: -0.0267, +0.0036] [90: -0.0228, +0.0017] sd 0.0076 | @0.1 -0.0079 [-0.0230, +0.0044]
+  among location hits: fraction with |origin error| <= 0.5 s: {'BOMP-PK+SC': 0.568, 'MT-FW+SC': 0.575, 'MT-FW-NOCAP+SC': 0.568, 'HUBER-N+SC': 0.569}  median |dt|: {'BOMP-PK+SC': 0.42, 'MT-FW+SC': 0.41, 'MT-FW-NOCAP+SC': 0.42, 'HUBER-N+SC': 0.42}
+  [regime thin] HUBER-N+SC - BOMP-PK+SC @0.25: 0.2500 - 0.1819 = +0.0681 [95: +0.0371, +0.0973] [90: +0.0407, +0.0899] sd 0.0152
+  [regime thin] HUBER-N+SC - MT-FW+SC @0.25: 0.2500 - 0.2638 = -0.0138 [95: -0.0363, +0.0077] [90: -0.0329, +0.0051] sd 0.0117
+  [regime strong] HUBER-N+SC - BOMP-PK+SC @0.25: 0.2196 - 0.1684 = +0.0512 [95: +0.0263, +0.0716] [90: +0.0305, +0.0674] sd 0.0116
+  [regime strong] HUBER-N+SC - MT-FW+SC @0.25: 0.2196 - 0.2226 = -0.0030 [95: -0.0269, +0.0183] [90: -0.0219, +0.0131] sd 0.0112
+  [cell thin ladder_4] H-BOMP @0.25 +0.0390 [+0.0012, +0.0831]   H-MTFW -0.0334 [-0.0703, +0.0082]
+  [cell thin ladder_6] H-BOMP @0.25 +0.0778 [+0.0262, +0.1135]   H-MTFW -0.0126 [-0.0501, +0.0284]
+  [cell thin unilateral_c40] H-BOMP @0.25 +0.0795 [+0.0301, +0.1369]   H-MTFW -0.0216 [-0.0734, +0.0211]
+  [cell strong ladder_4] H-BOMP @0.25 +0.0104 [-0.0092, +0.0562]   H-MTFW -0.0029 [-0.0259, +0.0350]
+  [cell strong ladder_6] H-BOMP @0.25 +0.0542 [+0.0129, +0.0911]   H-MTFW -0.0140 [-0.0563, +0.0193]
+  [cell strong unilateral_c40] H-BOMP @0.25 +0.0563 [+0.0105, +0.1062]   H-MTFW +0.0033 [-0.0439, +0.0403]
+  [per-cell operating point, mean over 6 cells] H-BOMP @0.25 +0.0529 [+0.0359, +0.0725]
+  [threshold-free, first 1 atoms of every window] BOMP-PK+SC recall 0.188 false/win 0.24; MT-FW-NOCAP+SC recall 0.188 false/win 0.24; MT-FW+SC recall 0.201 false/win 0.19; HUBER-N+SC recall 0.200 false/win 0.20
+  [threshold-free, first 2 atoms of every window] BOMP-PK+SC recall 0.339 false/win 0.61; MT-FW-NOCAP+SC recall 0.339 false/win 0.61; MT-FW+SC recall 0.353 false/win 0.56; HUBER-N+SC recall 0.349 false/win 0.57
+  [threshold-free, first 3 atoms of every window] BOMP-PK+SC recall 0.447 false/win 1.13; MT-FW-NOCAP+SC recall 0.446 false/win 1.14; MT-FW+SC recall 0.453 false/win 1.11; HUBER-N+SC recall 0.455 false/win 1.11
+  [threshold-free, first 5 atoms of every window] BOMP-PK+SC recall 0.565 false/win 2.57; MT-FW-NOCAP+SC recall 0.566 false/win 2.56; MT-FW+SC recall 0.567 false/win 2.54; HUBER-N+SC recall 0.563 false/win 2.58
+  [ceiling: recall with all atoms accepted] BOMP-PK+SC 0.623; MT-FW-NOCAP+SC 0.628; MT-FW+SC 0.630; HUBER-N+SC 0.622
+  [first atom: hit fraction (within-window) and cross-window AUC of its score] BOMP-PK+SC P(first atom hit) 0.757 AUC 0.589; MT-FW-NOCAP+SC P(first atom hit) 0.757 AUC 0.589; MT-FW+SC P(first atom hit) 0.810 AUC 0.711; HUBER-N+SC P(first atom hit) 0.804 AUC 0.667
+  [rank-matched score swap] atoms+labels of BOMP-PK+SC  recall 0.1/0.25 with scores of BOMP-PK+SC: 0.076/0.177; scores of HUBER-N+SC: 0.105/0.203; scores of MT-FW+SC: 0.118/0.210
+  [rank-matched score swap] atoms+labels of HUBER-N+SC  recall 0.1/0.25 with scores of BOMP-PK+SC: 0.104/0.206; scores of HUBER-N+SC: 0.139/0.235; scores of MT-FW+SC: 0.149/0.230
+  [rank-matched score swap] atoms+labels of MT-FW+SC    recall 0.1/0.25 with scores of BOMP-PK+SC: 0.113/0.204; scores of HUBER-N+SC: 0.138/0.227; scores of MT-FW+SC: 0.157/0.243
+  [swap] (BOMP atoms, HUBER scores) - BOMP @0.25: +0.0265 [+0.0155, +0.0390]
+  [swap] HUBER - (HUBER atoms, BOMP scores) @0.25: +0.0286 [+0.0156, +0.0363]
+  [swap] (HUBER atoms, BOMP scores) - BOMP @0.25 (pure atom-selection effect): +0.0296 [+0.0144, +0.0491]
+  fraction of windows whose first atom is at the same node for HUBER-N and BOMP-PK: 0.553
+=== seed 5151 std
+  [hit: <=5 km AND |dt|<=0.5s] HUBER-N+SC - BOMP-PK+SC @0.25: 0.3074 - 0.2771 = +0.0303 [95: +0.0107, +0.0504] [90: +0.0122, +0.0477] sd 0.0109 | @0.1 +0.0317 [+0.0083, +0.0609]
+  [hit: <=5 km AND |dt|<=0.5s] HUBER-N+SC - MT-FW+SC @0.25: 0.3074 - 0.3005 = +0.0068 [95: -0.0169, +0.0301] [90: -0.0145, +0.0247] sd 0.0117 | @0.1 -0.0041 [-0.0317, +0.0240]
+  [hit: <=5 km AND |dt|<=1.0s] HUBER-N+SC - BOMP-PK+SC @0.25: 0.4578 - 0.4442 = +0.0136 [95: -0.0079, +0.0357] [90: -0.0056, +0.0308] sd 0.0112 | @0.1 +0.0337 [+0.0031, +0.0668]
+  [hit: <=5 km AND |dt|<=1.0s] HUBER-N+SC - MT-FW+SC @0.25: 0.4578 - 0.4387 = +0.0191 [95: -0.0026, +0.0382] [90: +0.0010, +0.0357] sd 0.0108 | @0.1 +0.0317 [+0.0054, +0.0495]
+  among location hits: fraction with |origin error| <= 0.5 s: {'BOMP-PK+SC': 0.634, 'MT-FW+SC': 0.649, 'MT-FW-NOCAP+SC': 0.636, 'HUBER-N+SC': 0.641}  median |dt|: {'BOMP-PK+SC': 0.37, 'MT-FW+SC': 0.36, 'MT-FW-NOCAP+SC': 0.37, 'HUBER-N+SC': 0.37}
+  [regime thin] HUBER-N+SC - BOMP-PK+SC @0.25: 0.5657 - 0.5594 = +0.0063 [95: -0.0213, +0.0291] [90: -0.0169, +0.0250] sd 0.0129
+  [regime thin] HUBER-N+SC - MT-FW+SC @0.25: 0.5657 - 0.5462 = +0.0195 [95: -0.0091, +0.0408] [90: -0.0048, +0.0383] sd 0.0135
+  [regime strong] HUBER-N+SC - BOMP-PK+SC @0.25: 0.4236 - 0.4263 = -0.0027 [95: -0.0338, +0.0222] [90: -0.0280, +0.0194] sd 0.0143
+  [regime strong] HUBER-N+SC - MT-FW+SC @0.25: 0.4236 - 0.4016 = +0.0220 [95: -0.0139, +0.0465] [90: -0.0081, +0.0424] sd 0.0156
+  [threshold-free, first 1 atoms of every window] BOMP-PK+SC recall 0.487 false/win 0.60; MT-FW-NOCAP+SC recall 0.487 false/win 0.60; MT-FW+SC recall 0.483 false/win 0.61; HUBER-N+SC recall 0.480 false/win 0.61
+  [threshold-free, first 2 atoms of every window] BOMP-PK+SC recall 0.622 false/win 1.48; MT-FW-NOCAP+SC recall 0.622 false/win 1.48; MT-FW+SC recall 0.624 false/win 1.47; HUBER-N+SC recall 0.618 false/win 1.48
+  [threshold-free, first 3 atoms of every window] BOMP-PK+SC recall 0.662 false/win 2.43; MT-FW-NOCAP+SC recall 0.662 false/win 2.43; MT-FW+SC recall 0.670 false/win 2.41; HUBER-N+SC recall 0.656 false/win 2.43
+  [threshold-free, first 5 atoms of every window] BOMP-PK+SC recall 0.700 false/win 4.37; MT-FW-NOCAP+SC recall 0.701 false/win 4.37; MT-FW+SC recall 0.711 false/win 4.35; HUBER-N+SC recall 0.696 false/win 4.38
+  [ceiling: recall with all atoms accepted] BOMP-PK+SC 0.700; MT-FW-NOCAP+SC 0.701; MT-FW+SC 0.711; HUBER-N+SC 0.696
+  [first atom: hit fraction (within-window) and cross-window AUC of its score] BOMP-PK+SC P(first atom hit) 0.398 AUC 0.888; MT-FW-NOCAP+SC P(first atom hit) 0.398 AUC 0.888; MT-FW+SC P(first atom hit) 0.394 AUC 0.895; HUBER-N+SC P(first atom hit) 0.391 AUC 0.904
+  [rank-matched score swap] atoms+labels of BOMP-PK+SC  recall 0.1/0.25 with scores of BOMP-PK+SC: 0.361/0.479; scores of HUBER-N+SC: 0.379/0.489; scores of MT-FW+SC: 0.346/0.460
+  [rank-matched score swap] atoms+labels of HUBER-N+SC  recall 0.1/0.25 with scores of BOMP-PK+SC: 0.362/0.467; scores of HUBER-N+SC: 0.383/0.489; scores of MT-FW+SC: 0.347/0.462
+  [rank-matched score swap] atoms+labels of MT-FW+SC    recall 0.1/0.25 with scores of BOMP-PK+SC: 0.346/0.468; scores of HUBER-N+SC: 0.365/0.481; scores of MT-FW+SC: 0.354/0.469
+  [swap] (BOMP atoms, HUBER scores) - BOMP @0.25: +0.0102 [-0.0062, +0.0229]
+  [swap] HUBER - (HUBER atoms, BOMP scores) @0.25: +0.0214 [+0.0041, +0.0365]
+  [swap] (HUBER atoms, BOMP scores) - BOMP @0.25 (pure atom-selection effect): -0.0116 [-0.0308, +0.0043]
+  fraction of windows whose first atom is at the same node for HUBER-N and BOMP-PK: 0.703
+=== seed 6262 dense
+  [hit: <=5 km AND |dt|<=0.5s] HUBER-N+SC - BOMP-PK+SC @0.25: 0.0948 - 0.0761 = +0.0187 [95: +0.0095, +0.0297] [90: +0.0109, +0.0285] sd 0.0054 | @0.1 +0.0188 [+0.0114, +0.0266]
+  [hit: <=5 km AND |dt|<=0.5s] HUBER-N+SC - MT-FW+SC @0.25: 0.0948 - 0.1038 = -0.0090 [95: -0.0179, +0.0021] [90: -0.0160, +0.0005] sd 0.0052 | @0.1 -0.0056 [-0.0132, +0.0028]
+  [hit: <=5 km AND |dt|<=1.0s] HUBER-N+SC - BOMP-PK+SC @0.25: 0.1939 - 0.1467 = +0.0471 [95: +0.0323, +0.0625] [90: +0.0351, +0.0610] sd 0.0078 | @0.1 +0.0398 [+0.0286, +0.0547]
+  [hit: <=5 km AND |dt|<=1.0s] HUBER-N+SC - MT-FW+SC @0.25: 0.1939 - 0.2039 = -0.0100 [95: -0.0242, +0.0053] [90: -0.0221, +0.0035] sd 0.0075 | @0.1 -0.0081 [-0.0208, +0.0061]
+  among location hits: fraction with |origin error| <= 0.5 s: {'BOMP-PK+SC': 0.572, 'MT-FW+SC': 0.575, 'MT-FW-NOCAP+SC': 0.574, 'HUBER-N+SC': 0.57}  median |dt|: {'BOMP-PK+SC': 0.41, 'MT-FW+SC': 0.41, 'MT-FW-NOCAP+SC': 0.41, 'HUBER-N+SC': 0.41}
+  [regime thin] HUBER-N+SC - BOMP-PK+SC @0.25: 0.2768 - 0.2233 = +0.0535 [95: +0.0337, +0.0781] [90: +0.0369, +0.0754] sd 0.0119
+  [regime thin] HUBER-N+SC - MT-FW+SC @0.25: 0.2768 - 0.2922 = -0.0153 [95: -0.0405, +0.0079] [90: -0.0357, +0.0053] sd 0.0120
+  [regime strong] HUBER-N+SC - BOMP-PK+SC @0.25: 0.2247 - 0.1746 = +0.0500 [95: +0.0252, +0.0711] [90: +0.0310, +0.0682] sd 0.0117
+  [regime strong] HUBER-N+SC - MT-FW+SC @0.25: 0.2247 - 0.2241 = +0.0006 [95: -0.0185, +0.0214] [90: -0.0168, +0.0188] sd 0.0106
+  [cell thin ladder_4] H-BOMP @0.25 +0.0453 [+0.0069, +0.0796]   H-MTFW -0.0130 [-0.0533, +0.0245]
+  [cell thin ladder_6] H-BOMP @0.25 +0.0607 [+0.0152, +0.0956]   H-MTFW -0.0234 [-0.0664, +0.0168]
+  [cell thin unilateral_c40] H-BOMP @0.25 +0.0759 [+0.0260, +0.1239]   H-MTFW -0.0104 [-0.0593, +0.0382]
+  [cell strong ladder_4] H-BOMP @0.25 +0.0295 [+0.0037, +0.0608]   H-MTFW +0.0025 [-0.0247, +0.0282]
+  [cell strong ladder_6] H-BOMP @0.25 +0.0556 [+0.0189, +0.1000]   H-MTFW +0.0012 [-0.0328, +0.0441]
+  [cell strong unilateral_c40] H-BOMP @0.25 +0.0561 [+0.0092, +0.1056]   H-MTFW +0.0008 [-0.0399, +0.0389]
+  [per-cell operating point, mean over 6 cells] H-BOMP @0.25 +0.0539 [+0.0358, +0.0707]
+  [threshold-free, first 1 atoms of every window] BOMP-PK+SC recall 0.191 false/win 0.24; MT-FW-NOCAP+SC recall 0.191 false/win 0.24; MT-FW+SC recall 0.201 false/win 0.19; HUBER-N+SC recall 0.199 false/win 0.20
+  [threshold-free, first 2 atoms of every window] BOMP-PK+SC recall 0.345 false/win 0.60; MT-FW-NOCAP+SC recall 0.345 false/win 0.60; MT-FW+SC recall 0.356 false/win 0.55; HUBER-N+SC recall 0.355 false/win 0.56
+  [threshold-free, first 3 atoms of every window] BOMP-PK+SC recall 0.455 false/win 1.12; MT-FW-NOCAP+SC recall 0.454 false/win 1.12; MT-FW+SC recall 0.458 false/win 1.10; HUBER-N+SC recall 0.456 false/win 1.11
+  [threshold-free, first 5 atoms of every window] BOMP-PK+SC recall 0.569 false/win 2.55; MT-FW-NOCAP+SC recall 0.569 false/win 2.55; MT-FW+SC recall 0.575 false/win 2.52; HUBER-N+SC recall 0.556 false/win 2.61
+  [ceiling: recall with all atoms accepted] BOMP-PK+SC 0.628; MT-FW-NOCAP+SC 0.628; MT-FW+SC 0.635; HUBER-N+SC 0.616
+  [first atom: hit fraction (within-window) and cross-window AUC of its score] BOMP-PK+SC P(first atom hit) 0.764 AUC 0.602; MT-FW-NOCAP+SC P(first atom hit) 0.764 AUC 0.602; MT-FW+SC P(first atom hit) 0.806 AUC 0.711; HUBER-N+SC P(first atom hit) 0.798 AUC 0.693
+  [rank-matched score swap] atoms+labels of BOMP-PK+SC  recall 0.1/0.25 with scores of BOMP-PK+SC: 0.092/0.198; scores of HUBER-N+SC: 0.123/0.227; scores of MT-FW+SC: 0.136/0.226
+  [rank-matched score swap] atoms+labels of HUBER-N+SC  recall 0.1/0.25 with scores of BOMP-PK+SC: 0.113/0.216; scores of HUBER-N+SC: 0.151/0.251; scores of MT-FW+SC: 0.156/0.245
+  [rank-matched score swap] atoms+labels of MT-FW+SC    recall 0.1/0.25 with scores of BOMP-PK+SC: 0.113/0.216; scores of HUBER-N+SC: 0.137/0.242; scores of MT-FW+SC: 0.160/0.253
+  [swap] (BOMP atoms, HUBER scores) - BOMP @0.25: +0.0294 [+0.0188, +0.0391]
+  [swap] HUBER - (HUBER atoms, BOMP scores) @0.25: +0.0351 [+0.0248, +0.0441]
+  [swap] (HUBER atoms, BOMP scores) - BOMP @0.25 (pure atom-selection effect): +0.0178 [+0.0043, +0.0343]
+  fraction of windows whose first atom is at the same node for HUBER-N and BOMP-PK: 0.546
+=== seed 6262 std
+  [hit: <=5 km AND |dt|<=0.5s] HUBER-N+SC - BOMP-PK+SC @0.25: 0.3082 - 0.2957 = +0.0125 [95: -0.0115, +0.0325] [90: -0.0086, +0.0281] sd 0.0111 | @0.1 +0.0387 [+0.0185, +0.0641]
+  [hit: <=5 km AND |dt|<=0.5s] HUBER-N+SC - MT-FW+SC @0.25: 0.3082 - 0.3127 = -0.0045 [95: -0.0268, +0.0186] [90: -0.0237, +0.0125] sd 0.0113 | @0.1 -0.0038 [-0.0275, +0.0221]
+  [hit: <=5 km AND |dt|<=1.0s] HUBER-N+SC - BOMP-PK+SC @0.25: 0.4694 - 0.4611 = +0.0083 [95: -0.0159, +0.0292] [90: -0.0117, +0.0251] sd 0.0116 | @0.1 +0.0346 [+0.0066, +0.0667]
+  [hit: <=5 km AND |dt|<=1.0s] HUBER-N+SC - MT-FW+SC @0.25: 0.4694 - 0.4604 = +0.0090 [95: -0.0124, +0.0322] [90: -0.0090, +0.0289] sd 0.0113 | @0.1 +0.0125 [-0.0179, +0.0415]
+  among location hits: fraction with |origin error| <= 0.5 s: {'BOMP-PK+SC': 0.644, 'MT-FW+SC': 0.644, 'MT-FW-NOCAP+SC': 0.646, 'HUBER-N+SC': 0.639}  median |dt|: {'BOMP-PK+SC': 0.36, 'MT-FW+SC': 0.36, 'MT-FW-NOCAP+SC': 0.36, 'HUBER-N+SC': 0.36}
+  [regime thin] HUBER-N+SC - BOMP-PK+SC @0.25: 0.5709 - 0.6034 = -0.0324 [95: -0.0635, -0.0028] [90: -0.0604, -0.0076] sd 0.0159
+  [regime thin] HUBER-N+SC - MT-FW+SC @0.25: 0.5709 - 0.5851 = -0.0142 [95: -0.0464, +0.0124] [90: -0.0407, +0.0089] sd 0.0150
+  [regime strong] HUBER-N+SC - BOMP-PK+SC @0.25: 0.4252 - 0.4224 = +0.0028 [95: -0.0257, +0.0383] [90: -0.0204, +0.0341] sd 0.0163
+  [regime strong] HUBER-N+SC - MT-FW+SC @0.25: 0.4252 - 0.4174 = +0.0078 [95: -0.0161, +0.0410] [90: -0.0124, +0.0361] sd 0.0145
+  [threshold-free, first 1 atoms of every window] BOMP-PK+SC recall 0.498 false/win 0.60; MT-FW-NOCAP+SC recall 0.498 false/win 0.60; MT-FW+SC recall 0.491 false/win 0.61; HUBER-N+SC recall 0.484 false/win 0.61
+  [threshold-free, first 2 atoms of every window] BOMP-PK+SC recall 0.633 false/win 1.48; MT-FW-NOCAP+SC recall 0.633 false/win 1.48; MT-FW+SC recall 0.630 false/win 1.47; HUBER-N+SC recall 0.621 false/win 1.49
+  [threshold-free, first 3 atoms of every window] BOMP-PK+SC recall 0.674 false/win 2.43; MT-FW-NOCAP+SC recall 0.675 false/win 2.43; MT-FW+SC recall 0.681 false/win 2.41; HUBER-N+SC recall 0.661 false/win 2.44
+  [threshold-free, first 5 atoms of every window] BOMP-PK+SC recall 0.718 false/win 4.37; MT-FW-NOCAP+SC recall 0.715 false/win 4.37; MT-FW+SC recall 0.722 false/win 4.36; HUBER-N+SC recall 0.710 false/win 4.38
+  [ceiling: recall with all atoms accepted] BOMP-PK+SC 0.718; MT-FW-NOCAP+SC 0.715; MT-FW+SC 0.722; HUBER-N+SC 0.710
+  [first atom: hit fraction (within-window) and cross-window AUC of its score] BOMP-PK+SC P(first atom hit) 0.400 AUC 0.885; MT-FW-NOCAP+SC P(first atom hit) 0.400 AUC 0.885; MT-FW+SC P(first atom hit) 0.394 AUC 0.896; HUBER-N+SC P(first atom hit) 0.388 AUC 0.903
+  [rank-matched score swap] atoms+labels of BOMP-PK+SC  recall 0.1/0.25 with scores of BOMP-PK+SC: 0.355/0.488; scores of HUBER-N+SC: 0.375/0.499; scores of MT-FW+SC: 0.354/0.481
+  [rank-matched score swap] atoms+labels of HUBER-N+SC  recall 0.1/0.25 with scores of BOMP-PK+SC: 0.356/0.476; scores of HUBER-N+SC: 0.385/0.496; scores of MT-FW+SC: 0.360/0.475
+  [rank-matched score swap] atoms+labels of MT-FW+SC    recall 0.1/0.25 with scores of BOMP-PK+SC: 0.357/0.482; scores of HUBER-N+SC: 0.382/0.493; scores of MT-FW+SC: 0.367/0.485
+  [swap] (BOMP atoms, HUBER scores) - BOMP @0.25: +0.0107 [-0.0052, +0.0233]
+  [swap] HUBER - (HUBER atoms, BOMP scores) @0.25: +0.0201 [+0.0055, +0.0345]
+  [swap] (HUBER atoms, BOMP scores) - BOMP @0.25 (pure atom-selection effect): -0.0128 [-0.0351, +0.0031]
+  fraction of windows whose first atom is at the same node for HUBER-N and BOMP-PK: 0.690

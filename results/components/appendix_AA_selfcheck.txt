@@ -1,0 +1,126 @@
+SELF-CHECK OF APPENDIX AA (appendix_AA_theory.md)
+Every proof was re-read step by step. Below: (A) steps I am unsure about or that rest on an
+unproved/external fact, ranked by risk; (B) things checked numerically; (C) discrepancies found
+between the proposal text (Section 7.5 / Y.11) and the code or the theory.
+
+(A) STEPS I AM UNSURE ABOUT
+
+A1. Prop AA.5(b), normalization of the Gaussian kinematic formula. I wrote
+    E chi(A_t) = sum_j L_j (2 pi)^{-j/2} M_j(D_t), with M_j the coefficients of
+    gamma(Tube(D,eps)) = sum eps^j/j! M_j(D), and derived rho_j = (2pi)^{-j/2}(-1)^{j-1} f^{(j-1)}(sqrt t).
+    I did not re-read [120] to confirm this exact convention. Evidence that it is right: the result
+    reproduces Worsley's [119] polynomials for j = 1,2,3 exactly (symbolic check for nu = 2..10), and
+    for nu = 1 reproduces twice the Gaussian EC densities for j = 1..4. The j = 4 polynomial
+    p_4 = t^3 - 3nu t^2 + 3(nu-1)^2 t - (nu-1)(nu-2)(nu-3) also matches Worsley's general
+    double-sum formula for nu = 2..10. A first hand-written p_4 (without the j=1 term of the double sum)
+    was WRONG and was caught by the nu = 1 check; the current one is verified.
+
+A2. Prop AA.5(b), assumption (G). It is a strong symmetry condition (Q(theta)^T Q(theta') a scalar
+    multiple of the identity for suitable frames). I state that it fails for moment-tensor subspaces
+    "in general" but did not prove failure for the pilot operator. The LKC formula for a box is given
+    only for constant diagonal Lambda (proved by isometry); for non-diagonal constant Lambda I believe
+    L_j = sum_J prod a_i sqrt(det Lambda_JJ) but did not include it because I did not prove it.
+
+A3. "Approximation (threshold rule)": the claim that P(max >= t) - E chi(A_t) is of smaller exponential
+    order is established for Gaussian fields (Taylor-Takemura-Adler 2005), which is NOT in the
+    bibliography; the appendix says "in the literature that follows [120]" to avoid inventing a
+    reference. If the committee wants the citation, a new reference must be added deliberately.
+
+A4. Conjecture AA.1 / Status paragraph: I state that [47] proves the scalar-amplitude result "on a
+    one-dimensional domain". I am fairly but not fully sure [47] is restricted to d = 1 (torus); check
+    the paper before submission. My "group form" of the vanishing-derivative pre-certificate
+    (constraints Q_k^T p = Q_k^T ghat_k and <(I-P_k) d_j(G mbar_k), p> = 0) is my own adaptation; the
+    linearization of grad ||P_theta p||^2 = 0 at theta_k was derived with Lemma AA.4 and is correct
+    given P_{theta_k} p = ghat_k, but it is not taken from [47].
+
+A5. Section AA.5 "The continuum": the statement that [116] proves finite-step convergence of sliding
+    Frank-Wolfe under the non-degeneracy condition is from memory of [116]; I wrote only that it is
+    for scalar amplitudes and is not claimed here. Verify the exact hypotheses in [116].
+
+A6. Prop AA.1(a): I use without proof (i) the polar decomposition of R^N-valued Radon measures and
+    (ii) the equivalence between the weak definition of K and "polar in range P_theta, |nu|-a.e."
+    (via density of C(Theta) in L^1(|nu|)). Both are standard measure theory; existence itself only
+    needs the weak definition, so (ii) matters only for the interpretation.
+
+A7. Prop AA.6(b)-(d) are proved in CONTINUOUS time with exact P-S orthogonality (A4, c = 0) including
+    derivative orthogonality. For the Ricker pulse these hold only approximately (a(1 s) ~ 1e-6;
+    <s, s'> = 0 exactly by symmetry when the pulse is centred on the grid, approximately otherwise).
+    The results are therefore statements about the idealized model; the size of the error for close
+    stations (c up to ~0.1 at 0.5 s separation) is not bounded in the appendix.
+
+A8. Prop AA.4(e)-(h): the identification "matched-filter-domain subtraction of p * a(. - t*) equals
+    data-domain subtraction of U_k p" uses linearity of the matched filter plus (A3): kernel = pulse
+    (true to 1e-35 in energy), AC peak at zero lag (checked: argmax 48 = centre), no edge effects of
+    the 'same' convolution and of the +-3 s subtraction window, and the MAD scale treated as the exact
+    noise level. Edge effects are excluded by assumption, not bounded.
+
+A9. Prop AA.4(g): the counterexample (norm increases by 1/4) uses scalar blocks and a 1-D subspace; I
+    did not check that a moment-tensor subspace A(x) can realize it. The appendix says so explicitly.
+
+A10. Corollary AA.1 in floating point: T <= B(C) holds exactly in real arithmetic; in floating point
+    ||Pi v||^2 computed as ||Q^T v||^2 can exceed ||v||^2 by ~1e-15 relative. With the strict rule
+    "discard if B(C) < L" a cell whose bound equals the incumbent to rounding could in principle be
+    discarded while containing a tied maximizer. Recommend discarding only if B(C) < L*(1 - 1e-12) in
+    the implementation. Not stated in the appendix (implementation detail).
+
+A11. Prop AA.3 relies on the code computing the window start with (tt/DT).astype(int), i.e.
+    truncation toward zero, which equals floor only for tt >= 0. In the pilot tau >= 5 s so all
+    predicted times are positive; a negative predicted time would break monotonicity of the
+    truncation (it is still monotone non-decreasing, actually: trunc is non-decreasing on R, so the
+    containment argument survives; only the formula "floor" in the text would be inaccurate).
+
+A12. Prop AA.5(c): the proof takes a detection to be strict exceedance M > t_hat. If the catalogue code
+    emits at score >= threshold, ties change the statement by at most the probability of a tie
+    (zero for continuous noise, but the cap can create exact ties in principle).
+
+A13. Prop AA.5(a) numerical values (t = 36.3 and 39.9 for alpha = 0.05, 0.01; n = 20,925 nodes x taus)
+    assume rank 6 at every node; rank 6 was observed at every sampled node (60 networks x 1/7 of the
+    grid, min sigma ratio 6.8e-3), not at every node of every network.
+
+A14. The "resolution cells" remark (L_4 = integral of sqrt(det Lambda)) is proved only for q = 1; for
+    q > 1 under (G) Lambda is the common Cov(grad Z_l), whose link to F_eff is not proved.
+
+A15. Section AA.8: "off-grid modelling error O(h) against admissible noise O(lambda h^2)" is an
+    order-of-magnitude argument from the margin bound after Prop AA.6(d), not a theorem that
+    recovery fails; the appendix words it as "not expected".
+
+(B) CHECKED NUMERICALLY (scripts kept next to the appendix)
+
+B1. chk_aa_bound.py: Proposition AA.3 on the implemented statistic (task1x node_vectors, cap 6,
+    +-4-sample window, floor/clip windows) for 480 random index-cells of four windows of the Task 1x
+    "pert" generator (one-sided 8 st. and random 4 st.), on the raw matched-filter record AND on the
+    residual after one deflation step: 0 violations, minimum slack B(C) - max T = 28.4.
+    This checks the inequality, not the branch-and-bound savings; the node-by-node equivalence test of
+    Appendix Z for the moment-tensor bound is still registered work, as the appendix says.
+B2. chk_aa_ec.py: symbolic derivation of rho_1..rho_4 for chi^2_nu fields; agreement with Worsley's
+    general formula (nu = 2..10) and with the nu = 1 Gaussian identity (all j <= 4).
+B3. Pulse facts: normalized autocorrelation a(0.5 s) = 0.099, a(0.75 s) = 1.8e-3, a(1.0 s) = 1.2e-6;
+    Ricker energy outside |t| <= 1 s is 1.3e-35 of the total; deflation shape peaks at zero lag.
+B4. Source depths in the generator are U(5, 13) km, so t_S - t_P >= 0.70 s > 2w + Delta and the P and
+    S windows of a station never share a sample (c < 1 always), as (A4) states.
+B5. radiation_operator has rank 6 at all sampled nodes (see A13).
+
+(C) DISCREPANCIES BETWEEN THE PROPOSAL TEXT AND THE CODE / THEORY (for the coordinator)
+
+C1. Section 7.5 item 2 says sliding Frank-Wolfe handles sidelobes "without a suppression radius", and
+    Y.11 says deflation works "without a tuned radius". fw_record has min_sep = 5.0 km: after the first
+    atom, nodes within 5 km epicentral distance of accepted atoms are excluded. The appendix (D6) states
+    this. Section 7.5 / Y.11 should mention the 5 km no-reselection radius. The appendix suggests (untested)
+    why it matters: with the cap active, the deflation does not fully remove an event (Prop AA.4(g)).
+C2. Section 7.5 item 3 says the O(1/k) rate holds and the branch-and-bound supplies the exact oracle.
+    The rate is for genuine Frank-Wolfe (or fully corrective / sliding variants); the implemented MT-FW
+    is a group matching pursuit with per-atom least-squares refit, peak re-selection and a cap, for
+    which no rate holds and even monotone residual decrease can fail (Prop AA.4(e)-(h)).
+C3. Section 7.5 item 4 says lambda^2 eta^2 is a chi^2_6 random field. That holds pointwise for the
+    idealized certificate at mu = 0; the chi^2-field EC formula additionally needs assumption (G);
+    the implemented statistic (peak selection, cap, in-window scale) is not chi^2 even pointwise.
+    Only the conformal calibration (Prop AA.5(c)) is valid for the implemented detector.
+C4. Section 7.5 says eta = 1 "at every declared event": true for minimizers of (P_lambda)
+    (Prop AA.1), not for the output of the implemented deflation.
+C5. Section 7.5 last paragraph says the non-degenerate source condition "is a statement about the
+    local Gram matrix of G, the quantity that the observability certificate of Section 6.1 computes".
+    Prop AA.6(b)-(d) makes this precise and slightly different: the relevant curvature is the
+    EFFICIENT Fisher information with the moment tensor as nuisance, bounded below by the Section 6.1
+    leading term with weights equal to the energies the actual mechanism radiates (nodal stations
+    contribute nothing), and bounded above by the known-mechanism information. The global part of the
+    condition (no other hypothesis explains the noise-free signal) is not a local Gram statement.

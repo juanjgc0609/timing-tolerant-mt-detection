@@ -1,0 +1,52 @@
+C15 analysis, mode cycdev: 480 windows, networks [1800, 1802], methods ['BASE', 'CYC1', 'CYC2', 'CYC2g', 'CYC4'], B = 60
+plateau size of the accepted atoms (origins with the maximal statistic): mean 1.024, fraction > 1: 0.023
+
+==============================================================================================================
+STD: 240 windows, 188 events
+  origin error of atoms within 5 km (BASE ): n 141, median -0.039 s, |e| <= 0.5: 0.674, |e| median 0.331, early 0.532
+  origin error of atoms within 5 km (CYC1 ): n 138, median +0.020 s, |e| <= 0.5: 0.638, |e| median 0.344, early 0.486
+  origin error of atoms within 5 km (CYC2 ): n 139, median +0.028 s, |e| <= 0.5: 0.640, |e| median 0.332, early 0.475
+  origin error of atoms within 5 km (CYC2g): n 139, median +0.028 s, |e| <= 0.5: 0.640, |e| median 0.332, early 0.475
+  origin error of atoms within 5 km (CYC4 ): n 138, median +0.021 s, |e| <= 0.5: 0.667, |e| median 0.326, early 0.464
+  LOC+T <= 0.1: BASE 0.154  CYC1 0.160  (d +0.005 [-0.059,+0.021])  CYC2 0.160  (d +0.005 [-0.079,+0.041])  CYC2g 0.149  (d -0.005 [-0.064,+0.016])  CYC4 0.176  (d +0.021 [-0.058,+0.073])  
+  LOC+T <= 0.25: BASE 0.271  CYC1 0.239  (d -0.032 [-0.105,+0.034])  CYC2 0.207  (d -0.064 [-0.109,+0.044])  CYC2g 0.223  (d -0.048 [-0.079,+0.016])  CYC4 0.229  (d -0.043 [-0.091,+0.076])  
+  LOC   <= 0.1: BASE 0.255  CYC1 0.218  (d -0.037 [-0.095,+0.051])  CYC2 0.266  (d +0.011 [-0.077,+0.097])  CYC2g 0.239  (d -0.016 [-0.076,+0.038])  CYC4 0.266  (d +0.011 [-0.105,+0.126])  
+  LOC   <= 0.25: BASE 0.431  CYC1 0.394  (d -0.037 [-0.097,+0.036])  CYC2 0.362  (d -0.069 [-0.115,+0.067])  CYC2g 0.367  (d -0.064 [-0.116,+0.014])  CYC4 0.346  (d -0.085 [-0.128,+0.042])  
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: BASE 0.067; all scores 0.192
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: CYC1 0.075; all scores 0.208
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: CYC2 0.083; all scores 0.208
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: CYC2g 0.071; all scores 0.208
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: CYC4 0.058; all scores 0.192
+  close pairs (10 km, 2 s) LOC+T <= 0.25: BASE 0.000   tight (7 km, 1 s): 0.000
+  close pairs (10 km, 2 s) LOC+T <= 0.25: CYC1 0.000   tight (7 km, 1 s): 0.000
+  close pairs (10 km, 2 s) LOC+T <= 0.25: CYC2 0.000   tight (7 km, 1 s): 0.000
+  close pairs (10 km, 2 s) LOC+T <= 0.25: CYC2g 0.000   tight (7 km, 1 s): 0.000
+  close pairs (10 km, 2 s) LOC+T <= 0.25: CYC4 0.000   tight (7 km, 1 s): 0.000
+  cell ladder_4        LOC+T <= 0.25: BASE 0.172  CYC1 +0.034 [-0.071,+0.117]  CYC2 +0.069 [-0.019,+0.150]  CYC2g +0.034 [+0.000,+0.103]  CYC4 +0.052 [-0.062,+0.146]
+  cell ladder_6        LOC+T <= 0.25: BASE 0.328  CYC1 -0.075 [-0.170,+0.048]  CYC2 +0.000 [-0.168,+0.096]  CYC2g -0.060 [-0.156,+0.000]  CYC4 -0.015 [-0.173,+0.115]
+  cell unilateral_c40  LOC+T <= 0.25: BASE 0.286  CYC1 -0.032 [-0.153,+0.138]  CYC2 -0.079 [-0.185,+0.000]  CYC2g -0.032 [-0.120,+0.114]  CYC4 +0.000 [-0.129,+0.120]
+
+==============================================================================================================
+DENSE: 240 windows, 960 events
+  origin error of atoms within 5 km (BASE ): n 626, median -0.052 s, |e| <= 0.5: 0.585, |e| median 0.404, early 0.524
+  origin error of atoms within 5 km (CYC1 ): n 647, median -0.051 s, |e| <= 0.5: 0.586, |e| median 0.399, early 0.527
+  origin error of atoms within 5 km (CYC2 ): n 651, median -0.050 s, |e| <= 0.5: 0.596, |e| median 0.408, early 0.530
+  origin error of atoms within 5 km (CYC2g): n 651, median -0.050 s, |e| <= 0.5: 0.596, |e| median 0.408, early 0.530
+  origin error of atoms within 5 km (CYC4 ): n 668, median -0.054 s, |e| <= 0.5: 0.584, |e| median 0.409, early 0.534
+  LOC+T <= 0.1: BASE 0.060  CYC1 0.066  (d +0.005 [-0.016,+0.027])  CYC2 0.067  (d +0.006 [-0.025,+0.046])  CYC2g 0.050  (d -0.010 [-0.031,+0.008])  CYC4 0.059  (d -0.001 [-0.028,+0.026])  
+  LOC+T <= 0.25: BASE 0.119  CYC1 0.141  (d +0.022 [-0.009,+0.050])  CYC2 0.130  (d +0.011 [-0.033,+0.056])  CYC2g 0.116  (d -0.003 [-0.051,+0.029])  CYC4 0.120  (d +0.001 [-0.050,+0.038])  
+  LOC   <= 0.1: BASE 0.170  CYC1 0.178  (d +0.008 [-0.054,+0.032])  CYC2 0.167  (d -0.003 [-0.074,+0.049])  CYC2g 0.151  (d -0.019 [-0.084,-0.000])  CYC4 0.148  (d -0.022 [-0.078,+0.030])  
+  LOC   <= 0.25: BASE 0.257  CYC1 0.240  (d -0.018 [-0.041,+0.028])  CYC2 0.241  (d -0.017 [-0.056,+0.005])  CYC2g 0.231  (d -0.026 [-0.067,-0.003])  CYC4 0.224  (d -0.033 [-0.080,+0.006])  
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: BASE 0.167; all scores 0.963
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: CYC1 0.146; all scores 1.017
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: CYC2 0.146; all scores 0.996
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: CYC2g 0.146; all scores 0.996
+  right place wrong time above the <= 0.25 LOC+T threshold, per window: CYC4 0.138; all scores 1.033
+  close pairs (10 km, 2 s) LOC+T <= 0.25: BASE 0.119   tight (7 km, 1 s): 0.134
+  close pairs (10 km, 2 s) LOC+T <= 0.25: CYC1 0.144   tight (7 km, 1 s): 0.164
+  close pairs (10 km, 2 s) LOC+T <= 0.25: CYC2 0.132   tight (7 km, 1 s): 0.154
+  close pairs (10 km, 2 s) LOC+T <= 0.25: CYC2g 0.116   tight (7 km, 1 s): 0.131
+  close pairs (10 km, 2 s) LOC+T <= 0.25: CYC4 0.118   tight (7 km, 1 s): 0.164
+  cell ladder_4        LOC+T <= 0.25: BASE 0.084  CYC1 +0.006 [-0.020,+0.033]  CYC2 +0.003 [-0.028,+0.019]  CYC2g +0.000 [-0.021,+0.000]  CYC4 -0.012 [-0.037,+0.026]
+  cell ladder_6        LOC+T <= 0.25: BASE 0.113  CYC1 +0.038 [-0.035,+0.087]  CYC2 +0.072 [-0.031,+0.119]  CYC2g +0.006 [-0.030,+0.111]  CYC4 +0.082 [-0.052,+0.138]
+  cell unilateral_c40  LOC+T <= 0.25: BASE 0.129  CYC1 +0.016 [-0.050,+0.125]  CYC2 +0.006 [-0.069,+0.085]  CYC2g -0.063 [-0.123,+0.028]  CYC4 -0.034 [-0.115,+0.071]

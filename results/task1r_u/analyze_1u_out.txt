@@ -1,0 +1,35 @@
+[task1u_seed2024_r100_wave_exact.json]
+2024 one-sided, 8 st.  events   87 :: WAVE-E 0.29/0.33 | WAVE-P 0.31/0.45 | WAVE-PSH 0.23/0.39 | GAMMA 0.37/0.39
+     registered sweep: WAVE-E 0.29/0.32 | WAVE-P 0.28/0.41 | WAVE-PSH 0.13/0.39
+     WAVE-P - WAVE-E @0.25: +0.115 [+0.047, +0.195]
+     WAVE-P - WAVE-PSH @0.25: +0.057 [-0.010, +0.128]
+     WAVE-P - GAMMA @0.25: +0.057 [-0.052, +0.163]
+2024 4 stations        events   86 :: WAVE-E 0.12/0.20 | WAVE-P 0.22/0.28 | WAVE-PSH 0.07/0.14 | GAMMA 0.08/0.10
+     registered sweep: WAVE-E 0.01/0.15 | WAVE-P 0.01/0.22 | WAVE-PSH 0.01/0.13
+     WAVE-P - WAVE-E @0.25: +0.081 [+0.000, +0.165]
+     WAVE-P - WAVE-PSH @0.25: +0.140 [+0.044, +0.239]
+     WAVE-P - GAMMA @0.25: +0.174 [+0.066, +0.281]
+2024 6 stations        events   86 :: WAVE-E 0.12/0.22 | WAVE-P 0.29/0.44 | WAVE-PSH 0.17/0.21 | GAMMA 0.21/0.24
+     registered sweep: WAVE-E 0.01/0.19 | WAVE-P 0.22/0.35 | WAVE-PSH 0.01/0.17
+     WAVE-P - WAVE-E @0.25: +0.221 [+0.141, +0.307]
+     WAVE-P - WAVE-PSH @0.25: +0.233 [+0.144, +0.326]
+     WAVE-P - GAMMA @0.25: +0.198 [+0.080, +0.314]
+   seed 2024: U-a cells 2/3; U-b cells 2/3
+[task1u_seed7331_r100_wave_exact.json]
+7331 one-sided, 8 st.  events   70 :: WAVE-E 0.21/0.33 | WAVE-P 0.37/0.56 | WAVE-PSH 0.30/0.51 | GAMMA 0.33/0.33
+     registered sweep: WAVE-E 0.21/0.29 | WAVE-P 0.27/0.53 | WAVE-PSH 0.21/0.50
+     WAVE-P - WAVE-E @0.25: +0.229 [+0.122, +0.338]
+     WAVE-P - WAVE-PSH @0.25: +0.043 [-0.053, +0.135]
+     WAVE-P - GAMMA @0.25: +0.229 [+0.102, +0.356]
+7331 4 stations        events   70 :: WAVE-E 0.10/0.14 | WAVE-P 0.23/0.34 | WAVE-PSH 0.09/0.13 | GAMMA 0.07/0.07
+     registered sweep: WAVE-E 0.01/0.01 | WAVE-P 0.01/0.31 | WAVE-PSH 0.00/0.13
+     WAVE-P - WAVE-E @0.25: +0.200 [+0.108, +0.299]
+     WAVE-P - WAVE-PSH @0.25: +0.214 [+0.108, +0.319]
+     WAVE-P - GAMMA @0.25: +0.271 [+0.139, +0.403]
+7331 6 stations        events   78 :: WAVE-E 0.23/0.27 | WAVE-P 0.31/0.47 | WAVE-PSH 0.19/0.27 | GAMMA 0.15/0.18
+     registered sweep: WAVE-E 0.01/0.23 | WAVE-P 0.27/0.35 | WAVE-PSH 0.01/0.26
+     WAVE-P - WAVE-E @0.25: +0.205 [+0.110, +0.301]
+     WAVE-P - WAVE-PSH @0.25: +0.205 [+0.117, +0.302]
+     WAVE-P - GAMMA @0.25: +0.295 [+0.164, +0.423]
+   seed 7331: U-a cells 3/3; U-b cells 2/3
+U-a: True  U-b: True

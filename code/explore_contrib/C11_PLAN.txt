@@ -1,0 +1,149 @@
+C11 - SELF-CONSISTENT STATION TERMS INSIDE THE PICK-FREE MOMENT-TENSOR SUBSPACE DETECTORS - PLAN (frozen before any
+detection evaluation)
+======================================================================================================================
+Status: EXPLORATORY, NOT CONFIRMATORY. Seed 999 only. Seeds 2024, 7331, 4242, 8888, 5151, 6262, 7171, 9393 are not
+generated, read or touched.
+
+1. DATA
+  Networks task2a_confirm.network(999, cell, j); cells ladder_4, ladder_6, unilateral_c40; regimes thin and strong;
+  statics sd 0.3 s; registered catalogue streams [999, 2003, ci, j, ri] (the 40- and 80-event catalogues are the
+  continuation of the same streams: the first 20 events are the registered catalogue, asserted in the code).
+    DEVELOPMENT   j = 200-209   calibration quality only (rms error of the terms against the true statics)
+    EVALUATION    j = 210-239   detection recall; never opened before this plan was hashed
+    VALIDATION    j = 195       (as in C10)
+  grep before the study: networks used so far 0-4, 10-15, 20-35, 40-89, 99, 130-149, 160-179, 195, 199; TAGs 3001-3008,
+  3701-3706, 3801-3812, 3901-3913, 4000-4004.  New TAGs ([999, TAG, ci, j, ri, 41|233|61]):
+    4101 STD evaluation windows (xc.draw_sources, 0-2 events, kmax 5)
+    4102 DENSE evaluation windows (c2_run.draw_dense, 3-5 events within 9 km, kmax 7)
+    4103 unlabelled calibration stream of a network (xc.draw_sources; 30 windows; DISJOINT from the evaluation
+         windows; the truth of these windows is never passed to an estimator)
+    4104 noise-free validation catalogue (network 195)      4105 validation windows (network 195)
+  5 windows per network, regime and design: 30 x 3 x 2 x 5 = 900 windows per design.
+
+2. CANDIDATES (station terms per station and phase, fixed per network; code c11_lib.py, constants c11_lib.P)
+  S0    registered +SC (station_corrections.estimate_station_corrections on the 20-event catalogue; +-1 s joint P/S
+        read around the catalogue prediction, energy gate 25, median).
+  S1    SC-R, c10_screloc.sc_reloc, unchanged (3 passes, level = c10_lib.sigma_catalogue with S0).
+  S2    JHD on the 20-event catalogue (c11_lib.s2_terms).  State: terms c (ns, 2), hypocentre (x, t) per event.
+        Start: c = S0, events at the catalogue hypocentres.  3 passes; pass 1 uses the registered read (the S0 data);
+        passes 2 and 3 RE-READ every event (joint P/S read) within +-0.5 s of the prediction of its current
+        hypocentre and the current terms, with energy gate 12.  In each pass:
+          (a) alternation, at most 8 times, stop when no term moves by more than 0.002 s:  residual scale = 1.4826 MAD
+              of all gated residuals (floor 0.05 s);  each event with >= 4 gated arrivals is relocated (MAP: Huber
+              misfit, constant 1.345, of its gated arrivals in homogeneous straight-ray times + Gaussian prior N(0,
+              1 km) per coordinate and N(0, 0.1 s) on the origin around the CATALOGUE hypocentre; iteratively
+              reweighted Gauss-Newton; depth clipped to 1-20 km; events with fewer gated arrivals stay at the catalogue
+              hypocentre);  gauge: the median origin shift of the relocated catalogue events is subtracted from every
+              origin;  term of a (station, phase) = MEDIAN over events of (read time - travel time - origin).
+          (b) joint stage: at most 15 Gauss-Newton iterations over all terms and all relocatable hypocentres at
+              once, Cauchy weights (constant 2.385, scale re-estimated each iteration, floor 0.05 s), the same priors;
+              then the same gauge.
+        Deviations from the wording of the task, decided on the development set / validation and stated here:
+          - the gauge is NOT a zero mean per phase: the true statics are not zero-mean and a common offset moves the
+            origin time, which the strict hit rule sees; the absolute time is tied to the catalogue origins and the
+            other weak directions are held by the catalogue prior (1 km / 0.1 s, the known catalogue error);
+          - relocation by prior-regularised Gauss-Newton instead of a grid search (the prior makes it unimodal);
+          - joint Gauss-Newton stage added after the noise-free validation showed that the alternation alone leaves
+            0.02-0.08 s (it converges slowly along directions coupling terms and hypocentres).
+  S3    self-calibration from the detector's own atoms (c11_lib.s3_terms, c11_run.calibrate).  MT-FW (cap 6) + T3 with
+        the S2 terms runs over the 30 unlabelled windows (TAG 4103, kmax 5).  Atoms whose selection score is >= the
+        0.80 quantile of all atom scores of the stream are kept (30 atoms per network).  Each is an extra event with
+        prior N(0, 3 km) per coordinate and N(0, 0.3 s) on the origin around the refined atom, read within +-0.5 s of
+        its own prediction with the S2 terms (gate 12), used only if it has >= 6 gated arrivals.  The catalogue events
+        (in their S2 state) and the atoms then go through 2 more passes of the S2 procedure (re-read, alternation, joint
+        stage; the gauge uses the catalogue events only).  One iteration (no second detection pass).
+  S4    S2 with the first 40 and the first 80 events of the catalogue stream (S2@40, S2@80; start = the +SC median of
+        the same events).  Calibration quality is also reported for the plain median with 40 / 80 events (S0@40, S0@80).
+  ORA   true statics (c10 MT-ORA: timing level = c10_lib.sigma_oracle).
+  No truth enters S0-S4.
+
+3. HOW THE CONSTANTS WERE FIXED (development networks 200-209, both regimes, 3 cells = 60 network x regime; the only
+   criterion was the rms error of the terms against the true statics, median removed, median over networks; files
+   out/c11_dev_s2.txt, _s2b, _s2c, _s2d, _s3, c11_dev_s3b.log)
+  Rule: start from defaults written before the first table (w_re 0.5, 3 passes, Huber 1.345, floor 0.05, prior 1 km /
+  0.1 s, min 4 arrivals, median update, gate 25; S3: 30 windows, quantile 0.80, prior 3 km / 0.3 s, min 6 arrivals, 2
+  passes); a constant is changed only if the change lowers the sum of the two pooled medians (thin + strong) by more
+  than 0.01 s; otherwise the default stays.
+  Pooled medians (thin | strong), s:          S0 0.133 | 0.190      S1 0.101 | 0.190
+    S2 defaults, gate 25                      0.111 | 0.211
+    S2 gate 12 (the one change kept)          0.068 | 0.135         (gate 16: 0.076 | 0.140; gate 9: 0.078 | 0.147)
+    S2 gate 12 + joint stage (FINAL S2)       0.062 | 0.111         (floor 0.02: 0.058 | 0.123, not kept)
+    other one-at-a-time changes (window 0.3 / 0.75 / 1.0, schedules, 2-5 passes, Huber update, prior 0.5 / 2 km,
+      origin prior 0.2 s, min 3 / 5 arrivals, Huber / Cauchy constants): none better by > 0.01 s.
+    S2@40 0.057-0.061 | 0.075-0.082;  S2@80 0.043-0.050 | 0.058-0.064;  plain median S0@40 0.112 | 0.137, S0@80 0.076 |
+      0.104.
+    S3 defaults (FINAL S3)                    0.066 | 0.106
+    S3 variants (20 / 40 windows, quantile 0.6 / 0.7 / 0.9, prior 1.5 / 6 km, first read +-1 s, a self-consistency
+      filter of the atoms, 4-8 arrivals): 0.056-0.068 | 0.104-0.126; none better than S2 or than the S3 defaults by
+      > 0.01 s in the sum.  A second detection iteration was not tried (cost; S3 is flat).
+  On the development set S3 does not improve on S2 (0.066 | 0.106 against 0.062 | 0.111).
+  Declared: (i) the development detection pass for S3 was run with the S2 terms BEFORE the joint stage was added
+  (alternation only); the S3 constants were looked at with those atoms and the final S2 as start. (ii) A descriptive
+  purity figure of the selected atoms (share within 5 km of a true event: 0.54 at quantile 0.80, 0.76 at 0.90, 0.31 at
+  0.60) was computed on the development set with the truth; it is a detection-type quantity seen before the freeze; no
+  rule uses it. No recall, FROC or hit count of any detector was computed on any C11 network before this plan.
+  (iii) The smoke test of c11_run.py ran on validation network 195 (1 window per design, output deleted unread except
+  timings and term errors).
+
+4. DETECTORS AND RUN SET (code c11_run.py; loops of c10_lib.py unchanged)
+  MT-FW (cap 6) and BOMP-PK, 3 km x 3 depths lattice, origins 5.0-8.0 s step 0.1, +-0.25 s hard peak rule, 5 km
+  exclusion; T3 = C10 refinement, frozen (1 km lattice, radius 10 km, origins within 1 s, penalised peak search with
+  variance sig^2 + cell term, record score = selection statistic). Timing level of T3 for a term set: the C10 rule
+  c10_lib.sigma_catalogue recomputed with that term set (its own catalogue for S2@40 / S2@80); ORA: sigma_oracle.
+  MT family: S0, S1, S2, S3, S2@40, S2@80, ORA, each hard and +T3 (14 runs per window).
+  BOMP family (cost): S0, S2 hard and +T3, ORA +T3 (5 runs per window). BOMP with S1, S3, S4 and ORA hard: not run.
+  HUBER-N: not run (not cheap: every term set needs its own operator tables in c8_lib).
+  CEIL-GD: not run.
+  Budget rule: two processes (thin, strong), networks in increasing j, cells inside j. Expected 2.7 h. If the runs are
+  not finished at 21:00 UTC they are stopped and the analysis uses the network indices complete in BOTH regimes and
+  all three cells; nothing else changes.
+
+5. ENDPOINTS AND ANALYSIS (c11_analyze.py; c10_analyze.Boot)
+  (1) rms error of the terms against the true statics (median removed), per regime and cell; |offset|.
+  (2) recall at <= 0.1 and <= 0.25 realised false events per window, exact FROC, operating point re-chosen per
+      replicate; hit rules LOC+T (epicentre within 5 km and |origin error| <= 0.5 s; PRIMARY here) and LOC (registered);
+      paired differences to S0 (hard) and to S0+T3; hierarchical bootstrap, strata regime x cell, networks then
+      windows, 2000 replicates, 95% percentile intervals; pooled and per regime (strong clutter reported separately:
+      the catalogue peaks are contaminated there).
+  (3) fraction of the oracle gain, ratio bootstrapped: hard (X - S0) / (ORA - S0); T3 (X+T3 - S0+T3) / (ORA+T3 -
+      S0+T3); total (X+T3 - S0) / (ORA+T3 - S0).
+  (4) median epicentral and |origin-time| error of the hit atoms (LOC rule, all atoms; bootstrap over networks).
+  (5) runtime per window and per calibration.
+  PRIMARY CANDIDATE, by rule: the estimator among S2 and S3 with the smaller sum of pooled development medians; a
+  difference below 0.01 s goes to S2 (simpler, no detection pass).  S2: 0.173; S3: 0.172  ->  S2.
+  PRIMARY CONTRAST: MT@S2+T3 - MT@S0+T3 (the effect of the terms with the detector fixed), STANDARD windows, LOC+T,
+  <= 0.25 false events per window, regimes and cells pooled.
+  Named secondary contrasts (same endpoint): MT@S2 - MT@S0 (hard); MT@S2+T3 - MT@S0 (total, terms + refinement);
+  BOMP@S2+T3 - BOMP@S0+T3; BOMP@S2+T3 - BOMP@S0; the same for S3, S1, S2@40, S2@80 in the MT family; all of them under
+  LOC, at 0.1, per regime and in DENSE windows.
+  JUDGEMENT (fixed now): "plausible contribution" if
+    (A) primary contrast >= +0.05 with a 95% interval excluding 0, AND no loss in dense windows (the same contrast in
+        DENSE windows, LOC+T and LOC at 0.25, point estimate >= -0.01); or
+    (B) fraction of the oracle gain (T3 form, STANDARD, LOC+T, 0.25) >= 0.5 as a point estimate with the interval of
+        its numerator (the primary contrast) excluding 0.
+  Otherwise "not shown". The total contrast (S2+T3 against the registered detector S0 hard) is reported next to it
+  because C10 measured SC-R that way (+0.123), but it mixes the terms with T3 and is not the criterion.
+  No multiplicity correction; every contrast other than the primary one is descriptive.
+
+6. VALIDATION (out/c11_validation.txt, network 195; run before the freeze)
+  V1 the read of c11_lib equals station_corrections.peak_delays; S0 recomputed = registered +SC; cloned engines = C10
+     engines; MT and BOMP loops on a cloned engine reproduce c8_lib.mtfw_general (ls, cap 6) and xc.bomp_pk; MT+T3 = C10.
+  V2 exact model, noise-free, 20 events: with an exact catalogue S0 / S2 give 0.001-0.002 s; with catalogue errors
+     1 km / 0.1 s: S0 0.055-0.086 s, S1 0.043-0.074, S2 (as frozen, floor 0.05) 0.020-0.028, S2 with floor 0.01 0.007-
+     0.009, floor 0.01 and no prior 0.001-0.005 s (gauge removed): the joint estimator recovers the true terms up to
+     the gauge; the frozen floor and prior leave 0.02-0.03 s by shrinkage towards the catalogue.
+
+7. CODE HASHES AT THE FREEZE (sha256)
+  bb6f7be91071de52a803f9fba21f2d0f54ed2dcc5374038e1d98dc3fbbbe55c7  c11_lib.py
+  a59aa6bf0c5463186ec6a157dce44d2bfdcc7202d66645edf71fa186b5d4792d  c11_run.py
+  27a97ca1c5ee7320bd434d4ff237e48624edfafc20bd9719ae7f91d70118d8da  c11_analyze.py
+  3d98f7da51c6a4331daea3187369259034a887d6c506302c12c8696c264ae763  c10_lib.py
+  8933b44fc6a3228355148c691499a7a97c18cfbd216aec02f754b3aa2f7c2dd5  c10_screloc.py
+  c7bd0b4d35bc09f62befa038468e7774bccabc3ed306ec4cf5c7e68fe9268322  c10_run.py
+  4337b1f2ebad752489f4b60f075f4f574ea91a2c8186155882e2a22bee811651  c10_analyze.py
+
+8. FREEZE
+  date -u: Sun Oct  4 18:01:51 UTC 2026
+  sha256 of this file up to and including section 7 (everything above the line "8. FREEZE", with the blank line
+  before it excluded): 42e6613879e6f3f2aae4f1cb349d15bd2839770e4e1ecbcbf0f8ae772c181c5f
+  (also in C11_PLAN.sha256; the evaluation runs were launched after this line was written)

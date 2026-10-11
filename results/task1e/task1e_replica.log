@@ -1,0 +1,129 @@
+[protocolo] Tarea 0 final: red por realizacion, umbral relativo, calibracion a recall 0.98, 30 evaluacion + 30 calibracion por celda, sigma_buena=10.0 grados, 8 celdas
+   hecho unilateral_c40/mitad_buenas en 156 s
+   hecho unilateral_c40/cuarto_buenas en 152 s
+   hecho unilateral_c40/cuarto_buenas_3d en 155 s
+   hecho unilateral_c40/ninguna_buena_3d en 147 s
+   hecho ladder_4/mitad_buenas en 127 s
+   hecho ladder_4/cuarto_buenas en 126 s
+   hecho ladder_4/cuarto_buenas_3d en 126 s
+   hecho ladder_4/ninguna_buena_3d en 118 s
+
+=== unilateral, clutter 40 ===
+   condicion         metodo                  recall                falsos   calib
+   mitad_buenas      TOL      30/30=1.00 [0.88,1.00]   13/30=0.43 [0.25,0.63]   ok
+   mitad_buenas      CIII     30/30=1.00 [0.88,1.00]   15/30=0.50 [0.31,0.69]   ok
+   mitad_buenas      PHYS     29/30=0.97 [0.83,1.00]    1/30=0.03 [0.00,0.17]   ok
+   mitad_buenas      PHYS-G   30/30=1.00 [0.88,1.00]    5/30=0.17 [0.06,0.35]   ok
+   mitad_buenas      PHYS-N   30/30=1.00 [0.88,1.00]    0/30=0.00 [0.00,0.12]   ok
+      c_neutro=0.713
+      falsos TOL vs PHYS       discordantes 13/1  McNemar p=0.0018
+      recall TOL vs PHYS       discordantes 1/0  McNemar p=1.0000
+      falsos TOL vs PHYS-N     discordantes 13/0  McNemar p=0.0002
+      recall TOL vs PHYS-N     discordantes 0/0  McNemar p=1.0000
+      falsos PHYS vs PHYS-N    discordantes 1/0  McNemar p=1.0000
+      recall PHYS vs PHYS-N    discordantes 0/1  McNemar p=1.0000
+      falsos PHYS-G vs PHYS-N  discordantes 5/0  McNemar p=0.0625
+      recall PHYS-G vs PHYS-N  discordantes 0/0  McNemar p=1.0000
+   cuarto_buenas     TOL      30/30=1.00 [0.88,1.00]   13/30=0.43 [0.25,0.63]   ok
+   cuarto_buenas     CIII     30/30=1.00 [0.88,1.00]   15/30=0.50 [0.31,0.69]   ok
+   cuarto_buenas     PHYS     30/30=1.00 [0.88,1.00]    0/30=0.00 [0.00,0.12]   ok
+   cuarto_buenas     PHYS-G   27/30=0.90 [0.73,0.98]   19/30=0.63 [0.44,0.80]   ok
+   cuarto_buenas     PHYS-N   30/30=1.00 [0.88,1.00]    3/30=0.10 [0.02,0.27]   ok
+      c_neutro=0.745
+      falsos TOL vs PHYS       discordantes 13/0  McNemar p=0.0002
+      recall TOL vs PHYS       discordantes 0/0  McNemar p=1.0000
+      falsos TOL vs PHYS-N     discordantes 11/1  McNemar p=0.0063
+      recall TOL vs PHYS-N     discordantes 0/0  McNemar p=1.0000
+      falsos PHYS vs PHYS-N    discordantes 0/3  McNemar p=0.2500
+      recall PHYS vs PHYS-N    discordantes 0/0  McNemar p=1.0000
+      falsos PHYS-G vs PHYS-N  discordantes 16/0  McNemar p=0.0000
+      recall PHYS-G vs PHYS-N  discordantes 0/3  McNemar p=0.2500
+   cuarto_buenas_3d  TOL      30/30=1.00 [0.88,1.00]   13/30=0.43 [0.25,0.63]   ok
+   cuarto_buenas_3d  CIII     30/30=1.00 [0.88,1.00]   15/30=0.50 [0.31,0.69]   ok
+   cuarto_buenas_3d  PHYS     26/30=0.87 [0.69,0.96]   11/30=0.37 [0.20,0.56]   ok
+   cuarto_buenas_3d  PHYS-G   26/30=0.87 [0.69,0.96]   17/30=0.57 [0.37,0.75]   ok
+   cuarto_buenas_3d  PHYS-N   30/30=1.00 [0.88,1.00]    2/30=0.07 [0.01,0.22]   ok
+      c_neutro=0.752
+      falsos TOL vs PHYS       discordantes 8/6  McNemar p=0.7905
+      recall TOL vs PHYS       discordantes 4/0  McNemar p=0.1250
+      falsos TOL vs PHYS-N     discordantes 11/0  McNemar p=0.0010
+      recall TOL vs PHYS-N     discordantes 0/0  McNemar p=1.0000
+      falsos PHYS vs PHYS-N    discordantes 11/2  McNemar p=0.0225
+      recall PHYS vs PHYS-N    discordantes 0/4  McNemar p=0.1250
+      falsos PHYS-G vs PHYS-N  discordantes 15/0  McNemar p=0.0001
+      recall PHYS-G vs PHYS-N  discordantes 0/4  McNemar p=0.1250
+   ninguna_buena_3d  TOL      30/30=1.00 [0.88,1.00]   13/30=0.43 [0.25,0.63]   ok
+   ninguna_buena_3d  CIII     30/30=1.00 [0.88,1.00]   15/30=0.50 [0.31,0.69]   ok
+   ninguna_buena_3d  PHYS     26/30=0.87 [0.69,0.96]   27/30=0.90 [0.73,0.98]   NO alcanza 0.98
+   ninguna_buena_3d  PHYS-G   30/30=1.00 [0.88,1.00]   15/30=0.50 [0.31,0.69]   ok
+   ninguna_buena_3d  PHYS-N   30/30=1.00 [0.88,1.00]   15/30=0.50 [0.31,0.69]   ok
+      c_neutro=1.000
+      falsos TOL vs PHYS       discordantes 2/16  McNemar p=0.0013
+      recall TOL vs PHYS       discordantes 4/0  McNemar p=0.1250
+      falsos TOL vs PHYS-N     discordantes 0/2  McNemar p=0.5000
+      recall TOL vs PHYS-N     discordantes 0/0  McNemar p=1.0000
+      falsos PHYS vs PHYS-N    discordantes 14/2  McNemar p=0.0042
+      recall PHYS vs PHYS-N    discordantes 0/4  McNemar p=0.1250
+      falsos PHYS-G vs PHYS-N  discordantes 0/0  McNemar p=1.0000
+      recall PHYS-G vs PHYS-N  discordantes 0/0  McNemar p=1.0000
+
+=== 4 estaciones, clutter 35 ===
+   condicion         metodo                  recall                falsos   calib
+   mitad_buenas      TOL      28/30=0.93 [0.78,0.99]   28/30=0.93 [0.78,0.99]   NO alcanza 0.98
+   mitad_buenas      CIII     28/30=0.93 [0.78,0.99]   28/30=0.93 [0.78,0.99]   NO alcanza 0.98
+   mitad_buenas      PHYS     27/30=0.90 [0.73,0.98]   19/30=0.63 [0.44,0.80]   NO alcanza 0.98
+   mitad_buenas      PHYS-G   25/30=0.83 [0.65,0.94]   19/30=0.63 [0.44,0.80]   NO alcanza 0.98
+   mitad_buenas      PHYS-N   28/30=0.93 [0.78,0.99]   24/30=0.80 [0.61,0.92]   ok
+      c_neutro=0.772
+      falsos TOL vs PHYS       discordantes 10/1  McNemar p=0.0117
+      recall TOL vs PHYS       discordantes 1/0  McNemar p=1.0000
+      falsos TOL vs PHYS-N     discordantes 6/2  McNemar p=0.2891
+      recall TOL vs PHYS-N     discordantes 1/1  McNemar p=1.0000
+      falsos PHYS vs PHYS-N    discordantes 1/6  McNemar p=0.1250
+      recall PHYS vs PHYS-N    discordantes 1/2  McNemar p=1.0000
+      falsos PHYS-G vs PHYS-N  discordantes 0/5  McNemar p=0.0625
+      recall PHYS-G vs PHYS-N  discordantes 0/3  McNemar p=0.2500
+   cuarto_buenas     TOL      28/30=0.93 [0.78,0.99]   28/30=0.93 [0.78,0.99]   NO alcanza 0.98
+   cuarto_buenas     CIII     28/30=0.93 [0.78,0.99]   28/30=0.93 [0.78,0.99]   NO alcanza 0.98
+   cuarto_buenas     PHYS     29/30=0.97 [0.83,1.00]   25/30=0.83 [0.65,0.94]   NO alcanza 0.98
+   cuarto_buenas     PHYS-G   30/30=1.00 [0.88,1.00]   25/30=0.83 [0.65,0.94]   NO alcanza 0.98
+   cuarto_buenas     PHYS-N   30/30=1.00 [0.88,1.00]   19/30=0.63 [0.44,0.80]   ok
+      c_neutro=0.773
+      falsos TOL vs PHYS       discordantes 5/2  McNemar p=0.4531
+      recall TOL vs PHYS       discordantes 1/2  McNemar p=1.0000
+      falsos TOL vs PHYS-N     discordantes 10/1  McNemar p=0.0117
+      recall TOL vs PHYS-N     discordantes 0/2  McNemar p=0.5000
+      falsos PHYS vs PHYS-N    discordantes 8/2  McNemar p=0.1094
+      recall PHYS vs PHYS-N    discordantes 0/1  McNemar p=1.0000
+      falsos PHYS-G vs PHYS-N  discordantes 8/2  McNemar p=0.1094
+      recall PHYS-G vs PHYS-N  discordantes 0/0  McNemar p=1.0000
+   cuarto_buenas_3d  TOL      28/30=0.93 [0.78,0.99]   28/30=0.93 [0.78,0.99]   NO alcanza 0.98
+   cuarto_buenas_3d  CIII     28/30=0.93 [0.78,0.99]   28/30=0.93 [0.78,0.99]   NO alcanza 0.98
+   cuarto_buenas_3d  PHYS     24/30=0.80 [0.61,0.92]   29/30=0.97 [0.83,1.00]   NO alcanza 0.98
+   cuarto_buenas_3d  PHYS-G   30/30=1.00 [0.88,1.00]   26/30=0.87 [0.69,0.96]   NO alcanza 0.98
+   cuarto_buenas_3d  PHYS-N   30/30=1.00 [0.88,1.00]   20/30=0.67 [0.47,0.83]   ok
+      c_neutro=0.772
+      falsos TOL vs PHYS       discordantes 1/2  McNemar p=1.0000
+      recall TOL vs PHYS       discordantes 5/1  McNemar p=0.2188
+      falsos TOL vs PHYS-N     discordantes 9/1  McNemar p=0.0215
+      recall TOL vs PHYS-N     discordantes 0/2  McNemar p=0.5000
+      falsos PHYS vs PHYS-N    discordantes 10/1  McNemar p=0.0117
+      recall PHYS vs PHYS-N    discordantes 0/6  McNemar p=0.0312
+      falsos PHYS-G vs PHYS-N  discordantes 8/2  McNemar p=0.1094
+      recall PHYS-G vs PHYS-N  discordantes 0/0  McNemar p=1.0000
+   ninguna_buena_3d  TOL      28/30=0.93 [0.78,0.99]   28/30=0.93 [0.78,0.99]   NO alcanza 0.98
+   ninguna_buena_3d  CIII     28/30=0.93 [0.78,0.99]   28/30=0.93 [0.78,0.99]   NO alcanza 0.98
+   ninguna_buena_3d  PHYS     18/30=0.60 [0.41,0.77]   29/30=0.97 [0.83,1.00]   NO alcanza 0.98
+   ninguna_buena_3d  PHYS-G   28/30=0.93 [0.78,0.99]   28/30=0.93 [0.78,0.99]   NO alcanza 0.98
+   ninguna_buena_3d  PHYS-N   28/30=0.93 [0.78,0.99]   28/30=0.93 [0.78,0.99]   NO alcanza 0.98
+      c_neutro=1.000
+      falsos TOL vs PHYS       discordantes 1/2  McNemar p=1.0000
+      recall TOL vs PHYS       discordantes 11/1  McNemar p=0.0063
+      falsos TOL vs PHYS-N     discordantes 0/0  McNemar p=1.0000
+      recall TOL vs PHYS-N     discordantes 0/0  McNemar p=1.0000
+      falsos PHYS vs PHYS-N    discordantes 2/1  McNemar p=1.0000
+      recall PHYS vs PHYS-N    discordantes 1/11  McNemar p=0.0063
+      falsos PHYS-G vs PHYS-N  discordantes 0/0  McNemar p=1.0000
+      recall PHYS-G vs PHYS-N  discordantes 0/0  McNemar p=1.0000
+
+escrito task1e_replica_seed7331.json

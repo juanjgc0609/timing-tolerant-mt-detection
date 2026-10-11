@@ -1,0 +1,3 @@
+dense 4242 thin ladder_6 5 records identical (of 10): {'MT-FW+SC': 10, 'BOMP-PK+SC': 10, 'BOMP-PK-CAP+SC': 10, 'MT-FW-NOCAP+SC': 10}
+dense 8888 strong unilateral_c40 77 records identical (of 10): {'MT-FW+SC': 10, 'BOMP-PK+SC': 10, 'BOMP-PK-CAP+SC': 10, 'MT-FW-NOCAP+SC': 10}
+std 8888 strong ladder_4 101 records identical (of 10): {'MT-FW+SC': 10, 'BOMP-PK+SC': 10, 'BOMP-PK-CAP+SC': 10, 'MT-FW-NOCAP+SC': 10}

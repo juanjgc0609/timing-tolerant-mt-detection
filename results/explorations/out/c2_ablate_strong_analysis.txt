@@ -1,0 +1,16 @@
+C2 ablation STRONG regime (dense overlaps, kmax 7, nets 10-15, TAG 3002)  windows 180, events 721, networks 18
+  BOMP-PK                      recall@0.1 0.085 [0.039,0.164]   @0.25 0.190 [0.106,0.263]
+  MT-FW                        recall@0.1 0.164 [0.076,0.224]   @0.25 0.241 [0.183,0.293]
+  MT-FW-NOCAP                  recall@0.1 0.085 [0.039,0.159]   @0.25 0.183 [0.109,0.253]
+  BOMP-PK-CAP                  recall@0.1 0.144 [0.070,0.208]   @0.25 0.215 [0.151,0.282]
+  BOMP-PK-SEQ                  recall@0.1 0.085 [0.039,0.159]   @0.25 0.183 [0.109,0.253]
+  MT-FW - BOMP-PK: @0.1 +0.079 [-0.024, +0.158]   @0.25 +0.051 [-0.013, +0.133]
+  MT-FW - MT-FW-NOCAP: @0.1 +0.079 [-0.021, +0.158]   @0.25 +0.058 [-0.013, +0.137]
+  BOMP-PK-CAP - BOMP-PK: @0.1 +0.060 [-0.036, +0.135]   @0.25 +0.025 [-0.043, +0.126]
+  MT-FW - BOMP-PK-CAP: @0.1 +0.019 [-0.012, +0.056]   @0.25 +0.026 [-0.025, +0.062]
+  BOMP-PK-SEQ - BOMP-PK: @0.1 +0.000 [-0.015, +0.006]   @0.25 -0.007 [-0.040, +0.014]
+    ladder_4: BOMP-PK 0.04/0.15  MT-FW 0.11/0.14  MT-FW-NOCAP 0.04/0.15  BOMP-PK-CAP 0.10/0.14  BOMP-PK-SEQ 0.04/0.15
+    ladder_6: BOMP-PK 0.14/0.23  MT-FW 0.16/0.28  MT-FW-NOCAP 0.14/0.24  BOMP-PK-CAP 0.14/0.29  BOMP-PK-SEQ 0.14/0.24
+    unilateral_c40: BOMP-PK 0.10/0.20  MT-FW 0.17/0.33  MT-FW-NOCAP 0.10/0.19  BOMP-PK-CAP 0.17/0.29  BOMP-PK-SEQ 0.10/0.19
+s/window: {'BOMP-PK': 0.941, 'MT-FW': 0.147, 'MT-FW-NOCAP': 0.143, 'BOMP-PK-CAP': 1.025, 'BOMP-PK-SEQ': 0.935}
+MT-FW-NOCAP vs BOMP-PK-SEQ identical hit sequences: 180 / 180

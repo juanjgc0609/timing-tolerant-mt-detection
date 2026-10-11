@@ -1,0 +1,16 @@
+0 300 0 attrib_seed7171_thin_unilateral_c40_net100.json
+20 300 45 attrib_seed9393_thin_ladder_6_net101.json
+40 300 121 attrib_seed7171_thin_ladder_4_net103.json
+60 300 201 attrib_seed7171_thin_unilateral_c40_net105.json
+80 300 280 attrib_seed9393_thin_ladder_6_net106.json
+100 300 355 attrib_seed7171_thin_ladder_4_net108.json
+120 300 436 attrib_seed7171_thin_unilateral_c40_net110.json
+140 300 519 attrib_seed9393_thin_ladder_6_net111.json
+160 300 600 attrib_seed7171_thin_ladder_4_net113.json
+180 300 687 attrib_seed7171_thin_unilateral_c40_net115.json
+200 300 765 attrib_seed9393_thin_ladder_6_net116.json
+220 300 843 attrib_seed7171_thin_ladder_4_net118.json
+240 300 928 attrib_seed7171_thin_unilateral_c40_net120.json
+260 300 1010 attrib_seed9393_thin_ladder_6_net121.json
+280 300 1089 attrib_seed7171_thin_ladder_4_net123.json
+done 1165

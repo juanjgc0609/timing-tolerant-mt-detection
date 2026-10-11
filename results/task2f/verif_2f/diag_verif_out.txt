@@ -1,0 +1,42 @@
+seed 4242 pooled regimes: MT-FW - NOCAP +0.0602; NOCAP - BOMP-PK -0.0007; MT-FW - BOMP-PK +0.0595 (cap 0.25)
+   thin   kmax 7: MT-FW 0.1869/0.2887  BOMP-PK 0.1016/0.2166  diff +0.0853/+0.0722
+   thin   kmax 5: MT-FW 0.1871/0.2942  BOMP-PK 0.1037/0.2216  diff +0.0834/+0.0725
+   thin   kmax 3: MT-FW 0.1945/0.3105  BOMP-PK 0.1081/0.2353  diff +0.0864/+0.0752
+   thin   kmax 2: MT-FW 0.1919/0.3062  BOMP-PK 0.1122/0.2424  diff +0.0797/+0.0639
+   thin   kmax 1: MT-FW 0.1745/0.2099  BOMP-PK 0.1222/0.2004  diff +0.0522/+0.0095
+   thin   k=3 (1029 windows): diff +0.1066/+0.0800
+   thin   k=4 (913 windows): diff +0.0926/+0.0578
+   thin   k=5 (938 windows): diff +0.0768/+0.0665
+   thin   MT-FW+SC     first-atom score: median 63.9, p90/p10 ratio 2.13; first-atom hit rate 0.833; first-atom hit rate among top-20% scores 0.955
+   thin   BOMP-PK+SC   first-atom score: median 108.7, p90/p10 ratio 5.20; first-atom hit rate 0.795; first-atom hit rate among top-20% scores 0.835
+   strong kmax 7: MT-FW 0.1349/0.2205  BOMP-PK 0.0796/0.1695  diff +0.0553/+0.0510
+   strong kmax 5: MT-FW 0.1351/0.2235  BOMP-PK 0.0800/0.1708  diff +0.0551/+0.0527
+   strong kmax 3: MT-FW 0.1381/0.2310  BOMP-PK 0.0818/0.1765  diff +0.0564/+0.0545
+   strong kmax 2: MT-FW 0.1465/0.2374  BOMP-PK 0.0859/0.1894  diff +0.0606/+0.0480
+   strong kmax 1: MT-FW 0.1386/0.1926  BOMP-PK 0.0991/0.1796  diff +0.0395/+0.0130
+   strong k=3 (942 windows): diff +0.0545/+0.0304
+   strong k=4 (932 windows): diff +0.0542/+0.0582
+   strong k=5 (1006 windows): diff +0.0638/+0.0491
+   strong MT-FW+SC     first-atom score: median 62.9, p90/p10 ratio 2.01; first-atom hit rate 0.775; first-atom hit rate among top-20% scores 0.927
+   strong BOMP-PK+SC   first-atom score: median 101.2, p90/p10 ratio 5.02; first-atom hit rate 0.733; first-atom hit rate among top-20% scores 0.793
+seed 8888 pooled regimes: MT-FW - NOCAP +0.0593; NOCAP - BOMP-PK -0.0017; MT-FW - BOMP-PK +0.0576 (cap 0.25)
+   thin   kmax 7: MT-FW 0.1829/0.2873  BOMP-PK 0.0942/0.2130  diff +0.0887/+0.0744
+   thin   kmax 5: MT-FW 0.1846/0.2907  BOMP-PK 0.0949/0.2150  diff +0.0897/+0.0757
+   thin   kmax 3: MT-FW 0.2037/0.3212  BOMP-PK 0.1026/0.2333  diff +0.1011/+0.0879
+   thin   kmax 2: MT-FW 0.2125/0.3278  BOMP-PK 0.1073/0.2460  diff +0.1052/+0.0818
+   thin   kmax 1: MT-FW 0.1852/0.2127  BOMP-PK 0.1140/0.2003  diff +0.0711/+0.0124
+   thin   k=3 (992 windows): diff +0.1337/+0.1062
+   thin   k=4 (972 windows): diff +0.0661/+0.0530
+   thin   k=5 (916 windows): diff +0.0786/+0.0651
+   thin   MT-FW+SC     first-atom score: median 65.6, p90/p10 ratio 2.11; first-atom hit rate 0.845; first-atom hit rate among top-20% scores 0.958
+   thin   BOMP-PK+SC   first-atom score: median 112.9, p90/p10 ratio 5.47; first-atom hit rate 0.796; first-atom hit rate among top-20% scores 0.818
+   strong kmax 7: MT-FW 0.1304/0.2200  BOMP-PK 0.0704/0.1775  diff +0.0600/+0.0425
+   strong kmax 5: MT-FW 0.1303/0.2209  BOMP-PK 0.0703/0.1794  diff +0.0600/+0.0415
+   strong kmax 3: MT-FW 0.1334/0.2331  BOMP-PK 0.0754/0.1891  diff +0.0580/+0.0440
+   strong kmax 2: MT-FW 0.1401/0.2342  BOMP-PK 0.0794/0.2011  diff +0.0608/+0.0331
+   strong kmax 1: MT-FW 0.1316/0.1899  BOMP-PK 0.0988/0.1826  diff +0.0328/+0.0074
+   strong k=3 (961 windows): diff +0.0746/+0.0441
+   strong k=4 (926 windows): diff +0.0578/+0.0413
+   strong k=5 (993 windows): diff +0.0540/+0.0475
+   strong MT-FW+SC     first-atom score: median 63.9, p90/p10 ratio 1.98; first-atom hit rate 0.762; first-atom hit rate among top-20% scores 0.898
+   strong BOMP-PK+SC   first-atom score: median 109.1, p90/p10 ratio 5.12; first-atom hit rate 0.740; first-atom hit rate among top-20% scores 0.786

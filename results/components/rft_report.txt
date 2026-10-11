@@ -1,0 +1,449 @@
+RANDOM-FIELD THRESHOLD FOR THE MAXIMUM OF THE MOMENT-TENSOR CERTIFICATE - Component A
+Code: rft_threshold.py (null_max_samples, fast_field, Marginal, roughness, lkc_box, ec_density_chi2,
+eec_threshold, eec_time_threshold, bonferroni_threshold, gev_threshold, conformal_threshold, validate,
+selftest_eec; `python rft_threshold.py [out.txt]` reruns everything, about 6 min on one core)
+======================================================================================================
+
+SET-UP
+* Statistic T(theta) = ||Q(theta)^T v(theta)||^2 / 2 exactly as fields_x (WAVE-MT) and fw_record (first
+  Frank-Wolfe score), computed by a vectorised fast_field (max |difference| to fields_x 5e-14).
+  M = max over 675 nodes x 31 origin times = 20,925 hypotheses.  In an empty window the MT-FW catalogue at
+  threshold u is non-empty iff M > u, so alpha = P(M > u) is the per-window false-alarm probability.
+* Cells: random 4, random 6, one-sided 8 stations (task1r_fair.SCEN).  Two network settings: 'fixed' (one
+  network, make_network(kind, n, 25999), what a real deployment sees) and 'per_window' (a new network per
+  window, the task1x/1y protocol).  Pure Gaussian noise = generate_y with no source and no clutter.
+  Calibration: 300 windows (seed stream 100000); held-out test: 300 windows (seed stream 200000); clutter
+  (fixed networks): 35 pulses of amplitude 0.35 or 1.75, 300 calibration + 300 test windows each, separate
+  seed streams.  In total 7,200 noise windows.
+* Yardstick.  The naive Clopper-Pearson interval of the realized rate ignores the randomness of the
+  calibration set.  For an EXACTLY calibrated split-conformal threshold with n_cal = n_test = 300 the realized
+  rate is beta-binomial, with 95% predictive band [0.00, 0.03], [0.02, 0.09], [0.057, 0.15], [0.18, 0.32] at
+  alpha = 0.01, 0.05, 0.10, 0.25.  Both checks are reported; the band is the fair one.
+
+1. MARGINAL OF T AT A SINGLE HYPOTHESIS (i)
+  2T would be chi2_6 if v were white Gaussian without selection.  It is not: the max-energy sample of a
+  9-sample window of narrow-band matched-filtered noise inflates each block.  At single hypotheses and pooled,
+  mean(2T) = 12.6-13.5 (chi2_6: 6), var = 35-50 (12), q.99 = 29.9-34.5 (16.8), q.999 = 33-49 (22.5);
+  KS distance to chi2_6 = 0.52-0.58.  A scaled chi-square fitted by moments, 2T ~ c chi2_k with c = 1.3-1.9 and
+  k = 7.1-9.6, fits the bulk (KS 0.010-0.045) but overstates the upper tail (at the pooled 0.999 quantile it
+  gives ~2x the exceedance).  Above its 0.999 quantile the tail is T ~ (0.54-0.68) chi2_(10.6-14.0), i.e. lighter
+  than the moment fit (a Gumbel-like tail from the max-of-window selection).  The cap (energy 36) is never
+  reached by Gaussian noise.  The marginal hardly depends on the network (pooled 2T mean 13.0-13.1 in all
+  cells).  The rft code therefore uses the pooled empirical CDF with a chi-square tail fitted above the
+  0.999 quantile, and maps T to its chi2_6 equivalent T* = F_chi2_6^{-1}(F_T(T)).
+
+2. EXPECTED EULER CHARACTERISTIC (ii)
+  * The EC densities rho_0..rho_4 of a chi2_6 field (Worsley 1994) and the LKC of a box are verified by
+    simulation of a smooth chi2_6 field on a 10^4 lattice: EEC 7.007 / 4.664 / 1.874 against mean lattice EC
+    6.98 / 4.62 / 1.70 (+-0.26 / 0.18 / 0.12) at u = 12 / 16 / 20, and EEC 0.158 against P(max > 28) = 0.12.
+    rho_1 also matches the Rice upcrossing formula.  The machinery is correct.
+  * Roughness of the certificate field (lag-1 correlation of T*): x 0.13-0.20, y 0.09-0.18, z 0.09-0.21
+    (3 km, 3 km, 4 km steps), tau 0.51-0.63 (0.1 s step).  Adjacent nodes are nearly independent, because
+    moving 3 km shifts S times by up to 1 s against a +-0.25 s window.  Lambda_tautau = 46-68 s^-2; the only
+    sizeable off-diagonal terms are z-tau (correlation +0.25-0.27) and, in the one-sided network, x-tau
+    (-0.17 to -0.20).
+  * LKC from roughness: L4 = 1.6-3.1 x 10^4, more than the 20,925 lattice points.  The continuum field has
+    far more "room" for excursions than the lattice.  Measured on the data, the effective number of independent
+    hypotheses (alpha / P(T > u_conformal) at alpha = 0.05) is 8,700-19,000; the continuum EEC implies
+    330,000-640,000.
+  * Result: EEC with roughness-based LKC (EEC-rough) overestimates P(M > u) by 20-60x.  Thresholds are
+    5-9 units too high and the realized false-alarm rate is ~0.002 when 0.25 is requested (ratio 0.01).
+    Two lattice-aware variants are still conservative by ~4x: EEC-time (union bound over nodes x 1-D EEC /
+    Rice in tau) and EEC-ECfit (LKC fitted to the empirical lattice EC curve, then extrapolated).  Realized
+    0.012/0.029/0.074 for 0.05/0.10/0.25.  Bonferroni with the empirical marginal is the least conservative
+    analytic predictor (realized 0.021/0.047/0.108; ~0.43 of nominal) and is a valid upper bound.
+
+3. EXTREME-VALUE AND CONFORMAL CALIBRATION (iii), Gaussian noise, 300 held-out windows per setting
+  pooled mean realized rate at alpha = 0.01 / 0.05 / 0.10 / 0.25 over the 6 (cell, network) settings:
+      EEC-rough   0.000 / 0.001 / 0.001 / 0.002    inside predictive band  6/24 (only alpha=0.01 cells)
+      EEC-time    0.001 / 0.012 / 0.029 / 0.074                            8/24
+      EEC-ECfit   0.001 / 0.012 / 0.028 / 0.075                            8/24
+      Bonferroni  0.003 / 0.021 / 0.047 / 0.108                           10/24
+      GEV         0.006 / 0.042 / 0.094 / 0.237                           24/24
+      Gumbel      0.003 / 0.032 / 0.087 / 0.238                           24/24
+      conformal   0.007 / 0.037 / 0.095 / 0.239                           24/24
+  Held-out maxima: mean 22.5 (4 st.), 25.0 (6 st.), 26.4 (8 st.), sd 2.2-2.6.  Pooling calibration windows
+  over random networks ('per_window') works as well as a fixed network: the maximum depends on the number
+  of stations more than on their positions.
+
+4. CLUTTER (35 pulses, no source; fixed networks)
+  * Weak clutter (0.35) barely moves the maximum (mean +0.0 to +0.3).  Gaussian-calibrated GEV / conformal
+    thresholds stay inside the band (12/12 each), with a slight excess at small alpha: pooled realized
+    GEV 0.016/0.050/0.115/0.261, conformal 0.015/0.034/0.127/0.264 for 0.01/0.05/0.10/0.25.
+  * Strong clutter (1.75; visible, picked transients) shifts the maximum by +8 to +9 (mean 31.6/33.8/34.3
+    against 22.5/25.0/26.4) and doubles its sd (4.2-4.9).  EVERY threshold calibrated on Gaussian noise fails,
+    including the random-field ones: realized 0.60/0.78/0.90/0.96 (conformal) and 0.14/0.27/0.35/0.47 (the
+    very conservative EEC-rough) for 0.01/0.05/0.10/0.25.  That is 17-22x nominal for the empirical ones.
+  * Re-calibrating on separate clutter windows with the same clutter law restores calibration for the
+    empirical predictors: GEV 0.005/0.056/0.111/0.263, conformal 0.004/0.062/0.102/0.281, Gumbel
+    0.002/0.043/0.092/0.263; 12/12 inside the band for each.  The alpha = 0.05 threshold rises from ~28-31 to
+    ~39-43.  Re-estimating marginal and roughness on clutter windows does not rescue the EEC: still
+    conservative, by 3-5x (EEC-time, EEC-ECfit) to >50x (EEC-rough).
+
+FRANK ASSESSMENT
+  * Calibrated: split-conformal (finite-sample guarantee P(M > u) <= alpha under exchangeability) and the GEV
+    fit to window maxima (smooth, and it can extrapolate below 1/n_cal), both from ~300 noise-only windows of
+    the SAME network and noise/clutter regime.  Gumbel is calibrated but slightly conservative at small alpha.
+  * Not calibrated: the random-field predictors.  They are conservative (safe) on Gaussian noise, by 20-60x in
+    probability for the continuum EEC with roughness-based LKC and ~2-4x for the lattice-aware variants and
+    Bonferroni.  They are anti-conservative by an order of magnitude once non-Gaussian clutter is present.
+  * The claim of Section 7.5 point 4, that the EEC of a chi2_6 field "fixes the false-alarm rate per window
+    before any data are seen", is NOT supported, for three separate reasons:
+      (1) The marginal is not chi2_6 (the max-energy selection doubles the mean and changes the tail shape);
+          a data-estimated quantile transform is needed.
+      (2) The field decorrelates within one grid step in space, so the continuum EEC counts 15-30x more
+          effective tests than the lattice has.
+      (3) Non-Gaussian transients shift the maximum far beyond any Gaussian prediction.
+    What survives: the EEC/Bonferroni bound as a conservative prior threshold, and the empirical correction
+    (GEV or conformal on noise-only windows) that the proposal already names as the fallback.  That fallback
+    is the primary method, and it must be re-run whenever the noise/clutter regime changes (the correction is
+    only as good as the exchangeability of calibration and operational windows).
+  * Caveats: 300 calibration + 300 test windows per setting (alpha = 0.01 is barely resolved: 3 expected
+    exceedances); one fixed network per cell; synthetic white Gaussian noise; clutter law identical in
+    calibration and test.
+
+------------------------------------------------------------------------------------------------------
+TABLES (generated by rft_threshold.py; '*' marks the naive Clopper-Pearson check, see the yardstick above)
+------------------------------------------------------------------------------------------------------
+RANDOM-FIELD THRESHOLD FOR THE MAXIMUM OF THE MOMENT-TENSOR CERTIFICATE (Component A) - rft_threshold.py
+======================================================================================================================
+Statistic T(theta) = ||Q^T v||^2 / 2 (fields_x WAVE-MT, fw_record score); M = max over 675 nodes x 31 taus = 20925 hypotheses.
+fast_field vs task1x_mtglrt.fields_x (3 windows): max |difference| = 4.97e-14
+
+0. SELF-TEST of the chi2_6 EC densities and the LKC of a box: smooth chi2_6 field on a 10^4 lattice
+   (Gaussian kernel sd 2.0 voxels, 100 realisations; LKC = [1.0, 12.7, 60.8, 128.9, 102.5])
+       u      EEC    mean lattice EC  P(max>u)
+     8.0    0.141      0.610 +- 0.396     1.000
+    12.0    7.007      6.980 +- 0.263     1.000
+    16.0    4.664      4.620 +- 0.178     1.000
+    20.0    1.874      1.700 +- 0.124     0.840
+    24.0    0.587      0.380 +- 0.066     0.320
+    28.0    0.158      0.140 +- 0.040     0.120
+
+----------------------------------------------------------------------------------------------------------------------
+SCENARIO ladder_4 (random, 4 stations), network fixed (make_network('random', 4, seed=25999))
+(i) marginal of 2T (chi2_6 if v were white Gaussian without selection):
+    set                          mean     var    q.5    q.9   q.99  q.999 KS vs chi2_6  moment fit c*chi2_k KS vs fit
+    chi2_6 reference             6.00   12.00   5.35  10.64  16.81  22.46
+    hypothesis 1 (n=600)        12.99   40.69  12.18  21.42  32.97  36.95        0.546        c=1.57 k=8.29     0.031
+    hypothesis 2 (n=600)        12.94   34.73  12.10  20.79  31.04  33.08        0.577        c=1.34 k=9.64     0.031
+    hypothesis 3 (n=600)        12.67   37.23  11.62  21.01  29.93  37.51        0.529        c=1.47 k=8.62     0.022
+    pooled (6277500 values)     13.09   38.94  12.29  21.49  30.75  38.58        0.545        c=1.49 k=8.80     0.014
+    tail model of T above its 0.999 quantile (19.35): T ~ 0.536 chi2_13.99; P(T > 20) pooled = 6.56e-04
+(ii) EEC: lag-1 correlation of the chi2-equivalent field along x, y, z, tau: 0.197, 0.168, 0.213, 0.629
+     Lambda (km^-2, km^-1 s^-1, s^-2) diagonal: 0.181, 0.198, 0.0967, 46.3; correlation of the off-diagonals: +0.02, +0.04, +0.05, +0.06, +0.06, +0.26
+     LKC from roughness L0..L4: 1, 59.4, 1.22e+03, 9.4e+03, 1.63e+04
+     LKC fitted to the lattice EC curve: 0, 0, 7.17e+03, 0, 0
+     effective number of independent hypotheses at alpha = 0.05: alpha / P(T > u_conformal) = 15170 (lattice 20925, nodes 675); continuum EEC(u*)/P(T* > u*) at that u: 343756
+     calibration maxima: mean 22.74, sd 2.46; held-out: mean 22.51, sd 2.33 (n = 300 / 300)
+
+   (iii) Gaussian noise: predicted threshold u and realized P(M > u) on 300 held-out windows
+   predictor                         alpha=0.01                      alpha=0.05                       alpha=0.1                      alpha=0.25
+                          u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]
+   EEC-rough        34.93 0.000 [0.000,0.012]       32.54 0.003 [0.000,0.018] *     31.49 0.003 [0.000,0.018] *     30.07 0.003 [0.000,0.018] *
+   EEC-time         30.86 0.003 [0.000,0.018]       28.61 0.013 [0.004,0.034] *     27.62 0.020 [0.007,0.043] *     26.30 0.077 [0.049,0.113] *
+   EEC-ECfit        31.05 0.003 [0.000,0.018]       28.71 0.013 [0.004,0.034] *     27.68 0.020 [0.007,0.043] *     26.29 0.077 [0.049,0.113] *
+   Bonferroni       30.27 0.003 [0.000,0.018]       28.08 0.013 [0.004,0.034] *     27.12 0.043 [0.023,0.073] *     25.85 0.083 [0.055,0.121] *
+   GEV              29.91 0.003 [0.000,0.018]       27.30 0.030 [0.014,0.056]       26.05 0.080 [0.052,0.117]       24.19 0.220 [0.174,0.271]  
+   Gumbel           31.14 0.003 [0.000,0.018]       27.76 0.020 [0.007,0.043] *     26.27 0.077 [0.049,0.113]       24.18 0.223 [0.177,0.275]  
+   conformal        29.91 0.003 [0.000,0.018]       27.64 0.020 [0.007,0.043] *     25.79 0.083 [0.055,0.121]       24.02 0.237 [0.190,0.289]  
+   ('*' = nominal alpha outside the 95% Clopper-Pearson interval of the realized rate)
+
+   CLUTTER amplitude 0.35 (35 pulses, no source): maxima mean 22.79 sd 2.46 (Gaussian 22.51 / 2.33); clutter-cal LKC roughness 1, 59.2, 1.21e+03, 9.3e+03, 1.61e+04
+      thresholds calibrated on GAUSSIAN noise, applied to clutter windows:
+   predictor                         alpha=0.01                      alpha=0.05                       alpha=0.1                      alpha=0.25
+                          u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]
+   EEC-rough        34.93 0.000 [0.000,0.012]       32.54 0.000 [0.000,0.012] *     31.49 0.003 [0.000,0.018] *     30.07 0.007 [0.001,0.024] *
+   EEC-time         30.86 0.003 [0.000,0.018]       28.61 0.013 [0.004,0.034] *     27.62 0.033 [0.016,0.060] *     26.30 0.087 [0.057,0.124] *
+   EEC-ECfit        31.05 0.003 [0.000,0.018]       28.71 0.013 [0.004,0.034] *     27.68 0.030 [0.014,0.056] *     26.29 0.087 [0.057,0.124] *
+   Bonferroni       30.27 0.007 [0.001,0.024]       28.08 0.027 [0.012,0.052]       27.12 0.057 [0.033,0.089] *     25.85 0.127 [0.091,0.170] *
+   GEV              29.91 0.010 [0.002,0.029]       27.30 0.047 [0.026,0.077]       26.05 0.113 [0.080,0.155]       24.19 0.277 [0.227,0.331]  
+   Gumbel           31.14 0.003 [0.000,0.018]       27.76 0.030 [0.014,0.056]       26.27 0.093 [0.063,0.132]       24.18 0.277 [0.227,0.331]  
+   conformal        29.91 0.010 [0.002,0.029]       27.64 0.030 [0.014,0.056]       25.79 0.127 [0.091,0.170]       24.02 0.293 [0.242,0.348]  
+   ('*' = nominal alpha outside the 95% Clopper-Pearson interval of the realized rate)
+      thresholds re-calibrated on separate CLUTTER windows (same clutter law):
+   predictor                         alpha=0.01                      alpha=0.05                       alpha=0.1                      alpha=0.25
+                          u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]
+   EEC-rough        36.40 0.000 [0.000,0.012]       33.76 0.000 [0.000,0.012] *     32.59 0.000 [0.000,0.012] *     31.02 0.003 [0.000,0.018] *
+   EEC-time         31.91 0.003 [0.000,0.018]       29.43 0.010 [0.002,0.029] *     28.35 0.020 [0.007,0.043] *     26.90 0.063 [0.039,0.097] *
+   EEC-ECfit        32.11 0.000 [0.000,0.012]       29.54 0.010 [0.002,0.029] *     28.41 0.020 [0.007,0.043] *     26.88 0.063 [0.039,0.097] *
+   Bonferroni       31.27 0.003 [0.000,0.018]       28.86 0.013 [0.004,0.034] *     27.81 0.030 [0.014,0.056] *     26.41 0.080 [0.052,0.117] *
+   GEV              31.30 0.003 [0.000,0.018]       27.82 0.030 [0.014,0.056]       26.30 0.087 [0.057,0.124]       24.21 0.273 [0.224,0.328]  
+   Gumbel           31.09 0.003 [0.000,0.018]       27.75 0.030 [0.014,0.056]       26.27 0.087 [0.057,0.124]       24.21 0.273 [0.224,0.328]  
+   conformal        31.77 0.003 [0.000,0.018]       28.18 0.020 [0.007,0.043] *     25.96 0.113 [0.080,0.155]       23.92 0.293 [0.242,0.348]  
+   ('*' = nominal alpha outside the 95% Clopper-Pearson interval of the realized rate)
+
+   CLUTTER amplitude 1.75 (35 pulses, no source): maxima mean 31.58 sd 4.88 (Gaussian 22.51 / 2.33); clutter-cal LKC roughness 1, 53.9, 1e+03, 7.04e+03, 1.13e+04
+      thresholds calibrated on GAUSSIAN noise, applied to clutter windows:
+   predictor                         alpha=0.01                      alpha=0.05                       alpha=0.1                      alpha=0.25
+                          u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]
+   EEC-rough        34.93 0.237 [0.190,0.289] *     32.54 0.380 [0.325,0.438] *     31.49 0.470 [0.412,0.528] *     30.07 0.573 [0.515,0.630] *
+   EEC-time         30.86 0.533 [0.475,0.591] *     28.61 0.697 [0.641,0.748] *     27.62 0.763 [0.711,0.810] *     26.30 0.880 [0.838,0.915] *
+   EEC-ECfit        31.05 0.510 [0.452,0.568] *     28.71 0.690 [0.634,0.742] *     27.68 0.760 [0.708,0.807] *     26.29 0.880 [0.838,0.915] *
+   Bonferroni       30.27 0.570 [0.512,0.627] *     28.08 0.737 [0.683,0.786] *     27.12 0.797 [0.747,0.841] *     25.85 0.893 [0.853,0.926] *
+   GEV              29.91 0.587 [0.529,0.643] *     27.30 0.787 [0.736,0.832] *     26.05 0.883 [0.841,0.917] *     24.19 0.957 [0.927,0.977] *
+   Gumbel           31.14 0.507 [0.449,0.565] *     27.76 0.757 [0.704,0.804] *     26.27 0.880 [0.838,0.915] *     24.18 0.957 [0.927,0.977] *
+   conformal        29.91 0.587 [0.529,0.643] *     27.64 0.763 [0.711,0.810] *     25.79 0.897 [0.857,0.929] *     24.02 0.957 [0.927,0.977] *
+   ('*' = nominal alpha outside the 95% Clopper-Pearson interval of the realized rate)
+      thresholds re-calibrated on separate CLUTTER windows (same clutter law):
+   predictor                         alpha=0.01                      alpha=0.05                       alpha=0.1                      alpha=0.25
+                          u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]
+   EEC-rough        52.69 0.000 [0.000,0.012]       48.49 0.003 [0.000,0.018] *     46.64 0.003 [0.000,0.018] *     44.16 0.010 [0.002,0.029] *
+   EEC-time         46.23 0.003 [0.000,0.018]       42.33 0.023 [0.009,0.047] *     40.62 0.053 [0.031,0.085] *     38.35 0.083 [0.055,0.121] *
+   EEC-ECfit        46.35 0.003 [0.000,0.018]       42.26 0.023 [0.009,0.047] *     40.47 0.053 [0.031,0.085] *     38.06 0.097 [0.066,0.136] *
+   Bonferroni       45.46 0.003 [0.000,0.018]       41.68 0.030 [0.014,0.056]       40.03 0.053 [0.031,0.085] *     37.84 0.117 [0.083,0.159] *
+   GEV              43.36 0.010 [0.002,0.029]       39.28 0.070 [0.044,0.105]       37.20 0.140 [0.103,0.184] *     33.98 0.293 [0.242,0.348]  
+   Gumbel           46.89 0.003 [0.000,0.018]       40.60 0.053 [0.031,0.085]       37.82 0.117 [0.083,0.159]       33.94 0.293 [0.242,0.348]  
+   conformal        45.36 0.003 [0.000,0.018]       38.78 0.077 [0.049,0.113]       37.60 0.123 [0.088,0.166]       33.90 0.297 [0.246,0.352]  
+   ('*' = nominal alpha outside the 95% Clopper-Pearson interval of the realized rate)
+
+----------------------------------------------------------------------------------------------------------------------
+SCENARIO ladder_4 (random, 4 stations), network per_window (a new network per window, as in task1x/1y)
+(i) marginal of 2T (chi2_6 if v were white Gaussian without selection):
+    set                          mean     var    q.5    q.9   q.99  q.999 KS vs chi2_6  moment fit c*chi2_k KS vs fit
+    chi2_6 reference             6.00   12.00   5.35  10.64  16.81  22.46
+    hypothesis 1 (n=600)        12.69   38.29  11.64  21.00  32.54  35.69        0.546        c=1.51 k=8.42     0.025
+    hypothesis 2 (n=600)        12.80   37.46  12.22  21.13  28.48  33.54        0.529        c=1.46 k=8.75     0.042
+    hypothesis 3 (n=600)        12.79   38.58  11.91  20.98  29.85  36.46        0.534        c=1.51 k=8.47     0.038
+    pooled (6277500 values)     12.97   38.79  12.18  21.34  30.72  38.64        0.538        c=1.50 k=8.68     0.014
+    tail model of T above its 0.999 quantile (19.32): T ~ 0.557 chi2_13.10; P(T > 20) pooled = 6.51e-04
+(ii) EEC: lag-1 correlation of the chi2-equivalent field along x, y, z, tau: 0.177, 0.179, 0.214, 0.614
+     Lambda (km^-2, km^-1 s^-1, s^-2) diagonal: 0.192, 0.191, 0.0965, 48.7; correlation of the off-diagonals: -0.00, -0.01, -0.00, -0.00, +0.00, +0.27
+     LKC from roughness L0..L4: 1, 60.2, 1.25e+03, 9.76e+03, 1.7e+04
+     LKC fitted to the lattice EC curve: 0, 338, 6.89e+03, 0, 0
+     effective number of independent hypotheses at alpha = 0.05: alpha / P(T > u_conformal) = 9455 (lattice 20925, nodes 675); continuum EEC(u*)/P(T* > u*) at that u: 330200
+     calibration maxima: mean 22.68, sd 2.31; held-out: mean 22.49, sd 2.44 (n = 300 / 300)
+
+   (iii) Gaussian noise: predicted threshold u and realized P(M > u) on 300 held-out windows
+   predictor                         alpha=0.01                      alpha=0.05                       alpha=0.1                      alpha=0.25
+                          u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]
+   EEC-rough        35.37 0.000 [0.000,0.012]       32.91 0.000 [0.000,0.012] *     31.83 0.000 [0.000,0.012] *     30.37 0.000 [0.000,0.012] *
+   EEC-time         31.16 0.000 [0.000,0.012]       28.85 0.007 [0.001,0.024] *     27.83 0.033 [0.016,0.060] *     26.48 0.063 [0.039,0.097] *
+   EEC-ECfit        31.29 0.000 [0.000,0.012]       28.89 0.007 [0.001,0.024] *     27.83 0.033 [0.016,0.060] *     26.41 0.067 [0.041,0.101] *
+   Bonferroni       30.51 0.000 [0.000,0.012]       28.27 0.020 [0.007,0.043] *     27.29 0.033 [0.016,0.060] *     25.98 0.107 [0.074,0.147] *
+   GEV              29.49 0.000 [0.000,0.012]       26.93 0.050 [0.028,0.081]       25.73 0.113 [0.080,0.155]       23.98 0.260 [0.211,0.314]  
+   Gumbel           30.31 0.000 [0.000,0.012]       27.23 0.033 [0.016,0.060]       25.87 0.113 [0.080,0.155]       23.97 0.260 [0.211,0.314]  
+   conformal        30.42 0.000 [0.000,0.012]       27.14 0.037 [0.018,0.065]       25.74 0.113 [0.080,0.155]       23.97 0.260 [0.211,0.314]  
+   ('*' = nominal alpha outside the 95% Clopper-Pearson interval of the realized rate)
+
+----------------------------------------------------------------------------------------------------------------------
+SCENARIO ladder_6 (random, 6 stations), network fixed (make_network('random', 6, seed=25999))
+(i) marginal of 2T (chi2_6 if v were white Gaussian without selection):
+    set                          mean     var    q.5    q.9   q.99  q.999 KS vs chi2_6  moment fit c*chi2_k KS vs fit
+    chi2_6 reference             6.00   12.00   5.35  10.64  16.81  22.46
+    hypothesis 1 (n=600)        13.45   48.59  12.32  23.22  31.64  38.14        0.539        c=1.81 k=7.45     0.030
+    hypothesis 2 (n=600)        12.57   40.34  11.56  21.01  31.29  38.79        0.526        c=1.60 k=7.84     0.023
+    hypothesis 3 (n=600)        12.81   40.42  11.98  21.10  30.69  41.20        0.521        c=1.58 k=8.12     0.029
+    pooled (6277500 values)     13.04   43.55  12.07  21.96  32.24  40.99        0.525        c=1.67 k=7.81     0.011
+    tail model of T above its 0.999 quantile (20.48): T ~ 0.669 chi2_10.61; P(T > 20) pooled = 1.30e-03
+(ii) EEC: lag-1 correlation of the chi2-equivalent field along x, y, z, tau: 0.164, 0.107, 0.126, 0.552
+     Lambda (km^-2, km^-1 s^-1, s^-2) diagonal: 0.201, 0.249, 0.13, 59.5; correlation of the off-diagonals: +0.00, -0.01, -0.00, +0.01, +0.00, +0.25
+     LKC from roughness L0..L4: 1, 65.8, 1.49e+03, 1.28e+04, 2.55e+04
+     LKC fitted to the lattice EC curve: 0, 1.54e+03, 7.42e+03, 0, 0
+     effective number of independent hypotheses at alpha = 0.05: alpha / P(T > u_conformal) = 11265 (lattice 20925, nodes 675); continuum EEC(u*)/P(T* > u*) at that u: 494015
+     calibration maxima: mean 25.20, sd 2.29; held-out: mean 24.96, sd 2.23 (n = 300 / 300)
+
+   (iii) Gaussian noise: predicted threshold u and realized P(M > u) on 300 held-out windows
+   predictor                         alpha=0.01                      alpha=0.05                       alpha=0.1                      alpha=0.25
+                          u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]
+   EEC-rough        39.66 0.000 [0.000,0.012]       36.81 0.000 [0.000,0.012] *     35.56 0.003 [0.000,0.018] *     33.89 0.003 [0.000,0.018] *
+   EEC-time         34.26 0.003 [0.000,0.018]       31.59 0.007 [0.001,0.024] *     30.42 0.013 [0.004,0.034] *     28.85 0.047 [0.026,0.077] *
+   EEC-ECfit        34.49 0.003 [0.000,0.018]       31.73 0.007 [0.001,0.024] *     30.51 0.013 [0.004,0.034] *     28.88 0.047 [0.026,0.077] *
+   Bonferroni       33.35 0.003 [0.000,0.018]       30.75 0.007 [0.001,0.024] *     29.62 0.027 [0.012,0.052] *     28.11 0.083 [0.055,0.121] *
+   GEV              31.68 0.007 [0.001,0.024]       29.37 0.027 [0.012,0.052]       28.25 0.070 [0.044,0.105]       26.55 0.207 [0.162,0.257]  
+   Gumbel           33.05 0.003 [0.000,0.018]       29.89 0.027 [0.012,0.052]       28.49 0.057 [0.033,0.089] *     26.55 0.207 [0.162,0.257]  
+   conformal        32.20 0.007 [0.001,0.024]       29.74 0.027 [0.012,0.052]       28.19 0.077 [0.049,0.113]       26.52 0.213 [0.168,0.264]  
+   ('*' = nominal alpha outside the 95% Clopper-Pearson interval of the realized rate)
+
+   CLUTTER amplitude 0.35 (35 pulses, no source): maxima mean 24.98 sd 2.38 (Gaussian 24.96 / 2.23); clutter-cal LKC roughness 1, 65.8, 1.5e+03, 1.29e+04, 2.55e+04
+      thresholds calibrated on GAUSSIAN noise, applied to clutter windows:
+   predictor                         alpha=0.01                      alpha=0.05                       alpha=0.1                      alpha=0.25
+                          u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]
+   EEC-rough        39.66 0.000 [0.000,0.012]       36.81 0.000 [0.000,0.012] *     35.56 0.000 [0.000,0.012] *     33.89 0.000 [0.000,0.012] *
+   EEC-time         34.26 0.000 [0.000,0.012]       31.59 0.010 [0.002,0.029] *     30.42 0.020 [0.007,0.043] *     28.85 0.057 [0.033,0.089] *
+   EEC-ECfit        34.49 0.000 [0.000,0.012]       31.73 0.010 [0.002,0.029] *     30.51 0.020 [0.007,0.043] *     28.88 0.057 [0.033,0.089] *
+   Bonferroni       33.35 0.000 [0.000,0.012]       30.75 0.017 [0.005,0.038] *     29.62 0.037 [0.018,0.065] *     28.11 0.110 [0.077,0.151] *
+   GEV              31.68 0.010 [0.002,0.029]       29.37 0.040 [0.021,0.069]       28.25 0.103 [0.071,0.143]       26.55 0.233 [0.187,0.285]  
+   Gumbel           33.05 0.003 [0.000,0.018]       29.89 0.033 [0.016,0.060]       28.49 0.087 [0.057,0.124]       26.55 0.233 [0.187,0.285]  
+   conformal        32.20 0.007 [0.001,0.024]       29.74 0.033 [0.016,0.060]       28.19 0.103 [0.071,0.143]       26.52 0.233 [0.187,0.285]  
+   ('*' = nominal alpha outside the 95% Clopper-Pearson interval of the realized rate)
+      thresholds re-calibrated on separate CLUTTER windows (same clutter law):
+   predictor                         alpha=0.01                      alpha=0.05                       alpha=0.1                      alpha=0.25
+                          u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]
+   EEC-rough        39.29 0.000 [0.000,0.012]       36.51 0.000 [0.000,0.012] *     35.28 0.000 [0.000,0.012] *     33.64 0.000 [0.000,0.012] *
+   EEC-time         34.00 0.000 [0.000,0.012]       31.38 0.013 [0.004,0.034] *     30.23 0.020 [0.007,0.043] *     28.70 0.073 [0.047,0.109] *
+   EEC-ECfit        34.22 0.000 [0.000,0.012]       31.51 0.010 [0.002,0.029] *     30.32 0.020 [0.007,0.043] *     28.72 0.073 [0.047,0.109] *
+   Bonferroni       33.11 0.000 [0.000,0.012]       30.56 0.020 [0.007,0.043] *     29.45 0.037 [0.018,0.065] *     27.96 0.113 [0.080,0.155] *
+   GEV              31.29 0.013 [0.004,0.034]       29.13 0.047 [0.026,0.077]       28.05 0.110 [0.077,0.151]       26.39 0.257 [0.208,0.310]  
+   Gumbel           33.01 0.003 [0.000,0.018]       29.79 0.033 [0.016,0.060]       28.38 0.093 [0.063,0.132]       26.40 0.257 [0.208,0.310]  
+   conformal        31.88 0.010 [0.002,0.029]       29.44 0.037 [0.018,0.065]       28.08 0.110 [0.077,0.151]       26.61 0.220 [0.174,0.271]  
+   ('*' = nominal alpha outside the 95% Clopper-Pearson interval of the realized rate)
+
+   CLUTTER amplitude 1.75 (35 pulses, no source): maxima mean 33.75 sd 4.63 (Gaussian 24.96 / 2.23); clutter-cal LKC roughness 1, 59.9, 1.24e+03, 9.7e+03, 1.78e+04
+      thresholds calibrated on GAUSSIAN noise, applied to clutter windows:
+   predictor                         alpha=0.01                      alpha=0.05                       alpha=0.1                      alpha=0.25
+                          u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]
+   EEC-rough        39.66 0.110 [0.077,0.151] *     36.81 0.237 [0.190,0.289] *     35.56 0.320 [0.268,0.376] *     33.89 0.463 [0.406,0.522] *
+   EEC-time         34.26 0.427 [0.370,0.485] *     31.59 0.650 [0.593,0.704] *     30.42 0.747 [0.693,0.795] *     28.85 0.850 [0.804,0.888] *
+   EEC-ECfit        34.49 0.410 [0.354,0.468] *     31.73 0.643 [0.586,0.698] *     30.51 0.737 [0.683,0.786] *     28.88 0.850 [0.804,0.888] *
+   Bonferroni       33.35 0.510 [0.452,0.568] *     30.75 0.713 [0.659,0.764] *     29.62 0.810 [0.761,0.853] *     28.11 0.887 [0.845,0.920] *
+   GEV              31.68 0.650 [0.593,0.704] *     29.37 0.823 [0.775,0.865] *     28.25 0.887 [0.845,0.920] *     26.55 0.967 [0.940,0.984] *
+   Gumbel           33.05 0.537 [0.478,0.594] *     29.89 0.800 [0.750,0.844] *     28.49 0.870 [0.827,0.906] *     26.55 0.967 [0.940,0.984] *
+   conformal        32.20 0.603 [0.546,0.659] *     29.74 0.810 [0.761,0.853] *     28.19 0.887 [0.845,0.920] *     26.52 0.967 [0.940,0.984] *
+   ('*' = nominal alpha outside the 95% Clopper-Pearson interval of the realized rate)
+      thresholds re-calibrated on separate CLUTTER windows (same clutter law):
+   predictor                         alpha=0.01                      alpha=0.05                       alpha=0.1                      alpha=0.25
+                          u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]
+   EEC-rough        61.02 0.000 [0.000,0.012]       55.74 0.000 [0.000,0.012] *     53.43 0.000 [0.000,0.012] *     50.34 0.000 [0.000,0.012] *
+   EEC-time         51.91 0.000 [0.000,0.012]       47.02 0.007 [0.001,0.024] *     44.90 0.027 [0.012,0.052] *     42.08 0.053 [0.031,0.085] *
+   EEC-ECfit        51.97 0.000 [0.000,0.012]       46.90 0.010 [0.002,0.029] *     44.69 0.030 [0.014,0.056] *     41.73 0.060 [0.036,0.093] *
+   Bonferroni       50.52 0.000 [0.000,0.012]       45.79 0.013 [0.004,0.034] *     43.74 0.030 [0.014,0.056] *     41.02 0.070 [0.044,0.105] *
+   GEV              47.60 0.003 [0.000,0.018]       42.69 0.040 [0.021,0.069]       40.35 0.090 [0.060,0.128]       36.90 0.233 [0.187,0.285]  
+   Gumbel           49.63 0.000 [0.000,0.012]       43.45 0.030 [0.014,0.056]       40.72 0.077 [0.049,0.113]       36.90 0.233 [0.187,0.285]  
+   conformal        47.54 0.007 [0.001,0.024]       42.70 0.040 [0.021,0.069]       40.37 0.090 [0.060,0.128]       36.89 0.233 [0.187,0.285]  
+   ('*' = nominal alpha outside the 95% Clopper-Pearson interval of the realized rate)
+
+----------------------------------------------------------------------------------------------------------------------
+SCENARIO ladder_6 (random, 6 stations), network per_window (a new network per window, as in task1x/1y)
+(i) marginal of 2T (chi2_6 if v were white Gaussian without selection):
+    set                          mean     var    q.5    q.9   q.99  q.999 KS vs chi2_6  moment fit c*chi2_k KS vs fit
+    chi2_6 reference             6.00   12.00   5.35  10.64  16.81  22.46
+    hypothesis 1 (n=600)        12.82   42.40  12.20  21.79  30.80  38.10        0.518        c=1.65 k=7.75     0.045
+    hypothesis 2 (n=600)        12.80   40.12  12.00  21.53  29.94  38.26        0.520        c=1.57 k=8.16     0.029
+    hypothesis 3 (n=600)        13.30   49.76  12.34  23.25  34.48  43.66        0.527        c=1.87 k=7.11     0.035
+    pooled (6277500 values)     13.03   43.15  12.09  21.88  32.14  40.60        0.525        c=1.66 k=7.87     0.011
+    tail model of T above its 0.999 quantile (20.47): T ~ 0.641 chi2_11.40; P(T > 20) pooled = 1.30e-03
+(ii) EEC: lag-1 correlation of the chi2-equivalent field along x, y, z, tau: 0.139, 0.139, 0.135, 0.551
+     Lambda (km^-2, km^-1 s^-1, s^-2) diagonal: 0.219, 0.219, 0.125, 59.6; correlation of the off-diagonals: -0.00, +0.00, +0.00, -0.00, -0.00, +0.26
+     LKC from roughness L0..L4: 1, 65.3, 1.47e+03, 1.25e+04, 2.44e+04
+     LKC fitted to the lattice EC curve: 0, 1.48e+03, 7.45e+03, 0, 0
+     effective number of independent hypotheses at alpha = 0.05: alpha / P(T > u_conformal) = 12458 (lattice 20925, nodes 675); continuum EEC(u*)/P(T* > u*) at that u: 484284
+     calibration maxima: mean 25.13, sd 2.42; held-out: mean 24.90, sd 2.28 (n = 300 / 300)
+
+   (iii) Gaussian noise: predicted threshold u and realized P(M > u) on 300 held-out windows
+   predictor                         alpha=0.01                      alpha=0.05                       alpha=0.1                      alpha=0.25
+                          u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]
+   EEC-rough        39.04 0.000 [0.000,0.012]       36.29 0.000 [0.000,0.012] *     35.08 0.000 [0.000,0.012] *     33.45 0.003 [0.000,0.018] *
+   EEC-time         33.88 0.000 [0.000,0.012]       31.28 0.007 [0.001,0.024] *     30.15 0.020 [0.007,0.043] *     28.63 0.063 [0.039,0.097] *
+   EEC-ECfit        34.10 0.000 [0.000,0.012]       31.42 0.007 [0.001,0.024] *     30.24 0.017 [0.005,0.038] *     28.65 0.063 [0.039,0.097] *
+   Bonferroni       33.00 0.003 [0.000,0.018]       30.47 0.013 [0.004,0.034] *     29.37 0.033 [0.016,0.060] *     27.91 0.103 [0.071,0.143] *
+   GEV              32.22 0.003 [0.000,0.018]       29.58 0.027 [0.012,0.052]       28.33 0.080 [0.052,0.117]       26.50 0.227 [0.181,0.278]  
+   Gumbel           33.15 0.003 [0.000,0.018]       29.91 0.020 [0.007,0.043] *     28.48 0.073 [0.047,0.109]       26.48 0.230 [0.184,0.282]  
+   conformal        32.56 0.003 [0.000,0.018]       29.65 0.027 [0.012,0.052]       28.38 0.080 [0.052,0.117]       26.58 0.220 [0.174,0.271]  
+   ('*' = nominal alpha outside the 95% Clopper-Pearson interval of the realized rate)
+
+----------------------------------------------------------------------------------------------------------------------
+SCENARIO unilateral_c40 (one-sided, 8 stations), network fixed (make_network('onesided', 8, seed=25999))
+(i) marginal of 2T (chi2_6 if v were white Gaussian without selection):
+    set                          mean     var    q.5    q.9   q.99  q.999 KS vs chi2_6  moment fit c*chi2_k KS vs fit
+    chi2_6 reference             6.00   12.00   5.35  10.64  16.81  22.46
+    hypothesis 1 (n=600)        12.77   44.87  11.66  21.69  33.16  41.67        0.523        c=1.76 k=7.26     0.024
+    hypothesis 2 (n=600)        12.96   46.73  12.00  21.64  34.03  40.51        0.524        c=1.80 k=7.19     0.021
+    hypothesis 3 (n=600)        13.23   49.52  12.19  22.69  32.49  49.21        0.526        c=1.87 k=7.07     0.028
+    pooled (6277500 values)     13.06   45.67  12.02  22.18  32.87  42.07        0.519        c=1.75 k=7.47     0.010
+    tail model of T above its 0.999 quantile (20.94): T ~ 0.676 chi2_10.82; P(T > 20) pooled = 1.67e-03
+(ii) EEC: lag-1 correlation of the chi2-equivalent field along x, y, z, tau: 0.129, 0.096, 0.093, 0.509
+     Lambda (km^-2, km^-1 s^-1, s^-2) diagonal: 0.227, 0.261, 0.148, 67.5; correlation of the off-diagonals: +0.08, -0.10, -0.04, -0.17, -0.07, +0.27
+     LKC from roughness L0..L4: 1, 69.2, 1.65e+03, 1.48e+04, 3.07e+04
+     LKC fitted to the lattice EC curve: 0, 2.88e+03, 6.99e+03, 0, 0
+     effective number of independent hypotheses at alpha = 0.05: alpha / P(T > u_conformal) = 19244 (lattice 20925, nodes 675); continuum EEC(u*)/P(T* > u*) at that u: 644087
+     calibration maxima: mean 26.28, sd 2.54; held-out: mean 26.36, sd 2.64 (n = 300 / 300)
+
+   (iii) Gaussian noise: predicted threshold u and realized P(M > u) on 300 held-out windows
+   predictor                         alpha=0.01                      alpha=0.05                       alpha=0.1                      alpha=0.25
+                          u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]
+   EEC-rough        40.70 0.000 [0.000,0.012]       37.83 0.000 [0.000,0.012] *     36.57 0.000 [0.000,0.012] *     34.87 0.003 [0.000,0.018] *
+   EEC-time         35.03 0.000 [0.000,0.012]       32.32 0.023 [0.009,0.047] *     31.13 0.057 [0.033,0.089] *     29.55 0.127 [0.091,0.170] *
+   EEC-ECfit        35.19 0.000 [0.000,0.012]       32.39 0.023 [0.009,0.047] *     31.17 0.057 [0.033,0.089] *     29.52 0.127 [0.091,0.170] *
+   Bonferroni       34.00 0.007 [0.001,0.024]       31.37 0.047 [0.026,0.077]       30.22 0.097 [0.066,0.136]       28.68 0.170 [0.129,0.217] *
+   GEV              33.26 0.010 [0.002,0.029]       30.86 0.070 [0.044,0.105]       29.65 0.120 [0.085,0.162]       27.80 0.257 [0.208,0.310]  
+   Gumbel           35.05 0.000 [0.000,0.012]       31.52 0.040 [0.021,0.069]       29.96 0.103 [0.071,0.143]       27.78 0.260 [0.211,0.314]  
+   conformal        32.58 0.017 [0.005,0.038]       31.23 0.057 [0.033,0.089]       29.53 0.127 [0.091,0.170]       27.87 0.257 [0.208,0.310]  
+   ('*' = nominal alpha outside the 95% Clopper-Pearson interval of the realized rate)
+
+   CLUTTER amplitude 0.35 (35 pulses, no source): maxima mean 26.47 sd 2.75 (Gaussian 26.36 / 2.64); clutter-cal LKC roughness 1, 68.7, 1.62e+03, 1.45e+04, 2.98e+04
+      thresholds calibrated on GAUSSIAN noise, applied to clutter windows:
+   predictor                         alpha=0.01                      alpha=0.05                       alpha=0.1                      alpha=0.25
+                          u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]
+   EEC-rough        40.70 0.000 [0.000,0.012]       37.83 0.000 [0.000,0.012] *     36.57 0.000 [0.000,0.012] *     34.87 0.013 [0.004,0.034] *
+   EEC-time         35.03 0.010 [0.002,0.029]       32.32 0.027 [0.012,0.052]       31.13 0.047 [0.026,0.077] *     29.55 0.147 [0.109,0.192] *
+   EEC-ECfit        35.19 0.010 [0.002,0.029]       32.39 0.027 [0.012,0.052]       31.17 0.047 [0.026,0.077] *     29.52 0.150 [0.112,0.196] *
+   Bonferroni       34.00 0.020 [0.007,0.043]       31.37 0.040 [0.021,0.069]       30.22 0.090 [0.060,0.128]       28.68 0.207 [0.162,0.257]  
+   GEV              33.26 0.027 [0.012,0.052] *     30.86 0.063 [0.039,0.097]       29.65 0.130 [0.094,0.173]       27.80 0.273 [0.224,0.328]  
+   Gumbel           35.05 0.010 [0.002,0.029]       31.52 0.037 [0.018,0.065]       29.96 0.103 [0.071,0.143]       27.78 0.280 [0.230,0.334]  
+   conformal        32.58 0.027 [0.012,0.052] *     31.23 0.040 [0.021,0.069]       29.53 0.150 [0.112,0.196] *     27.87 0.267 [0.217,0.321]  
+   ('*' = nominal alpha outside the 95% Clopper-Pearson interval of the realized rate)
+      thresholds re-calibrated on separate CLUTTER windows (same clutter law):
+   predictor                         alpha=0.01                      alpha=0.05                       alpha=0.1                      alpha=0.25
+                          u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]
+   EEC-rough        41.17 0.000 [0.000,0.012]       38.23 0.000 [0.000,0.012] *     36.95 0.000 [0.000,0.012] *     35.21 0.010 [0.002,0.029] *
+   EEC-time         35.41 0.007 [0.001,0.024]       32.65 0.027 [0.012,0.052]       31.44 0.040 [0.021,0.069] *     29.82 0.113 [0.080,0.155] *
+   EEC-ECfit        35.60 0.003 [0.000,0.018]       32.74 0.027 [0.012,0.052]       31.49 0.037 [0.018,0.065] *     29.81 0.117 [0.083,0.159] *
+   Bonferroni       34.38 0.017 [0.005,0.038]       31.69 0.033 [0.016,0.060]       30.52 0.077 [0.049,0.113]       28.95 0.193 [0.150,0.243] *
+   GEV              35.33 0.007 [0.001,0.024]       31.66 0.033 [0.016,0.060]       30.06 0.097 [0.066,0.136]       27.83 0.267 [0.217,0.321]  
+   Gumbel           35.17 0.010 [0.002,0.029]       31.61 0.033 [0.016,0.060]       30.03 0.100 [0.068,0.140]       27.84 0.267 [0.217,0.321]  
+   conformal        35.27 0.007 [0.001,0.024]       31.32 0.040 [0.021,0.069]       30.36 0.083 [0.055,0.121]       27.94 0.263 [0.214,0.317]  
+   ('*' = nominal alpha outside the 95% Clopper-Pearson interval of the realized rate)
+
+   CLUTTER amplitude 1.75 (35 pulses, no source): maxima mean 34.30 sd 4.22 (Gaussian 26.36 / 2.64); clutter-cal LKC roughness 1, 63.6, 1.39e+03, 1.15e+04, 2.19e+04
+      thresholds calibrated on GAUSSIAN noise, applied to clutter windows:
+   predictor                         alpha=0.01                      alpha=0.05                       alpha=0.1                      alpha=0.25
+                          u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]
+   EEC-rough        40.70 0.077 [0.049,0.113] *     37.83 0.187 [0.144,0.235] *     36.57 0.263 [0.214,0.317] *     34.87 0.387 [0.331,0.444] *
+   EEC-time         35.03 0.377 [0.322,0.434] *     32.32 0.637 [0.579,0.691] *     31.13 0.773 [0.722,0.819] *     29.55 0.900 [0.860,0.932] *
+   EEC-ECfit        35.19 0.373 [0.318,0.431] *     32.39 0.633 [0.576,0.688] *     31.17 0.773 [0.722,0.819] *     29.52 0.903 [0.864,0.934] *
+   Bonferroni       34.00 0.453 [0.396,0.512] *     31.37 0.750 [0.697,0.798] *     30.22 0.850 [0.804,0.888] *     28.68 0.933 [0.899,0.959] *
+   GEV              33.26 0.523 [0.465,0.581] *     30.86 0.797 [0.747,0.841] *     29.65 0.890 [0.849,0.923] *     27.80 0.960 [0.931,0.979] *
+   Gumbel           35.05 0.377 [0.322,0.434] *     31.52 0.733 [0.679,0.783] *     29.96 0.873 [0.830,0.909] *     27.78 0.960 [0.931,0.979] *
+   conformal        32.58 0.620 [0.562,0.675] *     31.23 0.767 [0.715,0.813] *     29.53 0.900 [0.860,0.932] *     27.87 0.960 [0.931,0.979] *
+   ('*' = nominal alpha outside the 95% Clopper-Pearson interval of the realized rate)
+      thresholds re-calibrated on separate CLUTTER windows (same clutter law):
+   predictor                         alpha=0.01                      alpha=0.05                       alpha=0.1                      alpha=0.25
+                          u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]
+   EEC-rough        57.41 0.000 [0.000,0.012]       52.77 0.000 [0.000,0.012] *     50.73 0.000 [0.000,0.012] *     48.01 0.003 [0.000,0.018] *
+   EEC-time         49.01 0.003 [0.000,0.018]       44.69 0.017 [0.005,0.038] *     42.80 0.047 [0.026,0.077] *     40.30 0.083 [0.055,0.121] *
+   EEC-ECfit        49.03 0.003 [0.000,0.018]       44.56 0.020 [0.007,0.043] *     42.61 0.047 [0.026,0.077] *     39.99 0.093 [0.063,0.132] *
+   Bonferroni       47.57 0.003 [0.000,0.018]       43.38 0.033 [0.016,0.060]       41.56 0.063 [0.039,0.097] *     39.14 0.137 [0.100,0.181] *
+   GEV              46.41 0.003 [0.000,0.018]       41.95 0.057 [0.033,0.089]       39.78 0.103 [0.071,0.143]       36.54 0.263 [0.214,0.317]  
+   Gumbel           48.82 0.003 [0.000,0.018]       42.85 0.047 [0.026,0.077]       40.21 0.083 [0.055,0.121]       36.53 0.263 [0.214,0.317]  
+   conformal        46.52 0.003 [0.000,0.018]       41.14 0.070 [0.044,0.105]       40.00 0.093 [0.063,0.132]       36.09 0.313 [0.261,0.369] *
+   ('*' = nominal alpha outside the 95% Clopper-Pearson interval of the realized rate)
+
+----------------------------------------------------------------------------------------------------------------------
+SCENARIO unilateral_c40 (one-sided, 8 stations), network per_window (a new network per window, as in task1x/1y)
+(i) marginal of 2T (chi2_6 if v were white Gaussian without selection):
+    set                          mean     var    q.5    q.9   q.99  q.999 KS vs chi2_6  moment fit c*chi2_k KS vs fit
+    chi2_6 reference             6.00   12.00   5.35  10.64  16.81  22.46
+    hypothesis 1 (n=600)        12.71   40.44  11.83  21.92  29.78  34.93        0.524        c=1.59 k=7.98     0.038
+    hypothesis 2 (n=600)        12.90   42.08  12.03  21.30  29.89  40.75        0.544        c=1.63 k=7.90     0.030
+    hypothesis 3 (n=600)        12.71   45.84  11.63  22.77  30.99  38.15        0.497        c=1.80 k=7.05     0.021
+    pooled (6277500 values)     13.00   46.19  11.96  22.15  33.00  41.95        0.514        c=1.78 k=7.32     0.011
+    tail model of T above its 0.999 quantile (21.11): T ~ 0.794 chi2_8.25; P(T > 20) pooled = 1.78e-03
+(ii) EEC: lag-1 correlation of the chi2-equivalent field along x, y, z, tau: 0.133, 0.087, 0.114, 0.506
+     Lambda (km^-2, km^-1 s^-1, s^-2) diagonal: 0.224, 0.271, 0.136, 68.1; correlation of the off-diagonals: +0.07, -0.07, -0.03, -0.20, -0.09, +0.27
+     LKC from roughness L0..L4: 1, 69.5, 1.66e+03, 1.48e+04, 2.98e+04
+     LKC fitted to the lattice EC curve: 0, 2.7e+03, 7.23e+03, 0, 0
+     effective number of independent hypotheses at alpha = 0.05: alpha / P(T > u_conformal) = 8713 (lattice 20925, nodes 675); continuum EEC(u*)/P(T* > u*) at that u: 551241
+     calibration maxima: mean 26.30, sd 2.66; held-out: mean 26.22, sd 2.67 (n = 300 / 300)
+
+   (iii) Gaussian noise: predicted threshold u and realized P(M > u) on 300 held-out windows
+   predictor                         alpha=0.01                      alpha=0.05                       alpha=0.1                      alpha=0.25
+                          u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]           u   realized [95% CI]
+   EEC-rough        43.24 0.000 [0.000,0.012]       39.98 0.000 [0.000,0.012] *     38.56 0.000 [0.000,0.012] *     36.64 0.000 [0.000,0.012] *
+   EEC-time         36.87 0.000 [0.000,0.012]       33.82 0.013 [0.004,0.034] *     32.48 0.030 [0.014,0.056] *     30.70 0.070 [0.044,0.105] *
+   EEC-ECfit        37.08 0.000 [0.000,0.012]       33.93 0.013 [0.004,0.034] *     32.55 0.030 [0.014,0.056] *     30.70 0.070 [0.044,0.105] *
+   Bonferroni       35.71 0.003 [0.000,0.018]       32.74 0.027 [0.012,0.052]       31.45 0.050 [0.028,0.081] *     29.73 0.103 [0.071,0.143] *
+   GEV              34.45 0.010 [0.002,0.029]       31.25 0.050 [0.028,0.081]       29.80 0.100 [0.068,0.140]       27.74 0.250 [0.202,0.303]  
+   Gumbel           34.86 0.010 [0.002,0.029]       31.40 0.050 [0.028,0.081]       29.87 0.097 [0.066,0.136]       27.73 0.250 [0.202,0.303]  
+   conformal        33.99 0.010 [0.002,0.029]       31.11 0.053 [0.031,0.085]       30.00 0.090 [0.060,0.128]       27.73 0.250 [0.202,0.303]  
+   ('*' = nominal alpha outside the 95% Clopper-Pearson interval of the realized rate)
+
+======================================================================================================================
+SUMMARY: number of (cell, alpha) combinations where the nominal alpha lies in the 95% interval of the realized
+rate, and mean realized/nominal ratio (1 = calibrated; < 1 conservative; > 1 anti-conservative)
+gauss              EEC-rough 6/24 (0.01) | EEC-time 6/24 (0.23) | EEC-ECfit 6/24 (0.23) | Bonferroni 9/24 (0.42) | GEV 24/24 (0.82) | Gumbel 21/24 (0.70) | conformal 23/24 (0.83)
+clut0.35-gausscal  EEC-rough 3/12 (0.01) | EEC-time 4/12 (0.37) | EEC-ECfit 4/12 (0.37) | Bonferroni 7/12 (0.66) | GEV 11/12 (1.19) | Gumbel 12/12 (0.81) | conformal 10/12 (1.11)
+clut0.35-recal     EEC-rough 3/12 (0.00) | EEC-time 4/12 (0.32) | EEC-ECfit 4/12 (0.25) | Bonferroni 5/12 (0.53) | GEV 12/12 (0.89) | Gumbel 12/12 (0.80) | conformal 11/12 (0.84)
+clut1.75-gausscal  EEC-rough 0/12 (6.22) | EEC-time 0/12 (17.22) | EEC-ECfit 0/12 (16.82) | Bonferroni 0/12 (19.40) | GEV 0/12 (21.86) | Gumbel 0/12 (18.80) | conformal 0/12 (22.18)
+clut1.75-recal     EEC-rough 3/12 (0.01) | EEC-time 3/12 (0.31) | EEC-ECfit 3/12 (0.34) | Bonferroni 5/12 (0.41) | GEV 11/12 (0.96) | Gumbel 12/12 (0.77) | conformal 11/12 (0.96)
+(run time 324 s)

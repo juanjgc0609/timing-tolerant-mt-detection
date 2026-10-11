@@ -1,0 +1,92 @@
+   done unilateral_c40/jit0.1 in 229 s
+   done unilateral_c40/jit0.2 in 229 s
+   done unilateral_c40/jit0.1_v5 in 144 s
+   done ladder_4/jit0.1 in 121 s
+   done ladder_4/jit0.2 in 120 s
+   done ladder_4/jit0.1_v5 in 124 s
+   done ladder_6/jit0.1 in 138 s
+   done ladder_6/jit0.2 in 135 s
+   done ladder_6/jit0.1_v5 in 134 s
+
+=== unilateral_c40 | jit0.1 | seed 2024 ===
+   PHYS    recall 30/30  false  0/30 [0.00,0.12]  PHYS  ok
+   PHYS-S  recall 30/30  false  0/30 [0.00,0.12]  PHYS-S  ok
+   TOL-K   recall 30/30  false  0/30 [0.00,0.12]  TOL-K@0.15  ok
+   PHYS-K  recall 29/30  false  1/30 [0.00,0.17]  PHYS-K@0.15  ok
+      false TOL-K vs PHYS-K: 0/1  McNemar p=1.0000
+      false TOL-K vs PHYS: 0/0  McNemar p=1.0000
+      false TOL-K vs PHYS-S: 0/0  McNemar p=1.0000
+
+=== unilateral_c40 | jit0.2 | seed 2024 ===
+   PHYS    recall 30/30  false  0/30 [0.00,0.12]  PHYS  ok
+   PHYS-S  recall 30/30  false  0/30 [0.00,0.12]  PHYS-S  ok
+   TOL-K   recall 29/30  false  1/30 [0.00,0.17]  TOL-K@0.15  ok
+   PHYS-K  recall 29/30  false  1/30 [0.00,0.17]  PHYS-K@0.15  ok
+      false TOL-K vs PHYS-K: 1/1  McNemar p=1.0000
+      false TOL-K vs PHYS: 1/0  McNemar p=1.0000
+      false TOL-K vs PHYS-S: 1/0  McNemar p=1.0000
+
+=== unilateral_c40 | jit0.1_v5 | seed 2024 ===
+   PHYS    recall 30/30  false 18/30 [0.41,0.77]  PHYS  ok
+   PHYS-S  recall 30/30  false  8/30 [0.12,0.46]  PHYS-S  ok
+   TOL-K   recall 30/30  false  0/30 [0.00,0.12]  TOL-K@0.15  ok
+   PHYS-K  recall 29/30  false  1/30 [0.00,0.17]  PHYS-K@0.15  ok
+      false TOL-K vs PHYS-K: 0/1  McNemar p=1.0000
+      false TOL-K vs PHYS: 0/18  McNemar p=0.0000
+      false TOL-K vs PHYS-S: 0/8  McNemar p=0.0078
+
+=== ladder_4 | jit0.1 | seed 2024 ===
+   PHYS    recall 27/30  false 10/30 [0.17,0.53]  PHYS  ok
+   PHYS-S  recall 28/30  false  7/30 [0.10,0.42]  PHYS-S  ok
+   TOL-K   recall 30/30  false  3/30 [0.02,0.27]  TOL-K@0.3  ok
+   PHYS-K  recall 28/30  false  2/30 [0.01,0.22]  PHYS-K@0.15  ok
+      false TOL-K vs PHYS-K: 2/1  McNemar p=1.0000
+      false TOL-K vs PHYS: 2/9  McNemar p=0.0654
+      false TOL-K vs PHYS-S: 2/6  McNemar p=0.2891
+
+=== ladder_4 | jit0.2 | seed 2024 ===
+   PHYS    recall 28/30  false 15/30 [0.31,0.69]  PHYS  ok
+   PHYS-S  recall 29/30  false 10/30 [0.17,0.53]  PHYS-S  ok
+   TOL-K   recall 29/30  false 19/30 [0.44,0.80]  TOL-K@0.3  ok
+   PHYS-K  recall 27/30  false  3/30 [0.02,0.27]  PHYS-K@0.3  ok
+      false TOL-K vs PHYS-K: 17/1  McNemar p=0.0001
+      false TOL-K vs PHYS: 10/6  McNemar p=0.4545
+      false TOL-K vs PHYS-S: 14/5  McNemar p=0.0636
+
+=== ladder_4 | jit0.1_v5 | seed 2024 ===
+   PHYS    recall 29/30  false 20/30 [0.47,0.83]  PHYS  ok
+   PHYS-S  recall 30/30  false 25/30 [0.65,0.94]  PHYS-S  ok
+   TOL-K   recall 27/30  false  5/30 [0.06,0.35]  TOL-K@0.6  ok
+   PHYS-K  recall 29/30  false  4/30 [0.04,0.31]  PHYS-K@0.3  ok
+      false TOL-K vs PHYS-K: 4/3  McNemar p=1.0000
+      false TOL-K vs PHYS: 1/16  McNemar p=0.0003
+      false TOL-K vs PHYS-S: 0/20  McNemar p=0.0000
+
+=== ladder_6 | jit0.1 | seed 2024 ===
+   PHYS    recall 30/30  false  0/30 [0.00,0.12]  PHYS  ok
+   PHYS-S  recall 30/30  false  0/30 [0.00,0.12]  PHYS-S  ok
+   TOL-K   recall 30/30  false  0/30 [0.00,0.12]  TOL-K@0.15  ok
+   PHYS-K  recall 30/30  false  0/30 [0.00,0.12]  PHYS-K@0.15  ok
+      false TOL-K vs PHYS-K: 0/0  McNemar p=1.0000
+      false TOL-K vs PHYS: 0/0  McNemar p=1.0000
+      false TOL-K vs PHYS-S: 0/0  McNemar p=1.0000
+
+=== ladder_6 | jit0.2 | seed 2024 ===
+   PHYS    recall 30/30  false  0/30 [0.00,0.12]  PHYS  ok
+   PHYS-S  recall 30/30  false  0/30 [0.00,0.12]  PHYS-S  ok
+   TOL-K   recall 30/30  false  0/30 [0.00,0.12]  TOL-K@0.3  ok
+   PHYS-K  recall 30/30  false  0/30 [0.00,0.12]  PHYS-K@0.3  ok
+      false TOL-K vs PHYS-K: 0/0  McNemar p=1.0000
+      false TOL-K vs PHYS: 0/0  McNemar p=1.0000
+      false TOL-K vs PHYS-S: 0/0  McNemar p=1.0000
+
+=== ladder_6 | jit0.1_v5 | seed 2024 ===
+   PHYS    recall 30/30  false  0/30 [0.00,0.12]  PHYS  ok
+   PHYS-S  recall 30/30  false  0/30 [0.00,0.12]  PHYS-S  ok
+   TOL-K   recall 30/30  false  0/30 [0.00,0.12]  TOL-K@0.15  ok
+   PHYS-K  recall 30/30  false  0/30 [0.00,0.12]  PHYS-K@0.6  ok
+      false TOL-K vs PHYS-K: 0/0  McNemar p=1.0000
+      false TOL-K vs PHYS: 0/0  McNemar p=1.0000
+      false TOL-K vs PHYS-S: 0/0  McNemar p=1.0000
+
+written task1j2_seed2024.json

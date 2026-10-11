@@ -1,0 +1,241 @@
+QuakeMigrate as a published comparator on the task1y synthetic windows
+=====================================================================
+Module: /home/claude/work/qm_wrapper.py (real package, not a re-implementation).
+Paper: Winder et al., "QuakeMigrate: a Python package for automatic earthquake detection and location
+using waveform migration and stacking", Seismica, https://seismica.library.mcgill.ca/article/view/1854
+(the year given in the request, 2026, was not re-checked). Code: github.com/QuakeMigrate/QuakeMigrate.
+
+1. Installation (about 5 min, no problems)
+------------------------------------------
+pip install --break-system-packages quakemigrate  ->  quakemigrate 1.2.2, a manylinux wheel with the
+compiled C library (qmlib: migration, maximum coalescence, STA/LTA; OpenMP). The package source was not
+modified. scikit-fmm is not needed (homogeneous lookup table). Environment: Python 3.11.15,
+numpy 1.26.4, scipy 1.17.1, obspy 1.5.1, pandas 3.0.2, pyproj 3.7.2 (PROJ 9.5.1), matplotlib 3.10.9.
+pandas 3.0 is newer than the package targets, but compute_traveltimes, QuakeScan.detect, Trigger.trigger
+and QuakeScan.locate ran without errors or warnings. All runs used 1 thread (threads=1,
+OMP_NUM_THREADS=1).
+
+2. What is run per window: run_quakemigrate(STA, D, tmpdir, vp, vs, cfg)
+------------------------------------------------------------------------
+a) Archive. Each station goes into one MiniSEED file (FLOAT64, 16 Hz, network XX, station Sii,
+   channels HHE, HHN, HHZ), in the package's "YEAR/JD/STATION" layout.
+   Component mapping: the generator frame (x, y, z) has z = depth (positive down). Stations are at
+   z = 0, sources at z = +5..+13, and the P polarisation (sta - src)/d points upward. So HHE = x (East),
+   HHN = y (North), HHZ = -z (Up). The energy STA/LTA ignores polarity, so only the axis assignment
+   matters.
+   The 40-s window is embedded in 40 s of Gaussian noise on each side. The per-channel standard
+   deviation is estimated from the window itself (MAD/0.6745), and the padding is seeded
+   deterministically from the data. The padding is needed because QuakeMigrate reads data before and
+   after each scanned origin time. With LTA 6 s the pre-pad is 11.2-12.4 s, and the post-pad is
+   40-41 s (maximum grid travel time about 24 s, plus 2 LTA, plus taper).
+b) Lookup table. quakemigrate.lut.compute_traveltimes(method="homogeneous", vp=5.19, vs=3.0 km/s) on a
+   Grid3D covering x, y in [-21, 22] km and z in [0, 20] km with 1 km nodes (44 x 44 x 21 = 40,656
+   nodes). The local frame is placed at (lon, lat) = (-76.5, 3.4). coord_proj is longlat on a sphere
+   with R = 6371 km, and grid_proj is pyproj 'eqc' (lat_ts = lat_0 = 3.4, lon_0 = -76.5, same sphere,
+   units km). That projection is exactly the simple equirectangular conversion, so grid coordinates
+   equal local km to within 1e-12 km. The lookup-table travel times were checked against d/V exactly.
+   Station elevations are 0.
+c) Detect. QuakeScan.detect() runs with STALTAOnset (classic STA/LTA of the energy, the package default
+   for detect) at fs = 50 Hz. The package resamples the data itself: Archive(resample=True,
+   upfactor=25) linearly interpolates 16 Hz to 400 Hz, then decimates by 8. The scan covers origin
+   times 3.0-11.5 s in one timestep; the grid is not decimated.
+d) Trigger. Trigger.trigger() (public API, reads the .scanmseed file and writes TriggeredEvents.csv)
+   uses a static threshold. It keeps events whose coalescence peak lies in trigger_window =
+   (5.0, 8.0) + onset lag, a 3-s origin-time window, the same length as DEFAULT_TAUS (5.0-8.0 s) of
+   the grid methods. The lag is needed because classic STA/LTA peaks after the arrival; it was
+   measured on the calibration windows.
+e) Location. The event location is the detect-stage grid maximum at the triggered peak (COA_X/Y/Z in
+   TriggeredEvents.csv). locate() is not run; see the check in section 7.
+f) Output: [(TRIG_COA, x_km, y_km, z_km, t0_s)], sorted by decreasing score.
+   - TRIG_COA is the maximum coalescence of the event: the geometric mean of the onsets, not
+     normalised.
+   - t0_s is the coalescence peak time. It is therefore late by the onset lag: the median over test
+     hits is +0.47 s (QM-3C) and +0.41 s (default).
+qm_records(events, truth) converts this list into froc_exact (score, hit) records:
+   - Events are taken by decreasing score, with a greedy 5 km epicentral separation and at most 5 per
+     window, as in greedy_record.
+   - A hit is the nearest true source within 5 km epicentral distance (TOL_KM), as in score_events.
+   - Duplicates of the same source are neither hit nor false; exact_HF handles this through its hit set.
+Consistency check: the calibration applies the same Trigger methods in memory (trigger_scan). Over
+192 (window x trigger-configuration) pairs they gave events identical to the file-based
+Trigger.trigger(), with 0 differences.
+
+3. Key finding before any number: channel practice versus this generator
+-------------------------------------------------------------------------
+The request asked for P onsets on the vertical and S onsets on the horizontals (QuakeMigrate's default
+practice). In this generator that is physically inverted. It is a homogeneous full space with straight
+rays, and epicentral distance / depth is 2-6, so the rays arrive 60-80 degrees from vertical. P energy
+therefore lands mostly on the horizontals and SV energy mostly on the vertical. In a clutter-free control
+window with 5x the nominal SNR:
+   - the vertical "P" onsets peaked at the S arrival times, and the horizontal "S" onsets at the P
+     arrival times;
+   - the lookup-table times and the data timing were exact (S00 HHN peaks at 13.00 s, expected P at
+     13.01 s), so this is not a wiring error.
+Positive control: task0_common.generate, one source per window, no clutter, isotropic amplitudes,
+random-6 networks, 8 windows per noise level:
+                              found   median / max epicentral error of the top event
+   default channels, noise/5    3/8     0.8 / 20.5 km
+   default channels, nominal    4/8    15.4 / 24.8 km
+   3C channels, noise/5         8/8     0.5 / 0.7 km
+   3C channels, nominal         7/8     0.5 / 2.9 km
+"3C" means P and S onsets computed from all three channels (channel_maps P "*[Z,N,E]", S "*[Z,N,E]",
+combined as RMS, as STALTAOnset does for multi-channel phases). This is a documented package option,
+not a code change. Both variants were calibrated with identical grids on identical windows and are
+reported below:
+   QM     (QM_CFG):    default practice, as literally requested
+   QM-3C  (QM_CFG_3C): orientation-agnostic onsets. This is the recommended comparator for this
+                       generator. With real data, near-vertical incidence makes the default practice
+                       the right one.
+
+4. Calibration (seed 999 only; seeds 2024/7331 untouched)
+---------------------------------------------------------
+Data: the seed-999 stream of task1y_clutter.run_cell with evbase 25000 and moff 233; generate_y with the
+pert condition (statics N(0, 0.15 s), polarisation noise, site factors) and clut_amp 0.35 ("thin").
+Two cells: random-6 = task1r SCEN ladder_6 (random, 6 stations, 35 clutter) and onesided-8 =
+unilateral_c40 (onesided, 8 stations, 40 clutter).
+   Calibration windows: 30..59 of each cell (60 windows, 47 sources).
+   Test windows: 0..29 of each cell (disjoint from calibration).
+Detect grid (24 onsets per variant):
+   bandpass (Hz, 2 corners, two-pass): (1,4), (1,6), (2,16) [the last is the package default]
+   STA/LTA (s), same for P and S: (0.2,1.0) [package default], (0.2,3), (0.4,1.5), (0.4,3), (0.4,6),
+   (0.8,3), (0.8,6), (1.2,6)
+Onset lag: the median (coalescence peak time - true origin time) over calibration sources whose peak
+in [tau-0.5, tau+2.5] s is located within 5 km. If fewer than 5 sources qualify, the lag is the STA.
+Trigger grid, run in two phases:
+   (a) every onset with a reduced grid: floor quantile {0.5, 0.9} x (marginal window, minimum event
+       interval) {(0.25, 0.5), (0.5, 1.0)} x normalised coalescence {no, yes} x smoothing {no, yes};
+   (b) the best 3 onsets with the full grid: floor quantile {0.5, 0.75, 0.9, 0.95} of the pooled
+       trigger trace x (mw, mei) {(0.25,0.5), (0.5,1), (1,2), (0.5,2), (2,4) [package default]} x
+       normalised {no, yes} x smoothing (Gaussian, sigma 0.2 s) {no, yes}.
+Criterion: recall at <= 0.25 realized false events per window, pooled over both cells, computed with
+froc_exact.exact_HF and task1r_fair.recall_at on qm_records. Ties are broken at 0.1, then 0.05. The
+static threshold is the trigger FLOOR; the FROC comes from sweeping TRIG_COA above it.
+
+Calibration recall at 0.05 / 0.1 / 0.25 false events per window (47 sources, 60 windows):
+   QM     best 0.09 / 0.09 / 0.11 : bandpass 1-4 Hz, STA/LTA 0.4/6.0 s, lag 0.14 s
+          package-default onset (2-16 Hz, 0.2/1.0 s) with its best trigger: 0.00 / 0.00 / 0.00
+   QM-3C  best 0.23 / 0.38 / 0.38 : bandpass 1-6 Hz, STA/LTA 0.8/6.0 s, lag 0.22 s
+          two other onsets tie at 0.38 at 0.25: (1-4 Hz, 0.4/6) and (1-4 Hz, 0.8/6)
+          package-default onset: 0.00 / 0.04 / 0.06
+The longest LTA in the grid (6 s) is preferred in both variants, so the optimum may lie beyond the edge
+of the grid. LTA is limited in practice by the 40-s windows.
+
+5. Exact configuration (keys of QM_CFG; QM_CFG_3C overrides the lines marked 3C)
+--------------------------------------------------------------------------------
+grid_x (-21, 22), grid_y (-21, 22), grid_z (0, 20), node_spacing 1.0 km; phases P, S; homogeneous
+   vp 5.19, vs 3.0 km/s (passed by the caller)
+fs 50 Hz, upfactor 25 (package resampling of the 16 Hz data)
+STALTAOnset: position "classic", signal_transform "energy", min_onset_value 0.4 (package defaults)
+   QM   : bandpass P and S [1.0, 4.0, 2]; sta_lta_windows P and S [0.4, 6.0];
+          channel_maps {P: "*Z", S: "*[N,E]"}, channel_counts {P: 1, S: 2}
+   3C   : bandpass P and S [1.0, 6.0, 2]; sta_lta_windows P and S [0.8, 6.0];
+          channel_maps {P: "*[Z,N,E]", S: "*[Z,N,E]"}, channel_counts {P: 3, S: 3}
+QuakeScan.detect: scan_window 3.0-11.5 s, one timestep of 8.5 s, threads 1, LUT not decimated
+Trigger: threshold_method "static", pad = scan margin + 1 s, plot_trigger_summary False
+   QM   : static_threshold 1.641705 (median of the pooled COA trace), normalise_coalescence False,
+          smooth_coa True (sigma 0.2 s), marginal_window 0.5 s, min_event_interval 1.0 s,
+          trigger_window 5.14-8.14 s
+   3C   : static_threshold 1.4404625 (0.75 quantile), normalise_coalescence False, smooth_coa False,
+          marginal_window 0.25 s, min_event_interval 0.5 s, trigger_window 5.22-8.22 s
+data padding: pad_s 40 s of MAD-scaled Gaussian noise each side, pad_seed 12345
+locate: not run (the detect-stage location is used)
+
+6. Runtime (single thread, 2-core machine shared with other agents)
+-------------------------------------------------------------------
+run_quakemigrate end to end (archive write, lookup table, detect, file-based trigger, cleanup):
+   QM 0.73 s per window (random-6) and 0.80 s (onesided-8), maximum 1.39 s
+   QM-3C 0.82 s and 0.92 s per window
+   one detect alone about 0.57 s (QM) and 0.69 s (QM-3C); trigger about 0.01 s in memory
+   MT-FW reference (fw_record) on the same windows: 0.88 and 1.06 s per window
+Calibration cost:
+   detect sweep 411 s (QM) and 499 s (QM-3C) wall time on 2 workers (60 windows x 24 onsets);
+   trigger sweeps 448 s and 338 s on 1 core.
+
+7. Test: 30 windows per cell, seed-999 stream windows 0..29 (not used in calibration)
+-------------------------------------------------------------------------------------
+Sources: random-6 has 23 (windows with 0/1/2 sources = 13/11/6); onesided-8 has 24 (14/8/8).
+QuakeMigrate was run end to end through run_quakemigrate (public API). MT-FW was computed with
+task1x_mtglrt.fw_record exactly as task1y_clutter.run_cell calls it: default_grid, DEFAULT_TAUS,
+radiation_operator/basis per node, and MFn = matched(D)/sd.
+FROC with froc_exact.exact_HF. The values below are task1r_fair.recall_at at realized false events per
+window <= 0.05 / 0.1 / 0.25:
+
+   cell         method   recall 0.05 / 0.10 / 0.25   end of list: recall at false/window   events
+   random-6     QM          0.13 / 0.13 / 0.22            0.22 at 0.40                        17
+   random-6     QM-3C       0.39 / 0.57 / 0.57            0.57 at 0.10                        16
+   random-6     MT-FW       0.70 / 0.78 / 0.83            0.83 at 4.30                       150
+   onesided-8   QM          0.21 / 0.29 / 0.33            0.33 at 0.20                        14
+   onesided-8   QM-3C       0.50 / 0.50 / 0.50            0.50 at 0.00                        12
+   onesided-8   MT-FW       0.75 / 0.75 / 0.79            0.88 at 4.17                       150
+   pooled (47)  QM          0.15 / 0.15 / 0.28
+   pooled (47)  QM-3C       0.53 / 0.53 / 0.53            0.53 at 0.05
+   pooled (47)  MT-FW       0.66 / 0.72 / 0.81
+
+Requested read-outs (<= 0.1 / <= 0.25):
+   QM     random-6 0.13 / 0.22    onesided-8 0.29 / 0.33
+   QM-3C  random-6 0.57 / 0.57    onesided-8 0.50 / 0.50
+   MT-FW  random-6 0.78 / 0.83    onesided-8 0.75 / 0.79
+
+Pooled differences, point value [95% paired bootstrap over windows, 1000 resamples]:
+   MT-FW - QM-3C   at 0.1: +0.19 [-0.00, +0.37]   at 0.25: +0.28 [+0.10, +0.43]
+   MT-FW - QM      at 0.1: +0.57 [+0.35, +0.75]   at 0.25: +0.53 [+0.36, +0.71]
+   QM-3C - QM      at 0.1: +0.38 [+0.18, +0.52]   at 0.25: +0.26 [+0.11, +0.44]
+
+Where the gap comes from. Sources found over the full list, split by the number of sources in the window:
+   QM 6/19 single, 7/28 pair;  QM-3C 15/19 single, 10/28 pair;
+   MT-FW 18/19 single, 22/28 pair (17/19 and 21/28 at its <= 0.25 operating point).
+QuakeMigrate keeps one grid maximum per time sample and merges triggers within the minimum event
+interval. Both sources of a pair have origin times in 5.5-7.5 s, so the second source is usually lost.
+This is a structural property of the published method, not a tuning problem.
+QM-3C hit locations: median epicentral error 1.2 km (25 hits).
+
+Locate check (QuakeScan.locate, GaussianPicker, 5 random-6 test windows with a QM-3C event): the
+locate spline epicentre moves 0.2-4.5 km from the detect-stage location, and no hit/miss decision
+changes (errors to truth: 0.7->0.9, 2.3->2.2, 5.7->6.7 (still a miss), 0.8->0.6, 0.9->2.3 km with
+centred onsets). locate needs a marginal window of about 1 s: with the calibrated 0.25-0.5 s, the
+earlier centred-onset peak falls outside it and locate discards the event. locate costs about 1.7 s per
+event. The detect-stage location is therefore used.
+
+8. Fairness caveats
+-------------------
+- Channel practice (section 3). The default "P on Z, S on N/E" is physically mismatched with this
+  straight-ray full-space generator. It is reported as QM but should not be the headline comparator.
+  QM-3C is the fair configuration.
+- Truncated FROC. QuakeMigrate triggers few events: 28 in 60 test windows for QM-3C, whose list ends at
+  0.05 false events per window. Its recall at <= 0.1 and <= 0.25 is therefore its full-list recall. A
+  lower floor does not help: segments above threshold merge (for the chosen QM-3C onset, floors at
+  the 0.5 / 0.75 / 0.9 / 0.95 quantiles gave 0.36 / 0.38 / 0.21 / 0.17 at 0.25 in calibration).
+  The comparison at fixed false-alarm rate is valid, but QuakeMigrate cannot trade more false alarms
+  for recall the way MT-FW can.
+- Sampling. The 16 Hz data are upsampled by the package (linear interpolation) to 50 Hz. The signal
+  band (Ricker, 2 Hz peak) is well below 8 Hz, so nothing is lost; the 2-16 Hz package-default band
+  mostly adds interpolation images and noise.
+- Window length and edges. QuakeMigrate needs about 12 s of data before and about 41 s after each
+  scanned origin time; this is supplied by noise-only padding (MAD-matched), which carries no signal.
+  The grid methods zero-pad inside `matched`. LTA was capped at 6 s by the window-based design, and 6 s
+  was the calibrated optimum (at the edge of the grid).
+- Origin-time prior. The trigger window is 3 s long, like DEFAULT_TAUS, but shifted by the calibrated
+  onset lag (0.14 s QM, 0.22 s QM-3C). The lag on test hits is larger and variable (QM-3C median
+  0.47 s, 90th percentile 0.87 s). Up to about 4 of 47 sources with origin time near 7.5 s could have
+  their peak pushed past the window end: a possible small handicap for QM-3C.
+- Hypothesis space. QuakeMigrate searches 40,656 nodes (depth 0-20 km, 1 km) at every 0.02 s. The
+  grid methods search 675 nodes (depths 5/9/13 km, 3 km) x 31 origin times. The larger space raises
+  QuakeMigrate's noise maximum (the look-elsewhere effect). This is the grid requested for the
+  comparator; the effect of a coarser QuakeMigrate grid was not tested.
+- Statistics. Calibration used 47 sources and the test 47 sources: one source is 0.021 recall. The
+  selected QM configuration is not clearly better than neighbouring onsets, and the bootstrap intervals
+  are wide. For the proposal, rerun on the evaluation seeds (2024/7331, 100 windows per cell) with the
+  frozen QM_CFG_3C (and QM_CFG): about 1 s per window per variant.
+- Onset type. Only STALTAOnset (the package's onset function) was used. The package also allows custom
+  onsets, e.g. from machine-learning pickers; they were not used, per the request.
+
+9. Reproduction
+---------------
+python qm_wrapper.py calibrate --out DIR --workers 2   (both variants; about 30 min on 2 cores)
+python qm_wrapper.py test --out DIR                    (both variants + MT-FW; about 3 min)
+The locate check and the trigger equivalence check are available as module functions:
+   locate_check, and trigger_scan versus run_trigger.
+The positive control (section 3) is not a module function: it is task0_common.generate (one source,
+n_clutter=0, noise_scale 0.004 or 0.02, make_network("random", 6, seed=90000+k), rng seed 4242) fed
+to run_quakemigrate. The scratch scripts were in the session scratchpad and are not part of the
+deliverable.

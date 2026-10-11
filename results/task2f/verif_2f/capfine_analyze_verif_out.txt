@@ -1,0 +1,10 @@
+base, thin+strong, 360 windows; BOMP-PK 0.110/0.208
+  CAPV  2: MT-FW 0.046/0.086  minus BOMP-PK -0.064/-0.122
+  CAPV  3: MT-FW 0.114/0.151  minus BOMP-PK +0.004/-0.056
+  CAPV  4: MT-FW 0.149/0.224  minus BOMP-PK +0.040/+0.017
+  CAPV  5: MT-FW 0.168/0.255  minus BOMP-PK +0.058/+0.047
+  CAPV  6: MT-FW 0.183/0.278  minus BOMP-PK +0.074/+0.070
+  CAPV  8: MT-FW 0.167/0.254  minus BOMP-PK +0.058/+0.046
+  CAPV 12: MT-FW 0.142/0.218  minus BOMP-PK +0.033/+0.010
+  CAPV 24: MT-FW 0.107/0.199  minus BOMP-PK -0.003/-0.008
+  no cap : MT-FW 0.107/0.208  minus BOMP-PK -0.003/+0.001

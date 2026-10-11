@@ -1,0 +1,2 @@
+Mon Sep 28 03:49:08 UTC 2026
+first job on 4242/8888 launched: Mon Sep 28 03:49:14 UTC 2026 (OPENBLAS_CORETYPE=Prescott python task2f_run.py run --seeds 4242,8888 --workers 2)

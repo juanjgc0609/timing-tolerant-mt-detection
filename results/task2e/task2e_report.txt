@@ -1,0 +1,340 @@
+TASK 2E - OFF-GRID GROUP BLASSO WITH PER-STATION/PHASE TIME SHIFTS (TS-SFW+SC) VERSUS BLOCK SEARCH WITH THE SAME
+TIME TOLERANCE (BOMP-PK+SC): REPORT
+=====================================================================================================================
+
+Preregistration: PREREGISTRO_1j_1k.txt, section "Task 2E" (Sun Sep 27 14:44:14 UTC 2026; SHA-256 b40f0c6e...e988 in
+PREREGISTRO_hashes.txt, the hash sent to the user as the external timestamp). The only change made to the file is the
+calibration note required by the registry ("2E calibration note"), appended at Sun Sep 27 15:38:20 UTC 2026 (clock
+time from `date -u`), before any seed-2024/7331 computation, followed by a new line in PREREGISTRO_hashes.txt
+(fada69b1f1f6d8534729a9c6f8be81f6acccbb61ba5628c0d14fbf23c5c59271, 15:38:20 UTC). The budget rule did not trigger
+(estimate 1.98 h < 10 h), so no budget note was written. Nothing else in the registry was changed. No proposal document
+was edited.
+
+Timeline (UTC, Sep 27): task2e_methods.py created 14:55:56; task2e_validate.py 14:58, final validation output 15:07:22;
+task2e_run.py 15:08:54; analyze_2e.py 15:12:14 (written before any 2E result on 2024/7331; tested at 15:37 on the
+seed-999 calibration parts only); calibration (seed 999) 15:09:35-15:37:42; f frozen 15:37:42 (task2e_frozen.json);
+timing estimate 15:38:09; registry note and hash 15:38:20; code hashes 15:38:31 (task2e_code_hashes.txt); first
+evaluation part 15:39:40; last 17:39:19 (2.0 h wall on 2 workers); analysis 17:41. `sha256sum -c` on
+task2e_code_hashes.txt after the run: all five files OK (no code change after the evaluation started).
+
+Code (new):
+- task2e_methods.py: continuous atom model, oracle, refinement, sliding step, TS-SFW+SC / BOMP-PK-SLIDE+SC
+  (tssfw_record), and mtfw_sc_locs (the loop of certified_fw_record returning the accepted nodes). Reuses
+  task2d_methods (peak_table, PKDict, bomp_pk_record), task2c_methods (E_R, EIG_FLOOR, solve_restricted,
+  kkt_restricted, hit_of), certified_fw (certified_oracle, Lattice, stack_Q, _exclusion_update), task1x_mtglrt
+  (radiation_operator, AC), task0_common (VP, VS, DT, NT, grid, taus).
+- task2e_validate.py: validation on seed 999 (V1-V5) -> task2e_validation.txt.
+- task2e_run.py: runner (validate / calibrate / cal-summary / estimate / run); reuses task2b_ablation.setup_net,
+  task2a_confirm (window_rngs, generate_window, matched, certified_fw_record), task2c_run (kernel functions) and
+  task2d_run.ops.
+- analyze_2e.py: rules, tables, hierarchical bootstrap, Holm (reuses analyze_2c.HF / val / point / holm).
+- run_queue_2e.sh: launcher (Prescott pass, then SkylakeX pass).
+- task2e_explore.py: EXPLORATORY diagnostics written after the results (declared; decides nothing).
+
+Outputs: task2e_parts/ (30 calibration parts cal_seed999_*, 360 evaluation parts ev_seed{2024,7331}_*),
+task2e_validation.txt, task2e_calibration.txt, task2e_frozen.json, task2e_smoke.txt, task2e_code_hashes.txt,
+analyze_2e_out.txt / analyze_2e_out.json (stderr analyze_2e_err.txt empty), task2e_explore.txt, logs task2e_cal.log,
+task2e_run.log, task2e_analyze.log.
+
+
+1. VERDICTS
+-----------
+
+Cells in the order 4 stations, 6 stations, one-sided 8. Differences at cap 0.25 (false events per window), point
+estimate [hierarchical 95% CI lower bound]. Threshold 0.05 - 1e-9. No case within 0.005 of a threshold or of 0.
+
+2E-a (primary): TS-SFW+SC - BOMP-PK+SC >= 0.05 AND lower CI bound > 0, in >= 2/3 cells, both seeds.
+  thin    2024: 0/3 (+0.039 [-0.025], +0.029 [-0.025], +0.025 [-0.042])
+          7331: 0/3 (+0.016 [-0.038], +0.029 [-0.024], +0.015 [-0.035])        -> NOT MET
+  strong  2024: 0/3 (+0.000 [-0.033], +0.033 [-0.013], +0.016 [-0.026])
+          7331: 0/3 (+0.003 [-0.027], +0.015 [-0.024], +0.018 [-0.044])        -> NOT MET
+  Strict reading (Holm over the 6 cell x seed tests of each regime, one-sided 0.025): no rejection; smallest raw p
+  0.135 (thin) and 0.098 (strong); smallest Holm-adjusted p 0.81 (thin), 0.58 (strong)         -> NOT MET
+  All 12 point estimates are >= 0 but all are below 0.05 and every CI contains 0.
+
+2E-b (secondary): TS-SFW+SC - BOMP-PK-SLIDE+SC >= 0.05 at 0.25 in >= 2/3 cells, both seeds (point estimate).
+  thin    2024: 0/3 (-0.003, -0.003, +0.000)   7331: 0/3 (+0.013, -0.006, -0.012)   -> NOT MET
+  strong  2024: 0/3 (-0.003, +0.007, -0.020)   7331: 0/3 (-0.003, -0.006, -0.009)   -> NOT MET
+  (Exploratory: the rule holds in 0% of hierarchical replicates in both regimes.)
+
+Preregistered interpretation: 2E-a fails in both regimes, so G1-M is REFUTED in this synthetic design: the group
+BLASSO with per-station/phase shifts solved off the grid by sliding Frank-Wolfe is not a better detector than block
+orthogonal search with the same +-0.25 s time tolerance, at equal realised false rate. Per the registry, the proposal
+must state this and reformulate its methodological contribution. 2E-b also fails: the group penalty adds nothing over
+a least-squares refit with the same sliding (TS-SFW+SC and BOMP-PK-SLIDE+SC differ by -0.020 to +0.013 at 0.25).
+
+
+2. DESIGN AS IMPLEMENTED
+------------------------
+
+Data. Per seed (2024, 7331), regime (thin, strong) and cell (ladder_4, ladder_6, unilateral_c40): 30 networks = the 5
+networks of 2A (20 windows each) + the 25 networks of 2C part (ii) (12 windows each) = 400 windows; 4800 windows in
+total. Regenerated bit-exactly with task2b_ablation.setup_net and task2a_confirm.window_rngs/generate_window, with the
+OpenBLAS kernel of 2C (SkylakeX on the 18 seed-7331 networks of 2A listed in task2b_report.txt, Prescott elsewhere;
+checked with threadpoolctl at the start of every network and stored in every part). Same station corrections, grid
+(675 nodes, 3 km / depths 5, 9, 13 km), origin times DEFAULT_TAUS, +-0.25 s tolerance, 5 km exclusion, at most 5
+events per window and 5 km epicentral hit rule as in 2A-2D.
+
+Continuous atom model (matched-filter domain, MFn = MF / sd). An atom has theta = (x, y, z, t0) and shifts delta
+(2 phases x ns stations). Arrival time T_bi = d_i(x)/V_b + t0 + corr_ib + delta_bi (continuous, no rounding to samples).
+Prediction a_bi AC(t - T_bi) with a_bi = G_bi(x) m, G = task1x_mtglrt.radiation_operator evaluated at continuous x, and
+AC(s) = F(s)/F(0), F(s) = sum_{|l|<=16} ricker(s + l DT) KER_l, the continuous function whose samples are
+task1x_mtglrt.AC (max difference 1.1e-16). This is exactly the matched-filter image of the data-domain atom
+G m (x) ricker(t - T) / sqrt(E_R) used in 2C. "Continuous interpolation of the matched-filter traces" is implemented
+as the exact band-limited evaluation MFc_i(T) = sum_n Dn_i[n] ricker(n DT - T) (|n DT - T| <= 1 s, Dn = D / sd),
+which equals MFn at sample times (max difference 8.9e-16) and is the true correlation of the data with the
+continuously shifted wavelet. Objective J = 1/2||y||^2 - m^T b + 1/2 m^T K m + lambda sum_k sqrt(m_k^T K_kk m_k)
+with b_k = sum_bi G_kbi^T MFc_i(T_kbi), K_kl = sum_i sum_pq G_kpi^T G_lqi AC(T_kpi - T_lqi) (block-whitened group
+norm as GL-FW of 2C). Analytic gradients w.r.t. all (x, y, z, t0, delta) (dG by complex step).
+
+TS-SFW+SC, per window, k = 1..5:
+ (a) oracle: max over non-excluded grid nodes and origin times of ||Q(g)^T v||^2 / 2, v = the 3-component residual
+     vectors at the energy peak within +-4 samples (0.25 s) of each predicted station/phase sample (the uncapped MT-FW
+     statistic, i.e. MT-FW-NOCAP+SC's, vectorised with task2d_methods.peak_table). Nodes within 5 km (epicentral) of
+     the CURRENT position of any accepted atom are excluded. Value s_k.
+ (b) the new atom starts at the chosen node and origin with delta_bi = clip(peak sample time - T_bi, -0.25, 0.25) and
+     is refined by L-BFGS-B maximising E = v^T G (G^T G)^+ G^T v / 2 of the continuous residual (other atoms fixed);
+     bounds x, y in [-21, 21] km (grid extent), z in [1, 20] km, t0 in [4.5, 8.5] s, delta in [-0.25, 0.25] s;
+     at most 50 iterations.
+ (c) sliding: alternate (i) the convex step in the amplitudes of all atoms with theta fixed (block-whitened group
+     lasso, task2c_methods.solve_restricted, with the relative duality gap computed and required <= 1e-6; lambda = 0:
+     least squares) and (ii) L-BFGS-B on (theta, delta) of all atoms with m fixed (full J including the penalty; at
+     most 50 iterations); at most 5 alternations (stop early if the local step lowers J by <= 1e-10 |J|); a final
+     convex step after the last local step.
+ (d) sampled residual = MFn minus the joint prediction.
+ lambda = f * s_1 (s_1 = first oracle value of the window). Record: running minimum of s_k; hit evaluated with the
+ final (x, y) of each atom after the last iteration.
+BOMP-PK-SLIDE+SC: the same with lambda = 0.
+BOMP-PK+SC: task2d_methods.bomp_pk_record unchanged. On networks 0-4 the 2D records are used (the 2E recomputation is
+identical in 1200/1200 windows); on networks 5-29 it was computed in 2E with the same code.
+MT-FW+SC: stored records (task2a_parts for networks 0-4, task2c_parts/p2_* for 5-29). Regenerated with
+certified_fw_record and asserted exactly equal on windows 0 and 1 of every network (720/720). Additionally
+mtfw_sc_locs (same loop, returning nodes, for location errors) reproduced the stored record in 4800/4800 windows.
+
+Analysis (analyze_2e.py): exact FROC, operating point chosen per method on the evaluation, recall at <= 0.1 and
+<= 0.25 false events per window; hierarchical bootstrap (30 networks with replacement, then windows within network;
+2000 replicates; default_rng([seed, cell, regime, 2801]); same resamples for all methods; operating point re-chosen in
+each replicate); one-sided p = (1 + #{d* <= 0}) / 2001; Holm at 0.025 over the 6 cell x seed tests per regime.
+
+
+3. VALIDATION (seed 999, Prescott; task2e_validation.txt)
+-------------------------------------------------------
+
+V1 identities: continuous AC vs AC 1.1e-16; vectorised radiation operator vs radiation_operator 5.6e-17; MFc at
+   sample times vs MFn 8.9e-16; continuous Gram and correlation at integer-sample times vs PKDict (BOMP-PK) 3.6e-16 /
+   4.9e-16. PASS.
+V2 gradients vs central finite differences (18 checks: J with lambda = 0 and 2.5, 1-3 atoms, all cells; refinement
+   energy with 0-2 active atoms): max relative error 1.4e-9. PASS.
+V3 convex step vs the explicit data-domain dictionary (columns G_k (x) ricker(t - T)/sqrt(E_R), 2-4 random off-grid
+   atoms): |A^T A - K| rel <= 4.5e-11, |A^T y - b| <= 1.7e-15; lambda = 0 equals lstsq(A, y) to 5.0e-11 (least-squares
+   refit reproduced); lambda in {0.05, 0.3, 0.8} x c_max: relative gap <= 2.3e-15, KKT violation <= 9.4e-14, objective
+   equal to an independent FISTA solve to 3e-16 relative (including a case with 2 zero groups); lambda = 1e-9 c_max
+   converges to the least-squares solution (1.2e-9). PASS.
+V5 with refinement and sliding disabled and lambda = 0, the first atom (node, origin, peak samples) equals BOMP-PK's in
+   24/24 windows (4 per cell and regime) with amplitudes equal to 2.4e-13; with BOMP-PK's statistic in the oracle the
+   full 5-atom record equals bomp_pk_record in 24/24; the first oracle value equals MT-FW-NOCAP+SC's
+   (task2d_methods.fw_record_v) in 24/24. PASS.
+V4 noise-free single off-grid source with injected shifts |delta| in [0.1, 0.2] s (random sign). Shift errors are
+   measured modulo the common shift, which is exactly confounded with t0 (T depends only on t0 + delta).
+   - Optimiser basin (refinement + sliding, lambda = 0): from the truth, 94/94 stay exact; from the true position
+     + 0.2-0.4 km with delta_true + U(-0.03, 0.03) s, 85/94 recovered (median error 0.038 km); from + 0.5-1 km with
+     delta_true, 55/94. The local machinery is correct.
+   - The criterion requested for this validation ("TS-SFW recovers location within 0.5 km and shifts within 0.02 s
+     where grid BOMP-PK does not") is NOT MET from the grid start. Fixed cases: 0/4 for lambda = 0 and every f.
+     90 random sources: recovered 12/90 (lambda = 0), 12/90 (f = 0.01), 14/90 (f = 0.03), 5/90 (f = 0.1), 2/90
+     (f = 0.3). Median 3D error 0.52 km (f = 0.01) against 2.45 km for BOMP-PK's grid node (which is < 0.5 km in 0/90).
+     Arrival times are recovered to < 0.02 s in only 41/90: the failures are cycle skips of about one wavelet period
+     (0.45 s) on some station/phases. Diagnosis on a failing case: E(true source) = 1138 > E(converged) = 871 (a local
+     optimum, not an optimiser defect; ad hoc diagnostic, not in the validation file); starting the refinement
+     from a node 4 km away puts some predicted S times 1.2 s off, outside the +-0.25 s shift window. TS-SFW improves
+     location relative to the grid in a matched, noise-free model, but it does not reliably reach the true source from a 3 km grid with 2 Hz data.
+   Decision: the implementation checks (V1, V2, V3, V4-basin, V5) pass. I proceeded with the preregistered
+   calibration and evaluation because the registered method is a local refinement by definition and changing it to
+   pass V4 would have departed from the registry. The V4 failure is reported here as a finding about the method.
+
+
+4. CALIBRATION OF f (seed 999; task2e_calibration.txt)
+------------------------------------------------------
+
+600 windows (2A calibration networks 0-4, 20 windows each, 3 cells x 2 regimes). Controls: network, catalogue and
+corrections equal to 2A; MT-FW+SC exact on windows 0-1 of all 30 networks; MT-FW+SC with positions equal to the stored
+record in 600/600 windows. Recall at 0.1 / 0.25 on the 600 pooled windows (one exact FROC curve):
+  f = 0.01  0.358 / 0.4749      f = 0.03  0.341 / 0.4644      f = 0.1  0.069 / 0.2510      f = 0.3  0.067 / 0.1841
+  (BOMP-PK-SLIDE+SC 0.364 / 0.467; BOMP-PK+SC 0.331 / 0.441; MT-FW+SC 0.354 / 0.454, descriptive only)
+f = 0.01 selected (the mean of the six per-cell recalls at 0.25 gives the same order: 0.506, 0.503, 0.248, 0.193).
+It was frozen and noted in the registry at 15:38:20 UTC. The implied lambda / sqrt(2 s_1) (fraction of the first
+atom's certificate) has median 0.045 at f = 0.01, 0.136 at 0.03, 0.45 at 0.1 and 1.36 at 0.3. At f = 0.3, 88% of atoms
+get zero amplitude, so there is no deflation, and at f = 0.1 13% do. This is why recall collapses for large f. The
+selected f lies at the lower edge of the registered grid, where TS-SFW is almost a least-squares refit.
+
+
+5. TIMING AND BUDGET (task2e_smoke.txt)
+--------------------------------------
+
+The timing estimate used the full seed-999 calibration run instead of a separate smoke test. Per window: TS-SFW+SC
+1.0-1.4 s, BOMP-PK-SLIDE+SC 0.9-1.3 s, BOMP-PK+SC 0.33-0.45 s, MT-FW+SC with positions 0.16-0.22 s. Estimate for the
+evaluation with 30 networks: 3.96 h CPU, 1.98 h on 2 cores, below the 10 h threshold, so the budget rule did not trigger
+and all 30 networks per cell were used. Actual: 2.0 h wall (15:39:40-17:39:19). Mean / P90 per window in the
+evaluation: TS-SFW+SC 1.19 / 1.43 s, BOMP-PK-SLIDE+SC 1.14 / 1.37 s, BOMP-PK+SC 0.42 / 0.57 s. The runs were in the
+background (setsid nohup, 2 workers) and never died, so no relaunch was needed.
+
+
+6. TABLES (analyze_2e_out.txt)
+------------------------------
+
+Recall at <= 0.1 / <= 0.25 (400 windows per cell, seed and regime)
+
+  thin            events  TS-SFW+SC     BOMP-PK-SLIDE+SC  BOMP-PK+SC    MT-FW+SC
+  4 st. (2024)      308   0.334/0.558   0.328/0.562       0.279/0.519   0.458/0.562
+  6 st. (2024)      313   0.473/0.597   0.473/0.601       0.438/0.569   0.492/0.623
+  one-s. 8 (2024)   314   0.465/0.634   0.490/0.634       0.439/0.608   0.548/0.656
+  4 st. (7331)      307   0.352/0.485   0.332/0.472       0.270/0.469   0.319/0.466
+  6 st. (7331)      308   0.568/0.701   0.584/0.708       0.516/0.672   0.568/0.685
+  one-s. 8 (7331)   326   0.580/0.687   0.543/0.699       0.528/0.672   0.537/0.638
+  strong
+  4 st. (2024)      325   0.212/0.274   0.206/0.277       0.197/0.274   0.175/0.249
+  6 st. (2024)      304   0.316/0.474   0.316/0.467       0.306/0.441   0.326/0.431
+  one-s. 8 (2024)   305   0.413/0.511   0.413/0.531       0.377/0.495   0.367/0.489
+  4 st. (7331)      313   0.179/0.243   0.182/0.246       0.173/0.240   0.131/0.208
+  6 st. (7331)      329   0.331/0.474   0.325/0.480       0.310/0.459   0.347/0.459
+  one-s. 8 (7331)   329   0.486/0.587   0.517/0.596       0.438/0.568   0.453/0.556
+
+2E-a: TS-SFW+SC - BOMP-PK+SC, point [hierarchical 95% CI] one-sided p
+                    cap 0.1                          cap 0.25
+  thin   4 (2024)   +0.055 [-0.068, +0.138] 0.276    +0.039 [-0.025, +0.122] 0.135
+         6 (2024)   +0.035 [-0.033, +0.170] 0.152    +0.029 [-0.025, +0.087] 0.149
+         8 (2024)   +0.025 [-0.089, +0.110] 0.505    +0.025 [-0.042, +0.094] 0.220
+         4 (7331)   +0.081 [-0.028, +0.191] 0.108    +0.016 [-0.038, +0.094] 0.327
+         6 (7331)   +0.052 [-0.039, +0.147] 0.091    +0.029 [-0.024, +0.078] 0.235
+         8 (7331)   +0.052 [-0.050, +0.121] 0.260    +0.015 [-0.035, +0.091] 0.241
+  strong 4 (2024)   +0.015 [-0.032, +0.050] 0.392    +0.000 [-0.033, +0.030] 0.567
+         6 (2024)   +0.010 [-0.026, +0.086] 0.269    +0.033 [-0.013, +0.083] 0.098
+         8 (2024)   +0.036 [-0.019, +0.125] 0.146    +0.016 [-0.026, +0.059] 0.313
+         4 (7331)   +0.006 [-0.035, +0.045] 0.446    +0.003 [-0.027, +0.039] 0.427
+         6 (7331)   +0.021 [-0.014, +0.104] 0.151    +0.015 [-0.024, +0.058] 0.361
+         8 (7331)   +0.049 [-0.014, +0.115] 0.076    +0.018 [-0.044, +0.080] 0.323
+
+2E-b: TS-SFW+SC - BOMP-PK-SLIDE+SC at 0.1 / 0.25
+  thin    2024: +0.006/-0.003, +0.000/-0.003, -0.025/+0.000   7331: +0.020/+0.013, -0.016/-0.006, +0.037/-0.012
+  strong  2024: +0.006/-0.003, +0.000/+0.007, +0.000/-0.020   7331: -0.003/-0.003, +0.006/-0.006, -0.030/-0.009
+  (all hierarchical CIs contain 0)
+
+Descriptive, at 0.25 [hierarchical 95% CI] (0.1 in analyze_2e_out.txt, Table 4)
+  TS-SFW+SC - MT-FW+SC:
+    thin    2024: -0.003 [-0.100, +0.085], -0.026 [-0.095, +0.055], -0.022 [-0.087, +0.055]
+            7331: +0.020 [-0.060, +0.132], +0.016 [-0.046, +0.082], +0.049 [-0.020, +0.137]
+    strong  2024: +0.025 [-0.041, +0.100], +0.043 [-0.036, +0.113], +0.023 [-0.049, +0.094]
+            7331: +0.035 [-0.031, +0.100], +0.015 [-0.056, +0.097], +0.030 [-0.037, +0.080]
+    At 0.1 in thin 2024: -0.123, -0.019, -0.083 (MT-FW+SC's cap favours it at the strict end there).
+  BOMP-PK-SLIDE+SC - BOMP-PK+SC:
+    thin    2024: +0.042 [-0.027, +0.125], +0.032 [-0.022, +0.091], +0.025 [-0.034, +0.097]
+            7331: +0.003 [-0.050, +0.079], +0.036 [-0.018, +0.081], +0.028 [-0.025, +0.090]
+    strong  2024: +0.003 [-0.026, +0.033], +0.026 [-0.016, +0.083], +0.036 [-0.010, +0.076]
+            7331: +0.006 [-0.022, +0.041], +0.021 [-0.030, +0.062], +0.027 [-0.028, +0.093]
+    (at 0.1 two CIs exclude 0: thin 7331 6 st. +0.068 [+0.006, +0.160]; strong 7331 one-sided 8 +0.079 [+0.006,
+    +0.156])
+
+Location error of hits at the cap-0.25 operating point (one hit per true event, first atom that hits it), median
+epicentral km, all cells and seeds pooled:
+  thin:   TS-SFW+SC 1.79 (P90 3.96, n 1147); BOMP-PK-SLIDE+SC 1.80 (3.98, 1151); BOMP-PK+SC 1.88 (3.98, 1099);
+          MT-FW+SC 1.88 (3.99, 1136)
+  strong: TS-SFW+SC 2.01 (P90 4.05, n 814);  BOMP-PK-SLIDE+SC 1.98 (4.06, 825);  BOMP-PK+SC 2.15 (4.18, 787);
+          MT-FW+SC 2.19 (4.18, 760)
+  3D median error of the continuous methods 2.7-4.0 km, with median depth bias +0.3 to +1.3 km (too deep) in most
+  cells. Per-cell values are in Table 6 of analyze_2e_out.txt.
+
+Convergence diagnostics (both continuous methods, all 24 cell x seed x regime blocks; Table 7):
+  - convex step: relative duality gap max 5.6e-10 (median ~1.5e-15), KKT violation max 8.5e-10 for TS-SFW+SC; the
+    lambda = 0 refits have normal-equation residual <= 3.3e-13. The 1e-6 gap requirement was met everywhere.
+  - alternations: mean 4.97-5.00 per iteration; 99-100% of iterations used all 5.
+  - L-BFGS-B sliding steps (about 10,000 per block): 73-83% stopped at the 50-iteration cap (median 50 iterations);
+    refinement (b): 83-97% at 50 iterations.
+  - fraction of shifts at the +-0.25 s bound at the end: 0.24-0.35 (highest with 4 stations).
+  - atoms with zero amplitude (TS-SFW+SC, f = 0.01): 0.000. lambda / sqrt(2 s_1) median 0.038-0.049.
+
+
+7. DEVIATIONS, IMPLEMENTATION CHOICES AND PROBLEMS
+---------------------------------------------------
+
+D1 Units of lambda. The registry defines lambda = f x "the value of the oracle in the first iteration", and the oracle
+   value as the energy of the projection, "the MT-FW statistic without cap". I used that statistic in the MT-FW
+   convention (||Q^T v||^2 / 2, the same number as the record score). The group-lasso certificate is
+   c = sqrt(2 s) in amplitude units, so lambda / c_1 = f sqrt(s_1 / 2), which varies by window (median 0.045 at
+   f = 0.01). Reading the oracle value as the certificate c (lambda = f c_1) would have given a different effective
+   grid. It was not run. Because the chosen f already makes TS-SFW almost identical to lambda = 0, and lambda = 0 also
+   fails 2E-a, this does not change the conclusion.
+D2 The 5 km oracle exclusion is applied around the current (slid) position of each accepted atom. The registry says
+   "around accepted atoms" and does not specify grid or continuous positions.
+D3 Choices not specified by the registry: bounds x, y in [-21, 21] km (grid extent) and t0 in [4.5, 8.5] s; internal
+   scaling of time variables (0.2 s per unit) for L-BFGS-B; the refinement (b) capped at 50 iterations (the registry
+   gives the 50 cap only for step (c)); the initial shifts from the peak samples clipped to +-0.25 s (a peak sample can
+   be up to 0.3125 s before the continuous predicted time because of the floor in the grid index); the early stop of
+   the alternation (J decrease <= 1e-10 |J|, which almost never triggered) and a final convex step.
+D4 The refinement energy uses G^T G (no P/S overlap term), consistent with the oracle statistic. The convex and local
+   steps use the full Gram K with the P/S overlap through AC, as GL-FW of 2C.
+D5 Gauge: t0 and a common shift of all delta are exactly confounded (only t0 + delta enters the model). The gauge is
+   not fixed. It has no effect on predictions, locations or hits, and shift errors in V4 are reported modulo it.
+D6 "Continuous interpolation" is the exact band-limited correlation of the data with the shifted wavelet (see section
+   2), not cubic interpolation.
+D7 The V4 criterion requested in the task (not in the registry) was not met from the grid start (section 3). I
+   proceeded after verifying that the implementation is correct.
+D8 The timing estimate came from the full calibration run, not a separate smoke test.
+D9 Wording slip in the registry note: it says "both cells and regimes" where it should say "the three cells and both
+   regimes". The window count (600) and the numbers are correct. I did not correct it, because that would have been a
+   further registry change outside the two allowed notes.
+D10 In the SkylakeX pass, OPENBLAS_CORETYPE also switched scipy's bundled OpenBLAS (used only inside L-BFGS-B's
+   small internal linear algebra) to SkylakeX. The kernel that matters for bit-exact regeneration (numpy's) was checked
+   and is the one required. All regeneration controls passed on those 18 networks.
+D11 The analysis script was run once, before the evaluation, on the seed-999 calibration parts (renamed in memory) to
+   test it. Its code was not changed afterwards.
+D12 task2e_explore.py was written after seeing the results and is exploratory only.
+Problems: none in the runs. No control failure, no process death, no mismatch (4800/4800 windows equal to the stored
+truth, origins and MT-FW+SC records; BOMP-PK+SC recomputation equal to 2D in 1200/1200).
+
+
+8. INTERPRETATION
+-----------------
+
+The primary result is negative. With 30 networks per cell and the network as the replication unit, the off-grid group
+BLASSO with per-station/phase shifts (TS-SFW+SC) gains +0.000 to +0.039 recall at 0.25 over block orthogonal search
+with the same peak tolerance (BOMP-PK+SC). The gain is positive in all 12 cells but below the preregistered 0.05 in
+every cell, and no confidence interval excludes 0. Holm rejects nothing. Per the registry, hypothesis G1-M is refuted in
+this synthetic design, and the proposal has to say so and reformulate its methodological contribution.
+
+The group penalty is inert. With the calibrated f = 0.01, lambda is about 4.5% of the first certificate, no atom is
+zeroed, and TS-SFW+SC differs from its lambda = 0 control by -0.020 to +0.013 at 0.25 (2E-b fails with 0 cells). The
+calibration itself pushed lambda to the lowest registered value: larger penalties (f = 0.1, 0.3) zero atoms, stop the
+deflation and cut recall by more than half. The small positive TS-SFW - BOMP-PK differences are therefore due to
+sliding and the continuous refit, not to the convex penalty. Descriptively, sliding alone (BOMP-PK-SLIDE+SC -
+BOMP-PK+SC) gives +0.003 to +0.042 at 0.25, with every CI containing 0.
+
+Against MT-FW+SC (descriptive), TS-SFW+SC is within -0.026 to +0.049 at 0.25 in every cell, again with every CI
+containing 0. It is lower at the strict end in thin 2024 (-0.02 to -0.12 at 0.1), where MT-FW's per-station cap helps.
+
+Location improves only marginally: the median epicentral error of hits is 1.79 km versus 1.88 km for the grid methods
+in thin, and 2.01 versus 2.15 km in strong. The continuous solution is too deep by about 0.3-1.3 km in most cells.
+
+Why the off-grid machinery does not pay off here (the first two points are supported by this task's data; the third is
+a plausible reading, not tested):
+ (i) Local optimisation from a 3 km grid with 2 Hz data cycle-skips. Even in a matched, noise-free model (V4), it
+     reaches < 0.5 km / < 0.02 s in only about 13% of sources. In the evaluation, atoms slide a median 0.7 km from
+     their entry node (P90 1.8 km), and sliding changes the hit status of only about 1% of atoms (thin: 98 false->hit,
+     62 hit->false out of 12,000; strong: 62 and 64; task2e_explore.txt, exploratory).
+ (ii) The registered iteration budget binds: 73-83% of local steps stop at 50 iterations and almost every iteration
+     uses all 5 alternations, so the sliding step is generally not at a stationary point. About 25-35% of shifts end
+     at the +-0.25 s bound.
+ (iii) With free per-station/phase shifts, the arrival times no longer constrain the location, which then rests on
+     amplitude and polarization. Those are exactly what the generator perturbs (1.4-2.8 Hz wavelet with phase
+     rotation, coda, ~10 degree polarization deviation, lognormal site factors, curved rays), and the continuous atom
+     model does not represent those perturbations.
+What the data support is that, with the same +-0.25 s tolerance, the grid block search already captures essentially
+all the detection performance available to moment-tensor subspace methods in this design. The convex off-grid
+formulation adds cost (about 3x BOMP-PK's time per window) and no detectable recall. This is consistent with 2D, where
+the advantage of MT-FW over [129]/[122] was attributed to the peak search.
+
+
+9. EXPLORATORY (declared; after the results)
+--------------------------------------------
+
+task2e_explore.txt: sliding displacement and hit flips (quoted in section 8) and actual timings (section 5). Nothing
+else was added after the results.

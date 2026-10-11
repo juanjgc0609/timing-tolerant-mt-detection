@@ -1,0 +1,119 @@
+.   done unilateral_c15 in 224 s
+.x
+.x
+.x
+.x
+.   done unilateral_c40 in 616 s
+.   done dispersa_c40 in 564 s
+.x
+.   done ladder_3 in 678 s
+.   done ladder_4 in 658 s
+.x
+.x
+.x
+.x
+.   done ladder_6 in 571 s
+
+=== part j | unilateral_c15 | seed 7331 ===
+   TOL      recall 30/30  false  9/30 [0.15,0.49]  mean emitted 2.07  ok  threshold=1.000
+   TOL-TB   recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   TOL-K    recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   CIII-TB  recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   PHYS     recall 30/30  false  1/30 [0.00,0.17]  mean emitted 1.03  ok  threshold=0.970
+   PHYS-S   recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   GAMMA    recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  config={'min_picks': 8, 'sigma': 1.0, 'eps': 10.0}
+   PYOCTO   recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  config={'n_picks': 10, 'tol': 0.5}
+      false TOL vs PHYS: 9/1  McNemar p=0.0215
+      false TOL-TB vs PHYS: 0/1  McNemar p=1.0000
+      false TOL-K vs PHYS: 0/1  McNemar p=1.0000
+      false CIII-TB vs PHYS: 0/1  McNemar p=1.0000
+      false PHYS-S vs PHYS: 0/1  McNemar p=1.0000
+      false GAMMA vs PHYS: 0/1  McNemar p=1.0000
+      false PYOCTO vs PHYS: 0/1  McNemar p=1.0000
+
+=== part j | unilateral_c40 | seed 7331 ===
+   TOL      recall 30/30  false 12/30 [0.23,0.59]  mean emitted 2.20  ok  threshold=1.000
+   TOL-TB   recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   TOL-K    recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   CIII-TB  recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   PHYS     recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   PHYS-S   recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   GAMMA    recall 28/30  false  2/30 [0.01,0.22]  mean emitted 1.00  ok  config={'min_picks': 10, 'sigma': 1.0, 'eps': 10.0}
+   PYOCTO   recall 25/30  false 30/30 [0.88,1.00]  mean emitted 3.47  NOT reached  config={'n_picks': 4, 'tol': 0.5}
+      false TOL vs PHYS: 12/0  McNemar p=0.0005
+      false TOL-TB vs PHYS: 0/0  McNemar p=1.0000
+      false TOL-K vs PHYS: 0/0  McNemar p=1.0000
+      false CIII-TB vs PHYS: 0/0  McNemar p=1.0000
+      false PHYS-S vs PHYS: 0/0  McNemar p=1.0000
+      false GAMMA vs PHYS: 2/0  McNemar p=0.5000
+      false PYOCTO vs PHYS: 30/0  McNemar p=0.0000
+
+=== part j | dispersa_c40 | seed 7331 ===
+   TOL      recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   TOL-TB   recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   TOL-K    recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   CIII-TB  recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   PHYS     recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   PHYS-S   recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   GAMMA    recall 28/30  false 30/30 [0.88,1.00]  mean emitted 3.23  NOT reached  config={'min_picks': 5, 'sigma': 1.0, 'eps': 10.0}
+   PYOCTO   recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  config={'n_picks': 12, 'tol': 0.5}
+      false TOL vs PHYS: 0/0  McNemar p=1.0000
+      false TOL-TB vs PHYS: 0/0  McNemar p=1.0000
+      false TOL-K vs PHYS: 0/0  McNemar p=1.0000
+      false CIII-TB vs PHYS: 0/0  McNemar p=1.0000
+      false PHYS-S vs PHYS: 0/0  McNemar p=1.0000
+      false GAMMA vs PHYS: 30/0  McNemar p=0.0000
+      false PYOCTO vs PHYS: 0/0  McNemar p=1.0000
+
+=== part j | ladder_3 | seed 7331 ===
+   TOL      recall 15/30  false 30/30 [0.88,1.00]  mean emitted 5.00  NOT reached  threshold=1.000
+   TOL-TB   recall 30/30  false 30/30 [0.88,1.00]  mean emitted 4.97  ok  threshold=0.990
+   TOL-K    recall 28/30  false 15/30 [0.31,0.69]  mean emitted 1.73  ok  threshold=0.950
+   CIII-TB  recall 30/30  false 30/30 [0.88,1.00]  mean emitted 4.97  ok  threshold=0.990
+   PHYS     recall 27/30  false 25/30 [0.65,0.94]  mean emitted 2.83  NOT reached  threshold=0.850
+   PHYS-S   recall 29/30  false 27/30 [0.73,0.98]  mean emitted 3.60  NOT reached  threshold=0.820
+   GAMMA    recall  2/30  false 13/30 [0.25,0.63]  mean emitted 0.60  NOT reached  config={'min_picks': 6, 'sigma': 1.0, 'eps': 10.0}
+   PYOCTO   recall  9/30  false 30/30 [0.88,1.00]  mean emitted 3.87  NOT reached  config={'n_picks': 4, 'tol': 0.5}
+      false TOL vs PHYS: 5/0  McNemar p=0.0625
+      false TOL-TB vs PHYS: 5/0  McNemar p=0.0625
+      false TOL-K vs PHYS: 2/12  McNemar p=0.0129
+      false CIII-TB vs PHYS: 5/0  McNemar p=0.0625
+      false PHYS-S vs PHYS: 2/0  McNemar p=0.5000
+      false GAMMA vs PHYS: 2/14  McNemar p=0.0042
+      false PYOCTO vs PHYS: 5/0  McNemar p=0.0625
+
+=== part j | ladder_4 | seed 7331 ===
+   TOL      recall 28/30  false 27/30 [0.73,0.98]  mean emitted 3.77  NOT reached  threshold=1.000
+   TOL-TB   recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   TOL-K    recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   CIII-TB  recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   PHYS     recall 24/30  false  7/30 [0.10,0.42]  mean emitted 1.07  ok  threshold=0.990
+   PHYS-S   recall 27/30  false  3/30 [0.02,0.27]  mean emitted 1.00  ok  threshold=1.000
+   GAMMA    recall 13/30  false 23/30 [0.58,0.90]  mean emitted 2.20  NOT reached  config={'min_picks': 5, 'sigma': 2.0, 'eps': 10.0}
+   PYOCTO   recall 17/30  false 13/30 [0.25,0.63]  mean emitted 1.03  NOT reached  config={'n_picks': 8, 'tol': 0.5}
+      false TOL vs PHYS: 20/0  McNemar p=0.0000
+      false TOL-TB vs PHYS: 0/7  McNemar p=0.0156
+      false TOL-K vs PHYS: 0/7  McNemar p=0.0156
+      false CIII-TB vs PHYS: 0/7  McNemar p=0.0156
+      false PHYS-S vs PHYS: 0/4  McNemar p=0.1250
+      false GAMMA vs PHYS: 17/1  McNemar p=0.0001
+      false PYOCTO vs PHYS: 10/4  McNemar p=0.1796
+
+=== part j | ladder_6 | seed 7331 ===
+   TOL      recall 30/30  false  1/30 [0.00,0.17]  mean emitted 1.30  ok  threshold=1.000
+   TOL-TB   recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   TOL-K    recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   CIII-TB  recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.00  ok  threshold=1.000
+   PHYS     recall 30/30  false  9/30 [0.15,0.49]  mean emitted 1.47  ok  threshold=0.830
+   PHYS-S   recall 30/30  false  0/30 [0.00,0.12]  mean emitted 1.03  ok  threshold=0.970
+   GAMMA    recall 18/30  false 11/30 [0.20,0.56]  mean emitted 0.97  NOT reached  config={'min_picks': 8, 'sigma': 1.0, 'eps': 10.0}
+   PYOCTO   recall 29/30  false  1/30 [0.00,0.17]  mean emitted 1.00  ok  config={'n_picks': 12, 'tol': 1.0}
+      false TOL vs PHYS: 1/9  McNemar p=0.0215
+      false TOL-TB vs PHYS: 0/9  McNemar p=0.0039
+      false TOL-K vs PHYS: 0/9  McNemar p=0.0039
+      false CIII-TB vs PHYS: 0/9  McNemar p=0.0039
+      false PHYS-S vs PHYS: 0/9  McNemar p=0.0039
+      false GAMMA vs PHYS: 6/4  McNemar p=0.7539
+      false PYOCTO vs PHYS: 0/8  McNemar p=0.0078
+
+written task1j_seed7331.json

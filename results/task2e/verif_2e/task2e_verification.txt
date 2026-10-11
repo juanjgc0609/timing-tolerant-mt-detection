@@ -1,0 +1,240 @@
+TASK 2E - INDEPENDENT VERIFICATION OF THE NEGATIVE RESULT (TS-SFW+SC vs BOMP-PK+SC)
+=====================================================================================
+
+Question: is the 2E negative result (rules 2E-a and 2E-b fail) caused by an implementation error, by a budget
+handicap, or is it a trustworthy negative? Verified Sun Sep 27 2026 (18:40-19:40 UTC).
+
+Constraints I kept: new computation on seed 999 only (the 2A calibration networks 0-4). Seeds 2024/7331 were not
+rerun; their stored parts were only read. One worker. No 2E file and no registry file was modified (after the
+verification, sha256sum -c task2e_code_hashes.txt passes for all 5 files, the registry sha256 is still ebbc35de...,
+and no file under task2e_parts/ is newer than the start of the verification). All new files are in verif_2e/ with a
+_verif suffix. New compute: about 70 min on 1 core.
+
+Scripts / outputs (verif_2e/): common_verif.py (setup; regenerates the seed-999 windows and, for check 4, the exact
+clutter+noise-only part of each window), check1_verif.py -> check1_verif.txt, froc_rederive_verif.py ->
+froc_rederive_verif.txt/.json, boot_verif.py -> boot_verif.txt, check3_budget_verif.py -> check3_parts_verif/,
+check3_budget_verif.log, check3x_budget_verif.log, check4_ceiling_verif.py -> check4_parts_verif/, analyze_verif.py ->
+analyze_verif_out.txt, check4_summary_verif.json, reloc_verif.py -> reloc_verif.txt, anatomy_verif.py ->
+anatomy_verif.txt, hashchain_verif.py, parts_mtimes_verif.txt.
+
+
+1. CODE REVIEW OF THE CONTINUOUS ATOM MODEL AGAINST THE GRID MODEL                               OUTCOME: PASS
+-----------------------------------------------------------------------------------------------------------------
+What I read: task2e_methods.py in full, the BOMP-PK code in task2d_methods.py (peak_table, PKDict, bomp_pk_record),
+and the helpers it uses (task2c BlockDict / ac_at / hit_of, certified_fw._idx_node, task0_common constants). I also
+read the data generator (gen_realistic.py) and draw_sources.
+
+Consistency points confirmed by reading the code:
+- MF domain. Atom prediction a_bi AC(t - T_bi), a = G(x) m. The residual is MFn minus the joint prediction, as in
+  BOMP-PK. The correlation b uses the exact band-limited MF interpolation, and the Gram uses the continuous AC.
+- Arrival times. T = d/V + t0 + corr + delta. Station corrections are added with the same orientation as BOMP-PK:
+  corr is (ns, 2) with columns P and S, used as corr.T in both codes. P and S have independent shifts per station,
+  like BOMP-PK's independent peak search per phase.
+- Gauge. The common shift is exactly confounded with t0, because T depends only on t0 + delta. This is a flat
+  direction for L-BFGS-B. It does not change the predictions.
+- Bounds. x, y in [-21, 21]. The outermost grid column is at 21.37 km and is clipped by 0.37 km, which is irrelevant
+  because sources lie within +-15 km. z is in [1, 20] and t0 in [4.5, 8.5].
+- Score. The registered score is the grid oracle value s_k (the uncapped MT-FW statistic on the residual). The
+  continuous fit therefore never enters the ranking directly. This follows the registry and is not a bug, but it
+  matters for interpretation (section 6).
+
+Independent numerical checks (check1_verif.txt). This is my own code; it does not reuse task2e_validate.py.
+1A. Theta on the grid node and shifts equal to the peak offsets: the TS-SFW atom reproduces the BOMP-PK block. I used
+    120 BOMP-PK atoms, i.e. the full 5-atom least-squares solutions of 24 real seed-999 windows (network 1, 4 windows
+    per cell and regime). Maximum relative differences: sampled prediction (MFn minus the BOMP-PK residual vs
+    predict_sampled) 1.4e-15; Gram 9.0e-16; correlation 5.7e-16; joint least-squares objective 9.9e-16. The two are
+    IDENTICAL.
+    The refinement energy at the grid start equals the oracle value to 6.1e-14. The oracle value differs from
+    BOMP-PK's e/2 only by the P/S cross term, a relative difference of at most 6.7e-14.
+    One small asymmetry: BOMP-PK reads idx + [-4, 4] samples with idx = floor(T0/DT). Its window is therefore
+    [-0.25 - frac, 0.25 - frac] s, while TS-SFW clips to [-0.25, 0.25]. This affects 182 of 1440 peak offsets
+    (0.126), each by less than 1 sample (0.0625 s). The effect is registered-consistent and negligible.
+1C. Objective and gradient vs an independent data-domain implementation. The check uses my own Ricker function, my
+    own travel times and task1x_mtglrt.radiation_operator, and takes central differences of the independent J. Over
+    6 cases (1-3 off-grid atoms, lambda 0 and 1.7):
+    - J matches to at most 2.3e-13 relative.
+    - The refinement energy with 1-2 active atoms matches to at most 2.3e-13.
+    - The analytic gradient matches the finite differences of the independent J to at most 4.5e-8, which is the
+      finite-difference truncation level for these steps.
+1D. Sign conventions, tested on noise-free data built with my own code. The source is on a grid node, the origin on
+    the tau grid, the real network corrections are used, and I injected delta = +0.12 s on P at station 0 and
+    -0.08 s on S at station 1. Results in 2 cells:
+    - BOMP-PK's peak offsets equal round(T_true/DT) - idx for every station and phase (+4 and +1 samples).
+    - The TS-SFW refinement recovers all arrival times to within 1e-4 s, with a position error of 0.03 km.
+    - The joint gradient at delta = 0 has the correct sign for both injected shifts, and its norm is 7e-7 at the
+      truth.
+Verdict for check 1: no implementation error. The continuous model is the exact continuous extension of the BOMP-PK
+block. Station corrections, shift signs, P/S windows, bounds and gauge are consistent.
+
+
+2. RE-DERIVATION OF THE 2E-a NUMBERS FROM THE PARTS                                               OUTCOME: PASS
+-----------------------------------------------------------------------------------------------------------------
+I wrote my own exact FROC with no project imports. Every distinct score is a threshold; recall counts distinct true
+events hit; the cap applies to false atoms per window. Applied to task2e_parts/ev_*, it reproduces every entry of
+Table 1 of analyze_2e_out.txt exactly: 12 cell x seed pools x 4 methods x 2 caps. For example:
+  thin 4 st. (2024): TS-SFW 0.334/0.558, BOMP-PK 0.279/0.519, 2E-a difference +0.055/+0.039.
+  strong 6 st. (2024): TS-SFW 0.316/0.474, BOMP-PK 0.306/0.441, 2E-a difference +0.010/+0.033.
+All 12 2E-a and 12 2E-b point differences are identical to the report.
+
+I also ran my own hierarchical bootstrap (different RNG, 2000 replicates, networks then windows) at cap 0.25:
+  thin 4 st. 2024: +0.039 [-0.025, +0.123] p = 0.118 (registered: [-0.025, +0.122] p = 0.135).
+  strong 6 st. 2024: +0.033 [-0.013, +0.083] p = 0.104 (registered: [-0.013, +0.083] p = 0.098).
+The rules 2E-a and 2E-b fail in both regimes, as reported.
+
+
+3. BUDGET HANDICAP                                                                                OUTCOME: NO HANDICAP
+-----------------------------------------------------------------------------------------------------------------
+The registered diagnostics give reason to suspect a budget problem: in the evaluation, the sliding L-BFGS-B stops at
+its 50-iteration cap in 73-83% of steps, the refinement in 83-97%, and the alternations hit 5 in about 100% of cases.
+I therefore reran TS-SFW+SC (f = 0.01, same oracle score) on seed-999 calibration windows in four variants:
+  REG    the registered budget.
+  X10    caps x10: 500 iterations for refinement and sliding, 20 alternations.
+  MS     9-start refinement: the chosen node at t0 and t0 +- 0.1 s, plus its 6 axis neighbours (+-3 km in x and y,
+         +-4 km in z). The shifts of every start are re-initialised from the residual peaks, and the start with the
+         best energy is kept.
+  X10MS  both.
+Batch 1 ran all 4 variants on 90 windows (windows 0-2 of each of the 30 networks). Batch 2 ran REG and X10MS on 180
+more windows (windows 3-8). The pooled comparison uses 270 windows with 208 events.
+
+Reproducibility. REG recomputed equals the stored calibration record bit-for-bit in 88/90 windows. The hit pattern
+is identical in 270/270 windows; the rest are floating-point path differences.
+
+Convergence. With x10 caps, no L-BFGS-B call reaches its cap (0.00, against 0.80 for REG). The objective does
+improve:
+- Joint J after atom 1, X10MS vs REG: median -0.05%, P10 -7%; 35% of windows improve by more than 1%.
+- J after atom 5: median -1.9%.
+- Shifts at the +-0.25 s bound: 0.30 for REG, 0.33 for X10.
+
+Detection (exact FROC, recall at 0.1 / 0.25, 95% CI from the hierarchical bootstrap):
+  pool of 270 windows:  REG 0.351/0.462   X10MS 0.346/0.447   BOMP-PK+SC 0.351/0.457   BOMP-PK-SLIDE+SC 0.356/0.462
+      X10MS - REG        -0.005 [-0.072, +0.045]   -0.014 [-0.052, +0.038]
+      X10MS - BOMP-PK+SC -0.005 [-0.100, +0.096]   -0.010 [-0.068, +0.087]
+  thin (135 windows):   X10MS - REG -0.010 / +0.000;  strong (135 windows): X10MS - REG -0.018 / +0.000
+  Distinct true events ever hit: X10MS gains 6 and loses 4 of 208. The hit pattern changes in 25/270 windows.
+  Batch 1 alone (90 windows, 72 events): X10, MS and X10MS vs REG +0.042/+0.014 in the pool. That is 3 events of
+  72, it has no counterpart in the 270-window pool, and the event-level counts there are X10 +1/-0, MS +3/-0 and
+  X10MS +2/-0.
+
+Verdict for check 3: the registered budget truncates the optimiser in the numerical sense, since the objective keeps
+improving with more iterations and more starts. It does not handicap detection: a 10x budget plus multi-start changes
+recall by -0.014 to +0.000 at cap 0.25, far below the 0.05 threshold of 2E-a.
+
+
+4. HEADROOM / CEILING                                                         OUTCOME: LARGE HEADROOM (NOT SATURATED)
+-----------------------------------------------------------------------------------------------------------------
+Data: all 600 seed-999 calibration windows (5 networks x 20 windows per cell and regime). For each window I
+regenerated the event signal exactly (events and coda, without clutter and noise), so D - D_signal is the exact
+clutter+noise-only part; a full regeneration check passed in 600/600 windows.
+
+Oracle ("genie") detectors, all scored with an exact FROC:
+  CEIL-G     Each true event is scored by the best BOMP-PK block statistic e/2 (grid, +-0.25 s peak reading) over the
+             nodes within 5 km of it. The false candidates are the greedy block maxima of the clutter+noise-only
+             data, more than 5 km from every source. This assumes perfect localisation and perfect deflation, so it
+             is a generous ceiling for any grid block detector.
+  CEIL-GD    Same true scores. The false candidates are greedy maxima of the full data after an ORACLE joint
+             least-squares deflation of the true events, so it keeps the false alarms caused by event-model mismatch.
+             This is the more realistic ceiling.
+  CEIL-C     Continuous version, equivalent to TS-SFW initialised at the true source. True events are scored by the
+             single-atom off-grid energy (500 iterations from the truth). False candidates are refined the same way
+             on the clutter+noise-only data.
+  CEIL-G+BF  CEIL-G true scores plus BOMP-PK's own realised false atoms.
+
+Headroom table. Recall at <= 0.1 / <= 0.25 false per window; headroom with 95% CI (hierarchical bootstrap over
+networks and windows):
+
+  pool (seed 999)        events BOMP-PK+SC  TS-SFW+SC  CEIL-G       CEIL-GD      CEIL-C       CEIL-G - BOMP-PK @0.25   CEIL-GD - BOMP-PK @0.25
+  4 st. (thin)             81   0.309/0.531 0.321/0.568 0.840/0.852 0.605/0.753 0.840/0.864  +0.321 [+0.128, +0.607]  +0.222 [+0.041, +0.495]
+  6 st. (thin)             67   0.433/0.657 0.463/0.657 0.955/0.955 0.672/0.836 0.970/0.985  +0.299 [+0.148, +0.542]  +0.179 [-0.042, +0.418]
+  one-sided 8 (thin)       77   0.571/0.623 0.636/0.675 0.844/0.870 0.675/0.701 0.857/0.883  +0.247 [+0.118, +0.351]  +0.078 [-0.039, +0.178]
+  4 st. (strong)           74   0.176/0.230 0.189/0.230 0.284/0.392 0.230/0.338 0.284/0.351  +0.162 [+0.028, +0.375]  +0.108 [+0.000, +0.352]
+  6 st. (strong)           97   0.175/0.309 0.268/0.381 0.608/0.680 0.371/0.546 0.649/0.742  +0.371 [+0.162, +0.651]  +0.237 [+0.067, +0.505]
+  one-sided 8 (strong)     82   0.439/0.512 0.488/0.524 0.683/0.732 0.634/0.671 0.695/0.744  +0.220 [+0.042, +0.398]  +0.159 [+0.022, +0.352]
+  thin (3 cells, 1 curve) 225   0.422/0.582 0.471/0.631 0.876/0.880 0.631/0.738 0.867/0.893  +0.298 [+0.196, +0.403]  +0.156 [+0.042, +0.286]
+  strong (3 cells)        253   0.245/0.356 0.265/0.395 0.447/0.601 0.375/0.518 0.498/0.617  +0.245 [+0.101, +0.392]  +0.162 [+0.037, +0.301]
+  Headroom at cap 0.1: CEIL-G - BOMP-PK is +0.11 to +0.53 per cell; CEIL-GD - BOMP-PK is +0.05 to +0.30.
+
+Reading. BOMP-PK is NOT within 0.05 of the ceiling in any cell. At cap 0.25 it is 0.16-0.37 below the generous
+ceiling and 0.08-0.24 below the realistic one (thin 0.156, strong 0.162 pooled). The benchmark has room for a 0.05
+gain, so the negative result is NOT an artefact of a saturated benchmark. CEIL-C is about the same as CEIL-G (all 600
+windows: 0.699 vs 0.692 at 0.25): scoring with the continuous off-grid energy does not separate events from
+clutter/noise better than the grid statistic, because it raises the noise scores as well.
+
+Where the headroom is:
+- 89% of events have a near-truth grid score above every clutter+noise-only candidate of their window. BOMP-PK ever
+  places an atom within 5 km of only 77% of those; for TS-SFW the figure is 74%.
+- Among the detectable events that are never hit (99 for BOMP-PK, 110 for TS-SFW), the nearest atom lies at median
+  7.3 / 6.8 km. For 80% / 85% of them it lies 5-10 km from the event (anatomy_verif.txt). The event is absorbed by
+  an atom mislocated just beyond the 5 km hit tolerance.
+- The data generator has a 1D gradient medium, per-event source spectra and phase rotations, statics and site
+  factors, while the detector assumes a homogeneous medium. Even a refinement started at the true source drifts to a
+  median 3D distance of 2.35 km (P90 6.7 km).
+- The registered TS-SFW moves atoms from their entry node by a median of 0.7 km, and by more than 5 km in only
+  0.4-0.6% of atoms (task2e_explore.txt). It cannot recover events whose grid oracle maximum is 5-10 km away.
+
+
+5. REGISTRY HASH CHAIN AND ORDERING                                                              OUTCOME: PASS
+-----------------------------------------------------------------------------------------------------------------
+- Hash chain. Each of the 6 hashes in PREREGISTRO_hashes.txt equals the sha256 of a prefix of the current
+  PREREGISTRO_1j_1k.txt, and the prefix lengths increase monotonically: 39694, 40221, 41377, 46364, 46795 and 47540
+  bytes. The registry is therefore append-only across the whole chain.
+- The 2E section prefix (14:44:14 UTC, b40f0c6e..., 46364 bytes) contains the design and not the calibration note.
+- The calibration-note prefix (15:38:20 UTC, fada69b1..., 46795 bytes) contains the note ("f = 0.01") and not the
+  result. The final prefix (17:45:17 UTC) only appends the "Result of 2E" paragraph. The 2E design text is
+  byte-identical to the version hashed at 14:44:14.
+- Ordering (TZ=UTC ls --time-style=full-iso):
+  task2e_methods.py 14:55:56; task2e_validation.txt 15:07:22; last calibration part 15:37:28; task2e_frozen.json and
+  task2e_calibration.txt 15:37:42; calibration note hash 15:38:20; task2e_code_hashes.txt 15:38:31.
+  The FIRST 2024/7331 part (ev_seed2024_strong_unilateral_c40_net0.json) was written at 15:39:40. Its log line says
+  68 s, so it started at about 15:38:32. The last part was written at 17:39:19 (360 evaluation parts).
+  The calibration note therefore precedes the first 2024/7331 part.
+  task2e_run.py refuses to run the evaluation unless the registry hash equals the last hash and contains the note
+  with the frozen f.
+  sha256sum -c task2e_code_hashes.txt: all 5 files OK. There is no task2e_CONTROL_FAILED.txt.
+- Caveat. The hashes file and the file mtimes are internal to the container. The external anchor is the hash sent to
+  the user in the chat, which I cannot see; the user should check that it is fada69b1... for the calibration note and
+  b40f0c6e... for the design.
+
+
+6. WHY THE METHOD DOES NOT WIN (STRUCTURE, NOT A BUG)                           EXPLORATORY, FROM STORED PARTS ONLY
+-----------------------------------------------------------------------------------------------------------------
+- The TS-SFW record score is the grid oracle value, identical to BOMP-PK's statistic up to the P/S cross term.
+  Off-grid modelling can change only two things: where the next atom enters (through a better residual), and whether
+  an atom's final slid position is within 5 km of an event.
+- Decomposition of TS-SFW - BOMP-PK. Mean over cell and seed pools, recall at 0.1 / 0.25, split into total =
+  relocation (hit judged at the final position vs the entry node) + residual/ordering (reloc_verif.txt):
+    evaluation, thin:    +0.050 / +0.026 = +0.027 / +0.008 relocation + +0.023 / +0.017 residual
+    evaluation, strong:  +0.023 / +0.014 = +0.009 / +0.006 relocation + +0.014 / +0.008 residual
+    seed 999, thin:      +0.036 / +0.030;   seed 999, strong: +0.052 / +0.028 (same order of magnitude)
+  Both channels are real but small, a few hundredths.
+- The group penalty is inert at the calibrated f = 0.01 (lambda is about 4.5% of the first certificate; no zero
+  groups). At larger f the deflation is suppressed and recall collapses. Consequently TS-SFW = BOMP-PK-SLIDE (2E-b)
+  and BOMP-PK-SLIDE - BOMP-PK is also below 0.05.
+
+
+VERDICT
+-------
+TRUSTWORTHY NEGATIVE. No implementation error was found, and there is no budget handicap.
+- The continuous atom reproduces the BOMP-PK block to machine precision on the grid.
+- The objective and gradient agree with an independent data-domain implementation.
+- Signs, station corrections, P/S windows, bounds and gauge are consistent.
+- The reported numbers are reproduced exactly from the parts.
+- The registry chain and ordering are intact.
+- A 10x iteration budget with 9-start refinement lowers the objective but changes recall by -0.014 to +0.000 at cap
+  0.25 (6 events gained, 4 lost, of 208).
+
+The benchmark is not saturated. Oracle ceilings sit 0.08-0.37 above BOMP-PK at cap 0.25, so the failure of 2E-a is
+not a headroom artefact. It is a property of the registered method. The headroom comes mostly from events absorbed
+by atoms mislocated 5-10 km away because of the medium/source mismatch. A method that scores on the grid oracle and
+then slides locally (median 0.7 km) cannot reach them, and scoring with the continuous energy does not separate
+signal from noise better either (CEIL-C is about CEIL-G).
+
+The refutation of G1-M as registered stands. The headroom indicates that a winning method would need global
+relocation or association, or a better travel-time and source model, rather than local off-grid sliding.
+
+Limitations:
+- The new compute is seed 999 only, with 100 windows per cell for the ceilings, so the CIs are wide; every CEIL-G
+  headroom CI still excludes 0.
+- The ceilings are genie constructs (known source positions, exact noise-only data), not attainable bounds. CEIL-GD
+  is the realistic reference.
+- The budget test uses 270 windows (208 events), enough to exclude a +0.05 budget effect at the pooled level but not
+  within individual cells.

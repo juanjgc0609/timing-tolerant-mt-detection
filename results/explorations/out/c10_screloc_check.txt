@@ -1,0 +1,6 @@
+thin   ladder_4        rms correction error (s; median removed), median over 20 networks: +SC 0.118  SC-R 0.111;  mean 0.124 -> 0.105; SC-R better in 0.70 of the networks
+thin   ladder_6        rms correction error (s; median removed), median over 20 networks: +SC 0.162  SC-R 0.122;  mean 0.170 -> 0.135; SC-R better in 0.95 of the networks
+thin   unilateral_c40  rms correction error (s; median removed), median over 20 networks: +SC 0.166  SC-R 0.097;  mean 0.159 -> 0.103; SC-R better in 1.00 of the networks
+strong ladder_4        rms correction error (s; median removed), median over 20 networks: +SC 0.181  SC-R 0.195;  mean 0.190 -> 0.204; SC-R better in 0.30 of the networks
+strong ladder_6        rms correction error (s; median removed), median over 20 networks: +SC 0.234  SC-R 0.221;  mean 0.236 -> 0.228; SC-R better in 0.45 of the networks
+strong unilateral_c40  rms correction error (s; median removed), median over 20 networks: +SC 0.235  SC-R 0.171;  mean 0.234 -> 0.194; SC-R better in 0.90 of the networks

@@ -1,0 +1,143 @@
+{
+ "day": "101231",
+ "candidates": [
+  "ATBU",
+  "ATCA",
+  "ATCC",
+  "ATPC",
+  "ATPI",
+  "ATVO",
+  "FRON",
+  "MURB",
+  "PARC",
+  "PIEI",
+  "SSFR"
+ ],
+ "station_qc": {
+  "ATBU": {
+   "invalid_h": 0.004,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.004,
+   "spike_samples": 0,
+   "eligible_alone": 2119
+  },
+  "ATCA": {
+   "invalid_h": 0.0,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.0,
+   "spike_samples": 0,
+   "eligible_alone": 2136
+  },
+  "ATCC": {
+   "invalid_h": 7.296,
+   "pad_h_chan": 0.248,
+   "flat_h_chan": 21.626,
+   "spike_samples": 0,
+   "eligible_alone": 1437
+  },
+  "ATPC": {
+   "invalid_h": 0.04,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.121,
+   "spike_samples": 0,
+   "eligible_alone": 2095
+  },
+  "ATPI": {
+   "invalid_h": 0.004,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.004,
+   "spike_samples": 0,
+   "eligible_alone": 2118
+  },
+  "ATVO": {
+   "invalid_h": 0.625,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 1.872,
+   "spike_samples": 0,
+   "eligible_alone": 2076
+  },
+  "FRON": {
+   "invalid_h": 1.354,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 4.041,
+   "spike_samples": 0,
+   "eligible_alone": 1975
+  },
+  "MURB": {
+   "invalid_h": 0.0,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.0,
+   "spike_samples": 0,
+   "eligible_alone": 2136
+  },
+  "PARC": {
+   "invalid_h": 0.0,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.0,
+   "spike_samples": 0,
+   "eligible_alone": 2136
+  },
+  "PIEI": {
+   "invalid_h": 0.008,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.009,
+   "spike_samples": 0,
+   "eligible_alone": 2107
+  },
+  "SSFR": {
+   "invalid_h": 0.032,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.095,
+   "spike_samples": 0,
+   "eligible_alone": 2129
+  }
+ },
+ "steps": [
+  {
+   "set": [
+    "ATBU",
+    "ATCA",
+    "ATCC",
+    "ATPC",
+    "ATPI",
+    "ATVO",
+    "FRON",
+    "MURB",
+    "PARC",
+    "PIEI",
+    "SSFR"
+   ],
+   "E": 1209
+  },
+  {
+   "dropped": "ATCC",
+   "set": [
+    "ATBU",
+    "ATCA",
+    "ATPC",
+    "ATPI",
+    "ATVO",
+    "FRON",
+    "MURB",
+    "PARC",
+    "PIEI",
+    "SSFR"
+   ],
+   "E": 1826
+  }
+ ],
+ "selected": [
+  "ATBU",
+  "ATCA",
+  "ATPC",
+  "ATPI",
+  "ATVO",
+  "FRON",
+  "MURB",
+  "PARC",
+  "PIEI",
+  "SSFR"
+ ],
+ "E": 1826,
+ "used": true
+}

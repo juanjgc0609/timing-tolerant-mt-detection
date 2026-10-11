@@ -1,0 +1,5 @@
+catalogue amplitude-term estimators, pers world sigma 0.5, networks 60-63 x 3 cells, thin (12 networks)
+  MT (c8_lib)    corr mean 0.419 (min -0.23)  rmse 0.338  (sd of truth 0.380)  fraction estimated 0.66
+  MT nodal0.5    corr mean 0.486 (min -0.01)  rmse 0.330  (sd of truth 0.382)  fraction estimated 0.65
+  GEO            corr mean 0.729 (min 0.39)  rmse 0.255  (sd of truth 0.380)  fraction estimated 0.66
+  GEO iter       corr mean 0.736 (min 0.49)  rmse 0.252  (sd of truth 0.380)  fraction estimated 0.66

@@ -1,0 +1,6 @@
+['7171', 'thin', 'unilateral_c40', '3'] 0 ('/home/claude/work/verif_2l/regen_parts_verif/main_seed7171_thin_unilateral_c40_net3.json', 'done', 45.165394749999905) 
+['9393', 'strong', 'ladder_6', '17'] 0 ('/home/claude/work/verif_2l/regen_parts_verif/main_seed9393_strong_ladder_6_net17.json', 'done', 35.0167149580011) 
+['9393', 'thin', 'unilateral_c40', '24'] 0 ('/home/claude/work/verif_2l/regen_parts_verif/main_seed9393_thin_unilateral_c40_net24.json', 'done', 46.12174425200101) 
+['9393', 'thin', 'unilateral_c40', '75'] 0 ('/home/claude/work/verif_2l/regen_parts_verif/main_seed9393_thin_unilateral_c40_net75.json', 'done', 16.539266443000088) 
+['7171', 'strong', 'ladder_4', '140'] 0 ('/home/claude/work/verif_2l/regen_parts_verif/main_seed7171_strong_ladder_4_net140.json', 'done', 4.8427920150006685) 
+['7171', 'strong', 'unilateral_c40', '45'] 0 ('/home/claude/work/verif_2l/regen_parts_verif/main_seed7171_strong_unilateral_c40_net45.json', 'done', 28.852056681998874) 

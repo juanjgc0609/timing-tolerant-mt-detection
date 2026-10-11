@@ -1,0 +1,44 @@
+=== seed 5151: windows 7200, missing parts 0, meta variants 1: [(5201, 5202, 0.5, 7, 5, 5, ('BOMP-PK+SC', 'MT-FW+SC', 'MT-FW-NOCAP+SC', 'HUBER-N+SC'), 'Prescott', 'iid_s0.5')]
+  nets per (kind, regime, cell): [120] windows per cell: [600] n cells: 12
+  dense: 3600 windows, 14477 events, k set [3, 4, 5]; mean detections/window {'BOMP-PK+SC': 7.0, 'MT-FW+SC': 7.0, 'MT-FW-NOCAP+SC': 7.0, 'HUBER-N+SC': 7.0}
+    stored hit labels differing from own recomputation (<=5 km epicentral, nearest): 0; scores non-increasing in every record: True; min epicentral separation between atoms of a record 6.00 km
+    mean seconds per window (the 'sec' field): {'BOMP-PK+SC': 0.602, 'MT-FW+SC': 0.103, 'MT-FW-NOCAP+SC': 0.102, 'HUBER-N+SC': 0.927}
+    BOMP-PK+SC      recall cap0.1 0.0763 (brute 0.0763)  cap0.25 0.1767 (brute 0.1767)
+    MT-FW+SC        recall cap0.1 0.1565 (brute 0.1565)  cap0.25 0.2429 (brute 0.2429)
+    MT-FW-NOCAP+SC  recall cap0.1 0.0765 (brute 0.0765)  cap0.25 0.1750 (brute 0.1750)
+    HUBER-N+SC      recall cap0.1 0.1389 (brute 0.1389)  cap0.25 0.2349 (brute 0.2349)
+    dense pooled HUBER-N+SC - BOMP-PK+SC @0.25: 0.2349 - 0.1767 = +0.0582 [95: +0.0402, +0.0753] [90: +0.0424, +0.0710] sd 0.0088   | @0.1: +0.0627 [+0.0470, +0.0766]  (B=600)
+    dense pooled HUBER-N+SC - MT-FW+SC @0.25: 0.2349 - 0.2429 = -0.0079 [95: -0.0247, +0.0055] [90: -0.0216, +0.0031] sd 0.0077   | @0.1: -0.0176 [-0.0342, -0.0027]  (B=600)
+    dense pooled MT-FW+SC - BOMP-PK+SC @0.25: 0.2429 - 0.1767 = +0.0662 [95: +0.0465, +0.0839] [90: +0.0488, +0.0817] sd 0.0100   | @0.1: +0.0803 [+0.0635, +0.0978]  (B=600)
+  std: 3600 windows, 2938 events, k set [0, 1, 2]; mean detections/window {'BOMP-PK+SC': 5.0, 'MT-FW+SC': 5.0, 'MT-FW-NOCAP+SC': 5.0, 'HUBER-N+SC': 5.0}
+    stored hit labels differing from own recomputation (<=5 km epicentral, nearest): 0; scores non-increasing in every record: True; min epicentral separation between atoms of a record 6.00 km
+    mean seconds per window (the 'sec' field): {'BOMP-PK+SC': 0.425, 'MT-FW+SC': 0.074, 'MT-FW-NOCAP+SC': 0.072, 'HUBER-N+SC': 0.657}
+    BOMP-PK+SC      recall cap0.1 0.3615 (brute 0.3615)  cap0.25 0.4789 (brute 0.4789)
+    MT-FW+SC        recall cap0.1 0.3540 (brute 0.3540)  cap0.25 0.4687 (brute 0.4687)
+    MT-FW-NOCAP+SC  recall cap0.1 0.3601 (brute 0.3601)  cap0.25 0.4796 (brute 0.4796)
+    HUBER-N+SC      recall cap0.1 0.3826 (brute 0.3826)  cap0.25 0.4888 (brute 0.4888)
+    std pooled HUBER-N+SC - BOMP-PK+SC @0.25: 0.4888 - 0.4789 = +0.0099 [95: -0.0129, +0.0303] [90: -0.0096, +0.0277] sd 0.0113   | @0.1: +0.0211 [-0.0024, +0.0505]  (B=600)
+    std pooled HUBER-N+SC - MT-FW+SC @0.25: 0.4888 - 0.4687 = +0.0201 [95: -0.0027, +0.0391] [90: +0.0007, +0.0367] sd 0.0109   | @0.1: +0.0286 [+0.0053, +0.0557]  (B=600)
+    std pooled MT-FW+SC - BOMP-PK+SC @0.25: 0.4687 - 0.4789 = -0.0102 [95: -0.0354, +0.0140] [90: -0.0300, +0.0111] sd 0.0128   | @0.1: -0.0075 [-0.0344, +0.0260]  (B=600)
+=== seed 6262: windows 7200, missing parts 0, meta variants 1: [(5201, 5202, 0.5, 7, 5, 5, ('BOMP-PK+SC', 'MT-FW+SC', 'MT-FW-NOCAP+SC', 'HUBER-N+SC'), 'Prescott', 'iid_s0.5')]
+  nets per (kind, regime, cell): [120] windows per cell: [600] n cells: 12
+  dense: 3600 windows, 14407 events, k set [3, 4, 5]; mean detections/window {'BOMP-PK+SC': 7.0, 'MT-FW+SC': 7.0, 'MT-FW-NOCAP+SC': 7.0, 'HUBER-N+SC': 7.0}
+    stored hit labels differing from own recomputation (<=5 km epicentral, nearest): 0; scores non-increasing in every record: True; min epicentral separation between atoms of a record 6.00 km
+    mean seconds per window (the 'sec' field): {'BOMP-PK+SC': 0.587, 'MT-FW+SC': 0.104, 'MT-FW-NOCAP+SC': 0.102, 'HUBER-N+SC': 0.927}
+    BOMP-PK+SC      recall cap0.1 0.0916 (brute 0.0916)  cap0.25 0.1980 (brute 0.1980)
+    MT-FW+SC        recall cap0.1 0.1604 (brute 0.1604)  cap0.25 0.2531 (brute 0.2531)
+    MT-FW-NOCAP+SC  recall cap0.1 0.0914 (brute 0.0914)  cap0.25 0.1954 (brute 0.1954)
+    HUBER-N+SC      recall cap0.1 0.1514 (brute 0.1514)  cap0.25 0.2509 (brute 0.2509)
+    dense pooled HUBER-N+SC - BOMP-PK+SC @0.25: 0.2509 - 0.1980 = +0.0528 [95: +0.0362, +0.0691] [90: +0.0385, +0.0671] sd 0.0087   | @0.1: +0.0598 [+0.0354, +0.0765]  (B=600)
+    dense pooled HUBER-N+SC - MT-FW+SC @0.25: 0.2509 - 0.2531 = -0.0023 [95: -0.0194, +0.0129] [90: -0.0172, +0.0104] sd 0.0083   | @0.1: -0.0090 [-0.0329, +0.0087]  (B=600)
+    dense pooled MT-FW+SC - BOMP-PK+SC @0.25: 0.2531 - 0.1980 = +0.0551 [95: +0.0384, +0.0760] [90: +0.0407, +0.0718] sd 0.0097   | @0.1: +0.0688 [+0.0477, +0.0868]  (B=600)
+  std: 3600 windows, 2891 events, k set [0, 1, 2]; mean detections/window {'BOMP-PK+SC': 5.0, 'MT-FW+SC': 5.0, 'MT-FW-NOCAP+SC': 5.0, 'HUBER-N+SC': 5.0}
+    stored hit labels differing from own recomputation (<=5 km epicentral, nearest): 0; scores non-increasing in every record: True; min epicentral separation between atoms of a record 6.00 km
+    mean seconds per window (the 'sec' field): {'BOMP-PK+SC': 0.416, 'MT-FW+SC': 0.074, 'MT-FW-NOCAP+SC': 0.073, 'HUBER-N+SC': 0.658}
+    BOMP-PK+SC      recall cap0.1 0.3552 (brute 0.3552)  cap0.25 0.4884 (brute 0.4884)
+    MT-FW+SC        recall cap0.1 0.3667 (brute 0.3667)  cap0.25 0.4853 (brute 0.4853)
+    MT-FW-NOCAP+SC  recall cap0.1 0.3539 (brute 0.3539)  cap0.25 0.4884 (brute 0.4884)
+    HUBER-N+SC      recall cap0.1 0.3853 (brute 0.3853)  cap0.25 0.4957 (brute 0.4957)
+    std pooled HUBER-N+SC - BOMP-PK+SC @0.25: 0.4957 - 0.4884 = +0.0073 [95: -0.0167, +0.0272] [90: -0.0125, +0.0234] sd 0.0112   | @0.1: +0.0301 [-0.0028, +0.0546]  (B=600)
+    std pooled HUBER-N+SC - MT-FW+SC @0.25: 0.4957 - 0.4853 = +0.0104 [95: -0.0103, +0.0300] [90: -0.0068, +0.0269] sd 0.0104   | @0.1: +0.0187 [-0.0084, +0.0423]  (B=600)
+    std pooled MT-FW+SC - BOMP-PK+SC @0.25: 0.4853 - 0.4884 = -0.0031 [95: -0.0305, +0.0189] [90: -0.0247, +0.0153] sd 0.0122   | @0.1: +0.0114 [-0.0266, +0.0439]  (B=600)

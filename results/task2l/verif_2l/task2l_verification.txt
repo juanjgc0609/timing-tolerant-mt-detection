@@ -1,0 +1,145 @@
+TASK 2L - INDEPENDENT ADVERSARIAL VERIFICATION (search for a false positive)
+Written Mon Oct 5 2026 (UTC), after analyze_2l_out.txt. Scripts and outputs of this verification: verif_2l/*_verif.*
+No 2L file and no registry file was modified (sha256sum -c task2l_code_hashes.txt passes before and after; registry
+sha256 unchanged, 2934487e...9c3d).
+
+VERDICT: CONFIRMED POSITIVE. No leakage, asymmetry, provenance defect or statistical error was found. The registered
+contrast MT@S2+T3 - MT@S0+T3 is reproduced exactly with independent code, it is not an origin-time artefact, and it is
+carried by the station terms and not by the T3 timing level. The claim holds only within the scope stated in section 6;
+the pooled gain is mostly the one-sided 8-station cell.
+
+1. LEAKAGE
+1.1 Code reading. c11_lib.s2_terms -> jhd / relocate / joint_solve / read_peaks / energy take only (STA, catalogue =
+    [(waveform D, catalogue position, catalogue origin)], starting terms S0, constants P). No global holds truth. The
+    true statics (nc.statics) and the true catalogue hypocentres (nc.cat_truth) are read only by c11_lib.err / offset
+    (stored quality figures), by the ORACLE arm (c11_run.Net "ORA", c10_lib.sigma_oracle) and by the generator.
+    task2l_run.run_job passes nc.cat (the erroneous catalogue) to S2 and to the T3 level of S2. Outcome: no truth
+    enters S0, S2 or T3.
+1.2 Empirical (leak_attrib_verif.py, attrib_analyze_verif.txt; 300 network x regime units, nets 100-124, both seeds,
+    fresh processes): S0 terms reproduced 300/300; S2 terms reproduced 300/300; S2 recomputed on COPIES of (STA,
+    catalogue, S0) with the network's statics and true catalogue set to None, energies recomputed from the catalogue
+    waveforms: bit-identical 300/300. Catalogue hypocentres given to S0/S2 differ from the truth by sd 0.998 km per
+    coordinate and 0.099 s (0 of 18000 coordinates equal to the truth): the catalogue carries the registered errors.
+1.3 Independence of catalogue and evaluation windows. Catalogue streams [seed, 2003, ci, j, ri, 0..3]; window streams
+    [seed, 6101 | 6102, ci, j, ri, 41 | 233 | 61]: disjoint entropy, independent sources and noise. The only shared
+    quantity is the network (stations, statics), which is the object being calibrated. Tags 6101 / 6102 appear in no
+    file older than task2l_run.py.
+1.4 S2 re-reads catalogue waveforms only: read_peaks acts on ev.E = energy(D) of the 20 catalogue events; no evaluation
+    window is touched before the terms are fixed (terms are computed before the stream is opened).
+1.5 Gauge. NOTE: the gauge is NOT "zero mean per phase". It is "median origin-time shift of the relocated catalogue
+    events = 0" (absolute time tied to the catalogue origins), a deviation declared in C11_PLAN.txt before its freeze.
+    It uses catalogue origins only, no truth. Outcome: acceptable; the description of the method should say so.
+1.6 T3 and hit evaluation. c10_lib.mt_loop / bomp_loop receive only the engine, the prior and the window data. Truth
+    is used only in analyze_2l.py (c10_lib.label) to label stored atoms. The stored atom origin is the method's own
+    lattice origin (5.0-8.0 s, step 0.1), produced by the same code path in both arms.
+1.7 Origin-time artefact test (origin_verif.txt; own labelling code). Signed origin error (atom - true) of all
+    epicentral hits, standard windows: S0+T3 median -0.036 / -0.035 s (7171 / 9393), S2+T3 -0.045 / -0.038 s; dense
+    -0.060 / -0.064 against -0.065 / -0.071. The two arms have the same small bias; S2 does not recentre the origins,
+    it narrows them (share within 0.3 s: 0.47 -> 0.53 standard, 0.42 -> 0.46 dense). Common offset of the terms against
+    the true statics, per network: S0 mean -0.008..+0.012 s (sd 0.07), S2 mean -0.005..+0.025 s (sd 0.07): no offset
+    absorbed by one arm only.
+    Contrast at cap 0.25 under other hit windows (7171 / 9393):
+      standard  0.2 s +0.050 / +0.026   0.3 s +0.065 / +0.046   0.5 s +0.057 / +0.062   0.75 s +0.047 / +0.054
+                1.0 s +0.037 / +0.052   epicentre only +0.036 / +0.050
+      dense     0.2 s +0.010 / +0.010   0.3 s +0.017 / +0.020   0.5 s +0.038 / +0.031   0.75 s +0.030 / +0.035
+                1.0 s +0.031 / +0.028   epicentre only +0.020 / +0.035
+    Median-debiased origin error, 0.5 s window: one median per method +0.060 / +0.062 (standard), +0.038 / +0.036
+    (dense); per method x regime x cell +0.059 / +0.060 and +0.039 / +0.035; per method x network (truth-aided,
+    diagnostic) +0.054 / +0.052 and +0.033 / +0.031. Outcome: the gain does not come from hits moved across the 0.5 s
+    line by a systematic offset; it is positive at every window tested (smaller in dense windows at 0.2-0.3 s).
+1.8 Leakage verdict: none found.
+
+2. SYMMETRY
+    Both arms run on the same window object, the same coarse lattice and fine lattice (clone_eng copies the engine and
+    changes only the sample tables), origins 5.0-8.0 s, kmax 5 / 7, 5 km exclusion, cap 6, hard selection rule, T3
+    radius 10 km / 1 s. Stored parts (symmetry_verif.txt): every arm has exactly 5 (standard) or 7 (dense) atoms per
+    window, origins in [5.0, 8.0], depths {5, 9, 13}, minimum pairwise epicentral distance 5.00 km in both T3 arms, all
+    atoms on the 1 km lattice; first atom of MT@S0+T3 never moves more than 10 km / 1 s from the first atom of MT@S0;
+    tags (6101, 6102), kmax (5, 7), kernel Prescott in 1920 / 1920 parts.
+    One registered difference besides the terms: the T3 timing level (c10_lib.sigma_catalogue) is recomputed with each
+    term set (S2 level lower than S0 level in 0.74 of one-sided networks, about 0.53 elsewhere). Attribution run
+    (standard windows, 1500 windows, both seeds pooled, LOC+T, cap 0.25, bootstrap 500): registered contrast +0.036
+    [-0.006, +0.075]; terms only with the S0 level in both arms +0.045 [+0.005, +0.089]; level only with S0 terms
+    +0.000 [-0.018, +0.019]; level only with S2 terms -0.009 [-0.029, +0.008]. Outcome: the gain is carried by the
+    terms; the level change contributes nothing. (This 25-network subset is small: in it the registered contrast is
+    +0.077 for 7171 and -0.003 for 9393; it is used only for the attribution.)
+
+3. PROVENANCE
+3.1 sha256sum -c task2l_code_hashes.txt: 37 / 37 OK. Every module loaded by task2l_run.py that lives in the work
+    directory is in the list (task2l_run.py modules against the list: none missing).
+3.2 Registry chain: the 15 hashes of PREREGISTRO_hashes.txt are the sha256 of 15 successive line-boundary prefixes of
+    PREREGISTRO_1j_1k.txt (append-only). 13a6e9b1...a62a = prefix of 653 lines / 61718 bytes ending with the last line
+    of the Task 2L protocol, stamped Sun Oct 4 21:10:33 UTC; the full file (662 lines, result paragraph appended) is
+    2934487e...9c3d, stamped Mon Oct 5 02:00:25. That the hash was sent to the user before the run cannot be checked
+    from the files.
+3.3 Times (file system and host_time_utc inside the parts): registration 21:10:33; control parts on seed 999
+    21:14-21:19; newest frozen source 21:24:36; freeze 21:24:48; first part on 7171 / 9393 21:25:19; last 01:48:15;
+    1920 main parts, none earlier than the freeze. The clock of this machine is the only time source (the session was
+    suspended during the run and again during this verification); the order of events is internally consistent.
+    Minor: task2l_freeze_time.txt records relaunches at 22:48:13 and 22:49:32, the log has one start line (22:49:51)
+    and no part was written between 22:47:19 and 22:50:35; harmless.
+3.4 Regeneration from scratch, one fresh process per part (regen_verif.py, compare_regen_verif.txt): 6 parts, 2 written
+    before the first interruption (7171 thin one-sided net 3; 9393 strong 6 st. net 17), 1 between interruptions
+    (9393 thin one-sided net 24), 3 after (7171 strong one-sided net 45; 9393 thin one-sided net 75; 7171 strong 4 st.
+    net 140): all fields except timings identical (terms, levels, truth, 1530 atoms). In addition MT@S2+T3 atoms of
+    the standard windows were reproduced in 300 / 300 units of the attribution run (nets 100-124).
+3.5 Seeds: grep -rwE "7171|9393" over the work directory finds, before the registration, only a p-value (p=0.7171), a
+    number in a third-party test csv, and statements in the C9 / C10 / C11 reports and plan that the seeds are unused;
+    no parts directory, output or seed list holds them. No evidence of earlier use.
+3.6 Constants: c11_lib.py, c11_run.py, c10_lib.py, c10_run.py have the sha256 listed in section 7 of C11_PLAN.txt
+    (bb6f7be9..., a59aa6bf..., 3d98f7da..., c7bd0b4d...), and the plan body hashes to 42e66138...1c5f as recorded.
+    Hence c11_lib.P is the frozen plan. Budget rule not triggered (160 / 100 networks).
+3.7 python analyze_2l.py re-run by me: output byte-identical to analyze_2l_out.txt.
+
+4. STATISTICS (rules_verif.txt; own loader, own labelling, own exact FROC, own bootstrap; no code of analyze_2l.py)
+    Points at cap 0.25, MT@S2+T3 - MT@S0+T3 (7171 / 9393), all equal to the report to 4 decimals:
+      2L-a standard LOC+T +0.0572 / +0.0616     2L-b dense LOC+T +0.0380 / +0.0305
+      2L-c standard thin +0.0834 / +0.0773, strong +0.0375 / +0.0559; dense thin +0.0520 / +0.0334, strong +0.0287 /
+           +0.0273
+      2L-d LOC standard +0.0363 / +0.0497, dense +0.0200 / +0.0352        BOMP secondary +0.0675 / +0.0707
+    Own hierarchical bootstrap (600 replicates, strata regime x cell, networks then windows, operating point re-chosen,
+    different random stream):
+      2L-a  7171 [+0.032, +0.082], sd 0.0122;  9393 [+0.037, +0.083], sd 0.0123   (report [+0.034, +0.081], [+0.036,
+            +0.083]); no replicate <= 0
+      2L-b  7171 [+0.023, +0.054];  9393 [+0.017, +0.043]; no replicate <= 0
+      2L-d  5th percentiles: standard +0.020 / +0.031, dense +0.006 / +0.016 (margin -0.02)
+    Using the raw atom score instead of the running minimum: +0.0565 / +0.0608. The operating point is chosen per
+    method on the evaluation data (in-sample, as registered and as in earlier tasks; symmetric between arms).
+    Outcome: 2L-a, 2L-b, 2L-d re-derived; all pass in both seeds.
+
+5. SCOPE (exploratory, from the stored parts; scope_verif.txt, own bootstrap 400 replicates)
+5.1 Per cell, standard windows, LOC+T, cap 0.25 (7171 | 9393):
+      4 stations      +0.021 [-0.010, +0.056] | +0.018 [-0.013, +0.049]
+      6 stations      +0.048 [+0.006, +0.090] | +0.027 [-0.025, +0.072]
+      one-sided 8     +0.108 [+0.053, +0.155] | +0.113 [+0.061, +0.163]
+    Dense, LOC+T: 4 stations +0.000 | -0.005; 6 stations +0.027 | +0.026 (intervals include 0); one-sided +0.066
+    [+0.037, +0.102] | +0.054 [+0.025, +0.086]. With strong clutter the 4- and 6-station cells show nothing in standard
+    windows (-0.002 | +0.022 and -0.002 | +0.014). The report's statement is confirmed: the pooled effect is
+    essentially the one-sided 8-station cell (thin +0.128 | +0.141, strong +0.113 | +0.106); in the 4-station cell no
+    gain is demonstrated in either seed.
+5.2 Term error against the true statics (rms, median removed), medians per cell x regime: S0 0.12-0.24 s, S2
+    0.06-0.17 s; the largest reduction is in the one-sided cell with thin clutter (0.16 -> 0.06 s).
+5.3 Does S2 ever harm. S2 terms are WORSE than S0 in 22% of networks overall (3-4% one-sided thin, 19-27% one-sided
+    strong, 12-28% 6 stations, 26-37% 4 stations). At the pooled operating points, recall change in those networks:
+    standard +0.019 (7171) and -0.001 (9393); dense +0.026 and +0.025; in the 6-station cell, standard windows, it is
+    negative (-0.019 and -0.049). Where S2 is better: standard +0.068 / +0.079. By quartile of error reduction the
+    standard-window gain rises from +0.020 / -0.003 (terms worse by 0.05 s) to +0.108 / +0.117 (better by 0.14 s);
+    Spearman 0.17-0.18 per network (5 windows per network, so noisy). So the gain follows the calibration improvement,
+    there is no pooled loss where the terms get worse, and a local loss exists in 6-station networks with worse terms.
+5.4 Catalogue accuracy (stated, not rerun). S2 uses a Gaussian prior equal to the TRUE catalogue error (1 km per
+    coordinate, 0.1 s), taken as known. REPORT_C11.txt (development set) records that with a 2 km prior the term error
+    returns to the S0 level. The result is not shown for larger, biased or unknown catalogue errors, nor for
+    catalogues of fewer than 20 events.
+
+6. HONEST SCOPE OF THE CONFIRMED CLAIM
+    Synthetic data only, one generator family (gen_realistic defaults, statics sd 0.3 s fixed per network, three
+    geometries, two clutter regimes); the detectors' velocity model differs from the generator's only as built in.
+    Joint hypocentre determination with station terms is classical in pick-based location; what is new here is
+    estimating the terms without picks and measuring their effect inside the pick-free detector at a fixed false rate.
+    The gain is conditional on the T3 refinement: 2L has no S2 arm without T3, and in the pilot (seed 999) the terms
+    did nothing measurable with the hard rule alone. The registered superiority is for the origin-time hit rule
+    (LOC+T, 0.5 s); under the epicentre-only rule only non-inferiority was registered (the observed gain there,
+    +0.036 / +0.050 standard, is descriptive). It assumes a 20-event catalogue with 1 km / 0.1 s errors of known size.
+    The size to quote is about +0.06 recall in standard and +0.03 in dense windows at 0.25 false events per window,
+    concentrated in the one-sided 8-station geometry, with no demonstrated gain for 4 stations, and it captures only
+    part of the oracle gain (0.28-0.61 in the report).

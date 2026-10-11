@@ -1,0 +1,67 @@
+=== unilateral_c40 | consistent | seed 2024 | events 53, windows 60, arrival detection 0.43
+   TOL-TB   TOL-TB       0.05: rec 0.02 fal 0.00 | 0.1: rec 0.17 fal 0.08 | 0.25: rec 0.26 fal 0.30 | 0.5: rec 0.40 fal 0.72
+   KIN-LR   KIN-LR@0.1   0.05: rec 0.02 fal 0.00 | 0.1: rec 0.36 fal 0.10 | 0.25: rec 0.43 fal 0.32 | 0.5: rec 0.58 fal 0.82
+   PHYS-LR  PHYS-LR@0.1  0.05: rec 0.38 fal 0.02 | 0.1: rec 0.57 fal 0.25 | 0.25: rec 0.57 fal 0.25 | 0.5: rec 0.75 fal 0.80
+   WAVE-E   WAVE-E       0.05: rec 0.06 fal 0.03 | 0.1: rec 0.26 fal 0.10 | 0.25: rec 0.43 fal 0.47 | 0.5: rec 0.53 fal 0.85
+   WAVE-P   WAVE-P       0.05: rec 0.38 fal 0.15 | 0.1: rec 0.38 fal 0.15 | 0.25: rec 0.55 fal 0.52 | 0.5: rec 0.72 fal 0.90
+      budget 0.1, events detected only by KIN-LR / only by PHYS-LR: 0/11  McNemar p=0.0010
+      budget 0.1, events detected only by KIN-LR / only by WAVE-P: 4/5  McNemar p=1.0000
+      budget 0.1, events detected only by PHYS-LR / only by WAVE-P: 13/3  McNemar p=0.0213
+      budget 0.1, events detected only by WAVE-E / only by WAVE-P: 0/6  McNemar p=0.0312
+
+=== ladder_4 | consistent | seed 2024 | events 55, windows 60, arrival detection 0.46
+   TOL-TB   TOL-TB       0.05: rec 0.04 fal 0.03 | 0.1: rec 0.04 fal 0.03 | 0.25: rec 0.09 fal 0.30 | 0.5: rec 0.25 fal 0.67
+   KIN-LR   KIN-LR@0.4   0.05: rec 0.04 fal 0.03 | 0.1: rec 0.04 fal 0.03 | 0.25: rec 0.11 fal 0.32 | 0.5: rec 0.13 fal 0.62
+   PHYS-LR  PHYS-LR@0.2  0.05: rec 0.22 fal 0.08 | 0.1: rec 0.22 fal 0.08 | 0.25: rec 0.36 fal 0.22 | 0.5: rec 0.42 fal 0.53
+   WAVE-E   WAVE-E       0.05: rec 0.11 fal 0.12 | 0.1: rec 0.18 fal 0.22 | 0.25: rec 0.18 fal 0.52 | 0.5: rec 0.27 fal 0.80
+   WAVE-P   WAVE-P       0.05: rec 0.02 fal 0.00 | 0.1: rec 0.16 fal 0.07 | 0.25: rec 0.38 fal 0.45 | 0.5: rec 0.64 fal 0.80
+      budget 0.1, events detected only by KIN-LR / only by PHYS-LR: 0/10  McNemar p=0.0020
+      budget 0.1, events detected only by KIN-LR / only by WAVE-P: 0/7  McNemar p=0.0156
+      budget 0.1, events detected only by PHYS-LR / only by WAVE-P: 7/4  McNemar p=0.5488
+      budget 0.1, events detected only by WAVE-E / only by WAVE-P: 1/0  McNemar p=1.0000
+
+=== ladder_6 | consistent | seed 2024 | events 53, windows 60, arrival detection 0.44
+   TOL-TB   TOL-TB       0.05: rec 0.00 fal 0.00 | 0.1: rec 0.06 fal 0.02 | 0.25: rec 0.17 fal 0.25 | 0.5: rec 0.30 fal 0.40
+   KIN-LR   KIN-LR@0.2   0.05: rec 0.02 fal 0.00 | 0.1: rec 0.08 fal 0.10 | 0.25: rec 0.19 fal 0.27 | 0.5: rec 0.32 fal 0.48
+   PHYS-LR  PHYS-LR@0.2  0.05: rec 0.13 fal 0.10 | 0.1: rec 0.32 fal 0.22 | 0.25: rec 0.51 fal 0.37 | 0.5: rec 0.62 fal 0.62
+   WAVE-E   WAVE-E       0.05: rec 0.00 fal 0.00 | 0.1: rec 0.08 fal 0.03 | 0.25: rec 0.15 fal 0.13 | 0.5: rec 0.38 fal 0.82
+   WAVE-P   WAVE-P       0.05: rec 0.04 fal 0.00 | 0.1: rec 0.08 fal 0.03 | 0.25: rec 0.38 fal 0.33 | 0.5: rec 0.66 fal 0.65
+      budget 0.1, events detected only by KIN-LR / only by PHYS-LR: 0/13  McNemar p=0.0002
+      budget 0.1, events detected only by KIN-LR / only by WAVE-P: 2/2  McNemar p=1.0000
+      budget 0.1, events detected only by PHYS-LR / only by WAVE-P: 13/0  McNemar p=0.0002
+      budget 0.1, events detected only by WAVE-E / only by WAVE-P: 0/0  McNemar p=1.0000
+
+=== unilateral_c40 | jit0.5 | seed 2024 | events 53, windows 60, arrival detection 1.00
+   TOL-TB   TOL-TB       0.05: rec 0.02 fal 0.00 | 0.1: rec 0.32 fal 0.15 | 0.25: rec 0.64 fal 0.33 | 0.5: rec 0.96 fal 0.83
+   KIN-LR   KIN-LR@0.2   0.05: rec 0.30 fal 0.17 | 0.1: rec 0.30 fal 0.17 | 0.25: rec 0.53 fal 0.38 | 0.5: rec 0.83 fal 0.90
+   PHYS-LR  PHYS-LR@0.4  0.05: rec 0.57 fal 0.22 | 0.1: rec 0.64 fal 0.28 | 0.25: rec 0.81 fal 0.42 | 0.5: rec 0.92 fal 0.87
+   WAVE-E   WAVE-E       0.05: rec 0.06 fal 0.03 | 0.1: rec 0.26 fal 0.10 | 0.25: rec 0.43 fal 0.47 | 0.5: rec 0.53 fal 0.85
+   WAVE-P   WAVE-P       0.05: rec 0.38 fal 0.15 | 0.1: rec 0.38 fal 0.15 | 0.25: rec 0.55 fal 0.52 | 0.5: rec 0.72 fal 0.90
+      budget 0.1, events detected only by KIN-LR / only by PHYS-LR: 2/20  McNemar p=0.0001
+      budget 0.1, events detected only by KIN-LR / only by WAVE-P: 9/13  McNemar p=0.5235
+      budget 0.1, events detected only by PHYS-LR / only by WAVE-P: 20/6  McNemar p=0.0094
+      budget 0.1, events detected only by WAVE-E / only by WAVE-P: 0/6  McNemar p=0.0312
+
+=== ladder_4 | jit0.5 | seed 2024 | events 55, windows 60, arrival detection 1.00
+   TOL-TB   TOL-TB       0.05: rec 0.02 fal 0.00 | 0.1: rec 0.02 fal 0.00 | 0.25: rec 0.16 fal 0.20 | 0.5: rec 0.22 fal 0.53
+   KIN-LR   KIN-LR@0.2   0.05: rec 0.02 fal 0.00 | 0.1: rec 0.02 fal 0.00 | 0.25: rec 0.18 fal 0.20 | 0.5: rec 0.24 fal 0.48
+   PHYS-LR  PHYS-LR@0.4  0.05: rec 0.13 fal 0.07 | 0.1: rec 0.13 fal 0.07 | 0.25: rec 0.36 fal 0.27 | 0.5: rec 0.56 fal 0.55
+   WAVE-E   WAVE-E       0.05: rec 0.11 fal 0.12 | 0.1: rec 0.18 fal 0.22 | 0.25: rec 0.18 fal 0.52 | 0.5: rec 0.27 fal 0.80
+   WAVE-P   WAVE-P       0.05: rec 0.02 fal 0.00 | 0.1: rec 0.16 fal 0.07 | 0.25: rec 0.38 fal 0.45 | 0.5: rec 0.64 fal 0.80
+      budget 0.1, events detected only by KIN-LR / only by PHYS-LR: 0/6  McNemar p=0.0312
+      budget 0.1, events detected only by KIN-LR / only by WAVE-P: 0/8  McNemar p=0.0078
+      budget 0.1, events detected only by PHYS-LR / only by WAVE-P: 5/7  McNemar p=0.7744
+      budget 0.1, events detected only by WAVE-E / only by WAVE-P: 1/0  McNemar p=1.0000
+
+=== ladder_6 | jit0.5 | seed 2024 | events 53, windows 60, arrival detection 1.00
+   TOL-TB   TOL-TB       0.05: rec 0.25 fal 0.05 | 0.1: rec 0.25 fal 0.05 | 0.25: rec 0.36 fal 0.10 | 0.5: rec 0.62 fal 0.37
+   KIN-LR   KIN-LR@0.4   0.05: rec 0.00 fal 0.00 | 0.1: rec 0.21 fal 0.05 | 0.25: rec 0.45 fal 0.17 | 0.5: rec 0.81 fal 0.35
+   PHYS-LR  PHYS-LR@0.4  0.05: rec 0.42 fal 0.10 | 0.1: rec 0.42 fal 0.10 | 0.25: rec 0.58 fal 0.23 | 0.5: rec 0.83 fal 0.52
+   WAVE-E   WAVE-E       0.05: rec 0.00 fal 0.00 | 0.1: rec 0.08 fal 0.03 | 0.25: rec 0.15 fal 0.13 | 0.5: rec 0.38 fal 0.82
+   WAVE-P   WAVE-P       0.05: rec 0.04 fal 0.00 | 0.1: rec 0.08 fal 0.03 | 0.25: rec 0.38 fal 0.33 | 0.5: rec 0.66 fal 0.65
+      budget 0.1, events detected only by KIN-LR / only by PHYS-LR: 2/13  McNemar p=0.0074
+      budget 0.1, events detected only by KIN-LR / only by WAVE-P: 10/3  McNemar p=0.0923
+      budget 0.1, events detected only by PHYS-LR / only by WAVE-P: 19/1  McNemar p=0.0000
+      budget 0.1, events detected only by WAVE-E / only by WAVE-P: 0/0  McNemar p=1.0000
+
+written task1o_seed2024.json

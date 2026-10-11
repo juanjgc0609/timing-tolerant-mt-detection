@@ -1,0 +1,537 @@
+C11 - SELF-CONSISTENT STATION TERMS INSIDE THE PICK-FREE MOMENT-TENSOR SUBSPACE DETECTORS (explore_contrib) - REPORT
+======================================================================================================================
+Status: EXPLORATORY, NOT CONFIRMATORY. Nothing here tests a registered hypothesis.
+Date: Sun Oct 4 2026, 17:03-21:10 UTC (12:03-16:10 -05). Machine: 2 cores. Wall time about 4 h 07 min: development and
+validation 58 min (17:03-18:01), evaluation runs 2 h 49 min (18:02:00-20:51:30, two processes), analysis and post hoc
+contrasts 20 min. CPU time of the evaluation runs 5.6 h.
+
+Plan: explore_contrib/C11_PLAN.txt, frozen Sun Oct 4 18:01:51 UTC 2026, BEFORE any detection evaluation.
+  sha256 of the plan body (sections 1-7, everything above the line "8. FREEZE"):
+      42e6613879e6f3f2aae4f1cb349d15bd2839770e4e1ecbcbf0f8ae772c181c5f
+  sha256 of the whole file (body + freeze trailer): e95977c423cd2689f436ef4a84f893b2ea5eebb497857de0ed979492450bc5b9
+  (both in C11_PLAN.sha256). The code hashes of c11_lib.py, c11_run.py, c11_analyze.py, c10_lib.py, c10_screloc.py,
+  c10_run.py, c10_analyze.py at the freeze are in section 7 of the plan and were verified (sha256sum -c, all OK) at the
+  launch of the evaluation (18:02:00 UTC).
+
+Seeds and data (seed 999 ONLY; seeds 2024, 7331, 4242, 8888, 5151, 6262, 7171, 9393 were never generated, read or
+touched):
+  networks  task2a_confirm.network(999, cell, j); cells ladder_4 (4 stations), ladder_6 (6), unilateral_c40 (8,
+            one-sided); regimes thin and strong; statics sd 0.3 s; catalogue streams [999, 2003, ci, j, ri] (the first
+            20 events are the registered catalogue; events 21-80 continue the same stream).
+            DEVELOPMENT j = 200-209 (calibration quality only); EVALUATION j = 210-239 (30 per cell and regime);
+            VALIDATION j = 195. grep before the study: used so far 0-4, 10-15, 20-35, 40-89, 99, 130-149, 160-179, 195,
+            199; nothing at or above 200.
+  TAGs, all new ([999, TAG, ci, j, ri, 41|233|61]; used before: 3001-3008, 3701-3706, 3801-3812, 3901-3913, 4000-4004):
+            4101 STD evaluation windows (0-2 events, kmax 5); 4102 DENSE evaluation windows (3-5 events within 9 km, kmax
+            7); 4103 unlabelled calibration stream (30 standard-type windows per network, disjoint from the evaluation
+            windows; its truth never reaches an estimator); 4104 noise-free validation catalogue; 4105 validation
+            windows (network 195).
+  Sample: 30 networks x 3 cells x 2 regimes x 5 windows = 900 windows per design (STD 703 events, DENSE 3615 events).
+          All 30 evaluation networks finished before the 21:00 UTC deadline of the plan; nothing was dropped.
+Protocol as C7-C10: 3 km x 3 depths lattice (675 nodes), origins 5.0-8.0 s step 0.1, 5 km exclusion, exact FROC, recall
+at <= 0.1 and <= 0.25 realised false events per window, hierarchical bootstrap (strata regime x cell, networks then
+windows, 2000 replicates, operating point re-chosen per replicate), 95% percentile intervals, paired differences.
+Hit rules: LOC+T (epicentre within 5 km AND |origin error| <= 0.5 s; primary in this study) and LOC (registered).
+
+----------------------------------------------------------------------------------------------------------------------
+0. SUMMARY
+----------------------------------------------------------------------------------------------------------------------
+(1) PRIMARY CONTRAST (fixed in the plan): the JHD station terms S2, with the detector held fixed (MT-FW cap 6 + T3),
+    standard windows, origin-time hit rule, <= 0.25 false events per window:
+        MT@S2+T3 - MT@S0+T3 = +0.070 [+0.010, +0.120]   (recall 0.371 -> 0.441; bootstrap SD 0.028)
+    Oracle (true statics) on the same contrast: +0.091 [+0.031, +0.141]. Fraction of the oracle gain captured:
+    0.77 [0.18, 1.45]. Dense windows, same contrast: LOC+T +0.065 [+0.034, +0.094], LOC +0.034 [+0.001, +0.070]:
+    no loss. Both judgement rules of the plan, (A) and (B), are met: PLAUSIBLE CONTRIBUTION.
+(2) The effect needs the refinement. With the hard +-0.25 s rule alone the terms do nothing measurable in standard
+    windows (MT@S2 - MT@S0: LOC+T +0.026 [-0.030, +0.083], LOC +0.027 [-0.015, +0.079]) and neither does the oracle
+    (MT@ORA - MT@S0: LOC+T +0.020 [-0.044, +0.072], LOC +0.018 [-0.031, +0.068]). The terms and T3 are complements:
+    T3 with the registered +SC terms gives +0.024 [-0.022, +0.078] (LOC+T), T3 with the JHD terms +0.094 [+0.035,
+    +0.151], T3 with the true statics +0.115 [+0.061, +0.174], all against the registered MT-FW+SC.
+(3) The gain is in origin-time-consistent detection, not in the registered endpoint. Under LOC in standard windows the
+    primary contrast is +0.017 [-0.028, +0.068] and even the oracle gives +0.018 [-0.029, +0.070]. In dense windows it
+    is positive under both rules.
+(4) Calibration quality (rms error of the terms against the true statics, median over 90 networks per regime):
+        thin    S0 0.150   S1 0.107   S2 0.072   S3 0.069   S2@40 0.051   S2@80 0.041   (plain median 40 / 80: 0.109 / 0.081)
+        strong  S0 0.206   S1 0.185   S2 0.139   S3 0.134   S2@40 0.082   S2@80 0.052   (plain median 40 / 80: 0.150 / 0.105)
+    JHD with re-read peaks halves the error in thin clutter and removes a third in strong clutter; with 20 events it is
+    as good as the plain median with 80 events in thin clutter and between 40 and 80 in strong clutter.
+(5) Self-calibration from the detector's own atoms (S3) is not distinguishable from S2: term error 0.069 / 0.134
+    against 0.072 / 0.139; recall MT@S3+T3 - MT@S2+T3 +0.016 [-0.019, +0.064] (STD, LOC+T), -0.009 [-0.032, +0.018]
+    (DENSE). It costs a detection pass (13 s per network) and buys nothing measurable here.
+(6) Catalogue size (S4): the term error keeps falling (0.072 -> 0.051 -> 0.041 thin; 0.139 -> 0.082 -> 0.052 strong)
+    but the recall does not follow: STD LOC+T +0.070 (20), +0.080 (40), +0.087 (80), oracle +0.091; S2@80 - S2
+    +0.017 [-0.028, +0.063]. With 20 events and JHD the detector is already within the noise of the oracle
+    (ORA - S2: STD +0.021 [-0.026, +0.071], DENSE +0.013 [-0.014, +0.045]).
+(7) SC-R (S1, the post hoc candidate of C10) did not replicate as a term effect: MT@S1+T3 - MT@S0+T3 +0.023 [-0.050,
+    +0.077] in standard windows (C10: about +0.057); in dense windows it is positive (+0.042 [+0.014, +0.073] LOC+T).
+(8) BOMP-PK, same contrast: STD LOC+T +0.057 [-0.003, +0.115] (oracle +0.110 [+0.055, +0.171]; fraction 0.52
+    [-0.04, 0.95]); DENSE LOC+T +0.019 [-0.003, +0.041], LOC +0.031 [-0.012, +0.068]. Same direction, interval touching 0.
+(9) Several C10 effects are smaller on these fresh networks: T3 with +SC terms (C10 +0.066 [+0.019, +0.136], here
+    +0.024 [-0.022, +0.078]); the oracle with the hard rule (C10 +0.087 LOC+T and +0.098 LOC, here +0.020 and +0.018).
+    The C11 primary estimate (+0.070) should be expected to shrink in the same way; the draft registration plans on
+    +0.05.
+Recommendation: section 10. A confirmatory registration is drafted in section 12.
+
+----------------------------------------------------------------------------------------------------------------------
+1. DESIGN (code: c11_lib.py, c11_run.py; analysis c11_analyze.py; all constants in c11_lib.P)
+----------------------------------------------------------------------------------------------------------------------
+Station terms c (station, phase), fixed per network, used as the corrections of the detectors:
+  S0    registered +SC (median of the gated peak delays of the 20 catalogue events at the catalogue hypocentres; +-1 s
+        joint P/S read, energy gate 25).
+  S1    SC-R of C10 (c10_screloc.sc_reloc, unchanged).
+  S2    JHD on the 20-event catalogue. Start: terms = S0, events at the catalogue hypocentres. 3 passes; pass 1 uses
+        the registered read; passes 2 and 3 re-read every event within +-0.5 s of the prediction of its current
+        hypocentre and terms, energy gate 12. In each pass: (a) alternation (at most 8 times, stop below 0.002 s):
+        residual scale = 1.4826 MAD of the gated residuals (floor 0.05 s); each event with >= 4 gated arrivals is
+        relocated by iteratively reweighted Gauss-Newton (Huber 1.345, homogeneous straight-ray times, Gaussian prior
+        N(0, 1 km) per coordinate and N(0, 0.1 s) on the origin around the catalogue hypocentre); gauge: median
+        origin shift of the relocated catalogue events = 0; term = median over events of (read time - travel time -
+        origin); (b) joint Gauss-Newton over all terms and relocatable hypocentres (at most 15 iterations, Cauchy
+        weights 2.385, the same priors), then the same gauge.
+  S3    self-calibration: MT-FW (cap 6) + T3 with the S2 terms over the 30 unlabelled windows of the network; atoms
+        with selection score >= the 0.80 quantile of the stream's atom scores (30 per network); each atom is an extra
+        event with prior N(0, 3 km) / N(0, 0.3 s) around the refined atom, read within +-0.5 s of its own prediction
+        (gate 12), used with >= 6 gated arrivals (realised: 13.6 per network in thin clutter, 18.5 in strong); catalogue
+        events (S2 state) and atoms then go through 2 more passes of the S2 procedure. One iteration.
+  S4    S2 with the first 40 / 80 catalogue events (S2@40, S2@80).
+  ORA   true statics (as C10 MT-ORA; timing level = c10_lib.sigma_oracle, 0.05 s).
+Detectors: MT-FW (cap 6) and BOMP-PK loops of c10_lib.py, unchanged; hard +-0.25 s peak rule; T3 = the frozen C10
+  refinement (1 km lattice, 10 km, origins within 1 s, penalised peak search, record score = selection statistic).
+  Timing level of T3 for a term set: the C10 catalogue rule recomputed with that term set (realised medians, thin /
+  strong: S0 0.144 / 0.220, S1 0.105 / 0.178, S2 0.141 / 0.208, S3 0.140 / 0.205, S2@40 0.132 / 0.206, S2@80 0.130 /
+  0.210; ORA 0.049 / 0.048).
+Run set: MT family S0, S1, S2, S3, S2@40, S2@80, ORA, each hard and +T3; BOMP family S0 and S2 hard and +T3, ORA +T3.
+Deviations from the wording of the task (all written in the plan before the evaluation):
+  - gauge: not a zero mean per phase. The true statics are not zero-mean and a common offset moves origin times, which
+    the strict hit rule sees; absolute time is tied to the catalogue origins and the weak directions are held by the
+    catalogue prior (1 km / 0.1 s, the known catalogue error);
+  - relocation by prior-regularised Gauss-Newton instead of a grid search;
+  - joint Gauss-Newton stage added after the noise-free validation (section 3);
+  - BOMP-PK only with S0, S2 (the primary candidate) and ORA (+T3 only for ORA): cost. HUBER-N not run (not cheap: each
+    term set needs its own operator tables in c8_lib). CEIL-GD not run.
+
+----------------------------------------------------------------------------------------------------------------------
+2. WHAT WAS FIXED BEFORE THE RESULTS, AND POST HOC DECLARATIONS
+----------------------------------------------------------------------------------------------------------------------
+Fixed in C11_PLAN.txt before any detection evaluation: every definition and constant of section 1, the run set, the
+endpoints, the bootstrap, the rule naming the primary candidate (S2 or S3 by development term error, ties below 0.01 s
+to S2 -> S2), the primary contrast (MT@S2+T3 - MT@S0+T3, STD, LOC+T, 0.25, pooled), the judgement rules (A) and (B),
+the budget rule (stop at 21:00 UTC; not triggered).
+Chosen on the development networks 200-209 by term error only (section 4): the energy gate of the re-read (12), the
+joint stage; every other constant kept its default. Declared in the plan: the S3 development detection pass used
+the S2 terms before the joint stage existed; a purity figure of the selected atoms (0.54 at quantile 0.80) was
+computed there with the truth and used by no rule; the smoke test ran on validation network 195.
+No recall, FROC or hit count of any detector on any C11 network was computed before the freeze.
+AFTER THE FREEZE:
+  (a) c11_analyze.py was changed once after the evaluation finished: three lines that skip a fraction-of-oracle-gain
+      form when one of its methods was not run (BOMP@ORA hard; the frozen script stopped with a KeyError at that line
+      after printing the pooled LOC+T block of the MT family). No number of any other line changed. The frozen file
+      is kept as c11_analyze_frozen.py.txt (sha256 27a97ca1...18d8da, as in the plan).
+  (b) c11_validate.py: one check ("JHD without relocation = +SC") was given n_joint = 0 so that it tests what its name
+      says; rerun on network 195 while the evaluation was running; out/c11_validation.txt is that rerun.
+  (c) c11_analyze.py was exercised on a smoke data set of validation network 195 (12 windows, 8 events, B = 20) while
+      the evaluation ran; no evaluation file was read before both runs had finished.
+  (d) POST HOC contrasts between candidates (S3 - S2, S2@40 - S2, S2@80 - S2, ORA - S2, S2 - S1, ORA - S2@80;
+      c11_posthoc.py, out/c11_posthoc.txt): the plan only fixed contrasts to S0. Descriptive.
+  (e) The comparisons with C10 numbers in sections 0 and 6 are post hoc readings.
+No multiplicity correction. Outside the primary contrast everything is descriptive: 19 methods, 2 designs, 2 hit rules,
+2 caps, 3 regime groupings.
+Not done: BOMP-PK with S1, S3, S4; a second self-calibration iteration; S3 with more unlabelled windows on the
+evaluation set; T3 with a timing level taken from the JHD residuals (the C10 rule barely moves with S2: 0.144 -> 0.141 s,
+because it reads the catalogue at the catalogue hypocentres; the oracle arm uses 0.05 s, so part of the oracle gain may
+be the level and not the terms); per-cell tables; a soft prior (T2w) with the new terms; HUBER-N; CEIL-GD.
+
+----------------------------------------------------------------------------------------------------------------------
+3. VALIDATION (out/c11_validation.txt; network 195; before the freeze, see 2(b))
+----------------------------------------------------------------------------------------------------------------------
+  V1 identity. The read of c11_lib equals station_corrections.peak_delays in 6/6 network x regime; the median of the
+     gated reads equals the registered +SC in 6/6; the JHD with relocation switched off returns +SC in 6/6; the cloned
+     engines (only the sample tables change with the terms) equal the C10 engines in 6/6; on 9 dense windows the MT loop
+     on a cloned engine reproduces c8_lib.mtfw_general (ls, cap 6) 9/9, the BOMP loop reproduces xc.bomp_pk 9/9, and
+     MT+T3 equals the C10 MT+T3 9/9 (asserted).
+  V2 exact model, noise-free (straight rays, no direction / site scatter, no coda, no clutter, noise 1e-4), statics
+     N(0, 0.3 s), 20 events. rms error of the terms against the true statics, gauge (median) removed, s:
+                                      ladder_4     ladder_6     unilateral_c40
+       exact catalogue      S0        0.0014       0.0009       0.0008
+                            S2        0.0010       0.0020       0.0006
+       catalogue errors     S0        0.056        0.086        0.055
+       1 km / 0.1 s         S1        0.044        0.074        0.043
+                            S2 alternation only    0.023   0.077   0.039
+                            S2 as frozen (floor 0.05 s)   0.025   0.028   0.020
+                            S2, floor 0.01 s       0.008   0.009   0.007
+                            S2, floor 0.01 s, no prior    0.004   0.005   0.001
+     The joint estimator recovers the true terms up to the gauge (0.001-0.005 s; catalogue relocated from 1.3-1.7 km to
+     0.03-0.07 km). The alternation alone does not converge in 24 sweeps, which is why the joint stage was added. The
+     frozen version keeps a floor of 0.05 s on the residual scale; in a noise-free world that floor makes the catalogue
+     prior too strong and leaves 0.02-0.03 s. The gauge itself (offset of all terms) is the mean catalogue origin error
+     and cannot be recovered: 0.01-0.06 s here.
+
+----------------------------------------------------------------------------------------------------------------------
+4. DEVELOPMENT: CALIBRATION QUALITY ON NETWORKS 200-209 (out/c11_dev_s2.txt, _s2b, _s2c, _s2d, _s3, _s3b)
+----------------------------------------------------------------------------------------------------------------------
+rms error of the terms against the true statics (median removed), median over 30 networks per regime, s:
+                                              thin     strong
+    S0 (+SC)                                  0.133    0.190
+    S1 (SC-R)                                 0.101    0.190
+    S2 with the registered gate 25            0.111    0.211
+    S2 gate 12, alternation only              0.068    0.135
+    S2 gate 12 + joint stage (frozen S2)      0.062    0.111
+    S3 (frozen)                               0.066    0.106
+    S2@40 / S2@80                             0.06 / 0.05   0.08 / 0.06
+    plain median with 40 / 80 events          0.112 / 0.076   0.137 / 0.104
+What mattered: the gate of the re-read. With the registered gate (25, i.e. 5 noise sd) only about half of the arrivals
+of a catalogue event are used and many 4-station events cannot be relocated; reading again around the predicted time
+with a gate of 12 brings in the weaker arrivals safely. Window width (0.3-1.0 s), number of passes, robust constants,
+prior width 0.5 km and minimum number of arrivals changed the error by less than the network-to-network noise (0.01 s);
+a weaker position prior (2 km) is worse (0.118 / 0.186 with the joint stage): the estimate leans on the catalogue prior.
+S3 variants (20-40 windows, quantile 0.6-0.9, atom prior 1.5-6 km, first read +-1 s, a self-consistency filter): 0.056-
+0.068 / 0.104-0.126, never better than S2 by more than 0.01 s in the sum.
+
+----------------------------------------------------------------------------------------------------------------------
+5. EVALUATION: STATION TERMS (networks 210-239; out/c11_eval_analysis_STD.txt, head)
+----------------------------------------------------------------------------------------------------------------------
+rms error against the true statics, median removed (s): median over 30 networks per cell; "all" = median [quartiles]
+over the 90 networks of the regime; better = share of networks with a smaller error than S0; |offset| = median over
+networks of |median(term - static)|.
+  thin        ladder_4  ladder_6  unilateral   all                      mean    better   |offset|
+    S0        0.131     0.161     0.149        0.150 [0.127, 0.187]     0.158   -        0.041
+    S1        0.106     0.127     0.100        0.107 [0.088, 0.141]     0.120   0.86     0.043
+    S2        0.088     0.097     0.056        0.072 [0.052, 0.111]     0.093   0.84     0.049
+    S3        0.081     0.088     0.049        0.069 [0.047, 0.109]     0.089   0.81     0.044
+    S2@40     0.065     0.061     0.045        0.051 [0.038, 0.077]     0.060   0.96     0.034
+    S2@80     0.041     0.052     0.038        0.041 [0.034, 0.059]     0.048   0.99     0.027
+    S0@40     0.088     0.115     0.125        0.109 [0.087, 0.132]     0.111   0.83     0.034
+    S0@80     0.068     0.083     0.085        0.081 [0.067, 0.092]     0.080   0.98     0.028
+  strong
+    S0        0.163     0.221     0.220        0.206 [0.162, 0.261]     0.223   -        0.045
+    S1        0.164     0.204     0.163        0.185 [0.141, 0.236]     0.196   0.72     0.039
+    S2        0.136     0.191     0.105        0.139 [0.088, 0.237]     0.180   0.68     0.054
+    S3        0.139     0.150     0.089        0.134 [0.083, 0.236]     0.175   0.68     0.051
+    S2@40     0.102     0.089     0.056        0.082 [0.054, 0.132]     0.107   0.94     0.038
+    S2@80     0.068     0.055     0.041        0.052 [0.039, 0.076]     0.060   0.99     0.027
+    S0@40     0.137     0.161     0.146        0.150 [0.122, 0.183]     0.160   0.87     0.037
+    S0@80     0.107     0.108     0.104        0.105 [0.090, 0.130]     0.114   0.99     0.028
+The development figures replicate (S2 0.062 / 0.111 there, 0.072 / 0.139 here). In strong clutter the JHD is not safe
+for every network: it is worse than S0 in a third of them and its upper quartile (0.237) is no better than that of S0
+(0.261); contaminated catalogue peaks remain the limit with 20 events and 4-6 stations. With 40 events it is better
+than S0 in 94% of the networks. The common offset (which the estimator cannot see) stays at 0.04-0.05 s for every
+20-event estimator: it is the mean origin error of the catalogue.
+
+----------------------------------------------------------------------------------------------------------------------
+6. EVALUATION: DETECTION, STANDARD WINDOWS (900 windows, 703 events; out/c11_eval_analysis_STD.txt)
+----------------------------------------------------------------------------------------------------------------------
+6.1 Recall @0.1 / @0.25 (LOC+T), and @0.25 (LOC)
+                    LOC+T @0.1           LOC+T @0.25          LOC @0.25
+  MT@S0             0.256 [.201,.301]    0.347 [.296,.400]    0.506
+  MT@S0+T3          0.256 [.185,.322]    0.371 [.320,.429]    0.535
+  MT@S1+T3          0.263 [.217,.336]    0.394 [.322,.457]    0.535
+  MT@S2             0.290 [.237,.343]    0.373 [.319,.435]    0.533
+  MT@S2+T3          0.323 [.269,.390]    0.441 [.386,.497]    0.552
+  MT@S3+T3          0.347 [.287,.407]    0.457 [.406,.517]    0.566
+  MT@S2@40+T3       0.350 [.294,.414]    0.451 [.395,.510]    0.563
+  MT@S2@80+T3       0.339 [.284,.408]    0.458 [.407,.511]    0.575
+  MT@ORA            0.279 [.215,.333]    0.367 [.304,.423]    0.525
+  MT@ORA+T3         0.374 [.323,.437]    0.462 [.412,.518]    0.553
+  BOMP@S0           0.238 [.165,.300]    0.356 [.301,.410]    0.538
+  BOMP@S0+T3        0.256 [.182,.331]    0.398 [.337,.457]    0.555
+  BOMP@S2+T3        0.284 [.181,.372]    0.455 [.394,.518]    0.586
+  BOMP@ORA+T3       0.385 [.294,.447]    0.508 [.457,.566]    0.620
+6.2 Paired differences, LOC+T (primary rule), @0.1 / @0.25
+                    - S0+T3 (terms, detector fixed)                    - S0 hard (terms + refinement; registered base)
+  MT@S1+T3          +0.007 [-0.040,+0.077] / +0.023 [-0.050,+0.077]    +0.007 [-0.036,+0.085] / +0.047 [-0.029,+0.109]
+  MT@S2+T3 PRIMARY  +0.067 [+0.000,+0.144] / +0.070 [+0.010,+0.120]    +0.067 [+0.014,+0.140] / +0.094 [+0.035,+0.151]
+  MT@S3+T3          +0.091 [+0.026,+0.161] / +0.085 [+0.035,+0.140]    +0.091 [+0.034,+0.158] / +0.110 [+0.058,+0.171]
+  MT@S2@40+T3       +0.094 [+0.026,+0.168] / +0.080 [+0.019,+0.137]    +0.094 [+0.038,+0.162] / +0.104 [+0.044,+0.163]
+  MT@S2@80+T3       +0.083 [+0.021,+0.160] / +0.087 [+0.029,+0.138]    +0.083 [+0.035,+0.155] / +0.111 [+0.057,+0.168]
+  MT@ORA+T3         +0.118 [+0.058,+0.196] / +0.091 [+0.031,+0.141]    +0.118 [+0.070,+0.189] / +0.115 [+0.061,+0.174]
+  BOMP@S2+T3        +0.028 [-0.079,+0.105] / +0.057 [-0.003,+0.115]    +0.047 [-0.057,+0.146] / +0.100 [+0.037,+0.166]
+  BOMP@ORA+T3       +0.129 [+0.037,+0.197] / +0.110 [+0.055,+0.171]    +0.148 [+0.063,+0.234] / +0.152 [+0.099,+0.215]
+  Hard rule, - S0 hard @0.25: MT@S1 +0.006 [-0.055,+0.057]; MT@S2 +0.026 [-0.030,+0.083]; MT@S3 +0.024 [-0.038,+0.075];
+  MT@S2@40 +0.034 [-0.024,+0.086]; MT@S2@80 +0.027 [-0.037,+0.081]; MT@ORA +0.020 [-0.044,+0.072]; BOMP@S2 +0.011
+  [-0.049,+0.072]. T3 with the S0 terms: MT +0.024 [-0.022,+0.078], BOMP +0.043 [-0.010,+0.095].
+  Bootstrap SD @0.25: primary 0.0282; MT@S2+T3 - MT@S0 0.0298; BOMP@S2+T3 - BOMP@S0+T3 0.0304.
+6.3 Paired differences, LOC (registered rule), @0.1 / @0.25
+                    - S0+T3                                            - S0 hard
+  MT@S1+T3          -0.003 [-0.052,+0.046] / +0.000 [-0.048,+0.045]    +0.020 [-0.034,+0.072] / +0.028 [-0.021,+0.078]
+  MT@S2+T3          +0.030 [-0.020,+0.088] / +0.017 [-0.028,+0.068]    +0.053 [-0.001,+0.116] / +0.046 [-0.000,+0.100]
+  MT@S3+T3          +0.047 [-0.008,+0.103] / +0.031 [-0.016,+0.077]    +0.070 [+0.017,+0.125] / +0.060 [+0.018,+0.109]
+  MT@S2@40+T3       +0.044 [-0.014,+0.099] / +0.028 [-0.015,+0.085]    +0.067 [+0.007,+0.120] / +0.057 [+0.015,+0.111]
+  MT@S2@80+T3       +0.050 [-0.006,+0.118] / +0.040 [-0.015,+0.084]    +0.073 [+0.015,+0.143] / +0.068 [+0.014,+0.115]
+  MT@ORA+T3         +0.040 [-0.010,+0.105] / +0.018 [-0.029,+0.070]    +0.063 [+0.013,+0.126] / +0.047 [-0.000,+0.101]
+  BOMP@S2+T3        +0.060 [+0.000,+0.125] / +0.031 [-0.018,+0.080]    +0.050 [-0.006,+0.113] / +0.048 [-0.004,+0.101]
+  BOMP@ORA+T3       +0.087 [+0.023,+0.156] / +0.065 [+0.018,+0.117]    +0.077 [+0.022,+0.143] / +0.083 [+0.028,+0.137]
+  Hard rule, - S0 hard @0.25: MT@S2 +0.027 [-0.015,+0.079]; MT@ORA +0.018 [-0.031,+0.068]; BOMP@S2 -0.001 [-0.054,
+  +0.052]. Bootstrap SD @0.25: MT@S2+T3 - MT@S0+T3 0.0244.
+  Under the registered rule no term set, the oracle included, moves the MT-FW recall with the detector fixed; against
+  the registered detector the best estimates are +0.05 to +0.07 with intervals that start at 0.
+6.4 Per regime, LOC+T @0.25 (450 windows each; strong clutter reported separately as required)
+                    thin: - S0+T3             - S0 hard                 strong: - S0+T3          - S0 hard
+  MT@S1+T3          +0.039 [-0.045,+0.127]    +0.126 [+0.025,+0.214]    -0.014 [-0.094,+0.057]   -0.006 [-0.083,+0.067]
+  MT@S2+T3          +0.073 [-0.021,+0.161]    +0.160 [+0.069,+0.228]    +0.075 [-0.022,+0.160]   +0.084 [-0.014,+0.169]
+  MT@S3+T3          +0.059 [-0.023,+0.159]    +0.146 [+0.068,+0.237]    +0.084 [+0.003,+0.161]   +0.092 [+0.016,+0.168]
+  MT@S2@40+T3       +0.090 [+0.000,+0.189]    +0.176 [+0.093,+0.256]    +0.072 [-0.016,+0.152]   +0.081 [+0.000,+0.159]
+  MT@S2@80+T3       +0.078 [-0.011,+0.173]    +0.165 [+0.079,+0.249]    +0.081 [-0.003,+0.170]   +0.090 [+0.015,+0.172]
+  MT@ORA+T3         +0.115 [+0.026,+0.213]    +0.202 [+0.118,+0.279]    +0.101 [+0.021,+0.182]   +0.110 [+0.038,+0.191]
+  BOMP@S2+T3        +0.050 [-0.030,+0.130]    +0.132 [+0.037,+0.231]    +0.055 [-0.030,+0.141]   +0.069 [-0.018,+0.162]
+  BOMP@ORA+T3       +0.078 [+0.008,+0.173]    +0.160 [+0.082,+0.262]    +0.153 [+0.059,+0.229]   +0.168 [+0.060,+0.251]
+  T3 with the S0 terms: thin MT +0.087 [-0.008,+0.175], BOMP +0.081 [+0.000,+0.174]; strong MT +0.009 [-0.052,+0.075],
+  BOMP +0.014 [-0.052,+0.078].
+  The term effect of S2 is the same size in both regimes (+0.073 and +0.075), each interval alone including 0. The
+  two regimes differ in what the registered terms allow: in thin clutter T3 already works with S0 (+0.087) and S2
+  adds to it; in strong clutter T3 does nothing with S0 (+0.009), and the refinement only becomes useful once the
+  terms are better. S1 fails in strong clutter (-0.014), as its term error predicts (0.185 against 0.206).
+  LOC @0.25, - S0+T3: thin MT@S2+T3 +0.008 [-0.033,+0.049], MT@ORA+T3 +0.008; strong MT@S2+T3 +0.052 [-0.035,+0.134],
+  MT@S3+T3 +0.084 [+0.009,+0.179], MT@S2@80+T3 +0.095 [+0.014,+0.180], MT@ORA+T3 +0.061 [-0.020,+0.138].
+
+----------------------------------------------------------------------------------------------------------------------
+7. EVALUATION: DETECTION, DENSE WINDOWS (900 windows, 3615 events; out/c11_eval_analysis_DENSE.txt)
+----------------------------------------------------------------------------------------------------------------------
+7.1 Recall @0.1 / @0.25
+                    LOC+T                 LOC
+  MT@S0             0.055  0.121          0.168  0.272
+  MT@S0+T3          0.048  0.112          0.173  0.272
+  MT@S1+T3          0.074  0.154          0.201  0.292
+  MT@S2             0.071  0.148          0.219  0.291
+  MT@S2+T3          0.092  0.176          0.224  0.306
+  MT@S3+T3          0.094  0.168          0.202  0.299
+  MT@S2@40+T3       0.092  0.163          0.211  0.312
+  MT@S2@80+T3       0.116  0.184          0.223  0.307
+  MT@ORA            0.085  0.165          0.214  0.308
+  MT@ORA+T3         0.114  0.189          0.211  0.322
+  BOMP@S0           0.028  0.061          0.069  0.185
+  BOMP@S0+T3        0.029  0.072          0.079  0.201
+  BOMP@S2+T3        0.036  0.091          0.087  0.232
+  BOMP@ORA+T3       0.039  0.103          0.098  0.246
+7.2 Paired differences @0.25
+                    LOC+T: - S0+T3            - S0 hard                 LOC: - S0+T3             - S0 hard
+  MT@S1+T3          +0.042 [+0.014,+0.073]    +0.032 [+0.001,+0.064]    +0.020 [-0.008,+0.054]   +0.021 [-0.006,+0.057]
+  MT@S2+T3          +0.065 [+0.034,+0.094]    +0.055 [+0.023,+0.083]    +0.034 [+0.001,+0.070]   +0.035 [+0.005,+0.075]
+  MT@S3+T3          +0.056 [+0.025,+0.085]    +0.046 [+0.015,+0.079]    +0.027 [-0.006,+0.061]   +0.028 [-0.003,+0.066]
+  MT@S2@40+T3       +0.051 [+0.022,+0.080]    +0.041 [+0.010,+0.071]    +0.040 [+0.008,+0.071]   +0.041 [+0.008,+0.075]
+  MT@S2@80+T3       +0.072 [+0.041,+0.101]    +0.063 [+0.032,+0.093]    +0.035 [+0.002,+0.067]   +0.035 [+0.004,+0.070]
+  MT@ORA+T3         +0.078 [+0.048,+0.109]    +0.068 [+0.040,+0.100]    +0.050 [+0.020,+0.082]   +0.051 [+0.021,+0.088]
+  BOMP@S2+T3        +0.019 [-0.003,+0.041]    +0.030 [+0.010,+0.053]    +0.031 [-0.012,+0.068]   +0.047 [+0.002,+0.088]
+  BOMP@ORA+T3       +0.031 [+0.008,+0.059]    +0.042 [+0.019,+0.070]    +0.045 [+0.011,+0.083]   +0.061 [+0.026,+0.101]
+  Hard rule, - S0 hard @0.25: LOC+T MT@S1 +0.013 [-0.012,+0.039], MT@S2 +0.026 [-0.004,+0.055], MT@S3 +0.017 [-0.010,
+  +0.044], MT@S2@40 +0.022 [-0.011,+0.051], MT@S2@80 +0.038 [+0.005,+0.067], MT@ORA +0.043 [+0.014,+0.071]; LOC MT@S2
+  +0.019 [-0.014,+0.054], MT@ORA +0.036 [+0.004,+0.070], BOMP@S2 +0.032 [-0.009,+0.072]. T3 with the S0 terms: MT
+  -0.010 [-0.037,+0.018] (LOC+T), +0.001 (LOC); BOMP +0.011 [-0.004,+0.029], +0.016 [-0.014,+0.048].
+  Bootstrap SD @0.25: MT@S2+T3 - MT@S0+T3 LOC+T 0.0151, LOC 0.0179; BOMP@S2+T3 - BOMP@S0+T3 0.0109, 0.0209.
+  Per regime, MT@S2+T3 - MT@S0+T3 @0.25: LOC+T thin +0.063 [+0.019,+0.104], strong +0.061 [+0.020,+0.110]; LOC thin
+  +0.047 [-0.013,+0.095], strong +0.037 [-0.008,+0.079]. No loss anywhere; in dense windows the terms help the MT family
+  under both rules, and here T3 alone does nothing, so the dense gain is a term effect.
+  Fraction of the oracle gain, dense, LOC+T @0.25 (T3 form): S1 0.54 [0.21, 0.91], S2 0.83 [0.49, 1.23], S3 0.72 [0.38,
+  1.11], S2@40 0.65 [0.33, 0.99], S2@80 0.93 [0.61, 1.34]; BOMP@S2 0.60 [-0.17, 1.83].
+
+----------------------------------------------------------------------------------------------------------------------
+8. FRACTION OF THE ORACLE GAIN, AND SCALING WITH THE CATALOGUE
+----------------------------------------------------------------------------------------------------------------------
+Standard windows, LOC+T, @0.1 / @0.25 [95%, ratio bootstrapped]:
+               T3 form: (X+T3 - S0+T3) / (ORA+T3 - S0+T3)        total: (X+T3 - S0) / (ORA+T3 - S0)
+  S1           0.06 [-0.50, 0.55] / 0.25 [-0.86, 0.85]           0.06 [-0.39, 0.59] / 0.41 [-0.34, 0.90]
+  S2           0.57 [ 0.01, 1.02] / 0.77 [ 0.18, 1.45]           0.57 [ 0.14, 1.02] / 0.81 [ 0.41, 1.29]
+  S3           0.77 [ 0.30, 1.25] / 0.94 [ 0.52, 2.07]           0.77 [ 0.36, 1.25] / 0.95 [ 0.64, 1.58]
+  S2@40        0.80 [ 0.31, 1.25] / 0.88 [ 0.30, 1.55]           0.80 [ 0.38, 1.25] / 0.90 [ 0.51, 1.38]
+  S2@80        0.70 [ 0.27, 1.16] / 0.95 [ 0.50, 1.67]           0.70 [ 0.34, 1.15] / 0.96 [ 0.65, 1.45]
+  BOMP S2      0.22 [-1.04, 0.85] / 0.52 [-0.04, 0.95]           0.32 [-0.54, 0.90] / 0.65 [ 0.30, 0.96]
+  The hard form is not interpretable in standard windows: the oracle gain with the hard rule is +0.020 and is zero or
+  negative in 32% of the replicates.
+Scaling (MT family, +T3, LOC+T @0.25, difference to S0+T3; term error thin / strong):
+  catalogue   term error       STD                       DENSE
+  20 (S0)     0.150 / 0.206    0                         0
+  20 (S2)     0.072 / 0.139    +0.070 [+0.010,+0.120]    +0.065 [+0.034,+0.094]
+  40 (S2)     0.051 / 0.082    +0.080 [+0.019,+0.137]    +0.051 [+0.022,+0.080]
+  80 (S2)     0.041 / 0.052    +0.087 [+0.029,+0.138]    +0.072 [+0.041,+0.101]
+  oracle      0                +0.091 [+0.031,+0.141]    +0.078 [+0.048,+0.109]
+Post hoc paired contrasts (out/c11_posthoc.txt), LOC+T @0.25:
+                          STD                        DENSE
+  S3 - S2                 +0.016 [-0.019,+0.064]     -0.009 [-0.032,+0.018]
+  S2@40 - S2              +0.010 [-0.036,+0.059]     -0.014 [-0.040,+0.014]
+  S2@80 - S2              +0.017 [-0.028,+0.063]     +0.007 [-0.018,+0.035]
+  ORA - S2                +0.021 [-0.026,+0.071]     +0.013 [-0.014,+0.045]
+  ORA - S2@80             +0.004 [-0.037,+0.047]     +0.006 [-0.022,+0.034]
+  S2 - S1                 +0.047 [-0.008,+0.116]     +0.023 [-0.012,+0.053]
+  (@0.1, STD: ORA - S2 +0.051 [-0.002, +0.109]; the low-false-alarm end is where the oracle still leads.)
+Reading. What a network's history buys beyond 20 events is not resolved by this sample: quadrupling the catalogue
+halves the term error again and moves the recall by +0.01 to +0.02 with intervals of +-0.045. Most of the distance
+between the registered terms and the truth is covered by using the 20 events better (0.150 -> 0.072 s in thin
+clutter). The recall saturates near 0.07 s of term error, which is about the model error of the homogeneous travel
+times after a perfect station term (0.05 P, 0.07 S; C10 section 7) and well below the 1 km cell term of T3 (0.10 P,
+0.16 S): below that level the terms are no longer the largest timing error of a hypothesis.
+
+----------------------------------------------------------------------------------------------------------------------
+9. LOCATION AND ORIGIN TIME OF HITS; RUNTIME
+----------------------------------------------------------------------------------------------------------------------
+Hit atoms (all atoms, LOC rule; 95% by bootstrap over networks):
+                 STANDARD                                               DENSE
+                 epicentre km        |dt| s                within 0.5 s  epicentre km        |dt| s                within 0.5 s
+  MT@S0          2.26 [2.11,2.50]    0.359 [0.319,0.380]   0.664         2.65 [2.57,2.73]    0.391 [0.373,0.408]   0.589
+  MT@S0+T3       2.10 [1.88,2.31]    0.321 [0.301,0.348]   0.705         2.48 [2.40,2.55]    0.388 [0.370,0.401]   0.590
+  MT@S1+T3       1.88 [1.70,2.02]    0.277 [0.243,0.310]   0.725         2.37 [2.26,2.45]    0.348 [0.327,0.368]   0.632
+  MT@S2          2.05 [1.91,2.23]    0.328 [0.306,0.355]   0.684         2.48 [2.38,2.56]    0.385 [0.364,0.404]   0.605
+  MT@S2+T3       1.69 [1.54,1.85]    0.286 [0.262,0.310]   0.749         2.29 [2.18,2.38]    0.342 [0.325,0.362]   0.640
+  MT@S3+T3       1.71 [1.55,1.82]    0.267 [0.239,0.296]   0.779         2.33 [2.19,2.43]    0.320 [0.302,0.339]   0.649
+  MT@S2@40+T3    1.60 [1.48,1.77]    0.275 [0.247,0.298]   0.766         2.29 [2.17,2.38]    0.339 [0.322,0.355]   0.642
+  MT@S2@80+T3    1.60 [1.49,1.76]    0.284 [0.258,0.308]   0.772         2.24 [2.14,2.35]    0.337 [0.322,0.353]   0.647
+  MT@ORA         2.08 [2.00,2.30]    0.338 [0.311,0.367]   0.682         2.40 [2.34,2.49]    0.368 [0.351,0.384]   0.625
+  MT@ORA+T3      1.30 [1.17,1.45]    0.221 [0.202,0.250]   0.818         2.03 [1.93,2.14]    0.287 [0.274,0.305]   0.685
+  BOMP@S0        2.20 [2.04,2.36]    0.347 [0.308,0.374]   0.672         2.65 [2.57,2.73]    0.414 [0.396,0.439]   0.571
+  BOMP@S0+T3     1.72 [1.59,1.91]    0.303 [0.276,0.325]   0.724         2.57 [2.46,2.64]    0.372 [0.353,0.391]   0.602
+  BOMP@S2+T3     1.67 [1.49,1.83]    0.260 [0.234,0.279]   0.776         2.28 [2.20,2.39]    0.346 [0.329,0.367]   0.632
+  BOMP@ORA+T3    1.32 [1.17,1.47]    0.216 [0.194,0.243]   0.807         2.02 [1.90,2.14]    0.300 [0.286,0.318]   0.673
+The share of events hit by some atom hardly moves (STD 0.76-0.81, DENSE 0.63-0.68): the gain is in where the atoms are
+placed in space and time and in their rank, not in how many events are touched. In location and origin time the
+20-event JHD closes about half of the distance to the oracle (epicentre 2.10 -> 1.69 against 1.30 km), less than its
+share of the recall gain.
+Runtime (s; two processes on two cores). Per window, standard | dense: MT hard 0.14 | 0.19; MT+T3 0.40 | 0.57; BOMP-PK
+hard 0.51 | 0.72; BOMP+T3 1.00 | 1.41; identical for every term set (the terms only change the sample tables).
+Calibration per network: S1 0.13; S2 0.38; S2@40 0.72; S2@80 1.62; S3 12.95 (the detection pass over 30 windows);
+network setup 1.2. S2 is a one-off cost of 0.4 s per network.
+
+----------------------------------------------------------------------------------------------------------------------
+10. JUDGEMENT
+----------------------------------------------------------------------------------------------------------------------
+Rules of the plan. (A) primary contrast >= +0.05 with a 95% interval excluding 0 and no loss in dense windows (point
+>= -0.01 under LOC+T and LOC): +0.070 [+0.010, +0.120]; dense +0.065 and +0.034. MET. (B) fraction of the oracle gain
+>= 0.5 with the numerator's interval excluding 0: 0.77 [0.18, 1.45]. MET.
+  S2 (JHD, 20 events): PLAUSIBLE CONTRIBUTION, as the calibration half of a pair. Rule-fixed, catalogue-only, 0.4 s
+     per network. It gives nothing with the hard peak rule in isolated events; it is what makes the T3 refinement
+     work, and in strong clutter it is the difference between T3 doing nothing (+0.009) and T3 being useful (+0.084).
+  S3 (self-calibration from detections): NOT SHOWN to add to S2 (+0.016 [-0.019, +0.064] STD, -0.009 DENSE; term error
+     0.069 against 0.072). Its point estimates in standard windows are the highest of the 20-event estimators (+0.085
+     [+0.035, +0.140]), but the plan named S2 by a rule fixed beforehand and the difference is noise. The
+     self-calibration idea is therefore not supported here; the reason is visible in the development set: half of the
+     selected atoms are false and the true ones are located to about 2 km, so 14-18 usable atoms add little to 19
+     relocatable catalogue events.
+  S1 (SC-R): NOT REPLICATED in standard windows (+0.023 [-0.050, +0.077]); positive in dense (+0.042 [+0.014, +0.073]).
+  S4: more catalogue lowers the term error steadily; the recall gain over 20-event JHD is not resolved (+0.01 to
+     +0.02).
+  ORACLE: with T3, +0.091 (STD) and +0.078 (DENSE) over the registered terms under LOC+T; nothing with the hard rule
+     in standard windows.
+Caveats that must travel with any number above.
+  (i)   The effect exists under the origin-time hit rule. Under the registered rule (LOC) the standard-window contrast
+        is +0.017 [-0.028, +0.068] and the oracle gives the same; a claim about the registered endpoint is not
+        supported. In dense windows it is positive under both rules.
+  (ii)  It is conditional on T3; "station terms improve the detector" is not what was measured. What was measured is
+        that the origin-time-consistent recall of the refined detector depends on the terms, and that a JHD of the same
+        20 events recovers most of what the true statics would give.
+  (iii) One seed, 30 networks per cell and regime, a primary interval whose lower end is +0.010. C10 effects measured on
+        20 networks shrank on these 30 (T3 with +SC from +0.066 to +0.024; oracle hard from +0.087 to +0.020). Expect
+        the same of +0.070.
+  (iv)  The BOMP-PK family shows the same direction with an interval touching 0 (+0.057 [-0.003, +0.115]).
+  (v)   The JHD leans on the catalogue prior (1 km / 0.1 s, taken as known). A network whose catalogue errors are
+        larger or unknown is not covered; with a 2 km prior the development error was back at the S0 level.
+  (vi)  Statics sd 0.3 s, the 20-event catalogue and the +-1 s peak rule of +SC are our design choices; the size of the
+        S0 error, and so the room for improvement, depends on them.
+  (vii) In strong clutter the 20-event JHD is worse than S0 in a third of the networks (term error), although the
+        pooled recall gain is the same as in thin clutter.
+  (viii) The oracle arm uses a timing level of 0.05 s in T3 and the candidates 0.13-0.21 s (the C10 rule); the terms and
+        the level are confounded in the oracle; since S2@80 and the oracle agree (+0.004 [-0.037, +0.047]), the level
+        does not seem to matter at 0.25, consistent with C10 section 6.1.
+
+----------------------------------------------------------------------------------------------------------------------
+11. NOVELTY
+----------------------------------------------------------------------------------------------------------------------
+Not new: joint hypocentre determination with station terms (Douglas; Pujol; Frohlich), source-specific station terms
+(Richards-Dinger and Shearer), static corrections by iterated relocation, robust (L1 / Huber) residual statistics,
+catalogue priors in the relocation. S2 is a small Bayesian JHD; it is new only in its data: it never uses a pick, it
+reads the matched-filter energy peak around the predicted time and re-reads it as the hypocentres and terms move.
+Self-calibration from one's own detections is the standard bootstrap of template-matching and of iterative
+association-relocation workflows.
+What would be new if it stands: (a) station terms estimated without picks and used INSIDE a pick-free moment-tensor
+subspace detector, with (b) a measured effect on detection at a fixed false-alarm rate, next to the bound given by the
+true statics, and (c) the finding that the effect appears only together with a local refinement by the timing
+likelihood and only when a hit must have the right origin time. (d) The negative on self-calibration from detections
+(no gain over a 20-event JHD at this purity and location accuracy) is reportable with its mechanism. None of this is a
+new detector; it is a calibration result about what limits one.
+
+----------------------------------------------------------------------------------------------------------------------
+12. DRAFT CONFIRMATORY PREREGISTRATION (to be appended to PREREGISTRO_1j_1k.txt and hashed BEFORE any code is run on the
+    new seeds; nothing below has been run)
+----------------------------------------------------------------------------------------------------------------------
+Seeds 7171 and 9393. Check made on Oct 4 2026: grep -rnwE "7171|9393" over *.py, *.txt, *.sh, *.md, *.json of the work
+  directory returns "p=0.7171" (a p-value in analyze_2e_out.txt), the drafts in REPORT_C9.txt section 8 and
+  REPORT_C10.txt section 11, and the note in edits/part_y27_leeme.py that those drafts name the same seeds; find -name
+  "*7171*" -o -name "*9393*" returns nothing; no parts directory (task2a_parts ... task2i_parts) and no seed list
+  contains either number. Repeat the grep before registering.
+  CONFLICT TO RESOLVE FIRST: the C9 draft (SELPOL) and the C10 draft (T3) name the same two seeds, and so does this
+  one. Only ONE study may use them. This draft contains the C10 one (its arms BOMP+T3 and MT+T3 with +SC terms are the
+  base of the contrast here), so C10 and C11 can be registered as a single protocol; the C9 draft must move to other
+  never-used seeds or be dropped.
+Question: do station terms estimated by the pick-free JHD (S2) from the registered 20-event catalogue improve the
+  origin-time-consistent detection of the refined detector, without loss under the registered rule, in standard and
+  in dense windows?
+Primary hit rule: location plus origin time (epicentre within 5 km and |origin error| <= 0.5 s). Secondary: location.
+Data: networks task2a_confirm.network(seed, cell, j), j = 0-159 (standard design) and j = 0-99 (dense design), 3
+  cells, regimes thin and strong, statics sd 0.3 s, catalogue of 20 events as in 2A (1 km / 0.1 s errors), default
+  gen_realistic, 5 windows per network from two new TAGs (xc.draw_sources, kmax 5; c2_run.draw_dense, kmax 7): 4800
+  standard and 3000 dense windows per seed.
+Methods (code frozen and hashed: c11_lib.py, c11_run.py, c10_lib.py, c10_run.py, c9_lib.py, c9_run.py, c8_lib.py,
+  c6_lib.py, xc.py, station_corrections.py): MT-FW cap 6 and BOMP-PK, each with S0 (registered +SC) hard, S0 + T3,
+  S2 + T3; constants exactly c11_lib.P as of the hash in C11_PLAN.txt; T3 as frozen in C10; timing level by the C10
+  catalogue rule recomputed with the term set. No free constant is left. The estimator and the gate were chosen on
+  seed 999 (development networks 200-209 by term error; evaluation networks 210-239 for detection; this report).
+Endpoint: recall at <= 0.25 realised false events per window (primary) and <= 0.1 (secondary); exact FROC; operating
+  point per method; hierarchical bootstrap (strata regime x cell, networks then windows, 2000 replicates), per seed.
+Rules (each must hold in BOTH seeds):
+  2L-a superiority, standard windows, LOC+T, pooled: MT@S2+T3 - MT@S0+T3, lower one-sided 97.5% bound > 0 AND point
+       >= +0.03.
+  2L-b superiority, dense windows, LOC+T, pooled: the same contrast, lower one-sided 97.5% bound > 0.
+  2L-c non-inferiority, margin 0.02, PER REGIME (thin, strong), LOC+T, standard and dense: lower one-sided 95% bound
+       > -0.02 (the gain must not come from one clutter regime at the expense of the other).
+  2L-d non-inferiority, margin 0.02, registered rule LOC, pooled, standard and dense: lower one-sided 95% bound > -0.02.
+  Claim "pick-free JHD station terms improve origin-time-consistent detection of the refined MT subspace detector at no
+  cost under the registered rule" requires a, b, c and d. A superiority claim under the registered rule in standard
+  windows is NOT registered (pilot +0.017 [-0.028, +0.068]).
+Registered secondary, Holm over the two families with 2L-a: BOMP@S2+T3 - BOMP@S0+T3, standard, LOC+T (pilot +0.057
+  [-0.003, +0.115]).
+Descriptive, no rule: the total contrasts against the registered detectors (MT@S2+T3 - MT@S0, BOMP@S2+T3 - BOMP@S0);
+  the hard-rule arms; per cell; @0.1; term errors against the true statics; epicentral and origin-time error of hits;
+  and, required for the wording of any claim, the oracle arm (MT@ORA+T3, BOMP@ORA+T3 on 30 networks per cell and
+  regime) so that the result is reported next to its bound and as a fraction of it. S3 and S4 are NOT carried: no
+  signal over S2.
+Power (pilot = seed 999 evaluation set, 30 networks per cell and regime; bootstrap SD of the paired difference at
+  0.25, scaled by sqrt(30 / n); normal approximation; out/c11_power.txt):
+  2L-a  pilot +0.070, SD 0.0282. The pilot is the selected primary of a study whose predecessors shrank on replication:
+        plan on +0.05. n = 160: SD 0.0122; bound 0.98 at a true +0.05, 0.91 at +0.04, 0.69 at +0.03; point >= 0.03:
+        0.95, 0.79, 0.50. n = 100: SD 0.0154; bound 0.90, 0.74, 0.49; point 0.90, 0.74, 0.50. n = 240: bound 1.00,
+        0.98, 0.85.
+  2L-b  pilot +0.065, SD 0.0151. n = 100: SD 0.0083; power 1.00 at +0.05 and +0.04, 0.95 at +0.03. n = 60: 1.00, 0.96,
+        0.80.
+  2L-c  per-regime pilot, standard: thin +0.073 (SD 0.0465), strong +0.075 (SD 0.0463); n = 160: SD 0.020; power 0.97
+        at a true +0.05, 0.80 at +0.03, 0.26 at 0. Dense: thin +0.063 (SD 0.0220), strong +0.061 (SD 0.0228); n = 100:
+        SD 0.012; 1.00 at +0.05, 0.99 at +0.03, 0.49 at 0. This rule has power only if the effect is real in each
+        regime; a true zero in one regime fails it three times out of four, which is the intended reading.
+  2L-d  pilot standard +0.017 (SD 0.0244), dense +0.034 (SD 0.0179). n = 160 standard: SD 0.0106; power 0.60 at a
+        true 0, 0.88 at +0.01, 0.98 at +0.02. n = 100 dense: SD 0.0098; 0.65 at 0, 0.92 at +0.01, 0.99 at +0.02. At
+        n = 240 standard: 0.75 at 0, 0.97 at +0.01.
+  BOMP secondary: SD 0.0304; n = 160: SD 0.0132; power 0.97 at +0.05, 0.86 at +0.04, 0.63 at +0.03.
+  Joint, per seed, if the truth is +0.05 (a, c standard), +0.05 (b, c dense) and +0.01 / +0.02 (d): about 0.95 x 1.00
+  x 0.94 x 1.00 x 0.88 x 0.99 = 0.77, treating the rules as independent (they are positively correlated, so somewhat
+  higher); both seeds about 0.6. If the truth under LOC in standard windows is exactly 0, 2L-d (0.60) limits the claim to
+  about 0.5 per seed; 240 standard networks raise that rule to 0.75. The non-inferiority rule under the registered
+  rule, not the superiority rule, is what limits the power, as in the C10 draft.
+Cost (measured here): standard window MT 0.14 + 0.40 + 0.40 and BOMP 0.51 + 1.00 + 1.00 = 3.45 s; dense 0.19 + 0.57 +
+  0.57 + 0.72 + 1.41 + 1.41 = 4.87 s; setup and S2 1.6 s per network: 4800 x 3.45 + 3000 x 4.87 + 1560 x 1.6 s = 9.4
+  CPU-hours per seed (MT family alone 3.1), plus 0.6 h for the oracle arm.
+Nothing is changed after seeing 7171 / 9393.
+Assessment of the draft: the claimed endpoint (LOC+T) is the one the later registered tasks adopt as primary, which
+removes the main weakness of the C10 draft; the effect is a calibration effect conditional on T3 and should be worded
+that way. Worth running if the thesis keeps the refined detector; if it does not, S2 has nothing to act on in isolated
+events (hard rule: +0.026 [-0.030, +0.083]) and only the dense-window hard-rule oracle gap (+0.043 [+0.014, +0.071])
+remains as motivation.
+
+----------------------------------------------------------------------------------------------------------------------
+13. FILES (all in /home/claude/work/explore_contrib; outputs in out/)
+----------------------------------------------------------------------------------------------------------------------
+  C11_PLAN.txt, C11_PLAN.sha256   plan, frozen 18:01:51 UTC, and its hashes
+  c11_lib.py                      peak read, JHD (alternation + joint stage), S3, term errors, engine cloning
+  c11_run.py, c11_queue.sh        calibration of every term set and the evaluation runs -> out/c11_eval_{thin,strong}
+                                  .json (logs out/c11_eval_*.log)
+  c11_analyze.py                  -> out/c11_eval_analysis_{STD,DENSE}.txt (c11_analyze_frozen.py.txt = the file as
+                                  hashed in the plan, before the three-line guard of section 2(a))
+  c11_dev.py                      development tables -> out/c11_dev_s2.txt, _s2b, _s2c, _s2d, _s3, _s3b
+  c11_validate.py                 -> out/c11_validation.txt
+  c11_posthoc.py                  post hoc contrasts between candidates -> out/c11_posthoc.txt
+  c11_power.py                    -> out/c11_power.txt
+  No registered file, no 2A-2I part, no verif file and no earlier explore_contrib file or output was modified.

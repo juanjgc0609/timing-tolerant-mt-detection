@@ -1,0 +1,65 @@
+A. STRUCTURAL CHECKS
+  A1 q=1 kernel == task1x AC: max diff 0.0e+00; PH psi_1 autocorrelation vs AC (lags within +-48): 2.2e-16
+  A1 PH: X(0) = I max dev 2.2e-16; X[j,J](tau) = X[J,j](-tau) max dev 5.6e-17
+  A1 PHF4: X(0) = I max dev 2.0e-15; X[j,J](tau) = X[J,j](-tau) max dev 1.1e-16
+  A2 q=1 vs PKDict: cross_gram 0.0e+00 (scale 4.8e-02); corr_atoms 0.0e+00; residual 0.0e+00
+  A3 MT-FW-Q with q=1 reproduces c6_lib.mtfw_dense hits, locations and scores (rel. 1e-12): 6/6 windows
+  A5 BOMP-PK-NX (q=1, no P/S cross term) vs BOMP-PK: identical hit/location sequence in 6/6 windows; first-score relative difference median 7.3e-16 (the P/S cross term)
+  A4 PH: filt(explicit atom) vs synth prediction (interior) max rel diff 1.9e-16; Gram vs explicit <y_a, y_b> max rel diff 1.7e-16; corr_atoms(filt(y_a)) . U_b vs <y_a, y_b> 5.6e-17
+  A4 PHF4: filt(explicit atom) vs synth prediction (interior) max rel diff 1.8e-16; Gram vs explicit <y_a, y_b> max rel diff 5.6e-17; corr_atoms(filt(y_a)) . U_b vs <y_a, y_b> 1.1e-16
+  A6 rank-1 ALS on the PH basis: full-fit residual <= rank-1 <= first ALS pass (1-3 atoms): PASS
+  timing BOMP-PK    0.329 s/window (ladder_6, kmax 5, 1 process)
+  timing NX         0.046 s/window (ladder_6, kmax 5, 1 process)
+  timing PH         0.081 s/window (ladder_6, kmax 5, 1 process)
+  timing PH-FULL    0.076 s/window (ladder_6, kmax 5, 1 process)
+  timing PHF4       0.256 s/window (ladder_6, kmax 5, 1 process)
+  timing PHF4-FULL  0.108 s/window (ladder_6, kmax 5, 1 process)
+  timing PH-CAP     0.126 s/window (ladder_6, kmax 5, 1 process)
+
+B. NOISE-FREE INVARIANCE (captured fraction = first-iteration block statistic at the best block within 5 km / whitened signal energy)
+  design family (fc 1.4-2.8 x phase -45..45; 3 cells x 3 sources x 25 pulses)
+    detector            mean        min        max         sd         CV
+    BOMP-PK           0.795      0.599      0.962      0.103      0.129
+    NX                0.795      0.599      0.962      0.103      0.129
+    PH                0.830      0.691      0.980      0.104      0.125
+    PH-FULL           0.844      0.695      0.990      0.106      0.125
+    PHF4              0.943      0.868      0.985      0.025      0.027
+    PHF4-FULL         0.959      0.875      0.993      0.024      0.025
+  per phase at fc = 2.0 (mean over 9 source/network cases):
+    phase  -45.0: BOMP-PK 0.900  NX 0.900  PH 0.950  PH-FULL 0.966  PHF4 0.953  PHF4-FULL 0.966
+    phase  -22.5: BOMP-PK 0.915  NX 0.915  PH 0.950  PH-FULL 0.966  PHF4 0.953  PHF4-FULL 0.966
+    phase    0.0: BOMP-PK 0.935  NX 0.935  PH 0.950  PH-FULL 0.966  PHF4 0.953  PHF4-FULL 0.966
+    phase   22.5: BOMP-PK 0.935  NX 0.935  PH 0.950  PH-FULL 0.966  PHF4 0.953  PHF4-FULL 0.966
+    phase   45.0: BOMP-PK 0.869  NX 0.869  PH 0.950  PH-FULL 0.966  PHF4 0.953  PHF4-FULL 0.966
+  per fc at phase 0:
+    fc 1.40: BOMP-PK 0.701  NX 0.701  PH 0.708  PH-FULL 0.716  PHF4 0.950  PHF4-FULL 0.958
+    fc 1.75: BOMP-PK 0.902  NX 0.902  PH 0.915  PH-FULL 0.928  PHF4 0.963  PHF4-FULL 0.975
+    fc 2.00: BOMP-PK 0.935  NX 0.935  PH 0.950  PH-FULL 0.966  PHF4 0.953  PHF4-FULL 0.966
+    fc 2.40: BOMP-PK 0.850  NX 0.850  PH 0.867  PH-FULL 0.884  PHF4 0.942  PHF4-FULL 0.961
+    fc 2.80: BOMP-PK 0.693  NX 0.693  PH 0.708  PH-FULL 0.724  PHF4 0.910  PHF4-FULL 0.935
+  phase +-90 deg (outside the design phase range), fc 1.4/2.0/2.8
+    detector            mean        min        max         sd         CV
+    BOMP-PK           0.625      0.538      0.777      0.096      0.154
+    NX                0.625      0.538      0.777      0.096      0.154
+    PH                0.789      0.691      0.980      0.115      0.146
+    PH-FULL           0.802      0.695      0.990      0.117      0.146
+    PHF4              0.937      0.868      0.977      0.026      0.028
+    PHF4-FULL         0.953      0.875      0.988      0.024      0.025
+  Gabor pulse (width 0.6/f0, phase -90/0/90), f0 1.4/2.0/2.8 - out of family
+    detector            mean        min        max         sd         CV
+    BOMP-PK           0.649      0.456      0.921      0.142      0.219
+    NX                0.649      0.456      0.921      0.142      0.219
+    PH                0.739      0.546      0.941      0.149      0.202
+    PH-FULL           0.751      0.548      0.950      0.153      0.204
+    PHF4              0.913      0.881      0.961      0.020      0.022
+    PHF4-FULL         0.927      0.888      0.979      0.025      0.027
+  Berlage pulse (causal t^2 exp(-2 pi f0 t) sin, phase -90/0/90) - out of family
+    detector            mean        min        max         sd         CV
+    BOMP-PK           0.705      0.607      0.861      0.083      0.118
+    NX                0.705      0.607      0.861      0.083      0.118
+    PH                0.744      0.636      0.890      0.082      0.110
+    PH-FULL           0.751      0.651      0.903      0.083      0.111
+    PHF4              0.866      0.796      0.928      0.030      0.035
+    PHF4-FULL         0.875      0.812      0.941      0.027      0.031
+
+validation wall time 88 s

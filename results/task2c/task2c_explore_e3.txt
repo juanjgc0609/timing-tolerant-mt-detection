@@ -1,0 +1,4 @@
+task2c_explore.py (EXPLORATORY, post hoc); kernel ['Prescott', 'Katmai']
+E3 ideal, sources on nodes ladder_4        60 windows, 59 events: MT-FW 0.678/0.763 | BOMP 0.898/0.966 | MTSTACK 0.203/0.542 | GL-FW 0.424/0.729  (38 s)
+E3 ideal, sources on nodes ladder_6        60 windows, 44 events: MT-FW 0.909/0.932 | BOMP 0.955/0.977 | MTSTACK 0.659/0.818 | GL-FW 0.750/0.864  (47 s)
+E3 ideal, sources on nodes unilateral_c40  60 windows, 58 events: MT-FW 0.793/0.845 | BOMP 0.914/0.948 | MTSTACK 0.672/0.759 | GL-FW 0.741/0.914  (56 s)

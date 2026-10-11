@@ -1,0 +1,6 @@
+7171 thin unilateral_c40 3
+9393 strong ladder_6 17
+9393 thin unilateral_c40 24
+9393 thin unilateral_c40 75
+7171 strong ladder_4 140
+7171 strong unilateral_c40 45

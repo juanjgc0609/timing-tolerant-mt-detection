@@ -1,0 +1,21 @@
+=== part k | unilateral_c40 | seed 2024 ===
+   windows 60 (empty 22), true events 52
+   TOL      recall 52/52=1.00  false/window 0.50  empty with emission 0/22  ok  threshold=1.0000
+   TOL-TB   recall 50/52=0.96  false/window 0.00  empty with emission 0/22  ok  threshold=0.9968
+   TOL-K    recall 50/52=0.96  false/window 0.00  empty with emission 0/22  ok  threshold=0.8414
+   CIII-TB  recall 50/52=0.96  false/window 0.00  empty with emission 0/22  ok  threshold=0.9968
+   PHYS     recall 49/52=0.94  false/window 0.50  empty with emission 0/22  ok  threshold=0.4993
+   PHYS-S   recall 48/52=0.92  false/window 0.32  empty with emission 0/22  ok  threshold=0.5739
+   PHYS-K   recall 47/52=0.90  false/window 0.00  empty with emission 0/22  ok  threshold=0.5168
+   GAMMA    recall 44/52=0.85  false/window 0.02  empty with emission 0/22  ok  config={'min_picks': 14, 'sigma': 2.0, 'eps': 10.0}
+   PYOCTO   recall 26/52=0.50  false/window 2.97  empty with emission 22/22  NOT reached  config={'n_picks': 4, 'tol': 0.5}
+      false per window TOL vs PHYS: 13/12  sign p=1.0000
+      false per window TOL-TB vs PHYS: 0/20  sign p=0.0000
+      false per window TOL-K vs PHYS: 0/20  sign p=0.0000
+      false per window CIII-TB vs PHYS: 0/20  sign p=0.0000
+      false per window PHYS-S vs PHYS: 1/11  sign p=0.0063
+      false per window PHYS-K vs PHYS: 0/20  sign p=0.0000
+      false per window GAMMA vs PHYS: 0/19  sign p=0.0000
+      false per window PYOCTO vs PHYS: 56/0  sign p=0.0000
+
+written k_unilateral_c40_2024_j0.json

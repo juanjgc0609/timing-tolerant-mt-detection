@@ -1,0 +1,177 @@
+STATION TIME CORRECTIONS FROM CATALOGUED EVENTS - Component C
+Code: station_corrections.py (generate_c, peak_delays, catalogue, estimate_station_corrections, froc_recall,
+boot_diff; `python station_corrections.py [out.txt]` reruns everything, about 7.5 min on one core)
+======================================================================================================
+
+SET-UP
+* Networks: make_network('random', 4 | 6) and make_network('onesided', 8), 4 networks per cell (seeds
+  77000 + 100 net + 0/10/20).  Station statics N(0, 0.4 s) per station and phase, drawn ONCE per network (as
+  real station terms are) and applied to every window (generate_c = generate_y with fixed statics; the
+  ~10-degree direction and lognormal site perturbations and the weak clutter remain per window).
+  |static| > 0.25 s (outside the +-0.25 s MT search window) in 12-62% of station-phases per network.
+* Catalogue: events uniform in [-15,15]^2 x [5,13] km, origin 5.5-7.5 s, random double couple, same
+  generator.  An event is "catalogued" (a network would have detected it) if >= 3 station/phase arrivals
+  exceed the energy gate; 26-121 events were drawn per 20 catalogued.  Known location and origin time
+  (exact; a sensitivity run adds catalogue errors of 1 km per coordinate and 0.1 s).
+* estimate_station_corrections: for each catalogued event, station and phase, the peak of the 3-component
+  matched-filter energy within +-1 s of the predicted time (parabolic sub-sample refinement), gated at energy
+  25 (5 noise sd), then the median over events (0 if no event passes the gate).  P and S peaks are chosen
+  JOINTLY (max E(kP) + E(kS) with P >= 0.375 s before S).  In development, independent searches let the
+  stronger S arrival fall in the P window of a station near the events (S-P < 2 s): 7 of 13 P delays at one
+  station were S, and the median was wrong by 0.9 s.  (With the final catalogues the independent search gave
+  the same medians, row '20 indep'; the joint search removes the failure mode rather than relying on the
+  median to outvote it.)
+* Evaluation: 40 fresh windows per network (draw_sources: 0-2 events), same network and statics; MT-FW
+  (fw_record, run through certified_fw's oracle with the corrections added to the predicted P and S times;
+  checked against a dense corrected loop and, uncorrected, against fw_record itself).  Recall at realized
+  false events per window <= 0.1 / <= 0.25 on the exact FROC curve, pooled over the 4 networks of a cell
+  (160 windows, 134-138 events); paired window-bootstrap 95% intervals for the differences.
+
+RESULTS
+1. Residual static (estimated - true), rms over station-phases (uncorrected: 0.40 s):
+        K = 5:  pooled rms 0.171 s (per network 0.008-0.324, median 0.123); 9.1% of station-phases still
+                beyond 0.25 s; 22% have no gated delay.
+        K = 10: pooled rms 0.101 s (0.005-0.257, median 0.059); 3.9% beyond 0.25 s; 9.5% no estimate.
+        K = 20: pooled rms 0.088 s (0.002-0.242, median 0.007); 2.8% beyond 0.25 s; 2.8% no estimate.
+        K = 20 with catalogue errors (1 km, 0.1 s): pooled rms 0.173 s (0.067-0.276); 11.5% beyond 0.25 s.
+   Where a station-phase has gated delays, the estimate is within ~0.01 s (exact wavelet, homogeneous
+   medium).  Essentially all the residual comes from station-phases that NO catalogued event illuminated
+   above the gate (distant stations, weak P), whose correction stays 0.  These are also the arrivals that
+   contribute least to the detection statistic.  Catalogue location/origin errors propagate directly: with
+   1 km / 0.1 s errors, K = 20 is no better than K = 5 with exact locations.
+2. MT-FW recall at <= 0.1 / <= 0.25 false events per window (160 windows per cell):
+                          none        K=5        K=10       K=20       oracle
+        random 4 st.    0.33/0.40  0.49/0.64  0.49/0.62  0.51/0.64  0.51/0.67
+        random 6 st.    0.33/0.48  0.29/0.52  0.45/0.59  0.41/0.54  0.40/0.56
+        one-sided 8 st. 0.31/0.41  0.66/0.74  0.63/0.70  0.61/0.71  0.66/0.75
+   Paired differences (95% bootstrap interval):
+        K=20 - none:    4 st. +0.18 [+0.05,+0.35] / +0.24 [+0.10,+0.33];  6 st. +0.08 [-0.03,+0.22] / +0.07
+                        [-0.02,+0.21];  one-sided +0.30 [+0.20,+0.42] / +0.30 [+0.16,+0.39]
+        oracle - K=20:  +0.01 / +0.03, -0.01 / +0.01, +0.05 / +0.04, every interval containing 0.
+        K=5 - none:     +0.15 / +0.24, -0.04 / +0.04, +0.35 / +0.33 (intervals exclude 0 in the 4-station and
+                        one-sided cells).
+
+ASSESSMENT
+* Unmodelled statics of sd 0.4 s cost MT-FW 0.18-0.35 in recall in the 4-station and one-sided cells (none:
+  0.31-0.33 / 0.40-0.41 against oracle 0.51-0.66 / 0.67-0.75), consistent with Y.11 (0.37 / 0.42).
+* Corrections estimated from 5-20 catalogued events recover the oracle performance.  The differences to the
+  oracle are +0.01 to +0.05 and never significant, and K = 5 already captures most of the gain there.
+  The station-correction step removes the fragility named in Y.11 / Y.13 item 6 under these conditions.
+* In the 6-station cell neither the estimated nor the oracle correction gives a significant gain
+  (oracle - none +0.07 / +0.08, intervals include 0).  On these 4 networks the uncorrected MT-FW was
+  already less hurt, and one network (77310) did worse with the oracle correction (0.17 / 0.24) than
+  without (0.20 / 0.37).  With 40 windows per network, per-network recall is noisy: tiny changes of the
+  predicted times (0.01 s) move floor(t/DT) across a sample boundary, change which peak enters the +-4-sample
+  window, and reorder individual Frank-Wolfe records.  Only the pooled, paired comparisons should be read.
+* Limits: exact wavelet and homogeneous medium (real catalogue relocations and 3-D structure will leave
+  larger residuals, about the 0.17 s of the catalogue-error run); statics constant in time; catalogue events
+  drawn from the same region and generator as the evaluation events; 4 networks per cell.
+
+------------------------------------------------------------------------------------------------------
+TABLES (generated by station_corrections.py)
+------------------------------------------------------------------------------------------------------
+STATION TIME CORRECTIONS FROM CATALOGUED EVENTS (Component C) - station_corrections.py
+==============================================================================================================
+Statics N(0, 0.4 s) per station and phase, FIXED per network; pert direction (~10 deg) and site
+(lognormal sd 0.5) factors per window; weak clutter (amplitude 0.35, n_clutter of task1r_fair.SCEN).
+Catalogue: events uniform in [-15,15]^2 x [5,13] km, origin 5.5-7.5 s, random double couple; an event is
+catalogued if >= 3 station/phase arrivals exceed the energy gate (25 = 5 noise sd at the peak).
+Estimate: 3-C matched-filter energy peak within +-1 s of the predicted time, parabolic refinement,
+gate 25, median over events.  MT-FW = fw_record (via the certified oracle, identical records) with the
+corrections added to the predicted P and S times.  40 evaluation windows per network, fresh sources
+(draw_sources: 0-2 events), same network and statics.  Recall at realized false events per window.
+
+ladder_4        network 0 (seed 77000; |static| > 0.25 s in 50% of station-phases; catalogue drew 63 events for 20 catalogued; 36 true events in evaluation): none 0.53/0.58 | K=5 0.42/0.56 | K=10 0.47/0.58 | K=20 0.47/0.58 | oracle 0.58/0.81
+ladder_4        network 1 (seed 77100; |static| > 0.25 s in 38% of station-phases; catalogue drew 53 events for 20 catalogued; 36 true events in evaluation): none 0.56/0.61 | K=5 0.64/0.67 | K=10 0.61/0.64 | K=20 0.61/0.64 | oracle 0.61/0.64
+ladder_4        network 2 (seed 77200; |static| > 0.25 s in 12% of station-phases; catalogue drew 121 events for 20 catalogued; 33 true events in evaluation): none 0.18/0.39 | K=5 0.24/0.55 | K=10 0.30/0.45 | K=20 0.27/0.45 | oracle 0.33/0.58
+ladder_4        network 3 (seed 77300; |static| > 0.25 s in 62% of station-phases; catalogue drew 79 events for 20 catalogued; 31 true events in evaluation): none 0.13/0.26 | K=5 0.61/0.71 | K=10 0.58/0.74 | K=20 0.58/0.74 | oracle 0.58/0.71
+ladder_6        network 0 (seed 77010; |static| > 0.25 s in 50% of station-phases; catalogue drew 76 events for 20 catalogued; 28 true events in evaluation): none 0.43/0.50 | K=5 0.43/0.61 | K=10 0.61/0.64 | K=20 0.61/0.68 | oracle 0.71/0.71
+ladder_6        network 1 (seed 77110; |static| > 0.25 s in 58% of station-phases; catalogue drew 41 events for 20 catalogued; 28 true events in evaluation): none 0.21/0.43 | K=5 0.29/0.32 | K=10 0.39/0.50 | K=20 0.39/0.50 | oracle 0.39/0.57
+ladder_6        network 2 (seed 77210; |static| > 0.25 s in 42% of station-phases; catalogue drew 37 events for 20 catalogued; 36 true events in evaluation): none 0.50/0.61 | K=5 0.42/0.64 | K=10 0.69/0.72 | K=20 0.50/0.69 | oracle 0.56/0.67
+ladder_6        network 3 (seed 77310; |static| > 0.25 s in 58% of station-phases; catalogue drew 73 events for 20 catalogued; 46 true events in evaluation): none 0.20/0.37 | K=5 0.20/0.54 | K=10 0.24/0.54 | K=20 0.24/0.43 | oracle 0.17/0.24
+unilateral_c40  network 0 (seed 77020; |static| > 0.25 s in 50% of station-phases; catalogue drew 54 events for 20 catalogued; 34 true events in evaluation): none 0.09/0.29 | K=5 0.56/0.56 | K=10 0.35/0.56 | K=20 0.29/0.47 | oracle 0.56/0.68
+unilateral_c40  network 1 (seed 77120; |static| > 0.25 s in 56% of station-phases; catalogue drew 27 events for 20 catalogued; 39 true events in evaluation): none 0.41/0.51 | K=5 0.67/0.72 | K=10 0.64/0.69 | K=20 0.69/0.72 | oracle 0.72/0.77
+unilateral_c40  network 2 (seed 77220; |static| > 0.25 s in 56% of station-phases; catalogue drew 31 events for 20 catalogued; 30 true events in evaluation): none 0.27/0.50 | K=5 0.70/0.80 | K=10 0.63/0.63 | K=20 0.63/0.67 | oracle 0.63/0.67
+unilateral_c40  network 3 (seed 77320; |static| > 0.25 s in 56% of station-phases; catalogue drew 26 events for 20 catalogued; 31 true events in evaluation): none 0.52/0.61 | K=5 0.97/1.00 | K=10 0.84/0.94 | K=20 0.84/0.94 | oracle 0.84/0.97
+
+TABLE C1. Residual static after correction (estimated - true), per network; rms over the 2 ns station-phases.
+cell            net       K  rms (s)  rms, common  |res|>0.25 s  no estimate
+                                       offset out
+ladder_4          0       5    0.085        0.082          0.00         0.12
+ladder_4          0      10    0.079        0.072          0.00         0.12
+ladder_4          0      20    0.008        0.008          0.00         0.00
+ladder_4          0 20 indep    0.008        0.008          0.00         0.00
+ladder_4          0  20+err    0.114        0.074          0.00         0.00
+ladder_4          1       5    0.015        0.014          0.00         0.12
+ladder_4          1      10    0.015        0.014          0.00         0.12
+ladder_4          1      20    0.007        0.007          0.00         0.00
+ladder_4          1 20 indep    0.007        0.007          0.00         0.00
+ladder_4          1  20+err    0.123        0.121          0.12         0.00
+ladder_4          2       5    0.324        0.299          0.12         0.25
+ladder_4          2      10    0.012        0.011          0.00         0.00
+ladder_4          2      20    0.007        0.007          0.00         0.00
+ladder_4          2 20 indep    0.007        0.007          0.00         0.00
+ladder_4          2  20+err    0.163        0.153          0.12         0.00
+ladder_4          3       5    0.008        0.007          0.00         0.00
+ladder_4          3      10    0.005        0.005          0.00         0.00
+ladder_4          3      20    0.005        0.004          0.00         0.00
+ladder_4          3 20 indep    0.005        0.004          0.00         0.00
+ladder_4          3  20+err    0.196        0.196          0.12         0.00
+ladder_6          0       5    0.134        0.112          0.17         0.50
+ladder_6          0      10    0.083        0.078          0.08         0.25
+ladder_6          0      20    0.073        0.070          0.08         0.08
+ladder_6          0 20 indep    0.073        0.070          0.08         0.08
+ladder_6          0  20+err    0.140        0.140          0.17         0.08
+ladder_6          1       5    0.130        0.126          0.08         0.17
+ladder_6          1      10    0.009        0.009          0.00         0.00
+ladder_6          1      20    0.006        0.006          0.00         0.00
+ladder_6          1 20 indep    0.006        0.006          0.00         0.00
+ladder_6          1  20+err    0.221        0.209          0.25         0.00
+ladder_6          2       5    0.116        0.108          0.08         0.17
+ladder_6          2      10    0.028        0.027          0.00         0.08
+ladder_6          2      20    0.003        0.002          0.00         0.00
+ladder_6          2 20 indep    0.003        0.002          0.00         0.00
+ladder_6          2  20+err    0.067        0.067          0.00         0.00
+ladder_6          3       5    0.109        0.108          0.08         0.17
+ladder_6          3      10    0.101        0.097          0.08         0.08
+ladder_6          3      20    0.101        0.096          0.08         0.08
+ladder_6          3 20 indep    0.101        0.096          0.08         0.08
+ladder_6          3  20+err    0.198        0.198          0.17         0.08
+unilateral_c40    0       5    0.226        0.226          0.19         0.31
+unilateral_c40    0      10    0.144        0.136          0.06         0.12
+unilateral_c40    0      20    0.135        0.130          0.06         0.06
+unilateral_c40    0 20 indep    0.135        0.130          0.06         0.06
+unilateral_c40    0  20+err    0.188        0.184          0.12         0.06
+unilateral_c40    1       5    0.307        0.298          0.25         0.31
+unilateral_c40    1      10    0.257        0.230          0.19         0.25
+unilateral_c40    1      20    0.242        0.225          0.12         0.12
+unilateral_c40    1 20 indep    0.242        0.226          0.12         0.12
+unilateral_c40    1  20+err    0.276        0.245          0.19         0.12
+unilateral_c40    2       5    0.171        0.171          0.12         0.31
+unilateral_c40    2      10    0.102        0.098          0.06         0.06
+unilateral_c40    2      20    0.002        0.002          0.00         0.00
+unilateral_c40    2 20 indep    0.002        0.002          0.00         0.00
+unilateral_c40    2  20+err    0.162        0.151          0.12         0.00
+unilateral_c40    3       5    0.042        0.040          0.00         0.19
+unilateral_c40    3      10    0.039        0.037          0.00         0.06
+unilateral_c40    3      20    0.005        0.005          0.00         0.00
+unilateral_c40    3 20 indep    0.005        0.005          0.00         0.00
+unilateral_c40    3  20+err    0.128        0.077          0.00         0.00
+(uncorrected: rms = sd of the statics, 0.4 s in expectation; '20+err' = K = 20 with catalogue location
+ errors of 1 km per coordinate and origin-time errors of 0.1 s; '20 indep' = K = 20 with independent P and S
+ searches instead of the joint P-before-S search, the ablation that motivated the joint search.)
+
+TABLE C2. MT-FW event recall at realized false events per window <= 0.1 / <= 0.25, pooled over the networks
+of each cell (4 x 40 windows).
+cell            events        none         K=5        K=10        K=20      oracle
+ladder_4           136   0.33/0.40   0.49/0.64   0.49/0.62   0.51/0.64   0.51/0.67
+ladder_6           138   0.33/0.48   0.29/0.52   0.45/0.59   0.41/0.54   0.40/0.56
+unilateral_c40     134   0.31/0.41   0.66/0.74   0.63/0.70   0.61/0.71   0.66/0.75
+
+TABLE C3. Paired differences of pooled recall at <= 0.1 / <= 0.25 false events per window, with 95% intervals
+from a paired bootstrap over windows (400 resamples).
+cell                                    K=5 - none                        K=10 - none                        K=20 - none                      oracle - none                      oracle - K=20
+ladder_4        +0.15 [+0.03,+0.35] +0.24 [+0.08,+0.34] +0.15 [+0.02,+0.35] +0.23 [+0.07,+0.32] +0.18 [+0.05,+0.35] +0.24 [+0.10,+0.33] +0.18 [+0.05,+0.39] +0.27 [+0.14,+0.36] +0.01 [-0.01,+0.10] +0.03 [-0.01,+0.09]
+ladder_6        -0.04 [-0.19,+0.08] +0.04 [-0.13,+0.19] +0.12 [-0.01,+0.24] +0.12 [+0.01,+0.23] +0.08 [-0.03,+0.22] +0.07 [-0.02,+0.21] +0.07 [-0.07,+0.19] +0.08 [-0.03,+0.19] -0.01 [-0.11,+0.03] +0.01 [-0.07,+0.08]
+unilateral_c40  +0.35 [+0.22,+0.49] +0.33 [+0.18,+0.44] +0.31 [+0.20,+0.45] +0.29 [+0.13,+0.39] +0.30 [+0.20,+0.42] +0.30 [+0.16,+0.39] +0.35 [+0.25,+0.49] +0.34 [+0.21,+0.45] +0.05 [-0.01,+0.13] +0.04 [-0.02,+0.12]
+(run time 445 s)

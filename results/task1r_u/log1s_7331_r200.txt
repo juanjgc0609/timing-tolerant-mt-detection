@@ -1,0 +1,3 @@
+   done unilateral_c40 in 1846 s :: GAMMA 0.35/0.35/0.36 | GAMMA+POL 0.35/0.36/0.36 | GAMMA+SH 0.35/0.35/0.36
+   done ladder_4 in 1380 s :: GAMMA 0.09/0.11/0.11 | GAMMA+POL 0.09/0.11/0.11 | GAMMA+SH 0.09/0.11/0.11
+   done ladder_6 in 1194 s :: GAMMA 0.00/0.17/0.19 | GAMMA+POL 0.17/0.18/0.19 | GAMMA+SH 0.15/0.17/0.19

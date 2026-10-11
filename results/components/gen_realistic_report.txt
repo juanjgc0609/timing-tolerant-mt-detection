@@ -1,0 +1,182 @@
+gen_realistic_report.txt - realistic generator (gen_realistic.py) and real pickers (real_picker.py)
+=====================================================================================================
+
+Files
+  gen_realistic.py   generate_real(STA, sources, taus, n_clutter, rng, rng_m, rng_h, clut_amp, cfg=None, meta=None)
+                       -> D (ns, 3, NT), picks, sources, amp
+                     travel_time_gradient(src, STA, phase, cfg=None), arrival_direction(src, sta, phase, cfg=None),
+                     ray_directions (take-off and arrival), radiation_gradient, source_wavelet, shoot_ray (numerical tracing).
+                     python gen_realistic.py = self-test (does not plot).
+  real_picker.py     pick_waveforms(D, dt=DT, cfg=None, method="phasenet" | "stalta") -> (picks, quality)
+                     picks per station [(t, 'P'|'S')] (run_gamma format); quality = PhaseNet probability or
+                     STA/LTA maximum per pick. --mode calib / --mode report reproduce the calibration and this report.
+
+1. Generator model (default cfg in square brackets)
+-----------------------------------------------------------
+Interface and seeds. Same as generate_y (task1y_clutter): picks per station = 2*nsrc true arrivals (P and S
+of each source, in order) followed by the clutter picks; amp = amplitude per pick in units of SNR*A/r, so
+that degrade_y applies unchanged. rng_h gives delays, deviations and site factors in the same order as
+generate_y; rng_m gives one double couple per source (rand_dc) likewise; rng gives clutter and noise in the same order. All
+the new randomness (source function, coda, spikes) comes from rng_h.spawn(1), which does not alter the sequence of rng_h.
+Verified consequence: with cfg={"g": 0, "VS0": 3.0} the times and amplitudes of all picks (true and
+clutter) coincide with generate_y (difference 0 and 3e-16); only the waveforms change.
+
+(a) 1D linear-gradient medium, v(z) = v0 + g z, z depth [VS0 = 2.8 km/s, g = 0.04 1/s, VP = 1.73 VS at all
+    depths, i.e. VP0 = 4.844 km/s and gP = 0.0692 1/s]. Analytic time
+        t = (1/g) arccosh(1 + g^2 r^2 / (2 v(z_s) v(z_r))),  r = source-station distance,
+    evaluated as (2/g) asinh(x) = r/sqrt(v_s v_r) * asinh(x)/x, x = g r/(2 sqrt(v_s v_r)), stable for g -> 0.
+    Circular rays centred at depth -v0/g; in the vertical plane of the ray (h horizontal from the source):
+        g h_c = (g X^2 + (z_r - z_s)(v_s + v_r)) / (2X),   g R_c = hypot(g h_c, v_s),
+        n_s = (v_s e_h + g h_c e_z)/(g R_c),   n_r = (v_r e_h - (g X - g h_c) e_z)/(g R_c).
+    Everything is multiplied by g, so that g = 0 is exactly the straight ray. P and S have the same ratio g/v0,
+    hence the same ray. P polarization = n_r (incidence of the curved ray) times the take-off factor n_s.M.n_s.
+    S = transverse part of M n_s at take-off, decomposed into SV (e_SH x n_s) and SH (e_z x e_h, constant along
+    the ray because the ray does not leave its plane) and recomposed with e_SH x n_r: rotation about e_SH, which in
+    a 1D isotropic medium is the parallel transport of the polarization frame. Normalization CP, CS from task1w_mech.
+    Geometrical spreading 1/r (as in generate_y). Vertical ray (X = 0): no rotation.
+    Size of the mismatch with respect to the homogeneous medium (VP = 5.19, VS = 3.0) of the detectors, 2400
+    source-station pairs with the benchmark geometry: t_grad - d/V for P median -0.007 s (p5 -0.22, p95 +0.14,
+    extremes -0.44/+0.17); for S median -0.012 s (p5 -0.38, p95 +0.24, extremes -0.76/+0.30); near stations arrive late
+    (v0 < VS) and far ones early (the ray dips to higher velocities). Angle between the straight ray and the curved arrival:
+    median 12.4 degrees, p95 19.0, maximum 22.5.
+(b) Delay per station and phase N(0, static_sd) [0.15 s]; deviation of the polarization direction by adding
+    N(0, tan(dir_deg)) per component to the unit vector [dir_deg = 10, that of generate_y]; lognormal site factor per
+    station and phase exp(N(0, site_sd)) [0.5]. All three with rng_h in the order of generate_y.
+(c) Source function per event, common to P and S and to all stations: Ricker with centre frequency U[fc_range]
+    [1.4, 2.8] Hz (the matched filter of the detectors stays at 2 Hz), phase-rotated by U[-phase_max_deg, +] [45]
+    degrees: w = cos(phi) r - sin(phi) H[r], with H[r](t) = (2s + (2 - 4s^2) F(s))/sqrt(pi), s = pi fc t, F the Dawson
+    function (closed form; error 1.8e-9 against scipy.signal.hilbert). The rotation preserves the pulse energy,
+    integral of w^2 = 0.75 sqrt(pi/2)/(pi fc). phase_max_deg = 0 disables the rotation. meta=[] returns fc and phase.
+(d) Scattered coda after each true P and S arrival: independent 3-component Gaussian noise with envelope
+    exp(-(t - t_a)/coda_tau) from the pulse centre, CAUSAL Butterworth filter of order 4 in coda_band [1-4 Hz] (there
+    is no energy before the arrival), scaled so that its untruncated energy is coda_ratio [0.3] times that of the direct
+    arrival (|vec|^2 x integral of w^2). coda_tau [3 s]; length 6 coda_tau + 1 s. Checked on a noise-free
+    window: coda/direct ratio 0.301. Clutter carries no coda.
+(e) Clutter identical to generate_y: n_clutter 2 Hz Ricker pulses, amplitude SNR*clut_amp/median(d), random station,
+    time U[2, 36] s and random isotropic polarization, random P or S label. Optional spikes [spikes = 0]: one
+    sample on a random component, amplitude +-spike_amp [10] times the noise standard deviation; they do not enter the picks.
+Noise: white Gaussian with standard deviation SNR*noise [0.02], that of generate_y (NOISE_SD = 0.14).
+
+2. Numerical verification (self-test of gen_realistic.py and external control)
+--------------------------------------------------------------------------
+  g -> 0 (g = 1e-9, 1e-7, 0): relative error of the time against r/v0 <= 2.3e-7 (the 1e-7 case dominates; 2e-9 with
+    1e-9 and exact 0 with g = 0); 1 - cos(direction, straight ray) <= 3.5e-13 at take-off and arrival.
+  asinh form against (1/g) arccosh(...): relative error 1.9e-15. | |n| - 1 | <= 2.2e-16 (take-off and arrival).
+  Numerical ray tracing (kinematic equations dx/dt = v^2 p, dp/dt = -grad v / v in 3D, DOP853 with
+  tolerances 1e-12 and shooting on the take-off angle), 3 pairs x P and S, default gradient:
+      X = 5.0 km, z_s = 5 km:  P 1.40970 s (straight with v0 1.45976), S 2.43878 s, incidence 43.0 degrees
+      X = 40.2 km, z_s = 13:   P 7.90423 s (straight 8.71465), S 13.67431 s, incidence 57.4 degrees
+      X = 47.2 km, z_s = 9:    P 9.17673 s (straight 9.91347), S 15.87575 s, incidence 61.6 degrees
+    relative time error <= 2.0e-13; angular difference at take-off and arrival <= 1.2e-6 degrees.
+  Independent eikonal (second-order fast marching, scikit-fmm 2025.6.23, 2D mesh (h, z)), same 3 pairs:
+    relative error 8.2e-5 / 4.0e-5 / 4.6e-5 with step 0.04 km and 4.1e-5 / 1.9e-5 / 2.3e-5 with 0.02 km (converges with
+    the step). Required criterion < 1 %: met with four orders of magnitude of margin.
+  S transport (50 random mechanisms and geometries): the norm is preserved (5.6e-16), the arriving S is transverse
+    to the arriving ray (1.7e-16), and with g = 0 the P and S radiations are those of generate_y (1.8e-15).
+  Seed consistency with generate_y: see above (identical times and amplitudes with g = 0 and VS0 = 3).
+
+3. Real picker
+--------------
+3.1 PhaseNet (feasible, method="phasenet", default)
+  ORIGINAL pretrained model from the AI4EPS/PhaseNet repository, model/190703-214543 (model_95.ckpt), commit
+  62005c6195638f88d077f8870ea895971062715a, with the network code from the repository (phasenet/model.py), on
+  tensorflow-cpu 2.15.1 (last version with Keras 2; tf.compat.v1.layers does not work with Keras 3). Installed in
+  ~/.cache/phasenet/tf215 with pip --target (the system has protobuf 7, which onnxruntime uses, and TF 2.15 requires
+  protobuf < 5: the shared environment was not touched); repository in ~/.cache/phasenet/PhaseNet. Set-up time
+  ~10 min. Preprocessing as in PhaseNet's predict.py with continuous data: E = x, N = y, Z = -z (z is
+  depth), resampling 16 -> 100 Hz (resample_poly 25/4), normalize_long (3000 samples, step 1500), the whole
+  4000-sample trace; picks = probability maxima >= threshold separated by >= 0.5 s.
+  Pipeline check: on labelled samples from the repository the maxima fall within 0-10 samples of itp/its
+  (P 0.94-0.98); on NOISE-FREE generate_real windows the network gives 0.8-0.9 to almost all P and S arrivals at the
+  correct time. With the generator noise it barely responds: a P arrival with amplitude/noise 6.7 gives 0.09, and with
+  noise 4 times smaller 0.43. The white noise of the generator occupies 0-8 Hz after resampling, ABOVE the band of
+  the signal (1.4-2.8 Hz), the opposite of the real seismic noise (red, microseism < 1 Hz) of its training. I tried
+  prefilters (bandpass 1-4, 1-6, 0.7-3.5 Hz, lowpass 4 Hz): none improves the F1 in calibration.
+3.2 Classic STA/LTA (method="stalta")
+  Zero-phase Butterworth bandpass of order 4, 100 Hz, ObsPy classic_sta_lta + trigger_onset on the vertical (P) and
+  the horizontal norm (S); onset = trigger, or refined with AIC (aic_simple) or Baer-Kradolfer (pk_baer) in
+  [-1.5, +0.5] s; optional resolution of simultaneous P/S triggers by the vertical energy fraction. AIC, pk_baer and
+  the P/S resolution worsened the F1 in calibration and were left disabled (the trigger with calibrated offset is
+  better for Ricker pulses in white noise).
+3.3 Calibration (seed 999, windows evbase 1000, 20 per cell, 80 windows, 840 arrivals; the report uses other
+  windows, evbase 25000; never 2024 or 7331). Criterion: F1 per phase of true arrivals matched one to one
+  within 0.3 s. Offset = -(median of t_pick - t_true within 1 s), refined once: the pickers mark
+  the ONSET and the true time of the generator is the CENTRE of the pulse (PhaseNet picks ~0.35 s earlier).
+    PhaseNet PICK_CFG: threshold P 0.25, S 0.03 (grid 0.02, 0.03, 0.05-0.95), offset P +0.353 s (only 5 residuals:
+      unreliable), S +0.328 s, mpd 0.5 s. Calibration F1 P 0.025, S 0.135.
+    STA/LTA CLASSIC_CFG: band 1-4 Hz (chosen over 1-6); P: STA 0.3 s, LTA 8 s, trigger 6.0; S: STA 0.6 s,
+      LTA 8 s, trigger 3.0 (grid STA 0.3/0.6 x LTA 4/8 x trigger 2-8 x refinement none/aic/baer), end 1.0,
+      offset P +0.026 s, S +0.016 s, no P/S resolution. Calibration F1 P 0.126, S 0.193.
+  The optimal thresholds ended up in the interior of their grids (after widening the first ones, where they fell on the edge);
+  STA and LTA are on the edge of grids of only two values.
+
+4. Statistics (python real_picker.py --mode report): seed 999, evbase 25000, 40 windows per cell, n_clutter
+   35, moff 233; generate_real with default cfg; degrade_y applied to the same arrivals and amplitudes
+--------------------------------------------------------------------------------------------------------------------
+"picked" = pick of the same phase matched one to one within 0.3 s; error = |t_pick - t_true| of those picks
+(truncated at 0.3 s by the definition); false = unmatched picks, broken down into swapped phase (within < 0.3 s of an
+arrival of the other phase), clutter (within < 0.3 s of a clutter pulse) and other (noise, coda, misplaced arrivals).
+
+cell                      method     picked (P / S)         err med  err p90  false/window (phase/clutter/other)
+random-6, clutter 0.35    PhaseNet   0.032 (0.005 / 0.059)   0.080    0.187     1.90 (0.30 / 0.05 / 1.55)
+  31 events, 372 arr.     STA/LTA    0.145 (0.059 / 0.231)   0.087    0.220     3.20 (0.93 / 0.17 / 2.10)
+                          degrade_y  0.435 (0.312 / 0.559)   0.031    0.098     0.07 (0.00 / 0.05 / 0.03)
+random-6, clutter 1.75    PhaseNet   0.035 (0.005 / 0.065)   0.083    0.173     2.33 (0.25 / 0.53 / 1.55)
+  31 events, 372 arr.     STA/LTA    0.156 (0.070 / 0.242)   0.077    0.222     9.25 (0.85 / 6.85 / 1.55)
+                          degrade_y  0.422 (0.290 / 0.554)   0.028    0.125    27.98 (0.35 / 27.62 / 0.00)
+onesided-8, clutter 0.35  PhaseNet   0.051 (0.005 / 0.097)   0.074    0.193     1.95 (0.28 / 0.05 / 1.62)
+  27 events, 432 arr.     STA/LTA    0.134 (0.032 / 0.236)   0.060    0.227     3.90 (1.43 / 0.20 / 2.27)
+                          degrade_y  0.394 (0.255 / 0.532)   0.031    0.088     0.05 (0.00 / 0.03 / 0.03)
+onesided-8, clutter 1.75  PhaseNet   0.044 (0.000 / 0.088)   0.082    0.230     2.12 (0.33 / 0.38 / 1.43)
+  27 events, 432 arr.     STA/LTA    0.139 (0.051 / 0.227)   0.071    0.220    11.38 (1.48 / 8.12 / 1.77)
+                          degrade_y  0.433 (0.315 / 0.551)   0.041    0.136    28.98 (0.35 / 28.62 / 0.00)
+all (160 windows,         PhaseNet   0.041 (0.004 / 0.078)   0.080    0.198     2.08 (0.29 / 0.25 / 1.54)
+  116 events, 1608 arr.)  STA/LTA    0.143 (0.052 / 0.234)   0.078    0.221     6.93 (1.17 / 3.84 / 1.93)
+                          degrade_y  0.420 (0.292 / 0.549)   0.033    0.113    14.27 (0.17 / 14.08 / 0.01)
+Median bias of the true picks (all): PhaseNet -0.057 s, STA/LTA +0.008 s, degrade_y -0.002 s.
+Precision / F1 (all): PhaseNet 0.166 / 0.066; STA/LTA 0.172 / 0.156; degrade_y 0.228 / 0.296.
+
+Fraction picked per amplitude/noise class a = amp/NOISE_SD (all cells; n arrivals in parentheses):
+   a            0-1 (524)  1-2 (450)  2-3 (256)  3-5 (232)  5-10 (128)  >10 (18)
+   PhaseNet       0.00       0.00       0.01       0.03       0.31        0.78
+   STA/LTA        0.02       0.02       0.07       0.36       0.77        0.61
+   degrade_y      0.02       0.21       0.77       0.99       1.00        1.00
+(the fractions > 0 of degrade_y with a < 2 are coincidences with clutter picks or picks of another source).
+Calibration (80 windows, in-sample): picked PhaseNet 0.061, STA/LTA 0.148, degrade_y 0.404; false per
+window 2.79 / 7.49 / 14.41 (same order of magnitude as in the report).
+
+5. Reading
+----------
+  - degrade_y is optimistic relative to both real pickers: it detects half of the arrivals at a ~ 2 (its law
+    Phi((a-2)/0.5)), the calibrated STA/LTA at a ~ 5 and PhaseNet at a ~ 8-10. In these windows that is 0.42 of the
+    arrivals picked against 0.14 (STA/LTA) and 0.04 (PhaseNet). The timing error of degrade_y (3 times the
+    Cramer-Rao bound, median 0.03 s) is ~2.5 times smaller than that of the real pickers (0.08 s; p90 0.20-0.22 against
+    0.11 s, with the tail truncated at 0.3 s by the definition).
+  - False picks: degrade_y only produces those from strong clutter (~28 per window with clut_amp 1.75, almost none with
+    0.35) and almost none from noise or swapped phase. The real pickers produce 1.4-2.3 false picks per window from
+    noise and coda ("other") and 0.25-1.5 from swapped phase even without visible clutter. The STA/LTA with a high P trigger
+    only fires on 7-8 of the ~28 strong clutter pulses and PhaseNet almost never (0.4-0.5), because an isolated Ricker
+    pulse does not resemble an earthquake.
+  - The S phase dominates the real detections (amplitude 1.5 times the P, plus the coda); the P is picked very little
+    (PhaseNet 0.4 %, STA/LTA 5 %), whereas degrade_y picks 29 % of the P arrivals.
+  - PhaseNet outside its domain (an isolated Ricker pulse in 0-8 Hz white noise) is much worse than a
+    calibrated STA/LTA; this does not reflect its performance on real data. For the benchmark, method="stalta" is the most
+    informative real picker; PhaseNet remains as a pessimistic bound and as a check that the result does not depend on
+    a particular picker.
+
+6. Limitations
+--------------
+  - White noise (that of generate_y), without microseism or red noise, and signal limited to 8 Hz by the 16 Hz sampling:
+    this is the main cause of PhaseNet's poor result. Noise with a realistic spectrum (and a higher sampling rate)
+    would change the figures of the real pickers; degrade_y does not see the noise spectrum.
+  - No attenuation (Q), no different corner frequency for P and S, source function common to all stations.
+  - Spreading 1/r with the straight distance (not the geometric one of the curved ray); no free surface (the polarization
+    at the station is that of the incident ray, with no conversion or surface amplification), no converted,
+    reflected or head waves (the medium is a continuous gradient, without Moho); random station delays, not
+    correlated with the geometry.
+  - Coda isotropic in polarization and with a simple exponential envelope; it starts at the centre of the direct pulse.
+  - Clutter = isolated 2 Hz Ricker pulses (as in generate_y); spikes are disabled by default.
+  - PhaseNet: original 2019 model without retraining; P offset estimated with only 5 residuals (P bias in the report
+    -0.06 s). Calibration of both pickers within seed 999, with windows different from those of the report; the
+    figures are from 160 windows (1608 arrivals), without confidence intervals.
+  - The tail of the timing error is truncated at 0.3 s by the definition of a true pick.
