@@ -1013,3 +1013,17 @@ Hi-net swarm of Geolab-USTC/MatchLocate2 (commit bac5ccb00816a4ec0aaab215ea1c342
 7 stations, 14 JMA events), downloaded with its sha256 in data/checksums/hinet_matchlocate2_example.sha256
 and whose waveforms no analysis has read. If no candidate passes the gate, the thesis registers no further
 real test of the pick-free detector and reports its scope as limited to real noise with synthetic signals.
+
+Result of the closure of R0, POST HOC (Sat Oct 17 02:56:42 UTC 2026; r0/run_close/analysis_eval.txt, r0_analyze.py
+unchanged, B = 2000; frozen R0 code verified with sha256sum -c before and after). The first run of the closure
+(r0_run.py directly) was lost to a container restart at 21:47 UTC without writing outputs; it was relaunched at 00:02
+UTC on 17 Oct with r0/r0_run_chunks.py, which imports r0_run.py unchanged and writes resumable blocks of 50 windows
+(same Net, same windows, same methods). Reproducibility: the recall of M1 matches the registered one on every
+subnetwork and rule read (LOC+T 30/h 0.044, 0.000, 0.000, 0.000; LOC 60/h 0.067, 0.044, 0.000, 0.000) and that of M3
+on N8, the only subnetwork that had finished, matches too (LOC+T 0.022, LOC 30/h 0.089, LOC 60/h 0.178). Registered
+secondary contrast M1 - M3 (G1 against BOMP-PK on real data), LOC+T, 30/h, pooled: +0.000 [-0.023, +0.021]; per
+subnet N8 +0.022, N6 +0.000, N4 +0.000, U8 -0.022. With the LOC rule: -0.050 [-0.101, -0.013] (BOMP-PK better).
+Recall of M3 at 30/h: LOC+T 0.022, 0.000, 0.000, 0.022; LOC 0.089, 0.044, 0.044, 0.067. Reading: on real data the cap
+gives no advantage over BOMP-PK and under the epicentre rule the uncapped energy ranks somewhat better, which agrees
+with the saturation measured in C18; every pick-free detector stays below 0.09. The complete independent verification
+of R0 remains pending (it requires re-running M2 and the picks, lost with the original container).

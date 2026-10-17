@@ -2220,8 +2220,11 @@ with 4 stations), U8 −0.289. Recall of the thesis detector 0.022, 0.000, 0.000
 0.000, 0.289. R0-a and R0-b are not met. The secondary arm with a reading of ±0.69 s (fixed by rule from the
 measured error) changes nothing (+0.000 [−0.016, +0.019]). Post hoc diagnosis: location (8-18 km median error
 versus 1.5 km for PyOcto) and ranking (the score of the real events does not separate in a continuous
-sequence). The secondary contrasts against the registered detector and BOMP-PK are completed in the
-registration. Appendix Y.30; code and outputs in `results/taskR0/`.
+sequence). Closure, declared post hoc (16-17 October 2026): M1 and M3 re-run with the frozen code reproduce the
+registered recalls (M1 on all subnetworks, M3 on N8); the registered secondary contrast M1 - M3 is +0.000 [-0.023,
++0.021] with origin time and -0.050 [-0.101, -0.013] with the epicentre rule. Appendix Y.30; code and outputs in
+`results/taskR0/` (closure in `run_close/`). The complete independent verification, which needs M2 and the picks
+re-run, is pending.
 
 **Next step.** Exploration C18 (below) tested a layered and a fitted 1-D medium and non-saturating scores on the
 development segment: neither reduces the reading error nor locates the events. The next registered real test waits for

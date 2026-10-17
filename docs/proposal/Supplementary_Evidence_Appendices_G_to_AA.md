@@ -6884,6 +6884,17 @@ S2 with T3 against the registered detector gave $-0.006$ [$-0.022$, $+0.014$] an
 the registered corrections $+0.006$ [$+0.000$, $+0.019$]. The contrast with BOMP-PK was completed on N8 only (0.044
 against 0.022) and is declared not done.
 
+**Closure, declared post hoc.** The raw outputs of R0 were lost with the container that produced them (error E49), so
+the contrast with BOMP-PK was completed by re-running M1 and M3 on the evaluated segment of all four subnetworks with
+the frozen code, through a driver that imports `r0_run.py` unchanged and writes resumable blocks of windows
+(`r0/r0_run_chunks.py`, `queue_close.sh`; outputs in `results/taskR0/run_close/`), and analysing them with
+`r0_analyze.py` unchanged. The re-run reproduces the registered recalls of M1 on every subnetwork and of M3 on N8.
+The registered secondary contrast M1 - M3 is +0.000 [-0.023, +0.021] with origin times matched at 30 false detections
+per hour (N8 +0.022, N6 0.000, N4 0.000, U8 -0.022) and -0.050 [-0.101, -0.013] under the epicentre rule, where
+BOMP-PK, with unbounded energies, recalls 0.044 to 0.089 against 0.000 to 0.044 for the cap. On a real sequence the cap
+brings no advantage over BOMP-PK and under the looser rule a small disadvantage, as the saturation of Proposition
+AA.9.3 and exploration C18 predict; every pick-free detector stays below 0.09.
+
 
 ## Y.31 Task 2M: bounded influence with independent real noise (Alto Tiberina, 2010)
 

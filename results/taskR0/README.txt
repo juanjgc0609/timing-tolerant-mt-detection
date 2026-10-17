@@ -33,5 +33,10 @@ Files.
   REPORT_REALDATA.md      search for real data accessible from the environment, and candidates
   R0_draft_before_registration.md  draft prior to registration
 
+Closure (post hoc, 16-17 October 2026; run_close/). M1 and M3 re-run with the frozen code through r0_run_chunks.py
+(imports r0_run.py unchanged; resumable blocks of 50 windows) and analysed with r0_analyze.py unchanged: the recalls of M1
+(all subnetworks) and of M3 on N8 reproduce the registered ones; M1 - M3 = +0.000 [-0.023, +0.021] (LOC+T, 30/h) and
+-0.050 [-0.101, -0.013] (LOC). Log entries in run_close/log_entries/. Complete independent verification pending.
+
 Limits. One hour, one sequence, one network; catalogue incomplete below M ~2; scalar instrument response; homogeneous
 medium. It does not replace G1' on the RSNC, which remains registered.

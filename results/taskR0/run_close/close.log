@@ -1,0 +1,186 @@
+14:52:22 N6 eval 0 887 {'M3': 9.0}
+14:52:25 N8 eval 0 887 {'M3': 10.5}
+14:58:44 N6 eval 50 887 {'M3': 391.7}
+14:59:18 N8 eval 50 887 {'M3': 423.3}
+15:04:49 N6 eval 100 887 {'M3': 755.9}
+15:06:33 N8 eval 100 887 {'M3': 857.9}
+15:14:04 N6 eval 150 887 {'M3': 1311.4}
+15:16:27 N8 eval 150 887 {'M3': 1452.5}
+15:21:01 N6 eval 200 887 {'M3': 1727.6}
+15:24:24 N8 eval 200 887 {'M3': 1928.5}
+15:28:11 N6 eval 250 887 {'M3': 2157.5}
+15:32:16 N8 eval 250 887 {'M3': 2401.2}
+15:35:15 N6 eval 300 887 {'M3': 2581.7}
+15:40:04 N8 eval 300 887 {'M3': 2868.8}
+15:42:13 N6 eval 350 887 {'M3': 2999.8}
+15:48:19 N8 eval 350 887 {'M3': 3363.4}
+15:50:37 N6 eval 400 887 {'M3': 3503.5}
+16:00:45 N8 eval 400 887 {'M3': 4109.3}
+16:01:42 N6 eval 450 887 {'M3': 4168.5}
+16:12:35 N6 eval 500 887 {'M3': 4820.6}
+16:12:46 N8 eval 450 887 {'M3': 4830.0}
+16:23:25 N6 eval 550 887 {'M3': 5470.2}
+16:24:45 N8 eval 500 887 {'M3': 5549.1}
+16:34:10 N6 eval 600 887 {'M3': 6115.0}
+16:36:27 N8 eval 550 887 {'M3': 6250.2}
+16:40:31 N6 eval 650 887 {'M3': 6496.5}
+16:41:51 N8 eval 600 887 {'M3': 6574.7}
+16:44:06 N6 eval 700 887 {'M3': 6710.8}
+16:45:45 N8 eval 650 887 {'M3': 6808.8}
+16:47:30 N6 eval 750 887 {'M3': 6915.7}
+--- restart Fri Oct 16 19:02:02 -05 2026
+19:06:01 N6 eval ['M3'] chunk 0 50 of 887
+19:06:29 N8 eval ['M3'] chunk 0 50 of 887
+19:09:26 N6 eval ['M3'] chunk 50 100 of 887
+19:10:19 N8 eval ['M3'] chunk 50 100 of 887
+19:12:46 N6 eval ['M3'] chunk 100 150 of 887
+19:14:07 N8 eval ['M3'] chunk 100 150 of 887
+19:16:16 N6 eval ['M3'] chunk 150 200 of 887
+19:19:11 N8 eval ['M3'] chunk 150 200 of 887
+19:22:32 N6 eval ['M3'] chunk 200 250 of 887
+19:26:26 N8 eval ['M3'] chunk 200 250 of 887
+19:29:07 N6 eval ['M3'] chunk 250 300 of 887
+19:33:41 N8 eval ['M3'] chunk 250 300 of 887
+19:35:42 N6 eval ['M3'] chunk 300 350 of 887
+19:40:52 N8 eval ['M3'] chunk 300 350 of 887
+19:42:14 N6 eval ['M3'] chunk 350 400 of 887
+19:47:12 N8 eval ['M3'] chunk 350 400 of 887
+19:47:53 N6 eval ['M3'] chunk 400 450 of 887
+19:54:28 N8 eval ['M3'] chunk 400 450 of 887
+19:54:32 N6 eval ['M3'] chunk 450 500 of 887
+20:00:56 N6 eval ['M3'] chunk 500 550 of 887
+20:01:16 N8 eval ['M3'] chunk 450 500 of 887
+20:06:58 N6 eval ['M3'] chunk 550 600 of 887
+20:08:15 N8 eval ['M3'] chunk 500 550 of 887
+20:13:43 N6 eval ['M3'] chunk 600 650 of 887
+20:15:38 N8 eval ['M3'] chunk 550 600 of 887
+20:20:10 N6 eval ['M3'] chunk 650 700 of 887
+20:22:45 N8 eval ['M3'] chunk 600 650 of 887
+20:26:55 N6 eval ['M3'] chunk 700 750 of 887
+20:30:10 N8 eval ['M3'] chunk 650 700 of 887
+20:33:38 N6 eval ['M3'] chunk 750 800 of 887
+20:36:42 N8 eval ['M3'] chunk 700 750 of 887
+20:38:08 N6 eval ['M3'] chunk 800 850 of 887
+20:40:30 N8 eval ['M3'] chunk 750 800 of 887
+20:40:37 N6 eval ['M3'] chunk 850 887 of 887
+MERGED run_close/detM3_eval_N6.json {'M3': 797}
+20:43:50 N4 eval ['M3'] chunk 0 50 of 887
+20:44:14 N8 eval ['M3'] chunk 800 850 of 887
+20:46:57 N4 eval ['M3'] chunk 50 100 of 887
+20:47:01 N8 eval ['M3'] chunk 850 887 of 887
+MERGED run_close/detM3_eval_N8.json {'M3': 749}
+20:49:52 U8 eval ['M3'] chunk 0 50 of 887
+20:50:03 N4 eval ['M3'] chunk 100 150 of 887
+20:52:31 U8 eval ['M3'] chunk 50 100 of 887
+20:53:09 N4 eval ['M3'] chunk 150 200 of 887
+20:55:12 U8 eval ['M3'] chunk 100 150 of 887
+20:56:13 N4 eval ['M3'] chunk 200 250 of 887
+20:57:52 U8 eval ['M3'] chunk 150 200 of 887
+20:59:18 N4 eval ['M3'] chunk 250 300 of 887
+21:00:33 U8 eval ['M3'] chunk 200 250 of 887
+21:02:24 N4 eval ['M3'] chunk 300 350 of 887
+21:03:13 U8 eval ['M3'] chunk 250 300 of 887
+21:05:30 N4 eval ['M3'] chunk 350 400 of 887
+21:05:54 U8 eval ['M3'] chunk 300 350 of 887
+21:08:36 U8 eval ['M3'] chunk 350 400 of 887
+21:08:37 N4 eval ['M3'] chunk 400 450 of 887
+21:11:17 U8 eval ['M3'] chunk 400 450 of 887
+21:11:44 N4 eval ['M3'] chunk 450 500 of 887
+21:14:00 U8 eval ['M3'] chunk 450 500 of 887
+21:14:50 N4 eval ['M3'] chunk 500 550 of 887
+21:16:41 U8 eval ['M3'] chunk 500 550 of 887
+21:17:54 N4 eval ['M3'] chunk 550 600 of 887
+21:19:21 U8 eval ['M3'] chunk 550 600 of 887
+21:20:58 N4 eval ['M3'] chunk 600 650 of 887
+21:22:02 U8 eval ['M3'] chunk 600 650 of 887
+21:24:03 N4 eval ['M3'] chunk 650 700 of 887
+21:24:42 U8 eval ['M3'] chunk 650 700 of 887
+21:27:07 N4 eval ['M3'] chunk 700 750 of 887
+21:27:22 U8 eval ['M3'] chunk 700 750 of 887
+21:29:59 U8 eval ['M3'] chunk 750 800 of 887
+21:30:10 N4 eval ['M3'] chunk 750 800 of 887
+21:32:40 U8 eval ['M3'] chunk 800 850 of 887
+21:33:14 N4 eval ['M3'] chunk 800 850 of 887
+21:34:39 U8 eval ['M3'] chunk 850 887 of 887
+MERGED run_close/detM3_eval_U8.json {'M3': 847}
+21:35:26 N8 eval ['M1'] chunk 0 50 of 887
+21:35:30 N4 eval ['M3'] chunk 850 887 of 887
+MERGED run_close/detM3_eval_N4.json {'M3': 831}
+21:35:59 N4 eval ['M1'] chunk 0 50 of 887
+21:36:05 N8 eval ['M1'] chunk 50 100 of 887
+21:36:21 N4 eval ['M1'] chunk 50 100 of 887
+21:36:43 N4 eval ['M1'] chunk 100 150 of 887
+21:36:44 N8 eval ['M1'] chunk 100 150 of 887
+21:37:05 N4 eval ['M1'] chunk 150 200 of 887
+21:37:22 N8 eval ['M1'] chunk 150 200 of 887
+21:37:26 N4 eval ['M1'] chunk 200 250 of 887
+21:37:48 N4 eval ['M1'] chunk 250 300 of 887
+21:38:01 N8 eval ['M1'] chunk 200 250 of 887
+21:38:10 N4 eval ['M1'] chunk 300 350 of 887
+21:38:32 N4 eval ['M1'] chunk 350 400 of 887
+21:38:39 N8 eval ['M1'] chunk 250 300 of 887
+21:38:54 N4 eval ['M1'] chunk 400 450 of 887
+21:39:16 N4 eval ['M1'] chunk 450 500 of 887
+21:39:17 N8 eval ['M1'] chunk 300 350 of 887
+21:39:38 N4 eval ['M1'] chunk 500 550 of 887
+21:39:56 N8 eval ['M1'] chunk 350 400 of 887
+21:40:00 N4 eval ['M1'] chunk 550 600 of 887
+21:40:22 N4 eval ['M1'] chunk 600 650 of 887
+21:40:35 N8 eval ['M1'] chunk 400 450 of 887
+21:40:44 N4 eval ['M1'] chunk 650 700 of 887
+21:41:05 N4 eval ['M1'] chunk 700 750 of 887
+21:41:13 N8 eval ['M1'] chunk 450 500 of 887
+21:41:27 N4 eval ['M1'] chunk 750 800 of 887
+21:41:48 N4 eval ['M1'] chunk 800 850 of 887
+21:41:51 N8 eval ['M1'] chunk 500 550 of 887
+21:42:04 N4 eval ['M1'] chunk 850 887 of 887
+MERGED run_close/det_eval_N4.json {'M1': 897}
+21:42:30 N8 eval ['M1'] chunk 550 600 of 887
+21:42:52 U8 eval ['M1'] chunk 0 50 of 887
+21:43:08 N8 eval ['M1'] chunk 600 650 of 887
+21:43:31 U8 eval ['M1'] chunk 50 100 of 887
+21:43:47 N8 eval ['M1'] chunk 650 700 of 887
+21:44:10 U8 eval ['M1'] chunk 100 150 of 887
+21:44:26 N8 eval ['M1'] chunk 700 750 of 887
+21:44:49 U8 eval ['M1'] chunk 150 200 of 887
+21:45:04 N8 eval ['M1'] chunk 750 800 of 887
+21:45:28 U8 eval ['M1'] chunk 200 250 of 887
+21:45:43 N8 eval ['M1'] chunk 800 850 of 887
+21:46:06 U8 eval ['M1'] chunk 250 300 of 887
+21:46:12 N8 eval ['M1'] chunk 850 887 of 887
+MERGED run_close/det_eval_N8.json {'M1': 899}
+21:46:45 U8 eval ['M1'] chunk 300 350 of 887
+21:46:52 N6 eval ['M1'] chunk 0 50 of 887
+21:47:23 N6 eval ['M1'] chunk 50 100 of 887
+21:47:25 U8 eval ['M1'] chunk 350 400 of 887
+21:47:55 N6 eval ['M1'] chunk 100 150 of 887
+21:48:04 U8 eval ['M1'] chunk 400 450 of 887
+21:48:27 N6 eval ['M1'] chunk 150 200 of 887
+21:48:44 U8 eval ['M1'] chunk 450 500 of 887
+21:48:58 N6 eval ['M1'] chunk 200 250 of 887
+21:49:24 U8 eval ['M1'] chunk 500 550 of 887
+21:49:30 N6 eval ['M1'] chunk 250 300 of 887
+21:50:02 N6 eval ['M1'] chunk 300 350 of 887
+21:50:04 U8 eval ['M1'] chunk 550 600 of 887
+21:50:33 N6 eval ['M1'] chunk 350 400 of 887
+21:50:43 U8 eval ['M1'] chunk 600 650 of 887
+21:51:05 N6 eval ['M1'] chunk 400 450 of 887
+21:51:22 U8 eval ['M1'] chunk 650 700 of 887
+21:51:37 N6 eval ['M1'] chunk 450 500 of 887
+21:52:01 U8 eval ['M1'] chunk 700 750 of 887
+21:52:08 N6 eval ['M1'] chunk 500 550 of 887
+21:52:40 N6 eval ['M1'] chunk 550 600 of 887
+21:52:40 U8 eval ['M1'] chunk 750 800 of 887
+21:53:11 N6 eval ['M1'] chunk 600 650 of 887
+21:53:20 U8 eval ['M1'] chunk 800 850 of 887
+21:53:43 N6 eval ['M1'] chunk 650 700 of 887
+21:53:49 U8 eval ['M1'] chunk 850 887 of 887
+MERGED run_close/det_eval_U8.json {'M1': 1037}
+LANEB_DONE
+21:54:14 N6 eval ['M1'] chunk 700 750 of 887
+21:54:45 N6 eval ['M1'] chunk 750 800 of 887
+21:55:17 N6 eval ['M1'] chunk 800 850 of 887
+21:55:40 N6 eval ['M1'] chunk 850 887 of 887
+MERGED run_close/det_eval_N6.json {'M1': 956}
+LANEA_DONE
+CLOSE_DONE
