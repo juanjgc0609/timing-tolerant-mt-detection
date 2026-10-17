@@ -365,8 +365,8 @@ c18d_analyze.py (full detector on CAL with the cap 6, cap 24, LOG6, no cap and B
 c18e_analyze.py (seed 999, networks 3100-3107, TAG 5181-5186, qc1 noise of 2010-07-23: robustness of the variants to
 real-noise transients). Only CAL of Ridgecrest is read (origins before 19:15); EVAL is not. Result: no 1-D medium
 improves the readings (0.53 to 0.63 within 0.25 s); the cap erases the evidence of real events at the true hypocentre
-(AUC 0.39 to 0.49) and LOG6 restores it (0.66 to 0.72) while keeping the robustness of the cap on real noise (LOG6 -
-cap -0.015 [-0.099, +0.043]); no variant detects the CAL events with origin time (0 or 1 of 16 at 30 false/h).
+(AUC 0.39 to 0.49) and LOG6 restores it (0.66 to 0.72) while keeping most of the robustness of the cap on real noise
+(LOG6 - cap -0.015 [-0.099, +0.043], one seed); no variant detects the CAL events with origin time (0 or 1 of 16 at 30 false/h).
 C18f (c18f_run.py, c18f_analyze.py; same windows as C18e): BOMP-PK with energies capped at 6 recovers almost all of the
 gap (MT with cap - BOMP-PK with cap +0.026 [-0.009, +0.081]; per-station normalisation alone +0.037 over BOMP-PK).
 C18g (c18g_oracle.py): weighting the S peak vectors by 0.5 or removing them lowers the AUC (cap 0.17-0.32, LOG6 0.24-0.55)

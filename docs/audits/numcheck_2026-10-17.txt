@@ -1,0 +1,334 @@
+NUMBER CHECK - Task 2M, exploration C18 (C18a-C18h), R0 closure, Appendix AA.9
+Repository: /home/claude/work/repo (HEAD f2ea16f), text checked = git diff c5f45bd -- <file>
+Date of check: 2026-10-16. No repository file was modified. Light Python only (JSON reads, arithmetic).
+
+SUMMARY
+  Items checked: 153 (an item is one number or one group of numbers from a single source line)
+  Match: 148
+  Do not match: 5 (4 numerical, 1 claim about what an appendix proves)
+  Separately: 5 wording-strength flags, 6 consistency notes, 1 path note.
+  ASCII: Doctoral_Proposal.md and Supplementary_Evidence_Appendices_G_to_AA.md have 0 non-ASCII characters
+  (LC_ALL=C grep -nP '[^\x00-\x7F]' returns nothing). For information: the added lines of
+  docs/executive_summary.md (U+2212 minus, U+2265) and docs/tasks_and_real_data_plan.md (em dash) contain
+  non-ASCII, as those files already did before c5f45bd. They are not under the ASCII rule.
+
+Abbreviations for sources:
+  A2M   = results/task2M/analyze_2m_out.txt
+  BLK   = results/task2M/posthoc/blocks_out.txt
+  VER   = results/task2M/verif_2m/task2m_verification.txt
+  V2..V7 = results/task2M/verif_2m/v2_primary_verif.txt ... v7_coherent_verif.txt
+  PRE   = preregistration/original_sealed_es/PREREGISTRO_1j_1k.txt
+  HSH   = preregistration/original_sealed_es/PREREGISTRO_hashes.txt
+  R0C   = results/taskR0/run_close/analysis_eval.txt
+  R0O   = results/taskR0/analysis_eval.txt
+  C18/  = results/explorations/c18/
+
+======================================================================================================
+A. MISMATCHES (with corrections)
+======================================================================================================
+
+M1. Supplement Y.32, C18a: "Between 37 and 47 per cent of the readings of the larger events are off by more
+    than the read tolerance whatever the medium (27 to 46 per cent after the event term)".
+    The 37-47 range is taken over all five models (1-0.627 U8 HOMfit to 1-0.531 N6 HOM6). The parenthesis
+    uses HOM6 only. Over all five models with the event term removed, the fractions within 0.25 s go
+    from 0.4615 (N4 HKr) to 0.736 (U8 HOMfit), so the share outside is 26 to 54 per cent.
+    Source: C18/c18a_N4_M2.json "_evterm" HKr frac_025 0.4615; C18/c18a_U8_M2.json "_evterm" HOMfit
+    frac_025 0.736 (HOM6 only: 0.625, 0.728, 0.594, 0.538 -> 27 to 46 per cent).
+    Correction: "(26 to 54 per cent after the event term)", or "(27 to 46 per cent with the registered
+    medium after the event term)".
+
+M2. Supplement Y.32, C18a: "No model gains more than 0.06 on any subnetwork."
+    On N6, HKr gives 0.5918 against 0.5306 for HOM6, a gain of 0.061.
+    Source: C18/c18a_summary.txt:3. Correction: "No model gains more than about 0.06", or "at most 0.061".
+    Minor: it rounds to 0.06.
+
+M3. Supplement AA.9, *Numbers*: "(the median threshold of the capped detector at 0.25 false events per
+    window was about 75 in score units)".
+    The analysis prints one pooled operating-point threshold, not a median. For MT@S0 at 0.25 it is
+    t = 77.35 on seed 2718 (the primary day) and 74.91 on seed 3141.
+    Source: A2M:162 (2718), A2M:331 (3141). The code is code/t2m_analyze.py:136-141 with the TRANSFER
+    definition in code/explore_contrib/c16_analyze.py:11-13.
+    Correction: "the threshold of the capped detector at 0.25 false events per window was 77 in score units
+    on the primary day (75 on the secondary days)". Then sqrt(2*77.35) = 12.4, still about 12, so the
+    conclusion does not change. The other numbers in the example are correct: 2c = 12;
+    2*6*sqrt(log(1+(12500/6)^2)) = 46.91, about 47 (46.91 also with the exact 12,488.79 of V7:7);
+    sqrt(2*75) = 12.25.
+
+M4. docs/executive_summary.md, new C18 row: "capping BOMP-PK recovers almost all of the 2M gap".
+    C18f was not run on Task 2M data. It used the C18e windows: seed 999, networks 3100-3107, noise of
+    2010-07-23 after qc1. The gap it recovered is the C18e gap (+0.148 -> +0.026), not the 2M gap
+    (+0.228).
+    Source: C18/c18f_analysis.txt:1,11,13; C18/c18e_analysis.txt:1,9. Y.31 says this correctly ("on seed
+    999") and tasks_and_real_data_plan.md says "2M-type gap".
+    Correction: "capping BOMP-PK recovers almost all of the gap on seed 999 (C18f)".
+    The G1-R row of Doctoral_Proposal.md ("recovers almost all of the gap (exploration C18f, Y.32)")
+    comes right after the 2M numbers and invites the same misreading. It should say "of the gap on seed
+    999".
+
+M5. Doctoral_Proposal.md, Section 19 table, row 1-12 (T2): "begun in Appendix AA.9, which bounds the influence
+    of one station on the capped, Huber and logarithmic statistics ...".
+    AA.9 excludes HUBER-N explicitly: "The Huber statistic HUBER-N is an M-estimator fit, not a radial map,
+    and is not covered here" (Supplementary_Evidence_Appendices_G_to_AA.md:7984). AA.9 also states that a
+    false-alarm statement is still open (last paragraph of AA.9: "What remains open is a statement on the
+    false-alarm tail ..."), so it has not begun the "statement on its false-alarm rate under noise" that
+    the row attaches it to.
+    Correction: "...bounds the influence of one station on the capped and logarithmic statistics (the
+    Huber fit is not covered) and shows that a capped score saturates ...", and attach AA.9 to the
+    influence bound, not to the false-alarm statement.
+
+======================================================================================================
+B. WORDING-STRENGTH FLAGS (claims stronger than the source supports)
+======================================================================================================
+
+S1. "LOG6 keeps the robustness / without losing robustness". This is one exploratory seed (C18e, seed 999)
+    with LOG6 - cap = -0.015 [-0.099, +0.043] (C18/c18e_analysis.txt:14). The interval allows a loss of
+    up to about 0.10 of a 0.148 advantage, and no non-inferiority margin was tested. Where it appears:
+    Doctoral_Proposal.md abstract ("restores the ranking of real events without losing robustness to
+    transients"); executive_summary.md status paragraph ("while keeping the robustness of the cap") and
+    C18 row ("without losing robustness"); tasks_and_real_data_plan.md C18 (d); results/explorations/
+    README.txt C18 paragraph; the heading of Supplement Y.32 C18e ("keeps the robustness to transients").
+    The body of Y.32 ("keeps nearly all of it", point estimate) and AA.9 ("within -0.015 [-0.099,
+    +0.043]") are fair. Suggested wording: "with little loss of robustness (point -0.015, exploratory)".
+
+S2. "The effect belongs to the per-station bound, not to the pursuit", stated without an exploratory label
+    in the G1-R row of the Doctoral_Proposal.md hypothesis table and in executive_summary.md ("so G1-R is
+    a property of the per-station bound"). The supporting evidence is the exploratory C18f (seed 999, one
+    day): MT - BOMP-CAP6 = +0.026 [-0.009, +0.081] (C18/c18f_analysis.txt:13), which does not establish
+    equality, plus the descriptive arm of Task 2F (Supplement line 4491-4492: +0.008 [-0.001, +0.017]).
+    The conclusion is reasonable, but it should be marked exploratory in the hypothesis table.
+
+S3. Doctoral_Proposal.md T2 row: AA.9 described as the start of a false-alarm statement (see M5).
+
+S4. Supplement Y.30 closure: "every pick-free detector stays below 0.09". This holds at 10 and 30 false
+    detections per hour (R0C:4-8, R0O:4-8). It does not hold at 60/h, where M3 under the LOC rule reaches
+    0.178 on N8 (R0C:9). The sentence is in a 30/h context; consider "at 30 false detections per hour".
+
+S5. Doctoral_Proposal.md G1 row: "Refuted on the first real test". This is supported by the registered
+    negative (R0-a and R0-b not met, -0.383 [-0.481, -0.310], R0O:13,49), and the row limits it to "a real
+    dense sequence". Acceptable; listed only because it is the strongest new verdict.
+
+======================================================================================================
+C. CONSISTENCY NOTES (between documents)
+======================================================================================================
+
+K1. The abstract of Doctoral_Proposal.md lists independent verifications "for Tasks 2A, 2E, 2F, 2I and
+    2L". The G1-R row, Section 19 (verifications of "2F, 2I, 2L and 2M") and Y.31 say Task 2M was also
+    independently verified. Within the abstract's own scope (synthetic tasks) the list is correct, but the
+    next sentence presents 2M without saying it was verified. README.md has the same scope and is
+    consistent with the abstract.
+K2. Where C18f applies: "2M gap" (executive summary) vs "on seed 999" (Y.31) vs "2M-type gap" (tasks plan).
+    See M4.
+K3. Threshold: "about 75" (AA.9) vs 77.35 (A2M:162). See M3.
+K4. Completion of the 2718 REAL arm: 19:01:59 UTC (task2M README, PRE:951-952; run_2718_REAL.log
+    "REAL_DONE 14:01:59 -05") vs "last REAL part 19:01:58 UTC" (VER:14). The README time matches its
+    source. The one-second difference is part-file time vs end-of-lane time; no action needed.
+K5. Hours of the night block: "hours 0 to 7" (Y.31, PRE:974), "first slot hour 0.0-6.5" (BLK:1),
+    "hours 0.0-7.3" (V4:13). These are consistent: BLK gives first-slot hours, V4 the full span.
+K6. The C18 row of docs/artifact_manifest_and_error_log.md lists only the C18a-C18e scripts. The Y.32 code
+    list and the README also name c18f_run.py, c18f_analyze.py, c18g_oracle.py, c18h_kernel.py and
+    c18h_detect.py. The manifest row is incomplete (not a numerical error).
+
+Path note (not numerical): the Y.31 code paragraph names the post hoc script `t2m_posthoc/blocks.py`, but the
+repository path is results/task2M/posthoc/blocks.py. It also says "Everything is in results/task2M/", but the
+t2m_*.py and t2m_*.sh code is in code/.
+
+======================================================================================================
+D. ITEM-BY-ITEM LIST (status; source file:line)
+======================================================================================================
+
+--- Supplement Y.30, "Closure, declared post hoc" ---
+  1  M1 - M3 LOC+T 30/h +0.000 [-0.023, +0.021] ......................... match  R0C:13
+  2  per subnet N8 +0.022, N6 0.000, N4 0.000, U8 -0.022 ................. match  R0C:13
+  3  LOC -0.050 [-0.101, -0.013] .......................................... match  R0C:16
+  4  BOMP-PK (M3) LOC 30/h 0.044 to 0.089 ................................. match  R0C:8 (0.089,0.044,0.044,0.067)
+  5  cap (M1) LOC 30/h 0.000 to 0.044 ..................................... match  R0C:8
+  6  every pick-free detector below 0.09 .................................. match at <=30/h (see S4)  R0C:4-9, R0O:4-8
+  7  M1 recalls reproduced on every subnet, M3 on N8 ...................... match  R0C:4-9 vs R0O:4-9 (all 6 rows of M1 identical; M3 N8 0.000/0.022/0.022/0.022/0.089/0.178 identical)
+
+--- Supplement Y.31 (Task 2M) ---
+  8  T2M_FREEZE.sha256, 45 files .......................................... match  results/task2M/T2M_FREEZE.txt:2; 45 lines in T2M_FREEZE.sha256
+  9  C16 +0.07/+0.11 (GEN) -> +0.26/+0.29 (REAL) .......................... match  results/explorations/REPORT_C16.txt:23-27 (+0.069, +0.113; +0.259, +0.294)
+ 10  19 per cent flat telemetry in C16 slots .............................. match  PRE:786, PRE:809 (394/2037 = 19.3 %)
+ 11  qc1: run >= 25 identical counts (1 s), 10^4 robust dev., 60 s ......... match  PRE:801-804
+ 12  2010-12-31: 10 stations, 1826 slots .................................. match  results/task2M/noise_prep_101231.log:1; stations_101231.json E 1826
+ 13  2010-02-10/11: same 8 stations, 737 and 531 slots .................... match  noise_prep_100210.log:1, noise_prep_100211.log:1; stations_1002{10,11}.json
+ 14  2010-02-12 no usable slot with 8 stations ............................ match  stations_100212.json (E 0, used False)
+ 15  December: median excess kurtosis 3.2, half of slots peak > 10 ........ match  PRE:904 (3.24, 0.52; draft 3.17, 0.50 at PRE:822)
+ 16  February: below 0.5, 2 to 4 per cent ................................. match  PRE:904-905 (0.43/0.04, 0.22/0.02)
+ 17  power of cap rule 0.22, both seeds 0.07 .............................. match  PRE:825-826, PRE:887 (0.22 at 17 networks is not printed in task2M_prepared/t2m_power.txt, which has N 16 / 20; 0.07 ~ 0.31 x 0.22)
+ 18  GEN arm descriptive on 8 networks per cell ........................... match  PRE:852; A2M:4,173 (GEN parts 24)
+ 19  16 dense (up to 7), 6 standard, 4 event-free windows ................. match  PRE:847; VER:24
+ 20  24 networks per cell (Dec), 17 (Feb) ................................. match  PRE:831-832
+ 21  5 km, <= 0.25, lower bound > 0 and point >= +0.03, Holm over two ...... match  PRE:857-866
+ 22  C16-day noise regenerated bit for bit, sha256 = C16 freeze ............ match  results/task2M/noise_arrays.sha256:3 = code/explore_contrib/C16_FREEZE.txt:34 (a2cc53d3...)
+ 23  station rule identical on all five days .............................. match  PRE:896-897
+ 24  six seed-999 networks reproduce catalogue draws ...................... match  results/task2M/env_check/validation_env_parts.txt:1-6; PRE:899-902
+ 25  failed networks ladder_4 2909 and 2911 ............................... match  PRE:953; VER:21-22,29-30
+ 26  2718 ran 72 networks, 3141 ran 49 of 51 .............................. match  A2M:4, A2M:173
+ 27  cap +0.228 [+0.148, +0.298]; HUBER-N +0.241 [+0.179, +0.293] ......... match  A2M:343, A2M:345
+ 28  Holm adjusted p 0.0010 ............................................... match  A2M:347
+ 29  recalls BOMP-PK 0.097, cap 0.325, HUBER-N 0.339 ...................... match  A2M:7,10,11
+ 30  origin time required: +0.085 and +0.104 .............................. match  A2M:348-349
+ 31  standard windows +0.423 and +0.346, lower bounds > 0 ................. match  A2M:350-351
+ 32  HUBER-N - cap +0.014 [-0.038, +0.056], margin -0.03 .................. match  A2M:352; PRE:870
+ 33  Feb +0.057 [+0.004, +0.121]; +0.120 [+0.070, +0.168]; +0.062 [+0.012, +0.107]  match  A2M:344,346,357
+ 34  Feb standard windows: neither differs ................................ match  A2M:355-356
+ 35  Table Y.91 row 2718: 1152/4598, 0.325, 0.339, 0.097, contrasts ........ match  A2M:6-13
+ 36  Table Y.91 row 3141: 784/3138, 0.355, 0.418, 0.298, contrasts ......... match  A2M:175-182
+ 37  GEN gain +0.025; REAL - GEN +0.008 [-0.081, +0.111] .................. match  A2M:168
+ 38  night: kurtosis 0.6, cap +0.033 [-0.044, +0.128], HUBER-N +0.123 [+0.057, +0.200]  match  BLK:1
+ 39  "hours 0 to 7" ....................................................... match  BLK:1 (first slots 0.0-6.5), V4:13 (0.0-7.3)
+ 40  7.5-15 h: kurtosis 8.4, 64 %, BOMP 0.003, +0.300 [+0.231, +0.339], +0.237 [+0.128, +0.298]  match  BLK:2
+ 41  16-23 h: +0.223 and +0.236 ........................................... match  BLK:3
+ 42  February blocks: cap +0.04 to +0.09, HUBER-N +0.10 to +0.15 .......... match  BLK:4-6 (+0.073,+0.092,+0.038; +0.101,+0.152,+0.118)
+ 43  event-free windows: 0.000 / 0.028 / 0.042 ............................ match  A2M:162,166,165
+ 44  verification recalls 0.325, 0.339, 0.097 ............................. match  VER:40; V2:4
+ 45  verification +0.2277 [+0.150, +0.300], +0.2414 [+0.179, +0.292] ...... match  VER:42-43; V2:5-6
+ 46  181 of 288 top atoms false, 94 %, 1-2 stations at a time ............. match  VER:64-65,68-70; V3:20
+ 47  positive at hit radii 2 to 10 km ..................................... match  V4:3-7
+ 48  positive at false-event caps 0.05 to 2.0 ............................. match  VER:72-74
+ 49  positive in every cell ............................................... match  V4:9-11
+ 50  leave-one-network-out +0.222 to +0.247 ............................... match  V4:18-19 (range over both contrasts)
+ 51  hour-clustered bootstrap [+0.132, +0.314] ............................ match  V5:2
+ 52  quiet windows cap +0.050 (n.s.), HUBER-N about +0.12 ................. match  V4:54 (+0.050, lower -0.013; +0.117)
+ 53  transient of about 12,500 times the noise level ...................... match  V7:7 (12488.79); VER:62
+ 54  February lower bound of cap rule +0.004 marginal ..................... match  A2M:344
+ 55  C18f on seed 999 recovers almost all of the gap ...................... match  C18/c18f_analysis.txt:11,13
+
+--- Supplement Y.32 (C18) ---
+ 56  CAL = origins before 19:15 ........................................... match  PRE:729
+ 57  C18e: seed 999, networks 3100-3107, tags 5181-5186 ................... match  code/explore_contrib/c18e_run.py:23; C18/c18e_analysis.txt:1
+ 58  timing error 0.35 to 0.41 s .......................................... match  PRE:744-745
+ 59  16 catalogued events of M >= 2 ....................................... match  C18/c18b.log (n_events 16); c18d_analysis.txt:1
+ 60  energy gate 25 ....................................................... match  code/explore_contrib/c18a_timing.py:7,45
+ 61  registered medium VP 6.0, VP/VS 1.73 ................................. match  c18a_timing.py:9,86
+ 62  N8: 130 readings ..................................................... match  C18/c18a_N8_M2.json (models n = 130); c18a_overlap_N8.txt:1-2 (23+107)
+ 63  N8: 0.59, 0.60, 0.58, 0.59, 0.59 ..................................... match  C18/c18a_summary.txt:1
+ 64  U8 0.61-0.63; N6 0.53-0.59; N4 0.53-0.55 ............................. match  c18a_summary.txt:2-4
+ 65  "no model gains more than 0.06" ...................................... NO MATCH (0.061)  see M2
+ 66  event term: 0.62 N8, 0.73 U8, 0.59 N6, 0.54 N4 ....................... match  c18a_*_M2.json "_evterm" HOM6 (0.625, 0.728, 0.594, 0.538)
+ 67  a quarter to a half stay outside 0.25 s .............................. match  (27-46 % with HOM6)
+ 68  overlap 0.61 vs 0.59 ................................................. match  C18/c18a_overlap_N8.txt:1-2
+ 69  S/P 0.54 and 0.67; 32 and 16 % beyond 0.5 s .......................... match  c18a_overlap_N8.txt:3-4
+ 70  LRL 0.24 to SLA 0.81 ................................................. match  c18a_overlap_N8.txt:5
+ 71  all magnitudes N8: 0.39 to 0.43 ...................................... match  C18/c18a_N8_M0.json (0.392, 0.403, 0.418, 0.414, 0.432)
+ 72  37 to 47 % off for larger events, all media .......................... match  c18a_summary.txt (1-0.627 .. 1-0.531)
+ 73  "27 to 46 per cent after the event term" (whatever the medium) ....... NO MATCH (26 to 54)  see M1
+ 74  222 null windows ..................................................... match  C18/c18b.log, c18c.log (n_null 222)
+ 75  AUC with cap 0.49, 0.39, 0.43, 0.43 .................................. match  C18/c18c.log:4,13,22,31
+ 76  AUC no cap 0.71, 0.69, 0.72, 0.74 .................................... match  c18c.log:9,18,27,36
+ 77  cap 12: 0.61-0.64; cap 24: 0.69-0.74; LOG6: 0.66-0.72 ................ match  c18c.log:5-7,14-16,23-25,32-34
+ 78  per-station normalisation 0.40 to 0.54 ............................... match  c18b.log STA:8,18,28,38; c18c.log PREV6:8,17,26,35
+ 79  MT-subspace weighting 0.28 to 0.38 ................................... match  c18b.log STA-COH:9,19,29,39
+ 80  window max within 5 km: 6-31 % cap, 0-44 % no cap .................... match  c18b.log REG/NOCAP frac_argmax_5km
+ 81  true hypocentre is window max in 0 to 19 % ........................... match  c18b.log frac_strue_is_max
+ 82  C18d: 0 or 1 of 16 at 30/h, origin time required ..................... match  C18/c18d_analysis.txt:3,10
+ 83  best 3 of 16 epicentre rule (BOMP-PK on U8) .......................... match  c18d_analysis.txt:13
+ 84  cap 24 and LOG6: 2 of 16 on N8, none on U8 ........................... match  c18d_analysis.txt:6,13
+ 85  only cap 24 N8 excludes 0: +0.125 [+0.043, +0.300]; U8 -0.062 ........ match  c18d_analysis.txt:3,6,10,13
+ 86  C18e median window kurtosis 3.2 ...................................... match  C18/c18e_analysis.txt:59 (3.23)
+ 87  C18e: +0.148 [+0.056,+0.261], +0.133 [+0.052,+0.224], +0.175 [+0.095,+0.265],
+     +0.066 [+0.010,+0.141], -0.015 [-0.099,+0.043], LOC+T +0.015 [-0.022,+0.060],
+     -0.082 [-0.183,-0.014] ............................................... match  c18e_analysis.txt:9-14,28
+ 88  C18g: cap 0.23-0.32 (S x0.5), 0.17-0.24 (P only); LOG6 0.46-0.55, 0.24-0.33;
+     never within 5 km .................................................... match  C18/c18g.log:6-9,15-18,24-27,33-36
+ 89  C18h timing HOM6 0.58/0.60 at 3 Hz, 0.59/0.57 at 4 Hz ................ match  C18/c18h_f3.0_{N8,U8}_timing.json, c18h_f4.0_*; c18h.log:2,18,34,50
+ 90  C18h LOG6 argmax 0.38/0.50 vs 0.19/0.25 at 2 Hz; AUC 0.73, 0.72 ...... match  c18h.log:15,31; c18c.log:7,16
+ 91  "4 Hz is not better" ................................................. match for location (0.25/0.31 vs 0.38/0.50, c18h.log:47,63); N8 AUC at 4 Hz is 0.74 vs 0.73
+ 92  C18h detector: 3 of 16 LOC+T U8 (0 at 2 Hz), none N8; LOC 3 and 4 .... match  C18/c18h_detect_analysis.txt:3,6,10,13; c18d_analysis.txt:10
+ 93  gate 5 of 16 on N8 or U8, LOC+T, 30/h ................................ match  PRE:1008-1011
+ 94  C18f: 384 windows; +0.122 [+0.029,+0.224]; +0.026 [-0.009,+0.081]; +0.052 [-0.026,+0.107];
+     +0.037 [-0.033,+0.123]; +0.111 [+0.044,+0.186]; STD -0.019 [-0.117,+0.131]  match  C18/c18f_analysis.txt:3,11-15,45
+ 95  best pick-based comparator about 0.6 on N8 in EVAL .................... match  R0O:5 (BESTPICK 0.600)
+ 96  "between a quarter and a half" (What follows) ........................ match  (26-54 % over all media, 27-46 % with HOM6)
+
+--- Supplement AA.9 ---
+ 97  c = 6 noise deviations (cap) ......................................... match  PRE:854; VER:58
+ 98  M = 12,500 deviations, the largest found ............................. match  V7:7 (12488.79); VER:116
+ 99  cap moves sigma by at most 12 (= 2c) ................................. match  Proposition AA.9.2(a)
+100  log map: 2*6*sqrt(log(1+(12500/6)^2)) ~ 47 ........................... match  recomputed 46.913
+101  sqrt(2*75) ~ 12 ...................................................... match  recomputed 12.247
+102  "median threshold ... about 75" ...................................... NO MATCH  see M3 (pooled t = 77.35, A2M:162)
+103  AUC cap 0.39-0.49, uncapped 0.69-0.74 ................................ match  c18c.log
+104  LOG6 within -0.015 [-0.099, +0.043] .................................. match  c18e_analysis.txt:14
+     (Proofs of Lemma AA.9.1 and Propositions AA.9.2-AA.9.4 re-derived; no algebraic error found.)
+
+--- Doctoral_Proposal.md ---
+105  abstract: +0.228, +0.241; +0.057, +0.120 ............................. match  A2M:343-346
+106  abstract: LOG6 "without losing robustness" ........................... number ok; wording see S1
+107  abstract: verified-task list ......................................... see K1
+108  Section 1 paragraph: +0.228 [+0.148,+0.298], +0.241 [+0.179,+0.293], +0.057, +0.120  match  A2M:343-346
+109  "a quarter to a half ... whatever the medium" ......................... match  (26-54 % over all media)
+110  G1 row: -0.383 [-0.481, -0.310] vs PhaseNet with PyOcto ............... match  R0O:13 (BESTPICK = PyOcto at LOC+T 30/h in every subnet, R0O:5)
+111  G1-R row: +0.228 [..], +0.241 [..], +0.057, +0.120, independently verified  match  A2M; VER:1 (C18f wording: S2, M4)
+112  Section 19 risk row: 0.35-0.41 s; quarter to half beyond 0.25 s ....... match  PRE:745; c18a
+113  E1 row: gate 5 of 16, origin times, 30/h, N8 or U8 ................... match  PRE:1010
+114  T2 row: AA.9 covers "capped, Huber and logarithmic" ................... NO MATCH  see M5 (Supplement:7984)
+
+--- docs/executive_summary.md ---
+115  status: +0.228 [..], +0.241 [..], +0.057 [+0.004,+0.121], +0.120 [+0.070,+0.168]  match  A2M:343-346
+116  +0.033 at night, +0.300 between 7.5 and 15 h, HUBER-N +0.10 to +0.15 . match  BLK:1-6
+117  0.53 to 0.63; AUC 0.39-0.49; LOG6 0.66-0.72 .......................... match  c18a_summary.txt; c18c.log
+118  gate 5 of 16, 30/h ................................................... match  PRE:1010
+119  closure: M1/M3 reproduced; +0.000 [-0.023,+0.021]; -0.050 [-0.101,-0.013]  match  R0C:13,16
+120  R0 row -0.383 [-0.481,-0.310] and closure numbers ..................... match  R0O:13; R0C
+121  2M row numbers ....................................................... match  A2M
+122  C18 row: "recovers almost all of the 2M gap" ......................... NO MATCH  see M4
+123  reading row: 3 Hz LOG6 3 of 16 on U8; gate >= 5 of 16 ................ match  c18h_detect_analysis.txt:10
+124  forty-nine errors E1-E49; E46-E49 summaries ........................... match  docs/artifact_manifest_and_error_log.md:171,973,991,1007,1023
+
+--- README.md ---
+125  +0.228 and +0.241; table row +0.228 [..], +0.241 [..], +0.057, +0.120  match  A2M
+126  E1-E49 ............................................................... match  manifest
+127  "eight preregistered tasks (five ... 2A, 2E, 2F, 2I, 2L verified)" .... consistent with the abstract (K1)
+
+--- docs/tasks_and_real_data_plan.md ---
+128  R0 closure: +0.000 [-0.023,+0.021]; -0.050 [-0.101,-0.013] ........... match  R0C:13,16
+129  2M registration 16:32 UTC; 45 files; 10 / 8 stations; GEN 8 per cell .. match  HSH; T2M_FREEZE.txt; PRE:852
+130  2M result: +0.228, +0.241, +0.057, +0.120, +0.085, +0.104, +0.014 [..],
+     +0.062 [..], +0.033 [..], +0.300, BOMP 0.003, +0.10-0.15 ............. match  A2M; BLK
+131  C18 (a) 0.53-0.63; (b) 0.39-0.49 and 0.66-0.74; (c) 0 or 1 of 16;
+     (d) -0.015 [..]; (e) +0.026 [..] .................................... match  c18a_summary; c18b/c18c; c18d; c18e:14; c18f:13
+132  gate: 5 of 16, N8 or U8, 30/h ........................................ match  PRE:1010
+
+--- docs/artifact_manifest_and_error_log.md ---
+133  E48: 2909 47 draws; 2911 50 draws; 49 of 51 .......................... match  PRE:931,953; VER:29-30
+134  E48: GEN of 3141 resumed within the budget rule ....................... match  run_3141_REAL_resume.log (done 13:39:59 -05 = 18:39:59 UTC, within 3 h of 16:32:33)
+135  C18 row: networks 3100-3107, TAG 5181-5186 ........................... match  c18e_run.py:23 (row incomplete, K6)
+136  E49: raw parts archived .............................................. match  results/task2M/parts_2718 (96 = 72 REAL + 24 GEN), parts_3141 (73 = 49 + 24); run_close/det*_eval_*.json
+
+--- results/task2M/README.txt ---
+137  16:32:06 registration, hash 16e207ad...e9ac .......................... match  HSH (Fri Oct 16 16:32:06, 16e207ad...ce9ac)
+138  16:32:31 freeze, 45 files, 1f4eb62b...e917 ........................... match  HSH; T2M_FREEZE.txt:2; PRE:925-927
+139  launch 16:32:33 ...................................................... match  results/task2M/queue_start 1792168353 = 16:32:33 UTC
+140  17:43:15 incident .................................................... match  HSH; PRE:930
+141  REAL 2718 complete 19:01:59 .......................................... match  run_2718_REAL.log last line (14:01:59 -05); PRE:952 (see K4)
+142  container restart 19:13 .............................................. match  PRE:955
+143  19:59:53 result; 20:22:03 verification ............................... match  HSH; PRE:950,986
+144  +0.228 [..], +0.241 [..], +0.057 [..], +0.120 [..], +0.033 [..], +0.10-0.15  match  A2M; BLK
+145  10 stations (Dec), 8 stations (Feb) .................................. match  noise_prep logs
+146  arrays about 0.2 GB per day .......................................... match  /home/claude/work/t2m_out/noise/*/noise.npy 0.13-0.23 GB
+
+--- results/taskR0/README.txt ---
+147  resumable blocks of 50 windows ....................................... match  PRE:1020-1021
+148  M1 - M3 +0.000 [-0.023,+0.021]; -0.050 [-0.101,-0.013] ............... match  R0C:13,16
+
+--- results/explorations/README.txt (C18) ---
+149  networks 3100-3107, TAG 5181-5186 .................................... match  c18e_run.py:23
+150  0.53-0.63; AUC 0.39-0.49 / 0.66-0.72; -0.015 [..]; 0 or 1 of 16 ...... match  c18a; c18c; c18e:14; c18d:3,10
+151  C18f +0.026 [-0.009,+0.081]; normalisation +0.037 .................... match  c18f_analysis.txt:12-13
+152  C18g cap 0.17-0.32, LOG6 0.24-0.55; no max within 5 km ............... match  c18g.log
+153  C18h 3 of 16 on U8 (0 on N8); gate 5 of 16 ........................... match  c18h_detect_analysis.txt:3,10
+
+--- preregistration/README.md ---
+     Changed text contains no numbers beyond the date (16 October 2026, which matches HSH). Not counted.
+
+======================================================================================================
+E. OTHER OBSERVATIONS (no action required)
+======================================================================================================
+- The header of C18/c18h_detect_analysis.txt reads "C18d: CAL ..." because c18h_detect reuses the C18d
+  analyser. This is cosmetic, but a reader could take it for the C18d output.
+- The docstring of code/explore_contrib/c18e_run.py:3 says "networks j = 3100-3111", but the run and the
+  analysis use 3100-3107 (8 per cell, c18e_analysis.txt:1). The text correctly says 3100-3107.
+- The power figure 0.22 (3141, 17 networks) is quoted from the registration (PRE:887). It is not printed in
+  results/task2M_prepared/t2m_power.txt, whose grid has N = 16 (0.21) and N = 20 (0.26).

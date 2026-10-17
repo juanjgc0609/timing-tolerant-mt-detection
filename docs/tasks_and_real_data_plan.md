@@ -2262,8 +2262,8 @@ predict the held-out energy-peak readings better than the registered medium: 0.5
 real M >= 2 event does not exceed the maxima of event-free windows (AUC 0.39 to 0.49); without a cap, with a cap of
 24 or with a logarithmic compression (LOG6) the AUC is 0.66 to 0.74. (c) No variant detects the events at 30 false
 detections per hour with origin time required (0 or 1 of 16), because the window maxima are not at the events. (d) On
-real noise with injected events, LOG6 keeps the robustness of the cap against transients (LOG6 minus cap -0.015
-[-0.099, +0.043]); a cap of 24 loses it. (e) Capping the energies of BOMP-PK recovers almost all of the 2M-type gap (MT
+real noise with injected events (one exploratory seed), LOG6 keeps most of the robustness of the cap against transients
+(LOG6 minus cap -0.015 [-0.099, +0.043], no non-inferiority test); a cap of 24 loses it. (e) Capping the energies of BOMP-PK recovers almost all of the 2M-type gap (MT
 with cap minus BOMP-PK with cap +0.026 [-0.009, +0.081]); per-station normalisation alone does not. Appendix Y.32.
 
 **Gate for the next registered real test (fixed before any further development).** On Ridgecrest CAL, with origin

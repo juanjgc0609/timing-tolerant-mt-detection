@@ -6893,7 +6893,8 @@ The registered secondary contrast M1 - M3 is +0.000 [-0.023, +0.021] with origin
 per hour (N8 +0.022, N6 0.000, N4 0.000, U8 -0.022) and -0.050 [-0.101, -0.013] under the epicentre rule, where
 BOMP-PK, with unbounded energies, recalls 0.044 to 0.089 against 0.000 to 0.044 for the cap. On a real sequence the cap
 brings no advantage over BOMP-PK and under the looser rule a small disadvantage, as the saturation of Proposition
-AA.9.3 and exploration C18 predict; every pick-free detector stays below 0.09.
+AA.9.3 and exploration C18 predict; at 30 false detections per hour every pick-free detector stays below 0.09 (at 60 per
+hour BOMP-PK reaches 0.178 on N8 under the epicentre rule).
 
 
 ## Y.31 Task 2M: bounded influence with independent real noise (Alto Tiberina, 2010)
@@ -6901,8 +6902,9 @@ AA.9.3 and exploration C18 predict; every pick-free detector stays below 0.09.
 Code: `t2m_data.py`, `t2m_stations.py`, `t2m_lib.py`, `t2m_run.py`, `t2m_validate.py`, `t2m_analyze.py`,
 `t2m_power.py`, `t2m_prep.sh`, `t2m_queue.sh`, `t2m_freeze.sh`, `t2m_resume.sh`, `t2m_resume_each.sh`; freeze
 `T2M_FREEZE.sha256` (45 files); configurations `cfg_2718.json` and `cfg_3141.json`; output `analyze_2m_out.txt`;
-post hoc breakdown `t2m_posthoc/blocks.py` and `blocks_out.txt`; independent verification `verif_2m/`; registration,
-freeze, incident and result in `PREREGISTRO_1j_1k.txt` (Task 2M). Everything is in `results/task2M/`.
+post hoc breakdown `posthoc/blocks.py` and `blocks_out.txt`; independent verification `verif_2m/`; registration,
+freeze, incident and result in `PREREGISTRO_1j_1k.txt` (Task 2M). The code is in `code/`; outputs, post hoc breakdown and
+verification are in `results/task2M/`.
 
 **Question and design.** Exploration C16 (Y.29c) found that with real noise of one day of the Alto Tiberina network the
 advantage of the capped and Huber statistics over BOMP-PK grew from +0.07 and +0.11 to +0.26 and +0.29, but it was a
@@ -6990,7 +6992,8 @@ in a standard window; and on the February days the lower bound of the cap rule (
 **What this does and does not show.** It shows that the ordering of G1-R, established on synthetic noise in Tasks 2F
 and 2I, holds on real noise of a network that the method was not tuned on, on days that no earlier analysis used, and
 that the size of the gain is governed by how impulsive the noise is. Nor does it show that MT-FW beats a pursuit that bounds its stations too: on seed 999,
-BOMP-PK with its energies capped at the same level recovers almost all of the gap (exploration C18f, Y.32). It does
+BOMP-PK with its energies capped at the same level recovers almost all of the gap (exploration C18f, Y.32,
+on seed 999). It does
 not show that the detector finds real
 earthquakes: the signals are synthetic, and the first real-data test (R0, Y.30) was negative. It is one network, and
 the primary replicate is one day; the quality rules and the classification of the days were fixed after inspecting the
@@ -7020,14 +7023,15 @@ the other events. Five models were compared: the registered homogeneous medium (
 medium with fitted VP and VP/VS, the layered model of Hadley and Kanamori for southern California with VP/VS 1.73 or
 fitted, and a fitted linear gradient. On N8 (130 readings) the fraction of held-out readings predicted within 0.25 s is
 0.59, 0.60, 0.58, 0.59 and 0.59; on U8 0.61 to 0.63, on N6 0.53 to 0.59, on N4 0.53 to 0.55. No model gains more than
-0.06 on any subnetwork, and the fitted parameters stay close to the registered medium. Removing, in addition, an event
+about 0.06 on any subnetwork, and the fitted parameters stay close to the registered medium. Removing, in addition, an event
 term (the median residual of the held-out event, which a detector absorbs in its origin time) raises the fraction to
 0.62 on N8, 0.73 on U8, 0.59 on N6 and 0.54 on N4: part of the error is a common shift per event, but a quarter to a
 half of the readings stay outside 0.25 s. On N8 the residuals are not explained by other catalogued events arriving within 2 s (0.61 within
 0.25 s with such an overlap, 0.59 without). They are worse for S than for P (0.54 and 0.67 within 0.25 s; 32 and 16 per
 cent beyond 0.5 s) and very uneven across stations (0.24 at LRL to 0.81 at SLA). With all magnitudes the N8 fraction falls
 to 0.39 to 0.43 for every model. Between 37 and 47 per cent of the readings of the larger events are off by more than the read
-tolerance whatever the medium (27 to 46 per cent after the event term): what limits the timing on these data is the reading of the peaks in a dense sequence,
+tolerance whatever the medium (26 to 54 per cent after the event term, 27 to 46 per cent for the registered
+medium): what limits the timing on these data is the reading of the peaks in a dense sequence,
 not the velocity model, and the readings cannot be predicted from the source position with 16 events (C17a found the
 same for kriging).
 
@@ -7052,7 +7056,7 @@ on U8), while cap 24 and LOG6 reach 2 of 16 on N8 and none on U8; among the boot
 only cap 24 on N8 excludes zero (+0.125 [+0.043, +0.300]), and on U8 it is -0.062. The ranking gained in C18c does not turn into
 detections, because the detections are not where the events are.
 
-**C18e: the logarithmic compression keeps the robustness to transients.** If a less bounded statistic is to replace
+**C18e: the logarithmic compression keeps most of the robustness to transients (one exploratory seed).** If a less bounded statistic is to replace
 the cap, it must not lose what Task 2M confirmed. On real noise of 2010-07-23 after the quality rule (median window
 excess kurtosis 3.2), 8 networks per cell of seed 999, dense windows, epicentre rule, 0.25 false events per window: cap 6
 minus BOMP-PK +0.148 [+0.056, +0.261], LOG6 minus BOMP-PK +0.133 [+0.052, +0.224], HUBER-N minus BOMP-PK +0.175
@@ -7092,7 +7096,7 @@ use, which is how G1-R should be read: Task 2M confirms that bounding each stati
 transients, not that MT-FW beats a pursuit that bounds its stations too (Task 2F found the same on synthetics).
 
 **What follows.** C18 rules out the two remedies the R0 diagnosis pointed to as sufficient. A layered or fitted medium
-does not make the peaks predictable, and a non-saturating score (LOG6 is the candidate that does not cost robustness)
+does not make the peaks predictable, and a non-saturating score (LOG6 is the candidate that costs little robustness on one exploratory seed)
 restores the ranking of real events but not their location. The failure that remains is the reading of energy peaks,
 especially S, in a dense real sequence: between a quarter and a half of the readings of the larger events fall outside the
 0.25 s tolerance, and the grid search then places the energy maximum away from the event. The decision tree of the
@@ -8009,8 +8013,8 @@ which grows linearly with $\|\mathbf e\|$. $\square$
 *Numbers.* A digital or cultural transient at one station of $M=12{,}500$ noise deviations, the largest the
 verification of Task 2M found, can move $\sigma$ by at most $12$ with the cap, by at most
 $2\cdot6\sqrt{\log(1+(12500/6)^2)}\approx47$ with the logarithmic map, and by up to $12{,}500$ without a bound. A
-real event at the detection threshold of Task 2M has $\sigma$ of order $\sqrt{2\cdot75}\approx12$ (the median
-threshold of the capped detector at $0.25$ false events per window was about $75$ in score units), so one such
+real event at the detection threshold of Task 2M has $\sigma$ of order $\sqrt{2\cdot77}\approx12$ (the pooled
+threshold of the capped detector at $0.25$ false events per window was $77.4$ and $74.9$ in score units on the two seeds), so one such
 transient decides the ranking of an uncapped hypothesis and cannot decide that of a capped one by itself. This is the
 mechanism behind Tasks 2F, 2I and 2M and behind the collapse of BOMP-PK in the daytime hours of the 2M primary day
 (Appendix Y.31): the realized false events of BOMP-PK there come from one or two stations at a time.
