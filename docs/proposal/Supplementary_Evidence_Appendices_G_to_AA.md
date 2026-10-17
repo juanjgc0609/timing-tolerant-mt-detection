@@ -6978,7 +6978,9 @@ in a standard window; and on the February days the lower bound of the cap rule (
 
 **What this does and does not show.** It shows that the ordering of G1-R, established on synthetic noise in Tasks 2F
 and 2I, holds on real noise of a network that the method was not tuned on, on days that no earlier analysis used, and
-that the size of the gain is governed by how impulsive the noise is. It does not show that the detector finds real
+that the size of the gain is governed by how impulsive the noise is. Nor does it show that MT-FW beats a pursuit that bounds its stations too: on seed 999,
+BOMP-PK with its energies capped at the same level recovers almost all of the gap (exploration C18f, Y.32). It does
+not show that the detector finds real
 earthquakes: the signals are synthetic, and the first real-data test (R0, Y.30) was negative. It is one network, and
 the primary replicate is one day; the quality rules and the classification of the days were fixed after inspecting the
 noise statistics, without injection or detection; and the cells share hours, so the pooled intervals are somewhat too
@@ -6987,7 +6989,8 @@ narrow.
 ## Y.32 After R0: what fails on real data (exploration C18)
 
 Code: `explore_contrib/c18_tt.py`, `c18a_timing.py`, `c18a_overlap.py`, `c18b_oracle.py`, `c18c_oracle.py`,
-`c18d_detect.py`, `c18d_analyze.py`, `c18e_run.py`, `c18e_analyze.py`; outputs in `results/explorations/c18/`.
+`c18d_detect.py`, `c18d_analyze.py`, `c18e_run.py`, `c18e_analyze.py`, `c18f_run.py`, `c18f_analyze.py`; outputs in
+`results/explorations/c18/`.
 Exploratory. C18a to C18d use only the first 15 minutes of the Ridgecrest hour (CAL, origins before 19:15), which
 served for development and station terms in R0 and was never part of an evaluation; the evaluated segment of R0 is
 not read. C18e uses seed 999, new networks (3100 to 3107) and new stream tags (5181 to 5186), checked by search to
@@ -7045,6 +7048,18 @@ minus BOMP-PK +0.148 [+0.056, +0.261], LOG6 minus BOMP-PK +0.133 [+0.052, +0.224
 with the origin time required +0.015 [-0.022, +0.060]. A cap of 24 gives up most of the robustness (-0.082 [-0.183,
 -0.014] against the cap 6); the logarithmic compression keeps nearly all of it while restoring most of the ranking of
 real events lost by the cap.
+
+**C18f: the advantage belongs to the bound, not to the pursuit.** The fifth independent audit asked whether Task 2M
+measured an advantage over BOMP-PK as such or over a comparator without any per-station robustness. On the same 384
+dense windows as C18e, two robust versions of the comparator were run: BOMP-PK whose block energies are computed
+from peak vectors capped at 6 deviations (pursuit, refit and deflation unchanged), and BOMP-PK on matched-filter output
+normalised per station by its own level in the window. The cap recovers almost all of the gap: BOMP-PK with the cap
+gains +0.122 [+0.029, +0.224] over plain BOMP-PK, and the capped MT-FW and HUBER-N lead it by only +0.026 [-0.009,
++0.081] and +0.052 [-0.026, +0.107]; per-station normalisation alone gains +0.037 [-0.033, +0.123], and MT-FW leads
+it by +0.111 [+0.044, +0.186]. In standard windows BOMP-PK with the cap is level with MT-FW (-0.019 [-0.117,
++0.131]). Bounded influence is therefore a property of the per-station statistic that any moment-tensor pursuit can
+use, which is how G1-R should be read: Task 2M confirms that bounding each station helps on real noise with
+transients, not that MT-FW beats a pursuit that bounds its stations too (Task 2F found the same on synthetics).
 
 **What follows.** C18 rules out the two remedies the R0 diagnosis pointed to as sufficient. A layered or fitted medium
 does not make the peaks predictable, and a non-saturating score (LOG6 is the candidate that does not cost robustness)

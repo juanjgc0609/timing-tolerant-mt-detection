@@ -367,5 +367,7 @@ real-noise transients). Only CAL of Ridgecrest is read (origins before 19:15); E
 improves the readings (0.53 to 0.63 within 0.25 s); the cap erases the evidence of real events at the true hypocentre
 (AUC 0.39 to 0.49) and LOG6 restores it (0.66 to 0.72) while keeping the robustness of the cap on real noise (LOG6 -
 cap -0.015 [-0.099, +0.043]); no variant detects the CAL events with origin time (0 or 1 of 16 at 30 false/h).
+C18f (c18f_run.py, c18f_analyze.py; same windows as C18e): BOMP-PK with energies capped at 6 recovers almost all of the
+gap (MT with cap - BOMP-PK with cap +0.026 [-0.009, +0.081]; per-station normalisation alone +0.037 over BOMP-PK).
 Outputs: c18a_*.json, c18a_summary.txt, c18a_overlap_N8.txt, c18b_*.json, c18c_*.json, c18d_*.json,
 c18d_analysis.txt, c18e_parts/, c18e_analysis.txt and the run logs.
