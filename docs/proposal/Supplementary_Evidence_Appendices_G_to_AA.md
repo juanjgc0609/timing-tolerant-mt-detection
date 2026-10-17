@@ -51,6 +51,8 @@ and Appendices A to F cited here are in the main document.
   - [Y.28 Station terms estimated without picks, and the refined detector (C11 and Task 2L)](#y28-station-terms-estimated-without-picks-and-the-refined-detector-c11-and-task-2l)
   - [Y.29 After Task 2L: three exploratory studies on the calibration seed (C12, C13, C14)](#y29-after-task-2l-three-exploratory-studies-on-the-calibration-seed-c12-c13-c14)
   - [Y.30 Task R0: the first registered test on real data (Ridgecrest, 2019)](#y30-task-r0-the-first-registered-test-on-real-data-ridgecrest-2019)
+  - [Y.31 Task 2M: bounded influence with independent real noise (Alto Tiberina, 2010)](#y31-task-2m-bounded-influence-with-independent-real-noise-alto-tiberina-2010)
+  - [Y.32 After R0: what fails on real data (exploration C18)](#y32-after-r0-what-fails-on-real-data-exploration-c18)
 - [Appendix Z. Certified Pruning of the Hypothesis Space, and the Role of p4est](#appendix-z-certified-pruning-of-the-hypothesis-space-and-the-role-of-p4est)
 - [Appendix AA. Theory of the Group BLASSO Detector](#appendix-aa-theory-of-the-group-blasso-detector)
 
@@ -7009,6 +7011,180 @@ fit in the memory of one machine. The registered plan is therefore: certified br
 kinematic likelihood and the batched enclosure oracle for MT-FW in the confirmatory prototype, and
 p4est only at the stage of national-scale deployment, with the same record-by-record equivalence test
 against the dense search as its acceptance criterion.
+
+## Y.31 Task 2M: bounded influence with independent real noise (Alto Tiberina, 2010)
+
+Code: `t2m_data.py`, `t2m_stations.py`, `t2m_lib.py`, `t2m_run.py`, `t2m_validate.py`, `t2m_analyze.py`,
+`t2m_power.py`, `t2m_prep.sh`, `t2m_queue.sh`, `t2m_freeze.sh`, `t2m_resume.sh`, `t2m_resume_each.sh`; freeze
+`T2M_FREEZE.sha256` (45 files); configurations `cfg_2718.json` and `cfg_3141.json`; output `analyze_2m_out.txt`;
+post hoc breakdown `t2m_posthoc/blocks.py` and `blocks_out.txt`; independent verification `verif_2m/`; registration,
+freeze, incident and result in `PREREGISTRO_1j_1k.txt` (Task 2M). Everything is in `results/task2M/`.
+
+**Question and design.** Exploration C16 (Y.29c) found that with real noise of one day of the Alto Tiberina network the
+advantage of the capped and Huber statistics over BOMP-PK grew from +0.07 and +0.11 to +0.26 and +0.29, but it was a
+single seed and a single day, and 19 per cent of its noise slots turned out to contain flat telemetry fill. Task 2M asks
+the same question on noise of days that C16 never touched, after a quality rule written before any injection or
+detector run: a sample is invalid if it belongs to a run of at least 25 identical counts (1 s) or departs from the
+median by more than 10^4 robust deviations, and no slot with an invalid sample of any station within 60 s is used. A
+station rule then keeps the largest station set that leaves enough valid slots. Day 2010-12-31 kept 10 stations and
+1826 slots of 40 s; days 2010-02-10 and 2010-02-11 kept the same 8 stations and 737 and 531 slots; 2010-02-12 had no
+usable slot with 8 stations. The noise of these days differs in character, measured on the noise alone before
+registration: the December day has transients (median excess kurtosis of the matched-filter output 3.2, half of the
+slots with a peak above 10 robust deviations) and the February days are close to Gaussian (below 0.5, 2 to 4 per
+cent). Before registering, the author fixed three decisions: the quality and station rules unchanged; the December day
+(seed 2718) as the only primary replicate and the February days (seed 3141) as a secondary replicate with a written
+prediction, because the expected February effect was of the size of the generator-noise arm of C16, for which the
+power of the cap rule was 0.22 and that of requiring both seeds 0.07; and the generator-noise arm (GEN) as a
+descriptive control on 8 networks per cell. The scope of a positive is therefore real noise with transients from one
+network and one day.
+
+Synthetic events from the project generator, with the station statics, catalogue and station corrections of C16, were
+injected into 40 s noise segments at the real station positions; the cells are random subsets of 4 and 6 stations and
+the 8 stations nearest a random azimuth. Each network has 16 dense windows (up to 7 overlapping events), 6 standard
+windows and 4 event-free windows; 24 networks per cell on the December day and 17 on the February days. The primary
+rules, on the dense windows of seed 2718 under the epicentre rule (within 5 km) at no more than 0.25 realised false
+events per window, are 2M-a (cap minus BOMP-PK) and 2M-b (HUBER-N minus BOMP-PK): lower 2.5th bootstrap percentile
+above 0 and point estimate at least +0.03, both required, with Holm over the two tests as the strict reading. The
+container that had prepared the task was lost before registration; the environment was rebuilt with the recorded
+library versions and the preparation was repeated and checked: the noise of the C16 day was regenerated bit for bit
+(sha256 equal to the one in the C16 freeze), the station rule gave identical outputs on all five days, and six seed-999
+networks regenerated with the 2M code reproduced the catalogue draws of the original validation (which checks the
+random streams but not the atom content, because the C16 part files were not preserved).
+
+**Execution.** The registration hash was sent to the author before any computation on the new seeds, the code was
+frozen with SHA-256 and the run was single. Two networks of seed 3141 (ladder_4 2909 and 2911) exhausted their reserve
+of catalogue slots; the registration declared such networks failed, but the runner did not catch the exception and
+stopped the lane, so the remaining networks were run one by one with the unchanged frozen code after an incident note
+was appended to the log, before any part was analysed. A container restart interrupted the descriptive GEN arms; they
+were resumed with the frozen code verified. Seed 2718 ran all 72 networks and seed 3141 ran 49 of 51.
+
+**Result.** Both primary rules are met on the December day, and G1-R is confirmed with real noise with transients
+(Table Y.91). The cap gains +0.228 [+0.148, +0.298] over BOMP-PK and HUBER-N +0.241 [+0.179, +0.293]; Holm rejects both
+(adjusted p 0.0010). BOMP-PK recalls 0.097 of the dense events at the operating point, against 0.325 for the cap and
+0.339 for HUBER-N. With the origin time required the gains are +0.085 and +0.104, and in standard windows +0.423 and
++0.346, all with lower bounds above 0. HUBER-N is not shown non-inferior to the cap on this day (+0.014 [-0.038,
++0.056], the margin was -0.03). On the near-Gaussian February days both rules are also met, with smaller gains: +0.057
+[+0.004, +0.121] for the cap, above the registered expectation, and +0.120 [+0.070, +0.168] for HUBER-N, which there is
+also better than the cap (+0.062 [+0.012, +0.107]); in standard windows neither differs from BOMP-PK.
+
+**Table Y.91.** Task 2M, REAL arm, dense windows, epicentre rule, recall at no more than 0.25 false events per window,
+cells pooled; 95 per cent hierarchical bootstrap intervals (B = 2000).
+
+| Seed (days) | windows / events | cap 6 | HUBER-N | BOMP-PK | cap - BOMP-PK | HUBER-N - BOMP-PK |
+|:--|:--|:--|:--|:--|:--|:--|
+| 2718 (2010-12-31), primary | 1152 / 4598 | 0.325 | 0.339 | 0.097 | +0.228 [+0.148, +0.298] | +0.241 [+0.179, +0.293] |
+| 3141 (2010-02-10, 11), secondary | 784 / 3138 | 0.355 | 0.418 | 0.298 | +0.057 [+0.004, +0.121] | +0.120 [+0.070, +0.168] |
+
+**Where the advantage comes from.** The generator-noise arm, run on the first 8 networks per cell, gives on those same
+networks a cap gain of +0.025 and a real-minus-generator difference of +0.008 [-0.081, +0.111] on the December day,
+which at first sight contradicts the pooled +0.228. The networks are tied to blocks of hours, and the first 8 use the
+night hours. A breakdown by block, written after the result and therefore exploratory, resolves it: at night (hours 0
+to 7, median window kurtosis 0.6) the cap gains only +0.033 [-0.044, +0.128] while HUBER-N gains +0.123 [+0.057,
++0.200]; from 7.5 to 15 h (kurtosis 8.4, 64 per cent of windows with a peak above 10 deviations) BOMP-PK falls to a
+recall of 0.003 and the gains are +0.300 [+0.231, +0.339] and +0.237 [+0.128, +0.298]; from 16 to 23 h they are +0.223
+and +0.236. On the February days the cap gains +0.04 to +0.09 and HUBER-N +0.10 to +0.15 in every block. The advantage
+of the cap over unbounded energies is therefore a property of noise with transients, consistent with the mechanism of
+C16 and with the registered prediction; the transients are concentrated in the daytime hours, plausibly cultural noise,
+which this task does not identify. HUBER-N carries a smaller advantage that persists in quiet noise. At the operating
+point of the event windows, the event-free windows of the December day give 0.000 false events per window for the cap,
+0.028 for HUBER-N and 0.042 for BOMP-PK.
+
+**Independent verification.** A separate agent, which did not produce the result, searched for a false positive with
+its own labelling, FROC and bootstrap code (`verif_2m/task2m_verification.txt`). It reproduced the recalls (0.325,
+0.339, 0.097) and both primary contrasts (+0.2277 [+0.150, +0.300] and +0.2414 [+0.179, +0.292]), and found no
+leakage or asymmetry: every slot is eligible, unique and outside the margins around catalogued origins, the three
+methods share windows and timing tables, and the BOMP-PK scores are finite and proportional to the amplitude of the
+transients (181 of its 288 top-scored atoms are false, 94 per cent of them in windows with transients, mostly at one or
+two stations at a time). The contrasts stay positive at hit radii from 2 to 10 km, at false-event caps from 0.05 to 2.0
+per window, in every cell and after leaving out any one network (+0.222 to +0.247); a bootstrap that clusters the
+hours shared by the cells widens the cap interval to [+0.132, +0.314]. Its caveats are those of scope: in quiet
+windows the cap gains +0.050, not significant, while HUBER-N keeps about +0.12; the comparison is a capped statistic
+against unbounded energies under one common threshold, which is the mechanism of the hypothesis and not a general win
+over every detector of the BOMP type; the quality rule let through one transient of about 12,500 times the noise level
+in a standard window; and on the February days the lower bound of the cap rule (+0.004) is marginal.
+
+**What this does and does not show.** It shows that the ordering of G1-R, established on synthetic noise in Tasks 2F
+and 2I, holds on real noise of a network that the method was not tuned on, on days that no earlier analysis used, and
+that the size of the gain is governed by how impulsive the noise is. It does not show that the detector finds real
+earthquakes: the signals are synthetic, and the first real-data test (R0, Y.30) was negative. It is one network, and
+the primary replicate is one day; the quality rules and the classification of the days were fixed after inspecting the
+noise statistics, without injection or detection; and the cells share hours, so the pooled intervals are somewhat too
+narrow.
+
+## Y.32 After R0: what fails on real data (exploration C18)
+
+Code: `explore_contrib/c18_tt.py`, `c18a_timing.py`, `c18a_overlap.py`, `c18b_oracle.py`, `c18c_oracle.py`,
+`c18d_detect.py`, `c18d_analyze.py`, `c18e_run.py`, `c18e_analyze.py`; outputs in `results/explorations/c18/`.
+Exploratory. C18a to C18d use only the first 15 minutes of the Ridgecrest hour (CAL, origins before 19:15), which
+served for development and station terms in R0 and was never part of an evaluation; the evaluated segment of R0 is
+not read. C18e uses seed 999, new networks (3100 to 3107) and new stream tags (5181 to 5186), checked by search to
+appear in no earlier file. The Hi-net swarm of `Geolab-USTC/MatchLocate2` was downloaded and its checksums recorded,
+but none of its waveforms was read: it is kept unseen for the next registered real test.
+
+R0 named two causes of its failure: a timing error of 0.35 to 0.41 s with a homogeneous medium and constant station
+terms, and a capped score that saturates in continuous seismicity. C18 separates them on CAL, where the 16 catalogued
+events of magnitude 2 or more and their hypocentres are known.
+
+**C18a: a better medium does not reduce the timing error.** For each catalogued event the matched-filter energy peaks
+were read at every station and phase (joint P and S search within 1 s, energy gate 25, as in C17a), and each peak was
+predicted, leaving the event out, by a travel-time model plus the median residual of the same station and phase over
+the other events. Five models were compared: the registered homogeneous medium (VP 6.0 km/s, VP/VS 1.73), a homogeneous
+medium with fitted VP and VP/VS, the layered model of Hadley and Kanamori for southern California with VP/VS 1.73 or
+fitted, and a fitted linear gradient. On N8 (130 readings) the fraction of held-out readings predicted within 0.25 s is
+0.59, 0.60, 0.58, 0.59 and 0.59; on U8 0.61 to 0.63, on N6 0.53 to 0.59, on N4 0.53 to 0.55. No model gains more than
+0.06 on any subnetwork, and the fitted parameters stay close to the registered medium. Removing, in addition, an event
+term (the median residual of the held-out event, which a detector absorbs in its origin time) raises the fraction to
+0.62 on N8, 0.73 on U8, 0.59 on N6 and 0.54 on N4: part of the error is a common shift per event, but a quarter to a
+half of the readings stay outside 0.25 s. On N8 the residuals are not explained by other catalogued events arriving within 2 s (0.61 within
+0.25 s with such an overlap, 0.59 without). They are worse for S than for P (0.54 and 0.67 within 0.25 s; 32 and 16 per
+cent beyond 0.5 s) and very uneven across stations (0.24 at LRL to 0.81 at SLA). With all magnitudes the N8 fraction falls
+to 0.39 to 0.43 for every model. Between 37 and 47 per cent of the readings of the larger events are off by more than the read
+tolerance whatever the medium (27 to 46 per cent after the event term): what limits the timing on these data is the reading of the peaks in a dense sequence,
+not the velocity model, and the readings cannot be predicted from the source position with 16 events (C17a found the
+same for kriging).
+
+**C18b and C18c: the cap removes the evidence of real events, even at the true hypocentre.** For every CAL window the
+first-iteration score map of MT-FW (registered engine of R0, +SC corrections) was computed, and two numbers compared:
+the best score within 3 km and 0.5 s of each catalogued event, and the maxima of windows whose owned origins have no
+catalogued event within 2 s (222 null windows). With the registered cap the true-location score of a real event is not
+larger than a null maximum: the probability that it exceeds one (AUC) is 0.49, 0.39, 0.43 and 0.43 on N8, U8, N6 and
+N4. Without a cap it is 0.71, 0.69, 0.72 and 0.74; with a cap of 12 noise deviations 0.61 to 0.64, of 24 0.69 to 0.74,
+and with a logarithmic compression of the arrival energy (energy E replaced by c^2 log(1 + E/c^2), c = 6, LOG6) 0.66
+to 0.72. Normalising each station by its own level, in the window or in the previous 40 s, does not help (0.40 to
+0.54), and weighting by the fraction of energy explained by the moment-tensor subspace makes it worse (0.28 to 0.38).
+In a continuous aftershock sequence almost every window holds arrivals that reach the cap at several stations, so a
+capped score cannot rank a magnitude 2.5 event above the coda and the smaller uncatalogued events. The same maps show
+the second failure: the window maximum lies within 5 km of the event in only 6 to 31 per cent of the event windows with
+the cap and 0 to 44 per cent without it, and the true hypocentre is the window maximum in 0 to 19 per cent.
+
+**C18d: fixing the ranking does not fix detection on these data.** The full MT-FW loop of R0 was run on CAL with the
+cap 6 (R0's M1), cap 24, LOG6, no cap, and BOMP-PK (R0's M3). At 30 false detections per hour, with the origin time
+required, all variants recall 0 or 1 of the 16 events on N8 and U8; with the epicentre rule the best is 3 of 16 (BOMP-PK
+on U8), while cap 24 and LOG6 reach 2 of 16 on N8 and none on U8; among the bootstrap intervals of the differences from the cap 6
+only cap 24 on N8 excludes zero (+0.125 [+0.043, +0.300]), and on U8 it is -0.062. The ranking gained in C18c does not turn into
+detections, because the detections are not where the events are.
+
+**C18e: the logarithmic compression keeps the robustness to transients.** If a less bounded statistic is to replace
+the cap, it must not lose what Task 2M confirmed. On real noise of 2010-07-23 after the quality rule (median window
+excess kurtosis 3.2), 8 networks per cell of seed 999, dense windows, epicentre rule, 0.25 false events per window: cap 6
+minus BOMP-PK +0.148 [+0.056, +0.261], LOG6 minus BOMP-PK +0.133 [+0.052, +0.224], HUBER-N minus BOMP-PK +0.175
+[+0.095, +0.265], cap 24 minus BOMP-PK only +0.066 [+0.010, +0.141]; LOG6 minus cap 6 is -0.015 [-0.099, +0.043], and
+with the origin time required +0.015 [-0.022, +0.060]. A cap of 24 gives up most of the robustness (-0.082 [-0.183,
+-0.014] against the cap 6); the logarithmic compression keeps nearly all of it while restoring most of the ranking of
+real events lost by the cap.
+
+**What follows.** C18 rules out the two remedies the R0 diagnosis pointed to as sufficient. A layered or fitted medium
+does not make the peaks predictable, and a non-saturating score (LOG6 is the candidate that does not cost robustness)
+restores the ranking of real events but not their location. The failure that remains is the reading of energy peaks,
+especially S, in a dense real sequence: between a quarter and a half of the readings of the larger events fall outside the
+0.25 s tolerance, and the grid search then places the energy maximum away from the event. The decision tree of the
+continuation plan applies: with no intervention that improves false-event-controlled recall on development data, a new
+registered real test would spend unseen data on a detector that is expected to fail. The Hi-net swarm therefore stays
+unseen, and the gate for registering the next real test is set in advance: on Ridgecrest CAL, with origin times
+required, at 30 false detections per hour, a candidate must recall at least 5 of the 16 events on N8 or U8 (R0's best
+pick-based comparator recalled about 0.6 on N8 in EVAL). Candidates for that work are a reading less sensitive to
+coda and S-wave complexity (P-weighted or envelope reading, a higher-frequency matched filter), joint relocation of
+the readings with a coherence check before the grid search, and LOG6 as the statistic.
 
 ---
 

@@ -2202,7 +2202,7 @@ detector transfers to real noise with a small excess (up to 0.06 false detection
 rule); that of BOMP-PK does not (0.29 to 0.86).
 
 **Next step.** Registered confirmation of G1-R with real noise on other days of the same network (10, 11 and 12
-February and 31 December 2010) and never-used seeds (Task 2M, in preparation).
+February and 31 December 2010) and never-used seeds: Task 2M, executed and confirmed (below).
 
 ---
 
@@ -2223,9 +2223,50 @@ versus 1.5 km for PyOcto) and ranking (the score of the real events does not sep
 sequence). The secondary contrasts against the registered detector and BOMP-PK are completed in the
 registration. Appendix Y.30; code and outputs in `results/taskR0/`.
 
-**Next step.** Source-dependent timing models (SSST or kriged terms, pick-free 1-D model) and a normalisation
-that withstands continuous seismicity, explored on other data before testing again; G1' on the RSNC remains
-registered.
+**Next step.** Exploration C18 (below) tested a layered and a fitted 1-D medium and non-saturating scores on the
+development segment: neither reduces the reading error nor locates the events. The next registered real test waits for
+a candidate that passes the gate fixed in C18; G1' on the RSNC remains registered.
+
+---
+
+## TASK 2M — G1-R with independent real noise (Alto Tiberina) — EXECUTED, CONFIRMED
+
+**Registration.** 16 October 2026, 16:32 UTC, hash sent before any computation on seeds 2718 and 3141; code frozen
+with SHA-256 (45 files). Author decisions: quality rule qc1 and station rule unchanged; seed 2718 (2010-12-31, noise
+with transients, 10 stations) as the only primary replicate; seed 3141 (10 and 11 February 2010, near-Gaussian, 8
+stations) as a secondary replicate with a written prediction; generator-noise arm descriptive on 8 networks per cell.
+Rules 2M-a (cap minus BOMP-PK) and 2M-b (HUBER-N minus BOMP-PK) on dense windows, epicentre rule, <= 0.25 false
+events per window: lower bound > 0 and point >= +0.03, both required in seed 2718.
+
+**Result.** 2M-a +0.228 [+0.148, +0.298] and 2M-b +0.241 [+0.179, +0.293]: both met, Holm rejects both; G1-R confirmed
+with real noise with transients (one network, one day). Seed 3141: +0.057 [+0.004, +0.121] and +0.120 [+0.070, +0.168],
+both rules also met. With origin time required on 2718: +0.085 and +0.104. HUBER-N is not shown non-inferior to the cap
+on 2718 (+0.014 [-0.038, +0.056]) and beats it on 3141 (+0.062 [+0.012, +0.107]). Post hoc: the cap's gain is
+concentrated in the hours with transients (night hours of 2718: +0.033 [-0.044, +0.128]; 7.5-15 h: +0.300, with BOMP-PK
+at 0.003); HUBER-N keeps +0.10 to +0.15 in quiet noise. Two networks of 3141 failed by exhausting their catalogue reserve
+(declared; error E48). Independent verification: confirmed with caveats of scope. Appendix Y.31; `results/task2M/`.
+
+**Next step.** None for G1-R on real noise; the open question is real signals (R0 and its follow-up).
+
+---
+
+## EXPLORATION C18 — What fails on real data after R0 — DONE (exploratory)
+
+On the development segment of the Ridgecrest hour only (the evaluated segment is not read), and on seed 999 for the
+robustness check. (a) A layered model (Hadley-Kanamori), a fitted homogeneous medium and a fitted gradient do not
+predict the held-out energy-peak readings better than the registered medium: 0.53 to 0.63 of the readings within
+0.25 s on every subnetwork and model; S readings are worse than P. (b) At the true hypocentre the capped score of a
+real M >= 2 event does not exceed the maxima of event-free windows (AUC 0.39 to 0.49); without a cap, with a cap of
+24 or with a logarithmic compression (LOG6) the AUC is 0.66 to 0.74. (c) No variant detects the events at 30 false
+detections per hour with origin time required (0 or 1 of 16), because the window maxima are not at the events. (d) On
+real noise with injected events, LOG6 keeps the robustness of the cap against transients (LOG6 minus cap -0.015
+[-0.099, +0.043]); a cap of 24 loses it. Appendix Y.32.
+
+**Gate for the next registered real test (fixed before any further development).** On Ridgecrest CAL, with origin
+time required, at 30 false detections per hour, a candidate must recall at least 5 of the 16 events of M >= 2 on N8 or
+U8. Only then is a test registered on the Hi-net swarm of MatchLocate2, whose waveforms remain unread. Candidates: a
+reading less sensitive to coda and S complexity (P-weighted or envelope reading, higher-frequency matched filter),
+joint relocation of the readings with a coherence check before the grid search, and LOG6 as the statistic.
 
 ---
 

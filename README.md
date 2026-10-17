@@ -16,7 +16,11 @@ exploration that injected synthetic events into real noise strengthened G1-R. Th
 one hour of the 2019 Ridgecrest aftershock sequence, was **negative**: the detector recalled at most 0.022 of the 45
 catalogued events of magnitude 2 or more at 30 false detections per hour, against up to 0.667 for PhaseNet with
 PyOcto (pooled difference -0.383 [-0.481, -0.310]), because a homogeneous medium with constant station terms leaves
-timing errors of 0.35 to 0.41 s and the capped score saturates in continuous seismicity. The contribution is the
+timing errors of 0.35 to 0.41 s and the capped score saturates in continuous seismicity. A registered test on real
+noise of independent days then confirmed G1-R (+0.228 and +0.241 over BOMP-PK on a day with transients, Task 2M),
+and an exploration of the R0 failure found that a better velocity model does not make the arrival readings more
+predictable and that a logarithmic score restores the ranking of real events but not their location; a gate for the
+next real test is registered. The contribution is the
 preregistered benchmark, its positive and negative results, and the measured conditions under which pick-free
 physics helps.
 
@@ -30,10 +34,11 @@ physics helps.
 | 2I | G1-R: Huber statistic with noise-fixed level | Confirmed, +0.058 and +0.053 | `results/task2i`; Y.26 |
 | 2L | G1-C: pick-free station terms + local refinement | Confirmed, +0.057 and +0.062 (isolated), +0.038 and +0.030 (dense), mainly 8-station one-sided networks | `results/task2l`; Y.28 |
 | R0 | G1 transfer to real data (Ridgecrest 2019) | Negative, -0.383 [-0.481, -0.310] | `results/taskR0`; Y.30 |
-| 2M | G1-R with real noise on independent days | Prepared and validated, not registered or run | `preregistration/drafts`, `results/task2M_prepared` |
+| 2M | G1-R with real noise on independent days (Alto Tiberina) | Confirmed on the primary day with transients, +0.228 [+0.148, +0.298] (cap) and +0.241 [+0.179, +0.293] (Huber); +0.057 and +0.120 on near-Gaussian days | `results/task2M`; Y.31 |
 
 Exploratory studies C1 to C16 (calibration seed 999 only) are reported in `results/explorations/` and Appendices Y.23,
-Y.25, Y.27, Y.29 to Y.29c.
+Y.25, Y.27, Y.29 to Y.29c; exploration C18, on the development segment of the Ridgecrest hour and seed 999, in
+`results/explorations/c18/` and Appendix Y.32.
 
 ## Repository layout
 
@@ -44,15 +49,15 @@ docs/
   executive_summary.md                                decision document: what is measured, discarded and pending
   method_design.md                                    design of the method and its hypotheses
   tasks_and_real_data_plan.md                         every task: design, rules, results, next steps
-  artifact_manifest_and_error_log.md                  artifacts and the register of errors E1-E47
+  artifact_manifest_and_error_log.md                  artifacts and the register of errors E1-E49
   audit_status.md, audits/                            four independent audits and the status after them
   task1_step_by_step.md
 preregistration/                                      append-only registration log, hash chain, drafts
 code/                                                 all scripts, in the original flat layout (see code/README.md)
-  explore_contrib/                                    exploration code C1-C16 and their freeze files
+  explore_contrib/                                    exploration code C1-C18 and their freeze files
   r0/                                                 real-data task R0
 results/                                              per task: README, analysis outputs, raw results
-  explorations/                                       reports C7-C16 and their analysis outputs
+  explorations/                                       reports C7-C16, outputs of C18 (c18/)
 data/                                                 how to obtain the real data, with checksums
 ```
 

@@ -158,12 +158,17 @@ to 2L, are also in `outputs/explore_contrib/`, with their scripts, reports and o
 | `explore_contrib/c12_lib.py`, `c12_run.py`, `c12_analyze.py`, `c12_validate.py`, `c12_mech.py` | Y.29 (C12) | Full, deviatoric and double-couple statistics inside the MT-FW loop; optimiser over the double-couple manifold; constants and tail of the tube formula; null law and detection in standard and dense windows; mechanism (written after the results) | exploratory; seed 999, networks 1200-1229 and 1290; validations V0 to V6 correct (`out/c12_validation.txt`); the null law of the tube formula agrees with the simulation; null for detection (double couple − full +0.005 [−0.021, +0.033] in standard windows with origin time) |
 | `explore_contrib/c13_lib.py`, `c13_run.py`, `c13_run_d3c.py`, `c13_twin.py`, `c13_analyze.py`, `c13_tables.py`, `c13_report.py`, `c13_report_text.py` | Y.29 (C13) | Decoys D1p, D1o, D2s, D2r, D3 and D3c; calibrations tdc, conformal p-value with Benjamini-Hochberg, rank competition and fpw; event-free twins; hierarchical bootstrap of 400 replicates | exploratory; seed 999, networks 1400-1411; D1p controls with the epicentre-only rule and not with origin time; D3c, fpw and the twins were added after intermediate looks, declared; first version of the twins invalid (E43); D3 and D1o with a construction defect (E44) |
 | `explore_contrib/c14_lib.py`, `c14_run.py`, `c14_analyze.py`, `c14_frozen.json`, `c14_dev2.json`, `C14_FREEZE.txt` | Y.29 (C14) | MT-FW loop with remedies R1 to R4, oracle deflation and exact decomposition of the statistic; per-event parts and twins; diagnosis, development, freeze and evaluation | exploratory; seed 999, networks 1600-1602 (development) and 1610-1621 (evaluation, generated after freezing); with empty configuration it reproduces `c10_lib.mt_loop` atom by atom; negative for recall; incidents and changes around the freeze in E45 |
+| `t2m_data.py`, `t2m_stations.py`, `t2m_prep.sh`, `t2m_validate.py`, `t2m_power.py` | Task 2M, Y.31 | Real-noise preparation of any PyMPA37 day with the quality rule qc1, station rule, validation against C16 (noise bit for bit, slot plans) and power analysis | valid; the noise of the C16 day regenerated bit for bit in the rebuilt environment; C16 parts not preserved (E49) |
+| `t2m_lib.py`, `t2m_run.py`, `t2m_queue.sh`, `t2m_freeze.sh`, `t2m_resume.sh`, `t2m_resume_each.sh` | Task 2M, Y.31 | Injection of generator events into real noise, five methods, part files per (arm, cell, network); frozen run with SHA-256, resumption per network | valid; a declared per-network failure stopped a lane (E48), resumed with the frozen code |
+| `t2m_analyze.py`, `results/task2M/posthoc/blocks.py`, `results/task2M/verif_2m/*_verif.py` | Task 2M, Y.31 | Registered analysis (primary seed 2718, Holm over two tests), post hoc breakdown by blocks of hours, independent verification | valid; the breakdown is exploratory; verification confirms with caveats of scope |
+| `explore_contrib/c18_tt.py`, `c18a_timing.py`, `c18a_overlap.py`, `c18b_oracle.py`, `c18c_oracle.py`, `c18d_detect.py`, `c18d_analyze.py`, `c18e_run.py`, `c18e_analyze.py` | Y.32 (C18) | Timing ladder with layered media on the Ridgecrest CAL readings, oracle scores at the true hypocentre for several statistics, full detector on CAL with those statistics, robustness of the statistics to real-noise transients on seed 999 | exploratory; Ridgecrest CAL only, EVAL not read; seed 999, networks 3100-3107, TAG 5181-5186 |
+| `r0/queue_close.sh`, `r0/run_close/` | Y.30 (closure) | M1 and M3 on EVAL of the four subnetworks with the frozen R0 code, re-run after the original outputs were lost (E49), and the registered secondary contrast M1 - M3 | post hoc, declared in the log before running |
 
 ---
 
 ## 3. The design errors that inverted or nullified a result
 
-This is the central content of this manifest. The log contains 47 errors, E1 to E47. In the
+This is the central content of this manifest. The log contains 49 errors, E1 to E49. In the
 first six (E1 to E6) the resulting number looked valid, and in all six it was detected **only because
 it turned out to be implausible**, not because there was a visible fault in the code; the following ones were detected
 by controls, preregistered rules or audits, as indicated in each one.
@@ -998,6 +1003,37 @@ per subset of methods merged without touching the analysis; the execution order 
 real noise may come from instrumental defects and not from seismic transients; Task 2M applies the
 quality control.
 **Correction:** declared in Appendices Y.29c and Y.30 and in the registration.
+
+### E48. A declared per-network failure stopped a whole lane of Task 2M
+**Script:** `t2m_run.py`, `t2m_lib.py` (Task 2M, seed 3141).
+**Symptom:** the REAL lane of seed 3141 ended after network 2909, with ladder_6 and unilateral_c40 of 2909 and all
+networks of day 2010-02-11 not run, and the queue moved on to the descriptive GEN arm.
+**Cause:** the registration states that a network whose catalogue-slot reserve runs out fails and is declared;
+`Net2M.catalogue` raises `RuntimeError` in that case, but `t2m_run.py` does not catch it, so the first failure (ladder_4
+2909, 47 draws) terminated the loop over networks. The validation of the 2M code ran seed 999 networks whose reserve
+never ran out, so the path was untested.
+**Detection:** by the log of the run, before any part was analysed.
+**Scope:** none on the result. An incident note was appended to the log before resuming; the remaining networks were run
+one at a time with the frozen code unchanged (`t2m_resume.sh`, `t2m_resume_each.sh`), a second network (ladder_4 2911,
+50 draws) failed in the same way and was declared, and seed 3141 ran 49 of its 51 networks. The GEN arm of 3141 was
+stopped and resumed after the REAL arm, within the registered budget rule.
+**Correction:** declared in the log and in Appendix Y.31. General rule: a failure that the registration declares local
+must be caught locally, and the failure path must be exercised in the validation.
+
+### E49. Raw run outputs were not preserved outside the working container
+**Script:** `r0/` (Task R0) and `explore_contrib/c16_run.py` (C16).
+**Symptom:** after the original container was lost, the detection outputs of R0 (`r0/run/*.json`) and the part files of
+C16 were not available: the pending R0 contrast M1 - M3 could not be computed from stored outputs, and the
+bit-for-bit check of the Task 2M code against the C16 parts could not be repeated.
+**Cause:** the repository kept the analysis outputs and the freeze files but not the raw outputs from which the analyses
+are computed, and the container that held them was ephemeral.
+**Detection:** when rebuilding the environment for Task 2M and for the closure of R0.
+**Scope:** R0: M1 and M3 were re-run with the frozen code on the same data, declared post hoc before running, and the
+re-run of M1 serves as a reproducibility check of the registered values. C16: the environment check of Task 2M was
+reduced to the catalogue draws and window counts of six regenerated parts, declared as such in the registration.
+**Correction:** the raw outputs of Task 2M (part files) and of the R0 closure are archived in the repository; the data
+instructions in `data/README.md` were corrected (the station inventory, the catalogue and the auxiliary files of the
+Alto Tiberina data are not in the folder the earlier text named).
 
 ### On the order of the three errors of Task 0
 Three complete protocols, three different conclusions, and **in none of them was the cause the physics**. By
