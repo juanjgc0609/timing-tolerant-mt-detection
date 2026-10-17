@@ -1,0 +1,37 @@
+seed 2718: atoms per method {'MT@S0': 12240, 'HUBER-N@S0': 12240, 'BOMP@S0': 12240, 'MT@S0+T3': 12240, 'MT@S2+T3': 12240}; non-finite entries {'MT@S0': 0, 'HUBER-N@S0': 0, 'BOMP@S0': 0, 'MT@S0+T3': 0, 'MT@S2+T3': 0}; max score {'MT@S0': 168.0, 'HUBER-N@S0': 684.5, 'BOMP@S0': 26572774.1, 'MT@S0+T3': 181.2, 'MT@S2+T3': 187.2}
+   atoms whose score exceeds the previous atom's (non-monotone emission; record() takes running min): {'MT@S0': 1782, 'HUBER-N@S0': 0, 'BOMP@S0': 1318, 'MT@S0+T3': 1867, 'MT@S2+T3': 1976}
+seed 3141: atoms per method {'MT@S0': 8330, 'HUBER-N@S0': 8330, 'BOMP@S0': 8330, 'MT@S0+T3': 8330, 'MT@S2+T3': 8330}; non-finite entries {'MT@S0': 0, 'HUBER-N@S0': 0, 'BOMP@S0': 0, 'MT@S0+T3': 0, 'MT@S2+T3': 0}; max score {'MT@S0': 167.4, 'HUBER-N@S0': 225.2, 'BOMP@S0': 6724.7, 'MT@S0+T3': 167.4, 'MT@S2+T3': 165.6}
+   atoms whose score exceeds the previous atom's (non-monotone emission; record() takes running min): {'MT@S0': 1394, 'HUBER-N@S0': 0, 'BOMP@S0': 1062, 'MT@S0+T3': 1416, 'MT@S2+T3': 1459}
+
+b) stored noise statistics (kurtosis, max|MF|/sd of the REAL noise part) recomputed from noise.npy[sub, :, slot]
+   seed 2718: 48 rows checked, mismatches > 0.01: 0, worst abs diff 0.0049
+   seed 3141: 48 rows checked, mismatches > 0.01: 0, worst abs diff 0.0049
+
+c) day 101231: per station, share of eligible slots whose station max|MF| exceeds 10x the station robust sd (robust sd = median over eligible slots of the per-slot robust sd), by 8-hour block
+   hours  0- 8 (659 slots): ATBU 0.01  ATCA 0.05  ATPC 0.02  ATPI 0.02  ATVO 0.02  FRON 0.06  MURB 0.03  PARC 0.03  PIEI 0.02  SSFR 0.05
+   hours  8-16 (573 slots): ATBU 0.01  ATCA 0.32  ATPC 0.06  ATPI 0.31  ATVO 0.01  FRON 0.29  MURB 0.03  PARC 0.09  PIEI 0.28  SSFR 0.34
+   hours 16-24 (594 slots): ATBU 0.02  ATCA 0.63  ATPC 0.06  ATPI 0.01  ATVO 0.01  FRON 0.21  MURB 0.03  PARC 0.06  PIEI 0.16  SSFR 0.13
+   share of slots where the network max is on each station (hours 8-16): ATBU 0.01  ATCA 0.18  ATPC 0.02  ATPI 0.25  ATVO 0.00  FRON 0.10  MURB 0.02  PARC 0.03  PIEI 0.15  SSFR 0.23
+
+d) 2718 DENSE LOC: first atom of each window, by window max|MF|/sd class: share false, median score per method
+   MT@S0       max<=6 n 407: false 0.09 med s 88  6<max<=10 n 331: false 0.12 med s 88  10<max<=30 n 262: false 0.12 med s 86  max>30 n 152: false 0.22 med s 83
+   HUBER-N@S0  max<=6 n 407: false 0.07 med s 100  6<max<=10 n 331: false 0.10 med s 96  10<max<=30 n 262: false 0.12 med s 88  max>30 n 152: false 0.20 med s 89
+   BOMP@S0     max<=6 n 407: false 0.12 med s 378  6<max<=10 n 331: false 0.15 med s 329  10<max<=30 n 262: false 0.21 med s 287  max>30 n 152: false 0.45 med s 402
+   BOMP@S0: of the top 288 (= 0.25 x 1152) scored atoms, 181 are false; windows of those false atoms: median max|MF|/sd 174.3; share with max > 10: 0.94 (all windows: 0.36)
+   epicentral distance of those false atoms to the nearest network station: quartiles [5.2, 9.6, 16.4] km
+   MT@S0: of its top 288 scored atoms 13 are false; their windows share max>10: 0.38
+   HUBER-N@S0: of its top 288 scored atoms 34 are false; their windows share max>10: 0.79
+
+e) exact FROC, 2718 / 3141 DENSE LOC: recall at realised false events per window <= cap
+   seed 2718 caps  0.05  0.10  0.15  0.20  0.25  0.30  0.35  0.40  0.50  0.75  1.00  1.50  2.00
+   MT@S0            0.141 0.207 0.249 0.293 0.325 0.358 0.378 0.398 0.430 0.504 0.549 0.624 0.679
+   HUBER-N@S0       0.117 0.212 0.268 0.310 0.339 0.369 0.396 0.422 0.458 0.520 0.563 0.632 0.677
+   BOMP@S0          0.000 0.002 0.017 0.072 0.097 0.136 0.177 0.209 0.263 0.368 0.443 0.552 0.611
+   MT@S0+T3         0.157 0.224 0.272 0.320 0.347 0.366 0.391 0.408 0.444 0.513 0.568 0.645 0.704
+   MT@S2+T3         0.169 0.251 0.294 0.331 0.369 0.396 0.417 0.443 0.480 0.558 0.610 0.678 0.725
+   seed 3141 caps  0.05  0.10  0.15  0.20  0.25  0.30  0.35  0.40  0.50  0.75  1.00  1.50  2.00
+   MT@S0            0.152 0.242 0.280 0.330 0.355 0.387 0.411 0.428 0.463 0.547 0.602 0.667 0.719
+   HUBER-N@S0       0.208 0.289 0.336 0.390 0.418 0.442 0.460 0.478 0.511 0.570 0.617 0.693 0.741
+   BOMP@S0          0.081 0.163 0.221 0.255 0.298 0.336 0.368 0.394 0.429 0.508 0.566 0.646 0.698
+   MT@S0+T3         0.161 0.248 0.293 0.338 0.366 0.396 0.425 0.450 0.483 0.569 0.625 0.698 0.752
+   MT@S2+T3         0.206 0.285 0.323 0.357 0.397 0.425 0.448 0.468 0.511 0.576 0.633 0.716 0.771

@@ -1,0 +1,67 @@
+REAL ladder_6 2909 day 100210 done 12:45:33 125 s (cat 0.3, setup 1.8); err {'S0': 0.1, 'ORA': 0.0, 'S2': 0.062} drawn 27
+REAL unilateral_c40 2909 day 100210 done 12:48:04 150 s (cat 0.4, setup 2.1); err {'S0': 0.15, 'ORA': 0.0, 'S2': 0.044} drawn 27
+RESUME_DONE REAL 2909 ladder_6,unilateral_c40 Fri Oct 16 12:48:04 -05 2026
+REAL ladder_4 2910 day 100211 done 12:49:39 90 s (cat 0.4, setup 1.3); err {'S0': 0.144, 'ORA': 0.0, 'S2': 0.061} drawn 37
+REAL ladder_6 2910 day 100211 done 12:51:31 112 s (cat 0.3, setup 1.7); err {'S0': 0.118, 'ORA': 0.0, 'S2': 0.077} drawn 23
+REAL unilateral_c40 2910 day 100211 done 12:53:55 144 s (cat 0.3, setup 2.0); err {'S0': 0.103, 'ORA': 0.0, 'S2': 0.055} drawn 21
+Traceback (most recent call last):
+  File "/home/claude/work/t2m_run.py", line 71, in <module>
+    run_net(arm, cell, j, pdir)
+  File "/home/claude/work/t2m_run.py", line 24, in run_net
+    net = L2.Net2M(cell, j, arm)
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/claude/work/t2m_lib.py", line 246, in __init__
+    self.cat, self.drawn, self.cat_truth, self.cat_slots = self.catalogue(kcat)
+                                                           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/claude/work/t2m_lib.py", line 262, in catalogue
+    raise RuntimeError(f"catalogue slot pool exhausted ({self.cell}, {self.j}, {drawn} drawn)")
+RuntimeError: catalogue slot pool exhausted (ladder_4, 2911, 50 drawn)
+RESUME_DONE REAL 2910,2911,2912,2913,2914,2915,2916 ladder_4,ladder_6,unilateral_c40 Fri Oct 16 12:53:56 -05 2026
+Traceback (most recent call last):
+  File "/home/claude/work/t2m_run.py", line 71, in <module>
+    run_net(arm, cell, j, pdir)
+  File "/home/claude/work/t2m_run.py", line 24, in run_net
+    net = L2.Net2M(cell, j, arm)
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/claude/work/t2m_lib.py", line 246, in __init__
+    self.cat, self.drawn, self.cat_truth, self.cat_slots = self.catalogue(kcat)
+                                                           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/claude/work/t2m_lib.py", line 262, in catalogue
+    raise RuntimeError(f"catalogue slot pool exhausted ({self.cell}, {self.j}, {drawn} drawn)")
+RuntimeError: catalogue slot pool exhausted (ladder_4, 2911, 50 drawn)
+RESUME_DONE REAL 2911 ladder_4 Fri Oct 16 13:03:18 -05 2026
+REAL ladder_6 2911 day 100211 done 13:05:31 129 s (cat 0.3, setup 1.6); err {'S0': 0.091, 'ORA': 0.0, 'S2': 0.069} drawn 25
+RESUME_DONE REAL 2911 ladder_6 Fri Oct 16 13:05:32 -05 2026
+REAL unilateral_c40 2911 day 100211 done 13:08:05 149 s (cat 0.3, setup 2.1); err {'S0': 0.169, 'ORA': 0.0, 'S2': 0.053} drawn 21
+RESUME_DONE REAL 2911 unilateral_c40 Fri Oct 16 13:08:06 -05 2026
+REAL ladder_4 2912 day 100211 done 13:09:45 95 s (cat 0.4, setup 1.7); err {'S0': 0.084, 'ORA': 0.0, 'S2': 0.04} drawn 45
+RESUME_DONE REAL 2912 ladder_4 Fri Oct 16 13:09:46 -05 2026
+REAL ladder_6 2912 day 100211 done 13:11:53 123 s (cat 0.3, setup 1.8); err {'S0': 0.124, 'ORA': 0.0, 'S2': 0.038} drawn 20
+RESUME_DONE REAL 2912 ladder_6 Fri Oct 16 13:11:54 -05 2026
+REAL unilateral_c40 2912 day 100211 done 13:14:30 150 s (cat 0.4, setup 2.2); err {'S0': 0.107, 'ORA': 0.0, 'S2': 0.095} drawn 21
+RESUME_DONE REAL 2912 unilateral_c40 Fri Oct 16 13:14:30 -05 2026
+REAL ladder_4 2913 day 100211 done 13:16:13 97 s (cat 0.3, setup 1.4); err {'S0': 0.055, 'ORA': 0.0, 'S2': 0.062} drawn 28
+RESUME_DONE REAL 2913 ladder_4 Fri Oct 16 13:16:14 -05 2026
+REAL ladder_6 2913 day 100211 done 13:18:23 125 s (cat 0.2, setup 1.6); err {'S0': 0.135, 'ORA': 0.0, 'S2': 0.063} drawn 21
+RESUME_DONE REAL 2913 ladder_6 Fri Oct 16 13:18:24 -05 2026
+REAL unilateral_c40 2913 day 100211 done 13:20:55 146 s (cat 0.4, setup 2.3); err {'S0': 0.125, 'ORA': 0.0, 'S2': 0.041} drawn 20
+RESUME_DONE REAL 2913 unilateral_c40 Fri Oct 16 13:20:55 -05 2026
+REAL ladder_4 2914 day 100211 done 13:22:34 94 s (cat 0.2, setup 1.5); err {'S0': 0.102, 'ORA': 0.0, 'S2': 0.058} drawn 26
+RESUME_DONE REAL 2914 ladder_4 Fri Oct 16 13:22:34 -05 2026
+REAL ladder_6 2914 day 100211 done 13:24:51 132 s (cat 0.3, setup 1.8); err {'S0': 0.104, 'ORA': 0.0, 'S2': 0.046} drawn 21
+RESUME_DONE REAL 2914 ladder_6 Fri Oct 16 13:24:52 -05 2026
+REAL unilateral_c40 2914 day 100211 done 13:27:31 154 s (cat 0.4, setup 2.5); err {'S0': 0.144, 'ORA': 0.0, 'S2': 0.053} drawn 20
+RESUME_DONE REAL 2914 unilateral_c40 Fri Oct 16 13:27:31 -05 2026
+REAL ladder_4 2915 day 100211 done 13:29:08 92 s (cat 0.2, setup 1.4); err {'S0': 0.138, 'ORA': 0.0, 'S2': 0.032} drawn 22
+RESUME_DONE REAL 2915 ladder_4 Fri Oct 16 13:29:08 -05 2026
+REAL ladder_6 2915 day 100211 done 13:31:14 122 s (cat 0.2, setup 1.6); err {'S0': 0.121, 'ORA': 0.0, 'S2': 0.047} drawn 21
+RESUME_DONE REAL 2915 ladder_6 Fri Oct 16 13:31:15 -05 2026
+REAL unilateral_c40 2915 day 100211 done 13:33:49 150 s (cat 0.3, setup 2.3); err {'S0': 0.174, 'ORA': 0.0, 'S2': 0.065} drawn 20
+RESUME_DONE REAL 2915 unilateral_c40 Fri Oct 16 13:33:50 -05 2026
+REAL ladder_4 2916 day 100211 done 13:35:22 88 s (cat 0.3, setup 1.4); err {'S0': 0.081, 'ORA': 0.0, 'S2': 0.058} drawn 24
+RESUME_DONE REAL 2916 ladder_4 Fri Oct 16 13:35:23 -05 2026
+REAL ladder_6 2916 day 100211 done 13:37:27 119 s (cat 0.3, setup 1.7); err {'S0': 0.141, 'ORA': 0.0, 'S2': 0.049} drawn 21
+RESUME_DONE REAL 2916 ladder_6 Fri Oct 16 13:37:27 -05 2026
+REAL unilateral_c40 2916 day 100211 done 13:39:59 147 s (cat 0.3, setup 2.1); err {'S0': 0.116, 'ORA': 0.0, 'S2': 0.103} drawn 20
+RESUME_DONE REAL 2916 unilateral_c40 Fri Oct 16 13:39:59 -05 2026
+RESUME_EACH_DONE 3141 REAL 2911,2912,2913,2914,2915,2916 Fri Oct 16 13:39:59 -05 2026

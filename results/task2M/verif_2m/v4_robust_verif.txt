@@ -1,0 +1,60 @@
+V4 robustness, seed 2718, REAL, DENSE, @0.25 (bootstrap lower 2.5 percentiles with own hierarchical bootstrap)
+1) hit tolerance (LOC rule, epicentre within tol)
+   tol  2.0 km: MT-BOMP +0.055  HUB-BOMP +0.069  (MT 0.076 HUB 0.090 BOMP 0.021)  lower 2.5%: +0.031 / +0.048
+   tol  3.0 km: MT-BOMP +0.109  HUB-BOMP +0.125  (MT 0.161 HUB 0.177 BOMP 0.052)  lower 2.5%: +0.071 / +0.095
+   tol  5.0 km: MT-BOMP +0.228  HUB-BOMP +0.241  (MT 0.325 HUB 0.339 BOMP 0.097)  lower 2.5%: +0.145 / +0.179
+   tol  7.0 km: MT-BOMP +0.291  HUB-BOMP +0.294  (MT 0.448 HUB 0.451 BOMP 0.156)  lower 2.5%: +0.165 / +0.194
+   tol 10.0 km: MT-BOMP +0.376  HUB-BOMP +0.356  (MT 0.601 HUB 0.582 BOMP 0.225)  lower 2.5%: +0.232 / +0.233
+2) per cell (LOC 5 km)
+   ladder_4       : MT-BOMP +0.111  HUB-BOMP +0.108  (MT 0.237 HUB 0.234 BOMP 0.126)  lower 2.5%: +0.033 / +0.047
+   ladder_6       : MT-BOMP +0.260  HUB-BOMP +0.239  (MT 0.375 HUB 0.354 BOMP 0.115)  lower 2.5%: +0.109 / +0.143
+   unilateral_c40 : MT-BOMP +0.354  HUB-BOMP +0.380  (MT 0.394 HUB 0.420 BOMP 0.040)  lower 2.5%: +0.180 / +0.240
+3) per block of networks (hours of the day; cells share hours)
+   nets 2800-2807 (hours 0.0-7.3): MT-BOMP +0.033  HUB-BOMP +0.123  (MT 0.363 HUB 0.454 BOMP 0.331)  lower 2.5%: -0.044 / +0.054
+   nets 2808-2815 (hours 7.5-15.7): MT-BOMP +0.300  HUB-BOMP +0.237  (MT 0.302 HUB 0.240 BOMP 0.003)  lower 2.5%: +0.229 / +0.133
+   nets 2816-2823 (hours 15.9-23.8): MT-BOMP +0.223  HUB-BOMP +0.236  (MT 0.327 HUB 0.340 BOMP 0.104)  lower 2.5%: +0.082 / +0.113
+   (115 s)
+4) leave-one-network-out (72 (cell, net) units): range of the point contrasts
+   MT-BOMP: min +0.222 (('unilateral_c40', 2814)), max +0.239
+   HUB-BOMP: min +0.236 (('unilateral_c40', 2813)), max +0.247
+   leave-one-hour-block-out (drop network index j in all 3 cells; 24 options):
+   MT-BOMP: min +0.208 (j 2822), max +0.244
+   HUB-BOMP: min +0.224 (j 2822), max +0.251
+5) greedy removal of the (cell, net) unit whose removal most reduces the contrast, until the point < +0.03
+   MT-BOMP: after removing  1 units point +0.222
+   MT-BOMP: after removing  3 units point +0.203
+   MT-BOMP: after removing  5 units point +0.186
+   MT-BOMP: after removing 10 units point +0.142
+   MT-BOMP: after removing 15 units point +0.109
+   MT-BOMP: after removing 20 units point +0.083
+   MT-BOMP: units removed to bring the point below +0.03: 29 of 72 (remaining 43); first five [(('unilateral_c40', 2814), 0.222), (('ladder_4', 2814), 0.212), (('unilateral_c40', 2811), 0.203), (('ladder_4', 2822), 0.196), (('unilateral_c40', 2813), 0.186)]
+   MT-BOMP: removed units by hour block: 2800-07 1, 2808-15 18, 2816-23 10
+   HUB-BOMP: after removing  1 units point +0.236
+   HUB-BOMP: after removing  3 units point +0.218
+   HUB-BOMP: after removing  5 units point +0.203
+   HUB-BOMP: after removing 10 units point +0.173
+   HUB-BOMP: after removing 15 units point +0.150
+   HUB-BOMP: after removing 20 units point +0.124
+   HUB-BOMP: after removing 30 units point +0.080
+   HUB-BOMP: units removed to bring the point below +0.03: 46 of 72 (remaining 26); first five [(('unilateral_c40', 2813), 0.236), (('ladder_6', 2822), 0.226), (('unilateral_c40', 2814), 0.218), (('unilateral_c40', 2822), 0.209), (('unilateral_c40', 2816), 0.203)]
+   HUB-BOMP: removed units by hour block: 2800-07 13, 2808-15 20, 2816-23 13
+   (164 s)
+6) only the networks whose station subset does NOT contain station X (bootstrap B = 500)
+   without ATBU (28 units): MT-BOMP +0.238  HUB-BOMP +0.196  (MT 0.318 HUB 0.276 BOMP 0.080)  lower 2.5%: +0.121 / +0.113
+   without ATCA (33 units): MT-BOMP +0.216  HUB-BOMP +0.210  (MT 0.318 HUB 0.313 BOMP 0.103)  lower 2.5%: +0.095 / +0.114
+   without ATPC (27 units): MT-BOMP +0.210  HUB-BOMP +0.202  (MT 0.295 HUB 0.287 BOMP 0.085)  lower 2.5%: +0.134 / +0.134
+   without ATPI (29 units): MT-BOMP +0.226  HUB-BOMP +0.202  (MT 0.305 HUB 0.282 BOMP 0.079)  lower 2.5%: +0.109 / +0.116
+   without ATVO (38 units): MT-BOMP +0.189  HUB-BOMP +0.207  (MT 0.278 HUB 0.296 BOMP 0.089)  lower 2.5%: +0.068 / +0.128
+   without FRON (30 units): MT-BOMP +0.168  HUB-BOMP +0.181  (MT 0.303 HUB 0.316 BOMP 0.136)  lower 2.5%: +0.044 / +0.088
+   without MURB (20 units): MT-BOMP +0.157  HUB-BOMP +0.199  (MT 0.309 HUB 0.351 BOMP 0.152)  lower 2.5%: +0.024 / +0.084
+   without PARC (24 units): MT-BOMP +0.196  HUB-BOMP +0.213  (MT 0.337 HUB 0.354 BOMP 0.141)  lower 2.5%: +0.090 / +0.130
+   without PIEI (28 units): MT-BOMP +0.203  HUB-BOMP +0.199  (MT 0.284 HUB 0.280 BOMP 0.081)  lower 2.5%: +0.090 / +0.120
+   without SSFR (31 units): MT-BOMP +0.113  HUB-BOMP +0.153  (MT 0.314 HUB 0.354 BOMP 0.201)  lower 2.5%: +0.025 / +0.084
+7) windows by noise character (window max|MF|/sd of the noise part)
+   max <= 10 (738 windows): MT-BOMP +0.050  HUB-BOMP +0.117  (MT 0.340 HUB 0.407 BOMP 0.289)  lower 2.5%: -0.013 / +0.070
+   max <= 6  (407 windows): MT-BOMP +0.048  HUB-BOMP +0.113  (MT 0.345 HUB 0.410 BOMP 0.297)  lower 2.5%: -0.036 / +0.060
+   max > 10  (414 windows): MT-BOMP +0.301  HUB-BOMP +0.211  (MT 0.303 HUB 0.213 BOMP 0.002)  lower 2.5%: +0.249 / +0.129
+8) only the first k atoms of each window
+   k <= 3: MT-BOMP +0.172  HUB-BOMP +0.199  (MT 0.359 HUB 0.386 BOMP 0.187)
+   k <= 5: MT-BOMP +0.207  HUB-BOMP +0.216  (MT 0.342 HUB 0.351 BOMP 0.135)
+done (205 s)

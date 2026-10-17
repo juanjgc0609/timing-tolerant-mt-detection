@@ -1,0 +1,13 @@
+(a) eligible slots of 101231 with >= 5 of 10 stations above 10x their robust level: 22
+    DENSE windows on those slots: 18 of 1152
+    without them: MT-BOMP +0.229, HUB-BOMP +0.242
+(b) windows with noise max|MF|/sd > 30: 152; BOMP first-atom score / max^2: median 0.161, max 2.774; Spearman-type rank corr(score, max) 0.44
+    MT@S0 first-atom score in those windows: median 83, max 147 (all windows median 87); BOMP median 402, max 54720 (all windows median 338)
+    largest BOMP score 54720 in window with max|MF|/sd 337 (ratio 0.48)
+[26572774.1, 'STD', 'unilateral_c40', 2806, 0, 0, 12488.79, 3470.05] ratio 0.17
+[14315817.38, 'STD', 'unilateral_c40', 2806, 0, 1, 12488.79, 3470.05] ratio 0.092
+[7665586.5, 'STD', 'unilateral_c40', 2806, 0, 2, 12488.79, 3470.05] ratio 0.049
+[4797778.64, 'STD', 'unilateral_c40', 2806, 0, 3, 12488.79, 3470.05] ratio 0.031
+[1981995.99, 'STD', 'unilateral_c40', 2806, 0, 4, 12488.79, 3470.05] ratio 0.013
+[54719.63, 'DENSE', 'ladder_4', 2814, 11, 0, 337.48, 180.68] ratio 0.48
+all BOMP atoms in windows max>30: score/max^2 quantiles [0.07  0.552 2.774]

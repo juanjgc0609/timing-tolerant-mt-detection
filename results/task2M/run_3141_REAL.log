@@ -1,0 +1,40 @@
+REAL ladder_4 2900 day 100210 done 11:34:15 100 s (cat 0.2, setup 1.5); err {'S0': 0.069, 'ORA': 0.0, 'S2': 0.034} drawn 22
+REAL ladder_6 2900 day 100210 done 11:36:24 128 s (cat 0.3, setup 1.8); err {'S0': 0.172, 'ORA': 0.0, 'S2': 0.077} drawn 22
+REAL unilateral_c40 2900 day 100210 done 11:40:04 221 s (cat 0.4, setup 2.7); err {'S0': 0.211, 'ORA': 0.0, 'S2': 0.059} drawn 20
+REAL ladder_4 2901 day 100210 done 11:42:37 153 s (cat 0.4, setup 1.9); err {'S0': 0.066, 'ORA': 0.0, 'S2': 0.102} drawn 22
+REAL ladder_6 2901 day 100210 done 11:45:58 201 s (cat 0.6, setup 3.3); err {'S0': 0.213, 'ORA': 0.0, 'S2': 0.168} drawn 21
+REAL unilateral_c40 2901 day 100210 done 11:49:44 225 s (cat 0.5, setup 3.4); err {'S0': 0.29, 'ORA': 0.0, 'S2': 0.223} drawn 20
+REAL ladder_4 2902 day 100210 done 11:52:10 146 s (cat 0.3, setup 2.2); err {'S0': 0.063, 'ORA': 0.0, 'S2': 0.046} drawn 24
+REAL ladder_6 2902 day 100210 done 11:54:22 133 s (cat 0.5, setup 2.7); err {'S0': 0.09, 'ORA': 0.0, 'S2': 0.055} drawn 21
+REAL unilateral_c40 2902 day 100210 done 11:56:53 151 s (cat 0.4, setup 2.0); err {'S0': 0.158, 'ORA': 0.0, 'S2': 0.041} drawn 20
+REAL ladder_4 2903 day 100210 done 11:58:24 91 s (cat 0.4, setup 1.4); err {'S0': 0.107, 'ORA': 0.0, 'S2': 0.133} drawn 42
+REAL ladder_6 2903 day 100210 done 12:00:25 121 s (cat 0.2, setup 1.7); err {'S0': 0.093, 'ORA': 0.0, 'S2': 0.083} drawn 21
+REAL unilateral_c40 2903 day 100210 done 12:03:03 158 s (cat 0.3, setup 2.3); err {'S0': 0.14, 'ORA': 0.0, 'S2': 0.056} drawn 20
+REAL ladder_4 2904 day 100210 done 12:04:58 115 s (cat 0.3, setup 1.4); err {'S0': 0.101, 'ORA': 0.0, 'S2': 0.064} drawn 29
+REAL ladder_6 2904 day 100210 done 12:08:02 183 s (cat 0.4, setup 2.9); err {'S0': 0.124, 'ORA': 0.0, 'S2': 0.051} drawn 21
+REAL unilateral_c40 2904 day 100210 done 12:12:00 238 s (cat 0.4, setup 3.1); err {'S0': 0.099, 'ORA': 0.0, 'S2': 0.047} drawn 20
+REAL ladder_4 2905 day 100210 done 12:13:56 116 s (cat 0.6, setup 2.0); err {'S0': 0.118, 'ORA': 0.0, 'S2': 0.2} drawn 35
+REAL ladder_6 2905 day 100210 done 12:15:55 118 s (cat 0.3, setup 1.6); err {'S0': 0.22, 'ORA': 0.0, 'S2': 0.064} drawn 25
+REAL unilateral_c40 2905 day 100210 done 12:18:22 148 s (cat 0.3, setup 2.0); err {'S0': 0.146, 'ORA': 0.0, 'S2': 0.174} drawn 20
+REAL ladder_4 2906 day 100210 done 12:19:59 96 s (cat 0.3, setup 1.1); err {'S0': 0.111, 'ORA': 0.0, 'S2': 0.066} drawn 41
+REAL ladder_6 2906 day 100210 done 12:21:56 117 s (cat 0.3, setup 1.8); err {'S0': 0.151, 'ORA': 0.0, 'S2': 0.044} drawn 21
+REAL unilateral_c40 2906 day 100210 done 12:24:21 145 s (cat 0.3, setup 2.3); err {'S0': 0.104, 'ORA': 0.0, 'S2': 0.046} drawn 22
+REAL ladder_4 2907 day 100210 done 12:25:53 92 s (cat 0.2, setup 1.3); err {'S0': 0.056, 'ORA': 0.0, 'S2': 0.042} drawn 22
+REAL ladder_6 2907 day 100210 done 12:27:49 116 s (cat 0.2, setup 1.6); err {'S0': 0.115, 'ORA': 0.0, 'S2': 0.078} drawn 21
+REAL unilateral_c40 2907 day 100210 done 12:30:10 141 s (cat 0.3, setup 1.9); err {'S0': 0.129, 'ORA': 0.0, 'S2': 0.063} drawn 20
+REAL ladder_4 2908 day 100210 done 12:31:43 93 s (cat 0.3, setup 1.5); err {'S0': 0.036, 'ORA': 0.0, 'S2': 0.024} drawn 33
+REAL ladder_6 2908 day 100210 done 12:33:54 130 s (cat 0.3, setup 1.7); err {'S0': 0.125, 'ORA': 0.0, 'S2': 0.085} drawn 24
+REAL unilateral_c40 2908 day 100210 done 12:36:24 150 s (cat 0.3, setup 2.1); err {'S0': 0.132, 'ORA': 0.0, 'S2': 0.105} drawn 22
+Traceback (most recent call last):
+  File "/home/claude/work/t2m_run.py", line 71, in <module>
+    run_net(arm, cell, j, pdir)
+  File "/home/claude/work/t2m_run.py", line 24, in run_net
+    net = L2.Net2M(cell, j, arm)
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/claude/work/t2m_lib.py", line 246, in __init__
+    self.cat, self.drawn, self.cat_truth, self.cat_slots = self.catalogue(kcat)
+                                                           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/claude/work/t2m_lib.py", line 262, in catalogue
+    raise RuntimeError(f"catalogue slot pool exhausted ({self.cell}, {self.j}, {drawn} drawn)")
+RuntimeError: catalogue slot pool exhausted (ladder_4, 2909, 47 drawn)
+REAL_DONE Fri Oct 16 12:36:25 -05 2026

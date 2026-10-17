@@ -1,0 +1,42 @@
+RESUME_DONE GEN 2800 ladder_4 Fri Oct 16 14:15:28 -05 2026
+RESUME_DONE GEN 2800 ladder_6 Fri Oct 16 14:15:33 -05 2026
+RESUME_DONE GEN 2800 unilateral_c40 Fri Oct 16 14:15:37 -05 2026
+RESUME_DONE GEN 2801 ladder_4 Fri Oct 16 14:15:41 -05 2026
+RESUME_DONE GEN 2801 ladder_6 Fri Oct 16 14:15:46 -05 2026
+RESUME_DONE GEN 2801 unilateral_c40 Fri Oct 16 14:15:51 -05 2026
+RESUME_DONE GEN 2802 ladder_4 Fri Oct 16 14:15:56 -05 2026
+GEN ladder_6 2802 day 101231 done 14:17:58 119 s (cat 0.3, setup 1.9); err {'S0': 0.149, 'ORA': 0.0, 'S2': 0.036} drawn 24
+RESUME_DONE GEN 2802 ladder_6 Fri Oct 16 14:17:59 -05 2026
+GEN unilateral_c40 2802 day 101231 done 14:20:23 140 s (cat 0.3, setup 1.8); err {'S0': 0.117, 'ORA': 0.0, 'S2': 0.048} drawn 20
+RESUME_DONE GEN 2802 unilateral_c40 Fri Oct 16 14:20:24 -05 2026
+GEN ladder_4 2803 day 101231 done 14:21:52 84 s (cat 0.3, setup 1.2); err {'S0': 0.14, 'ORA': 0.0, 'S2': 0.036} drawn 37
+RESUME_DONE GEN 2803 ladder_4 Fri Oct 16 14:21:52 -05 2026
+GEN ladder_6 2803 day 101231 done 14:23:58 122 s (cat 0.3, setup 1.6); err {'S0': 0.218, 'ORA': 0.0, 'S2': 0.045} drawn 25
+RESUME_DONE GEN 2803 ladder_6 Fri Oct 16 14:23:59 -05 2026
+GEN unilateral_c40 2803 day 101231 done 14:26:29 146 s (cat 0.3, setup 2.0); err {'S0': 0.085, 'ORA': 0.0, 'S2': 0.028} drawn 20
+RESUME_DONE GEN 2803 unilateral_c40 Fri Oct 16 14:26:30 -05 2026
+GEN ladder_4 2804 day 101231 done 14:28:03 89 s (cat 0.3, setup 1.3); err {'S0': 0.105, 'ORA': 0.0, 'S2': 0.041} drawn 29
+RESUME_DONE GEN 2804 ladder_4 Fri Oct 16 14:28:04 -05 2026
+GEN ladder_6 2804 day 101231 done 14:30:03 115 s (cat 0.3, setup 2.1); err {'S0': 0.128, 'ORA': 0.0, 'S2': 0.029} drawn 21
+RESUME_DONE GEN 2804 ladder_6 Fri Oct 16 14:30:03 -05 2026
+GEN unilateral_c40 2804 day 101231 done 14:32:36 149 s (cat 0.3, setup 2.1); err {'S0': 0.25, 'ORA': 0.0, 'S2': 0.054} drawn 21
+RESUME_DONE GEN 2804 unilateral_c40 Fri Oct 16 14:32:37 -05 2026
+GEN ladder_4 2805 day 101231 done 14:34:12 90 s (cat 0.2, setup 1.4); err {'S0': 0.041, 'ORA': 0.0, 'S2': 0.046} drawn 23
+RESUME_DONE GEN 2805 ladder_4 Fri Oct 16 14:34:12 -05 2026
+GEN ladder_6 2805 day 101231 done 14:36:22 125 s (cat 0.3, setup 1.6); err {'S0': 0.153, 'ORA': 0.0, 'S2': 0.04} drawn 23
+RESUME_DONE GEN 2805 ladder_6 Fri Oct 16 14:36:22 -05 2026
+GEN unilateral_c40 2805 day 101231 done 14:38:54 147 s (cat 0.4, setup 2.2); err {'S0': 0.201, 'ORA': 0.0, 'S2': 0.048} drawn 21
+RESUME_DONE GEN 2805 unilateral_c40 Fri Oct 16 14:38:55 -05 2026
+GEN ladder_4 2806 day 101231 done 14:40:26 88 s (cat 0.2, setup 1.3); err {'S0': 0.138, 'ORA': 0.0, 'S2': 0.064} drawn 27
+RESUME_DONE GEN 2806 ladder_4 Fri Oct 16 14:40:27 -05 2026
+GEN ladder_6 2806 day 101231 done 14:42:37 125 s (cat 0.2, setup 1.7); err {'S0': 0.152, 'ORA': 0.0, 'S2': 0.07} drawn 22
+RESUME_DONE GEN 2806 ladder_6 Fri Oct 16 14:42:37 -05 2026
+GEN unilateral_c40 2806 day 101231 done 14:45:10 149 s (cat 0.4, setup 1.9); err {'S0': 0.155, 'ORA': 0.0, 'S2': 0.033} drawn 22
+RESUME_DONE GEN 2806 unilateral_c40 Fri Oct 16 14:45:10 -05 2026
+GEN ladder_4 2807 day 101231 done 14:46:47 92 s (cat 0.3, setup 1.4); err {'S0': 0.116, 'ORA': 0.0, 'S2': 0.108} drawn 35
+RESUME_DONE GEN 2807 ladder_4 Fri Oct 16 14:46:47 -05 2026
+GEN ladder_6 2807 day 101231 done 14:49:01 129 s (cat 0.4, setup 2.2); err {'S0': 0.072, 'ORA': 0.0, 'S2': 0.06} drawn 22
+RESUME_DONE GEN 2807 ladder_6 Fri Oct 16 14:49:01 -05 2026
+GEN unilateral_c40 2807 day 101231 done 14:51:31 145 s (cat 0.4, setup 2.2); err {'S0': 0.115, 'ORA': 0.0, 'S2': 0.038} drawn 21
+RESUME_DONE GEN 2807 unilateral_c40 Fri Oct 16 14:51:32 -05 2026
+RESUME_EACH_DONE 2718 GEN 2800,2801,2802,2803,2804,2805,2806,2807 Fri Oct 16 14:51:32 -05 2026

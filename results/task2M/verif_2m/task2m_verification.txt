@@ -1,0 +1,134 @@
+VERDICT: CONFIRMED WITH CAVEATS (the registered primary result of 2M reproduces exactly and survives every adversarial check
+below; I found no false positive. The caveats concern scope and interpretation, not the correctness of the registered test.)
+
+TASK 2M - INDEPENDENT ADVERSARIAL VERIFICATION (seed 2718 primary, seed 3141 secondary)
+Date: 2026-10-16. Environment: /home/claude/venv311 (Python 3.11, NumPy 1.26.4, SciPy 1.17.1), OPENBLAS_NUM_THREADS=1,
+OPENBLAS_CORETYPE=Prescott, nice -n 5. All outputs are in /home/claude/work/t2m_verif/. No other file was modified.
+
+0. FREEZE AND HASHES
+   sha256sum -c --quiet T2M_FREEZE.sha256: rc = 0 (OK) before and after the verification.
+   sha256sum PREREGISTRO_1j_1k.txt T2M_FREEZE.sha256 is identical to t2m_verif/hashes_before.txt before and after:
+     7f0583327ad8518d97814aeb91380f7a307b08424f33eace289901bd49399586  PREREGISTRO_1j_1k.txt
+     1f4eb62bd3fc6609ada9fdfef89d368be27056d9419607d4e7edd79523a2e917  T2M_FREEZE.sha256 (= the hash in the freeze line)
+   File times are consistent with the declared order: t2m_analyze.py last modified 15:08 UTC, T2M_FREEZE.sha256 16:32:17 UTC,
+   queue_start 16:32:33 UTC, first part 16:34 UTC, last REAL part 19:01:58 UTC, analyze_2m_out.txt 19:57 UTC.
+   The frozen code is identical to the repository commit c5f45bd for t2m_lib/run/data/stations/validate/power.py and for
+   c16_analyze, c10_lib, c10_analyze, c8_lib, xc, c2_run, c11_lib, c9_run, c10_run; t2m_queue.sh / t2m_prep.sh /
+   t2m_freeze.sh differ only in the scratchpad path, the PATH line and the added freeze entries (as declared).
+
+1. PROVENANCE (v1_provenance_verif.py, v6_failednets_verif.py)
+   Own reconstruction of the noise blocks (array_split of meta "eligible") and of the slot rule (p % 4) from the configs.
+   Seed 2718: 72 of 72 REAL parts (24 per cell), no missing network, no unexpected file. Seed 3141: 49 parts; missing exactly
+   ladder_4 2909 and ladder_4 2911.
+   In every part: seed, day, station names (= meta stations[sub]), STA coordinates, subset size, slots dict, window counts
+   (6 STD / 16 DENSE / 4 NOISE), row slot = slots[design][w], k = len(truth) = len(taus), method set: 0 errors.
+   All used slots (windows + catalogue) are eligible, inside the network's block and unique within the network; no
+   (day, slot) is shared by two networks of a cell; 0 used slots violate the +-60 s catalogue/day-end margins (own check
+   against meta events_s; 5 templates.zmap origins on 101231, none in February). Catalogue slots lie in the prefix of the
+   independently rebuilt pool. Catalogue draws 2718: mean 23.5, max 41, minimum pool size 50 (no risk of exhaustion).
+   Failed networks: re-running the frozen catalogue construction reproduces "catalogue slot pool exhausted" for ladder_4 2909
+   (47 drawn = pool 47) and ladder_4 2911 (50 = pool 50); controls ladder_4 2910 and ladder_6 2909 reproduce the stored
+   draws (37, 27) and catalogue slots exactly. They are genuine failures and affect only the secondary seed.
+   Slot mapping of the noise: for 48 random rows per seed the stored noise kurtosis and max|MF|/sd were recomputed from
+   noise.npy[sub, :, slot]: 0 mismatches (max abs diff 0.005, rounding of the stored values).
+
+2. INDEPENDENT RECOMPUTATION OF THE PRIMARY (vlib_verif.py, v2_primary_verif.py)
+   Own labelling (nearest true epicentre within 5 km; LOC+T: nearest among those within 5 km and |dtau| <= 0.5 s), own
+   running-minimum scores, own exact FROC (distinct (window draw, event) hits; duplicates neither hit nor false; level-wise
+   evaluation) and own hierarchical bootstrap (strata = cell, networks then windows; seed 20261016, B = 2000).
+   Seed 2718, REAL, DENSE, LOC (1152 windows, 4598 events), recall @0.1 / @0.25:
+     MT@S0 0.207 / 0.325   HUBER-N@S0 0.212 / 0.339   BOMP@S0 0.002 / 0.097   MT@S0+T3 0.224 / 0.347   MT@S2+T3 0.251 / 0.369
+     (identical to analyze_2m_out.txt to the third decimal)
+   2M-a MT@S0 - BOMP@S0      +0.2277 [+0.1497, +0.3000], p 0.0005   (reported +0.228 [+0.148, +0.298])  MET
+   2M-b HUBER-N@S0 - BOMP@S0 +0.2414 [+0.1792, +0.2922], p 0.0005   (reported +0.241 [+0.179, +0.293])  MET
+   Holm over the two primary tests: both p = 1/(B+1), adjusted 0.0010 < 0.025: both rejected.
+   2M-d HUBER-N - MT +0.014 [-0.034, +0.058], p(d <= -0.03) 0.043 (not shown; reported -0.038 bound): same conclusion.
+   Secondaries reproduced: 2718 LOC+T dense +0.085 / +0.104 (bounds +0.053 / +0.079); STD LOC +0.423 / +0.347 (bounds +0.236
+   / +0.204). Seed 3141 DENSE LOC: +0.057 [+0.005, +0.119] and +0.120 [+0.073, +0.169]; LOC+T +0.037 [-0.005, +0.076] and
+   +0.068; STD LOC -0.021 and +0.017; 2M-d +0.062 [+0.013, +0.107]. All agree with the reported values (differences only in
+   the third decimal of the bootstrap bounds, i.e. Monte Carlo error).
+
+3. SYMMETRY, LEAKAGE AND THE BOMP COLLAPSE (v3_symmetry_verif.py, v7_coherent_verif.py, code reading)
+   Identical windows: every row carries one truth list and one noise slot and the atoms of all five methods; the runner
+   computes all methods on the same w["MFn"] (t2m_run.run_net). No truth enters detection: Net2M.run passes only MFn
+   (mt_loop, bomp_loop) and, for HUBER-N, mtfw_general(dops, MFn, [], ...) with an EMPTY truth list (used only for a
+   diagnostic hit_of). Station corrections: MT@S0 and BOMP@S0 both use self.eng["S0"] (engine E built with corr = SC from the
+   catalogue), mode "hard", no timing charge; HUBER-N uses DOps(xc.Ops(STA, corr, GRID)) and setup() asserts
+   E.IDX == dops.IDX, i.e. the same lattice and the same corrected travel-time table for all three. Same kmax (7 dense),
+   same 5 km exclusion radius. Huber constant 2.7955 (C_HUB default), MT cap 6 (CAPV) as registered.
+   Score sanity: 0 non-finite entries among 12240 atoms per method (2718) and 8330 (3141). BOMP scores are large but
+   physically scaled: in windows with noise max|MF|/sd > 30, BOMP score / max^2 has median 0.07 and maximum 2.8 (consistent
+   with an energy bounded by the projected data energy; no overflow or pseudo-inverse blow-up). The largest BOMP score
+   (2.66e7) is in a STD window (unilateral_c40 2806, w0) whose noise contains a 12,489-sd transient (kurtosis 3470): a real,
+   enormous transient that passed qc1 (whose spike threshold is 1e4 robust deviations on raw counts).
+   Mechanism: of BOMP's 288 top-scored atoms (= the 0.25 x 1152 false budget) 181 are false, from windows with median noise
+   max|MF|/sd 174 (94 % with max > 10 vs 36 % of all windows); MT@S0 has 13 false atoms in its top 288, HUBER-N 34. First-atom
+   false share: BOMP 0.12 (max <= 6) -> 0.45 (max > 30); MT 0.09 -> 0.22. The collapse is caused by transients, not by a
+   numerical artefact.
+   Transients on 101231 are station-local: in hours 8-16, 34 % / 32 % / 31 % / 29 % / 28 % of slots exceed 10x the station
+   level on SSFR / ATCA / ATPI / FRON / PIEI (ATCA 63 % in hours 16-24); most affected slots have 1-2 such stations;
+   pairwise exceedance correlations <= 0.48. Only 22 eligible slots have >= 5 stations above 10x (candidate uncatalogued
+   earthquakes); 18 DENSE windows use them; without them: +0.229 / +0.242.
+   Exact FROC curves (2718 DENSE LOC), caps 0.05-2.0: MT@S0 0.141 ... 0.679, HUBER-N 0.117 ... 0.677, BOMP 0.000, 0.002,
+   0.017, 0.072, 0.097 (@0.25), 0.136, ..., 0.443 (@1.0), 0.611 (@2.0). The contrast is positive at every cap
+   (MT - BOMP +0.221 @0.2, +0.167 @0.5, +0.106 @1.0, +0.068 @2.0), shrinking as the false budget absorbs the transient windows.
+
+4. ROBUSTNESS (v4_robust_verif.py, v5_hourboot_verif.py; seed 2718 DENSE @0.25; lower = own bootstrap 2.5 percentile)
+   Hit tolerance: 2 km +0.055 / +0.069 (lower +0.031 / +0.048); 3 km +0.109 / +0.125 (+0.071 / +0.095); 5 km +0.228 /
+   +0.241; 7 km +0.291 / +0.294 (+0.165 / +0.194); 10 km +0.376 / +0.356. Positive at every tolerance.
+   Per cell (MT-BOMP / HUB-BOMP): ladder_4 +0.111 / +0.108 (lower +0.033 / +0.047), ladder_6 +0.260 / +0.239, unilateral_c40
+   +0.354 / +0.380 (matches the reported per-cell values).
+   Per hour block: nets 2800-2807 (hours 0-7.3) +0.033 [lower -0.044] / +0.123 [+0.054]; 2808-2815 (7.5-15.7) +0.300 /
+   +0.237 (BOMP 0.003); 2816-2823 (15.9-23.8) +0.223 / +0.236. Reproduces the post hoc table.
+   Leave-one-network-out (72 units): MT-BOMP range +0.222 to +0.239, HUB-BOMP +0.236 to +0.247. Leave-one-hour-block-out
+   (network index j in all cells, 24 options): +0.208 to +0.244 and +0.224 to +0.251.
+   Greedy adversarial removal of the most favourable units: 29 of 72 (cell, net) units must be removed to bring MT-BOMP below
+   +0.03 (18 of them from hours 7.5-15.7), 46 of 72 for HUB-BOMP. The result does not rest on a few networks.
+   Networks excluding each station (20-38 units each): MT-BOMP +0.113 (without SSFR) to +0.238, all lower bounds > 0 except
+   without SSFR +0.025 and without MURB +0.024 (both still positive); HUB-BOMP +0.153 to +0.213, lower bounds >= +0.084.
+   No single station drives the effect.
+   Bootstraps that respect the shared hours of the cells (B = 2000): cluster = j across cells: MT-BOMP [+0.132, +0.314],
+   HUB-BOMP [+0.168, +0.306]; moving blocks of 4 consecutive j: [+0.088, +0.314] and [+0.146, +0.291]; all p = 0.0005. The
+   registered bootstrap is somewhat narrower (as declared) but the conclusion does not depend on it. (For 3141 the
+   hour-clustered intervals are slightly narrower than the registered one: [+0.010, +0.110] for MT-BOMP.)
+   Only the first k atoms: k <= 3 +0.172 / +0.199; k <= 5 +0.207 / +0.216.
+   Windows by noise character (post hoc conditioning, descriptive): max <= 10 (738 windows) +0.050 [lower -0.013] / +0.117
+   [+0.070]; max > 10 (414 windows) +0.301 / +0.211.
+
+5. ANALYSIS CODE (t2m_analyze.py vs repo/code/t2m_analyze.py = draft)
+   diff: changes only in the docstring and in the decision section: PRIMARY_SEED = "2718" added; verdict and Holm p-values
+   taken only from seed 2718 (2 tests instead of 4 over both seeds); output labels. The rule test (lo > 0 and point >= 0.03),
+   contrast(), holm(), the endpoints, the bootstrap call (B for "all"), records() and Boot are unchanged and identical to the
+   C16 code (c16_analyze.py, c10_analyze.py identical to the repository). This implements exactly registered decision 2
+   (2M-a and 2M-b in 2718, intersection-union; Holm over the 2 primary tests, one-sided 0.025, p = (1 + #{d <= 0})/(B + 1)).
+   Nothing else changed.
+
+6. OTHER POSSIBLE SOURCES OF A FALSE POSITIVE - FINDINGS AND CAVEATS
+   a) None of the checks above found a defect that inflates the contrast. The positive is real for the registered endpoint.
+   b) Scope (as declared, worth repeating): the effect is concentrated in hours with station-local transients (hours 0-7.3:
+      MT-BOMP +0.033 with lower bound -0.044); in quiet windows of the same day the cap's advantage is small and not
+      significant, while HUBER-N keeps +0.12. "Real noise with transients" is the correct scope; the result is one day, one
+      network, synthetic signals.
+   c) The advantage arises from the pooled operating point (one score threshold across windows) combined with BOMP-PK's
+      unbounded energies: a per-window or robustly normalised BOMP score would likely recover much of the gap. This is the
+      registered comparator and the very mechanism G1-R claims, so it is not a defect, but the result should be read as
+      "bounded influence vs an unbounded energy statistic", not as a general superiority over sparse-recovery detectors.
+   d) qc1 lets through extreme transients (up to ~1.2e4 robust sd in the MF domain, STD window of unilateral_c40 2806);
+      whether such samples are natural transients or digital glitches is unknown. This affects only BOMP's ranking and is
+      covered by the declared scope.
+   e) The registered bootstrap ignores the sharing of noise hours across cells (declared); hour-clustered and moving-block
+      bootstraps widen the MT-BOMP interval (lower +0.088 at worst) but keep both primary bounds well above 0.
+   f) The 3141 MT-BOMP rule (+0.057, lower +0.004 registered; +0.005 and -0.001 with my strata-cell bootstraps of seeds 20261016 and 31415;
+      +0.010 with the hour-clustered bootstrap) is marginal; it is secondary and does not enter the claim.
+   g) No side effects: no file outside t2m_verif was written by this verification (the frozen t2m_lib was only imported to
+      reproduce the two catalogue failures).
+
+SCRIPTS (all in /home/claude/work/t2m_verif/)
+   vlib_verif.py              own loader, LOC / LOC+T labelling, exact FROC, hierarchical bootstrap (no project imports)
+   v1_provenance_verif.py     -> v1_provenance_verif.txt  (configs, slots, eligibility, margins, counts)
+   v2_primary_verif.py        -> v2_primary_verif.txt     (points and B = 2000 bootstrap, both seeds)
+   v3_symmetry_verif.py       -> v3_symmetry_verif.txt    (score sanity, slot mapping, station anatomy, BOMP mechanism, FROC)
+   v4_robust_verif.py         -> v4_robust_verif.txt      (tolerances, cells, hours, LONO, greedy removal, stations, k)
+   v5_hourboot_verif.py       -> v5_hourboot_verif.txt    (hour-clustered and moving-block bootstraps)
+   v6_failednets_verif.py     -> v6_failednets_verif.txt  (reproduction of the 3141 catalogue-pool failures)
+   v7_coherent_verif.py       -> v7_coherent_verif.txt    (network-coherent transients; BOMP score scale)

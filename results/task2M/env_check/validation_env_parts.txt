@@ -1,0 +1,6 @@
+REAL_ladder_4_2402.json: 36 windows, 1596 atoms, catalogue drawn 21, content sha256[:16] 29a4bf2f7c59630d
+REAL_ladder_4_2413.json: 36 windows, 1596 atoms, catalogue drawn 38, content sha256[:16] 2794a680581d10a1
+REAL_ladder_6_2402.json: 36 windows, 1596 atoms, catalogue drawn 20, content sha256[:16] 7bbfc419ec7263eb
+REAL_ladder_6_2413.json: 36 windows, 1596 atoms, catalogue drawn 35, content sha256[:16] d6368095369768f1
+REAL_unilateral_c40_2402.json: 36 windows, 1596 atoms, catalogue drawn 20, content sha256[:16] 7f3e53d1e8290a8b
+REAL_unilateral_c40_2413.json: 36 windows, 1596 atoms, catalogue drawn 25, content sha256[:16] c9edfc102b277415

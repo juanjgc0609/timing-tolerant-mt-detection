@@ -1,0 +1,5 @@
+ladder_4 2909: RuntimeError: catalogue slot pool exhausted (ladder_4, 2909, 47 drawn); pool size 47
+ladder_4 2911: RuntimeError: catalogue slot pool exhausted (ladder_4, 2911, 50 drawn); pool size 50
+ladder_4 2910: completed, drawn 37 (part file: 37), cat slots equal: True, pool 50
+ladder_6 2909: completed, drawn 27 (part file: 27), cat slots equal: True, pool 47
+2718 pool sizes: min 50

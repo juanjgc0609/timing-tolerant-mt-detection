@@ -1,0 +1,5 @@
+day 101231 stations 10 eligible slots 1826 of 2160 (20.29 h) events 5 (templates 5 ) valid hours (all stations) 21.94
+x_km [4.8, -18.0, -2.6, -7.0, -6.6, 19.2, 2.9, -20.2, 3.8, 23.8]
+y_km [0.0, 10.0, 0.6, -2.8, -10.4, 4.7, -23.6, 19.2, 6.7, -4.4]
+distance to frame origin (km) min 2.6 max 27.9
+relative in-band level quantiles (5,25,50,75,95,99): [0.656, 0.862, 1.0, 1.167, 1.747, 5.235]

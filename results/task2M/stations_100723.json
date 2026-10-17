@@ -1,0 +1,158 @@
+{
+ "day": "100723",
+ "candidates": [
+  "ATBU",
+  "ATCA",
+  "ATCC",
+  "ATFO",
+  "ATLO",
+  "ATPC",
+  "ATPI",
+  "ATVO",
+  "BADI",
+  "FRON",
+  "MURB",
+  "PARC",
+  "PIEI",
+  "SSFR"
+ ],
+ "station_qc": {
+  "ATBU": {
+   "invalid_h": 0.001,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.001,
+   "spike_samples": 0,
+   "eligible_alone": 2036
+  },
+  "ATCA": {
+   "invalid_h": 0.467,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 1.397,
+   "spike_samples": 0,
+   "eligible_alone": 1984
+  },
+  "ATCC": {
+   "invalid_h": 0.0,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.0,
+   "spike_samples": 0,
+   "eligible_alone": 2037
+  },
+  "ATFO": {
+   "invalid_h": 0.0,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.0,
+   "spike_samples": 0,
+   "eligible_alone": 2037
+  },
+  "ATLO": {
+   "invalid_h": 0.004,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.004,
+   "spike_samples": 0,
+   "eligible_alone": 2022
+  },
+  "ATPC": {
+   "invalid_h": 0.009,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.027,
+   "spike_samples": 0,
+   "eligible_alone": 2028
+  },
+  "ATPI": {
+   "invalid_h": 0.003,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.003,
+   "spike_samples": 1,
+   "eligible_alone": 2024
+  },
+  "ATVO": {
+   "invalid_h": 0.0,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.0,
+   "spike_samples": 0,
+   "eligible_alone": 2037
+  },
+  "BADI": {
+   "invalid_h": 0.058,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.169,
+   "spike_samples": 0,
+   "eligible_alone": 2003
+  },
+  "FRON": {
+   "invalid_h": 0.555,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 1.657,
+   "spike_samples": 0,
+   "eligible_alone": 1976
+  },
+  "MURB": {
+   "invalid_h": 0.383,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 1.078,
+   "spike_samples": 0,
+   "eligible_alone": 1820
+  },
+  "PARC": {
+   "invalid_h": 0.054,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.159,
+   "spike_samples": 0,
+   "eligible_alone": 2029
+  },
+  "PIEI": {
+   "invalid_h": 0.064,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.179,
+   "spike_samples": 0,
+   "eligible_alone": 2008
+  },
+  "SSFR": {
+   "invalid_h": 0.014,
+   "pad_h_chan": 0.0,
+   "flat_h_chan": 0.041,
+   "spike_samples": 0,
+   "eligible_alone": 2020
+  }
+ },
+ "steps": [
+  {
+   "set": [
+    "ATBU",
+    "ATCA",
+    "ATCC",
+    "ATFO",
+    "ATLO",
+    "ATPC",
+    "ATPI",
+    "ATVO",
+    "BADI",
+    "FRON",
+    "MURB",
+    "PARC",
+    "PIEI",
+    "SSFR"
+   ],
+   "E": 1643
+  }
+ ],
+ "selected": [
+  "ATBU",
+  "ATCA",
+  "ATCC",
+  "ATFO",
+  "ATLO",
+  "ATPC",
+  "ATPI",
+  "ATVO",
+  "BADI",
+  "FRON",
+  "MURB",
+  "PARC",
+  "PIEI",
+  "SSFR"
+ ],
+ "E": 1643,
+ "used": true
+}

@@ -1,0 +1,7 @@
+GEN ladder_4 2800 day 101231 done 14:03:20 79 s (cat 0.3, setup 1.4); err {'S0': 0.259, 'ORA': 0.0, 'S2': 0.05} drawn 34
+GEN ladder_6 2800 day 101231 done 14:05:03 103 s (cat 0.2, setup 1.4); err {'S0': 0.152, 'ORA': 0.0, 'S2': 0.146} drawn 21
+GEN unilateral_c40 2800 day 101231 done 14:07:10 127 s (cat 0.3, setup 1.8); err {'S0': 0.087, 'ORA': 0.0, 'S2': 0.04} drawn 21
+GEN ladder_4 2801 day 101231 done 14:08:33 83 s (cat 0.2, setup 1.2); err {'S0': 0.247, 'ORA': 0.0, 'S2': 0.114} drawn 27
+GEN ladder_6 2801 day 101231 done 14:10:14 101 s (cat 0.2, setup 1.4); err {'S0': 0.173, 'ORA': 0.0, 'S2': 0.072} drawn 24
+GEN unilateral_c40 2801 day 101231 done 14:12:21 127 s (cat 0.3, setup 1.7); err {'S0': 0.111, 'ORA': 0.0, 'S2': 0.055} drawn 22
+GEN ladder_4 2802 day 101231 done 14:13:37 77 s (cat 0.2, setup 1.1); err {'S0': 0.075, 'ORA': 0.0, 'S2': 0.097} drawn 24

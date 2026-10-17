@@ -1,0 +1,22 @@
+====================================================================================================
+SEED 2718: config nets 2800-2823 (24), days 101231 (1826 eligible, 10 stations, 5 cat. events)
+  REAL parts present 72; per cell ladder_4 24, ladder_6 24, unilateral_c40 24
+  unexpected REAL files: []
+  parts with errors: 0; slots violating the catalogue/day-end margins: 0
+  ladder_4: window (day, slot) pairs shared between networks: 0
+  ladder_6: window (day, slot) pairs shared between networks: 0
+  unilateral_c40: window (day, slot) pairs shared between networks: 0
+  catalogue draws: mean 23.5, max 41; pool sizes min 19 (cat list only)
+====================================================================================================
+SEED 3141: config nets 2900-2916 (17), days 100210 (737 eligible, 8 stations, 0 cat. events), 100211 (531 eligible, 8 stations, 0 cat. events)
+  MISSING REAL ladder_4 2909
+  MISSING REAL ladder_4 2911
+  REAL parts present 49; per cell ladder_4 15, ladder_6 17, unilateral_c40 17
+  unexpected REAL files: []
+  parts with errors: 0; slots violating the catalogue/day-end margins: 0
+  ladder_4: window (day, slot) pairs shared between networks: 0
+  ladder_6: window (day, slot) pairs shared between networks: 0
+  unilateral_c40: window (day, slot) pairs shared between networks: 0
+  catalogue draws: mean 24.1, max 45; pool sizes min 18 (cat list only)
+  missing ladder_4 2909: block 73 slots, catalogue pool size 47 (log reports drawn = pool)
+  missing ladder_4 2911: block 76 slots, catalogue pool size 50 (log reports drawn = pool)
