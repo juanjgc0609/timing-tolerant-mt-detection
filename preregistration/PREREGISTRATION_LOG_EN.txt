@@ -772,3 +772,244 @@ recall between 0.000 and 0.044 in all subnetworks, so these contrasts among them
 BOMP-PK) was NOT completed: M3 finished only on N8 (LOC+T 30/h: M1 0.044, M3 0.022; LOC: 0.044 and 0.089); the runs of
 M3 on N6, N4 and U8 were stopped by hand when closing the session and are declared not done. Complete independent verification:
 pending; only the own recomputation of the N8 and N6 points of the primary has been done.
+
+Task 2M (Fri Oct 16 16:32:06 UTC 2026, wall-clock time), written before running any code on seeds 2718 and 3141,
+never used (grep in *.py, *.sh, *.txt, *.md and *.json of the working directory: none appears as a seed; the
+ones used are 999, 2024, 7331, 4242, 8888, 5151, 6262, 7171, 9393 and the test one 31337; the only textual match
+is the value 0.2718 in an output of 2F). Its SHA-256 is delivered to the user through the chat. Text based on
+the draft preregistration/drafts/task2M_registration_DRAFT.txt with the three author decisions resolved below.
+Origin: exploration C16 on seed 999 (explore_contrib/REPORT_C16.txt): with real noise from 2010-07-23 (IV
+network, Alto Tiberina) and dense windows, LOC rule, <= 0.25 false events per window, MT@S0 - BOMP@S0 = +0.259
+[+0.131, +0.321] and HUBER-N@S0 - BOMP@S0 = +0.294 [+0.178, +0.355], against +0.069 and +0.113 with the
+generator noise; proposed mechanism: the transients of the real noise give BOMP-PK (energies without a cap)
+false atoms with enormous scores. G1-R is already confirmed on synthetic data (2F, 2I); C16 is a single seed,
+a single day and a single block of hours per network, and 19 % of its slots contained flat telemetry fill.
+Question (G1-R with real noise): with synthetic events from the project generator injected into continuous
+real noise from days independent of that of C16, MT-FW with a per-station cap of 6 (MT@S0) and HUBER-N
+(HUBER-N@S0) detect more events than BOMP-PK (BOMP@S0) in dense windows at an equal realised false-event rate.
+Data and independence. Source: avuan/PyMPA37, commit 4a14b134afec3c1f527b738ca3bae4cdc7cbbbf6,
+main.pympa.dir/24h/, IV network, three components at 25 Hz, in /home/claude/realdata/pympa37_days/ (111 files;
+sha256 in /home/claude/realdata/pympa37_days.sha256 = data/checksums/altotiberina_other_days_task2M.sha256 of
+the repository); inventory inv.IV and catalogue templates.zmap from the C16 directory. No day coincides with
+that of C16 (2010-07-23). Preprocessing identical to that of C16 (t2m_data.py = c16_data.py with the day, the
+station set, the exclusion lists and the quality control as parameters): mean and trend removed, zero-phase
+high-pass 0.5 Hz (order 4) and low-pass 6.5 Hz (order 8), resampling 25 -> 16 Hz, components (E, N, -Z), flat
+frame at 43.315 N, 12.388 E shifted by the centroid of the stations of the day, z = 0, 40 s slots, exclusion
+of +-60 s around the catalogued origins of the day and around the ends of the day, per-channel amplitude rule
+(daily median in-band level = that of the generator noise).
+Author decision 1: the quality rule qc1 and the station rule are accepted without changes. qc1, on the raw
+25 Hz counts of each channel: every sample of a run of >= 25 identical consecutive values (>= 1 s) is
+invalid, and so is every sample with |x - median| > 1e4 robust deviations (1.4826 MAD, computed without the
+flat runs); invalid samples are treated like the gaps of C16 (no slot with an invalid sample of any station
+of the set within 60 s is eligible). Station rule (t2m_stations.py): S = all stations with files for the
+day; while |S| > 8, remove the station whose removal most increases the eligible slots E(S), only if E
+increases by at least 20 %; the day is used if |S| >= 8 and E(S) >= 300. Both rules were written after
+seeing quality and level statistics of the noise of the new days (without injecting events or running any
+detector) and are declared as such. The 1e4-deviation threshold only catches digital spikes; real
+transients, which are the mechanism under test, pass. Applied to the C16 day they keep the 14 stations but
+remove 394 of its 2037 eligible slots (19 %: flat stretches of MURB, BADI and ATPC); C16 is not reanalysed.
+Result of the rules (quality and level only): 2010-12-31 (101231): 11 stations with files; ATCC is
+removed (7.3 h flat); 10 stations (ATBU ATCA ATPC ATPI ATVO FRON MURB PARC PIEI SSFR), 1826 eligible
+slots (20.3 h), 5 catalogued events excluded; stations at 2.6-27.9 km from the frame origin. 2010-02-10
+(100210): 9 stations; MURB is removed; 8 stations (ATBU ATCC ATLO ATPC ATVO BADI PARC PIEI), 737 slots
+(8.2 h). 2010-02-11 (100211): the same 8 stations, 531 slots (5.9 h). Stations at 4.7-33.0 km.
+2010-02-12 (100212): NOT USED (0 eligible slots with 8 stations). Catalogue: templates.zmap starts on
+2010-04-02; for the February days there are no catalogued origins and only the spike rule excludes
+large real events. Uncatalogued microearthquakes remain in the noise of all methods equally.
+Character of the noise (statistics of the preprocessed noise per slot and over all stations of the day, computed
+before registering, without injection or detector): excess kurtosis of the filtered noise median / p90, max |MF|
+/ median robust deviation, fraction of slots with maximum > 10: 2010-07-23 (C16) 8.68 / 107.8, 16.3, 0.80;
+2010-12-31 3.17 / 68.9, 10.0, 0.50; 2010-02-10 0.32 / 1.4, 5.1, 0.04; 2010-02-11 0.06 / 0.4, 4.2, 0.02.
+Author decision 2: seed 2718 (day 101231) is the ONLY primary replicate; seed 3141 (days 100210 + 100211) is a
+secondary replicate that does not enter the claim. Reason, fixed before seeing any result: the draft predicts
+for February an effect of the order of the GEN arm of C16, with which the power of 2M-a is 0.22 in 3141 and that
+of requiring both seeds 0.07; requiring both seeds would register a claim expected to fail for a reason already
+predicted. Noise classification fixed now with the statistics above (noise only): a day is "with transients" if
+the median excess kurtosis is > 1 and the fraction of slots with maximum > 10 is > 0.2 (101231: 3.17 and 0.50,
+with transients; 100210 and 100211: near-Gaussian). Consequently the scope of the claim is "real noise with
+transients", not "real noise" in general; the primary replicate rests on a single day and a single network.
+Seeds and replicates: seed 2718 = day 101231 (10 stations), networks j = 2800-2823 (24 per cell), blocks of
+76-77 slots. Seed 3141 = days 100210 + 100211 pooled (8 stations), networks j = 2900-2916 (17 per cell): j =
+2900-2909 on 100210 and 2910-2916 on 100211 (allocation of blocks proportional to the slots, largest
+remainder), blocks of 73-76 slots. As in C16, network j of each cell uses the same block of hours (the cells
+share hours; the networks of a cell do not); within the block, position p: p % 4 = 0 catalogue candidates, 1
+standard, 2 dense, 3 event-free; the REAL catalogue then takes the unused event-free slots from the end and
+then the leftover dense and standard ones (sequence identical to that of C16 as long as it suffices; if it
+runs out, the network fails and this is declared). TAG as in C16 (5161 standard, 5162 dense, 5163 catalogue,
+5164 statics, 5165 subsets, 5166 event-free of the GEN arm); with new seeds the streams are new.
+Cells (C16 rules with the station set of the day; stream [seed, 5165, cell, j]): ladder_4 and ladder_6 = uniform
+subset without replacement of 4 and 6 of the stations of the day; unilateral_c40 = direction theta ~ U(0, 2 pi)
+(always drawn) and the 8 stations with azimuth (from the frame origin) closest to theta. With 10 stations (101231)
+there are 10 possible subsets, with a maximum azimuthal gap of 76 to 148 degrees; with 8 stations (February) the
+subset is the full network for every theta (maximum gap 97 degrees): the "one-sided" cell of 3141 is not one-sided
+and in 2718 it is less so than in C16 and than in the synthetic setting. This is declared; the readings are pooled.
+Generator, signals, statics N(0, 0.3 s), catalogue of 20 events with errors of 1 km and 0.1 s,
++SC, S2, T3: exactly C16 (t2m_lib.py = c16_lib.py with the parameters). Windows per network: 16
+dense (c2_run.draw_dense, kmax 7), 6 standard (xc.draw_sources, kmax 5) and 4 event-free (kmax
+7). Total per seed: 2718: 1152 dense, 432 standard, 288 event-free; 3141: 816, 306 and 204.
+Arms: REAL (signal + real noise segment; no clutter or Gaussian noise; the generator noise draws
+are consumed and discarded as in C16) is the primary. Author decision 3: the GEN arm (standard
+chain: thin clutter + Gaussian noise, same networks and signals) is included, descriptive only,
+on the first 8 networks per cell of each seed, with the budget rule below; it enters no rule.
+Methods (code paths unchanged): MT@S0 (MT-FW cap 6, hard rule +-0.25 s, +SC;
+c10_lib.mt_loop), BOMP@S0 (BOMP-PK +SC; c10_lib.bomp_loop), HUBER-N@S0
+(c8_lib.mtfw_general "huber_n", c = 2.7955, +SC), MT@S0+T3 and MT@S2+T3 (descriptive).
+Endpoint (as in C16, C11 and C14): exact FROC, recall at <= 0.25 realised false events per window (primary) and <=
+0.1 (secondary), operating point per method re-chosen in each replicate; LOC rule (epicentre within <= 5 km;
+primary) and LOC+T (in addition |origin error| <= 0.5 s; secondary); hierarchical bootstrap (strata = cell; networks
+and then windows; c10_analyze.Boot), 2000 replicates, paired differences, pooled over the 3 cells, per seed.
+Rules (REAL arm, dense windows, LOC rule, cap 0.25, pooled):
+2M-a superiority: MT@S0 - BOMP@S0, one-sided 97.5 lower bound (percentile 2.5) > 0 and point estimate >= +0.03.
+2M-b superiority: HUBER-N@S0 - BOMP@S0, the same rule.
+The claim "G1-R is confirmed with real noise with transients" requires 2M-a and 2M-b in
+seed 2718 (intersection-union test: it does not require correction). Strict reading:
+Holm over the 2 tests of 2718, one-sided 0.025, bootstrap p = (1 + #{d <= 0}) / (B +
+1). In seed 3141 the same rules are evaluated and reported as a secondary replicate.
+2M-c secondary (does not enter the claim): the same two contrasts with LOC+T on
+dense windows and with LOC on standard ones, lower bound > 0, per seed.
+2M-d non-inferiority (secondary): HUBER-N@S0 - MT@S0, dense, LOC, 0.25,
+one-sided 97.5 lower bound > -0.03, per seed.
+Declared prediction (before running, based on the character of the noise): in 2718 (noise with transients, like C16)
+differences close to those of C16 are expected; in 3141 (near-Gaussian noise after quality control) the C16 mechanism
+barely acts and an effect of the order of the GEN arm of C16 (+0.07 and +0.11) is expected, with low power for 2M-a.
+Interpretation: 2M-a and 2M-b in 2718 -> G1-R confirmed with real noise with transients from an independent day (one
+network, one day). Only 2M-b in 2718 -> HUBER-N, not the cap, is the robust advantage with real noise. Failure in 2718 ->
+the C16 effect does not replicate with independent real noise and is reported as such. 3141 is read against the prediction:
+if 2M-a and 2M-b also hold there, the evidence extends to near-Gaussian real noise (without claiming generality); if not,
+the result is consistent with the advantage acting through the transients, and no generality is claimed.
+Descriptive: cap 0.1; per cell and per day; recall per method; MT@S2+T3 - MT@S0+T3 (G1-C,
+without a rule); SNR per arrival and noise statistics of the windows; station terms;
+transfer of the operating point to the event-free windows; REAL - GEN in the networks
+with a GEN arm; run times. Any analysis added after seeing 2M data is exploratory.
+Size and power (t2m_power.py on the C16 parts; results/task2M_prepared/t2m_power.txt). Effective deviation
+of the contrast at 0.25 with 16 dense windows per network: MT@S0 - BOMP@S0 0.043 (2718, 24 networks per
+cell) and 0.052 (3141, 17); HUBER-N@S0 - BOMP@S0 0.036 and 0.043. Power of the rule per seed 2718 / 3141:
+MT - BOMP with effect +0.259 (C16 REAL) 1.00 / 1.00; +0.13 (half) 0.85 / 0.71; +0.069 (C16 GEN) 0.31 /
+0.22. HUBER-N - BOMP with +0.294 1.00 / 1.00; +0.147 0.98 / 0.93; +0.113 (C16 GEN) 0.87 / 0.74.
+Environment. The original container was lost; on 16 Oct /home/claude/work was recreated from the repository
+(commit c5f45bd) with Python 3.11, NumPy 1.26.4, SciPy 1.17.1 and ObsPy 1.5.1 (the versions recorded in
+R0_FREEZE.txt), in /home/claude/venv311; t2m_prep.sh and t2m_queue.sh change only in the scratchpad path and in
+putting that environment first in PATH; t2m_analyze.py changes only in the decision section, to implement
+decision 2 (primary seed 2718; Holm over 2 tests). Data downloaded again and verified with sha256sum -c against
+data/checksums (C16 day: 48 of 48; 2M days: 111 of 111). Validations repeated in this environment before
+registering: V0: the noise of the C16 day regenerated without quality control is bit-for-bit identical to that
+of C16 (sha256 a2cc53d3faa4adbed1df6204b15e369b8994971fc90e533d9df1bc229ac3d1fb, the one in C16_FREEZE.txt).
+Station rule: the five regenerated stations_<day>.json are identical to the prepared ones. Plan (t2m_validate.py
+plan): PASS for both configurations (slots disjoint, eligible and sufficient; catalogue reserve 50-51 in 2718
+and 47-50 in 3141). V2 cannot be repeated against the C16 parts, which were not preserved; as a substitute the
+six REAL parts of networks 2402 and 2413 were regenerated with seed 999 and they match the record of the
+original validation in windows (36), atoms (1596) and catalogue events drawn (21, 20, 20, 38, 35, 25), which
+checks the random streams but not the content of the atoms (t2m_check/validation_env_parts.txt). Recomputation
+in this environment of the noise-character statistics with the definition of t2m_lib.snr_stats over all eligible
+slots (t2m_check/noise_character.py), in the order above: 100723 8.78 / 106.9, 16.4, 0.82; 101231 3.24 / 76.3,
+10.4, 0.52; 100210 0.43 / 1.4, 5.6, 0.04; 100211 0.22 / 0.6, 5.1, 0.02; they differ from those of the draft in
+the second digit because of details of the definition, and the classification does not change.
+Budget: with the per-window times of C16 each trio of networks costs ~320 s: REAL 2718 ~2.1 h, REAL 3141
+~1.5 h, one lane per seed with its own core (R0 has finished; the M3 runs of R0 are launched after 2M);
+GEN on 8 networks per cell ~0.7 h more per lane. Rule: the GEN arm of a lane is started only if its REAL
+finished within 3 h of the launch; if the running estimate of the REAL exceeds 4 h, nothing of the
+primary is reduced: one waits. OPENBLAS_NUM_THREADS=1, OPENBLAS_CORETYPE=Prescott, as in C16 (the noise
+preprocessing was done with the default OpenBLAS kernel, like that of C16, and is frozen as data).
+Freeze: (1) this text is appended to PREREGISTRO_1j_1k.txt with the wall-clock time; (2) t2m_freeze.sh writes
+T2M_FREEZE.sha256 (code, configurations, outputs of the station rule, processed noise of the three days, project
+modules that are loaded and the sha256 list of the downloaded files) and its sha256 is appended as a freeze line
+before the first computation; (3) t2m_queue.sh verifies the freeze (sha256sum -c) before launching; (4) single
+run, resumable from the parts; (5) single analysis with t2m_analyze.py, B = 2000, and sha256sum -c at the end;
+(6) independent verification as in 2F, 2I and 2L. Nothing is modified after seeing a part of 2718 or 3141.
+Declared limits: one site and one network (Alto Tiberina, IV), three days; the primary replicate is a single day;
+the quality rules, the station rule and the noise classification were fixed while seeing the quality and noise
+statistics of the new data; no catalogue in February; synthetic signals (only the noise and the geometry are
+real); cells that share hours (the bootstrap somewhat underestimates the pooled uncertainty); one-sided cell
+barely or not at all one-sided; a positive is evidence of transfer to real noise, not a test with real waveforms.
+
+Freeze of 2M (Fri Oct 16 16:32:31 UTC 2026): T2M_FREEZE.sha256 (45 files: code, configurations, outputs of the station
+rule, processed noise of the three days and of the C16 day, project modules, sha256 list of the downloaded files,
+environment checks), sha256 1f4eb62bd3fc6609ada9fdfef89d368be27056d9419607d4e7edd79523a2e917, appended before the
+first computation on seeds 2718 and 3141. t2m_queue.sh with_gen is launched (one lane per seed).
+
+Incident of 2M (Fri Oct 16 17:43:15 UTC 2026), before seeing any result (no part has been analysed). In seed 3141 the network
+ladder_4 2909 exhausted the reserve of catalogue slots (47 drawn): t2m_lib.Net2M raises RuntimeError and, since t2m_run.py
+does not catch the exception, the REAL lane of 3141 ended instead of continuing with the other networks (left unrun: ladder_6
+and unilateral_c40 of 2909 and networks 2910-2916, all those of day 100211), and the lane moved on to the GEN arm. The
+registration says "if it runs out, the network fails and this is declared": that network fails, not the following ones.
+Action: the GEN arm of 3141 is stopped (3 complete parts of network 2900 remain; descriptive); the rest of the REAL of 3141
+is run with the frozen code unchanged (sha256sum -c first), calling t2m_run.py with the lists of missing networks and cells
+(t2m_resume.sh, new, only invokes the frozen code); ladder_4 2909 is declared a failed network. Afterwards the GEN of 3141
+continues with the budget rule counted from the original launch. If the 2718 lane meets the same error, it is treated the
+same way. The analysis uses the parts that exist; t2m_analyze.py already pools over the parts present.
+
+Closure of R0, declared POST HOC (Fri Oct 16 19:52:00 UTC 2026), before running anything. The detection outputs of R0
+(r0/run/*.json) were lost with the original container; only analysis_eval.txt and analysis_eval.json remain. To
+complete the registered secondary contrast M1 - M3 (against BOMP-PK), M1 and M3 are run on EVAL of the four subnetworks
+with the frozen R0 code unchanged (sha256sum -c against R0_FREEZE.txt first; Python 3.11, NumPy 1.26.4, SciPy 1.17.1,
+ObsPy 1.5.1, those of R0_FREEZE.txt; data verified with sha256sum -c), in r0/run_close/ (r0/queue_close.sh), and
+analysed with r0/r0_analyze.py unchanged on those files (without picks: only M1, M3 and M1 - M3). The run of M1 also
+serves as a reproducibility check: its recall per subnet must match the registered one (LOC+T 30/h: 0.044, 0.000,
+0.000, 0.000). All of this is posterior to the evaluation of R0 and changes neither its primary result nor any rule.
+
+Result of 2M (Fri Oct 16 19:59:53 UTC 2026; t2m_out/analyze_2m_out.txt, B = 2000; frozen code unchanged, sha256sum
+-c OK before and after the analysis). Run: launched 16:32:33 UTC; REAL of 2718 complete (72 of 72 parts) at
+19:01:59 UTC, within 3 h, so its GEN arm was launched; REAL of 3141: 49 of 51 parts, with ladder_4 2909 and
+ladder_4 2911 declared failed networks for exhausting the catalogue reserve (47 and 50 draws), resumed network by
+network after the registered incident; GEN complete in both seeds (24 and 24 parts, networks 2800-2807 and
+2900-2907). A container restart at 19:13 UTC cut the GEN arms; they were resumed with the frozen code verified
+(sha256sum -c) and the finished parts were kept (atomic writes). No part was analysed before all had finished.
+PRIMARY (seed 2718, day 101231, REAL, dense, LOC, @0.25, cells pooled): 2M-a MT@S0 - BOMP@S0 = +0.228 [+0.148,
++0.298] (p 0.0005): MET; 2M-b HUBER-N@S0 - BOMP@S0 = +0.241 [+0.179, +0.293] (p 0.0005): MET; Holm over the 2
+tests: both reject (adjusted p 0.0010). G1-R IS CONFIRMED with real noise with transients from an independent
+day (one network, one day). Recall @0.25: MT@S0 0.325, HUBER-N@S0 0.339, BOMP@S0 0.097. Per cell (MT - BOMP /
+HUBER-N - BOMP): ladder_4 +0.111 / +0.108, ladder_6 +0.260 / +0.239, unilateral_c40 +0.354 / +0.380.
+Secondary 2718: 2M-c LOC+T dense +0.085 [+0.053, +0.120] and +0.104 [+0.080, +0.134]; LOC
+standard +0.423 [+0.224, +0.633] and +0.346 [+0.186, +0.517]: all with lower bound > 0. 2M-d
+HUBER-N@S0 - MT@S0 +0.014 [-0.038, +0.056]: non-inferiority NOT shown (bound -0.038 < -0.03).
+Secondary replicate 3141 (days 100210 and 100211, near-Gaussian noise): 2M-a +0.057 [+0.004, +0.121]
+(p 0.018) and 2M-b +0.120 [+0.070, +0.168] (p 0.0005): both rules are also met, above the prediction
+for 2M-a (effect of the order of the GEN arm of C16, power 0.22). 2M-c: LOC+T dense +0.037 [-0.003,
++0.076] (no) and +0.068 [+0.038, +0.108] (yes); LOC standard -0.021 [-0.087, +0.056] and +0.017
+[-0.048, +0.090] (no). 2M-d +0.062 [+0.012, +0.107]: HUBER-N non-inferior and above the cap.
+Descriptive. REAL - GEN on the first 8 networks per cell (dense, LOC, @0.25): 2718 MT - BOMP GEN +0.025, REAL - GEN
++0.008 [-0.081, +0.111]; HUBER-N - BOMP GEN +0.086, REAL - GEN +0.038 [-0.056, +0.127]; 3141 -0.020 [-0.105, +0.087]
+and +0.006 [-0.067, +0.108]: on those networks the real noise does not change the contrast with respect to the
+generator noise. POST HOC exploratory analysis (t2m_posthoc/blocks.py, written after reading the result): networks
+2800-2807 of 2718 use hours 0-7 of the day (night noise, median window kurtosis 0.58) and there MT - BOMP is +0.033
+[-0.044, +0.128] and HUBER-N - BOMP +0.123 [+0.057, +0.200]; in hours 7.5-15 (kurtosis 8.4, 64 % of windows with
+maximum > 10) +0.300 [+0.231, +0.339] and +0.237 [+0.128, +0.298], with BOMP at 0.003; in hours 16-23 +0.223 and
++0.236. The advantage of the cap over BOMP-PK is concentrated in the hours with transients (possibly daytime cultural
+noise); that of HUBER-N also exists in quiet noise (+0.10 to +0.15 in all blocks of 3141). Transfer of the operating
+point to event-free windows (2718 @0.25): MT 0.000, HUBER-N 0.028, BOMP 0.042 false events per window. G1-C without a
+rule: MT@S2+T3 - MT@S0+T3 dense LOC +0.022 [-0.018, +0.056] (2718) and +0.031 [-0.024, +0.069] (3141).
+Reading: the bounded-influence advantage over BOMP-PK transfers to independent real noise
+of the IV network; with transients it is large (+0.23 to +0.24) and in quiet noise it is
+small for the cap and moderate for HUBER-N. This is real noise with synthetic signals, not
+detection of real earthquakes; R0 remains negative. Pending: independent verification.
+
+Independent verification of 2M (Fri Oct 16 20:22:03 UTC 2026; verif_2m/task2m_verification.txt, scripts
+verif_2m/*_verif.py; a separate agent that did not produce the result): positive confirmed with caveats of scope.
+Freeze sha256sum -c OK before and after; registry and freeze unchanged; the frozen code is that of commit c5f45bd
+except for the declared lines. Provenance: 72 of 72 parts in 2718; in every part seed, day, stations, slots and
+counts match an own reconstruction; all slots are eligible, unique per network and per cell, outside the +-60 s
+margins; the two failed networks of 3141 reproduce the error with 47 and 50 draws. Recomputation with own code
+(labelling, FROC and hierarchical bootstrap, B = 2000): recall @0.25 MT 0.325, HUBER-N 0.339, BOMP 0.097; 2M-a
++0.2277 [+0.150, +0.300], 2M-b +0.2414 [+0.179, +0.292], Holm rejects both; secondary readings and 3141 reproduced.
+Symmetry: same windows and same timing table with +SC for the three methods; no truth enters detection; the BOMP
+scores are finite and proportional to the amplitude of the transients: of its 288 top-scored atoms 181 are false
+and 94 % come from windows with transients, mostly at one or two stations at a time. Robustness: positive at 2, 3,
+7 and 10 km, at caps from 0.05 to 2.0 false events per window and in every cell; leaving out one network, +0.222 to
++0.247; 29 of 72 networks removed worst first are needed to bring MT - BOMP below +0.03; a bootstrap that clusters
+the hours shared by the cells gives [+0.132, +0.314] and a moving-block one [+0.088, +0.314]. Caveats: the effect
+is concentrated in the hours with transients (in quiet windows MT - BOMP +0.050, not significant; HUBER-N about
++0.12); the comparison is cap against unbounded energies under a common threshold, which is the mechanism of the
+hypothesis and not a general win over BOMP-type detectors; qc1 let through a transient of ~12500 times the noise
+level in a standard window; in 3141 the bound of 2M-a (+0.004) is marginal.
+
+Gate for the next registered real test (Fri Oct 16 21:42:44 UTC 2026), fixed after exploration C18
+(Appendix Y.32: the 1-D medium does not reduce the reading error; a logarithmic score LOG6 restores the
+ranking of real earthquakes without losing robustness to transients, but no variant locates the events of
+CAL) and before any further development. A new test with real data is registered only when a candidate,
+developed only on Ridgecrest CAL (origins before 19:15; EVAL is not read again for development), recalls on
+CAL, with the LOC+T rule and at 30 false detections per hour, at least 5 of the 16 events of M >= 2.0 on N8
+or on U8 (R0 recorded at most 1 of 16 for any pick-free variant in C18d). Data reserved for that test: the
+Hi-net swarm of Geolab-USTC/MatchLocate2 (commit bac5ccb00816a4ec0aaab215ea1c342c730d412f, folder example/,
+7 stations, 14 JMA events), downloaded with its sha256 in data/checksums/hinet_matchlocate2_example.sha256
+and whose waveforms no analysis has read. If no candidate passes the gate, the thesis registers no further
+real test of the pick-free detector and reports its scope as limited to real noise with synthetic signals.
