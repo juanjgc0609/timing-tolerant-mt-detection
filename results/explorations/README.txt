@@ -363,8 +363,8 @@ energy-peak readings of the Ridgecrest CAL events under five media), c18b_oracle
 score at the true hypocentre against the maxima of event-free CAL windows, for several statistics), c18d_detect.py and
 c18d_analyze.py (full detector on CAL with the cap 6, cap 24, LOG6, no cap and BOMP-PK), c18e_run.py and
 c18e_analyze.py (seed 999, networks 3100-3107, TAG 5181-5186, qc1 noise of 2010-07-23: robustness of the variants to
-real-noise transients). Only CAL of Ridgecrest is read (origins before 19:15); EVAL is not. Result: no 1-D medium
-improves the readings (0.53 to 0.63 within 0.25 s); the cap erases the evidence of real events at the true hypocentre
+real-noise transients). Only CAL of Ridgecrest is read (origins before 19:15); EVAL is not. Result (with the +-1 s
+readings, see C18i below): no 1-D medium seemed to improve the readings (0.53 to 0.63 within 0.25 s); the cap erases the evidence of real events at the true hypocentre
 (AUC 0.39 to 0.49) and LOG6 restores it (0.66 to 0.72) while keeping most of the robustness of the cap on real noise
 (LOG6 - cap -0.015 [-0.099, +0.043], one seed); no variant detects the CAL events with origin time (0 or 1 of 16 at 30 false/h).
 C18f (c18f_run.py, c18f_analyze.py; same windows as C18e): BOMP-PK with energies capped at 6 recovers almost all of the
@@ -373,5 +373,9 @@ C18g (c18g_oracle.py): weighting the S peak vectors by 0.5 or removing them lowe
 and no window maximum falls within 5 km of the event.
 C18h (c18h_kernel.py, c18h_detect.py): a 3 Hz matched-filter kernel with LOG6 recalls 3 of 16 CAL events with origin
 time at 30 false/h on U8 (0 on N8); the registered gate (5 of 16) is not passed.
+C18i (c18a_timing.py with SEARCH 2.0, c18i_widesc.py): with readings and station terms over +-2 s, the layered model
+predicts the readings better than the registered medium (0.45 against 0.37-0.39 within 0.25 s on N8 and U8), which
+withdraws the first C18a conclusion (E50). C18j (c18j_layered.py): layered medium, +-2 s terms, 2 Hz, MT-FW without cap:
+4 and 5 of 16 CAL events with origin time at 30 false/h on N8 and U8, which meets the registered gate.
 Outputs: c18a_*.json, c18a_summary.txt, c18a_overlap_N8.txt, c18b_*.json, c18c_*.json, c18d_*.json,
 c18d_analysis.txt, c18e_parts/, c18e_analysis.txt and the run logs.

@@ -2256,23 +2256,25 @@ at 0.003); HUBER-N keeps +0.10 to +0.15 in quiet noise. Two networks of 3141 fai
 ## EXPLORATION C18 — What fails on real data after R0 — DONE (exploratory)
 
 On the development segment of the Ridgecrest hour only (the evaluated segment is not read), and on seed 999 for the
-robustness check. (a) A layered model (Hadley-Kanamori), a fitted homogeneous medium and a fitted gradient do not
-predict the held-out energy-peak readings better than the registered medium: 0.53 to 0.63 of the readings within
-0.25 s on every subnetwork and model; S readings are worse than P. (b) At the true hypocentre the capped score of a
-real M >= 2 event does not exceed the maxima of event-free windows (AUC 0.39 to 0.49); without a cap, with a cap of
-24 or with a logarithmic compression (LOG6) the AUC is 0.66 to 0.74. (c) No variant detects the events at 30 false
-detections per hour with origin time required (0 or 1 of 16), because the window maxima are not at the events. (d) On
-real noise with injected events (one exploratory seed), LOG6 keeps most of the robustness of the cap against transients
-(LOG6 minus cap -0.015 [-0.099, +0.043], no non-inferiority test); a cap of 24 loses it. (e) Capping the energies of BOMP-PK recovers almost all of the 2M-type gap (MT
-with cap minus BOMP-PK with cap +0.026 [-0.009, +0.081]); per-station normalisation alone does not. Appendix Y.32.
+robustness checks. (a) At the true hypocentre the capped score of a real M >= 2 event does not exceed the maxima of
+event-free windows (AUC 0.39 to 0.49); without a cap, with a cap of 24 or with a logarithmic compression (LOG6) the AUC
+is 0.66 to 0.74. (b) On real noise with injected events (one exploratory seed), LOG6 keeps most of the robustness of the
+cap against transients (LOG6 minus cap -0.015 [-0.099, +0.043], no non-inferiority test); a cap of 24 loses it; capping
+the energies of BOMP-PK recovers almost all of the 2M-type gap (+0.026 [-0.009, +0.081] left). (c) Down-weighting S and a
+3 or 4 Hz matched filter did not reach the gate with the registered timing. (d) After the R0 verification found that the
+station terms are read within 1 s while real S delays reach 1.7 to 1.9 s, the readings were repeated over 2 s: the
+layered Hadley-Kanamori model then predicts them better than the registered medium (0.45 against 0.37-0.39 within 0.25 s
+on N8 and U8), which withdraws the first conclusion of C18 that the medium does not matter (E50). (e) With terms read
+over 2 s, the layered medium, the 2 Hz filter and MT-FW without a cap, the detector recalls 4 and 5 of the 16 CAL events
+with origin time at 30 false detections per hour on N8 and U8. Appendix Y.32.
 
-**Gate for the next registered real test (fixed before any further development).** On Ridgecrest CAL, with origin
-time required, at 30 false detections per hour, a candidate must recall at least 5 of the 16 events of M >= 2 on N8 or
-U8. Only then is a test registered on the Hi-net swarm of MatchLocate2, whose waveforms remain unread. Candidates: a
-reading less sensitive to coda and S complexity (envelope reading, higher-frequency matched filter; down-weighting S
-was tried and fails, C18g),
-joint relocation of the readings with a coherence check before the grid search, and LOG6 as the statistic.
-
+**Gate for the next registered real test.** Registered before (e): on Ridgecrest CAL, with origin time required, at 30
+false detections per hour, a candidate must recall at least 5 of the 16 events of M >= 2 on N8 or U8. Met by (e), exactly
+at the threshold, after about twenty configurations on the same events (selection effect declared in the log). The
+registered test on the Hi-net swarm of MatchLocate2 (waveforms unread) is drafted in
+`preregistration/drafts/taskR1_registration_DRAFT.txt`; it is not registered, because it spends the last unseen data and
+its open choices (published 1-D model of the region, 1 Hz borehole sensors, split of the 14 JMA events, comparators) are
+the author's.
 ---
 
 ## TASK 1q — Search with certified pruning and p4est

@@ -12,6 +12,7 @@ registration hash was sent to the author in the conversation before any run.
 | `PREREGISTRATION_LOG_EN.txt` | English translation of the log, entry by entry, for reading. |
 | `original_sealed_es/PREREGISTRO_1j_1k.txt` | The log as sealed, in the original Spanish. This is the file the hashes certify; it cannot be translated without breaking the chain. |
 | `original_sealed_es/PREREGISTRO_hashes.txt` | The hash chain: UTC time and SHA-256 of the sealed log after each append. |
+| `drafts/taskR1_registration_DRAFT.txt` | Draft of Task R1, the registered real-data test on the unread Hi-net swarm that follows the gate met in exploration C18j; not registered, with four decisions left to the author. |
 | `drafts/task2M_registration_DRAFT.txt` | Draft of Task 2M (G1-R with real noise on independent days) as prepared before the author's three protocol decisions; the registered text is the entry "Tarea 2M" of the sealed log (16 October 2026), which resolves them. |
 
 ## Verifying the chain

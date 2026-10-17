@@ -9,8 +9,8 @@ Decision document. It contains the formulation, what has been measured, what was
 and the concrete pending actions. The detail is in the full proposal (appendices A to
 AA), in the audit (`audit_status.md`) and in the implementation error log.
 
-**Status as of 16 October 2026: G1-R confirmed with independent real noise; the R0 failure narrowed to the
-reading of arrivals.** Task 2M, registered before any computation on its seeds, injected synthetic events into real
+**Status as of 16-17 October 2026: G1-R confirmed with independent real noise; R0 verified negative and its failure
+traced to truncated station terms, the medium and the cap; the gate for a new real test met on development data.** Task 2M, registered before any computation on its seeds, injected synthetic events into real
 noise of days of the Alto Tiberina network that no earlier analysis used. On the primary day, whose noise has
 transients, the per-station cap and the Huber fit beat BOMP-PK by +0.228 [+0.148, +0.298] and +0.241 [+0.179,
 +0.293] in dense windows (both rules met, Holm rejects both); on two near-Gaussian days, a secondary replicate, by
@@ -18,18 +18,22 @@ transients, the per-station cap and the Huber fit beat BOMP-PK by +0.228 [+0.148
 cap is concentrated in the hours with transients (+0.033 at night, +0.300 between 7.5 and 15 h), while the Huber fit
 keeps +0.10 to +0.15 in quiet noise. An independent verification confirmed the positive with caveats of scope; two
 networks of the secondary seed failed by exhausting their catalogue reserve, as the registration allows (E48).
-Exploration C18, on the development segment of the Ridgecrest hour only, tested the two remedies the R0 diagnosis
-named. A layered or fitted medium does not make the energy-peak readings more predictable (0.53 to 0.63 of held-out
-readings within 0.25 s for every model), so the timing error is a reading problem, worse for S, not a velocity-model
-problem. The cap does erase the evidence of real events even at their true hypocentres (AUC against event-free
-windows 0.39 to 0.49), and a logarithmic compression restores it (0.66 to 0.72) while keeping most of the robustness of
-the cap to transients on real noise in one exploratory seed; but no variant detects the events, because the score maxima are not where the
-events are. A gate is now registered: a new real test, on the Hi-net swarm kept unread, is registered only when a
-candidate recalls at least 5 of the 16 development events with origin time at 30 false detections per hour. The
-closure of R0, declared post hoc, reproduced the registered recalls of M1 and of M3 on N8 exactly and completed the
-registered contrast against BOMP-PK: +0.000 [−0.023, +0.021] with origin time, −0.050 [−0.101, −0.013] with the
-epicentre rule (BOMP-PK better), as the saturation of the cap predicts. Appendices Y.30 to Y.32;
-errors E48 and E49.
+Exploration C18, on the development segment of the Ridgecrest hour only, tested the remedies the R0 diagnosis
+named. The cap does erase the evidence of real events even at their true hypocentres (AUC against event-free windows
+0.39 to 0.49), and a logarithmic compression restores it (0.66 to 0.72) while keeping most of the robustness of the
+cap to transients on real noise in one exploratory seed. The independent verification of R0 reproduced all 222
+registered points and 36 contrasts from a full re-run (negative confirmed) and found that the station terms had been
+read within 1 s of the homogeneous prediction while real S delays reach 1.7 to 1.9 s. That also invalidated the first
+conclusion of C18 that the medium does not matter (E50): with terms read over 2 s, the Hadley-Kanamori layered model
+predicts the readings better (0.45 against 0.37-0.39 within 0.25 s), and with both corrections and no cap the detector
+recalls 4 and 5 of the 16 development events with origin time at 30 false detections per hour on N8 and U8, which
+meets the gate registered in advance, after about twenty configurations on the same events and with a statistic that
+does not bound any station. The registered test on the unread Hi-net swarm is drafted, not registered: it spends the
+last unseen data and its design is the author's decision. The closure of R0, declared post hoc, reproduced the
+registered recalls of M1 and of M3 on N8 exactly and completed the registered contrast against BOMP-PK: +0.000
+[−0.023, +0.021] with origin time, −0.050 [−0.101, −0.013] with the epicentre rule (BOMP-PK better), as the saturation of
+the cap predicts. Appendices Y.30 to Y.32;
+errors E48 to E50.
 
 **Status as of 10 October 2026: first test with real data, negative.** Task R0, registered
 before touching the data, tested the thesis detector (MT-FW with cap 6, pick-free S2 terms and
@@ -783,8 +787,8 @@ generator (8b) or the real data.
 | ~~C12, C13, C14~~ | **EXPLORATORY, DONE** (seed 999): the double-couple restriction lowers the threshold by 10 % without changing the recall (null law from the tube formula); decoy calibration with permuted moveout reproduces without labels the operating point with the epicentre-only rule, not with origin time; the self-interference remedies halve the induced false events without moving the recall; the largest class of origin-time false events are well-located detections of real events with the origin shifted by a median of 0.8 s (Appendix Y.29) | None is proposed for confirmation as a recall contribution; the origin time of the well-located detections becomes the target of the calibration | done |
 | ~~R0~~ | **EXECUTED, NEGATIVE**: −0.383 [−0.481, −0.310] against PhaseNet with PyOcto on one hour of Ridgecrest 2019 (Appendix Y.30); closure, declared post hoc: M1 and M3 reproduce the registered recalls; M1 − M3 +0.000 [−0.023, +0.021] (LOC+T, 30/h), −0.050 [−0.101, −0.013] (LOC) | G1 does not transfer to a real dense sequence with the registered timing and score | done |
 | ~~2M~~ | **EXECUTED AND VERIFIED**: 2M-a +0.228 [+0.148, +0.298] and 2M-b +0.241 [+0.179, +0.293] on real noise with transients (primary day); +0.057 and +0.120 on near-Gaussian days (secondary); the cap's gain is concentrated in the hours with transients, HUBER-N's persists (Appendix Y.31) | G1-R holds on independent real noise of one network | done |
-| ~~C18~~ | **EXPLORATORY, DONE** (Ridgecrest CAL and seed 999): no 1-D medium improves the readings; the cap erases real-event evidence at the true hypocentre and LOG6 restores it while keeping most of the robustness on one exploratory seed, but no variant locates the events; on seed 999, capping BOMP-PK recovers almost all of the gap (exploratory C18f), which suggests that G1-R is a property of the per-station bound (Appendix Y.32) | The R0 failure is the reading of arrivals in a dense sequence, not the medium | done |
-| **Reading of arrivals for dense real sequences** | Best so far: 3 Hz matched filter with LOG6, 3 of 16 CAL events with origin time on U8 (C18h); next: envelope reading, joint relocation with a coherence check, LOG6 statistic (down-weighting S fails, C18g); developed on Ridgecrest CAL only | Whether any candidate passes the registered gate (≥ 5 of 16 CAL events with origin time at 30 false/h on N8 or U8) that unlocks a registered test on the unread Hi-net swarm | to be estimated |
+| ~~C18~~ | **EXPLORATORY, DONE** (Ridgecrest CAL and seed 999): with ±1 s terms no 1-D medium seemed to improve the readings (withdrawn after the R0 verification, E50); the cap erases real-event evidence at the true hypocentre and LOG6 restores it while keeping most of the robustness on one exploratory seed, but no variant locates the events; on seed 999, capping BOMP-PK recovers almost all of the gap (exploratory C18f), which suggests that G1-R is a property of the per-station bound (Appendix Y.32) | The R0 failure is the reading of arrivals in a dense sequence, not the medium | done |
+| **R1: registered test on the Hi-net swarm (author's decision)** | Gate met on Ridgecrest CAL by the layered medium with station terms read over ±2 s and uncapped MT-FW (4 and 5 of 16 with origin time, C18j); draft registration in `preregistration/drafts/taskR1_registration_DRAFT.txt` with the choices left to the author (1-D model of the region, sensor treatment, CAL/EVAL split) | Whether any candidate passes the registered gate (≥ 5 of 16 CAL events with origin time at 30 false/h on N8 or U8) that unlocks a registered test on the unread Hi-net swarm | to be estimated |
 | **Station-term calibration, next steps** | Sensitivity of the S2 estimator to catalogue errors of unknown size, dependence on the geometry and combination with the bounded-influence statistic, with the true-statics oracle as a bound; prior exploration of whether the S2 terms, a better timing model or a treatment of the early origin bias reduce the class of well-located detections with the origin shifted (C14); afterwards, amplitude evidence for weak arrivals | Whether G1-C holds outside the known-catalogue assumption and the one-sided cell | to be estimated |
 | **1n** | Real PhaseNet residuals against the catalogue (data already downloaded) and calibration of $\eta$ | Whether the RSNC is in the regime where polarisation can pay | 1 wk |
 | **1l** | Orientation audit (OrientPy) and incidence control at CHI, OCA, SJC, ZAR | Whether the failure at CHI is geometry, orientation or site | 3-5 days |
@@ -826,7 +830,7 @@ identical to the exhaustive search), not a pruning gain over the moment-tensor c
 
 ## 9. Note on the working method
 
-During development **forty-nine errors** were documented (E1 to E49): three of claims in the text
+During development **fifty errors** were documented (E1 to E50): three of claims in the text
 pointed out by the fourth independent audit (E40, "certificate" used for a statistic that is not one;
 E41, a declared dependence removed together with the arms that measure it without reporting it; E42, the real test G1'
 without an arm for the polarisation assumption that the real data contradict), thirty of experimental
@@ -840,10 +844,11 @@ in each window read as a site term of the station, with a plan for a certificate
 that exploration C8 does not support), and three in the explorations after 2L (E43 and E44, in C13, an event-free
 twin that retained remnants of the events and decoys that saw less clutter than the target; E45,
 execution and code incidents around the freeze of C14), none with an effect on a figure
-used; and four after them: E46, a synthetic timing error that understated the real one and a detector that did not
+used; and five after them: E46, a synthetic timing error that understated the real one and a detector that did not
 transfer to real data (R0); E47, interruptions of R0 and C16 and flat telemetry fill in the noise of C16; E48, a
-declared per-network failure of Task 2M that stopped a whole lane until it was resumed; and E49, raw run outputs
-not preserved outside the working container. Several of
+declared per-network failure of Task 2M that stopped a whole lane until it was resumed; E49, raw run outputs
+not preserved outside the working container; and E50, an exploration that inherited a truncated peak search and
+drew a false conclusion about the medium. Several of
 them reversed or annulled a result: constraints turned into no-ops, undersampling of the
 sensitive parameter, true source on a grid node, thresholds below chance and, the most costly,
 ties of a discrete score read as a physical effect (E15), a weak comparator against an

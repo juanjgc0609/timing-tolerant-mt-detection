@@ -1,0 +1,29 @@
+layered corrections (s), P / S: [0.34, -0.63, 0.72, -0.4, 0.46, 0.21, 0.57, 0.61] [0.37, 1.29, 1.05, 1.29, 0.48, 0.46, 1.01, 0.91]
+01:22:33 N8 0 299
+01:23:10 N8 100 299
+01:23:48 N8 200 299
+N8 CAP6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.125, 'frac_above_q99': 0.0, 'auc': 0.557, 'frac_argmax_5km': 0.188, 'frac_strue_is_max': 0.125}
+N8 LOG6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.562, 'frac_above_q99': 0.062, 'auc': 0.715, 'frac_argmax_5km': 0.562, 'frac_strue_is_max': 0.125}
+N8 NOCAP {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.5, 'frac_above_q99': 0.125, 'auc': 0.695, 'frac_argmax_5km': 0.438, 'frac_strue_is_max': 0.25}
+layered corrections (s), P / S: [0.25, 0.39, 0.72, -0.17, 0.81, 0.52, 0.61, 0.69] [0.36, 1.26, 1.01, 1.26, 0.65, 0.57, 1.01, 1.11]
+01:24:47 N8 0 299
+01:25:24 N8 100 299
+01:26:00 N8 200 299
+N8 CAP6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.062, 'frac_above_q99': 0.0, 'auc': 0.579, 'frac_argmax_5km': 0.312, 'frac_strue_is_max': 0.062}
+N8 LOG6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.5, 'frac_above_q99': 0.25, 'auc': 0.753, 'frac_argmax_5km': 0.625, 'frac_strue_is_max': 0.062}
+N8 NOCAP {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.5, 'frac_above_q99': 0.125, 'auc': 0.735, 'frac_argmax_5km': 0.375, 'frac_strue_is_max': 0.125}
+layered corrections (s), P / S: [0.57, -0.63, -0.4, 0.34, 0.28, 0.73, 0.21, 0.24] [1.01, 1.29, 1.29, 0.85, 0.59, 0.37, 0.46, 0.3]
+01:27:01 U8 0 299
+01:27:38 U8 100 299
+01:28:18 U8 200 299
+U8 CAP6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.062, 'frac_above_q99': 0.0, 'auc': 0.41, 'frac_argmax_5km': 0.312, 'frac_strue_is_max': 0.125}
+U8 LOG6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.438, 'frac_above_q99': 0.125, 'auc': 0.661, 'frac_argmax_5km': 0.438, 'frac_strue_is_max': 0.125}
+U8 NOCAP {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.438, 'frac_above_q99': 0.188, 'auc': 0.695, 'frac_argmax_5km': 0.438, 'frac_strue_is_max': 0.312}
+layered corrections (s), P / S: [0.61, 0.43, -0.17, 1.47, 0.24, 0.25, 0.52, 0.09] [1.01, 1.37, 1.28, 0.76, 0.59, 0.36, 0.57, 1.06]
+01:29:19 U8 0 299
+01:29:59 U8 100 299
+01:30:40 U8 200 299
+U8 CAP6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.0, 'frac_above_q99': 0.0, 'auc': 0.531, 'frac_argmax_5km': 0.062, 'frac_strue_is_max': 0.0}
+U8 LOG6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.5, 'frac_above_q99': 0.125, 'auc': 0.729, 'frac_argmax_5km': 0.25, 'frac_strue_is_max': 0.188}
+U8 NOCAP {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.562, 'frac_above_q99': 0.125, 'auc': 0.743, 'frac_argmax_5km': 0.375, 'frac_strue_is_max': 0.25}
+LANE3_DONE

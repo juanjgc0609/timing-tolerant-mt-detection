@@ -19,9 +19,10 @@ catalogued events of magnitude 2 or more at 30 false detections per hour, agains
 PyOcto (pooled difference -0.383 [-0.481, -0.310]), because a homogeneous medium with constant station terms leaves
 timing errors of 0.35 to 0.41 s and the capped score saturates in continuous seismicity. A registered test on real
 noise of independent days then confirmed G1-R (+0.228 and +0.241 over BOMP-PK on a day with transients, Task 2M),
-and an exploration of the R0 failure found that a better velocity model does not make the arrival readings more
-predictable and that a logarithmic score restores the ranking of real events but not their location; a gate for the
-next real test is registered. The contribution is the
+and an independent re-run of R0 reproduced every registered number and found that its station terms were read within
+1 s while real S delays reach 1.7 to 1.9 s; on the development segment, with terms read over 2 s, a published layered
+medium and an uncapped score, the pick-free detector recalls 4 and 5 of 16 events with origin time, which meets a
+registered gate for a new real test (drafted for a Hi-net swarm, not yet registered). The contribution is the
 preregistered benchmark, its positive and negative results, and the measured conditions under which pick-free
 physics helps.
 
@@ -50,7 +51,7 @@ docs/
   executive_summary.md                                decision document: what is measured, discarded and pending
   method_design.md                                    design of the method and its hypotheses
   tasks_and_real_data_plan.md                         every task: design, rules, results, next steps
-  artifact_manifest_and_error_log.md                  artifacts and the register of errors E1-E49
+  artifact_manifest_and_error_log.md                  artifacts and the register of errors E1-E50
   audit_status.md, audits/                            four independent audits and the status after them
   task1_step_by_step.md
 preregistration/                                      append-only registration log, hash chain, drafts

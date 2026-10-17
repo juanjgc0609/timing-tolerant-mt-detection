@@ -2,7 +2,9 @@
 c18a_timing.py - exploration C18a (after R0; Ridgecrest CAL segment only, origins in [0, 900) s; the EVAL segment is
 not read).  Timing ladder for the R0 failure: how well do different travel-time models, each with a constant term per
 station and phase, predict the matched-filter energy peaks of catalogued events that were left out?
-    python c18a_timing.py SUBNET MINMAG OUT.json
+    python c18a_timing.py SUBNET MINMAG OUT.json [SEARCH]
+SEARCH (s, default 1.0): half-width of the peak search around the homogeneous prediction (C18i uses 2.0; with 1.0 a
+large share of the S readings sits at the edge of the search, see C18i).
 Readings: station_corrections.peak_delays at the catalogue hypocentre (joint P/S search +-1 s around the homogeneous
 prediction, energy gate 25), as in C17a; observed peak time = homogeneous prediction + delay.
 Models (leave one event out; every fitted quantity uses only the other events):
@@ -27,7 +29,7 @@ from station_corrections import peak_delays  # noqa: E402
 from task0_common import VP, VS  # noqa: E402
 
 
-def readings(sub, minmag):
+def readings(sub, minmag, search=1.0):
     centre = R.frame()
     cat = R.catalogue_local(centre)
     STA, sens = R.stations(R.SUBNETS[sub], centre)
@@ -38,7 +40,7 @@ def readings(sub, minmag):
     for k, e in enumerate(evs):
         src = np.array([e["x"], e["y"], e["z"]])
         D = R.window(d16, e["t"] - 6.5)
-        dl, en = peak_delays(STA, D, src, 6.5)
+        dl, en = peak_delays(STA, D, src, 6.5, search)
         d = np.linalg.norm(STA - src, axis=1)
         for i in range(len(STA)):
             for b, V in ((0, VP), (1, VS)):
@@ -86,8 +88,8 @@ GRIDS = {
 FIXED = {"HOM6": (6.0, 1.73), "HK": (1.73,)}
 
 
-def main(sub, minmag, outp):
-    STA, evs, rows = readings(sub, minmag)
+def main(sub, minmag, outp, search=1.0):
+    STA, evs, rows = readings(sub, minmag, search)
     srcs = {k: e and [e["x"], e["y"], e["z"]] for k, e in enumerate(evs)}
     ev_ids = sorted({r["ev"] for r in rows})
     cache = {}
@@ -138,9 +140,9 @@ def main(sub, minmag, outp):
         print(f"{sub} M>={minmag} {name:8s} n {len(v):4d}  robust sd {res[name]['robust_sd']:.3f}  rms {res[name]['rms']:.3f}"
               f"  |e|<=0.25 {res[name]['frac_025']:.2f}  |e|<=0.5 {res[name]['frac_050']:.2f}  params {res[name]['pars_median']}",
               flush=True)
-    json.dump({"subnet": sub, "minmag": minmag, "n_events": len(ev_ids), "n_readings": len(rows), "models": res, "rows": rows},
+    json.dump({"subnet": sub, "minmag": minmag, "search": search, "n_events": len(ev_ids), "n_readings": len(rows), "models": res, "rows": rows},
               open(outp, "w"), indent=1)
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], float(sys.argv[2]), sys.argv[3])
+    main(sys.argv[1], float(sys.argv[2]), sys.argv[3], float(sys.argv[4]) if len(sys.argv) > 4 else 1.0)

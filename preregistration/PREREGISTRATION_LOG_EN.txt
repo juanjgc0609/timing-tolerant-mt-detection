@@ -1046,3 +1046,18 @@ s (post hoc, N8 and U8) removes the origin bias but M2 recall at 30/h stays at 0
 the false-event cap uses 0.75 h instead of 44.33 min (it changes only at 60/h); D4 numba, tqdm, PhaseNet and
 TensorFlow are not pinned in R0_FREEZE.txt. Consequence for C18: the readings of C18a and the +SC terms of
 C18b-C18h used the same +-1 s search, so their conclusion about the medium is in doubt and is repeated (C18i).
+
+Gate of the next real test: result on CAL (Sat Oct 17 07:26:05 UTC 2026; explorations C18i and C18j, Ridgecrest
+CAL only, results/explorations/c18/). After defect D1 of the verification of R0, the readings of C18a were
+repeated with a +-2 s search (C18i): the layered model of Hadley and Kanamori now predicts better than the
+registered homogeneous medium (fraction of readings within 0.25 s: N8 0.45 against 0.39, U8 0.45 against 0.37, N6
+0.44-0.46 against 0.41, N4 0.52 against 0.43), so the conclusion of C18a ("the medium does not matter") was an
+artefact of the +-1 s search and is withdrawn (error E50). Detector on CAL, LOC+T, 30 false/h, events recalled
+out of 16 (N8 / U8): homogeneous medium with +-2 s terms and 2 Hz filter: cap 6 0 / 0, LOG6 3 / 1, BOMP-PK 3 / 4;
+with 3 Hz: LOG6 3 / 2; layered medium with +-2 s terms (C18j) and 2 Hz: cap 6 0 / 0, LOG6 1 / 2, MT-FW without
+cap 4 / 5; with 3 Hz: without cap 3 / 1. The candidate "layered medium, +-2 s terms, 2 Hz filter, MT-FW without
+cap" reaches 5 of 16 on U8 and meets the registered gate exactly at the threshold; it is declared that about
+twenty configurations were tried on the same 16 events, so passing the gate carries a selection effect, and that
+the candidate does not bound the influence per station (the opposite of G1-R). The test on the Hi-net swarm is
+not registered yet: its design (published 1-D model for the region, Hi-net preprocessing, comparators, CAL/EVAL
+split of the 14 JMA events) is left as a draft for the author's decision, because it uses the last unseen data.

@@ -162,13 +162,14 @@ to 2L, are also in `outputs/explore_contrib/`, with their scripts, reports and o
 | `t2m_lib.py`, `t2m_run.py`, `t2m_queue.sh`, `t2m_freeze.sh`, `t2m_resume.sh`, `t2m_resume_each.sh` | Task 2M, Y.31 | Injection of generator events into real noise, five methods, part files per (arm, cell, network); frozen run with SHA-256, resumption per network | valid; a declared per-network failure stopped a lane (E48), resumed with the frozen code |
 | `t2m_analyze.py`, `results/task2M/posthoc/blocks.py`, `results/task2M/verif_2m/*_verif.py` | Task 2M, Y.31 | Registered analysis (primary seed 2718, Holm over two tests), post hoc breakdown by blocks of hours, independent verification | valid; the breakdown is exploratory; verification confirms with caveats of scope |
 | `explore_contrib/c18_tt.py`, `c18a_timing.py`, `c18a_overlap.py`, `c18b_oracle.py`, `c18c_oracle.py`, `c18d_detect.py`, `c18d_analyze.py`, `c18e_run.py`, `c18e_analyze.py`, `c18f_run.py`, `c18f_analyze.py`, `c18g_oracle.py`, `c18h_kernel.py`, `c18h_detect.py` | Y.32 (C18) | Timing ladder with layered media on the Ridgecrest CAL readings, oracle scores at the true hypocentre for several statistics, full detector on CAL with those statistics, robustness of the statistics to real-noise transients on seed 999 | exploratory; Ridgecrest CAL only, EVAL not read; seed 999, networks 3100-3107, TAG 5181-5186 |
+| `explore_contrib/c18i_widesc.py`, `c18j_layered.py` (and `c18a_timing.py` with SEARCH 2.0) | Y.32 (C18i, C18j) | Readings and station terms with a +-2 s search; detector with the layered medium of Hadley and Kanamori; the gate check on CAL | exploratory; Ridgecrest CAL only; withdraws the C18a conclusion (E50) |
 | `r0/queue_close.sh`, `r0/run_close/` | Y.30 (closure) | M1 and M3 on EVAL of the four subnetworks with the frozen R0 code, re-run after the original outputs were lost (E49), and the registered secondary contrast M1 - M3 | post hoc, declared in the log before running |
 
 ---
 
 ## 3. The design errors that inverted or nullified a result
 
-This is the central content of this manifest. The log contains 49 errors, E1 to E49. In the
+This is the central content of this manifest. The log contains 50 errors, E1 to E50. In the
 first six (E1 to E6) the resulting number looked valid, and in all six it was detected **only because
 it turned out to be implausible**, not because there was a visible fault in the code; the following ones were detected
 by controls, preregistered rules or audits, as indicated in each one.
@@ -1034,6 +1035,23 @@ reduced to the catalogue draws and window counts of six regenerated parts, decla
 **Correction:** the raw outputs of Task 2M (part files) and of the R0 closure are archived in the repository; the data
 instructions in `data/README.md` were corrected (the station inventory, the catalogue and the auxiliary files of the
 Alto Tiberina data are not in the folder the earlier text named).
+
+### E50. An exploration inherited a truncated search and drew a false conclusion about the medium
+**Script:** `explore_contrib/c18a_timing.py` (exploration C18a), through `station_corrections.peak_delays`.
+**Symptom:** C18a concluded that no layered or fitted medium predicts the energy-peak readings of the Ridgecrest
+development events better than the registered homogeneous medium, and the documents stated that the timing error was
+a reading problem, not a velocity-model problem.
+**Cause:** the readings were searched within +-1.0 s of the homogeneous prediction, the default of `peak_delays`,
+while real S delays at several stations are 1.7 to 1.9 s; 42 per cent of the S readings and 24 per cent of the P
+readings on N8 lay within 0.1 s of the edge of the search, so every model was compared on truncated readings.
+**Detection:** the independent verification of R0 (defect D1, the same truncation in the station-term estimators);
+then a check of the C18a readings against the search edge.
+**Scope:** the C18a conclusion is withdrawn. With a +-2 s search the layered model predicts the readings better on
+every subnetwork (C18i), and with terms read over 2 s, the layered medium and no cap the detector meets the registered
+gate on development data (C18j). C18b to C18h remain valid as measurements of the configuration with the truncated
+terms. No registered result is affected.
+**Correction:** Appendix Y.32 rewritten; the documents corrected. General rule: before comparing models on readings,
+check what fraction of the readings sits at the edge of the search window.
 
 ### On the order of the three errors of Task 0
 Three complete protocols, three different conclusions, and **in none of them was the cause the physics**. By

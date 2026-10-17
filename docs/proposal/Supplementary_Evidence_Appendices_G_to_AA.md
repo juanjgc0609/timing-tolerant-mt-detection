@@ -7016,7 +7016,7 @@ R0 named two causes of its failure: a timing error of 0.35 to 0.41 s with a homo
 terms, and a capped score that saturates in continuous seismicity. C18 separates them on CAL, where the 16 catalogued
 events of magnitude 2 or more and their hypocentres are known.
 
-**C18a: a better medium does not reduce the timing error.** For each catalogued event the matched-filter energy peaks
+**C18a: with a +-1 s search, a better medium seemed not to matter (withdrawn, see C18i).** For each catalogued event the matched-filter energy peaks
 were read at every station and phase (joint P and S search within 1 s, energy gate 25, as in C17a), and each peak was
 predicted, leaving the event out, by a travel-time model plus the median residual of the same station and phase over
 the other events. Five models were compared: the registered homogeneous medium (VP 6.0 km/s, VP/VS 1.73), a homogeneous
@@ -7095,19 +7095,39 @@ it by +0.111 [+0.044, +0.186]. In standard windows BOMP-PK with the cap is level
 use, which is how G1-R should be read: Task 2M confirms that bounding each station helps on real noise with
 transients, not that MT-FW beats a pursuit that bounds its stations too (Task 2F found the same on synthetics).
 
-**What follows.** C18 rules out the two remedies the R0 diagnosis pointed to as sufficient. A layered or fitted medium
-does not make the peaks predictable, and a non-saturating score (LOG6 is the candidate that costs little robustness on one exploratory seed)
-restores the ranking of real events but not their location. The failure that remains is the reading of energy peaks,
-especially S, in a dense real sequence: between a quarter and a half of the readings of the larger events fall outside the
-0.25 s tolerance, and the grid search then places the energy maximum away from the event. The decision tree of the
-continuation plan applies: with no intervention that improves false-event-controlled recall on development data, a new
-registered real test would spend unseen data on a detector that is expected to fail. The Hi-net swarm therefore stays
-unseen, and the gate for registering the next real test is set in advance: on Ridgecrest CAL, with origin times
-required, at 30 false detections per hour, a candidate must recall at least 5 of the 16 events on N8 or U8 (R0's best
-pick-based comparator recalled about 0.6 on N8 in EVAL). Candidates for that work are a reading less sensitive to
-coda and S-wave complexity (an envelope reading or a higher-frequency matched filter; down-weighting S fails, C18g), joint relocation of
-the readings with a coherence check before the grid search, and LOG6 as the statistic.
+**C18i: the search window, not the medium, hid the effect of the medium.** The independent verification of R0 found
+that the catalogue station terms and the first reading of S2 search only +-1 s around the homogeneous prediction,
+while the real S delays at several stations are 1.7 to 1.9 s; in C18a, 42 per cent of the S readings and 24 per cent
+of the P readings on N8 lie within 0.1 s of the edge of that search. With the search widened to +-2 s the readings
+of all events admit more wrong peaks (the fraction within 0.25 s of the prediction drops to 0.37 to 0.43 for the
+registered medium), and the layered model now predicts them better than the registered medium on every subnetwork:
+0.45 against 0.39 on N8, 0.45 against 0.37 on U8, 0.44 to 0.46 against 0.41 on N6 and 0.52 against 0.43 on N4, with
+the robust deviation falling from 0.60 to 0.48 s on N8. The conclusion of C18a that the medium does not matter was an
+artefact of the truncated search and is withdrawn (error E50); C18b to C18h, which used the truncated station terms,
+are kept as measurements of that configuration.
 
+**C18j: with corrected terms and a layered medium the gate is met, by an uncapped statistic.** With the station terms
+re-estimated with a +-2 s search, the full detector on CAL (origin times matched, 30 false detections per hour)
+recalls, of the 16 events on N8 and U8: with the registered homogeneous medium and the 2 Hz filter, 0 and 0 with the
+cap, 3 and 1 with LOG6 and 3 and 4 with BOMP-PK; with the 3 Hz filter, 3 and 2 with LOG6. With the layered medium of
+Hadley and Kanamori (travel times of every node from `c18_tt`, terms re-estimated against it; `c18j_layered.py`) and
+the 2 Hz filter it recalls 0 and 0 with the cap, 1 and 2 with LOG6 and 4 and 5 with MT-FW without a cap; at 3 Hz the
+uncapped detector falls back to 3 and 1. The candidate "layered medium, +-2 s terms, 2 Hz, MT-FW without a cap" reaches
+5 of 16 on U8 and meets the registered gate exactly at its threshold. Two qualifications were logged with the result:
+about twenty configurations have been tried on the same 16 development events, so passing the gate carries a
+selection effect that only the registered test on unseen data can remove; and the candidate does not bound the
+influence of any station, which is the opposite of what Task 2M confirmed on real noise. On real seismicity with the
+timing corrected, amplitude evidence matters more than robustness, as Proposition AA.9.3 predicts for a saturating
+statistic.
+
+**What follows.** R0 failed for a reason that is now measured: station terms truncated at 1 s, a homogeneous medium and a
+capped score each removed part of the evidence, and only together do their corrections bring the pick-free detector to
+about a third of the development events with origin times matched, still well below PhaseNet with PyOcto on the same
+network (about 0.6 on N8 in EVAL). The registered gate is met, so the next step is a registered test on the Hi-net
+swarm, whose waveforms remain unread. Its design is drafted (`preregistration/drafts/taskR1_registration_DRAFT.txt`)
+and not registered, because it spends the last unseen data and several of its choices, among them the published 1-D
+model of the region, the treatment of the 1 Hz borehole sensors and the split of the 14 catalogued events, are the
+author's to make.
 ---
 
 # Appendix Z. Certified Pruning of the Hypothesis Space, and the Role of p4est
@@ -8056,7 +8076,8 @@ $\|Q_h^{\mathsf T}\cdot\|$ monotonically. The propositions describe a trade-off 
 transform protects against transients (AA.9.2) and saturates in dense seismicity (AA.9.3); a transform with slowly
 growing, unbounded radius keeps part of each property. Exploration C18 found that LOG6 kept the robustness of the cap
 to real-noise transients within $-0.015$ [$-0.099$, $+0.043$] and restored most of the ranking of real events, but
-neither statistic located the Ridgecrest events, which is a failure of the peak readings, not of the transform.
+neither statistic located the Ridgecrest events with the registered timing; with station terms read over +-2 s and a
+layered medium the uncapped statistic located up to 5 of the 16 development events and the capped one none (C18j).
 What remains open is a statement on the false-alarm tail of these scores under the peak search: the maximum over
 $\pm W$ samples and over the grid makes the null law of $s_\phi$ a maximum of dependent, non-Gaussian quantities, and
 only the conformal calibration of Proposition AA.5(c) applies to it without further assumptions.
