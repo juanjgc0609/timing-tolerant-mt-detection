@@ -6989,7 +6989,8 @@ narrow.
 ## Y.32 After R0: what fails on real data (exploration C18)
 
 Code: `explore_contrib/c18_tt.py`, `c18a_timing.py`, `c18a_overlap.py`, `c18b_oracle.py`, `c18c_oracle.py`,
-`c18d_detect.py`, `c18d_analyze.py`, `c18e_run.py`, `c18e_analyze.py`, `c18f_run.py`, `c18f_analyze.py`, `c18g_oracle.py`; outputs in
+`c18d_detect.py`, `c18d_analyze.py`, `c18e_run.py`, `c18e_analyze.py`, `c18f_run.py`, `c18f_analyze.py`, `c18g_oracle.py`, `c18h_kernel.py`, `c18h_detect.py`;
+outputs in
 `results/explorations/c18/`.
 Exploratory. C18a to C18d use only the first 15 minutes of the Ridgecrest hour (CAL, origins before 19:15), which
 served for development and station terms in R0 and was never part of an evaluation; the evaluated segment of R0 is
@@ -7055,6 +7056,17 @@ predictable. Both lose: with the cap the AUC falls from 0.39-0.49 to 0.23-0.32 (
 with LOG6 from 0.66-0.72 to 0.46-0.55 and 0.24-0.33, and the window maximum is never within 5 km of the event once the S
 blocks are down-weighted. The S arrivals, though poorly timed, carry most of the evidence; the reading has to be made
 more reliable, not discounted.
+
+**C18h: a higher-frequency matched filter helps location a little, and the gate is not passed.** The second candidate
+replaced the 2 Hz Ricker kernel of the matched filter, used in every task, by 3 or 4 Hz kernels everywhere a matched
+filter is computed (readings, station corrections, scores). The timing ladder does not change (HOM6 within 0.25 s:
+0.58 and 0.60 on N8 and U8 at 3 Hz, 0.59 and 0.57 at 4 Hz). At 3 Hz the oracle maps put the window maximum within 5 km
+of the event more often with LOG6 (0.38 on N8, 0.50 on U8, against 0.19 and 0.25 at 2 Hz), with AUC 0.73 and 0.72; 4 Hz
+is not better. With the full detector on CAL at 3 Hz, LOG6 recalls 3 of the 16 events with origin times matched at 30
+false detections per hour on U8 (0 at 2 Hz) and none on N8; with the epicentre rule 3 and 4 of 16. That is the best
+pick-free result on these data so far and still below the registered gate of 5 of 16. Several candidates have now been
+tried on the same 16 development events, so passing the gate later would carry a selection effect; the registered test
+on unseen data is what protects against it.
 
 **C18f: the advantage belongs to the bound, not to the pursuit.** The fifth independent audit asked whether Task 2M
 measured an advantage over BOMP-PK as such or over a comparator without any per-station robustness. On the same 384

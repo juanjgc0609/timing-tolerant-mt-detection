@@ -68,7 +68,7 @@ def main(sub, outp):
         lo, hi = ts + R.OWN[0], ts + R.OWN[1]
         own = [e for e in tg if lo <= e["t"] < hi]
         quiet = not np.any((allt > lo - 2.0) & (allt < hi + 2.0))
-        for v, (M_, kind, c) in inp.items():
+        for v, (M_, kind, c) in ((k, inp[k]) for k in VARIANTS):
             s = score_map(E, M_, kind, c)
             s_own = np.where(ownt[None, :], s, -np.inf)
             smax = float(s_own.max())

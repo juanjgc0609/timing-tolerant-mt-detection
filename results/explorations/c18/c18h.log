@@ -1,0 +1,65 @@
+      with event term: n 145 robust sd 0.263 |e|<=0.25 0.57
+N8 M>=2.0 HOM6     n  147  robust sd 0.266  rms 0.666  |e|<=0.25 0.58  |e|<=0.5 0.73  params [6.0, 1.73]
+      with event term: n 145 robust sd 0.263 |e|<=0.25 0.57
+N8 M>=2.0 HOMfit   n  147  robust sd 0.260  rms 0.664  |e|<=0.25 0.59  |e|<=0.5 0.73  params [5.799999999999999, 1.72]
+      with event term: n 145 robust sd 0.267 |e|<=0.25 0.59
+N8 M>=2.0 HK       n  147  robust sd 0.272  rms 0.650  |e|<=0.25 0.59  |e|<=0.5 0.73  params [1.73]
+      with event term: n 145 robust sd 0.227 |e|<=0.25 0.60
+N8 M>=2.0 HKr      n  147  robust sd 0.242  rms 0.646  |e|<=0.25 0.60  |e|<=0.5 0.72  params [1.65]
+      with event term: n 145 robust sd 0.247 |e|<=0.25 0.59
+N8 M>=2.0 GRADfit  n  147  robust sd 0.240  rms 0.659  |e|<=0.25 0.58  |e|<=0.5 0.73  params [5.800000000000001, 0.06, 1.73]
+20:03:59 N8 0 299
+20:04:38 N8 100 299
+20:05:18 N8 200 299
+N8 CAP6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.062, 'frac_above_q99': 0.0, 'auc': 0.542, 'frac_argmax_5km': 0.125, 'frac_strue_is_max': 0.0}
+N8 LOG6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.438, 'frac_above_q99': 0.0, 'auc': 0.728, 'frac_argmax_5km': 0.375, 'frac_strue_is_max': 0.0}
+N8 NOCAP {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.438, 'frac_above_q99': 0.0, 'auc': 0.705, 'frac_argmax_5km': 0.312, 'frac_strue_is_max': 0.0}
+      with event term: n 150 robust sd 0.210 |e|<=0.25 0.64
+U8 M>=2.0 HOM6     n  151  robust sd 0.241  rms 0.598  |e|<=0.25 0.60  |e|<=0.5 0.80  params [6.0, 1.73]
+      with event term: n 150 robust sd 0.201 |e|<=0.25 0.63
+U8 M>=2.0 HOMfit   n  151  robust sd 0.249  rms 0.596  |e|<=0.25 0.60  |e|<=0.5 0.79  params [6.099999999999998, 1.74]
+      with event term: n 150 robust sd 0.169 |e|<=0.25 0.67
+U8 M>=2.0 HK       n  151  robust sd 0.185  rms 0.600  |e|<=0.25 0.65  |e|<=0.5 0.75  params [1.73]
+      with event term: n 150 robust sd 0.181 |e|<=0.25 0.68
+U8 M>=2.0 HKr      n  151  robust sd 0.187  rms 0.599  |e|<=0.25 0.66  |e|<=0.5 0.75  params [1.73]
+      with event term: n 150 robust sd 0.174 |e|<=0.25 0.69
+U8 M>=2.0 GRADfit  n  151  robust sd 0.183  rms 0.609  |e|<=0.25 0.63  |e|<=0.5 0.77  params [5.800000000000001, 0.09, 1.745]
+20:08:13 U8 0 299
+20:08:52 U8 100 299
+20:09:31 U8 200 299
+U8 CAP6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.0, 'frac_above_q99': 0.0, 'auc': 0.516, 'frac_argmax_5km': 0.188, 'frac_strue_is_max': 0.062}
+U8 LOG6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.438, 'frac_above_q99': 0.062, 'auc': 0.722, 'frac_argmax_5km': 0.5, 'frac_strue_is_max': 0.062}
+U8 NOCAP {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.5, 'frac_above_q99': 0.0, 'auc': 0.731, 'frac_argmax_5km': 0.438, 'frac_strue_is_max': 0.062}
+      with event term: n 152 robust sd 0.264 |e|<=0.25 0.57
+N8 M>=2.0 HOM6     n  156  robust sd 0.304  rms 0.637  |e|<=0.25 0.59  |e|<=0.5 0.75  params [6.0, 1.73]
+      with event term: n 152 robust sd 0.294 |e|<=0.25 0.57
+N8 M>=2.0 HOMfit   n  156  robust sd 0.305  rms 0.639  |e|<=0.25 0.57  |e|<=0.5 0.75  params [5.699999999999999, 1.75]
+      with event term: n 152 robust sd 0.322 |e|<=0.25 0.55
+N8 M>=2.0 HK       n  156  robust sd 0.303  rms 0.647  |e|<=0.25 0.53  |e|<=0.5 0.70  params [1.73]
+      with event term: n 152 robust sd 0.319 |e|<=0.25 0.55
+N8 M>=2.0 HKr      n  156  robust sd 0.292  rms 0.646  |e|<=0.25 0.54  |e|<=0.5 0.70  params [1.69]
+      with event term: n 152 robust sd 0.329 |e|<=0.25 0.56
+N8 M>=2.0 GRADfit  n  156  robust sd 0.311  rms 0.648  |e|<=0.25 0.57  |e|<=0.5 0.71  params [5.700000000000001, 0.09, 1.76]
+20:12:34 N8 0 299
+20:13:14 N8 100 299
+20:13:52 N8 200 299
+N8 CAP6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.062, 'frac_above_q99': 0.0, 'auc': 0.524, 'frac_argmax_5km': 0.188, 'frac_strue_is_max': 0.0}
+N8 LOG6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.375, 'frac_above_q99': 0.062, 'auc': 0.74, 'frac_argmax_5km': 0.25, 'frac_strue_is_max': 0.0}
+N8 NOCAP {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.438, 'frac_above_q99': 0.062, 'auc': 0.723, 'frac_argmax_5km': 0.125, 'frac_strue_is_max': 0.062}
+      with event term: n 151 robust sd 0.273 |e|<=0.25 0.58
+U8 M>=2.0 HOM6     n  153  robust sd 0.284  rms 0.569  |e|<=0.25 0.57  |e|<=0.5 0.78  params [6.0, 1.73]
+      with event term: n 151 robust sd 0.272 |e|<=0.25 0.56
+U8 M>=2.0 HOMfit   n  153  robust sd 0.280  rms 0.565  |e|<=0.25 0.56  |e|<=0.5 0.78  params [5.849999999999999, 1.75]
+      with event term: n 151 robust sd 0.236 |e|<=0.25 0.60
+U8 M>=2.0 HK       n  153  robust sd 0.267  rms 0.615  |e|<=0.25 0.58  |e|<=0.5 0.73  params [1.73]
+      with event term: n 151 robust sd 0.225 |e|<=0.25 0.59
+U8 M>=2.0 HKr      n  153  robust sd 0.251  rms 0.615  |e|<=0.25 0.58  |e|<=0.5 0.74  params [1.69]
+      with event term: n 151 robust sd 0.244 |e|<=0.25 0.62
+U8 M>=2.0 GRADfit  n  153  robust sd 0.234  rms 0.611  |e|<=0.25 0.59  |e|<=0.5 0.76  params [5.800000000000001, 0.09, 1.79]
+20:16:48 U8 0 299
+20:17:28 U8 100 299
+20:18:08 U8 200 299
+U8 CAP6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.0, 'frac_above_q99': 0.0, 'auc': 0.371, 'frac_argmax_5km': 0.062, 'frac_strue_is_max': 0.0}
+U8 LOG6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.375, 'frac_above_q99': 0.0, 'auc': 0.707, 'frac_argmax_5km': 0.312, 'frac_strue_is_max': 0.062}
+U8 NOCAP {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.438, 'frac_above_q99': 0.0, 'auc': 0.749, 'frac_argmax_5km': 0.25, 'frac_strue_is_max': 0.125}
+C18H_DONE

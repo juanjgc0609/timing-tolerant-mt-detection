@@ -371,5 +371,7 @@ C18f (c18f_run.py, c18f_analyze.py; same windows as C18e): BOMP-PK with energies
 gap (MT with cap - BOMP-PK with cap +0.026 [-0.009, +0.081]; per-station normalisation alone +0.037 over BOMP-PK).
 C18g (c18g_oracle.py): weighting the S peak vectors by 0.5 or removing them lowers the AUC (cap 0.17-0.32, LOG6 0.24-0.55)
 and no window maximum falls within 5 km of the event.
+C18h (c18h_kernel.py, c18h_detect.py): a 3 Hz matched-filter kernel with LOG6 recalls 3 of 16 CAL events with origin
+time at 30 false/h on U8 (0 on N8); the registered gate (5 of 16) is not passed.
 Outputs: c18a_*.json, c18a_summary.txt, c18a_overlap_N8.txt, c18b_*.json, c18c_*.json, c18d_*.json,
 c18d_analysis.txt, c18e_parts/, c18e_analysis.txt and the run logs.
