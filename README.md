@@ -35,7 +35,7 @@ physics helps.
 | 2F | G1-R: per-station cap in dense sequences | Confirmed, +0.04 to +0.07 | `results/task2f`; Y.24 |
 | 2I | G1-R: Huber statistic with noise-fixed level | Confirmed, +0.058 and +0.053 | `results/task2i`; Y.26 |
 | 2L | G1-C: pick-free station terms + local refinement | Confirmed, +0.057 and +0.062 (isolated), +0.038 and +0.030 (dense), mainly 8-station one-sided networks | `results/task2l`; Y.28 |
-| R0 | G1 transfer to real data (Ridgecrest 2019) | Negative, -0.383 [-0.481, -0.310] | `results/taskR0`; Y.30 |
+| R0 | G1 transfer to real data (Ridgecrest 2019) | Negative, -0.383 [-0.481, -0.310]; independently re-run and confirmed; closure M1 - M3 +0.000 [-0.023, +0.021] | `results/taskR0`; Y.30 |
 | 2M | G1-R with real noise on independent days (Alto Tiberina) | Confirmed on the primary day with transients, +0.228 [+0.148, +0.298] (cap) and +0.241 [+0.179, +0.293] (Huber); +0.057 and +0.120 on near-Gaussian days | `results/task2M`; Y.31 |
 
 Exploratory studies C1 to C16 (calibration seed 999 only) are reported in `results/explorations/` and Appendices Y.23,
