@@ -1,0 +1,41 @@
+14:24:53 N8 0 299
+14:25:21 N8 50 299
+14:25:49 N8 100 299
+14:26:17 N8 150 299
+14:26:46 N8 200 299
+14:27:13 N8 250 299
+N8 REG {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.0625, 'frac_above_q99': 0.0, 'auc': 0.4938063063063063, 'frac_argmax_5km': 0.3125, 'frac_strue_is_max': 0.1875, 'median_strue_over_q90': 0.63208893576131}
+N8 STA {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.0625, 'frac_above_q99': 0.0, 'auc': 0.5, 'frac_argmax_5km': 0.3125, 'frac_strue_is_max': 0.125, 'median_strue_over_q90': 0.6049598349836702}
+N8 STA-COH {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.125, 'frac_above_q99': 0.0, 'auc': 0.3547297297297297, 'frac_argmax_5km': 0.1875, 'frac_strue_is_max': 0.125, 'median_strue_over_q90': 0.41899247848151}
+N8 NOCAP {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.5, 'frac_above_q99': 0.125, 'auc': 0.7069256756756757, 'frac_argmax_5km': 0.3125, 'frac_strue_is_max': 0.125, 'median_strue_over_q90': 1.0985716227966194}
+14:27:46 U8 0 299
+14:28:14 U8 50 299
+14:28:43 U8 100 299
+14:29:10 U8 150 299
+14:29:39 U8 200 299
+14:30:07 U8 250 299
+U8 REG {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.125, 'frac_above_q99': 0.0625, 'auc': 0.39442567567567566, 'frac_argmax_5km': 0.0625, 'frac_strue_is_max': 0.0, 'median_strue_over_q90': 0.621654612477931}
+U8 STA {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.0625, 'frac_above_q99': 0.0, 'auc': 0.4009009009009009, 'frac_argmax_5km': 0.0625, 'frac_strue_is_max': 0.0, 'median_strue_over_q90': 0.581020122795553}
+U8 STA-COH {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.125, 'frac_above_q99': 0.0, 'auc': 0.27561936936936937, 'frac_argmax_5km': 0.0625, 'frac_strue_is_max': 0.0, 'median_strue_over_q90': 0.43556535542327846}
+U8 NOCAP {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.5, 'frac_above_q99': 0.0625, 'auc': 0.6869369369369369, 'frac_argmax_5km': 0.4375, 'frac_strue_is_max': 0.1875, 'median_strue_over_q90': 0.9434450802965969}
+14:30:39 N6 0 299
+14:31:02 N6 50 299
+14:31:23 N6 100 299
+14:31:45 N6 150 299
+14:32:07 N6 200 299
+14:32:30 N6 250 299
+N6 REG {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.0625, 'frac_above_q99': 0.0625, 'auc': 0.43299549549549554, 'frac_argmax_5km': 0.125, 'frac_strue_is_max': 0.125, 'median_strue_over_q90': 0.6384084297946617}
+N6 STA {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.0625, 'frac_above_q99': 0.0, 'auc': 0.4670608108108108, 'frac_argmax_5km': 0.125, 'frac_strue_is_max': 0.125, 'median_strue_over_q90': 0.6161524599846177}
+N6 STA-COH {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.0625, 'frac_above_q99': 0.0625, 'auc': 0.30996621621621623, 'frac_argmax_5km': 0.25, 'frac_strue_is_max': 0.125, 'median_strue_over_q90': 0.42504643318753976}
+N6 NOCAP {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.5625, 'frac_above_q99': 0.0625, 'auc': 0.7221283783783784, 'frac_argmax_5km': 0.0625, 'frac_strue_is_max': 0.0625, 'median_strue_over_q90': 1.331547404806956}
+14:32:56 N4 0 299
+14:33:12 N4 50 299
+14:33:27 N4 100 299
+14:33:43 N4 150 299
+14:33:59 N4 200 299
+14:34:15 N4 250 299
+N4 REG {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.0, 'frac_above_q99': 0.0, 'auc': 0.42623873873873874, 'frac_argmax_5km': 0.125, 'frac_strue_is_max': 0.0625, 'median_strue_over_q90': 0.6676389643770988}
+N4 STA {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.0, 'frac_above_q99': 0.0, 'auc': 0.4738175675675676, 'frac_argmax_5km': 0.1875, 'frac_strue_is_max': 0.0625, 'median_strue_over_q90': 0.6679100746367451}
+N4 STA-COH {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.0, 'frac_above_q99': 0.0, 'auc': 0.3828828828828829, 'frac_argmax_5km': 0.1875, 'frac_strue_is_max': 0.0625, 'median_strue_over_q90': 0.5869157050704028}
+N4 NOCAP {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.5625, 'frac_above_q99': 0.125, 'auc': 0.7395833333333333, 'frac_argmax_5km': 0.0, 'frac_strue_is_max': 0.0, 'median_strue_over_q90': 1.0156933650562485}
+C18B_DONE

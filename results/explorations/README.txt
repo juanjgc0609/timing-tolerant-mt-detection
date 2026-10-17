@@ -356,3 +356,16 @@ cap - BOMP-PK +0.259 [+0.131, +0.321], HUBER-N - BOMP-PK +0.294 [+0.178, +0.355]
 +0.113) because BOMP-PK collapses with the real transients; G1-C keeps the sign without being resolved (+0.049
 [-0.083, +0.149]); the operating point of the capped detector transfers to real noise with little excess. The
 processed noise (out/c16_noise) and the parts remained in the working folder.
+
+C18 - after R0: what fails on real data (Appendix Y.32). Folder c18/. Scripts in code/explore_contrib: c18_tt.py
+(first-arrival times in layered media), c18a_timing.py and c18a_overlap.py (leave-one-event-out prediction of the
+energy-peak readings of the Ridgecrest CAL events under five media), c18b_oracle.py and c18c_oracle.py (first-iteration
+score at the true hypocentre against the maxima of event-free CAL windows, for several statistics), c18d_detect.py and
+c18d_analyze.py (full detector on CAL with the cap 6, cap 24, LOG6, no cap and BOMP-PK), c18e_run.py and
+c18e_analyze.py (seed 999, networks 3100-3107, TAG 5181-5186, qc1 noise of 2010-07-23: robustness of the variants to
+real-noise transients). Only CAL of Ridgecrest is read (origins before 19:15); EVAL is not. Result: no 1-D medium
+improves the readings (0.53 to 0.63 within 0.25 s); the cap erases the evidence of real events at the true hypocentre
+(AUC 0.39 to 0.49) and LOG6 restores it (0.66 to 0.72) while keeping the robustness of the cap on real noise (LOG6 -
+cap -0.015 [-0.099, +0.043]); no variant detects the CAL events with origin time (0 or 1 of 16 at 30 false/h).
+Outputs: c18a_*.json, c18a_summary.txt, c18a_overlap_N8.txt, c18b_*.json, c18c_*.json, c18d_*.json,
+c18d_analysis.txt, c18e_parts/, c18e_analysis.txt and the run logs.

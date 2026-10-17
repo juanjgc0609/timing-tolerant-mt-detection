@@ -1,0 +1,37 @@
+14:34:46 N8 0 299
+14:36:12 N8 100 299
+14:37:39 N8 200 299
+N8 CAP6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.062, 'frac_above_q99': 0.0, 'auc': 0.494, 'frac_argmax_5km': 0.312, 'frac_strue_is_max': 0.188}
+N8 CAP12 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.188, 'frac_above_q99': 0.0, 'auc': 0.638, 'frac_argmax_5km': 0.312, 'frac_strue_is_max': 0.062}
+N8 CAP24 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.438, 'frac_above_q99': 0.0, 'auc': 0.705, 'frac_argmax_5km': 0.375, 'frac_strue_is_max': 0.188}
+N8 LOG6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.438, 'frac_above_q99': 0.0, 'auc': 0.7, 'frac_argmax_5km': 0.188, 'frac_strue_is_max': 0.062}
+N8 PREV6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.0, 'frac_above_q99': 0.0, 'auc': 0.543, 'frac_argmax_5km': 0.312, 'frac_strue_is_max': 0.125}
+N8 NOCAP {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.5, 'frac_above_q99': 0.125, 'auc': 0.707, 'frac_argmax_5km': 0.312, 'frac_strue_is_max': 0.125}
+14:39:10 U8 0 299
+14:40:35 U8 100 299
+14:42:04 U8 200 299
+U8 CAP6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.125, 'frac_above_q99': 0.062, 'auc': 0.394, 'frac_argmax_5km': 0.062, 'frac_strue_is_max': 0.0}
+U8 CAP12 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.25, 'frac_above_q99': 0.062, 'auc': 0.642, 'frac_argmax_5km': 0.125, 'frac_strue_is_max': 0.062}
+U8 CAP24 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.5, 'frac_above_q99': 0.0, 'auc': 0.693, 'frac_argmax_5km': 0.25, 'frac_strue_is_max': 0.125}
+U8 LOG6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.562, 'frac_above_q99': 0.0, 'auc': 0.659, 'frac_argmax_5km': 0.25, 'frac_strue_is_max': 0.125}
+U8 PREV6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.062, 'frac_above_q99': 0.0, 'auc': 0.518, 'frac_argmax_5km': 0.0, 'frac_strue_is_max': 0.062}
+U8 NOCAP {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.5, 'frac_above_q99': 0.062, 'auc': 0.687, 'frac_argmax_5km': 0.438, 'frac_strue_is_max': 0.188}
+14:43:33 N6 0 299
+14:44:42 N6 100 299
+14:45:51 N6 200 299
+N6 CAP6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.062, 'frac_above_q99': 0.062, 'auc': 0.433, 'frac_argmax_5km': 0.125, 'frac_strue_is_max': 0.125}
+N6 CAP12 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.125, 'frac_above_q99': 0.0, 'auc': 0.609, 'frac_argmax_5km': 0.188, 'frac_strue_is_max': 0.062}
+N6 CAP24 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.375, 'frac_above_q99': 0.0, 'auc': 0.703, 'frac_argmax_5km': 0.188, 'frac_strue_is_max': 0.062}
+N6 LOG6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.438, 'frac_above_q99': 0.062, 'auc': 0.691, 'frac_argmax_5km': 0.25, 'frac_strue_is_max': 0.062}
+N6 PREV6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.062, 'frac_above_q99': 0.0, 'auc': 0.54, 'frac_argmax_5km': 0.125, 'frac_strue_is_max': 0.125}
+N6 NOCAP {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.562, 'frac_above_q99': 0.062, 'auc': 0.722, 'frac_argmax_5km': 0.062, 'frac_strue_is_max': 0.062}
+14:47:03 N4 0 299
+14:47:53 N4 100 299
+14:48:42 N4 200 299
+N4 CAP6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.0, 'frac_above_q99': 0.0, 'auc': 0.426, 'frac_argmax_5km': 0.125, 'frac_strue_is_max': 0.062}
+N4 CAP12 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.125, 'frac_above_q99': 0.0, 'auc': 0.639, 'frac_argmax_5km': 0.0, 'frac_strue_is_max': 0.0}
+N4 CAP24 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.562, 'frac_above_q99': 0.062, 'auc': 0.736, 'frac_argmax_5km': 0.062, 'frac_strue_is_max': 0.0}
+N4 LOG6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.5, 'frac_above_q99': 0.0, 'auc': 0.72, 'frac_argmax_5km': 0.062, 'frac_strue_is_max': 0.062}
+N4 PREV6 {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.0, 'frac_above_q99': 0.0, 'auc': 0.532, 'frac_argmax_5km': 0.0, 'frac_strue_is_max': 0.0}
+N4 NOCAP {'n_events': 16, 'n_null': 222, 'frac_above_q90': 0.562, 'frac_above_q99': 0.125, 'auc': 0.74, 'frac_argmax_5km': 0.0, 'frac_strue_is_max': 0.0}
+C18C_DONE

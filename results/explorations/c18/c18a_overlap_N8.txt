@@ -1,0 +1,5 @@
+N8 M>=2.0: another arrival within 2 s: n 23, fraction |e| <= 0.25: 0.61, median |e| 0.156
+N8 M>=2.0: none within 2 s: n 107, fraction |e| <= 0.25: 0.59, median |e| 0.162
+  phase P: n 51, |e| <= 0.25 0.67, |e| > 0.5 0.16
+  phase S: n 79, |e| <= 0.25 0.54, |e| > 0.5 0.32
+  per station |e|<=0.25: CLC:0.73(26) SRT:0.33(12) CCC:0.50(20) TOW2:0.50(4) LRL:0.24(17) WRC2:0.68(19) WBM:0.75(16) SLA:0.81(16)

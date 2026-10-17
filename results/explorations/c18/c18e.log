@@ -1,0 +1,25 @@
+REAL ladder_4 3100 day 100723 done 15:49:55 116 s (cat 0.3, setup 2.0); err {'S0': 0.127, 'ORA': 0.0, 'S2': 0.058} drawn 20
+REAL ladder_6 3100 day 100723 done 15:52:11 136 s (cat 0.4, setup 2.5); err {'S0': 0.177, 'ORA': 0.0, 'S2': 0.057} drawn 20
+REAL unilateral_c40 3100 day 100723 done 15:54:52 161 s (cat 0.5, setup 3.2); err {'S0': 0.104, 'ORA': 0.0, 'S2': 0.038} drawn 20
+REAL ladder_4 3101 day 100723 done 15:56:42 110 s (cat 0.4, setup 2.2); err {'S0': 0.076, 'ORA': 0.0, 'S2': 0.07} drawn 20
+REAL ladder_6 3101 day 100723 done 15:59:04 142 s (cat 0.3, setup 2.6); err {'S0': 0.098, 'ORA': 0.0, 'S2': 0.04} drawn 20
+REAL unilateral_c40 3101 day 100723 done 16:01:41 158 s (cat 0.5, setup 3.1); err {'S0': 0.106, 'ORA': 0.0, 'S2': 0.042} drawn 20
+REAL ladder_4 3102 day 100723 done 16:03:27 106 s (cat 0.4, setup 2.0); err {'S0': 0.078, 'ORA': 0.0, 'S2': 0.034} drawn 27
+REAL ladder_6 3102 day 100723 done 16:05:45 138 s (cat 0.4, setup 2.7); err {'S0': 0.148, 'ORA': 0.0, 'S2': 0.047} drawn 20
+REAL unilateral_c40 3102 day 100723 done 16:08:20 155 s (cat 0.5, setup 3.1); err {'S0': 0.099, 'ORA': 0.0, 'S2': 0.038} drawn 20
+REAL ladder_4 3103 day 100723 done 16:10:00 101 s (cat 0.4, setup 2.3); err {'S0': 0.147, 'ORA': 0.0, 'S2': 0.055} drawn 27
+REAL ladder_6 3103 day 100723 done 16:12:09 128 s (cat 0.4, setup 2.7); err {'S0': 0.13, 'ORA': 0.0, 'S2': 0.074} drawn 23
+REAL unilateral_c40 3103 day 100723 done 16:14:47 158 s (cat 0.4, setup 3.1); err {'S0': 0.202, 'ORA': 0.0, 'S2': 0.136} drawn 20
+REAL ladder_4 3104 day 100723 done 16:16:30 103 s (cat 0.5, setup 2.0); err {'S0': 0.187, 'ORA': 0.0, 'S2': 0.083} drawn 35
+REAL ladder_6 3104 day 100723 done 16:18:46 136 s (cat 0.5, setup 2.6); err {'S0': 0.212, 'ORA': 0.0, 'S2': 0.085} drawn 25
+REAL unilateral_c40 3104 day 100723 done 16:21:25 159 s (cat 0.5, setup 3.0); err {'S0': 0.192, 'ORA': 0.0, 'S2': 0.161} drawn 22
+REAL ladder_4 3105 day 100723 done 16:23:10 104 s (cat 0.4, setup 1.9); err {'S0': 0.058, 'ORA': 0.0, 'S2': 0.034} drawn 24
+REAL ladder_6 3105 day 100723 done 16:25:18 129 s (cat 0.4, setup 2.9); err {'S0': 0.35, 'ORA': 0.0, 'S2': 0.49} drawn 22
+REAL unilateral_c40 3105 day 100723 done 16:27:46 148 s (cat 0.5, setup 3.0); err {'S0': 0.088, 'ORA': 0.0, 'S2': 0.037} drawn 21
+REAL ladder_4 3106 day 100723 done 16:29:24 99 s (cat 0.6, setup 1.9); err {'S0': 0.208, 'ORA': 0.0, 'S2': 0.078} drawn 42
+REAL ladder_6 3106 day 100723 done 16:31:39 134 s (cat 0.4, setup 2.4); err {'S0': 0.105, 'ORA': 0.0, 'S2': 0.051} drawn 20
+REAL unilateral_c40 3106 day 100723 done 16:34:16 158 s (cat 0.5, setup 3.3); err {'S0': 0.196, 'ORA': 0.0, 'S2': 0.106} drawn 20
+REAL ladder_4 3107 day 100723 done 16:35:54 98 s (cat 0.5, setup 1.8); err {'S0': 0.115, 'ORA': 0.0, 'S2': 0.048} drawn 35
+REAL ladder_6 3107 day 100723 done 16:37:22 88 s (cat 0.2, setup 1.9); err {'S0': 0.158, 'ORA': 0.0, 'S2': 0.106} drawn 21
+REAL unilateral_c40 3107 day 100723 done 16:39:05 102 s (cat 0.3, setup 2.3); err {'S0': 0.196, 'ORA': 0.0, 'S2': 0.075} drawn 20
+C18E_DONE
