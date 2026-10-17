@@ -6819,7 +6819,7 @@ days of the same network and never-used seeds is the natural next test.
 
 Code: `r0/r0_lib.py`, `r0_run.py`, `r0_picks.py`, `r0_analyze.py`, `queue_eval.sh`, `queue_resume.sh`,
 `merge_parts.py`; development log `R0_DEV_LOG.txt`; freeze `R0_FREEZE.txt`; post hoc log
-`R0_DEV_LOG_POSTFREEZE.txt`; outputs `run/analysis_eval.txt`; registration, amendment, freeze and result in
+`R0_DEV_LOG_POSTFREEZE.txt`; output `results/taskR0/analysis_eval.txt`; registration, amendment, freeze and result in
 `PREREGISTRO_1j_1k.txt` (Task R0).
 
 **Data and design.** One continuous hour, 4 July 2019 from 19:00 to 20:00 UTC, of the early aftershock sequence of
@@ -6853,7 +6853,7 @@ rule R0-b was met. The wider tolerance did not help: M6 minus M2 was $+0.000$ [$
 location-only rule the pooled difference was $-0.450$ [$-0.563$, $-0.385$]. Four stations defeated every method. An
 independent recomputation of the point recalls of N8 and N6 with a separate script gave the same values.
 
-**Table Y.90. Task R0, EVAL segment (45 targets of M 2.0 or more), recall at 30 false detections per hour with origin times matched, per subnetwork, and the pooled registered contrast, point [95% block-bootstrap interval].** Output `r0/run/analysis_eval.txt`.
+**Table Y.90. Task R0, EVAL segment (45 targets of M 2.0 or more), recall at 30 false detections per hour with origin times matched, per subnetwork, and the pooled registered contrast, point [95% block-bootstrap interval].** Output `results/taskR0/analysis_eval.txt`.
 
 | Method | N8 | N6 | N4 | U8 |
 |:--|:--|:--|:--|:--|
@@ -6884,133 +6884,6 @@ S2 with T3 against the registered detector gave $-0.006$ [$-0.022$, $+0.014$] an
 the registered corrections $+0.006$ [$+0.000$, $+0.019$]. The contrast with BOMP-PK was completed on N8 only (0.044
 against 0.022) and is declared not done.
 
----
-
-# Appendix Z. Certified Pruning of the Hypothesis Space, and the Role of p4est
-
-Code: `bnb_octree.py`, `bnb_scaling.py`. Appendix V.4 found that an octree refined by score is cheaper
-than a uniform grid and that an observability-based stopping rule never fired. What an exhaustive
-search needs for scale is different: a pruning rule that **cannot** remove a hypothesis that the
-dense search would have accepted, so that speed is never bought with false negatives, and that emits
-events only from exactly evaluated nodes, so that it cannot add false positives.
-
-**The bound.** For a cell of the space-time hypothesis grid with centre $c$, spatial radius $h$ and
-origin-time half-width $\delta\tau$, the eikonal Lipschitz property of C-III gives, for every point
-$x$ of the cell and every branch $b$,
-
-$$\big|t_b(x)-t_b(c)\big|\le h/V_{b,\min},$$
-
-so the residual of every predicted arrival to its nearest pick is at least
-$\max\big(0,\,r_i(c)-h/V_{b,\min}-\delta\tau\big)$. The robust kinematic log-likelihood of Appendix
-Y.5 is a sum of terms that decrease monotonically in the residual, so evaluating it at those reduced
-residuals is an upper bound on its value anywhere in the cell. A cell is discarded only if that bound
-is below the detection threshold; otherwise it is split along its longest index dimension, down to
-the nodes of the dense grid, where the score is evaluated exactly. The certificate covers the
-kinematic likelihood only. Extending it to the polarization likelihood (9d) is not a direct
-consequence: the predicted direction can change abruptly near vertical incidence, the nearest pick
-(and with it the measured polarization) can change inside a cell, and the ratio $f/g$ is not
-monotone. A valid bound must take the maximum of $f/g$ over every direction and pick reachable from
-the cell, and is registered as open work. The pick-free detectors of Appendix Y.10 to Y.12 admit a
-simpler bound, because they need no nearest pick: the moment-tensor certificate is the norm of a
-projection of the peak three-component vectors, and no projector increases a norm, so the energy of
-those vectors in a time window enlarged by $h/V_{b,\min}+\delta\tau$ bounds it over the whole cell;
-the same holds for the ray-geometry detector. That bound is valid and makes the Frank-Wolfe oracle
-of Section 7.5 certifiable, but, as measured below, it is too loose to prune once the Frank-Wolfe
-maxima fall to the noise level; tightening it with the subspaces reachable from the cell remains
-open.
-
-**Verification.** On windows of the consistent generator of Appendix Y.5, with zero to two sources
-and an absolute threshold, the set of grid nodes above threshold and the emitted catalogue were
-compared node by node with the dense search.
-
-| Setting | windows with identical catalogue | dense evaluations | pruned evaluations | reduction |
-|:--|:--|:--|:--|:--|
-| 4 stations, 3 km and 0.1 s | 12 of 12 | 20,925 | 8,864 | 2.4x |
-| 8 stations one-sided, 3 km and 0.1 s | 12 of 12 | 20,925 | 8,668 | 2.4x |
-| 4 stations, 3 km and 0.1 s, fixed threshold | 6 of 6 | 20,925 | 9,040 | 2.3x |
-| 4 stations, 1.5 km and 0.05 s | 6 of 6 | 153,903 | 53,650 | 2.9x |
-| 4 stations, 0.75 km and 0.05 s | 6 of 6 | 594,567 | 197,981 | 3.0x |
-
-The pruning is exact in all 42 windows. The reduction is modest, two to three times in
-evaluations and 1.7 to 2.0 times in wall-clock time, and grows
-slowly with resolution, because in these windows a large part of the hypothesis space lies above a
-threshold calibrated for high recall; it is the price of refusing any pruning that could lose an
-event. Tighter bounds (per-station directional Lipschitz constants, polarization bounds) and a
-best-first order when only the strongest event per cluster is needed are the registered routes to
-larger savings.
-
-**The certified oracle of MT-FW, measured.** Code: `certified_fw.py` (`certified_fw_record`,
-`certified_oracle`, `cell_bounds`, `leaf_enclosure`, `check_bound`); output
-`certified_fw_report.txt`. The energy bound above was implemented inside the greedy MT-FW iteration,
-with best-first search that prunes only cells whose bound is strictly below the incumbent, the tie
-rule, exclusion radius, deflation and record of `fw_record`, and the bound rebuilt from the current
-residual after each deflation, since it uses only the energies of that residual. On 72 windows of the
-generator of Y.12 (pert, weak and strong clutter, random 4 and 6 and one-sided 8 stations, 12 windows
-per cell, seed-999 streams) it returns records bitwise identical to `fw_record` in 72 of 72 windows,
-in three modes: the bound as specified (Lipschitz), the same bound with exact station-to-cell distance
-ranges (box), and a subspace-aware leaf enclosure described below. The bounds are valid: there were no
-violations on 48 residual fields times 300 random cells, raw and after deflation, nor on 1,004,400
-single hypotheses.
-
-**Cost of the certified oracle over the 72 windows (one core).** Exact node evaluations use the call of
-`fw_record` (31 origin times per node). Batched hypotheses: hypotheses whose statistic the enclosure
-recomputes in batch, as a fraction of the dense count. Script `certified_fw.py`; output
-`certified_fw_report.txt`, sections 3 and 4.
-
-| Cell, clutter | exact node evaluations: dense / Lipschitz / box / enclosure | batched hypotheses | wall time: dense / Lipschitz / enclosure |
-|:--|:--|:--|:--|
-| 4 stations, weak | 37,506 / 33,783 / 33,783 / 60 | 0.99 | 7.2 / 25.2 / 1.8 s |
-| 4 stations, strong | 37,632 / 35,285 / 35,285 / 60 | 1.00 | 7.3 / 26.0 / 1.9 s |
-| 6 stations, weak | 37,542 / 36,442 / 36,442 / 60 | 1.00 | 9.4 / 28.6 / 2.2 s |
-| 6 stations, strong | 37,569 / 37,043 / 37,043 / 60 | 1.00 | 9.4 / 28.2 / 2.1 s |
-| one-sided, 8 st., weak | 37,560 / 36,221 / 36,221 / 60 | 1.00 | 10.9 / 32.2 / 2.5 s |
-| one-sided, 8 st., strong | 37,635 / 37,208 / 37,208 / 60 | 1.00 | 11.7 / 32.2 / 2.5 s |
-| total | 225,444 / 215,982 / 215,982 / 360 | 1.00 | 55.9 / 172.3 / 13.1 s |
-
-**The energy bound certifies but does not prune.** As specified it avoids only 4 per cent of the exact
-node evaluations (215,982 of 225,444) and, with its bookkeeping, is 3 times slower than the dense loop
-(172 s against 56 s); the box variant is no better. It prunes only when a strong event sets a high
-incumbent: in the first iteration at four stations 70 per cent of the nodes are still evaluated, and in
-the noise-dominated later iterations 93 to 100 per cent. The median ratio of the cell bound to the true
-cell maximum is 4.99 (Lipschitz) and 4.64 (box). No bound built only from per-block energies can do
-much better, because it must dominate the largest $\|Q^{\mathsf T}\mathbf v\|^2$ over all vectors with
-those block norms, which equals the full energy whenever the six-dimensional subspace contains such a
-vector, while under noise the statistic captures only about a fraction $1/n_s$ of that energy.
-Tightening requires the directions of the candidate vectors.
-
-**The enclosure certifies by vectorization, not by pruning.** On cells of at most 16 nodes the
-statistic of every hypothesis is recomputed in batch from the same argmax and cap tables, and both
-floating-point evaluations of $\|Q^{\mathsf T}\mathbf v\|^2/2$ lie within $60u\|\mathbf v\|^2$
-($u=1.1\times10^{-16}$) of the exact value, so the batch value plus $10^{-11}(\|\mathbf v\|^2+1)$ is a
-certified upper bound on the value `fw_record` computes (measured slack at most $3.5\times10^{-9}$,
-no violations); hypotheses whose sample index or window argmax is not certifiable fall back to the
-energy bound. Only nodes whose enclosure reaches the incumbent are evaluated exactly, and in all 360
-iterations that was exactly one node, the winner: 360 exact node evaluations against 225,444, and 13.1
-s against 55.9 s, 4.3 times faster with identical records. It still recomputes the statistic for
-about 100 per cent of the hypotheses (6.97 million batched evaluations). The gain is certified
-vectorization of the dense search, not pruning of the hypothesis space. Exactness also fixes the unit
-of exact evaluation: BLAS matrix products round a row differently depending on the number of rows in
-the product (last-bit mismatches in 5 to 90 per cent of random trials for subsets of 1 to 16 rows of a
-31-row product), so evaluating a subset of origin times would change the last bits of the scores and
-could flip near-ties; a node, with its 31 hypotheses, is the smallest unit that reproduces
-`fw_record` bit for bit. Pruning that pays in noise-dominated iterations needs cell bounds built from
-the union of the moment-tensor subspaces reachable from a cell and the directions of the candidate peak
-vectors, which remains open.
-
-**Where p4est fits.** p4est provides forests of octrees distributed over many processes, with
-space-filling-curve partitioning and 2:1 balance, and scales to very large adaptive meshes [108]; it
-is also available through PETSc's forest interface. Its justification here is not a pruning gain:
-the kinematic bound saves two to three times in evaluations and 1.7 to 2.0 times in wall-clock time,
-the moment-tensor energy bound almost nothing, and the
-fastest certified oracle for MT-FW evaluates essentially every hypothesis. For a regional window the
-whole hypothesis space fits in the memory of one machine, and the certified oracle runs on it
-directly. p4est is justified by two other needs that arise only at national scale: distributing
-continuous monitoring of a national network over a cluster, each window or region being one tree of
-the forest, and storing and partitioning a hypothesis space and 3-D travel-time tables that no longer
-fit in the memory of one machine. The registered plan is therefore: certified branch-and-bound for the
-kinematic likelihood and the batched enclosure oracle for MT-FW in the confirmatory prototype, and
-p4est only at the stage of national-scale deployment, with the same record-by-record equivalence test
-against the dense search as its acceptance criterion.
 
 ## Y.31 Task 2M: bounded influence with independent real noise (Alto Tiberina, 2010)
 
@@ -7185,6 +7058,134 @@ required, at 30 false detections per hour, a candidate must recall at least 5 of
 pick-based comparator recalled about 0.6 on N8 in EVAL). Candidates for that work are a reading less sensitive to
 coda and S-wave complexity (P-weighted or envelope reading, a higher-frequency matched filter), joint relocation of
 the readings with a coherence check before the grid search, and LOG6 as the statistic.
+
+---
+
+# Appendix Z. Certified Pruning of the Hypothesis Space, and the Role of p4est
+
+Code: `bnb_octree.py`, `bnb_scaling.py`. Appendix V.4 found that an octree refined by score is cheaper
+than a uniform grid and that an observability-based stopping rule never fired. What an exhaustive
+search needs for scale is different: a pruning rule that **cannot** remove a hypothesis that the
+dense search would have accepted, so that speed is never bought with false negatives, and that emits
+events only from exactly evaluated nodes, so that it cannot add false positives.
+
+**The bound.** For a cell of the space-time hypothesis grid with centre $c$, spatial radius $h$ and
+origin-time half-width $\delta\tau$, the eikonal Lipschitz property of C-III gives, for every point
+$x$ of the cell and every branch $b$,
+
+$$\big|t_b(x)-t_b(c)\big|\le h/V_{b,\min},$$
+
+so the residual of every predicted arrival to its nearest pick is at least
+$\max\big(0,\,r_i(c)-h/V_{b,\min}-\delta\tau\big)$. The robust kinematic log-likelihood of Appendix
+Y.5 is a sum of terms that decrease monotonically in the residual, so evaluating it at those reduced
+residuals is an upper bound on its value anywhere in the cell. A cell is discarded only if that bound
+is below the detection threshold; otherwise it is split along its longest index dimension, down to
+the nodes of the dense grid, where the score is evaluated exactly. The certificate covers the
+kinematic likelihood only. Extending it to the polarization likelihood (9d) is not a direct
+consequence: the predicted direction can change abruptly near vertical incidence, the nearest pick
+(and with it the measured polarization) can change inside a cell, and the ratio $f/g$ is not
+monotone. A valid bound must take the maximum of $f/g$ over every direction and pick reachable from
+the cell, and is registered as open work. The pick-free detectors of Appendix Y.10 to Y.12 admit a
+simpler bound, because they need no nearest pick: the moment-tensor certificate is the norm of a
+projection of the peak three-component vectors, and no projector increases a norm, so the energy of
+those vectors in a time window enlarged by $h/V_{b,\min}+\delta\tau$ bounds it over the whole cell;
+the same holds for the ray-geometry detector. That bound is valid and makes the Frank-Wolfe oracle
+of Section 7.5 certifiable, but, as measured below, it is too loose to prune once the Frank-Wolfe
+maxima fall to the noise level; tightening it with the subspaces reachable from the cell remains
+open.
+
+**Verification.** On windows of the consistent generator of Appendix Y.5, with zero to two sources
+and an absolute threshold, the set of grid nodes above threshold and the emitted catalogue were
+compared node by node with the dense search.
+
+| Setting | windows with identical catalogue | dense evaluations | pruned evaluations | reduction |
+|:--|:--|:--|:--|:--|
+| 4 stations, 3 km and 0.1 s | 12 of 12 | 20,925 | 8,864 | 2.4x |
+| 8 stations one-sided, 3 km and 0.1 s | 12 of 12 | 20,925 | 8,668 | 2.4x |
+| 4 stations, 3 km and 0.1 s, fixed threshold | 6 of 6 | 20,925 | 9,040 | 2.3x |
+| 4 stations, 1.5 km and 0.05 s | 6 of 6 | 153,903 | 53,650 | 2.9x |
+| 4 stations, 0.75 km and 0.05 s | 6 of 6 | 594,567 | 197,981 | 3.0x |
+
+The pruning is exact in all 42 windows. The reduction is modest, two to three times in
+evaluations and 1.7 to 2.0 times in wall-clock time, and grows
+slowly with resolution, because in these windows a large part of the hypothesis space lies above a
+threshold calibrated for high recall; it is the price of refusing any pruning that could lose an
+event. Tighter bounds (per-station directional Lipschitz constants, polarization bounds) and a
+best-first order when only the strongest event per cluster is needed are the registered routes to
+larger savings.
+
+**The certified oracle of MT-FW, measured.** Code: `certified_fw.py` (`certified_fw_record`,
+`certified_oracle`, `cell_bounds`, `leaf_enclosure`, `check_bound`); output
+`certified_fw_report.txt`. The energy bound above was implemented inside the greedy MT-FW iteration,
+with best-first search that prunes only cells whose bound is strictly below the incumbent, the tie
+rule, exclusion radius, deflation and record of `fw_record`, and the bound rebuilt from the current
+residual after each deflation, since it uses only the energies of that residual. On 72 windows of the
+generator of Y.12 (pert, weak and strong clutter, random 4 and 6 and one-sided 8 stations, 12 windows
+per cell, seed-999 streams) it returns records bitwise identical to `fw_record` in 72 of 72 windows,
+in three modes: the bound as specified (Lipschitz), the same bound with exact station-to-cell distance
+ranges (box), and a subspace-aware leaf enclosure described below. The bounds are valid: there were no
+violations on 48 residual fields times 300 random cells, raw and after deflation, nor on 1,004,400
+single hypotheses.
+
+**Cost of the certified oracle over the 72 windows (one core).** Exact node evaluations use the call of
+`fw_record` (31 origin times per node). Batched hypotheses: hypotheses whose statistic the enclosure
+recomputes in batch, as a fraction of the dense count. Script `certified_fw.py`; output
+`certified_fw_report.txt`, sections 3 and 4.
+
+| Cell, clutter | exact node evaluations: dense / Lipschitz / box / enclosure | batched hypotheses | wall time: dense / Lipschitz / enclosure |
+|:--|:--|:--|:--|
+| 4 stations, weak | 37,506 / 33,783 / 33,783 / 60 | 0.99 | 7.2 / 25.2 / 1.8 s |
+| 4 stations, strong | 37,632 / 35,285 / 35,285 / 60 | 1.00 | 7.3 / 26.0 / 1.9 s |
+| 6 stations, weak | 37,542 / 36,442 / 36,442 / 60 | 1.00 | 9.4 / 28.6 / 2.2 s |
+| 6 stations, strong | 37,569 / 37,043 / 37,043 / 60 | 1.00 | 9.4 / 28.2 / 2.1 s |
+| one-sided, 8 st., weak | 37,560 / 36,221 / 36,221 / 60 | 1.00 | 10.9 / 32.2 / 2.5 s |
+| one-sided, 8 st., strong | 37,635 / 37,208 / 37,208 / 60 | 1.00 | 11.7 / 32.2 / 2.5 s |
+| total | 225,444 / 215,982 / 215,982 / 360 | 1.00 | 55.9 / 172.3 / 13.1 s |
+
+**The energy bound certifies but does not prune.** As specified it avoids only 4 per cent of the exact
+node evaluations (215,982 of 225,444) and, with its bookkeeping, is 3 times slower than the dense loop
+(172 s against 56 s); the box variant is no better. It prunes only when a strong event sets a high
+incumbent: in the first iteration at four stations 70 per cent of the nodes are still evaluated, and in
+the noise-dominated later iterations 93 to 100 per cent. The median ratio of the cell bound to the true
+cell maximum is 4.99 (Lipschitz) and 4.64 (box). No bound built only from per-block energies can do
+much better, because it must dominate the largest $\|Q^{\mathsf T}\mathbf v\|^2$ over all vectors with
+those block norms, which equals the full energy whenever the six-dimensional subspace contains such a
+vector, while under noise the statistic captures only about a fraction $1/n_s$ of that energy.
+Tightening requires the directions of the candidate vectors.
+
+**The enclosure certifies by vectorization, not by pruning.** On cells of at most 16 nodes the
+statistic of every hypothesis is recomputed in batch from the same argmax and cap tables, and both
+floating-point evaluations of $\|Q^{\mathsf T}\mathbf v\|^2/2$ lie within $60u\|\mathbf v\|^2$
+($u=1.1\times10^{-16}$) of the exact value, so the batch value plus $10^{-11}(\|\mathbf v\|^2+1)$ is a
+certified upper bound on the value `fw_record` computes (measured slack at most $3.5\times10^{-9}$,
+no violations); hypotheses whose sample index or window argmax is not certifiable fall back to the
+energy bound. Only nodes whose enclosure reaches the incumbent are evaluated exactly, and in all 360
+iterations that was exactly one node, the winner: 360 exact node evaluations against 225,444, and 13.1
+s against 55.9 s, 4.3 times faster with identical records. It still recomputes the statistic for
+about 100 per cent of the hypotheses (6.97 million batched evaluations). The gain is certified
+vectorization of the dense search, not pruning of the hypothesis space. Exactness also fixes the unit
+of exact evaluation: BLAS matrix products round a row differently depending on the number of rows in
+the product (last-bit mismatches in 5 to 90 per cent of random trials for subsets of 1 to 16 rows of a
+31-row product), so evaluating a subset of origin times would change the last bits of the scores and
+could flip near-ties; a node, with its 31 hypotheses, is the smallest unit that reproduces
+`fw_record` bit for bit. Pruning that pays in noise-dominated iterations needs cell bounds built from
+the union of the moment-tensor subspaces reachable from a cell and the directions of the candidate peak
+vectors, which remains open.
+
+**Where p4est fits.** p4est provides forests of octrees distributed over many processes, with
+space-filling-curve partitioning and 2:1 balance, and scales to very large adaptive meshes [108]; it
+is also available through PETSc's forest interface. Its justification here is not a pruning gain:
+the kinematic bound saves two to three times in evaluations and 1.7 to 2.0 times in wall-clock time,
+the moment-tensor energy bound almost nothing, and the
+fastest certified oracle for MT-FW evaluates essentially every hypothesis. For a regional window the
+whole hypothesis space fits in the memory of one machine, and the certified oracle runs on it
+directly. p4est is justified by two other needs that arise only at national scale: distributing
+continuous monitoring of a national network over a cluster, each window or region being one tree of
+the forest, and storing and partitioning a hypothesis space and 3-D travel-time tables that no longer
+fit in the memory of one machine. The registered plan is therefore: certified branch-and-bound for the
+kinematic likelihood and the batched enclosure oracle for MT-FW in the confirmatory prototype, and
+p4est only at the stage of national-scale deployment, with the same record-by-record equivalence test
+against the dense search as its acceptance criterion.
 
 ---
 
@@ -7894,7 +7895,7 @@ cross-Gram terms decay with the separation of arrival times at the pulse's rate,
 The results assume that the operator is right. Model error (velocity, statics, amplitude factors,
 polarization deviations, the D7 gap between generator and operator) enters as a deterministic term in
 $\mathbf w$ that is not small relative to $\lambda$ at high frequency, and neither Proposition AA.6(a) nor
-Conjecture AA.1 covers it; the cap (D2), which the theory treats only as a deviation, bounds the influence
+Conjecture AA.1 covers it; the cap (D2), which AA.2 to AA.7 treat only as a deviation and AA.9 treats directly, bounds the influence
 of each station and phase block and is what protects the implemented statistic against amplitude model
 error in dense sequences (Appendices Y.24, Y.25); the measured degradation in the "pert" condition of Y.11 is evidence, not
 theory. Statics larger than the search half-width $w$ break the peak-vector model entirely (Y.11); the
@@ -7918,3 +7919,95 @@ a posteriori certificate AA.4(d) (with $S=0$, or after a refit on the dictionary
 way to measure how far it is from one. Finally, nothing
 here bounds false events in windows that contain events, which is what the FROC endpoint counts.
 
+## AA.9 The deployed statistics: influence of one station and saturation
+
+The results of AA.2 to AA.7 concern the convex problem $(P_\lambda)$, which Task 2E refuted as a detector. The
+statistics that were confirmed or tested on real data are of a simpler kind: a radial transform of each station and
+phase block of peak vectors, followed by the projection on the moment-tensor subspace. This section states what can be
+proved about them with elementary tools, and connects it to the measurements of Tasks 2F, 2I, 2M and exploration C18.
+
+**Setting.** At a hypothesis $h=(\mathbf x,\tau)$ the detector reads, for each phase $b\in\{P,S\}$ and station
+$i=1,\dots,n_s$, a peak vector $\mathbf v_k\in\mathbb R^3$, $k=(b,i)$, of the normalized matched-filter output (the
+sample of largest energy within $\pm W$ of the predicted time). Stack them into $\mathbf v\in\mathbb R^{6n_s}$. Let
+$Q_h\in\mathbb R^{6n_s\times 6}$ have orthonormal or zero columns spanning the radiation subspace of the node (the left
+singular vectors of the radiation operator, `c9_lib.bases`). For a map
+$\phi:\mathbb R^3\to\mathbb R^3$ applied block by block, the score is
+$$s_\phi(h)=\tfrac12\,\|Q_h^{\mathsf T}\phi(\mathbf v)\|^2,\qquad \phi(\mathbf v)=(\phi(\mathbf v_1),\dots,\phi(\mathbf v_{2n_s})).$$
+Three radial maps are used, each of the form $\phi(\mathbf x)=r(\|\mathbf x\|)\,\mathbf x/\|\mathbf x\|$:
+the identity $r(t)=t$ (the energies of BOMP-PK, "uncapped"); the cap $r_c(t)=\min(t,c)$ (MT-FW, $c=6$ noise
+deviations); and the logarithmic compression $\ell_c(t)=c\sqrt{\log(1+t^2/c^2)}$ (LOG6, $c=6$, exploration C18). The
+Huber statistic HUBER-N is an M-estimator fit, not a radial map, and is not covered here.
+
+**Lemma AA.9.1 (contraction).** For any $\mathbf a,\mathbf b\in\mathbb R^{6n_s}$,
+$\big|\,\|Q_h^{\mathsf T}\mathbf a\|-\|Q_h^{\mathsf T}\mathbf b\|\,\big|\le\|\mathbf a-\mathbf b\|$, and
+$\|Q_h^{\mathsf T}\mathbf a\|\le\|\mathbf a\|$.
+
+*Proof.* $Q_h^{\mathsf T}Q_h$ is diagonal with entries 0 or 1, so $Q_hQ_h^{\mathsf T}$ is an orthogonal projector and
+$\|Q_h^{\mathsf T}\mathbf a\|^2=\mathbf a^{\mathsf T}Q_hQ_h^{\mathsf T}\mathbf a\le\|\mathbf a\|^2$. Apply this to
+$\mathbf a-\mathbf b$ and use the reverse triangle inequality. $\square$
+
+**Proposition AA.9.2 (influence of one station and phase).** Let $\mathbf v$ and $\mathbf v'$ differ only in block
+$k$, and write $\sigma_\phi=\sqrt{2s_\phi}$. Then
+$$|\sigma_\phi(\mathbf v)-\sigma_\phi(\mathbf v')|\le r(\|\mathbf v_k\|)+r(\|\mathbf v_k'\|).$$
+Hence (a) for the cap the change is at most $2c$, whatever the amplitude of the block; (b) for the logarithmic map,
+if both blocks have norm at most $M$, the change is at most $2c\sqrt{\log(1+M^2/c^2)}$; (c) for the identity the
+change is not bounded.
+
+*Proof.* By Lemma AA.9.1, $|\sigma_\phi(\mathbf v)-\sigma_\phi(\mathbf v')|\le\|\phi(\mathbf v)-\phi(\mathbf v')\|
+=\|\phi(\mathbf v_k)-\phi(\mathbf v'_k)\|\le\|\phi(\mathbf v_k)\|+\|\phi(\mathbf v'_k)\|$, and
+$\|\phi(\mathbf x)\|=r(\|\mathbf x\|)$. Parts (a) and (b) follow from $r_c\le c$ and the monotonicity of
+$\ell_c$. For (c), let $\mathbf v'_k=0$ and $\mathbf v=\mathbf v'+\mathbf e$, with $\mathbf e$ zero outside block $k$ and
+$\|Q_h^{\mathsf T}\hat{\mathbf e}\|=\gamma>0$ for its direction $\hat{\mathbf e}$ (possible whenever block $k$ is not
+orthogonal to the subspace). Then $\sigma(\mathbf v)-\sigma(\mathbf v')\ge\gamma\|\mathbf e\|-2\|Q_h^{\mathsf T}\mathbf v'\|$,
+which grows linearly with $\|\mathbf e\|$. $\square$
+
+*Numbers.* A digital or cultural transient at one station of $M=12{,}500$ noise deviations, the largest the
+verification of Task 2M found, can move $\sigma$ by at most $12$ with the cap, by at most
+$2\cdot6\sqrt{\log(1+(12500/6)^2)}\approx47$ with the logarithmic map, and by up to $12{,}500$ without a bound. A
+real event at the detection threshold of Task 2M has $\sigma$ of order $\sqrt{2\cdot75}\approx12$ (the median
+threshold of the capped detector at $0.25$ false events per window was about $75$ in score units), so one such
+transient decides the ranking of an uncapped hypothesis and cannot decide that of a capped one by itself. This is the
+mechanism behind Tasks 2F, 2I and 2M and behind the collapse of BOMP-PK in the daytime hours of the 2M primary day
+(Appendix Y.31): the realized false events of BOMP-PK there come from one or two stations at a time.
+
+**Proposition AA.9.3 (saturation of the capped score).** For every hypothesis $s_{r_c}(h)\le n_bc^2/2$, with
+$n_b=2n_s$ the number of blocks. If every block read at $h$ has $\|\mathbf v_k\|\ge c$, then
+$$s_{r_c}(h)=\tfrac{c^2}2\,\|Q_h^{\mathsf T}\mathbf u\|^2,\qquad \mathbf u=(\mathbf v_1/\|\mathbf v_1\|,\dots,
+\mathbf v_{n_b}/\|\mathbf v_{n_b}\|),$$
+which does not depend on the amplitudes. Consequently, if a background hypothesis $h'$ (no event at $h'$) has all its
+blocks at or above the cap and directions with $\|Q_{h'}^{\mathsf T}\mathbf u'\|\ge\|Q_h^{\mathsf T}\mathbf u\|$,
+then $s_{r_c}(h')\ge s_{r_c}(h)$ for an event at $h$ of any magnitude whose blocks are also saturated.
+
+*Proof.* $\|r_c(\mathbf v)\|^2=\sum_k\min(\|\mathbf v_k\|,c)^2\le n_bc^2$, and Lemma AA.9.1 gives the bound. When
+every block is saturated, $r_c(\mathbf v_k)=c\,\mathbf v_k/\|\mathbf v_k\|$, so $r_c(\mathbf v)=c\mathbf u$. The
+comparison follows from the formula. $\square$
+
+In a quiet window the bound is not reached: only the blocks of a real event exceed the cap, and its score separates
+from the background. In a continuous aftershock sequence, where coda and small events put energy above the cap at
+most stations in most windows, every hypothesis is scored by the directions of its peak vectors alone, and a
+magnitude 2.5 event has no amplitude advantage over the many saturated background hypotheses that the grid offers.
+Exploration C18 measured exactly this on the development segment of the Ridgecrest hour: at the true hypocentre the
+capped score of a real event did not exceed the maxima of event-free windows (AUC 0.39 to 0.49), while the uncapped
+score did (0.69 to 0.74).
+
+**Proposition AA.9.4 (the logarithmic map keeps the amplitude ordering).** Let an event contribute blocks
+$\mathbf v_k=a\,\mathbf w_k$, $a>0$, with $\|\mathbf w_k\|=\omega$ for all $k$. Then
+$$s_{\ell_c}(a)=\tfrac{c^2}2\log\!\Big(1+\frac{a^2\omega^2}{c^2}\Big)\,\|Q_h^{\mathsf T}\hat{\mathbf w}\|^2,\qquad
+\hat{\mathbf w}=\mathbf w/\omega,$$
+which is strictly increasing and unbounded in $a$ whenever $Q_h^{\mathsf T}\hat{\mathbf w}\ne0$, whereas
+$s_{r_c}(a)$ is constant for $a\ge c/\omega$.
+
+*Proof.* With equal block norms the radial map multiplies every block by the same factor
+$\ell_c(a\omega)/(a\omega)$, so $\ell_c(\mathbf v)=\ell_c(a\omega)\hat{\mathbf w}$ and the formula follows; the cap
+gives $r_c(a\omega)\hat{\mathbf w}=c\hat{\mathbf w}$ for $a\omega\ge c$. $\square$
+
+The equal-norm hypothesis is restrictive (real events have unequal amplitudes across stations), and nothing here
+orders the logarithmic and capped scores for general inputs, because a block-diagonal rescaling need not change
+$\|Q_h^{\mathsf T}\cdot\|$ monotonically. The propositions describe a trade-off rather than an optimum: a bounded
+transform protects against transients (AA.9.2) and saturates in dense seismicity (AA.9.3); a transform with slowly
+growing, unbounded radius keeps part of each property. Exploration C18 found that LOG6 kept the robustness of the cap
+to real-noise transients within $-0.015$ [$-0.099$, $+0.043$] and restored most of the ranking of real events, but
+neither statistic located the Ridgecrest events, which is a failure of the peak readings, not of the transform.
+What remains open is a statement on the false-alarm tail of these scores under the peak search: the maximum over
+$\pm W$ samples and over the grid makes the null law of $s_\phi$ a maximum of dependent, non-Gaussian quantities, and
+only the conformal calibration of Proposition AA.5(c) applies to it without further assumptions.

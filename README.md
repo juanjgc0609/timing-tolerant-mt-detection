@@ -8,8 +8,9 @@ confirmatory and exploratory analyses with their outputs, and the first test on 
 
 ## Status in one paragraph
 
-On synthetic data, in eight preregistered and independently verified tasks, the timing-tolerant moment-tensor
-detectors beat GaMMA, PyOcto and QuakeMigrate by 0.09 to 0.49 in event recall at equal realized false-event rates;
+On synthetic data, in eight preregistered tasks (five of them, 2A, 2E, 2F, 2I and 2L, independently verified), the
+timing-tolerant moment-tensor detectors beat GaMMA, PyOcto and QuakeMigrate by 0.09 to 0.49 in event recall at equal
+realized false-event rates in Task 2A (Tasks 2C and 2D compared them with QuakeMigrate only);
 bounding the influence of each station (a per-station cap or a noise-scaled Huber fit) added 0.04 to 0.07 in dense
 sequences (G1-R); and station terms estimated without picks added about 0.06 in origin-time-matched recall (G1-C). An
 exploration that injected synthetic events into real noise strengthened G1-R. The first registered test on real data,
