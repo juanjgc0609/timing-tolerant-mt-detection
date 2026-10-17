@@ -34,12 +34,36 @@ with the station inventory `inv.IV`, `stations.list` and the TABOO catalogue `te
 cite the network and the PyMPA authors when publishing.
 
 ```bash
-git clone --depth 1 --filter=blob:none --sparse https://github.com/avuan/PyMPA37.git
-cd PyMPA37 && git sparse-checkout set main.pympa.dir/24h
+git clone --filter=blob:none --sparse https://github.com/avuan/PyMPA37.git
+cd PyMPA37 && git checkout 4a14b134afec3c1f527b738ca3bae4cdc7cbbbf6
+git sparse-checkout set main.pympa.dir/24h input.calculate_ttimes.dir input.download_data.dir
+cd .. && mkdir -p realdata/pympa37_altotiberina_100723 realdata/pympa37_days
+cp PyMPA37/main.pympa.dir/24h/100723.* PyMPA37/main.pympa.dir/200.100723.cat PyMPA37/main.pympa.dir/templates.zmap \
+   PyMPA37/LICENSE PyMPA37/input.calculate_ttimes.dir/inv.IV PyMPA37/input.calculate_ttimes.dir/aquila_kato.tvel \
+   PyMPA37/input.download_data.dir/stations.list realdata/pympa37_altotiberina_100723/
+for f in $(awk '{print $2}' data/checksums/altotiberina_other_days_task2M.sha256); do
+  cp PyMPA37/main.pympa.dir/24h/$f realdata/pympa37_days/; done
+(cd realdata/pympa37_altotiberina_100723 && sha256sum -c ../../data/checksums/altotiberina_20100723_C16.sha256)
+(cd realdata/pympa37_days && sha256sum -c ../../data/checksums/altotiberina_other_days_task2M.sha256)
+cp data/checksums/altotiberina_other_days_task2M.sha256 realdata/pympa37_days.sha256
 ```
 
-C16 expects the day 2010-07-23 in `/home/claude/realdata/pympa37_altotiberina_100723/` and Task 2M the other days in
-`/home/claude/realdata/pympa37_days/`; check with the files in `checksums/`.
+The catalogue used is `main.pympa.dir/templates.zmap`; the copies of `templates.zmap` in the `input.*` folders of
+PyMPA37 are a different file. C16 expects the day 2010-07-23 in `/home/claude/realdata/pympa37_altotiberina_100723/`
+and Task 2M the other days in `/home/claude/realdata/pympa37_days/`, with the list of checksums of the latter at
+`/home/claude/realdata/pympa37_days.sha256` (it is part of the Task 2M freeze).
+
+## Hi-net swarm (held out for a future registered real test)
+
+Fukushima-Yamagata swarm of 2 September 2012, 33 min 20 s of continuous three-component data at seven Hi-net
+stations, with 14 JMA events (`catalog.dat`), from `Geolab-USTC/MatchLocate2`, commit
+`bac5ccb00816a4ec0aaab215ea1c342c730d412f`, folder `example/` (GPL-3.0; NIED Hi-net data). Its waveforms have not been
+read by any analysis of this project; it is kept as unseen data for the registered real test that follows R0.
+
+```bash
+git clone --depth 1 --filter=blob:none --sparse https://github.com/Geolab-USTC/MatchLocate2.git
+cd MatchLocate2 && git sparse-checkout set example
+```
 
 ## Pickers and associators
 
