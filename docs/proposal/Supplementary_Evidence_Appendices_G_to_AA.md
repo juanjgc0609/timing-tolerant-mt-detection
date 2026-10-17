@@ -6989,7 +6989,7 @@ narrow.
 ## Y.32 After R0: what fails on real data (exploration C18)
 
 Code: `explore_contrib/c18_tt.py`, `c18a_timing.py`, `c18a_overlap.py`, `c18b_oracle.py`, `c18c_oracle.py`,
-`c18d_detect.py`, `c18d_analyze.py`, `c18e_run.py`, `c18e_analyze.py`, `c18f_run.py`, `c18f_analyze.py`; outputs in
+`c18d_detect.py`, `c18d_analyze.py`, `c18e_run.py`, `c18e_analyze.py`, `c18f_run.py`, `c18f_analyze.py`, `c18g_oracle.py`; outputs in
 `results/explorations/c18/`.
 Exploratory. C18a to C18d use only the first 15 minutes of the Ridgecrest hour (CAL, origins before 19:15), which
 served for development and station terms in R0 and was never part of an evaluation; the evaluated segment of R0 is
@@ -7049,6 +7049,13 @@ with the origin time required +0.015 [-0.022, +0.060]. A cap of 24 gives up most
 -0.014] against the cap 6); the logarithmic compression keeps nearly all of it while restoring most of the ranking of
 real events lost by the cap.
 
+**C18g: down-weighting the S readings makes it worse.** As a first candidate for the registered gate, the oracle of
+C18c was repeated with the S peak vectors weighted by 0.5 or removed, since C18a found the S readings the least
+predictable. Both lose: with the cap the AUC falls from 0.39-0.49 to 0.23-0.32 (S weighted 0.5) and 0.17-0.24 (P only),
+with LOG6 from 0.66-0.72 to 0.46-0.55 and 0.24-0.33, and the window maximum is never within 5 km of the event once the S
+blocks are down-weighted. The S arrivals, though poorly timed, carry most of the evidence; the reading has to be made
+more reliable, not discounted.
+
 **C18f: the advantage belongs to the bound, not to the pursuit.** The fifth independent audit asked whether Task 2M
 measured an advantage over BOMP-PK as such or over a comparator without any per-station robustness. On the same 384
 dense windows as C18e, two robust versions of the comparator were run: BOMP-PK whose block energies are computed
@@ -7071,7 +7078,7 @@ registered real test would spend unseen data on a detector that is expected to f
 unseen, and the gate for registering the next real test is set in advance: on Ridgecrest CAL, with origin times
 required, at 30 false detections per hour, a candidate must recall at least 5 of the 16 events on N8 or U8 (R0's best
 pick-based comparator recalled about 0.6 on N8 in EVAL). Candidates for that work are a reading less sensitive to
-coda and S-wave complexity (P-weighted or envelope reading, a higher-frequency matched filter), joint relocation of
+coda and S-wave complexity (an envelope reading or a higher-frequency matched filter; down-weighting S fails, C18g), joint relocation of
 the readings with a coherence check before the grid search, and LOG6 as the statistic.
 
 ---

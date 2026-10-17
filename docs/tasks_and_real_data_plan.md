@@ -2266,7 +2266,8 @@ with cap minus BOMP-PK with cap +0.026 [-0.009, +0.081]); per-station normalisat
 **Gate for the next registered real test (fixed before any further development).** On Ridgecrest CAL, with origin
 time required, at 30 false detections per hour, a candidate must recall at least 5 of the 16 events of M >= 2 on N8 or
 U8. Only then is a test registered on the Hi-net swarm of MatchLocate2, whose waveforms remain unread. Candidates: a
-reading less sensitive to coda and S complexity (P-weighted or envelope reading, higher-frequency matched filter),
+reading less sensitive to coda and S complexity (envelope reading, higher-frequency matched filter; down-weighting S
+was tried and fails, C18g),
 joint relocation of the readings with a coherence check before the grid search, and LOG6 as the statistic.
 
 ---
