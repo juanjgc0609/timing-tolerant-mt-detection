@@ -3552,7 +3552,12 @@ chosen on the evaluation windows, as in Tasks 2A and 2B. The replication over th
 MT-FW+SC, QM-3C+SC, BOMP+SC and MTSTACK+SC; the pick-based associators, rule 2A-e and the ablation of
 Task 2B were not repeated over thirty networks. The data are the synthetic generator of Y.14, with
 double-couple sources inside the moment-tensor subspace of the detector, and MALMI [110], the stacking
-of [112], real noise and real data remain untested.
+of [112], real noise and real data remain untested. An independent code audit found later that "exact predicted times" means the
+floor of the predicted sample, not the nearest one (error E52): with no timing error a reader at the floor sample keeps
+on average 0.78 of the energy of a 2 Hz arrival (worst case 0.42), against 0.94 at the nearest sample. The exact-time
+comparators of this task, the convex problem of rule 2C-b and the MT-FW-EX ablation of Task 2D are handicapped by that
+detail, which inflates the measured value of the peak search; the decisions very probably stand, since the timing
+error of the 3 km grid is already 0.1 to 0.3 s, but the cells were not re-run with rounding.
 
 ### Y.20a What Task 2C changes
 
@@ -6851,7 +6856,11 @@ was interrupted by a container restart with N8 complete and resumed with the fro
 pooled difference was $-0.383$ [$-0.481$, $-0.310$], so neither the non-inferiority rule R0-a nor the per-subnetwork
 rule R0-b was met. The wider tolerance did not help: M6 minus M2 was $+0.000$ [$-0.016$, $+0.019$]. Under the
 location-only rule the pooled difference was $-0.450$ [$-0.563$, $-0.385$]. Four stations defeated every method. An
-independent recomputation of the point recalls of N8 and N6 with a separate script gave the same values.
+independent recomputation of the point recalls of N8 and N6 with a separate script gave the same values. The corrected
+picks of the comparators were mis-specified (error E54, found later by an independent code audit): the corrections
+are delays of matched-filter energy peaks, and subtracting them from PhaseNet onset picks also subtracts the lag of
+the peak behind the onset, about 0.4 to 0.6 s for S. BESTPICK takes the best of the raw and corrected arms, so the
+decision is unaffected; the corrected arms read alone are biased.
 
 **Table Y.90. Task R0, EVAL segment (45 targets of M 2.0 or more), recall at 30 false detections per hour with origin times matched, per subnetwork, and the pooled registered contrast, point [95% block-bootstrap interval].** Output `results/taskR0/analysis_eval.txt`.
 
@@ -7119,6 +7128,16 @@ selection effect that only the registered test on unseen data can remove; and th
 influence of any station, which is the opposite of what Task 2M confirmed on real noise. On real seismicity with the
 timing corrected, amplitude evidence matters more than robustness, as Proposition AA.9.3 predicts for a saturating
 statistic.
+
+**Two qualifications from the independent code audit.** First, the station terms of every C18 reading on CAL were
+estimated on the same 16 events that are then counted (error E53). Re-estimating them for each window without the
+events that window can hit, the candidate still recalls 5 of 16 on U8 and falls from 4 to 2 on N8, and the LOG6
+readings fall by 0 to 2 events; removing every event inside the window as well gives 1 of 16 on U8. The gate is
+therefore met under the proper held-out estimate but only exactly at its threshold, and the in-sample readings above
+are optimistic by up to two events. Second, the 3 Hz runs changed the kernel of the matched filter but not the pulse
+shape used to deflate each accepted atom, and C18h differs from C18i and C18j in that shape (error E51): the 3 Hz
+readings move by one event when only the import order changes and are not comparable with each other. The 2 Hz runs,
+including the gate candidate, are not affected.
 
 **What follows.** R0 failed for a reason that is now measured: station terms truncated at 1 s, a homogeneous medium and a
 capped score each removed part of the evidence, and only together do their corrections bring the pick-free detector to

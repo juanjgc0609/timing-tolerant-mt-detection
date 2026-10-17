@@ -1061,3 +1061,131 @@ twenty configurations were tried on the same 16 events, so passing the gate carr
 the candidate does not bound the influence per station (the opposite of G1-R). The test on the Hi-net swarm is
 not registered yet: its design (published 1-D model for the region, Hi-net preprocessing, comparators, CAL/EVAL
 split of the 14 JMA events) is left as a draft for the author's decision, because it uses the last unseen data.
+
+Task R1 (Sat Oct 17 18:49:11 UTC 2026, wall-clock time), written before any detector, picker or
+associator reads the waveforms of the Hi-net swarm (only the file list, checksums, SAC header metadata,
+catalog.dat, DetectedFinal.dat, the README and the first lines of INPUT.in have been opened). Its SHA-256
+is delivered to the user through the chat. Author decisions of 17 October 2026: (1) ground truth with
+both catalogues, (2) a published 1-D model of the region, (3) horizontal components as recorded, (4) the
+decision rule, which the author asked to validate; the validation changed (1) and (4) as stated below.
+Origin. The gate of 16 October was met on the Ridgecrest development segment (C18j: layered medium, station
+terms read over +-2 s, 2 Hz, MT-FW without cap, 4 and 5 of 16 events). On the same segment (development only,
+hyb/hyb_dev2.py, hyb/hyb_comp.py) the pick-based comparators given the same layered model and pick-based
+station terms recalled 13 of 16 on N8 and U8 at 30 false detections per hour with origin time, far above the
+pick-free detector, and a hybrid that adds pick-free candidates to the best associator and scores every
+candidate by the PhaseNet picks it explains recalled 14 and 13 of 16 (and 12 against 10 of 16 on U8 at 10 per
+hour). R1 tests that hybrid, not the pick-free detector alone, against the associator it extends.
+Question. On unseen data, does adding moment-tensor pick-free candidates to a pick-based associator,
+with every candidate scored by the PhaseNet picks it explains, recall more catalogued events at the same
+false-detection rate than the associator alone, both given the same velocity model and station terms?
+Data. Geolab-USTC/MatchLocate2, commit bac5ccb00816a4ec0aaab215ea1c342c730d412f, example/: continuous 100 Hz
+three-component Hi-net records of 7 stations (ATKH, INWH, NAZH, ONIH, THTH, TSTH, YNZH), 2012-09-02 03:20:00 to
+03:53:20 UTC, Fukushima-Yamagata swarm; sha256 in data/checksums/hinet_matchlocate2_example.sha256. Catalogues:
+14 JMA events (catalog.dat, M 2.1 to 3.2) and 140 Match&Locate detections (MultipleTemplate/DetectedFinal.dat,
+relative magnitude -0.41 to 3.2, including the JMA events), with location and origin time.
+Segments. CAL = origins before 03:34:00 (840 s; development, station terms, choice of the associator
+configuration); EVAL = origins from 03:34:00 to 03:53:20 minus 40 s at the end. Development before
+the freeze only on CAL (units, polarity, alignment, cost, that the methods find CAL events); no
+constant is tuned for recall except the registered choice of the associator configuration below.
+Truth and targets (decision 1, revised by the validation). Truth list = the Match&Locate
+detections (they contain the JMA events). Targets = truth events in EVAL with relative magnitude
+>= 0.5 (about 55 events by the catalogue alone); a detection that hits only a truth event of
+magnitude < 0.5 is neutral; one that hits nothing is false. The JMA-only reading (10 EVAL events)
+is descriptive: the simulation below shows that with 9 to 14 events no rule has a false-positive
+rate within 2.5 % and useful power, so it cannot be primary. Limitation declared: the Match&Locate
+list comes from template matching with the 14 JMA templates and favours events similar to them.
+Velocity model (decision 2). JMA2001 P velocities from the 28-point approximation published by
+Y. Maeda (Nagoya University opentools documentation, create_1DvelocityStructure_JMA2001_Vp):
+depth (km) / VP (km/s) 0.0 4.800, 1.5 5.220, 2.5 5.450, 4.0 5.720, 5.0 5.820, 15.0 6.220, 22.0
+6.544, 34.0 7.188, 41.0 7.494, 44.0 7.598, 48.0 7.688, 52.5 7.750, 65.0 7.845; linear between
+points, represented by layers of 0.25 km; VS = VP / 1.73 (JMA2001 S values not obtained;
+declared). The same model for every method: first-arrival tables of c18_tt for the pick-free
+engine and the hybrid, PyOcto VelocityModel1D and the GaMMA eikonal model for the associators.
+Components (decision 3). E, N, U as recorded (Hi-net borehole sensors; orientation errors declared as a
+limitation), detector frame (E, N, -U); stations at the SAC coordinates, elevations and borehole depths ignored.
+Preprocessing as R0: counts (no response), demean, detrend, zero-phase band-pass 0.5-6 Hz order
+4, resampling 100 -> 16 Hz for the pick-free engine, per-station scale by the robust deviation
+over CAL; PhaseNet on the 100 Hz counts (original model, threshold 0.3, as R0). Frame centre =
+mean of the CAL JMA epicentres. Pick-free grid and windows as R0 (coarse grid, depths 3, 7, 11
+km; 40 s windows every 3 s owning origins in [5, 8) s; kmax 6; de-duplication 5 km / 1 s).
+Station terms. Matched-filter terms (pick-free engine): c18j_layered.corrections
+over the CAL truth events with magnitude >= 1.0, search +-2 s, energy gate 25.
+Pick terms (associators and hybrid): hyb_dev2.pick_terms over the same events,
+search +-2 s; picks given to the associators are corrected by them.
+Methods. BASE = the associator configuration with the largest CAL recall at 30 false per hour (LOC+T) over
+the grids of Task 2A of PyOcto-1D and GaMMA-1D on the corrected picks (ties: fewer CAL detections, then
+PyOcto, then the first of the grid). HYB = hyb_dev2 PICKSCORE-UNION: candidates = BASE events and P1
+atoms; every candidate scored by the number of PhaseNet picks within 0.5 s of its predicted arrivals
+(layered times plus pick terms; each pick supports one candidate, BASE events claim first), plus 0.5 times
+the percentile of its waveform score; candidates within 5 km and 1.5 s of a higher-scored one removed. P1
+= MT-FW without cap with the layered engine and matched-filter terms (C18j). BESTPICK = envelope over
+every configuration of both associators (with the same model and terms), as in R0 (optimistic for the
+comparators). R0-style comparators (homogeneous VP 6.0, uncorrected picks) descriptive.
+Endpoint. Recall of the targets at <= 30 false detections per hour of EVAL, exact FROC, operating point per
+method on EVAL (as R0); LOC+T (epicentre within 5 km and origin within 0.5 s of a truth event) primary, LOC
+(5 km, 3.0 s) secondary; 10 and 60 per hour secondary; deployable threshold fixed on CAL secondary.
+Rules (decision 4, set by validation, hyb/sim_r1_rules.py, hyb/sim_r1_rules_out.txt). The provisional
+margin of -0.20 was not justified: a percentile bootstrap with 9 events gives a false-positive rate of 5
+to 13 % for that non-inferiority rule, and margins are a scientific choice the data cannot fix. A
+superiority rule needs no margin. Simulated with the target counts of this design, an exact one-sided
+McNemar test on the discordant target events (hit by one method and not the other) at 0.025 keeps the
+false-positive rate at 0.000 to 0.018 when the true difference is 0, with power 0.13 to 0.17 at +0.10 and
+0.49 to 0.69 at +0.20 for 40 targets, and 0.35 to 0.53 at +0.10 and 0.92 to 0.99 at +0.20 for 100
+targets; the percentile bootstrap of the paired difference has a false-positive rate of 0.020 to 0.025 at
+40 to 100 targets but up to 0.034 with 9 to 14. R1-a (primary): HYB - BASE, LOC+T, 30/h: exact one-sided
+McNemar p <= 0.025 on the discordant targets and point difference > 0. R1-b (secondary): HYB - BESTPICK,
+the same test. R1-c (descriptive): P1 - BASE, the JMA-only reading, 60 s block-bootstrap intervals of
+every contrast (2000 replicates), the 10 and 60 per hour readings, LOC, the deployable threshold.
+Declared prediction (from development): a small gain of HYB over BASE, of the order
+of one or two events in sixteen, so the power of R1-a is low; a negative R1-a is
+the more likely outcome and does not by itself refute the hybrid. P1 below BASE.
+Interpretation. R1-a met -> pick-free candidates add detections to a pick-based
+associator on unseen real data at equal false-detection rate (one swarm, seven
+stations). Not met -> no demonstrated gain; reported as such, with the discordant
+events listed. In either case P1 alone is expected below BASE, and that is reported.
+Freeze and run: code r1_*.py and hyb_*.py frozen with sha256 after development
+on CAL and an amendment recorded before the freeze; single run on EVAL; analysis
+with r1_analyze.py; independent verification by a separate agent.
+Declared limits: one swarm, 33 min 20 s, 7 borehole stations with orientation
+errors, no instrument response, prefiltered data; truth list derived from
+template matching; operating point chosen on EVAL for every method (as R0); VS
+from VP / 1.73; the hybrid design was selected on 16 events of another sequence.
+
+Task R1, amendment 1 (Sat Oct 17 19:10:24 UTC 2026, wall clock), written after the development on CAL and
+before the freeze and the run; no detector, picker or associator has read EVAL samples (the development
+runs read the waveforms up to 880 s). Its SHA-256 is sent to the user in the chat before the run.
+1. Alignment of the matched-filter terms (changes the registration). With the registered reading (+-2 s,
+joint P and S, gate 25) the P terms of ATKH, TSTH and YNZH came out +1.66, -1.70 and +1.60 s,
+incompatible with the pick terms of the same stations (-0.21, +0.17 and +0.23 s). At ATKH and YNZH (12
+km, S-P 1.9 s) the +-2 s P window reaches the S arrival, which in these borehole records carries one
+hundred to one thousand times the P energy; at THTH and TSTH the P energy of the CAL events is near or
+below the gate. Correction, chosen by an alignment criterion and not by recall: readings searched within
++-min(2 s, half the S-P time predicted by JMA2001) and matched-filter terms = pick terms + the lag of
+the energy peak behind the onset, one per phase, equal to the median over the station-phases with at
+least 3 readings above the gate of (median reading - pick term); on CAL 0.265 s for P and 0.244 s for S
+(r1_run.mf_terms). The terms of P1 thus depend on the CAL picks; the detection of P1 remains pick-free.
+2. Model of the associators. PyOcto's VelocityModel1D does not accept the 0.25 km layer representation;
+PyOcto-1D and GaMMA-1D receive the JMA2001 (depth, VP) points down to 40 km, which both interpolate linearly,
+with VS = VP / 1.73; the pick-free engine and the hybrid use the 0.25 km layers of c18_tt. It is the same model.
+3. Definitions the registration did not fix. Pick terms: hyb_dev2.pick_terms with minimum magnitude 1.0,
+the nearest pick within +-2 s, median when there are at least 2. BESTPICK in the McNemar tests: the
+configuration with the highest recall on EVAL (the first of the grid on ties) and its targets hit at its
+operating point; in the bootstrap the envelope is recomputed in each replicate. JMA-only reading: targets
+= truth events that coincide with a JMA event (1.0 s and 5 km); a detection hitting another truth event
+is not false. Deployable threshold: the score threshold of the CAL operating point (LOC+T, 30/h) applied
+to EVAL for HYB, BASE and P1. Run: PhaseNet once on the full record; terms from CAL only; BASE chosen on
+the CAL detections of that same run; P1 on CAL and EVAL; hybrid lists and analysis with r1_queue.sh.
+4. Independent code audit of 17 October (E51 to E55 of the error log). For R1: reading at the
+floor sample (E52) shifts the centre of the peak window by half a sample, the same for every
+pick-free reading; it is not corrected so as not to change the engine of the registered results.
+The development readings on CAL are in-sample (E53); EVAL is out of sample. The +SC arms of the
+R0-style comparators subtract the peak-onset lag from onset picks (E54); they are descriptive.
+5. Development readings on CAL (in-sample, 30 targets, LOC+T at 30 per hour): BASE = GaMMA-1D (min_picks
+6, sigma 1.0), 16 of 30; HYB 16 of 30 (17 with the registered terms); P1 2 of 30. The highest-scoring
+atoms of P1 are ghosts of the S coda of the large events: 6 to 15 km to the south-west, at 3 km depth,
+2.7 to 3.9 s after the origin. The declared prediction stands: R1-a is very probably not met.
+6. Freeze: r1/FREEZE_R1.sha256 (sha256 of every .py module of the top level, r0/, r1/, hyb/ and
+explore_contrib/, of r1_queue.sh and env.sh, of the files of the trace folder (21 traces and
+one script) and of the two catalogues, of the PhaseNet model, the GaMMA commit and the package
+versions), with SHA-256 1669903f22b1e6d4f1b9656ffdc78f5c7a3bc9b4ed4145ce52e41cefcd28a2a3.
+Single run with r1_queue.sh; independent verification by a separate agent.

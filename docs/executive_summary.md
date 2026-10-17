@@ -830,7 +830,7 @@ identical to the exhaustive search), not a pruning gain over the moment-tensor c
 
 ## 9. Note on the working method
 
-During development **fifty errors** were documented (E1 to E50): three of claims in the text
+During development **fifty-five errors** were documented (E1 to E55): three of claims in the text
 pointed out by the fourth independent audit (E40, "certificate" used for a statistic that is not one;
 E41, a declared dependence removed together with the arms that measure it without reporting it; E42, the real test G1'
 without an arm for the polarisation assumption that the real data contradict), thirty of experimental
@@ -848,7 +848,10 @@ used; and five after them: E46, a synthetic timing error that understated the re
 transfer to real data (R0); E47, interruptions of R0 and C16 and flat telemetry fill in the noise of C16; E48, a
 declared per-network failure of Task 2M that stopped a whole lane until it was resumed; E49, raw run outputs
 not preserved outside the working container; and E50, an exploration that inherited a truncated peak search and
-drew a false conclusion about the medium. Several of
+drew a false conclusion about the medium; and five found by an independent audit of the code (E51 to E55): a 3 Hz
+matched filter deflated with the 2 Hz pulse, exact-time readers at the floor sample, station terms of the development
+readings estimated on the events they detect, peak-based terms applied to onset picks, and a 31 ms rounding of the
+calibration origin. Several of
 them reversed or annulled a result: constraints turned into no-ops, undersampling of the
 sensitive parameter, true source on a grid node, thresholds below chance and, the most costly,
 ties of a discrete score read as a physical effect (E15), a weak comparator against an

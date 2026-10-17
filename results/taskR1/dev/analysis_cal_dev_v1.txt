@@ -1,0 +1,35 @@
+R1 analysis, segment cal [0.0, 840.0) s (0.2333 h), 30 targets (truth M >= 0.5), 4 JMA events; BASE = gamma_1d {"min_picks": 6, "sigma": 1.0}
+detections: BASE 20, HYB 172, P1 175
+
+recall (events) at <= rate false per hour, operating point chosen in the segment
+   method          LOC+T 10/h  LOC+T 30/h  LOC+T 60/h    LOC 10/h    LOC 30/h    LOC 60/h
+   HYB             0.533 (16)  0.567 (17)  0.567 (17)  0.600 (18)  0.633 (19)  0.633 (19)
+   BASE            0.533 (16)  0.533 (16)  0.533 (16)  0.600 (18)  0.600 (18)  0.600 (18)
+   BESTPICK        0.533 (16)  0.533 (16)  0.533 (16)  0.600 (18)  0.600 (18)  0.600 (18)
+   P1              0.000 ( 0)  0.067 ( 2)  0.100 ( 3)  0.000 ( 0)  0.067 ( 2)  0.100 ( 3)
+   R0-BESTPICK     0.567 (17)  0.567 (17)  0.567 (17)  0.600 (18)  0.600 (18)  0.600 (18)
+   R0-gamma        0.467 (14)  0.467 (14)  0.467 (14)  0.600 (18)  0.600 (18)  0.600 (18)
+   R0-pyocto       0.433 (13)  0.467 (14)  0.467 (14)  0.600 (18)  0.600 (18)  0.600 (18)
+   R0-gamma_sc     0.533 (16)  0.533 (16)  0.533 (16)  0.567 (17)  0.567 (17)  0.567 (17)
+   R0-pyocto_sc    0.567 (17)  0.567 (17)  0.567 (17)  0.600 (18)  0.600 (18)  0.600 (18)
+   BESTPICK configuration at LOC+T 30/h: gamma_1d|{"min_picks": 3, "sigma": 1.0}
+
+JMA-only targets (descriptive)
+   HYB        LOC+T 10/h 1.000  LOC+T 30/h 1.000  LOC+T 60/h 1.000
+   BASE       LOC+T 10/h 1.000  LOC+T 30/h 1.000  LOC+T 60/h 1.000
+   BESTPICK   LOC+T 10/h 1.000  LOC+T 30/h 1.000  LOC+T 60/h 1.000
+   P1         LOC+T 10/h 0.000  LOC+T 30/h 0.500  LOC+T 60/h 0.750
+
+R1-a: HYB - BASE, LOC+T 30/h: 17 vs 16 of 30, difference +0.033; discordant 1 only HYB, 0 only BASE; exact one-sided McNemar p = 0.5000 -> NOT MET
+      only HYB: t 582.6 M 0.51
+      only BASE: 
+R1-b: HYB - BESTPICK, LOC+T 30/h: 17 vs 16 of 30, difference +0.033; discordant 1 only HYB, 0 only BESTPICK; exact one-sided McNemar p = 0.5000 -> NOT MET
+      only HYB: t 582.6 M 0.51
+      only BESTPICK: 
+R1-c: P1 - BASE, LOC+T 30/h: 2 vs 16 of 30, difference -0.467; discordant 0 only P1, 14 only BASE; exact one-sided McNemar p = 1.0000
+      only P1: 
+      only BASE: t 17.5 M 0.74, t 34.4 M 0.60, t 54.7 M 0.51, t 336.5 M 1.67, t 386.5 M 2.70, t 471.0 M 1.26, t 513.4 M 1.05, t 576.0 M 0.63, t 614.5 M 1.85, t 637.7 M 1.26, t 652.1 M 1.40, t 700.5 M 1.32, t 762.0 M 0.97, t 831.6 M 2.30
+
+block bootstrap (60 s blocks, 2000 replicates) HYB - BASE, LOC+T 30/h: median +0.000, 95% percentile interval [+0.000, +0.111]
+block bootstrap (60 s blocks, 2000 replicates) HYB - BESTPICK, LOC+T 30/h: median +0.000, 95% percentile interval [+0.000, +0.111]
+block bootstrap (60 s blocks, 2000 replicates) P1 - BASE, LOC+T 30/h: median -0.457, 95% percentile interval [-0.633, -0.304]

@@ -14,6 +14,20 @@ layers.
 import numpy as np
 
 HK = [(0.0, 5.5), (5.5, 6.3), (16.0, 6.7), (32.0, 7.8)]      # Hadley and Kanamori (1977), southern California
+# JMA2001 P velocities, 28-point approximation of Y. Maeda (Nagoya University opentools documentation,
+# create_1DvelocityStructure_JMA2001_Vp), first 13 points (0 to 65 km), linear between points
+JMA2001_POINTS = [(0.0, 4.800), (1.5, 5.220), (2.5, 5.450), (4.0, 5.720), (5.0, 5.820), (15.0, 6.220), (22.0, 6.544),
+                  (34.0, 7.188), (41.0, 7.494), (44.0, 7.598), (48.0, 7.688), (52.5, 7.750), (65.0, 7.845)]
+
+
+def points_model(points, zmax=60.0, dz=0.25):
+    """thin-layer representation of a piecewise-linear velocity profile (velocity at the layer midpoint)."""
+    zp, vp = np.array([p[0] for p in points]), np.array([p[1] for p in points])
+    z = np.arange(0.0, zmax, dz)
+    return [(float(zz), float(np.interp(zz + dz / 2, zp, vp))) for zz in z]
+
+
+JMA2001 = points_model(JMA2001_POINTS)
 
 
 def gradient_model(v0, g, zmax=40.0, dz=0.25, vmax=7.8):

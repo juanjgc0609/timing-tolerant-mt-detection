@@ -21,10 +21,11 @@ import r0_run as RR  # noqa: E402
 import c18_tt as TT  # noqa: E402
 
 R_VPVS = 1.73
+MODEL = TT.HK          # C18j used Hadley-Kanamori; Task R1 sets c18j_layered.MODEL = c18_tt.JMA2001
 
 
 def tt_table(depths):
-    tab = TT.table(TT.HK, R_VPVS, depths, xmax=120.0, dx=0.25)
+    tab = TT.table(MODEL, R_VPVS, depths, xmax=120.0, dx=0.25)
     return tab
 
 
@@ -53,7 +54,7 @@ def corrections(net, tab, search=2.0, gate=25.0):
         dl, en = peak_delays(net.STA, D, np.asarray(src, float), float(tau), search)
         d = np.linalg.norm(net.STA - np.asarray(src), axis=1)
         t_hom = np.stack([d / VP, d / VS], axis=1)
-        t_lay = tt_nodes(np.asarray(src)[None], net.STA, {float(src[2]): TT.table(TT.HK, R_VPVS, [float(src[2])])[float(src[2])]})[0].T
+        t_lay = tt_nodes(np.asarray(src)[None], net.STA, {float(src[2]): TT.table(MODEL, R_VPVS, [float(src[2])])[float(src[2])]})[0].T
         ds.append(dl + t_hom - t_lay)
         ens.append(en)
     ds, ens = np.array(ds), np.array(ens)

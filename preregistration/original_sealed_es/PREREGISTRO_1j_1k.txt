@@ -1061,3 +1061,131 @@ mismos 16 eventos, de modo que el paso de la compuerta tiene un efecto de selecc
 influencia por estacion (lo contrario de G1-R). No se registra todavia la prueba sobre el enjambre Hi-net: su diseno
 (modelo 1-D publicado para la region, preprocesado de Hi-net, comparadores, division CAL/EVAL de los 14 eventos JMA) se
 deja como borrador para decision del autor, porque usa los ultimos datos no vistos.
+
+Tarea R1 (Sat Oct 17 18:49:11 UTC 2026, hora de reloj), escrita antes de que cualquier detector, picker o asociador lea
+las formas de onda del enjambre Hi-net (solo se han abierto la lista de archivos, las sumas sha256, los metadatos de
+cabecera SAC, catalog.dat, DetectedFinal.dat, el README y las primeras lineas de INPUT.in). Su SHA-256 se entrega al
+usuario por el chat. Decisiones del autor del 17 de octubre de 2026: (1) verdad con ambos catalogos, (2) un modelo 1-D
+publicado de la region, (3) componentes horizontales tal como se registraron, (4) la regla de decision, que el autor
+pidio validar; la validacion cambio (1) y (4) como se indica abajo.
+Origen. La compuerta del 16 de octubre se cumplio en el segmento de desarrollo de Ridgecrest (C18j: medio estratificado,
+terminos de estacion leidos en +-2 s, 2 Hz, MT-FW sin tope, 4 y 5 de 16 eventos). En el mismo segmento (solo desarrollo,
+hyb/hyb_dev2.py, hyb/hyb_comp.py) los comparadores con picks, dados el mismo modelo estratificado y terminos de estacion
+basados en picks, recuperaron 13 de 16 en N8 y U8 a 30 detecciones falsas por hora con tiempo de origen, muy por encima
+del detector sin picks, y un hibrido que agrega candidatos sin picks al mejor asociador y puntua cada candidato por los
+picks de PhaseNet que explica recupero 14 y 13 de 16 (y 12 frente a 10 de 16 en U8 a 10 por hora). R1 prueba ese
+hibrido, no el detector sin picks solo, contra el asociador que extiende.
+Pregunta. Con datos no vistos, agregar candidatos sin picks de tensor de momento a un asociador con picks, puntuando
+cada candidato por los picks de PhaseNet que explica, recupera mas eventos catalogados a la misma tasa de detecciones
+falsas que el asociador solo, ambos con el mismo modelo de velocidad y los mismos terminos de estacion?
+Datos. Geolab-USTC/MatchLocate2, commit bac5ccb00816a4ec0aaab215ea1c342c730d412f, example/: registros continuos de tres
+componentes a 100 Hz de 7 estaciones Hi-net (ATKH, INWH, NAZH, ONIH, THTH, TSTH, YNZH), 2012-09-02 de 03:20:00 a
+03:53:20 UTC, enjambre de Fukushima-Yamagata; sha256 en data/checksums/hinet_matchlocate2_example.sha256. Catalogos: 14
+eventos JMA (catalog.dat, M 2.1 a 3.2) y 140 detecciones de Match&Locate (MultipleTemplate/DetectedFinal.dat, magnitud
+relativa -0.41 a 3.2, que incluyen los eventos JMA), con ubicacion y tiempo de origen.
+Segmentos. CAL = origenes antes de 03:34:00 (840 s; desarrollo, terminos de estacion, eleccion de la configuracion del
+asociador); EVAL = origenes de 03:34:00 a 03:53:20 menos 40 s al final. Desarrollo antes de congelar solo sobre CAL
+(unidades, polaridad, alineacion, costo, que los metodos encuentren eventos de CAL); ninguna constante se ajusta por
+recall salvo la eleccion registrada de la configuracion del asociador.
+Verdad y objetivos (decision 1, revisada por la validacion). Lista de verdad = las detecciones de Match&Locate
+(contienen los eventos JMA). Objetivos = eventos de verdad en EVAL con magnitud relativa >= 0.5 (unos 55 segun el
+catalogo); una deteccion que solo acierta un evento de magnitud < 0.5 es neutra; una que no acierta nada es falsa. La
+lectura solo con JMA (10 eventos en EVAL) es descriptiva: la simulacion de abajo muestra que con 9 a 14 eventos ninguna
+regla tiene tasa de falsos positivos dentro de 2.5 % y potencia util, de modo que no puede ser primaria. Limite
+declarado: la lista de Match&Locate viene de coincidencia de plantillas con las 14 plantillas JMA y favorece eventos
+parecidos a ellas.
+Modelo de velocidad (decision 2). Velocidades P de JMA2001 segun la aproximacion de 28 puntos publicada por Y. Maeda
+(documentacion opentools de la Universidad de Nagoya, create_1DvelocityStructure_JMA2001_Vp): profundidad (km) / VP
+(km/s) 0.0 4.800, 1.5 5.220, 2.5 5.450, 4.0 5.720, 5.0 5.820, 15.0 6.220, 22.0 6.544, 34.0 7.188, 41.0 7.494, 44.0
+7.598, 48.0 7.688, 52.5 7.750, 65.0 7.845; lineal entre puntos, representado por capas de 0.25 km; VS = VP / 1.73 (no se
+obtuvieron los valores S de JMA2001; declarado). El mismo modelo para todos los metodos: tablas de primer arribo de
+c18_tt para el motor sin picks y el hibrido, VelocityModel1D de PyOcto y el modelo eikonal de GaMMA para los
+asociadores.
+Componentes (decision 3). E, N, U tal como se registraron (sensores de pozo de Hi-net; errores de orientacion declarados
+como limite), marco del detector (E, N, -U); estaciones en las coordenadas SAC, sin elevaciones ni profundidad de pozo.
+Preprocesado como R0: cuentas (sin respuesta), media y tendencia removidas, pasa-banda de fase cero 0.5-6 Hz orden 4,
+remuestreo 100 -> 16 Hz para el motor sin picks, escala por estacion con la desviacion robusta de CAL; PhaseNet sobre
+las cuentas a 100 Hz (modelo original, umbral 0.3, como R0). Centro del marco = media de los epicentros JMA de CAL.
+Grilla y ventanas sin picks como R0 (grilla gruesa, profundidades 3, 7, 11 km; ventanas de 40 s cada 3 s duenas de los
+origenes en [5, 8) s; kmax 6; deduplicacion 5 km / 1 s).
+Terminos de estacion. Terminos del filtro adaptado (motor sin picks): c18j_layered.corrections sobre los eventos de
+verdad de CAL con magnitud >= 1.0, busqueda +-2 s, compuerta de energia 25. Terminos de picks (asociadores e hibrido):
+hyb_dev2.pick_terms sobre los mismos eventos, busqueda +-2 s; los picks que reciben los asociadores se corrigen con
+ellos.
+Metodos. BASE = la configuracion de asociador con mayor recall en CAL a 30 falsos por hora (LOC+T) sobre las grillas de
+la Tarea 2A de PyOcto-1D y GaMMA-1D con los picks corregidos (empates: menos detecciones en CAL, luego PyOcto, luego la
+primera de la grilla). HYB = hyb_dev2 PICKSCORE-UNION: candidatos = eventos de BASE y atomos de P1; cada candidato
+puntuado por el numero de picks de PhaseNet a 0.5 s de sus arribos predichos (tiempos estratificados mas terminos de
+picks; cada pick apoya a un solo candidato, los eventos de BASE reclaman primero), mas 0.5 veces el percentil de su
+puntuacion de forma de onda; se eliminan candidatos a 5 km y 1.5 s de otro de mayor puntuacion. P1 = MT-FW sin tope con
+el motor estratificado y los terminos del filtro adaptado (C18j). BESTPICK = envolvente sobre todas las configuraciones
+de ambos asociadores (con el mismo modelo y terminos), como en R0 (optimista para los comparadores). Comparadores al
+estilo de R0 (homogeneo VP 6.0, picks sin corregir) descriptivos.
+Endpoint. Recall de los objetivos a <= 30 detecciones falsas por hora de EVAL, FROC exacto, punto de operacion por
+metodo en EVAL (como R0); LOC+T (epicentro a 5 km y origen a 0.5 s de un evento de verdad) primaria, LOC (5 km, 3.0 s)
+secundaria; 10 y 60 por hora secundarios; umbral desplegable fijado en CAL secundario.
+Reglas (decision 4, fijada por la validacion, hyb/sim_r1_rules.py, hyb/sim_r1_rules_out.txt). El margen provisional de
+-0.20 no estaba justificado: un bootstrap de percentiles con 9 eventos da una tasa de falsos positivos de 5 a 13 % para
+esa regla de no inferioridad, y un margen es una eleccion cientifica que los datos no pueden fijar. Una regla de
+superioridad no necesita margen. Simulada con los conteos de objetivos de este diseno, una prueba exacta unilateral de
+McNemar sobre los objetivos discordantes (acertados por un metodo y no por el otro) a 0.025 mantiene la tasa de falsos
+positivos en 0.000 a 0.018 cuando la diferencia real es 0, con potencia 0.13 a 0.17 a +0.10 y 0.49 a 0.69 a +0.20 con 40
+objetivos, y 0.35 a 0.53 a +0.10 y 0.92 a 0.99 a +0.20 con 100 objetivos; el bootstrap de percentiles de la diferencia
+pareada tiene tasa de falsos positivos de 0.020 a 0.025 con 40 a 100 objetivos pero hasta 0.034 con 9 a 14. R1-a
+(primaria): HYB - BASE, LOC+T, 30/h: McNemar exacta unilateral p <= 0.025 sobre los objetivos discordantes y diferencia
+puntual > 0. R1-b (secundaria): HYB - BESTPICK, la misma prueba. R1-c (descriptiva): P1 - BASE, la lectura solo con JMA,
+intervalos de bootstrap de bloques de 60 s de cada contraste (2000 replicas), las lecturas a 10 y 60 por hora, LOC, el
+umbral desplegable.
+Prediccion declarada (desde el desarrollo): una ganancia pequena de HYB sobre BASE, del orden de uno o dos eventos en
+dieciseis, de modo que la potencia de R1-a es baja; un R1-a negativo es el resultado mas probable y no refuta por si
+solo el hibrido. P1 por debajo de BASE.
+Interpretacion. R1-a se cumple -> los candidatos sin picks agregan detecciones a un asociador con picks en datos reales
+no vistos a igual tasa de detecciones falsas (un enjambre, siete estaciones). No se cumple -> no hay ganancia
+demostrada; se reporta asi, con la lista de eventos discordantes. En ambos casos se espera P1 solo por debajo de BASE, y
+se reporta.
+Congelacion y corrida: codigo r1_*.py y hyb_*.py congelado con sha256 despues del desarrollo en CAL y de una enmienda
+registrada antes de congelar; corrida unica sobre EVAL; analisis con r1_analyze.py; verificacion independiente por un
+agente separado.
+Limites declarados: un enjambre, 33 min 20 s, 7 estaciones de pozo con errores de orientacion, sin respuesta
+instrumental, datos prefiltrados; lista de verdad derivada de coincidencia de plantillas; punto de operacion elegido en
+EVAL para todos los metodos (como R0); VS desde VP / 1.73; el diseno del hibrido se eligio sobre 16 eventos de otra
+secuencia.
+
+Tarea R1, enmienda 1 (Sat Oct 17 19:10:24 UTC 2026, hora de reloj), escrita despues del desarrollo sobre CAL y antes de
+congelar y de correr; ningun detector, picker ni asociador ha leido muestras de EVAL (las corridas de desarrollo leyeron
+las formas de onda hasta 880 s). Su SHA-256 se entrega al usuario por el chat antes de la corrida.
+1. Alineacion de los terminos del filtro adaptado (cambia el registro). Con la lectura registrada (+-2 s, P y S
+conjuntas, compuerta 25) los terminos P de ATKH, TSTH e YNZH resultaron +1.66, -1.70 y +1.60 s, incompatibles con los
+terminos de picks de las mismas estaciones (-0.21, +0.17 y +0.23 s). En ATKH e YNZH (12 km, S-P de 1.9 s) la ventana de
+P de +-2 s alcanza la llegada S, que en estos registros de pozo tiene de cien a mil veces la energia de P; en THTH y
+TSTH la energia de P de los eventos de CAL esta cerca o por debajo de la compuerta. Correccion, elegida por un criterio
+de alineacion y no por recall: lecturas buscadas en +-min(2 s, la mitad del S-P predicho por JMA2001) y terminos del
+filtro adaptado = terminos de picks + el retardo del pico de energia detras del inicio, uno por fase, igual a la mediana
+sobre las estaciones-fase con al menos 3 lecturas sobre la compuerta de (lectura mediana - termino de picks); en CAL
+0.265 s para P y 0.244 s para S (r1_run.mf_terms). Asi los terminos de P1 dependen de los picks de CAL; la deteccion de
+P1 sigue sin picks.
+2. Modelo de los asociadores. VelocityModel1D de PyOcto no acepta la representacion en capas de 0.25 km; PyOcto-1D y
+GaMMA-1D reciben los puntos (profundidad, VP) de JMA2001 hasta 40 km, que ambos interpolan linealmente, con VS = VP /
+1.73; el motor sin picks y el hibrido usan las capas de 0.25 km de c18_tt. Es el mismo modelo.
+3. Definiciones que el registro no fijaba. Terminos de picks: hyb_dev2.pick_terms con magnitud minima 1.0, el pick mas
+cercano dentro de +-2 s, mediana si hay al menos 2. BESTPICK en las pruebas de McNemar: la configuracion con mayor
+recall en EVAL (la primera de la grilla si hay empate) y sus objetivos acertados en su punto de operacion; en el
+bootstrap la envolvente se recalcula en cada replica. Lectura solo JMA: objetivos = eventos de verdad que coinciden con
+un evento JMA (1.0 s y 5 km); una deteccion que acierta otro evento de verdad no es falsa. Umbral desplegable: el umbral
+de puntuacion del punto de operacion de CAL (LOC+T, 30/h) aplicado a EVAL para HYB, BASE y P1. Corrida: PhaseNet una vez
+sobre el registro completo; terminos solo de CAL; BASE elegido sobre las detecciones de CAL de esa misma corrida; P1
+sobre CAL y EVAL; listas del hibrido y analisis con r1_queue.sh.
+4. Auditoria independiente del codigo del 17 de octubre (E51 a E55 del registro de errores). Para R1: la lectura en la
+muestra inferior (E52) desplaza medio muestreo el centro de la ventana de pico, igual para todas las lecturas sin picks;
+no se corrige para no cambiar el motor de los resultados registrados. Las lecturas de desarrollo sobre CAL son dentro de
+muestra (E53); EVAL esta fuera de muestra. Los brazos +SC de los comparadores al estilo de R0 restan el retardo
+pico-inicio de picks de inicio (E54); son descriptivos.
+5. Lecturas de desarrollo en CAL (dentro de muestra, 30 objetivos, LOC+T a 30 por hora): BASE = GaMMA-1D (min_picks 6,
+sigma 1.0), 16 de 30; HYB 16 de 30 (17 con los terminos registrados); P1 2 de 30. Los atomos de mayor puntuacion de P1
+son fantasmas de la coda S de los eventos grandes: de 6 a 15 km al suroeste, a 3 km de profundidad, de 2.7 a 3.9 s
+despues del origen. La prediccion declarada se mantiene: R1-a muy probablemente no se cumple.
+6. Congelacion: r1/FREEZE_R1.sha256 (sha256 de todo modulo .py de la raiz, r0/, r1/, hyb/ y explore_contrib/, de
+r1_queue.sh y env.sh, de los archivos del directorio de trazas (21 trazas y un script) y de los dos catalogos, del
+modelo de PhaseNet, el commit de GaMMA y las versiones de los paquetes), con SHA-256
+1669903f22b1e6d4f1b9656ffdc78f5c7a3bc9b4ed4145ce52e41cefcd28a2a3. Corrida unica con r1_queue.sh; verificacion
+independiente por un agente separado.

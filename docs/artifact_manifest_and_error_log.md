@@ -169,7 +169,7 @@ to 2L, are also in `outputs/explore_contrib/`, with their scripts, reports and o
 
 ## 3. The design errors that inverted or nullified a result
 
-This is the central content of this manifest. The log contains 50 errors, E1 to E50. In the
+This is the central content of this manifest. The log contains 55 errors, E1 to E55. In the
 first six (E1 to E6) the resulting number looked valid, and in all six it was detected **only because
 it turned out to be implausible**, not because there was a visible fault in the code; the following ones were detected
 by controls, preregistered rules or audits, as indicated in each one.
@@ -1052,6 +1052,68 @@ gate on development data (C18j). C18b to C18h remain valid as measurements of th
 terms. No registered result is affected.
 **Correction:** Appendix Y.32 rewritten; the documents corrected. General rule: before comparing models on readings,
 check what fraction of the readings sits at the edge of the search window.
+
+### E51. A matched filter changed to 3 Hz without changing the deflation kernel
+**Script:** `explore_contrib/c18h_kernel.py` (`set_kernel`), used by C18h, C18i and C18j at 3 Hz.
+**Symptom:** the 3 Hz detector readings of C18h, C18i and C18j moved by up to one event of sixteen when only the order
+of two imports was changed.
+**Cause:** `set_kernel` replaces the kernel of the matched filter, but the pulse shape used to deflate each accepted atom
+(`task1x_mtglrt.AC`) is computed once when that module is first imported. C18h set the kernel before the import (a 2 Hz
+pulse correlated with the 3 Hz kernel); C18i and C18j imported first (the 2 Hz shape throughout). None of the three
+deflated with the response of the 3 Hz kernel.
+**Detection:** the independent code audit of 17 October 2026 (finding F1, `bughunt/ac_order_bh.txt`).
+**Scope:** the 3 Hz readings of Appendix Y.32 are not comparable with each other; the 2 Hz runs, including the
+configuration that met the gate, and the single-atom oracle maps are not affected. No registered result is affected.
+**Correction:** Appendix Y.32 marks the 3 Hz readings as affected; R1 uses the 2 Hz filter only.
+
+### E52. Exact-time readers read the floor sample, not the nearest one
+**Script:** `certified_fw.py` (`_idx_node`), `explore_contrib/c10_lib.py`, `c11_lib.py`, `c18j_layered.py`.
+**Symptom:** a reader at the exact predicted time captured on average 0.78 of the energy of an arrival with no timing
+error (worst case 0.42); the nearest sample gives 0.94 (worst 0.82).
+**Cause:** the predicted sample is `int(t / DT)`, which truncates, so the read sample is on average half a sample
+(31 ms) early, and the +-4-sample peak window is centred half a sample early.
+**Detection:** the independent code audit of 17 October 2026 (finding F2, `bughunt/floor_bias_bh.txt`).
+**Scope:** the comparators of Task 2C read at the exact sample (BOMP+SC, MTSTACK+SC, GL-FW+SC, the convex problem of
+2C-b) and the MT-FW-EX ablation of 2D are handicapped, which inflates the measured value of the peak search; the
+decisions are very probably unchanged (the timing error of the grid is already 0.1 to 0.3 s) but were not re-run.
+Comparisons in which every method has the same +-4-sample search (2D BOMP-PK against MT-FW, 2F, 2I, 2M, R0, R1) are
+not affected beyond a common shift of at most one sample.
+**Correction:** declared in Appendix Y.30 next to the 2C and 2D results; the engines are left unchanged so that the
+registered runs remain reproducible.
+
+### E53. Station terms estimated on the events they are then used to detect
+**Script:** `r0/r0_run.py` (calibration windows), `explore_contrib/c18j_layered.py` and the C18d to C18j readings.
+**Symptom:** the development readings of C18 on the Ridgecrest calibration segment were optimistic by up to two events
+of sixteen.
+**Cause:** the station terms are medians over the same sixteen events that are then counted as detected, so each event
+contributes to the predicted times used to find it.
+**Detection:** the independent code audit of 17 October 2026 (finding F5, `bughunt/c18j_loeo_bh.txt`).
+**Scope:** re-estimating the terms without the events each window can hit, the gate configuration still recovers 5 of
+16 on U8 (gate met exactly at its threshold) and 2 instead of 4 on N8; removing every event inside the window gives 1
+of 16 on U8. R0 and R1 estimate their terms on the calibration segment and evaluate on a separate segment and are not
+affected; the R1 development readings on its own calibration segment are in-sample in the same way and are reported
+as development only.
+**Correction:** Appendix Y.32 and the R1 registration report the held-out readings and the sensitivity.
+
+### E54. Station terms measured on energy peaks applied to onset picks
+**Script:** `r0/r0_picks.py` (the +SC arms of GaMMA and PyOcto).
+**Symptom:** the corrected S picks were pulled early by about 0.4 to 0.6 s.
+**Cause:** the +SC terms are delays of the matched-filter energy peak relative to the catalogue prediction; PhaseNet
+picks onsets, which precede the energy peak by a phase-dependent lag, so subtracting the term also subtracts that lag.
+**Detection:** the independent code audit of 17 October 2026 (finding F4).
+**Scope:** the descriptive +SC readings of R0; BESTPICK, which takes the best of the raw and corrected arms, and the
+registered R0 decision are not affected. The hybrid development and R1 estimate the pick terms from pick residuals
+(`hyb_dev2.pick_terms`), which is the correction; the R0-style +SC arms of R1 remain descriptive.
+**Correction:** declared in the R0 section of Appendix Y.30 and in R1.
+
+### E55. Calibration windows assume an origin at 6.5 s on a rounded window start
+**Script:** `r0/r0_run.py`, `explore_contrib/c18a_timing.py`.
+**Symptom:** none measurable; the catalogue origin sits up to 31 ms from 6.5 s of window time.
+**Cause:** the window starts at the nearest sample of `t - 6.5`, while the origin passed to the estimators is 6.5 s.
+**Detection:** the independent code audit of 17 October 2026 (finding F3).
+**Scope:** an error common to all readings of an event, of standard deviation about 18 ms, against timing errors of
+0.35 to 0.6 s. No result is affected.
+**Correction:** declared.
 
 ### On the order of the three errors of Task 0
 Three complete protocols, three different conclusions, and **in none of them was the cause the physics**. By
