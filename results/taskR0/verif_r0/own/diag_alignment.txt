@@ -1,0 +1,60 @@
+(1) nearest detection (within +-3 s) to each M>=2 EVAL event: median epicentral distance, median/mean origin error (det - cat) of those within 5 km, n events with a det within 5 km & 3 s
+  N4 GaMMA     med dist   6.29 km  n(<=5km) 11  med dt +0.14  mean dt +0.38  frac |dt|<=0.5 0.64
+  N4 GaMMA+SC  med dist   8.45 km  n(<=5km)  4  med dt -0.14  mean dt -0.06  frac |dt|<=0.5 1.00
+  N4 M1        med dist  15.01 km  n(<=5km)  3  med dt +1.31  mean dt +0.98  frac |dt|<=0.5 0.00
+  N4 M2        med dist  14.97 km  n(<=5km)  3  med dt +1.41  mean dt +1.30  frac |dt|<=0.5 0.00
+  N4 M3        med dist  10.46 km  n(<=5km) 11  med dt +1.21  mean dt +0.87  frac |dt|<=0.5 0.36
+  N4 PyOcto    med dist   6.41 km  n(<=5km) 11  med dt +0.21  mean dt +0.26  frac |dt|<=0.5 0.91
+  N4 PyOcto+SC med dist   9.07 km  n(<=5km)  6  med dt -0.17  mean dt -0.19  frac |dt|<=0.5 0.83
+  N6 GaMMA     med dist   1.80 km  n(<=5km) 33  med dt +0.32  mean dt +0.29  frac |dt|<=0.5 0.64
+  N6 GaMMA+SC  med dist   3.43 km  n(<=5km) 28  med dt -0.16  mean dt -0.21  frac |dt|<=0.5 0.71
+  N6 M1        med dist  10.53 km  n(<=5km)  6  med dt +1.10  mean dt +1.01  frac |dt|<=0.5 0.17
+  N6 M2        med dist  13.35 km  n(<=5km)  4  med dt +0.64  mean dt +0.92  frac |dt|<=0.5 0.50
+  N6 M3        med dist   7.21 km  n(<=5km) 13  med dt +0.40  mean dt +0.76  frac |dt|<=0.5 0.46
+  N6 PyOcto    med dist   1.90 km  n(<=5km) 32  med dt +0.02  mean dt +0.08  frac |dt|<=0.5 0.97
+  N6 PyOcto+SC med dist   2.60 km  n(<=5km) 31  med dt -0.49  mean dt -0.47  frac |dt|<=0.5 0.52
+  N8 GaMMA     med dist   1.39 km  n(<=5km) 35  med dt +0.21  mean dt +0.35  frac |dt|<=0.5 0.66
+  N8 GaMMA+SC  med dist   1.97 km  n(<=5km) 33  med dt -0.34  mean dt -0.33  frac |dt|<=0.5 0.58
+  N8 M1        med dist  17.93 km  n(<=5km) 10  med dt +1.01  mean dt +1.05  frac |dt|<=0.5 0.40
+  N8 M2        med dist  12.75 km  n(<=5km) 10  med dt +0.92  mean dt +1.09  frac |dt|<=0.5 0.40
+  N8 M3        med dist   8.15 km  n(<=5km) 19  med dt +0.58  mean dt +0.71  frac |dt|<=0.5 0.47
+  N8 PyOcto    med dist   1.51 km  n(<=5km) 35  med dt +0.13  mean dt +0.18  frac |dt|<=0.5 0.86
+  N8 PyOcto+SC med dist   2.37 km  n(<=5km) 34  med dt -0.55  mean dt -0.50  frac |dt|<=0.5 0.47
+  U8 GaMMA     med dist   5.34 km  n(<=5km) 18  med dt -0.13  mean dt -0.06  frac |dt|<=0.5 0.94
+  U8 GaMMA+SC  med dist   5.40 km  n(<=5km) 19  med dt -0.66  mean dt -0.60  frac |dt|<=0.5 0.21
+  U8 M1        med dist  10.96 km  n(<=5km)  9  med dt +0.39  mean dt +1.04  frac |dt|<=0.5 0.44
+  U8 M2        med dist   9.71 km  n(<=5km) 10  med dt +0.17  mean dt +0.16  frac |dt|<=0.5 0.30
+  U8 M3        med dist   4.77 km  n(<=5km) 25  med dt +0.55  mean dt +0.38  frac |dt|<=0.5 0.36
+  U8 PyOcto    med dist   5.53 km  n(<=5km) 18  med dt -0.08  mean dt -0.08  frac |dt|<=0.5 1.00
+  U8 PyOcto+SC med dist   4.74 km  n(<=5km) 24  med dt -0.69  mean dt -0.66  frac |dt|<=0.5 0.21
+(2) PhaseNet pick residuals vs catalogue (pick - (t0 + d/V)), matched within +-1.5 s of prediction, per station: median P / S residual on CAL events | EVAL events, and the CAL +SC correction (P, S)
+  N8
+    CLC   CAL P +0.25(13) S +0.66(13) | EVAL P +0.25(35) S +0.60(38) | corr_sc P +0.44 S +0.76
+    SRT   CAL P +0.68(14) S +1.18( 5) | EVAL P +0.63(38) S +1.33(12) | corr_sc P +0.48 S +0.16
+    CCC   CAL P +0.87(13) S +1.28( 4) | EVAL P +0.80(34) S +1.24(14) | corr_sc P +0.91 S +0.12
+    TOW2  CAL P +0.77(13) S +1.13( 3) | EVAL P +0.78(33) S +1.38( 5) | corr_sc P -0.02 S +0.22
+    LRL   CAL P +0.26(14) S +0.47(11) | EVAL P +0.22(36) S +0.61(35) | corr_sc P +0.58 S +0.75
+    WRC2  CAL P +0.42(13) S +0.93(13) | EVAL P +0.32(31) S +0.76(38) | corr_sc P +0.65 S +0.93
+    WBM   CAL P +0.82(13) S +1.03( 5) | EVAL P +0.72(38) S +1.07(23) | corr_sc P +0.88 S +0.93
+    SLA   CAL P +0.46(11) S +0.88(13) | EVAL P +0.40(30) S +0.77(30) | corr_sc P +0.78 S +0.87
+  N6
+    CLC   CAL P +0.25(13) S +0.66(13) | EVAL P +0.25(35) S +0.60(38) | corr_sc P +0.44 S +0.76
+    SRT   CAL P +0.68(14) S +1.18( 5) | EVAL P +0.63(38) S +1.33(12) | corr_sc P +0.48 S +0.16
+    CCC   CAL P +0.87(13) S +1.28( 4) | EVAL P +0.80(34) S +1.24(14) | corr_sc P +0.91 S +0.12
+    TOW2  CAL P +0.77(13) S +1.13( 3) | EVAL P +0.78(33) S +1.38( 5) | corr_sc P -0.02 S +0.19
+    LRL   CAL P +0.26(14) S +0.47(11) | EVAL P +0.22(36) S +0.61(35) | corr_sc P +0.58 S +0.75
+    WRC2  CAL P +0.42(13) S +0.93(13) | EVAL P +0.32(31) S +0.76(38) | corr_sc P +0.65 S +0.93
+  N4
+    CLC   CAL P +0.25(13) S +0.66(13) | EVAL P +0.25(35) S +0.60(38) | corr_sc P +0.44 S +0.76
+    SRT   CAL P +0.68(14) S +1.18( 5) | EVAL P +0.63(38) S +1.33(12) | corr_sc P +0.48 S +0.16
+    CCC   CAL P +0.87(13) S +1.28( 4) | EVAL P +0.80(34) S +1.24(14) | corr_sc P +0.91 S +0.12
+    TOW2  CAL P +0.77(13) S +1.13( 3) | EVAL P +0.78(33) S +1.38( 5) | corr_sc P -0.02 S +0.22
+  U8
+    WBM   CAL P +0.82(13) S +1.03( 5) | EVAL P +0.72(38) S +1.07(23) | corr_sc P +0.88 S +0.93
+    SRT   CAL P +0.68(14) S +1.18( 5) | EVAL P +0.63(38) S +1.33(12) | corr_sc P +0.48 S +0.16
+    TOW2  CAL P +0.77(13) S +1.13( 3) | EVAL P +0.78(33) S +1.38( 5) | corr_sc P -0.02 S +0.22
+    JRC2  CAL P +0.50(12) S +0.89(13) | EVAL P +0.46(33) S +0.81(38) | corr_sc P +0.43 S +0.95
+    WCS2  CAL P +0.54(10) S +0.86(13) | EVAL P +0.38(32) S +0.57(35) | corr_sc P +0.67 S +0.97
+    CLC   CAL P +0.25(13) S +0.66(13) | EVAL P +0.25(35) S +0.60(38) | corr_sc P +0.42 S +0.76
+    WRC2  CAL P +0.42(13) S +0.93(13) | EVAL P +0.32(31) S +0.76(38) | corr_sc P +0.65 S +0.93
+    MPM   CAL P +0.29(14) S +0.67(13) | EVAL P +0.23(33) S +0.51(37) | corr_sc P +0.74 S +0.71

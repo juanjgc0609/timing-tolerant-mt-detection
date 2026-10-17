@@ -1,0 +1,196 @@
+VERDICT: CONFIRMED NEGATIVE
+
+Independent adversarial verification of Task R0 (Ridgecrest 2019, one hour, CI network), written 17 Oct 2026 by a
+separate agent that did not produce the result. All new outputs are in /home/claude/work/r0_verif/. Times below are
+local (-05) unless marked UTC.
+
+0. Summary
+
+The frozen M2 detector, the frozen PhaseNet + GaMMA + PyOcto comparators and the frozen analysis were re-run from
+scratch on EVAL of the four subnetworks. Running the unchanged r0_analyze.py on the re-run outputs reproduces EVERY
+number of the registered analysis_eval.txt/json: 222 of 222 point recalls (10 methods x 4 subnets x 2 rules x 3
+rates, those present in the registered file) and 36 of 36 contrasts (point, 95% block-bootstrap interval and the 4
+per-subnet points), with zero difference at 1e-9; the text output is byte-identical except the M3 lines (M3 now
+exists on all four subnets, from the closure). Primary: M2 - BESTPICK (LOC+T, 30/h, pooled) = -0.383 [-0.481, -0.310];
+per subnet N8 -0.578, N6 -0.667, N4 +0.000, U8 -0.289; R0-a False, R0-b False. An independent re-implementation
+(own catalogue reading, labelling, de-duplication, exact FROC, own bootstrap) gives the same points and
+[-0.481, -0.309]. No implementation error was found that favours the comparators or penalises the detector in a way
+that could change the decision; even under perfect ranking of M2's atoms the pooled contrast is at most -0.328.
+Defects and deviations found are listed in section 7; none changes the result.
+
+1. Integrity and environment
+
+  Freeze check (head -34 R0_FREEZE.txt minus gamma_src/R0_DEV_LOG lines, sha256sum -c --quiet): OK before (21:57)
+  and after (01:10). gamma_src hashes of R0_FREEZE.txt: OK. Data: sha256sum -c ridgecrest_2019_R0.sha256 OK
+  (wave.mseed, stations.csv, catalog.csv), before and after.
+  sha256 /home/claude/work/PREREGISTRO_1j_1k.txt before and after:
+  f84bca1c1d925ee35b12cf23e3582c17ee4d061a0c7b9473a2634095d1268d6c (unchanged).
+  Environment: /home/claude/venv311 (Python 3.11, NumPy 1.26.4, SciPy 1.17.1, ObsPy 1.5.1, scikit-learn 1.8.0,
+  PyOcto 0.2.0). GaMMA cloned to /home/claude/work/gamma_src at 80394dd4a4c29450da599f507916ecf1db6203dd (the only
+  write outside r0_verif; it is the documented location and is not a tracked file). PhaseNet cloned at
+  62005c6195638f88d077f8870ea895971062715a (model/190703-214543) into r0_verif/phasenet/PhaseNet; TensorFlow-CPU
+  2.15.1 (Keras 2.15, protobuf 4.25.9) installed with uv --target into r0_verif/phasenet/tf215; PHASENET_HOME pointed
+  there. venv311 lacks numba and tqdm, which GaMMA imports (first picks attempt failed: picks_attempt1_nonumba.log);
+  numba 0.60.0, llvmlite 0.43.0 and tqdm 4.66.5 were installed with --no-deps into r0_verif/pydeps and added via
+  PYTHONPATH (NumPy still resolved to venv311's 1.26.4). The numba version of the original run is not recorded
+  anywhere (task1jk README only says "with numba and tqdm"); since every GaMMA number reproduces exactly, this is
+  immaterial. All runs used PYTHONDONTWRITEBYTECODE=1 and OPENBLAS_NUM_THREADS=1, OPENBLAS_CORETYPE=Prescott.
+
+2. Step 1 - re-run of the frozen M2 (r0_run_chunks.py eval SUB M2 r0_verif/m2/chunks_M2_SUB 50, then merge)
+
+  Raw atoms: N8 863, N6 933, N4 905, U8 965. After de-duplication, in segment: 855, 917, 892, 958 = registered
+  descriptive counts. LOC+T hits on M>=2 at any score: 5, 2, 0, 5 = registered.
+  Recall (N8, N6, N4, U8), registered = re-run, identical at every rule/rate:
+    LOC+T 10/h 0.000,0.000,0.000,0.000   30/h 0.022,0.000,0.000,0.000   60/h 0.022,0.000,0.000,0.000
+    LOC   10/h 0.000,0.000,0.000,0.000   30/h 0.022,0.000,0.000,0.000   60/h 0.022,0.022,0.000,0.000
+  Additionally M5 and M6 (registered secondary arms) were re-run (r0_verif/m56, methods M5,M6 in one process): all
+  their 48 point recalls and the M2-M5, M6-BESTPICK, M6-M2 contrasts match exactly (e.g. M6-BESTPICK LOC+T 30/h
+  -0.383 [-0.484, -0.311]). M1 and M3 were taken from run_close (closure); the closure M1 - M3 numbers
+  (+0.000 [-0.023, +0.021]; LOC -0.050 [-0.101, -0.013]) are reproduced in the combined analysis.
+
+3. Step 2 - re-run of the frozen comparators (r0_picks.py eval SUB, unchanged)
+
+  PhaseNet picks over the hour: N8 1193 P / 1274 S, N6 922/968, N4 626/643, U8 1131/1191; no associator config
+  failed. Detection counts (max over configs, in segment) and any-score LOC+T hits equal the registered ones
+  (e.g. N8 PyOcto 160 / 30, GaMMA 164 / 24, PyOcto+SC 160 / 16, GaMMA+SC 159 / 19; N6 PyOcto 148 / 31).
+  Associator recalls (N8, N6, N4, U8) at LOC+T 30/h: GaMMA 0.489,0.511,0.000,0.222; PyOcto 0.600,0.667,0.000,0.289;
+  GaMMA+SC 0.133,0.333,0.000,0.044; PyOcto+SC 0.200,0.133,0.000,0.000; BESTPICK 0.600,0.667,0.000,0.289. All 120
+  associator/BESTPICK points (5 sets x 4 subnets x 2 rules x 3 rates) match the registered file exactly.
+
+4. Step 3 - unchanged r0_analyze.py on the re-run outputs (r0_verif/analysis, built by assemble.py)
+
+  det_eval_<s>.json = M2 (this run) + M1 (run_close) + M5/M6 (this run); detM3_eval_<s>.json copied from run_close;
+  picks_eval_<s>.json from this run. python r0_analyze.py eval r0_verif/analysis 2000.
+  compare_registered.py: points matched 222, differ 0; contrasts matched 36, differ 0 (point, CI and per-subnet).
+  diff of analysis_eval.txt against the registered one, lines containing M3 excluded: empty.
+  Primary: M2-BESTPICK LOC+T 30/h -0.383 [-0.481, -0.310], per subnet N8 -0.578 N6 -0.667 N4 +0.000 U8 -0.289.
+  REGISTERED DECISION: R0-a False; R0-b False; superiority False.
+  (r0_verif/analysis_m2only holds the earlier run without M5/M6: 174/174 points and 18/18 contrasts matched.)
+
+5. Step 4 - independent re-implementation (verif_analysis.py; imports neither r0_analyze nor r0_lib)
+
+  Catalogue read with csv/datetime; frame centre = mean of CAL epicentres = (35.67970952, -117.53875714), identical
+  to r0_lib.frame(); 45 targets. LOC+T and LOC labelling, M>=2 preference, neutral/false as registered;
+  de-duplication by descending score; exact FROC, cap = floor(rate x 2660/3600) = 7, 22, 44.
+  Results: every M1, M2, M3, GaMMA, PyOcto (raw and +SC) and BESTPICK point at 10 and 30/h equals the registered
+  value; primary point -0.383 (per subnet -0.578, -0.667, +0.000, -0.289); M2 - M1 LOC+T 30/h -0.006; M1 - M3 +0.000.
+  Own block bootstrap (45 blocks of 60 s, last block 20 s, cap from the resampled duration, seed 7, B = 2000):
+  [-0.481, -0.309].
+  At 60/h my cap is 44 (registration text: floor(60 x 44.33/60)) whereas r0_analyze uses 0.75 h (45 blocks of 60 s)
+  and so 45; with 44 a few 60/h secondary values drop by one event (N6 GaMMA 0.556 vs 0.578, N6 PyOcto+SC 0.267 vs
+  0.311, N6 M1 LOC 0.022 vs 0.044, N6 PyOcto LOC 0.689 vs 0.711, N4 M3 LOC 0.067 vs 0.089). The primary (30/h, cap
+  22 in both conventions) and 10/h are unaffected.
+
+6. Step 5 - adversarial checks
+
+  6.1 Time alignment. All HH traces start at 18:59:59.9983 (WBM 19:00:00.0031); r0_lib rounds the 100 Hz offset,
+  error <= 3.1 ms; no gaps (one trace per channel). resample_poly keeps sample 0 at t = 0; window k starts at sample
+  round(ts/DT), exact for the 3 s step; engine sample = floor((d/V + tau + corr)/DT) and the atom's absolute origin
+  is window start + tau, so no offset is introduced. Catalogue times are UTC like the waveforms. PhaseNet pick
+  residuals against the catalogue (homogeneous VP 6.0, VS 6.0/1.73, diag_alignment.py) are positive at every
+  station (P +0.22 to +0.87 s, S +0.47 to +1.38 s), identical between CAL and EVAL within 0.1-0.2 s: there is no
+  clock or segment offset, only a slow medium relative to 6.0 km/s. Origin error of the nearest detection within
+  5 km of each target (median, det - catalogue): PyOcto +0.13 (N8), +0.02 (N6); GaMMA +0.21, +0.32; M2 +0.92,
+  +0.64, +1.41, +0.17 (N8, N6, N4, U8); M1 +1.01 to +1.31 except U8 +0.39. The pick-free detectors are late by about
+  1 s; the cause is the timing terms (6.6), not an alignment bug: with the S2 first read widened to +-2 s the M2
+  bias goes to -0.26 s (N8) and -0.07 s (U8).
+
+  6.2 Local frame and catalogue conversion. The same equirectangular frame (111.19 km/deg, cos lat0) is used for
+  stations, catalogue, detector grid and associators, with x = east, y = north. Against WGS84 geodesics
+  (diag_projection.py) station-event epicentral distances differ by +0.018 km on average and at most 0.107 km
+  (<= 0.031 s of S travel time). Station elevations (667-1839 m) are ignored and the stations sit at z = 0 for all
+  methods alike. All 45 targets are within x -5.6..+7.7, y -9.5..+8.1 km, inside the +-21 km grid of the detector
+  and the +-21.4 km box of the associators.
+
+  6.3 Units and polarity of Z. Counts divided by the per-component scalar sensitivity, demean, linear detrend;
+  per-station normalisation by the CAL robust sd makes the absolute units irrelevant for the detector. Components
+  are (E, N, -Z), consistent with x = east, y = north, z = depth in the generator. PhaseNet receives raw (E, N, Z up)
+  at 100 Hz, as its training convention requires. POST HOC sensitivity (verif_zflip.py, N8, frozen code with +Z):
+  M2 gets worse (any-score LOC+T hits 1 vs 5 targets, recall 0.000 at every rate and rule, median nearest-atom
+  distance 21.1 vs 12.8 km). The registered -Z is the better choice; polarity does not hide a positive.
+
+  6.4 Station selection. diag_subnets.py re-derives the registered rule from stations.csv and the registration
+  centroid (35.6773 N, 117.5418 W): the 8 closest HH stations are exactly N8 (N6, N4 = its 6 and 4 closest); the
+  narrowest azimuthal sector holding 8 HH stations is 256-6 degrees (110 degrees) with exactly the U8 stations.
+  r0_lib.stations reads the HH rows only and each selected station has a single HH location code.
+
+  6.5 CAL/EVAL separation. CAL catalogue (origins < 900 s) is used for the frame centre, the station scale (CAL
+  segment of the traces), +SC, S2 and sigma; EVAL catalogue rows enter only r0_analyze (and my scripts). Detections
+  and targets are both restricted to [900, 3560) s; EVAL windows start at 895 s and only own origins >= 900 s. The
+  first EVAL window reads 5 s of CAL waveform, which is data, not labels. No EVAL information reaches any detector
+  or comparator.
+
+  6.6 Information symmetry. Detector and comparators share the stations, frame, VP/VS, search region and the CAL
+  +SC corrections (the +SC comparator arms). The comparators receive no catalogue information. PhaseNet carries
+  prior training on northern California data, which is the registered comparator. The design is, if anything,
+  favourable to the comparators in one respect (BESTPICK = envelope over 25 configurations x 2 pick versions vs one
+  configuration for M2, declared in the amendment) and unfavourable in another: their score is the integer number
+  of picks and r0_analyze keeps only detections strictly above the threshold score, so all detections tied at the
+  threshold are dropped; the tie-break by the associator's own score stated in the registration is not implemented
+  (the GaMMA score is stored but unused; PyOcto gives none). This penalises the comparators, not the detector.
+
+  6.7 Could an implementation error have hidden a positive?
+  (a) Ranking/threshold: the any-score ceiling of M2 (fraction of targets with any LOC+T hit, i.e. its recall under
+  a perfect ranking with unlimited false budget) is N8 0.111, N6 0.044, N4 0.000, U8 0.089 (diag_ceiling.py), so
+  pooled M2 - BESTPICK cannot exceed -0.328 at 30/h whatever the scores; under LOC -0.306; with 10 km and 1.5 s
+  -0.417. Removing the de-duplication changes nothing (ceilings identical, recall identical).
+  (b) Station terms: diag_corrections.py (CAL only, N8) shows that the frozen +SC estimator (peak search +-1.0 s)
+  truncates the S delays: SRT, CCC, TOW2 S terms +0.16, +0.12, +0.22 s with a +-1 s search vs +1.74, +1.78, +1.91 s
+  with +-2 s, against PhaseNet S-onset residuals of +1.1 to +1.4 s; several S delays sit at the +-1 s edge. M2 does
+  not use +SC directly: POST HOC verif_widesc.py (+SC with +-2 s) gives M2 atoms bit-identical to the frozen ones,
+  because the S2 joint estimation re-reads the catalogue from scratch. But S2 has the same +-1.0 s first read
+  (c11_lib.P search0). POST HOC verif_wides2.py (both reads +-2 s, N8 and U8): S terms become consistent with the
+  pick residuals (SRT 1.75, CCC 1.76, TOW2 1.95 s), the origin bias disappears (6.1), any-score LOC+T targets rise
+  N8 5 -> 8 and U8 4 -> 6, LOC 10 -> 11 and 10 -> 14, but recall at 30/h is N8 0.000 and U8 0.022 (LOC+T) against
+  BESTPICK 0.600 and 0.289; its perfect-ranking ceilings (0.178, 0.133) are still far below BESTPICK. This is a
+  design limitation inherited from the synthetic studies (statics of 0.3 s sd), declared in substance in
+  R0_DEV_LOG (time level 0.35-0.41 s not covered); it is not a coding error, and correcting it does not come close
+  to reversing the negative.
+  (c) Polarity: 6.3. (d) Frame/timing: 6.1, 6.2. (e) M2 path: M2 = coarse selection on the S2 engine (hard
+  +-4-sample read), relocation on the 1 km lattice with the S2 prior, as documented; methods do not share state
+  across calls (mt_loop copies MFn), and running M2 alone (this verification) or with M1/M5/M6 (original) gives
+  identical recalls.
+
+7. Defects and deviations found (none changes the registered decision)
+
+  D1 (design, against the detector) The +SC estimator and the S2 first read search only +-1.0 s around the
+  homogeneous prediction; on these data the S delays reach 1.7-1.9 s, so the station terms of several S phases are
+  wrong by ~1-1.7 s and the pick-free origins are ~1 s late. Correcting it post hoc (6.7b) does not change the
+  conclusion. The +SC comparator arms are also degraded by it (under LOC+T at 30/h PyOcto+SC is at or below PyOcto on every subnet), which does
+  not matter because BESTPICK takes the raw arms.
+  D2 (code vs registration, against the comparators) Tie-break by the associator's own score registered but not
+  implemented; strict threshold drops integer ties (6.6).
+  D3 (code vs registration, neutral) r0_analyze computes the false-event cap from 45 blocks x 60 s = 0.75 h, the
+  registration from 44.33 min; identical at 10 and 30/h, cap 45 instead of 44 at 60/h (section 5).
+  D4 (environment) The R0 environment needs numba and tqdm for GaMMA, which venv311 lacks and R0_FREEZE.txt does not
+  pin; reproduced here with numba 0.60.0 / tqdm 4.66.5. PhaseNet/TensorFlow are not in R0_FREEZE.txt either
+  (pinned only in real_picker.py docstring and data/README.md).
+  D5 (scope) The descriptive origin bias of the pick-free detectors (6.1) means LOC+T penalises them more than LOC;
+  but under LOC the contrast is -0.450 and the ceiling -0.306, so the rule choice is not decisive.
+
+8. What could not be verified
+
+  The original raw outputs of R0 are lost, so equality with them is shown only through the registered aggregate
+  files (every number matches). The original numba version is unknown. The deployable (CAL-threshold) secondary
+  analysis and the CAL runs of queue_eval.sh were not re-run (not part of analysis_eval.txt). The "Independent
+  recomputation of the N8 and N6 points" mentioned in the result log could not be inspected (no such script found under /home/claude/work);
+  it is superseded by this verification. QuakeMigrate and M4 were not part of the frozen run.
+
+9. Scripts and outputs (all in /home/claude/work/r0_verif/)
+
+  run_m2.sh          frozen M2 via r0_run_chunks.py, 4 subnets -> m2/det_eval_<s>.json
+  run_picks.sh       frozen r0_picks.py, 4 subnets -> picks/picks_eval_<s>.json (log picks/picks.log)
+  run_m56.sh         frozen M5, M6 -> m56/det_eval_<s>.json; then the Z-flip run
+  assemble.py        builds analysis/ for r0_analyze.py; analysis/analysis_eval.txt/json = unchanged r0_analyze output
+  compare_registered.py  point/contrast comparison with results/taskR0/analysis_eval.json
+  verif_analysis.py  independent labelling, de-dup, FROC, bootstrap -> own/own_analysis.txt/json, own/own_stdout.txt
+  diag_alignment.py  origin/epicentre errors, PhaseNet residuals -> own/diag_alignment.txt
+  diag_ceiling.py    perfect-ranking ceilings, no-dedup, widened rules -> own/diag_ceiling.txt
+  diag_projection.py frame vs geodesic distances
+  diag_subnets.py    re-derivation of the subnet rule
+  diag_corrections.py  CAL-only +SC search-width diagnostic (N8)
+  verif_zflip.py     POST HOC M2 with +Z -> zflip/det_eval_N8.json, own/zflip_analysis.txt
+  verif_widesc.py, run_widesc.sh   POST HOC M2 with +SC search +-2 s -> widesc/, own/widesc_analysis.txt
+  verif_wides2.py, run_wides2.sh   POST HOC M2 with +SC and S2 first read +-2 s (N8, U8) -> wides2/,
+                     own/wides2_analysis.txt
+  progress.txt       timestamped progress notes

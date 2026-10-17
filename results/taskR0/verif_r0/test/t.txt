@@ -1,0 +1,99 @@
+centre (35.67970952, -117.53875714), targets 45
+
+== hours convention 2660s (caps 10/h->7, 30/h->22, 60/h->44)
+  LOC+T 10/h M1:0.022,0.000,0.000,0.000  M2:0.000,0.000,0.000,0.000  M3:0.000,0.000,0.000,0.000  GaMMA:0.378,0.356,nan,nan  PyOcto:0.400,0.511,nan,nan  GaMMA+SC:0.000,0.022,nan,nan  PyOcto+SC:0.000,0.000,nan,nan  BESTPICK:0.400,0.511,nan,nan
+  LOC+T 30/h M1:0.044,0.000,0.000,0.000  M2:0.022,0.000,0.000,0.000  M3:0.022,0.000,0.000,0.022  GaMMA:0.489,0.511,nan,nan  PyOcto:0.600,0.667,nan,nan  GaMMA+SC:0.133,0.333,nan,nan  PyOcto+SC:0.200,0.133,nan,nan  BESTPICK:0.600,0.667,nan,nan
+  LOC+T 60/h M1:0.044,0.000,0.000,0.000  M2:0.022,0.000,0.000,0.000  M3:0.022,0.000,0.000,0.022  GaMMA:0.511,0.556,nan,nan  PyOcto:0.644,0.667,nan,nan  GaMMA+SC:0.400,0.400,nan,nan  PyOcto+SC:0.311,0.267,nan,nan  BESTPICK:0.644,0.667,nan,nan
+  LOC   10/h M1:0.022,0.000,0.000,0.000  M2:0.000,0.000,0.000,0.000  M3:0.022,0.022,0.000,0.067  GaMMA:0.533,0.556,nan,nan  PyOcto:0.578,0.511,nan,nan  GaMMA+SC:0.556,0.444,nan,nan  PyOcto+SC:0.533,0.489,nan,nan  BESTPICK:0.578,0.556,nan,nan
+  LOC   30/h M1:0.044,0.000,0.000,0.000  M2:0.022,0.000,0.000,0.000  M3:0.089,0.044,0.044,0.067  GaMMA:0.711,0.689,nan,nan  PyOcto:0.711,0.689,nan,nan  GaMMA+SC:0.711,0.511,nan,nan  PyOcto+SC:0.711,0.578,nan,nan  BESTPICK:0.711,0.689,nan,nan
+  LOC   60/h M1:0.067,0.022,0.000,0.000  M2:0.022,0.022,0.000,0.000  M3:0.178,0.044,0.067,0.089  GaMMA:0.756,0.733,nan,nan  PyOcto:0.778,0.689,nan,nan  GaMMA+SC:0.733,0.578,nan,nan  PyOcto+SC:0.756,0.644,nan,nan  BESTPICK:0.778,0.733,nan,nan
+  M2-BESTPICK LOC+T 10/h pooled +nan  per N8:-0.400 N6:-0.511 N4:+nan U8:+nan
+  M2-BESTPICK LOC+T 30/h pooled +nan  per N8:-0.578 N6:-0.667 N4:+nan U8:+nan
+  M2-BESTPICK LOC+T 60/h pooled +nan  per N8:-0.622 N6:-0.667 N4:+nan U8:+nan
+  M2-BESTPICK LOC   10/h pooled +nan  per N8:-0.578 N6:-0.556 N4:+nan U8:+nan
+  M2-BESTPICK LOC   30/h pooled +nan  per N8:-0.689 N6:-0.689 N4:+nan U8:+nan
+  M2-BESTPICK LOC   60/h pooled +nan  per N8:-0.756 N6:-0.711 N4:+nan U8:+nan
+  M1-BESTPICK LOC+T 10/h pooled +nan  per N8:-0.378 N6:-0.511 N4:+nan U8:+nan
+  M1-BESTPICK LOC+T 30/h pooled +nan  per N8:-0.556 N6:-0.667 N4:+nan U8:+nan
+  M1-BESTPICK LOC+T 60/h pooled +nan  per N8:-0.600 N6:-0.667 N4:+nan U8:+nan
+  M1-BESTPICK LOC   10/h pooled +nan  per N8:-0.556 N6:-0.556 N4:+nan U8:+nan
+  M1-BESTPICK LOC   30/h pooled +nan  per N8:-0.667 N6:-0.689 N4:+nan U8:+nan
+  M1-BESTPICK LOC   60/h pooled +nan  per N8:-0.711 N6:-0.711 N4:+nan U8:+nan
+  M3-BESTPICK LOC+T 10/h pooled +nan  per N8:-0.400 N6:-0.511 N4:+nan U8:+nan
+  M3-BESTPICK LOC+T 30/h pooled +nan  per N8:-0.578 N6:-0.667 N4:+nan U8:+nan
+  M3-BESTPICK LOC+T 60/h pooled +nan  per N8:-0.622 N6:-0.667 N4:+nan U8:+nan
+  M3-BESTPICK LOC   10/h pooled +nan  per N8:-0.556 N6:-0.533 N4:+nan U8:+nan
+  M3-BESTPICK LOC   30/h pooled +nan  per N8:-0.622 N6:-0.644 N4:+nan U8:+nan
+  M3-BESTPICK LOC   60/h pooled +nan  per N8:-0.600 N6:-0.689 N4:+nan U8:+nan
+  M1-M3 LOC+T 10/h pooled +0.006
+  M2-M1 LOC+T 10/h pooled -0.006
+  M1-M3 LOC+T 30/h pooled +0.000
+  M2-M1 LOC+T 30/h pooled -0.006
+  M1-M3 LOC+T 60/h pooled +0.000
+  M2-M1 LOC+T 60/h pooled -0.006
+  M1-M3 LOC   10/h pooled -0.022
+  M2-M1 LOC   10/h pooled -0.006
+  M1-M3 LOC   30/h pooled -0.050
+  M2-M1 LOC   30/h pooled -0.006
+  M1-M3 LOC   60/h pooled -0.072
+  M2-M1 LOC   60/h pooled -0.011
+
+== hours convention 45blk (caps 10/h->7, 30/h->22, 60/h->45)
+  LOC+T 10/h M1:0.022,0.000,0.000,0.000  M2:0.000,0.000,0.000,0.000  M3:0.000,0.000,0.000,0.000  GaMMA:0.378,0.356,nan,nan  PyOcto:0.400,0.511,nan,nan  GaMMA+SC:0.000,0.022,nan,nan  PyOcto+SC:0.000,0.000,nan,nan  BESTPICK:0.400,0.511,nan,nan
+  LOC+T 30/h M1:0.044,0.000,0.000,0.000  M2:0.022,0.000,0.000,0.000  M3:0.022,0.000,0.000,0.022  GaMMA:0.489,0.511,nan,nan  PyOcto:0.600,0.667,nan,nan  GaMMA+SC:0.133,0.333,nan,nan  PyOcto+SC:0.200,0.133,nan,nan  BESTPICK:0.600,0.667,nan,nan
+  LOC+T 60/h M1:0.044,0.000,0.000,0.000  M2:0.022,0.000,0.000,0.000  M3:0.022,0.000,0.000,0.022  GaMMA:0.511,0.578,nan,nan  PyOcto:0.644,0.667,nan,nan  GaMMA+SC:0.400,0.400,nan,nan  PyOcto+SC:0.311,0.311,nan,nan  BESTPICK:0.644,0.667,nan,nan
+  LOC   10/h M1:0.022,0.000,0.000,0.000  M2:0.000,0.000,0.000,0.000  M3:0.022,0.022,0.000,0.067  GaMMA:0.533,0.556,nan,nan  PyOcto:0.578,0.511,nan,nan  GaMMA+SC:0.556,0.444,nan,nan  PyOcto+SC:0.533,0.489,nan,nan  BESTPICK:0.578,0.556,nan,nan
+  LOC   30/h M1:0.044,0.000,0.000,0.000  M2:0.022,0.000,0.000,0.000  M3:0.089,0.044,0.044,0.067  GaMMA:0.711,0.689,nan,nan  PyOcto:0.711,0.689,nan,nan  GaMMA+SC:0.711,0.511,nan,nan  PyOcto+SC:0.711,0.578,nan,nan  BESTPICK:0.711,0.689,nan,nan
+  LOC   60/h M1:0.067,0.044,0.000,0.000  M2:0.022,0.022,0.000,0.000  M3:0.178,0.044,0.089,0.089  GaMMA:0.756,0.733,nan,nan  PyOcto:0.778,0.711,nan,nan  GaMMA+SC:0.733,0.578,nan,nan  PyOcto+SC:0.756,0.644,nan,nan  BESTPICK:0.778,0.733,nan,nan
+  M2-BESTPICK LOC+T 10/h pooled +nan  per N8:-0.400 N6:-0.511 N4:+nan U8:+nan
+  M2-BESTPICK LOC+T 30/h pooled +nan  per N8:-0.578 N6:-0.667 N4:+nan U8:+nan
+  M2-BESTPICK LOC+T 60/h pooled +nan  per N8:-0.622 N6:-0.667 N4:+nan U8:+nan
+  M2-BESTPICK LOC   10/h pooled +nan  per N8:-0.578 N6:-0.556 N4:+nan U8:+nan
+  M2-BESTPICK LOC   30/h pooled +nan  per N8:-0.689 N6:-0.689 N4:+nan U8:+nan
+  M2-BESTPICK LOC   60/h pooled +nan  per N8:-0.756 N6:-0.711 N4:+nan U8:+nan
+  M1-BESTPICK LOC+T 10/h pooled +nan  per N8:-0.378 N6:-0.511 N4:+nan U8:+nan
+  M1-BESTPICK LOC+T 30/h pooled +nan  per N8:-0.556 N6:-0.667 N4:+nan U8:+nan
+  M1-BESTPICK LOC+T 60/h pooled +nan  per N8:-0.600 N6:-0.667 N4:+nan U8:+nan
+  M1-BESTPICK LOC   10/h pooled +nan  per N8:-0.556 N6:-0.556 N4:+nan U8:+nan
+  M1-BESTPICK LOC   30/h pooled +nan  per N8:-0.667 N6:-0.689 N4:+nan U8:+nan
+  M1-BESTPICK LOC   60/h pooled +nan  per N8:-0.711 N6:-0.689 N4:+nan U8:+nan
+  M3-BESTPICK LOC+T 10/h pooled +nan  per N8:-0.400 N6:-0.511 N4:+nan U8:+nan
+  M3-BESTPICK LOC+T 30/h pooled +nan  per N8:-0.578 N6:-0.667 N4:+nan U8:+nan
+  M3-BESTPICK LOC+T 60/h pooled +nan  per N8:-0.622 N6:-0.667 N4:+nan U8:+nan
+  M3-BESTPICK LOC   10/h pooled +nan  per N8:-0.556 N6:-0.533 N4:+nan U8:+nan
+  M3-BESTPICK LOC   30/h pooled +nan  per N8:-0.622 N6:-0.644 N4:+nan U8:+nan
+  M3-BESTPICK LOC   60/h pooled +nan  per N8:-0.600 N6:-0.689 N4:+nan U8:+nan
+  M1-M3 LOC+T 10/h pooled +0.006
+  M2-M1 LOC+T 10/h pooled -0.006
+  M1-M3 LOC+T 30/h pooled +0.000
+  M2-M1 LOC+T 30/h pooled -0.006
+  M1-M3 LOC+T 60/h pooled +0.000
+  M2-M1 LOC+T 60/h pooled -0.006
+  M1-M3 LOC   10/h pooled -0.022
+  M2-M1 LOC   10/h pooled -0.006
+  M1-M3 LOC   30/h pooled -0.050
+  M2-M1 LOC   30/h pooled -0.006
+  M1-M3 LOC   60/h pooled -0.072
+  M2-M1 LOC   60/h pooled -0.017
+
+Descriptive (after de-dup, in segment): detections, any-score LOC+T and LOC hits (distinct M>=2 targets, max over configs)
+  N4 M1        n   891  LOC+T hit-detections   0 distinct targets   0  LOC distinct   3
+  N4 M2        n   892  LOC+T hit-detections   0 distinct targets   0  LOC distinct   3
+  N4 M3        n   817  LOC+T hit-detections   5 distinct targets   4  LOC distinct  11
+  N6 GaMMA     n   149  LOC+T hit-detections  26 distinct targets  26  LOC distinct  33
+  N6 GaMMA+SC  n   152  LOC+T hit-detections  20 distinct targets  20  LOC distinct  28
+  N6 M1        n   948  LOC+T hit-detections   1 distinct targets   1  LOC distinct   7
+  N6 M2        n   917  LOC+T hit-detections   2 distinct targets   2  LOC distinct   4
+  N6 M3        n   791  LOC+T hit-detections   8 distinct targets   7  LOC distinct  13
+  N6 PyOcto    n   148  LOC+T hit-detections  31 distinct targets  31  LOC distinct  32
+  N6 PyOcto+SC n   151  LOC+T hit-detections  16 distinct targets  16  LOC distinct  31
+  N8 GaMMA     n   164  LOC+T hit-detections  24 distinct targets  24  LOC distinct  35
+  N8 GaMMA+SC  n   159  LOC+T hit-detections  19 distinct targets  19  LOC distinct  33
+  N8 M1        n   893  LOC+T hit-detections   5 distinct targets   5  LOC distinct  10
+  N8 M2        n   855  LOC+T hit-detections   5 distinct targets   5  LOC distinct  10
+  N8 M3        n   738  LOC+T hit-detections  11 distinct targets   9  LOC distinct  19
+  N8 PyOcto    n   160  LOC+T hit-detections  30 distinct targets  30  LOC distinct  35
+  N8 PyOcto+SC n   160  LOC+T hit-detections  16 distinct targets  16  LOC distinct  34
+  U8 M1        n  1028  LOC+T hit-detections   4 distinct targets   4  LOC distinct   9
+  U8 M2        n   958  LOC+T hit-detections   5 distinct targets   4  LOC distinct  10
+  U8 M3        n   839  LOC+T hit-detections  10 distinct targets  10  LOC distinct  25

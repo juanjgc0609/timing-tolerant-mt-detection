@@ -1,0 +1,37 @@
+per subnet: M2 recall@30/h | M2 any-score ceiling | M2 no-dedup @30/h, any | BESTPICK @30/h (any-score)
+ rule LOC+T
+   N8 M2 0.022 | ceil 0.111 | nodedup 0.022, 0.111 | BESTPICK 0.600 (0.667)
+   N6 M2 0.000 | ceil 0.044 | nodedup 0.000, 0.044 | BESTPICK 0.667 (0.689)
+   N4 M2 0.000 | ceil 0.000 | nodedup 0.000, 0.000 | BESTPICK 0.000 (0.222)
+   U8 M2 0.000 | ceil 0.089 | nodedup 0.000, 0.089 | BESTPICK 0.289 (0.400)
+   pooled M2 - BESTPICK @30/h -0.383; perfect-ranking bound (M2 any-score ceiling - BESTPICK@30/h) -0.328; same without de-dup -0.328
+ rule LOC
+   N8 M2 0.022 | ceil 0.222 | nodedup 0.022, 0.222 | BESTPICK 0.711 (0.778)
+   N6 M2 0.000 | ceil 0.089 | nodedup 0.000, 0.089 | BESTPICK 0.689 (0.733)
+   N4 M2 0.000 | ceil 0.067 | nodedup 0.000, 0.067 | BESTPICK 0.000 (0.244)
+   U8 M2 0.000 | ceil 0.222 | nodedup 0.000, 0.222 | BESTPICK 0.422 (0.533)
+   pooled M2 - BESTPICK @30/h -0.450; perfect-ranking bound (M2 any-score ceiling - BESTPICK@30/h) -0.306; same without de-dup -0.306
+ rule T1.0
+   N8 M2 0.022 | ceil 0.111 | nodedup 0.022, 0.111 | BESTPICK 0.711 (0.778)
+   N6 M2 0.000 | ceil 0.044 | nodedup 0.000, 0.044 | BESTPICK 0.689 (0.711)
+   N4 M2 0.000 | ceil 0.022 | nodedup 0.000, 0.022 | BESTPICK 0.000 (0.244)
+   U8 M2 0.000 | ceil 0.178 | nodedup 0.000, 0.178 | BESTPICK 0.378 (0.511)
+   pooled M2 - BESTPICK @30/h -0.439; perfect-ranking bound (M2 any-score ceiling - BESTPICK@30/h) -0.356; same without de-dup -0.356
+ rule T1.5
+   N8 M2 0.022 | ceil 0.156 | nodedup 0.022, 0.156 | BESTPICK 0.711 (0.778)
+   N6 M2 0.000 | ceil 0.067 | nodedup 0.000, 0.067 | BESTPICK 0.689 (0.733)
+   N4 M2 0.000 | ceil 0.044 | nodedup 0.000, 0.044 | BESTPICK 0.000 (0.244)
+   U8 M2 0.000 | ceil 0.222 | nodedup 0.000, 0.222 | BESTPICK 0.422 (0.533)
+   pooled M2 - BESTPICK @30/h -0.450; perfect-ranking bound (M2 any-score ceiling - BESTPICK@30/h) -0.333; same without de-dup -0.333
+ rule R10T0.5
+   N8 M2 0.044 | ceil 0.178 | nodedup 0.044, 0.178 | BESTPICK 0.622 (0.689)
+   N6 M2 0.022 | ceil 0.178 | nodedup 0.022, 0.200 | BESTPICK 0.689 (0.756)
+   N4 M2 0.000 | ceil 0.089 | nodedup 0.000, 0.089 | BESTPICK 0.600 (0.689)
+   U8 M2 0.000 | ceil 0.156 | nodedup 0.000, 0.156 | BESTPICK 0.733 (0.800)
+   pooled M2 - BESTPICK @30/h -0.644; perfect-ranking bound (M2 any-score ceiling - BESTPICK@30/h) -0.511; same without de-dup -0.506
+ rule R10T1.5
+   N8 M2 0.067 | ceil 0.311 | nodedup 0.067, 0.311 | BESTPICK 0.733 (0.822)
+   N6 M2 0.022 | ceil 0.311 | nodedup 0.022, 0.311 | BESTPICK 0.733 (0.822)
+   N4 M2 0.000 | ceil 0.200 | nodedup 0.000, 0.200 | BESTPICK 0.644 (0.778)
+   U8 M2 0.000 | ceil 0.378 | nodedup 0.000, 0.378 | BESTPICK 0.756 (0.844)
+   pooled M2 - BESTPICK @30/h -0.694; perfect-ranking bound (M2 any-score ceiling - BESTPICK@30/h) -0.417; same without de-dup -0.417

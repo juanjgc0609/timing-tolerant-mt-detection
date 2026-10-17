@@ -1,0 +1,20 @@
+00:17:06 N8 eval ['M2'] chunk 0 50 of 887
+00:18:14 N8 eval ['M2'] chunk 50 100 of 887
+00:19:20 N8 eval ['M2'] chunk 100 150 of 887
+00:20:29 N8 eval ['M2'] chunk 150 200 of 887
+00:21:38 N8 eval ['M2'] chunk 200 250 of 887
+00:22:45 N8 eval ['M2'] chunk 250 300 of 887
+00:23:56 N8 eval ['M2'] chunk 300 350 of 887
+00:25:39 N8 eval ['M2'] chunk 350 400 of 887
+00:27:21 N8 eval ['M2'] chunk 400 450 of 887
+00:28:30 N8 eval ['M2'] chunk 450 500 of 887
+00:29:36 N8 eval ['M2'] chunk 500 550 of 887
+00:30:45 N8 eval ['M2'] chunk 550 600 of 887
+00:31:58 N8 eval ['M2'] chunk 600 650 of 887
+00:33:04 N8 eval ['M2'] chunk 650 700 of 887
+00:34:12 N8 eval ['M2'] chunk 700 750 of 887
+00:35:21 N8 eval ['M2'] chunk 750 800 of 887
+00:36:25 N8 eval ['M2'] chunk 800 850 of 887
+00:37:14 N8 eval ['M2'] chunk 850 887 of 887
+MERGED /home/claude/work/r0_verif/zflip/det_eval_N8.json {'M2': 885}
+ZFLIP_DONE

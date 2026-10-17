@@ -1,0 +1,40 @@
+00:47:18 U8 eval ['M2'] chunk 0 50 of 887
+00:47:20 N8 eval ['M2'] chunk 0 50 of 887
+00:48:24 U8 eval ['M2'] chunk 50 100 of 887
+00:48:28 N8 eval ['M2'] chunk 50 100 of 887
+00:49:27 U8 eval ['M2'] chunk 100 150 of 887
+00:49:33 N8 eval ['M2'] chunk 100 150 of 887
+00:50:34 U8 eval ['M2'] chunk 150 200 of 887
+00:50:38 N8 eval ['M2'] chunk 150 200 of 887
+00:51:38 U8 eval ['M2'] chunk 200 250 of 887
+00:51:44 N8 eval ['M2'] chunk 200 250 of 887
+00:52:42 U8 eval ['M2'] chunk 250 300 of 887
+00:52:50 N8 eval ['M2'] chunk 250 300 of 887
+00:53:50 U8 eval ['M2'] chunk 300 350 of 887
+00:53:58 N8 eval ['M2'] chunk 300 350 of 887
+00:54:58 U8 eval ['M2'] chunk 350 400 of 887
+00:55:07 N8 eval ['M2'] chunk 350 400 of 887
+00:56:06 U8 eval ['M2'] chunk 400 450 of 887
+00:56:17 N8 eval ['M2'] chunk 400 450 of 887
+00:57:16 U8 eval ['M2'] chunk 450 500 of 887
+00:57:28 N8 eval ['M2'] chunk 450 500 of 887
+00:58:21 U8 eval ['M2'] chunk 500 550 of 887
+00:58:38 N8 eval ['M2'] chunk 500 550 of 887
+00:59:32 U8 eval ['M2'] chunk 550 600 of 887
+00:59:48 N8 eval ['M2'] chunk 550 600 of 887
+01:00:40 U8 eval ['M2'] chunk 600 650 of 887
+01:00:56 N8 eval ['M2'] chunk 600 650 of 887
+01:01:46 U8 eval ['M2'] chunk 650 700 of 887
+01:02:03 N8 eval ['M2'] chunk 650 700 of 887
+01:02:52 U8 eval ['M2'] chunk 700 750 of 887
+01:03:09 N8 eval ['M2'] chunk 700 750 of 887
+01:04:00 U8 eval ['M2'] chunk 750 800 of 887
+01:04:18 N8 eval ['M2'] chunk 750 800 of 887
+01:05:07 U8 eval ['M2'] chunk 800 850 of 887
+01:05:27 N8 eval ['M2'] chunk 800 850 of 887
+01:05:56 U8 eval ['M2'] chunk 850 887 of 887
+MERGED /home/claude/work/r0_verif/wides2/det_eval_U8.json {'M2': 937}
+WIDES2_DONE_U8
+01:06:17 N8 eval ['M2'] chunk 850 887 of 887
+MERGED /home/claude/work/r0_verif/wides2/det_eval_N8.json {'M2': 869}
+WIDES2_DONE_N8

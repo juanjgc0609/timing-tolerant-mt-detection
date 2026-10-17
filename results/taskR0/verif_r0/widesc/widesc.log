@@ -1,0 +1,20 @@
+00:25:29 N8 eval ['M2'] chunk 0 50 of 887
+00:27:11 N8 eval ['M2'] chunk 50 100 of 887
+00:28:19 N8 eval ['M2'] chunk 100 150 of 887
+00:29:27 N8 eval ['M2'] chunk 150 200 of 887
+00:30:36 N8 eval ['M2'] chunk 200 250 of 887
+00:31:47 N8 eval ['M2'] chunk 250 300 of 887
+00:32:56 N8 eval ['M2'] chunk 300 350 of 887
+00:34:05 N8 eval ['M2'] chunk 350 400 of 887
+00:35:13 N8 eval ['M2'] chunk 400 450 of 887
+00:36:20 N8 eval ['M2'] chunk 450 500 of 887
+00:37:26 N8 eval ['M2'] chunk 500 550 of 887
+00:38:35 N8 eval ['M2'] chunk 550 600 of 887
+00:39:41 N8 eval ['M2'] chunk 600 650 of 887
+00:40:49 N8 eval ['M2'] chunk 650 700 of 887
+00:41:56 N8 eval ['M2'] chunk 700 750 of 887
+00:43:07 N8 eval ['M2'] chunk 750 800 of 887
+00:44:14 N8 eval ['M2'] chunk 800 850 of 887
+00:45:03 N8 eval ['M2'] chunk 850 887 of 887
+MERGED /home/claude/work/r0_verif/widesc/det_eval_N8.json {'M2': 863}
+WIDESC_DONE

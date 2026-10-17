@@ -1,0 +1,559 @@
+START N8 Sat Oct 17 03:03:20 UTC 2026
+phasenet 33 s {'P': 1193, 'S': 1274}
+Clustering (eps=8.33):   0%|          | 0/68 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 68/68 [00:00<00:00, 102705.32it/s]
+Associating 2467 picks with 1 CPUs
+...............................
+Associated 100 events
+.........................
+Associated 200 events
+...........gamma {'min_picks': 3, 'sigma': 1.0} 222 97
+Clustering (eps=8.33):   0%|          | 0/68 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 68/68 [00:00<00:00, 14227.20it/s]
+Associating 2467 picks with 1 CPUs
+..............................
+Associated 100 events
+........................
+Associated 200 events
+.............gamma {'min_picks': 3, 'sigma': 2.0} 225 165
+Clustering (eps=8.33):   0%|          | 0/68 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 68/68 [00:00<00:00, 105908.90it/s]
+Associating 2467 picks with 1 CPUs
+................................
+Associated 100 events
+...................................gamma {'min_picks': 4, 'sigma': 1.0} 196 230
+Clustering (eps=8.33):   0%|          | 0/68 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 68/68 [00:00<00:00, 107749.40it/s]
+Associating 2467 picks with 1 CPUs
+................................
+Associated 100 events
+................................
+Associated 200 events
+...gamma {'min_picks': 4, 'sigma': 2.0} 203 297
+Clustering (eps=8.33):   0%|          | 0/68 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 68/68 [00:00<00:00, 85804.05it/s]
+Associating 2467 picks with 1 CPUs
+..................................
+Associated 100 events
+.................................gamma {'min_picks': 5, 'sigma': 1.0} 176 362
+Clustering (eps=8.33):   0%|          | 0/68 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 68/68 [00:00<00:00, 102153.54it/s]
+Associating 2467 picks with 1 CPUs
+.................................
+Associated 100 events
+..................................gamma {'min_picks': 5, 'sigma': 2.0} 182 428
+Clustering (eps=8.33):   0%|          | 0/68 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 68/68 [00:00<00:00, 87114.44it/s]
+Associating 2467 picks with 1 CPUs
+.....................................
+Associated 100 events
+..............................gamma {'min_picks': 6, 'sigma': 1.0} 163 496
+Clustering (eps=8.33):   0%|          | 0/68 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 68/68 [00:00<00:00, 105478.06it/s]
+Associating 2467 picks with 1 CPUs
+....................................
+Associated 100 events
+...............................gamma {'min_picks': 6, 'sigma': 2.0} 170 563
+Clustering (eps=8.33):   0%|          | 0/68 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 68/68 [00:00<00:00, 103563.06it/s]
+Associating 2467 picks with 1 CPUs
+...........................................
+Associated 100 events
+........................gamma {'min_picks': 8, 'sigma': 1.0} 136 630
+Clustering (eps=8.33):   0%|          | 0/68 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 68/68 [00:00<00:00, 12655.87it/s]
+Associating 2467 picks with 1 CPUs
+.........................................
+Associated 100 events
+..........................gamma {'min_picks': 8, 'sigma': 2.0} 143 697
+pyocto {'n_picks': 3, 'tol': 0.5} 222 699
+pyocto {'n_picks': 3, 'tol': 1.0} 222 700
+pyocto {'n_picks': 3, 'tol': 2.0} 226 702
+pyocto {'n_picks': 4, 'tol': 0.5} 210 703
+pyocto {'n_picks': 4, 'tol': 1.0} 210 704
+pyocto {'n_picks': 4, 'tol': 2.0} 208 706
+pyocto {'n_picks': 6, 'tol': 0.5} 171 708
+pyocto {'n_picks': 6, 'tol': 1.0} 172 709
+pyocto {'n_picks': 6, 'tol': 2.0} 173 711
+pyocto {'n_picks': 8, 'tol': 0.5} 155 713
+pyocto {'n_picks': 8, 'tol': 1.0} 157 714
+pyocto {'n_picks': 8, 'tol': 2.0} 156 717
+pyocto {'n_picks': 10, 'tol': 0.5} 119 717
+pyocto {'n_picks': 10, 'tol': 1.0} 119 719
+pyocto {'n_picks': 10, 'tol': 2.0} 119 723
+Clustering (eps=8.33):   0%|          | 0/69 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 69/69 [00:00<00:00, 122267.42it/s]
+Associating 2467 picks with 1 CPUs
+.....x
+.........................
+Associated 100 events
+...........................
+Associated 200 events
+...........gamma_sc {'min_picks': 3, 'sigma': 1.0} 219 798
+Clustering (eps=8.33):   0%|          | 0/69 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 69/69 [00:00<00:00, 80637.22it/s]
+Associating 2467 picks with 1 CPUs
+.....x
+........................
+Associated 100 events
+..........................
+Associated 200 events
+.............gamma_sc {'min_picks': 3, 'sigma': 2.0} 222 877
+Clustering (eps=8.33):   0%|          | 0/69 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 69/69 [00:00<00:00, 107626.25it/s]
+Associating 2467 picks with 1 CPUs
+.....x
+...........................
+Associated 100 events
+..................................
+Associated 200 events
+..gamma_sc {'min_picks': 4, 'sigma': 1.0} 201 956
+Clustering (eps=8.33):   0%|          | 0/69 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 69/69 [00:00<00:00, 106321.45it/s]
+Associating 2467 picks with 1 CPUs
+.....x
+..........................
+Associated 100 events
+.................................
+Associated 200 events
+....gamma_sc {'min_picks': 4, 'sigma': 2.0} 205 1034
+Clustering (eps=8.33):   0%|          | 0/69 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 69/69 [00:00<00:00, 103916.33it/s]
+Associating 2467 picks with 1 CPUs
+.....x
+..............................
+Associated 100 events
+.................................gamma_sc {'min_picks': 5, 'sigma': 1.0} 179 1117
+Clustering (eps=8.33):   0%|          | 0/69 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 69/69 [00:00<00:00, 77257.60it/s]
+Associating 2467 picks with 1 CPUs
+.....x
+............................
+Associated 100 events
+...................................gamma_sc {'min_picks': 5, 'sigma': 2.0} 184 1199
+Clustering (eps=8.33):   0%|          | 0/69 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 69/69 [00:00<00:00, 88045.93it/s]
+Associating 2467 picks with 1 CPUs
+.....x
+.................................
+Associated 100 events
+..............................gamma_sc {'min_picks': 6, 'sigma': 1.0} 165 1279
+Clustering (eps=8.33):   0%|          | 0/69 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 69/69 [00:00<00:00, 34830.54it/s]
+Associating 2467 picks with 1 CPUs
+.....x
+................................
+Associated 100 events
+...............................gamma_sc {'min_picks': 6, 'sigma': 2.0} 170 1359
+Clustering (eps=8.33):   0%|          | 0/69 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 69/69 [00:00<00:00, 85395.98it/s]
+Associating 2467 picks with 1 CPUs
+.....x
+.......................................
+Associated 100 events
+........................gamma_sc {'min_picks': 8, 'sigma': 1.0} 135 1440
+Clustering (eps=8.33):   0%|          | 0/69 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 69/69 [00:00<00:00, 101868.00it/s]
+Associating 2467 picks with 1 CPUs
+.....x
+....................................
+Associated 100 events
+...........................gamma_sc {'min_picks': 8, 'sigma': 2.0} 143 1517
+pyocto_sc {'n_picks': 3, 'tol': 0.5} 221 1518
+pyocto_sc {'n_picks': 3, 'tol': 1.0} 224 1520
+pyocto_sc {'n_picks': 3, 'tol': 2.0} 221 1521
+pyocto_sc {'n_picks': 4, 'tol': 0.5} 205 1523
+pyocto_sc {'n_picks': 4, 'tol': 1.0} 208 1524
+pyocto_sc {'n_picks': 4, 'tol': 2.0} 209 1526
+pyocto_sc {'n_picks': 6, 'tol': 0.5} 172 1527
+pyocto_sc {'n_picks': 6, 'tol': 1.0} 170 1529
+pyocto_sc {'n_picks': 6, 'tol': 2.0} 172 1530
+pyocto_sc {'n_picks': 8, 'tol': 0.5} 156 1532
+pyocto_sc {'n_picks': 8, 'tol': 1.0} 154 1533
+pyocto_sc {'n_picks': 8, 'tol': 2.0} 154 1536
+pyocto_sc {'n_picks': 10, 'tol': 0.5} 116 1537
+pyocto_sc {'n_picks': 10, 'tol': 1.0} 116 1538
+pyocto_sc {'n_picks': 10, 'tol': 2.0} 117 1543
+DONE 1543
+START N6 Sat Oct 17 03:29:08 UTC 2026
+phasenet 31 s {'P': 922, 'S': 968}
+Clustering (eps=8.33):   0%|          | 0/74 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 74/74 [00:00<00:00, 104539.74it/s]
+Associating 1890 picks with 1 CPUs
+.....................................
+Associated 100 events
+...............................
+Associated 200 events
+.....gamma {'min_picks': 3, 'sigma': 1.0} 208 79
+Clustering (eps=8.33):   0%|          | 0/74 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 74/74 [00:00<00:00, 101034.67it/s]
+Associating 1890 picks with 1 CPUs
+.....................................
+Associated 100 events
+..............................
+Associated 200 events
+......gamma {'min_picks': 3, 'sigma': 2.0} 209 123
+Clustering (eps=8.33):   0%|          | 0/74 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 74/74 [00:00<00:00, 112293.23it/s]
+Associating 1890 picks with 1 CPUs
+.......................................
+Associated 100 events
+..................................gamma {'min_picks': 4, 'sigma': 1.0} 184 168
+Clustering (eps=8.33):   0%|          | 0/74 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 74/74 [00:00<00:00, 64689.14it/s]
+Associating 1890 picks with 1 CPUs
+......................................
+Associated 100 events
+...................................gamma {'min_picks': 4, 'sigma': 2.0} 187 212
+Clustering (eps=8.33):   0%|          | 0/74 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 74/74 [00:00<00:00, 113152.93it/s]
+Associating 1890 picks with 1 CPUs
+.............................................
+Associated 100 events
+............................gamma {'min_picks': 5, 'sigma': 1.0} 155 256
+Clustering (eps=8.33):   0%|          | 0/74 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 74/74 [00:00<00:00, 62677.40it/s]
+Associating 1890 picks with 1 CPUs
+...........................................
+Associated 100 events
+..............................gamma {'min_picks': 5, 'sigma': 2.0} 161 303
+Clustering (eps=8.33):   0%|          | 0/74 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 74/74 [00:00<00:00, 117835.42it/s]
+Associating 1890 picks with 1 CPUs
+................................................
+Associated 100 events
+.........................gamma {'min_picks': 6, 'sigma': 1.0} 139 348
+Clustering (eps=8.33):   0%|          | 0/74 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 74/74 [00:00<00:00, 119422.28it/s]
+Associating 1890 picks with 1 CPUs
+...............................................
+Associated 100 events
+..........................gamma {'min_picks': 6, 'sigma': 2.0} 144 391
+Clustering (eps=8.33):   0%|          | 0/74 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 74/74 [00:00<00:00, 105463.30it/s]
+Associating 1890 picks with 1 CPUs
+.................................................................x
+.....
+Associated 100 events
+...gamma {'min_picks': 8, 'sigma': 1.0} 103 440
+Clustering (eps=8.33):   0%|          | 0/74 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 74/74 [00:00<00:00, 8043.60it/s]
+Associating 1890 picks with 1 CPUs
+..........................................................
+Associated 100 events
+.......x
+........gamma {'min_picks': 8, 'sigma': 2.0} 113 488
+pyocto {'n_picks': 3, 'tol': 0.5} 206 489
+pyocto {'n_picks': 3, 'tol': 1.0} 208 490
+pyocto {'n_picks': 3, 'tol': 2.0} 208 492
+pyocto {'n_picks': 4, 'tol': 0.5} 194 492
+pyocto {'n_picks': 4, 'tol': 1.0} 191 493
+pyocto {'n_picks': 4, 'tol': 2.0} 187 495
+pyocto {'n_picks': 6, 'tol': 0.5} 157 495
+pyocto {'n_picks': 6, 'tol': 1.0} 158 496
+pyocto {'n_picks': 6, 'tol': 2.0} 154 498
+pyocto {'n_picks': 8, 'tol': 0.5} 118 499
+pyocto {'n_picks': 8, 'tol': 1.0} 119 500
+pyocto {'n_picks': 8, 'tol': 2.0} 121 503
+pyocto {'n_picks': 10, 'tol': 0.5} 89 503
+pyocto {'n_picks': 10, 'tol': 1.0} 89 504
+pyocto {'n_picks': 10, 'tol': 2.0} 89 507
+Clustering (eps=8.33):   0%|          | 0/75 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 75/75 [00:00<00:00, 112871.47it/s]
+Associating 1890 picks with 1 CPUs
+.....................................
+Associated 100 events
+.................................
+Associated 200 events
+....gamma_sc {'min_picks': 3, 'sigma': 1.0} 206 548
+Clustering (eps=8.33):   0%|          | 0/75 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 75/75 [00:00<00:00, 73567.07it/s]
+Associating 1890 picks with 1 CPUs
+....................................
+Associated 100 events
+.................................
+Associated 200 events
+.....gamma_sc {'min_picks': 3, 'sigma': 2.0} 208 590
+Clustering (eps=8.33):   0%|          | 0/75 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 75/75 [00:00<00:00, 124731.48it/s]
+Associating 1890 picks with 1 CPUs
+........................................
+Associated 100 events
+..................................gamma_sc {'min_picks': 4, 'sigma': 1.0} 181 636
+Clustering (eps=8.33):   0%|          | 0/75 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 75/75 [00:00<00:00, 104857.60it/s]
+Associating 1890 picks with 1 CPUs
+.....................................
+Associated 100 events
+.....................................gamma_sc {'min_picks': 4, 'sigma': 2.0} 189 683
+Clustering (eps=8.33):   0%|          | 0/75 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 75/75 [00:00<00:00, 59297.42it/s]
+Associating 1890 picks with 1 CPUs
+.............................................
+Associated 100 events
+.............................gamma_sc {'min_picks': 5, 'sigma': 1.0} 155 734
+Clustering (eps=8.33):   0%|          | 0/75 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 75/75 [00:00<00:00, 111038.76it/s]
+Associating 1890 picks with 1 CPUs
+..........................................
+Associated 100 events
+................................gamma_sc {'min_picks': 5, 'sigma': 2.0} 166 785
+Clustering (eps=8.33):   0%|          | 0/75 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 75/75 [00:00<00:00, 93734.45it/s]
+Associating 1890 picks with 1 CPUs
+................................................
+Associated 100 events
+..........................gamma_sc {'min_picks': 6, 'sigma': 1.0} 142 834
+Clustering (eps=8.33):   0%|          | 0/75 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 75/75 [00:00<00:00, 104509.24it/s]
+Associating 1890 picks with 1 CPUs
+..............................................
+Associated 100 events
+............................gamma_sc {'min_picks': 6, 'sigma': 2.0} 148 881
+Clustering (eps=8.33):   0%|          | 0/75 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 75/75 [00:00<00:00, 103003.54it/s]
+Associating 1890 picks with 1 CPUs
+........................................................................
+Associated 100 events
+..gamma_sc {'min_picks': 8, 'sigma': 1.0} 101 929
+Clustering (eps=8.33):   0%|          | 0/75 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 75/75 [00:00<00:00, 122022.03it/s]
+Associating 1890 picks with 1 CPUs
+...............................................................
+Associated 100 events
+...........gamma_sc {'min_picks': 8, 'sigma': 2.0} 111 973
+pyocto_sc {'n_picks': 3, 'tol': 0.5} 207 974
+pyocto_sc {'n_picks': 3, 'tol': 1.0} 211 974
+pyocto_sc {'n_picks': 3, 'tol': 2.0} 208 976
+pyocto_sc {'n_picks': 4, 'tol': 0.5} 193 976
+pyocto_sc {'n_picks': 4, 'tol': 1.0} 194 977
+pyocto_sc {'n_picks': 4, 'tol': 2.0} 192 978
+pyocto_sc {'n_picks': 6, 'tol': 0.5} 155 979
+pyocto_sc {'n_picks': 6, 'tol': 1.0} 153 979
+pyocto_sc {'n_picks': 6, 'tol': 2.0} 154 981
+pyocto_sc {'n_picks': 8, 'tol': 0.5} 119 981
+pyocto_sc {'n_picks': 8, 'tol': 1.0} 118 982
+pyocto_sc {'n_picks': 8, 'tol': 2.0} 119 985
+pyocto_sc {'n_picks': 10, 'tol': 0.5} 85 985
+pyocto_sc {'n_picks': 10, 'tol': 1.0} 86 987
+pyocto_sc {'n_picks': 10, 'tol': 2.0} 86 990
+DONE 990
+START N4 Sat Oct 17 03:45:44 UTC 2026
+phasenet 27 s {'P': 626, 'S': 643}
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 126725.47it/s]
+Associating 1269 picks with 1 CPUs
+................................................
+Associated 100 events
+.................................gamma {'min_picks': 3, 'sigma': 1.0} 170 54
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 131775.07it/s]
+Associating 1269 picks with 1 CPUs
+................................................
+Associated 100 events
+.................................gamma {'min_picks': 3, 'sigma': 2.0} 171 78
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 125477.17it/s]
+Associating 1269 picks with 1 CPUs
+.....................................................
+Associated 100 events
+............................gamma {'min_picks': 4, 'sigma': 1.0} 148 104
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 129200.95it/s]
+Associating 1269 picks with 1 CPUs
+....................................................
+Associated 100 events
+.............................gamma {'min_picks': 4, 'sigma': 2.0} 153 129
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 128573.06it/s]
+Associating 1269 picks with 1 CPUs
+.................................................................
+Associated 100 events
+................gamma {'min_picks': 5, 'sigma': 1.0} 118 154
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 95536.92it/s]
+Associating 1269 picks with 1 CPUs
+...............................................................
+Associated 100 events
+..................gamma {'min_picks': 5, 'sigma': 2.0} 125 178
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 131623.78it/s]
+Associating 1269 picks with 1 CPUs
+.................................................................................gamma {'min_picks': 6, 'sigma': 1.0} 97 202
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 128765.60it/s]
+Associating 1269 picks with 1 CPUs
+..........................................................................
+Associated 100 events
+.......gamma {'min_picks': 6, 'sigma': 2.0} 104 225
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 129786.01it/s]
+Associating 1269 picks with 1 CPUs
+.................................................................................gamma {'min_picks': 8, 'sigma': 1.0} 51 247
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 130723.27it/s]
+Associating 1269 picks with 1 CPUs
+.................................................................................gamma {'min_picks': 8, 'sigma': 2.0} 61 270
+pyocto {'n_picks': 3, 'tol': 0.5} 184 271
+pyocto {'n_picks': 3, 'tol': 1.0} 188 271
+pyocto {'n_picks': 3, 'tol': 2.0} 186 273
+pyocto {'n_picks': 4, 'tol': 0.5} 165 273
+pyocto {'n_picks': 4, 'tol': 1.0} 165 274
+pyocto {'n_picks': 4, 'tol': 2.0} 167 275
+pyocto {'n_picks': 6, 'tol': 0.5} 115 276
+pyocto {'n_picks': 6, 'tol': 1.0} 115 276
+pyocto {'n_picks': 6, 'tol': 2.0} 113 278
+pyocto {'n_picks': 8, 'tol': 0.5} 60 278
+pyocto {'n_picks': 8, 'tol': 1.0} 60 279
+pyocto {'n_picks': 8, 'tol': 2.0} 59 280
+pyocto {'n_picks': 10, 'tol': 0.5} 0 281
+pyocto {'n_picks': 10, 'tol': 1.0} 0 281
+pyocto {'n_picks': 10, 'tol': 2.0} 0 281
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 145303.31it/s]
+Associating 1269 picks with 1 CPUs
+.................................................
+Associated 100 events
+................................gamma_sc {'min_picks': 3, 'sigma': 1.0} 168 303
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 133152.51it/s]
+Associating 1269 picks with 1 CPUs
+.................................................
+Associated 100 events
+................................gamma_sc {'min_picks': 3, 'sigma': 2.0} 172 327
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 131171.98it/s]
+Associating 1269 picks with 1 CPUs
+.....................................................
+Associated 100 events
+............................gamma_sc {'min_picks': 4, 'sigma': 1.0} 150 352
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 117303.18it/s]
+Associating 1269 picks with 1 CPUs
+....................................................
+Associated 100 events
+.............................gamma_sc {'min_picks': 4, 'sigma': 2.0} 157 379
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 119962.65it/s]
+Associating 1269 picks with 1 CPUs
+................................................................
+Associated 100 events
+.................gamma_sc {'min_picks': 5, 'sigma': 1.0} 119 404
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 123052.93it/s]
+Associating 1269 picks with 1 CPUs
+...............................................................
+Associated 100 events
+..................gamma_sc {'min_picks': 5, 'sigma': 2.0} 125 429
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 106844.65it/s]
+Associating 1269 picks with 1 CPUs
+.................................................................................gamma_sc {'min_picks': 6, 'sigma': 1.0} 94 456
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 133204.08it/s]
+Associating 1269 picks with 1 CPUs
+..............................................................................
+Associated 100 events
+...gamma_sc {'min_picks': 6, 'sigma': 2.0} 102 484
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 129884.04it/s]
+Associating 1269 picks with 1 CPUs
+.................................................................................gamma_sc {'min_picks': 8, 'sigma': 1.0} 39 509
+Clustering (eps=8.33):   0%|          | 0/82 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 82/82 [00:00<00:00, 143724.58it/s]
+Associating 1269 picks with 1 CPUs
+.................................................................................gamma_sc {'min_picks': 8, 'sigma': 2.0} 57 534
+pyocto_sc {'n_picks': 3, 'tol': 0.5} 182 534
+pyocto_sc {'n_picks': 3, 'tol': 1.0} 181 535
+pyocto_sc {'n_picks': 3, 'tol': 2.0} 184 537
+pyocto_sc {'n_picks': 4, 'tol': 0.5} 166 537
+pyocto_sc {'n_picks': 4, 'tol': 1.0} 164 538
+pyocto_sc {'n_picks': 4, 'tol': 2.0} 165 539
+pyocto_sc {'n_picks': 6, 'tol': 0.5} 112 539
+pyocto_sc {'n_picks': 6, 'tol': 1.0} 112 540
+pyocto_sc {'n_picks': 6, 'tol': 2.0} 111 542
+pyocto_sc {'n_picks': 8, 'tol': 0.5} 62 542
+pyocto_sc {'n_picks': 8, 'tol': 1.0} 62 543
+pyocto_sc {'n_picks': 8, 'tol': 2.0} 62 545
+pyocto_sc {'n_picks': 10, 'tol': 0.5} 0 545
+pyocto_sc {'n_picks': 10, 'tol': 1.0} 0 545
+pyocto_sc {'n_picks': 10, 'tol': 2.0} 0 545
+DONE 545
+START U8 Sat Oct 17 03:54:54 UTC 2026
+phasenet 36 s {'P': 1131, 'S': 1191}
+Clustering (eps=8.33):   0%|          | 0/60 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 60/60 [00:00<00:00, 88893.76it/s]
+Associating 2322 picks with 1 CPUs
+...........................
+Associated 100 events
+................................gamma {'min_picks': 3, 'sigma': 1.0} 198 98
+Clustering (eps=8.33):   0%|          | 0/60 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 60/60 [00:00<00:00, 100462.37it/s]
+Associating 2322 picks with 1 CPUs
+...........................
+Associated 100 events
+..............................
+Associated 200 events
+..gamma {'min_picks': 3, 'sigma': 2.0} 201 161
+Clustering (eps=8.33):   0%|          | 0/60 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 60/60 [00:00<00:00, 111897.84it/s]
+Associating 2322 picks with 1 CPUs
+...............................
+Associated 100 events
+............................gamma {'min_picks': 4, 'sigma': 1.0} 179 223
+Clustering (eps=8.33):   0%|          | 0/60 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 60/60 [00:00<00:00, 109942.44it/s]
+Associating 2322 picks with 1 CPUs
+.............................
+Associated 100 events
+..............................gamma {'min_picks': 4, 'sigma': 2.0} 184 287
+Clustering (eps=8.33):   0%|          | 0/60 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 60/60 [00:00<00:00, 92931.40it/s]
+Associating 2322 picks with 1 CPUs
+................................
+Associated 100 events
+...........................gamma {'min_picks': 5, 'sigma': 1.0} 166 349
+Clustering (eps=8.33):   0%|          | 0/60 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 60/60 [00:00<00:00, 100784.24it/s]
+Associating 2322 picks with 1 CPUs
+................................
+Associated 100 events
+...........................gamma {'min_picks': 5, 'sigma': 2.0} 167 414
+Clustering (eps=8.33):   0%|          | 0/60 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 60/60 [00:00<00:00, 91913.16it/s]
+Associating 2322 picks with 1 CPUs
+..................................
+Associated 100 events
+.........................gamma {'min_picks': 6, 'sigma': 1.0} 149 477
+Clustering (eps=8.33):   0%|          | 0/60 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 60/60 [00:00<00:00, 98728.22it/s]
+Associating 2322 picks with 1 CPUs
+.................................
+Associated 100 events
+..........................gamma {'min_picks': 6, 'sigma': 2.0} 156 540
+Clustering (eps=8.33):   0%|          | 0/60 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 60/60 [00:00<00:00, 50241.21it/s]
+Associating 2322 picks with 1 CPUs
+.........................................
+Associated 100 events
+..................gamma {'min_picks': 8, 'sigma': 1.0} 123 603
+Clustering (eps=8.33):   0%|          | 0/60 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 60/60 [00:00<00:00, 74898.29it/s]
+Associating 2322 picks with 1 CPUs
+.....................................
+Associated 100 events
+......................gamma {'min_picks': 8, 'sigma': 2.0} 132 667
+pyocto {'n_picks': 3, 'tol': 0.5} 208 669
+pyocto {'n_picks': 3, 'tol': 1.0} 210 670
+pyocto {'n_picks': 3, 'tol': 2.0} 213 673
+pyocto {'n_picks': 4, 'tol': 0.5} 192 674
+pyocto {'n_picks': 4, 'tol': 1.0} 190 675
+pyocto {'n_picks': 4, 'tol': 2.0} 192 677
+pyocto {'n_picks': 6, 'tol': 0.5} 160 678
+pyocto {'n_picks': 6, 'tol': 1.0} 160 679
+pyocto {'n_picks': 6, 'tol': 2.0} 162 681
+pyocto {'n_picks': 8, 'tol': 0.5} 134 682
+pyocto {'n_picks': 8, 'tol': 1.0} 133 684
+pyocto {'n_picks': 8, 'tol': 2.0} 135 687
+pyocto {'n_picks': 10, 'tol': 0.5} 108 688
+pyocto {'n_picks': 10, 'tol': 1.0} 108 690
+pyocto {'n_picks': 10, 'tol': 2.0} 109 694
+Clustering (eps=8.33):   0%|          | 0/62 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 62/62 [00:00<00:00, 100598.39it/s]
+Associating 2322 picks with 1 CPUs
+............................
+Associated 100 events
+.................................gamma_sc {'min_picks': 3, 'sigma': 1.0} 196 753
+Clustering (eps=8.33):   0%|          | 0/62 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 62/62 [00:00<00:00, 118960.13it/s]
+Associating 2322 picks with 1 CPUs
+............................
+Associated 100 events
+..............................
+Associated 200 events
+...gamma_sc {'min_picks': 3, 'sigma': 2.0} 203 814
+Clustering (eps=8.33):   0%|          | 0/62 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 62/62 [00:00<00:00, 94631.31it/s]
+Associating 2322 picks with 1 CPUs
+...............................
+Associated 100 events
+..............................gamma_sc {'min_picks': 4, 'sigma': 1.0} 179 876
+Clustering (eps=8.33):   0%|          | 0/62 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 62/62 [00:00<00:00, 100676.29it/s]
+Associating 2322 picks with 1 CPUs
+............................
+Associated 100 events
+.................................gamma_sc {'min_picks': 4, 'sigma': 2.0} 185 937
+Clustering (eps=8.33):   0%|          | 0/62 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 62/62 [00:00<00:00, 98019.92it/s]
+Associating 2322 picks with 1 CPUs
+..................................
+Associated 100 events
+...........................gamma_sc {'min_picks': 5, 'sigma': 1.0} 162 1003
+Clustering (eps=8.33):   0%|          | 0/62 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 62/62 [00:00<00:00, 96064.59it/s]
+Associating 2322 picks with 1 CPUs
+..................................
+Associated 100 events
+...........................gamma_sc {'min_picks': 5, 'sigma': 2.0} 163 1067
+Clustering (eps=8.33):   0%|          | 0/62 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 62/62 [00:00<00:00, 101422.33it/s]
+Associating 2322 picks with 1 CPUs
+...................................
+Associated 100 events
+..........................gamma_sc {'min_picks': 6, 'sigma': 1.0} 154 1129
+Clustering (eps=8.33):   0%|          | 0/62 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 62/62 [00:00<00:00, 107813.78it/s]
+Associating 2322 picks with 1 CPUs
+...................................
+Associated 100 events
+..........................gamma_sc {'min_picks': 6, 'sigma': 2.0} 157 1190
+Clustering (eps=8.33):   0%|          | 0/62 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 62/62 [00:00<00:00, 109539.53it/s]
+Associating 2322 picks with 1 CPUs
+..........................................
+Associated 100 events
+...................gamma_sc {'min_picks': 8, 'sigma': 1.0} 125 1252
+Clustering (eps=8.33):   0%|          | 0/62 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 62/62 [00:00<00:00, 98726.97it/s]
+Associating 2322 picks with 1 CPUs
+........................................
+Associated 100 events
+.....................gamma_sc {'min_picks': 8, 'sigma': 2.0} 131 1314
+pyocto_sc {'n_picks': 3, 'tol': 0.5} 211 1315
+pyocto_sc {'n_picks': 3, 'tol': 1.0} 211 1316
+pyocto_sc {'n_picks': 3, 'tol': 2.0} 208 1318
+pyocto_sc {'n_picks': 4, 'tol': 0.5} 193 1319
+pyocto_sc {'n_picks': 4, 'tol': 1.0} 191 1321
+pyocto_sc {'n_picks': 4, 'tol': 2.0} 188 1323
+pyocto_sc {'n_picks': 6, 'tol': 0.5} 158 1324
+pyocto_sc {'n_picks': 6, 'tol': 1.0} 159 1325
+pyocto_sc {'n_picks': 6, 'tol': 2.0} 158 1327
+pyocto_sc {'n_picks': 8, 'tol': 0.5} 134 1328
+pyocto_sc {'n_picks': 8, 'tol': 1.0} 134 1329
+pyocto_sc {'n_picks': 8, 'tol': 2.0} 133 1332
+pyocto_sc {'n_picks': 10, 'tol': 0.5} 108 1333
+pyocto_sc {'n_picks': 10, 'tol': 1.0} 109 1334
+pyocto_sc {'n_picks': 10, 'tol': 2.0} 108 1338
+DONE 1338
+PICKS_DONE
