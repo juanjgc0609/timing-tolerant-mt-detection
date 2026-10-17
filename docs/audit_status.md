@@ -2,32 +2,45 @@
 
 ## Independent audits
 
-Between 26 September and 2 October 2026 the proposal underwent four independent audits, carried out by
+Between 26 September and 2 October 2026 the proposal underwent four independent audits, and on 16 October a fifth, carried out by
 reviewers who did not take part in producing the work and who did not read the previous audits or this
 document. All four use the same fixed rubric (novelty and positioning 20 %, theoretical rigor
 15 %, experimental design 20 %, empirical evidence 15 %, internal coherence and writing 10 %,
 feasibility 10 %, reproducibility 10 %; total equal to the weighted sum times 10) and checked figures
 against the results files. The full texts are in `audits/independent_audit_1.md`,
 `audits/independent_audit_2.md`, `audits/independent_audit_3.md` and
-`audits/independent_audit_4.md`. They are, to date,
+`audits/independent_audit_4.md` and `audits/independent_audit_5.md`. They are, to date,
 the reference evaluation of the proposal; the scores in the following sections (60, 63 and
 68 out of 100) are internal, were assigned by the same process that produced the work, and are kept only as
 history.
 
 **Table A. Score per criterion in the four independent audits (0 to 10).**
 
-| Criterion | Weight | Audit 1 | Audit 2 | Audit 3 | Audit 4 |
-|:--|:-:|:-:|:-:|:-:|:-:|
-| Novelty and positioning | 20 % | 5.0 | 5.0 | 4.0 | 5.5 |
-| Theoretical rigor | 15 % | 6.0 | 6.0 | 5.5 | 6.0 |
-| Experimental design | 20 % | 6.0 | 5.0 | 6.0 | 7.0 |
-| Empirical evidence | 15 % | 5.0 | 4.0 | 4.5 | 4.5 |
-| Internal coherence and writing | 10 % | 4.0 | 4.0 | 4.0 | 5.5 |
-| Feasibility | 10 % | 5.0 | 5.0 | 5.0 | 5.0 |
-| Reproducibility | 10 % | 8.0 | 7.0 | 7.0 | 6.5 |
-| **Rubric total** | | **55.5, rounded to 56/100** | **51/100** | **51.1, rounded to 51/100** | **57.75, rounded to 57.8/100** |
-| Simulated decision | | major revision | major revision | major revision | major revision |
-| Estimate by a reasonable committee | | not estimated | about 60/100 | about 62/100 | about 70/100 |
+| Criterion | Weight | Audit 1 | Audit 2 | Audit 3 | Audit 4 | Audit 5 |
+|:--|:-:|:-:|:-:|:-:|:-:|:-:|
+| Novelty and positioning | 20 % | 5.0 | 5.0 | 4.0 | 5.5 | 4.0 |
+| Theoretical rigor | 15 % | 6.0 | 6.0 | 5.5 | 6.0 | 5.0 |
+| Experimental design | 20 % | 6.0 | 5.0 | 6.0 | 7.0 | 6.5 |
+| Empirical evidence | 15 % | 5.0 | 4.0 | 4.5 | 4.5 | 4.0 |
+| Internal coherence and writing | 10 % | 4.0 | 4.0 | 4.0 | 5.5 | 4.0 |
+| Feasibility | 10 % | 5.0 | 5.0 | 5.0 | 5.0 | 5.0 |
+| Reproducibility | 10 % | 8.0 | 7.0 | 7.0 | 6.5 | 7.0 |
+| **Rubric total** | | **55.5, rounded to 56/100** | **51/100** | **51.1, rounded to 51/100** | **57.75, rounded to 57.8/100** | **50.5/100** |
+| Simulated decision | | major revision | major revision | major revision | major revision | major revision |
+| Estimate by a reasonable committee | | not estimated | about 60/100 | about 62/100 | about 70/100 | about 53/100 (50 to 58) |
+
+**Audit 5 (50.5/100, 16 October 2026).** It evaluated the version with R0 (negative), Task 2M and exploration C18. It
+checked 28 numbers (24 matched exactly; the four mismatches were attribution, staleness and inventory errors, corrected
+the same day) and the full hash chain (28 hashes, all byte prefixes). Its lower score than Audit 4 reflects the first
+real-data evidence: the primary hypothesis G1 failed on Ridgecrest and the text had not been restructured around it;
+little method novelty survives the project's own ablations (BOMP-PK with the same peak search matches MT-FW, the
+convex method was refuted, and clipping is known practice), and the theory covered the refuted convex method rather
+than the deployed statistic; the 2M comparator, BOMP-PK without any per-station robustness, is weak, and the primary
+day was chosen knowing its noise had transients; the bounded statistic confirmed in 2M is the one that saturates on
+real earthquakes; and the documents are too long. Its top actions: restructure the proposal around the evidence,
+write the theory of the deployed statistic (begun in Appendix AA.9), re-plan the first year around the
+arrival-reading gate (done in Section 19), test G1-R against a comparator with per-station robustness, and pass the
+gate and run the registered real test on the Hi-net swarm.
 
 **Audit 1 (56/100).** It evaluated the version with Tasks 2A and 2B already executed. It found all the
 checked figures in agreement with the files and valued the error log, the preregistration and the
