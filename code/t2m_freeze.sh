@@ -14,7 +14,8 @@ F=(t2m_data.py t2m_stations.py t2m_lib.py t2m_run.py t2m_validate.py t2m_analyze
    explore_contrib/c16_analyze.py explore_contrib/c10_lib.py explore_contrib/c10_run.py explore_contrib/c10_analyze.py
    explore_contrib/c11_lib.py explore_contrib/c8_lib.py explore_contrib/c9_run.py explore_contrib/c2_run.py
    explore_contrib/xc.py gen_realistic.py station_corrections.py task0_common.py task2a_confirm.py task1y_clutter.py
-   task1o_consistent.py /home/claude/realdata/pympa37_days.sha256)
+   task1o_consistent.py /home/claude/realdata/pympa37_days.sha256 t2m_out/noise/100723/noise.npy
+   t2m_check/noise_character.py t2m_check/validation_env_parts.txt t2m_check/env_venv311.txt)
 sha256sum "${F[@]}" > T2M_FREEZE.sha256 || { rm -f T2M_FREEZE.sha256; echo "missing file: freeze aborted"; exit 1; }
 (cd /home/claude/realdata/pympa37_days && sha256sum -c --quiet ../pympa37_days.sha256) || { rm -f T2M_FREEZE.sha256; echo "day files changed: freeze aborted"; exit 1; }
 { date; echo "T2M FREEZE: $(wc -l < T2M_FREEZE.sha256) files; sha256 of T2M_FREEZE.sha256 $(sha256sum T2M_FREEZE.sha256 | cut -d' ' -f1)"; } > T2M_FREEZE.txt

@@ -5,12 +5,14 @@
 #     101231 -> 10 stations (ATCC dropped), 100210 and 100211 -> 8 stations (MURB dropped), 100212 -> not used (0 slots
 #     with 8 stations); 100723 is also evaluated, for the report only.
 #  3. noise of the used new days with QC qc1 and the selected station sets; day 100723 with qc1, for the report only.
-SP=/tmp/claude-0/-home-claude/d3c612af-4e2f-52d9-b554-c7fa18d867f4/scratchpad
+SP=/tmp/claude-0/-home-claude/dd3b46bc-0f2e-5360-b938-9624bcf101de/scratchpad
 cd $SP
 # C16 prepared its noise with the default OpenBLAS kernel (DYNAMIC_ARCH, CORETYPE unset); with Prescott the trend fit
 # differs in the last bits.  Same environment here, so that day 100723 is bit-identical to c16_noise.npy.
 unset OPENBLAS_CORETYPE
 export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
+# Python 3.11, NumPy 1.26.4, SciPy 1.17.1, ObsPy 1.5.1 (the environment of the C16 preparation)
+export PATH=/home/claude/venv311/bin:$PATH
 W=/home/claude/work
 D0=/home/claude/realdata/pympa37_altotiberina_100723
 DN=/home/claude/realdata/pympa37_days

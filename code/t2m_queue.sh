@@ -11,6 +11,8 @@
 cd /home/claude/work || exit 1
 sha256sum -c --quiet T2M_FREEZE.sha256 || { echo "T2M freeze check failed: not launching"; exit 1; }
 export OPENBLAS_NUM_THREADS=1 OPENBLAS_CORETYPE=Prescott OMP_NUM_THREADS=1
+# Python 3.11, NumPy 1.26.4, SciPy 1.17.1, ObsPy 1.5.1 (the environment of C16 and of the 2M validation)
+export PATH=/home/claude/venv311/bin:$PATH
 MODE=${1:-real}
 mkdir -p t2m_out/parts_2718 t2m_out/parts_3141
 [ -f t2m_out/queue_start ] || date +%s > t2m_out/queue_start
