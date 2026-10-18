@@ -1,4 +1,28 @@
-# Audit of the doctoral proposal and plan to strengthen the thesis
+# Audits of the work and plan to strengthen it
+
+## Audits 6 and 7 (17 and 18 October 2026): the work judged as an undergraduate thesis
+
+After the author stated that the work is an undergraduate thesis (trabajo de grado), two further audits applied the
+same fixed rubric calibrated for that level, each also giving the doctoral-level score for comparison. Like the
+earlier ones, they were made by separate AI sessions that had not produced the work and did not read the previous
+audits; they are not human committees. Audit 6 (`audits/independent_audit_6.md`) gave 67.5/100 (53.5 at doctoral
+level) and required a statement of how AI tools were used, a task-by-task account of the protocol, and corrections of
+claims on seeds, on the theory and on R1. After those corrections, audit 7 (`audits/independent_audit_7.md`) gave
+70.3/100 (53.3 at doctoral level), approval with text corrections, and no distinction; its corrections were applied
+in commit 3b54c75. The rise between the two audits comes from corrections of the text and from disclosure, not from
+new positive evidence.
+
+| Criterion | Weight | Audit 6 | Audit 7 |
+|:--|:-:|:-:|:-:|
+| Novelty and positioning | 20 % | 6.5 | 6.0 |
+| Theoretical rigor | 15 % | 6.5 | 7.0 |
+| Experimental design | 20 % | 7.5 | 8.0 |
+| Empirical evidence | 15 % | 6.5 | 6.5 |
+| Internal coherence and writing | 10 % | 6.0 | 7.0 |
+| Feasibility | 10 % | 6.5 | 7.0 |
+| Reproducibility | 10 % | 7.5 | 8.0 |
+| Total (undergraduate) | | 67.5 | 70.3 |
+| Total (doctoral comparison) | | 53.5 | 53.3 |
 
 ## Independent audits
 
