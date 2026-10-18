@@ -1,9 +1,14 @@
 # Roadmap
 
-Target: a doctoral-level thesis (ADR-0001). Every phase ends at a gate written here before the phase starts; a gate that
+Target: a doctoral-level thesis (ADR-0001), as a line separate from the undergraduate thesis (ADR-0006). Every phase ends at a gate written here before the phase starts; a gate that
 is not met is reported and the plan is revised in a decision record, not silently. Baseline of 18 October 2026: the
 prototype detector (MT-FW and BOMP-PK with bounded influence), eleven registered tests, two negative real-data tests,
-audit score 53.3/100 at doctoral level.
+audit score 53.3/100 at doctoral level (a diagnostic, not a target; ADR-0006).
+
+Order of execution (review of 18 October 2026, `docs/reviews/2026-10-18_plan_review.md`): phase 2 runs **before**
+phase 1, because it can change the only confirmed result (G1-R) and it is cheap, while phase 1 only changes the form of
+the code; a package built first would reproduce numbers that then change. The undergraduate thesis (ADR-0006, product
+A) is delivered after phase 2. Phases 3 to 7 are product B.
 
 ## Phase 0. Governance (done 18 October 2026)
 
@@ -13,30 +18,57 @@ Decisions of the author (18 October 2026): code under MIT and documents under CC
 domains of `docs/data_access.md` (ADR-0005, option a); learned components trained on the author's local GPU; the
 thesis is presented at Universidad Icesi (programme and director to be added to the front matter).
 
-## Phase 1. Repository and core package
+## Phase 1. Repository and core package (after phase 2)
 
-Deliverables: `src/ttmt/` package with configuration objects; `archive/legacy/` with the current code byte-identical
-and hash-indexed; `experiments/registered/` and `experiments/exploratory/` with one folder and card per task;
+Preconditions, decided before any code is written: the Python version and one lock file per scenario (the frozen
+numpy 1.26.4 has no wheel for Python 3.13, and exploration C19 already ran on numpy 2.5.3; E31 shows that a BLAS change
+moved numbers); whether each regression is exact or within a stated tolerance; the branches of the integrity work
+merged into `main`.
+
+Deliverables: `src/ttmt/` package with configuration objects; the current `code/` left **in place**, declared frozen
+and hash-indexed (moving it would break its absolute paths and the scripts that call each other, leaving the evidence
+byte-identical but not runnable); `experiments/registered/` and `experiments/exploratory/` with one folder and card per task;
 environment lock files per scenario; unit tests of the core functions (sample index convention, subspace projection,
 radial maps, deflation, hit rule, exact FROC, partition boundary); regression tests against frozen outputs; continuous
 integration with a smoke test; analyses of archived results runnable without raw data.
-Gate: the regression suite reproduces the registered numbers of 2F, 2M, R0 and R1 from the package.
+Gate: the regression suite reproduces the registered numbers of 2F, 2M, R0 and R1 from the package. Cost: the raw
+records of 2F and 2I are not stored (E49) and take hours to regenerate; R0 and R1 need their raw data. The regression
+of R0 can be reduced to its scoring stage from stored detections if the full run does not fit.
 
-## Phase 2. Integrity of the existing results (declared post hoc)
+## Phase 2. Integrity of the existing results (declared post hoc; runs first)
 
-1. Duplicate detections counted separately in 2F, 2I, 2M and R0; the effect of counting them as false on G1-R.
+1. The hit rule: the scoring code applies no origin-time test under LOC although the thesis states one; rescoring of
+   2F, 2I and 2M under LOC+T with one-to-one matching (ADR-0007), with duplicates counted as false.
 2. Tasks 2C and 2D re-read at the nearest sample (E52).
-3. Whether the synthetic generator shares the wavelet and the radiation operator with the detector.
+3. Whether the synthetic generator shares the wavelet and the radiation operator with the detector. The radiation
+   part is measured by exploration C19 (source mechanism matters little, except two sub-events 0.3 s apart, which
+   roughly halve the bounded-influence advantage); the shared Ricker family and far-field operator remain.
 4. The within-segment percentile score of the R1 hybrid and the 19-block bootstrap, declared as defects.
+5. The deployable threshold of R1 gave 41.8 false detections per hour for HYB against a budget of 30, declared as a
+   failure of false-alarm calibration, not only an oracle choice.
+6. The two R1 targets of magnitude 2 or more that no method detects, reviewed by hand as possible artefacts of the
+   template-matching truth list.
+7. The fragility of the C18j gate under E53 (5 of 16 exactly at threshold, 1 of 16 with every event of the window
+   removed), stated wherever C18j motivates the timing direction.
+8. Section 6.2 of the thesis corrected to describe the generator the code uses.
 Gate: each item reported in the log and in the evidence volume, with its effect on the conclusions.
 
 ## Phase 3. Failure atlas of the published methods
 
+Precondition: the atlas card `experiments/exploratory/ATLAS-0/card.md` is completed and anchored (ADR-0004)
+before any comparator is run: the regime grid, the false-detection budget, the rule for "majority of regimes", the
+truth design and the number of targets per cell. Without it the regimes would be chosen after seeing the atlas.
+
 Deliverables: one benchmark harness with common hit rules, exact FROC and stratification by inter-event time,
-magnitude, signal-to-noise ratio, station count, distance and overlap; runs of PhaseNet, PhaseNO, EQTransformer,
-GaMMA, PyOcto, REAL, QuakeMigrate, EQcorrscan, Match and Locate, MALMI, BOMP-PK and MT-FW at their best; internal
+magnitude, signal-to-noise ratio, station count, distance and overlap; runs, in a core set, of PhaseNet and PhaseNO with GaMMA and PyOcto, EQNet (Zhu et al. 2022, the closest prior
+work: learned features shifted and stacked by travel times), template matching, BOMP-PK and MT-FW, at their best
+(PhaseNet with its peak distance and threshold tuned on development, not the defaults of 0.5 s and 0.3 used in R0 and
+R1); EQTransformer, REAL, QuakeMigrate and MALMI as an extended set if time allows; internal
 diagnostics (merged and missed picks against arrival separation, split and merged events, sensitivity to the velocity
-model); a second synthetic generator independent of the detector's forward model; development-only real data.
+model); a second synthetic generator independent of the detector's forward model (another wavelet family and another
+radiation operator); semi-synthetic injection of recorded events into real continuous noise, with the event library
+used for injection disjoint from any library used for deflation; development-only real data. A catalogue produced by
+template matching is not used to evaluate template matching.
 Gate: the harness reproduces published numbers of at least two comparators on their own example data, and the atlas
 identifies regimes where every published method loses a measurable fraction of events.
 
@@ -51,28 +83,37 @@ Section 3):
 4. Joint multi-event refinement; deflation by empirical Green's functions.
 5. False-alarm calibration with a deployable threshold.
 6. Full-wave modelling, only if its gate in ADR-0003 is met.
-Gate of the phase: on development data the model beats the best comparator of the atlas in the majority of its
-regimes at the registered false-detection budgets, with a deployable threshold.
+Gate of the phase: on development data the model beats the best comparator of the atlas in the majority of the
+regimes fixed in the atlas card (the grid and the counting rule written before the atlas was run), at the registered
+false-detection budgets, with a deployable threshold.
 
 ## Phase 5. Theory (in parallel with phases 3 and 4)
 
-Identifiability of overlapping events; recovery guarantees for block-greedy pursuit with a perturbed dictionary and a
-timing tolerance; an adaptive bounded-influence statistic that does not saturate; false-alarm control of the full
-detector (decoys or conformal). Gate: each result stated with complete proofs and checked numerically.
+Primary line: identifiability of overlapping events (bounds against time separation, geometry, noise and the
+difference between mechanisms), which justifies the target regime of the atlas. Secondary lines, taken up only after
+the primary one meets its gate: recovery guarantees for block-greedy pursuit with a perturbed dictionary and a timing
+tolerance; an adaptive bounded-influence statistic that does not saturate; false-alarm control of the full detector
+(decoys or conformal). Gate: each result stated with complete proofs and checked numerically.
 
 ## Phase 6. Confirmatory tests
 
-At least two registered tests on unseen real sequences from networks not used in development, anchored on GitHub
-before the run (ADR-0004), with comparators at their best, power computed before the run, deployable thresholds, and a
-verification that includes a number re-derived by a person.
+At least two registered tests on unseen real sequences from networks not used in development, anchored before the
+run by a GitHub Release, OpenTimestamps and OSF Registries (ADR-0004), with comparators at their best, power computed
+before the run, deployable thresholds, and a verification that includes a number re-derived by a person. Size: by
+exploration P6-power, a registered gain of 0.05 in recall needs about 400 to 1,200 independent targets for 80 per cent
+power, and a gain of 0.10 needs 150 to 300 (R1, with 54, had power 0.11 to 0.13 for 0.05). The data request is sized
+by that table; a single small sequence does not suffice.
 
 ## Phase 7. Thesis
 
-The thesis is rewritten around the atlas, the new model, the theory and the confirmatory tests; the present
-benchmark, G1-R, R0 and R1 become the chapter on the prototype. The thesis is concluded only after phase 6.
+The doctoral thesis (product B, ADR-0006) is written around the atlas, the new model, the theory and the
+confirmatory tests; the present benchmark, G1-R, R0 and R1 become the chapter on the prototype. The doctoral thesis is
+concluded only after phase 6. The undergraduate thesis (product A) is delivered after phase 2 and does not wait.
 
 ## Risks
 
 Data access (ADR-0005); compute for learned components (two cores in the working environment); a new model that does
 not win in most regimes, in which case the thesis reports where and why each method fails, which remains a
-contribution; scope, controlled by the gates.
+contribution; scope, controlled by the gates and by the reduced core comparator set and the single primary theory
+line; too few targets for a confirmatory test (P6-power); the absence of a human director, without whom the person
+part of the verification rule cannot be met.

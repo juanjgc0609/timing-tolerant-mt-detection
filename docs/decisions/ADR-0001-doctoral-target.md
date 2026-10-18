@@ -1,6 +1,7 @@
 # ADR-0001: The work is assessed at doctoral level
 
-Date: 18 October 2026. Status: accepted (decision of the author).
+Date: 18 October 2026. Status: accepted (decision of the author). Amended by ADR-0006: it applies to the doctoral line;
+the undergraduate thesis is a separate product.
 
 Context. The project is formally an undergraduate thesis (trabajo de grado). Audits 6 and 7 were recalibrated to that
 level and reported 67.5 and 70.3 out of 100; on the doctoral rubric the same work scored 53.5 and 53.3. The author
