@@ -59,7 +59,7 @@ required, it recalled at most 0.022 of the 45 events of M ≥ 2.0, against up to
 the pooled difference with the best comparator was −0.383 [−0.481, −0.310] and the registered rule is not
 met. A reading tolerance widened by rule to the measured timing error changed nothing. The measured
 causes: with a homogeneous medium and constant station terms the real timing error is 0.35 to 0.41 s
-and grows with the separation between sources (the synthetic generator gave about 0.14 s), so that the detector
+and grows with the separation between sources (the station corrections of the synthetic generator left 0.12 to 0.28 s, before a position-dependent model error that for S exceeded 0.25 s in about a sixth of the arrivals; E57), so that the detector
 places the events at 8-18 km in median; and in a continuous sequence the capped score saturates and does not
 separate the real events. By contrast, an exploration with real noise and injected events (C16) reinforced G1-R,
 because the real transients, partly telemetry defects, sink BOMP-PK. The synthetic advantage is
@@ -846,7 +846,7 @@ identical to the exhaustive search), not a pruning gain over the moment-tensor c
 
 ## 9. Note on the working method
 
-During development **fifty-six errors** were documented (E1 to E56): three of claims in the text
+During development **fifty-seven errors** were documented (E1 to E57): three of claims in the text
 pointed out by the fourth independent audit (E40, "certificate" used for a statistic that is not one;
 E41, a declared dependence removed together with the arms that measure it without reporting it; E42, the real test G1'
 without an arm for the polarisation assumption that the real data contradict), thirty of experimental
@@ -904,7 +904,7 @@ support (E39). The independent verification of Task 2I confirmed its positive wi
 or provenance errors, regenerated parts across the two interruptions of the run and bounded its
 scope (hit rule with origin time, equivalence per regime, cost), without adding an error to the
 log. The
-errors (fifty-six to date) are in
+errors (fifty-seven to date) are in
 `artifact_manifest_and_error_log.md` with cause, detection and correction, together with the checks that
 would have caught them.
 

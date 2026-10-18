@@ -83,7 +83,7 @@ The contributions are the following, stated at the level the evidence supports.
    real noise with injected events, two on real seismicity), with exact FROC curves at a realized false-event rate and
    paired bootstrap intervals. Table 3 states, for each, whether its registration was hashed before the run, whether
    its code was frozen by a hash list, whether it was run once and whether it was verified; not all of them had every
-   step. Positive and negative results are reported in the same way, and a register of fifty-six
+   step. Positive and negative results are reported in the same way, and a register of fifty-seven
    errors found during the work is part of the record.
 2. **Bounded influence helps in noise with transients.** A per-station cap or a Huber fit adds detections in
    dense sequences on synthetic data and on one day of real noise with transients and injected events, by a smaller
@@ -435,14 +435,29 @@ value is the bound and the other three the empirical quantiles.
 
 ### 6.2 Synthetic benchmark (Tasks 2A to 2F, 2I, 2L; Appendices Y.18 to Y.28)
 
-**Design.** The generator places double-couple sources at random in a 42 km by 42 km region under networks of four,
-six or eight stations (the eight-station network on one side of the sources), computes far-field P and S arrivals in
-a homogeneous medium with station-dependent delays and amplitude errors, adds Gaussian noise and spurious arrivals
-(clutter) at a weak and a strong rate, and draws windows with one or two events (standard) or three to five
-overlapping events (dense). Tasks 2A, 2F, 2I and 2L each drew two seeds never used before; Tasks 2B to 2E are
-follow-up analyses on the windows of 2A, designed after the results of 2A were known (and those of 2C, for 2D and 2E),
-so they are not independent replications of it. The cells are the network geometries and the two clutter regimes. The timing error of this generator after station corrections is about 0.14 s, which matters for
-Section 6.4.
+**Design.** The generator (`code/gen_realistic.py`, Appendix Y.14) does not use the forward model of the
+detectors. It places double-couple sources uniformly in a 30 km by 30 km square at 5 to 13 km depth (in dense
+windows, three to five sources within 9 km of a random centre and at least 5 km apart) under networks of four, six
+or eight stations (the eight-station network on one side of the sources). Travel times and ray directions come
+from a one-dimensional linear gradient, $v(z)=v_0+gz$ with $V_{S0}=2.8$ km/s, $g=0.04$ s$^{-1}$ and
+$V_P=1.73\,V_S$, with curved rays: P is polarised along the ray at the station and S is carried along it. Each event
+has its own source wavelet, a Ricker pulse with centre frequency uniform in [1.4, 2.8] Hz rotated in phase by up to
+±45 degrees, while the matched filter stays at 2 Hz, and every P and S arrival is followed by a scattered coda
+(3 s exponential decay, 1 to 4 Hz, 0.3 of the energy of the direct arrival). Station delays are drawn once per
+network, $\mathcal N(0,0.3\ \mathrm s)$ per station and phase; polarisations deviate by about ten degrees and
+amplitudes carry lognormal site factors ($\sigma=0.5$). The windows add white Gaussian noise and spurious arrivals
+(clutter: 2 Hz Ricker pulses with random polarisation, 35 per window with four or six stations and 40 with eight)
+at a weak and a strong amplitude, and contain one or two events (standard) or three to five overlapping events
+(dense). The detectors keep a homogeneous medium ($V_P=5.19$, $V_S=3.0$ km/s) with straight rays, so the benchmark
+tests them under a mismatched velocity model and wavelet; the sources, however, are double couples and lie inside
+the moment-tensor subspace the detectors score against. Tasks 2A, 2F, 2I and 2L each drew two seeds never used
+before; Tasks 2B to 2E are follow-up analyses on the windows of 2A, designed after the results of 2A were known
+(and those of 2C, for 2D and 2E), so they are not independent replications of it. The cells are the network
+geometries and the two clutter regimes. Two timing errors remain after the station corrections: the corrections,
+estimated from a twenty-event catalogue, differ from the true delays by 0.12 to 0.21 s rms with weak clutter and
+0.20 to 0.28 s with strong clutter (Task 2A), and the travel-time error of the homogeneous model depends on the
+source position, so no constant term removes it (for S, 5th to 95th percentile −0.38 to +0.24 s, Appendix Y.14).
+Both are of the order of the ±0.25 s tolerance of the peak search, which matters for Section 6.4.
 
 **Against published methods (2A to 2D).** In Task 2A MT-FW with catalogue station corrections exceeded the best of
 GaMMA and PyOcto, fed by an STA/LTA picker, and QuakeMigrate, which works on onset functions of the waveforms, by at least 0.05 at both false-event budgets in all
@@ -514,8 +529,8 @@ contrast with BOMP-PK: +0.000 [-0.023, +0.021] with origin time and -0.050 [-0.1
 BOMP-PK being better, consistent with the saturation of a capped score (Proposition 2).
 
 Two causes were measured. With a homogeneous medium and constant station terms the timing residuals of the
-calibration events had a scale of 0.35 to 0.41 s, against about 0.14 s in the synthetic generator and a reading
-tolerance of 0.25 s; and in a continuous sequence the capped score saturates. A third is a candidate that was not
+calibration events had a scale of 0.35 to 0.41 s, against 0.12 to 0.28 s for the station corrections of the synthetic
+generator (before its position-dependent model error, Section 6.2) and a reading tolerance of 0.25 s; and in a continuous sequence the capped score saturates. A third is a candidate that was not
 measured: the deflation of the capped detector subtracts a cap-sized prediction (Section 3.4), so a magnitude 3
 aftershock is only partly removed and its residual can be selected again.
 
@@ -615,7 +630,9 @@ produced the truth list.
 The two real tests fail in different ways, and the differences are informative.
 
 *Timing.* The peak search tolerates travel-time errors up to its half-width, 0.25 s. On the synthetic benchmark the
-residual timing error after corrections was about 0.14 s, so the tolerance covered it; at Ridgecrest the residuals of
+tolerance covered most readings: the station corrections left 0.12 to 0.28 s rms, depending on the clutter regime,
+and the homogeneous model a position-dependent error that for S exceeded 0.25 s in about a sixth of the arrivals
+(Section 6.2); at Ridgecrest the residuals of
 the calibration events had a scale of 0.35 to 0.41 s with a homogeneous medium. On the swarm, with the JMA2001 medium
 and the anchored terms, a post hoc measurement on the development events (`code/r1/posthoc_timing_cal.py`,
 `results/taskR1/posthoc/timing_cal_out.txt`) gives a robust scale of 0.22 s for P and 0.17 s for S with held-out
@@ -663,7 +680,10 @@ on a realistic synthetic generator does not transfer to two real sequences, with
 ### 7.4 Threats to validity
 
 *Synthetic generator.* All synthetic evidence comes from one generator family with double-couple sources inside the
-subspace of the detector, a homogeneous medium and Gaussian noise; a second, independent generator was not built.
+subspace of the detector, a smooth one-dimensional gradient medium (the detectors assume a homogeneous one), white
+Gaussian noise and clutter pulses that share the 2 Hz wavelet of the matched filter. A second generator was written
+(`code/gen_b.py`: layered medium, lateral heterogeneity, non-double-couple sources, attenuation, coloured noise) but
+never validated or used, and the validation script and report it cites are not in the repository.
 *Comparators.* In the synthetic tasks the associators were fed by an STA/LTA picker; on real data they were fed by
 PhaseNet, the strongest picker available, and won. *Operating points.* Every method's operating point was chosen on
 the evaluation data (in the same way for all methods); the deployable threshold of R1, fixed on development data,
@@ -699,7 +719,7 @@ margin by a test whose false-positive rate is known.
 
 A pick-free detector that reads three-component waveforms at predicted times with a timing tolerance, scores them
 against the moment-tensor subspace and deflates accepted events beats pick-based association on a synthetic benchmark
-where the timing error is smaller than the tolerance (against associators fed by an STA/LTA picker and QuakeMigrate,
+where most of the timing error is within the tolerance (against associators fed by an STA/LTA picker and QuakeMigrate,
 with operating points chosen on the evaluation data, and no better than block pursuit with the same tolerance), and loses to PhaseNet-based association on two real sequences
 where it is not. Adding its candidates to a PhaseNet associator did not demonstrably help on unseen data. What
 survives as a contribution is the bound on the influence of each station, measured on one day of real noise and
@@ -730,7 +750,7 @@ OUT.txt`. The three figures are drawn from the stored R1 outputs by `python code
 results/taskR1/run docs/thesis/figures`. The data are public and `data/README.md` gives their sources and checksums. Paths in the scripts refer to the
 original working directory and must be adapted.
 
-The error register (`docs/artifact_manifest_and_error_log.md`) lists fifty-six errors found during the work, from
+The error register (`docs/artifact_manifest_and_error_log.md`) lists fifty-seven errors found during the work, from
 claims in the text to implementation defects, each with its cause, its scope and whether it affected a registered
 result; five of them (E51 to E55) were found by an audit of the code made by a separate AI session before the last real test, and one
 (E56) by the verification of that test.
