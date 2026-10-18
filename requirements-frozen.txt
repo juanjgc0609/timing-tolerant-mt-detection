@@ -6,6 +6,8 @@ pandas==3.0.6
 scikit-learn==1.8.0
 pyocto==0.2.0
 matplotlib==3.11.2
+pyproj==3.7.2
+# QuakeMigrate 1.2.2 (synthetic Tasks 2A to 2D only), installed from PyPI
 # PhaseNet runs with tensorflow-cpu==2.15.1 installed in a separate target directory (see data/README.md)
 # pyrocko==2026.6.2 and pyyaml==6.0.3 (for the PyOcto 1-D model of Task R1) installed in a separate target directory
 # GaMMA: github.com/AI4EPS/GaMMA at commit 80394dd4a4c29450da599f507916ecf1db6203dd, cloned into code/gamma_src/

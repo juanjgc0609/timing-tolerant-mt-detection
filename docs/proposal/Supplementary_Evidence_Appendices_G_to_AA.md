@@ -7114,7 +7114,9 @@ registered medium), and the layered model now predicts them better than the regi
 0.45 against 0.39 on N8, 0.45 against 0.37 on U8, 0.44 to 0.46 against 0.41 on N6 and 0.52 against 0.43 on N4, with
 the robust deviation falling from 0.60 to 0.48 s on N8. The conclusion of C18a that the medium does not matter was an
 artefact of the truncated search and is withdrawn (error E50); C18b to C18h, which used the truncated station terms,
-are kept as measurements of that configuration.
+are kept as measurements of that configuration. With a term per event that absorbs the origin time, the fraction within 0.25 s is the same for the
+two media on N8 (0.427 and 0.427) and differs by 0.03 on U8 (0.417 against 0.387), so most of the advantage of the
+layered model in this reading is a common shift of the origin.
 
 **C18j: with corrected terms and a layered medium the gate is met, by an uncapped statistic.** With the station terms
 re-estimated with a +-2 s search, the full detector on CAL (origin times matched, 30 false detections per hour)
@@ -7168,8 +7170,8 @@ of the Fukushima-Yamagata border region. Catalogues: 14 JMA events (M 2.1 to 3.2
 evaluation (EVAL) = origins from 03:34:00 to 03:53:20 minus 40 s (1120 s).
 
 **Registered design.** Truth = the Match and Locate list; targets = truth events of magnitude 0.5 or more (30 in CAL,
-54 in EVAL); a detection hitting only smaller events is neutral. Medium: JMA2001 P velocities in the 28-point
-approximation of Y. Maeda, VS = VP/1.73, for every method. Station terms from the CAL truth events of magnitude 1.0 or
+54 in EVAL); a detection hitting only smaller events is neutral. Medium: JMA2001 P velocities, the first 13 points (to 65 km)
+of the 28-point approximation of Y. Maeda, VS = VP/1.73, for every method. Station terms from the CAL truth events of magnitude 1.0 or
 more. BASE = the configuration of PyOcto-1D or GaMMA-1D, over the grids of Task 2A, with the highest CAL recall at 30
 false detections per hour with origin time (ties: fewer CAL detections, then PyOcto, then the first of the grid). HYB =
 PICKSCORE-UNION on BASE and P1 (thesis Section 3.6). P1 = MT-FW without cap on the layered engine. BESTPICK = the best
@@ -8143,8 +8145,8 @@ $\|Q_h^{\mathsf T}\hat{\mathbf e}\|=\gamma>0$ for its direction $\hat{\mathbf e}
 orthogonal to the subspace). Then $\sigma(\mathbf v)-\sigma(\mathbf v')\ge\gamma\|\mathbf e\|-2\|Q_h^{\mathsf T}\mathbf v'\|$,
 which grows linearly with $\|\mathbf e\|$. $\square$
 
-*Numbers.* A digital or cultural transient at one station of $M=12{,}500$ noise deviations, the largest the
-verification of Task 2M found, can move $\sigma$ by at most $12$ with the cap, by at most
+*Numbers.* A digital or cultural transient at one station of $M=12{,}500$ noise deviations, one that the
+quality control of Task 2M let through, can move $\sigma$ by at most $12$ with the cap, by at most
 $2\cdot6\sqrt{\log(1+(12500/6)^2)}\approx47$ with the logarithmic map, and by up to $12{,}500$ without a bound. A
 real event at the detection threshold of Task 2M has $\sigma$ of order $\sqrt{2\cdot77}\approx12$ (the pooled
 threshold of the capped detector at $0.25$ false events per window was $77.4$ and $74.9$ in score units on the two seeds), so one such

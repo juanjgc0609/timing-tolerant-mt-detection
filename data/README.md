@@ -62,8 +62,13 @@ longer unseen data.
 
 ```bash
 git clone --depth 1 --filter=blob:none --sparse https://github.com/Geolab-USTC/MatchLocate2.git
-cd MatchLocate2 && git sparse-checkout set example
+cd MatchLocate2 && git checkout bac5ccb00816a4ec0aaab215ea1c342c730d412f && git sparse-checkout set example
+cd example && sha256sum -c <repository>/data/checksums/hinet_matchlocate2_example.sha256
 ```
+
+The R1 code reads the data from `/home/claude/realdata/MatchLocate2/example` (`DATA` in `code/r1/r1_lib.py`); move the
+clone there or change that constant. The PyOcto velocity model of R1 is built on first use by `hyb_comp.pyocto_1d` from
+the JMA2001 points into `code/r1/pyocto_jma2001.model`.
 
 ## Pickers and associators
 

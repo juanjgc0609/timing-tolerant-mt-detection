@@ -10,12 +10,14 @@ in full.
 
 ## Status in one paragraph
 
-Eleven tests were registered before their data were analysed, run once with frozen code and checked by an independent
-verifier. On a synthetic benchmark, timing-tolerant moment-tensor detection exceeded GaMMA, PyOcto and QuakeMigrate fed
+Eleven tests were registered before their run; which of them also had frozen code, a single run and a verification
+by a separate AI session is listed in Table 3 of the thesis, and Section 10 of the thesis states how AI tools were
+used. On a synthetic benchmark, timing-tolerant moment-tensor detection exceeded GaMMA, PyOcto and QuakeMigrate fed
 by an STA/LTA picker in Task 2A (with operating points chosen on the evaluation data), but block orthogonal matching
 pursuit with the same timing tolerance matched the thesis detector (2D) and an off-grid convex variant was refuted
 (2E). Bounding the influence of each station (a cap or a Huber fit) added 0.04 to 0.07 in recall in dense synthetic
-sequences (2F, 2I) and +0.228 [+0.148, +0.298] on a day of real noise with transients (2M); the gain belongs to the
+sequences (2F, 2I) and +0.228 [+0.148, +0.298] (epicentre rule; +0.085 with origin time) on one day of real noise with transients and
+injected events (2M); the gain belongs to the
 per-station bound, which block pursuit can also use. On real seismicity the pick-free detector failed: at most 0.022
 of the targets on one hour of the 2019 Ridgecrest sequence against up to 0.667 for PhaseNet with PyOcto (R0, -0.383
 [-0.481, -0.310]), and 1 of 54 on a 2012 Hi-net swarm (R1). A hybrid that adds pick-free candidates to a PhaseNet
@@ -35,7 +37,7 @@ pick-free detector does not transfer to real sequences.
 | 2I | G1-R: Huber statistic with noise-fixed level | Confirmed, +0.058 and +0.053 | `results/task2i`; Y.26 |
 | 2L | G1-C: pick-free station terms + local refinement | Confirmed, +0.057 and +0.062 (standard), +0.038 and +0.030 (dense), mainly 8-station one-sided networks | `results/task2l`; Y.28 |
 | R0 | G1 on real data (Ridgecrest 2019) | Negative, -0.383 [-0.481, -0.310]; independently re-run | `results/taskR0`; Y.30 |
-| 2M | G1-R with real noise of independent days (Alto Tiberina) | Confirmed on the primary day with transients, +0.228 (cap) and +0.241 (Huber) | `results/task2M`; Y.31 |
+| 2M | G1-R with real noise of independent days (Alto Tiberina) | Confirmed on one primary day with transients, +0.228 (cap) and +0.241 (Huber) with the epicentre rule; +0.085 and +0.104 with origin time | `results/task2M`; Y.31 |
 | R1 | Hybrid: pick-free candidates scored by PhaseNet picks vs the associator (Hi-net 2012) | Not met: 23 vs 22 of 54, p = 0.50; vs best configuration 23 vs 26 | `results/taskR1`; Y.33 |
 
 Exploratory studies C1 to C16 (calibration seed 999 only) are in `results/explorations/` and Appendices Y.23, Y.25,
