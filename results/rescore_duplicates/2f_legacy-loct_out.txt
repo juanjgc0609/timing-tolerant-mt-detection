@@ -1,0 +1,160 @@
+# Tarea 2F - tope por estacion en secuencias densas (analyze_2f.py)
+
+Recall de eventos a eventos falsos realizados por ventana <= 0.1 / <= 0.25 (FROC exacta, punto de operacion por metodo sobre la evaluacion; agrupado = un umbral por metodo para las ventanas agrupadas). Diferencias: punto [IC 95% jerarquico: celdas como estratos, redes y ventanas; 2000 replicas; punto de operacion re-elegido en cada replica]; p = (1 + #{d* <= 0}) / 2001.
+
+Controles de datos:
+  semilla 4242, brazo dense: 96 redes x 3 celdas x 2 regimenes, 5760 ventanas, 23013 eventos, k en [3, 4, 5]; (TAG, kmax) [(4201, 7)]; OPENBLAS_CORETYPE ['Prescott']; OpenBLAS cargadas [(('Katmai', 'libscipy_openblas-6cdc3b4a.so'), ('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'))]
+  semilla 4242, brazo std: 16 redes x 3 celdas x 2 regimenes, 960 ventanas, 766 eventos, k en [0, 1, 2]; (TAG, kmax) [(4202, 5)]; OPENBLAS_CORETYPE ['Prescott']; OpenBLAS cargadas [(('Katmai', 'libscipy_openblas-6cdc3b4a.so'), ('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'))]
+  semilla 8888, brazo dense: 96 redes x 3 celdas x 2 regimenes, 5760 ventanas, 22996 eventos, k en [3, 4, 5]; (TAG, kmax) [(4201, 7)]; OPENBLAS_CORETYPE ['Prescott']; OpenBLAS cargadas [(('Katmai', 'libscipy_openblas-6cdc3b4a.so'), ('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'))]
+  semilla 8888, brazo std: 16 redes x 3 celdas x 2 regimenes, 960 ventanas, 749 eventos, k en [0, 1, 2]; (TAG, kmax) [(4202, 5)]; OPENBLAS_CORETYPE ['Prescott']; OpenBLAS cargadas [(('Katmai', 'libscipy_openblas-6cdc3b4a.so'), ('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'))]
+
+## Recall por metodo, brazo denso (agrupando las 3 celdas) y brazo estandar (agrupando celdas)
+  dense thin   4242: 2880 ventanas, 11429 eventos | MT-FW+SC 0.071/0.128  BOMP-PK+SC 0.030/0.082  MT-FW-NOCAP+SC 0.031/0.082
+  dense thin   8888: 2880 ventanas, 11444 eventos | MT-FW+SC 0.061/0.121  BOMP-PK+SC 0.033/0.079  MT-FW-NOCAP+SC 0.032/0.079
+  dense strong 4242: 2880 ventanas, 11584 eventos | MT-FW+SC 0.050/0.095  BOMP-PK+SC 0.027/0.071  MT-FW-NOCAP+SC 0.027/0.071
+  dense strong 8888: 2880 ventanas, 11552 eventos | MT-FW+SC 0.050/0.094  BOMP-PK+SC 0.028/0.067  MT-FW-NOCAP+SC 0.028/0.068
+  dense both   4242: 5760 ventanas, 23013 eventos | MT-FW+SC 0.060/0.111  BOMP-PK+SC 0.030/0.077  MT-FW-NOCAP+SC 0.029/0.076
+  dense both   8888: 5760 ventanas, 22996 eventos | MT-FW+SC 0.055/0.107  BOMP-PK+SC 0.030/0.073  MT-FW-NOCAP+SC 0.030/0.073
+  std   thin   4242: 480 ventanas, 381 eventos | MT-FW+SC 0.202/0.349  BOMP-PK+SC 0.173/0.310  MT-FW-NOCAP+SC 0.157/0.310
+  std   thin   8888: 480 ventanas, 373 eventos | MT-FW+SC 0.241/0.357  BOMP-PK+SC 0.193/0.338  MT-FW-NOCAP+SC 0.196/0.335
+  std   strong 4242: 480 ventanas, 385 eventos | MT-FW+SC 0.161/0.249  BOMP-PK+SC 0.127/0.223  MT-FW-NOCAP+SC 0.127/0.223
+  std   strong 8888: 480 ventanas, 376 eventos | MT-FW+SC 0.146/0.218  BOMP-PK+SC 0.117/0.231  MT-FW-NOCAP+SC 0.117/0.231
+  std   both   4242: 960 ventanas, 766 eventos | MT-FW+SC 0.175/0.282  BOMP-PK+SC 0.150/0.262  MT-FW-NOCAP+SC 0.149/0.262
+  std   both   8888: 960 ventanas, 749 eventos | MT-FW+SC 0.176/0.286  BOMP-PK+SC 0.154/0.278  MT-FW-NOCAP+SC 0.154/0.278
+
+## Regla 2F-a (primaria): MT-FW+SC - BOMP-PK+SC a tope 0.25, brazo denso, agrupando las 3 celdas
+  thin   4242: +0.045 [+0.031, +0.059]  p = 0.0005  Holm p aj = 0.0020 rechaza = SI  (DE bootstrap 0.0072; DE piloto 0.0383)
+  thin   8888: +0.042 [+0.029, +0.058]  p = 0.0005  Holm p aj = 0.0020 rechaza = SI  (DE bootstrap 0.0074; DE piloto 0.0383)
+  -> thin: cota inferior > 0 y punto >= 0.03 por semilla ['SI', 'SI']: 2F-a SE CUMPLE; lectura estricta (Holm, 4 pruebas, 0.025) ['SI', 'SI']: SE CUMPLE
+  strong 4242: +0.024 [+0.012, +0.036]  p = 0.0005  Holm p aj = 0.0020 rechaza = SI  (DE bootstrap 0.0062; DE piloto 0.0353)
+  strong 8888: +0.027 [+0.015, +0.039]  p = 0.0005  Holm p aj = 0.0020 rechaza = SI  (DE bootstrap 0.0062; DE piloto 0.0353)
+  -> strong: cota inferior > 0 y punto >= 0.03 por semilla ['NO', 'NO']: 2F-a NO SE CUMPLE; lectura estricta (Holm, 4 pruebas, 0.025) ['NO', 'NO']: NO SE CUMPLE
+  Secundario, tope 0.1 (mismo contraste, descriptivo):
+    thin   4242: +0.040 [+0.027, +0.053]  p = 0.0005
+    thin   8888: +0.028 [+0.016, +0.040]  p = 0.0005
+    strong 4242: +0.022 [+0.012, +0.032]  p = 0.0005
+    strong 8888: +0.022 [+0.014, +0.033]  p = 0.0005
+
+## Regla 2F-b (mecanismo), brazo denso, agrupando celdas y regimenes, tope 0.25
+  4242: MT-FW+SC - MT-FW-NOCAP+SC +0.035 [+0.025, +0.044] (cota inferior > 0: SI);  MT-FW-NOCAP+SC - BOMP-PK+SC -0.000 [-0.002, +0.001] (|punto| <= 0.02: SI)
+        (referencia, agrupando regimenes: MT-FW+SC - BOMP-PK+SC +0.035 [+0.025, +0.043])
+  8888: MT-FW+SC - MT-FW-NOCAP+SC +0.034 [+0.024, +0.044] (cota inferior > 0: SI);  MT-FW-NOCAP+SC - BOMP-PK+SC +0.001 [-0.001, +0.002] (|punto| <= 0.02: SI)
+        (referencia, agrupando regimenes: MT-FW+SC - BOMP-PK+SC +0.035 [+0.025, +0.044])
+  -> 2F-b SE CUMPLE
+  Tope 0.1 (descriptivo):
+    4242: MT-FW+SC - MT-FW-NOCAP+SC +0.031 [+0.023, +0.039];  MT-FW-NOCAP+SC - BOMP-PK+SC -0.000 [-0.001, +0.001]
+    8888: MT-FW+SC - MT-FW-NOCAP+SC +0.025 [+0.018, +0.033];  MT-FW-NOCAP+SC - BOMP-PK+SC +0.000 [-0.001, +0.002]
+
+## Regla 2F-c (no dano, brazo estandar): TOST, margen 0.05, MT-FW+SC - BOMP-PK+SC a tope 0.25, agrupando celdas y regimenes
+  4242: 960 ventanas, 766 eventos; diferencia +0.020, IC 90 [-0.021, +0.057], IC 95 [-0.027, +0.064]; p(d <= -0.05) = 0.0030, p(d >= +0.05) = 0.0860: equivalente NO
+  8888: 960 ventanas, 749 eventos; diferencia +0.008, IC 90 [-0.040, +0.053], IC 95 [-0.048, +0.062]; p(d <= -0.05) = 0.0230, p(d >= +0.05) = 0.0670: equivalente NO
+  -> 2F-c NO SE CUMPLE
+  Tope 0.1 y por regimen (descriptivo):
+    4242 ambos, tope 0.1: +0.025 [-0.030, +0.081]
+    4242 thin: tope 0.1 +0.029 [-0.055, +0.121]; tope 0.25 +0.039 [-0.048, +0.126]
+    4242 strong: tope 0.1 +0.034 [-0.035, +0.085]; tope 0.25 +0.026 [-0.034, +0.084]
+    8888 ambos, tope 0.1: +0.023 [-0.032, +0.093]
+    8888 thin: tope 0.1 +0.048 [-0.060, +0.149]; tope 0.25 +0.019 [-0.055, +0.106]
+    8888 strong: tope 0.1 +0.029 [-0.053, +0.097]; tope 0.25 -0.013 [-0.070, +0.065]
+
+## Descriptivo: diferencias agrupando las 3 celdas (brazo denso), ambos topes
+  thin   4242 MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.040 [+0.027, +0.053]; tope 0.25 +0.045 [+0.031, +0.059]
+  thin   4242 MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.040 [+0.027, +0.053]; tope 0.25 +0.046 [+0.032, +0.060]
+  thin   4242 MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.001 [-0.001, +0.002]; tope 0.25 -0.001 [-0.003, +0.001]
+  thin   8888 MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.028 [+0.016, +0.040]; tope 0.25 +0.042 [+0.029, +0.058]
+  thin   8888 MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.029 [+0.016, +0.040]; tope 0.25 +0.042 [+0.029, +0.058]
+  thin   8888 MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 -0.000 [-0.002, +0.002]; tope 0.25 +0.000 [-0.002, +0.002]
+  strong 4242 MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.022 [+0.012, +0.032]; tope 0.25 +0.024 [+0.012, +0.036]
+  strong 4242 MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.023 [+0.012, +0.033]; tope 0.25 +0.025 [+0.012, +0.037]
+  strong 4242 MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 -0.000 [-0.002, +0.001]; tope 0.25 -0.000 [-0.003, +0.001]
+  strong 8888 MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.022 [+0.014, +0.033]; tope 0.25 +0.027 [+0.015, +0.039]
+  strong 8888 MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.022 [+0.013, +0.032]; tope 0.25 +0.026 [+0.014, +0.038]
+  strong 8888 MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.001 [-0.000, +0.003]; tope 0.25 +0.001 [-0.001, +0.004]
+  both   4242 MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.030 [+0.022, +0.039]; tope 0.25 +0.035 [+0.025, +0.043]
+  both   4242 MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.031 [+0.023, +0.039]; tope 0.25 +0.035 [+0.025, +0.044]
+  both   4242 MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 -0.000 [-0.001, +0.001]; tope 0.25 -0.000 [-0.002, +0.001]
+  both   8888 MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.025 [+0.018, +0.033]; tope 0.25 +0.035 [+0.025, +0.044]
+  both   8888 MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.025 [+0.018, +0.033]; tope 0.25 +0.034 [+0.024, +0.044]
+  both   8888 MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.000 [-0.001, +0.002]; tope 0.25 +0.001 [-0.001, +0.002]
+
+## Descriptivo: por celda (brazo denso), recall por metodo y diferencias con IC 95 por celda
+  thin   4242 4 st.        (960 ventanas, 3826 eventos): MT-FW+SC 0.044/0.082  BOMP-PK+SC 0.018/0.057  MT-FW-NOCAP+SC 0.018/0.057
+      MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.026 [+0.009, +0.044]; tope 0.25 +0.025 [+0.005, +0.046]
+      MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.026 [+0.009, +0.044]; tope 0.25 +0.025 [+0.005, +0.046]
+      MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.000 [-0.002, +0.001]; tope 0.25 +0.000 [-0.003, +0.003]
+  thin   4242 6 st.        (960 ventanas, 3798 eventos): MT-FW+SC 0.087/0.141  BOMP-PK+SC 0.029/0.077  MT-FW-NOCAP+SC 0.030/0.077
+      MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.058 [+0.036, +0.077]; tope 0.25 +0.064 [+0.036, +0.089]
+      MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.058 [+0.035, +0.076]; tope 0.25 +0.064 [+0.036, +0.090]
+      MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.001 [-0.002, +0.006]; tope 0.25 +0.000 [-0.006, +0.004]
+  thin   4242 one-sided 8  (960 ventanas, 3805 eventos): MT-FW+SC 0.083/0.155  BOMP-PK+SC 0.042/0.102  MT-FW-NOCAP+SC 0.041/0.102
+      MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.041 [+0.015, +0.070]; tope 0.25 +0.053 [+0.022, +0.081]
+      MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.042 [+0.015, +0.071]; tope 0.25 +0.052 [+0.023, +0.081]
+      MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 -0.000 [-0.005, +0.002]; tope 0.25 +0.001 [-0.004, +0.006]
+  thin   8888 4 st.        (960 ventanas, 3824 eventos): MT-FW+SC 0.045/0.091  BOMP-PK+SC 0.031/0.068  MT-FW-NOCAP+SC 0.031/0.067
+      MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.013 [+0.000, +0.031]; tope 0.25 +0.023 [-0.003, +0.048]
+      MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.013 [+0.000, +0.031]; tope 0.25 +0.024 [-0.003, +0.049]
+      MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.000 [-0.001, +0.001]; tope 0.25 -0.001 [-0.006, +0.002]
+  thin   8888 6 st.        (960 ventanas, 3837 eventos): MT-FW+SC 0.064/0.136  BOMP-PK+SC 0.024/0.068  MT-FW-NOCAP+SC 0.026/0.068
+      MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.040 [+0.015, +0.063]; tope 0.25 +0.068 [+0.039, +0.093]
+      MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.039 [+0.015, +0.063]; tope 0.25 +0.068 [+0.040, +0.093]
+      MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.001 [-0.003, +0.004]; tope 0.25 -0.000 [-0.004, +0.003]
+  thin   8888 one-sided 8  (960 ventanas, 3783 eventos): MT-FW+SC 0.071/0.142  BOMP-PK+SC 0.041/0.098  MT-FW-NOCAP+SC 0.041/0.099
+      MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.030 [+0.007, +0.048]; tope 0.25 +0.044 [+0.018, +0.070]
+      MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.030 [+0.007, +0.048]; tope 0.25 +0.043 [+0.018, +0.069]
+      MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.000 [-0.003, +0.003]; tope 0.25 +0.001 [-0.004, +0.005]
+  strong 4242 4 st.        (960 ventanas, 3846 eventos): MT-FW+SC 0.028/0.059  BOMP-PK+SC 0.019/0.050  MT-FW-NOCAP+SC 0.019/0.050
+      MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.009 [-0.004, +0.021]; tope 0.25 +0.009 [-0.007, +0.026]
+      MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.009 [-0.004, +0.022]; tope 0.25 +0.009 [-0.008, +0.027]
+      MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.000 [-0.003, +0.001]; tope 0.25 +0.000 [-0.003, +0.003]
+  strong 4242 6 st.        (960 ventanas, 3842 eventos): MT-FW+SC 0.064/0.113  BOMP-PK+SC 0.027/0.074  MT-FW-NOCAP+SC 0.027/0.073
+      MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.037 [+0.015, +0.056]; tope 0.25 +0.039 [+0.012, +0.062]
+      MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.037 [+0.015, +0.056]; tope 0.25 +0.041 [+0.014, +0.063]
+      MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.000 [-0.003, +0.001]; tope 0.25 -0.002 [-0.007, +0.001]
+  strong 4242 one-sided 8  (960 ventanas, 3896 eventos): MT-FW+SC 0.047/0.111  BOMP-PK+SC 0.034/0.078  MT-FW-NOCAP+SC 0.034/0.076
+      MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.013 [-0.004, +0.033]; tope 0.25 +0.033 [+0.007, +0.058]
+      MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.013 [-0.004, +0.033]; tope 0.25 +0.035 [+0.008, +0.059]
+      MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.000 [-0.004, +0.004]; tope 0.25 -0.002 [-0.007, +0.004]
+  strong 8888 4 st.        (960 ventanas, 3881 eventos): MT-FW+SC 0.036/0.068  BOMP-PK+SC 0.019/0.044  MT-FW-NOCAP+SC 0.020/0.045
+      MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.017 [+0.003, +0.029]; tope 0.25 +0.023 [+0.002, +0.038]
+      MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.016 [+0.003, +0.028]; tope 0.25 +0.023 [+0.002, +0.038]
+      MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.001 [+0.000, +0.003]; tope 0.25 +0.000 [-0.002, +0.003]
+  strong 8888 6 st.        (960 ventanas, 3826 eventos): MT-FW+SC 0.053/0.101  BOMP-PK+SC 0.031/0.072  MT-FW-NOCAP+SC 0.031/0.070
+      MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.022 [+0.003, +0.044]; tope 0.25 +0.030 [+0.010, +0.055]
+      MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.022 [+0.003, +0.043]; tope 0.25 +0.031 [+0.011, +0.057]
+      MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.000 [+0.000, +0.001]; tope 0.25 -0.002 [-0.006, +0.001]
+  strong 8888 one-sided 8  (960 ventanas, 3845 eventos): MT-FW+SC 0.064/0.113  BOMP-PK+SC 0.027/0.076  MT-FW-NOCAP+SC 0.027/0.077
+      MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.037 [+0.016, +0.055]; tope 0.25 +0.037 [+0.015, +0.061]
+      MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.037 [+0.016, +0.054]; tope 0.25 +0.036 [+0.014, +0.059]
+      MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.000 [-0.003, +0.004]; tope 0.25 +0.001 [-0.004, +0.008]
+  MT-FW+SC - BOMP-PK+SC positivo por celda: tope 0.1 12/12, tope 0.25 12/12
+
+## Descriptivo: brazo estandar por celda (MT-FW+SC - BOMP-PK+SC)
+  thin   4242 4 st.        (160 ventanas, 119 eventos): MT-FW+SC 0.193/0.269, BOMP-PK+SC 0.101/0.294; dif. tope 0.1 +0.092 [-0.055, +0.198]; tope 0.25 -0.025 [-0.111, +0.100]
+  thin   4242 6 st.        (160 ventanas, 133 eventos): MT-FW+SC 0.226/0.421, BOMP-PK+SC 0.143/0.353; dif. tope 0.1 +0.083 [-0.135, +0.238]; tope 0.25 +0.068 [-0.096, +0.231]
+  thin   4242 one-sided 8  (160 ventanas, 129 eventos): MT-FW+SC 0.271/0.372, BOMP-PK+SC 0.202/0.380; dif. tope 0.1 +0.070 [-0.136, +0.197]; tope 0.25 -0.008 [-0.148, +0.165]
+  thin   8888 4 st.        (160 ventanas, 118 eventos): MT-FW+SC 0.153/0.271, BOMP-PK+SC 0.153/0.356; dif. tope 0.1 +0.000 [-0.124, +0.135]; tope 0.25 -0.085 [-0.192, +0.097]
+  thin   8888 6 st.        (160 ventanas, 140 eventos): MT-FW+SC 0.321/0.407, BOMP-PK+SC 0.179/0.343; dif. tope 0.1 +0.143 [-0.102, +0.314]; tope 0.25 +0.064 [-0.104, +0.247]
+  thin   8888 one-sided 8  (160 ventanas, 115 eventos): MT-FW+SC 0.252/0.426, BOMP-PK+SC 0.261/0.374; dif. tope 0.1 -0.009 [-0.153, +0.165]; tope 0.25 +0.052 [-0.080, +0.167]
+  strong 4242 4 st.        (160 ventanas, 135 eventos): MT-FW+SC 0.081/0.170, BOMP-PK+SC 0.037/0.111; dif. tope 0.1 +0.044 [-0.041, +0.141]; tope 0.25 +0.059 [-0.036, +0.179]
+  strong 4242 6 st.        (160 ventanas, 124 eventos): MT-FW+SC 0.169/0.274, BOMP-PK+SC 0.226/0.282; dif. tope 0.1 -0.056 [-0.148, +0.070]; tope 0.25 -0.008 [-0.133, +0.088]
+  strong 4242 one-sided 8  (160 ventanas, 126 eventos): MT-FW+SC 0.167/0.317, BOMP-PK+SC 0.135/0.278; dif. tope 0.1 +0.032 [-0.110, +0.189]; tope 0.25 +0.040 [-0.060, +0.111]
+  strong 8888 4 st.        (160 ventanas, 128 eventos): MT-FW+SC 0.070/0.156, BOMP-PK+SC 0.102/0.195; dif. tope 0.1 -0.031 [-0.128, +0.093]; tope 0.25 -0.039 [-0.133, +0.058]
+  strong 8888 6 st.        (160 ventanas, 118 eventos): MT-FW+SC 0.186/0.246, BOMP-PK+SC 0.153/0.271; dif. tope 0.1 +0.034 [-0.117, +0.150]; tope 0.25 -0.025 [-0.130, +0.084]
+  strong 8888 one-sided 8  (160 ventanas, 130 eventos): MT-FW+SC 0.131/0.277, BOMP-PK+SC 0.138/0.208; dif. tope 0.1 -0.008 [-0.105, +0.155]; tope 0.25 +0.069 [-0.075, +0.188]
+
+## Tiempos (s por ventana, media; un proceso por nucleo, 2 procesos en paralelo)
+  dense 4242 thin  : MT-FW+SC 0.131  BOMP-PK+SC 0.774  MT-FW-NOCAP+SC 0.130; preparacion por red 1.4 s
+  dense 4242 strong: MT-FW+SC 0.131  BOMP-PK+SC 0.771  MT-FW-NOCAP+SC 0.129; preparacion por red 1.2 s
+  dense 8888 thin  : MT-FW+SC 0.122  BOMP-PK+SC 0.737  MT-FW-NOCAP+SC 0.121; preparacion por red 1.2 s
+  dense 8888 strong: MT-FW+SC 0.123  BOMP-PK+SC 0.737  MT-FW-NOCAP+SC 0.121; preparacion por red 1.1 s
+  std   4242 thin  : MT-FW+SC 0.088  BOMP-PK+SC 0.520  MT-FW-NOCAP+SC 0.087; preparacion por red 1.2 s
+  std   4242 strong: MT-FW+SC 0.090  BOMP-PK+SC 0.530  MT-FW-NOCAP+SC 0.088; preparacion por red 1.1 s
+  std   8888 thin  : MT-FW+SC 0.088  BOMP-PK+SC 0.518  MT-FW-NOCAP+SC 0.086; preparacion por red 1.2 s
+  std   8888 strong: MT-FW+SC 0.088  BOMP-PK+SC 0.512  MT-FW-NOCAP+SC 0.086; preparacion por red 1.1 s
+
+## Veredictos
+  2F-a thin: SE CUMPLE  (estricta Holm: SE CUMPLE)
+  2F-a strong: NO SE CUMPLE  (estricta Holm: NO SE CUMPLE)
+  2F-b: SE CUMPLE
+  2F-c: NO SE CUMPLE
+  Interpretacion registrada: 2F-a y 2F-b se cumplen -> el tope por estacion es una contribucion confirmada para secuencias densas (en los regimenes donde 2F-a se cumple: ['thin']).

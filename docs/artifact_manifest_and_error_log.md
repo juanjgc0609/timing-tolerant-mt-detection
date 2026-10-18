@@ -1130,6 +1130,23 @@ conclusion. The registered result stands; the statement of the amendment was fal
 **Correction:** declared in the result entry of the log, in Appendix Y.33 and in the thesis. Rule for future tests:
 the development reads must end at the start of the evaluation segment, margin included.
 
+### E58. Repeat detections of an event are neutral, and the headline hit rule has no origin-time test
+**Script:** `froc_exact.py`, `task2c_methods.hit_of`, `explore_contrib/c10_lib.label`, `analyze_2f.Pool`,
+`explore_contrib/c10_analyze.Boot` (Tasks 2A to 2M).
+**Symptom:** an atom that hits an event already hit counts neither as a hit nor as a false event, so a method pays
+nothing for repeat atoms (5 to 7 % of all atoms in 2M DENSE). The rule LOC, which carries the G1-R headlines, has no
+origin-time test, although Thesis Section 5.2 describes it as "within 3 s". On synthetic windows the two coincide
+because the origins and the search grid span 5 to 8 s. Only 58 to 62 % of the LOC hits of 2M DENSE have an origin
+error of at most 0.5 s.
+**Cause:** the nearest-event labelling was not one-to-one, and the time test was left to the secondary rule LOC+T.
+**Detection:** the research audit of 18 October 2026 (thread "Fix duplicate detection scoring").
+**Scope:** 2F, 2I and 2M were rescored post hoc (`results/rescore_duplicates/`). The one-to-one rule alone moves
+contrasts by at most 0.008 in 2F and 0.023 in 2M, and no primary verdict changes; the secondary 2M-d (seed 2718) becomes
+non-inferior. With LOC+T, 2F-a strong (+0.023 / +0.027 against the 0.03 point criterion) and 2F-c (equivalence fails
+on the upper side) are not met; 2M-a and 2M-b keep lower bounds above 0 in seed 2718.
+**Correction:** `code/froc_strict.py` (one-to-one matching in score order; repeat atoms are false), proposed as the
+rule of future tests together with LOC+T as the headline. The registered results stand as registered.
+
 ### On the order of the three errors of Task 0
 Three complete protocols, three different conclusions, and **in none of them was the cause the physics**. By
 effect size: the fixed geometry (E9), the scale of the threshold (E8), and the small-sample bias
