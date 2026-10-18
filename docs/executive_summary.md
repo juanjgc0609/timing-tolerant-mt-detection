@@ -3,10 +3,12 @@
 **Epicentre determination and seismic source attribution as an inverse problem with
 constraints generated from elastodynamics**
 
-Juan José Gordillo Córdoba · October 2026
+Juan José Gordillo Córdoba - October 2026
 
-Decision document. It contains the formulation, what has been measured, what was discarded and why,
-and the concrete pending actions. The detail is in the full proposal (appendices A to
+Historical decision document, written while the work was framed as a doctoral proposal and kept as the dated record
+of decisions; its status paragraphs are in reverse chronological order and the older sections describe the state at
+the time they were written. The current statement of the work is the thesis, `docs/thesis/Thesis.md`. It contains the
+formulation, what has been measured, what was discarded and why, and the pending actions at each date. The detail is in the full proposal (appendices A to
 AA), in the audit (`audit_status.md`) and in the implementation error log.
 
 **Status as of 17 October 2026, evening: R1 registered, run once and negative; the work is presented as an
@@ -902,7 +904,7 @@ support (E39). The independent verification of Task 2I confirmed its positive wi
 or provenance errors, regenerated parts across the two interruptions of the run and bounded its
 scope (hit rule with origin time, equivalence per regime, cost), without adding an error to the
 log. The
-forty-two errors are in
+errors (fifty-six to date) are in
 `artifact_manifest_and_error_log.md` with cause, detection and correction, together with the checks that
 would have caught them.
 

@@ -1,0 +1,5 @@
+R1 CAL, 17 calibration events (truth M >= 1.0), 7 stations; readings above the gate: P 47, S 105
+   in-sample            P: n 47, median +0.000 s, robust sd 0.087 s, within 0.25 s 0.70, within 0.5 s 0.77
+   in-sample            S: n 105, median +0.000 s, robust sd 0.159 s, within 0.25 s 0.76, within 0.5 s 0.80
+   leave-one-event-out  P: n 47, median -0.004 s, robust sd 0.222 s, within 0.25 s 0.55, within 0.5 s 0.64
+   leave-one-event-out  S: n 105, median +0.002 s, robust sd 0.169 s, within 0.25 s 0.76, within 0.5 s 0.80

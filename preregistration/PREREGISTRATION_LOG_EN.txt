@@ -1218,3 +1218,12 @@ code were not in the freeze list (the model is byte-identical to an independent 
 Reading: the declared prediction held. The hybrid adds no demonstrable detections
 to the pick-based associator on unseen data, and the pick-free detector alone
 finds one of the 54 targets. R1 gives no evidence for G1 on real data.
+
+Task R1, post hoc analysis declared as such (Sun Oct 18 02:36:40 UTC 2026, wall clock), descriptive only and
+on CAL only, requested by the sixth audit (code/r1/posthoc_timing_cal.py,
+results/taskR1/posthoc/timing_cal_out.txt): timing residuals of the energy-peak readings of the 17 CAL truth
+events of magnitude >= 1.0 against the JMA2001 times plus the matched-filter terms of the frozen run, read as
+in r1_run.mf_terms. With terms leaving out each event: P, 47 readings, robust scale 0.222 s, 55 % within 0.25
+s and 64 % within 0.5 s; S, 105 readings, robust scale 0.169 s, 76 % within 0.25 s and 80 % within 0.5 s. It
+changes no registered result; it is used to state G1 in a conditional and refutable form (at least 90 % of the
+readings within 0.25 s with out-of-sample terms), a condition that neither Ridgecrest nor the swarm meets.

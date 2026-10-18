@@ -1,9 +1,11 @@
 # Preregistration
 
-Every confirmatory task (2A to 2L, R0, 2M) was written into an append-only log before its run, the code was frozen with
-SHA-256 checksums before evaluation, and the result and its independent verification were appended afterwards. After
-each append, the SHA-256 of the whole log and the UTC time were added to the hash chain, and from Task 2E on the
-registration hash was sent to the author in the conversation before any run.
+Every confirmatory task (2A to 2L, R0, 2M, R1) was written into an append-only log before its run, and its result and,
+where one was made, its verification were appended afterwards. After each append, the SHA-256 of the whole log and the
+UTC time were added to the hash chain, and from Task 2E on the registration hash was sent to the author in the
+conversation before any run. The chain begins inside the registration of Task 2D, so for 2A to 2C it certifies only
+that the text has not changed since 26 September 2026, not that the registration preceded the run; code hash lists
+exist from 2D on. Table 3 of `docs/thesis/Thesis.md` gives, task by task, which of these steps each test had.
 
 ## Files
 
@@ -28,6 +30,14 @@ final log. The copies of the log that were stored next to the results of each ta
 63478 bytes) were checked to be exact prefixes of the final file and are therefore not duplicated here; their hashes
 are in the chain (for example `ca3f62fc...2d38` for the state after the verification of Task 2L).
 
+## Format of the hash file
+
+`PREREGISTRO_hashes.txt` has, for each append, a line with the UTC time followed by a line with the SHA-256 of the
+whole log at that moment; the first hash has no time line, and one time line (5 October 2026) is not followed by a hash; every hash in the
+file is nevertheless the digest of a byte prefix of the log, and the last one is the digest of the whole file. The English translation keeps the line
+breaks between paragraphs and the number of lines of every paragraph, but within a long paragraph a word can fall
+one line earlier or later than in the Spanish file, so a cited line should be read with its neighbours.
+
 ## Section names
 
 Documents in this repository cite sections of the log by their English names ("Task 2I", "Result of 2I",
@@ -39,6 +49,6 @@ cited in one is the same line in the other.
 
 The checksums of the frozen code of each task are in `code/` (`task2d_code_hashes.txt` to `task2l_code_hashes.txt`),
 `code/explore_contrib/` (`C11_PLAN.sha256`, `C14_FREEZE.txt`, `C16_FREEZE.txt`), `code/r0/R0_FREEZE.txt` and
-`results/task2M/T2M_FREEZE.sha256`. Paths
+`results/task2M/T2M_FREEZE.sha256` and `code/r1/FREEZE_R1.sha256`. Paths
 inside them are those of the original working directory (`/home/claude/work/...`); check them from a tree with the
 same layout or by file name.

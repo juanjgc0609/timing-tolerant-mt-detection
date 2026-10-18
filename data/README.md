@@ -53,12 +53,12 @@ PyMPA37 are a different file. C16 expects the day 2010-07-23 in `/home/claude/re
 and Task 2M the other days in `/home/claude/realdata/pympa37_days/`, with the list of checksums of the latter at
 `/home/claude/realdata/pympa37_days.sha256` (it is part of the Task 2M freeze).
 
-## Hi-net swarm (held out for a future registered real test)
+## Hi-net swarm (Task R1)
 
 Fukushima-Yamagata swarm of 2 September 2012, 33 min 20 s of continuous three-component data at seven Hi-net
 stations, with 14 JMA events (`catalog.dat`), from `Geolab-USTC/MatchLocate2`, commit
-`bac5ccb00816a4ec0aaab215ea1c342c730d412f`, folder `example/` (GPL-3.0; NIED Hi-net data). Its waveforms have not been
-read by any analysis of this project; it is kept as unseen data for the registered real test that follows R0.
+`bac5ccb00816a4ec0aaab215ea1c342c730d412f`, folder `example/` (the repository is under GPL-3.0; the waveforms are NIED Hi-net data, subject to the NIED terms of use). Its waveforms were held out until Task R1 (registered on 17 October 2026), which used them once; they are no
+longer unseen data.
 
 ```bash
 git clone --depth 1 --filter=blob:none --sparse https://github.com/Geolab-USTC/MatchLocate2.git
@@ -75,4 +75,4 @@ PhaseNet: original model of `AI4EPS/PhaseNet`, commit `62005c6195638f88d077f8870
 ## Other public candidates
 
 `results/taskR0/REPORT_REALDATA.md` lists the other datasets that were found and why they were or were not used,
-among them a 33-minute Hi-net swarm with seven stations (`Geolab-USTC/MatchLocate2`), kept for future tests.
+among them a 33-minute Hi-net swarm with seven stations (`Geolab-USTC/MatchLocate2`), used by Task R1.

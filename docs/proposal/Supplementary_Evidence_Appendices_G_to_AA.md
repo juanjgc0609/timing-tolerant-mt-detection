@@ -7234,6 +7234,13 @@ that only 29 of the 54 targets are detected by any method at any threshold, that
 are detected by none (each about 10 s from a JMA event, with correlation coefficients of 0.57 and 0.53, possibly
 artefacts of the template matching), and that the PyOcto model file and the PhaseNet code were not in the freeze list.
 
+**Post hoc timing of the readings** (declared as such in the log; CAL only; `code/r1/posthoc_timing_cal.py`,
+`results/taskR1/posthoc/timing_cal_out.txt`). Against the JMA2001 times plus the matched-filter terms of the frozen
+run, with terms that leave out each event, the energy-peak readings of the 17 CAL events of magnitude 1.0 or more have
+a robust scale of 0.222 s for P (47 readings; 55 per cent within 0.25 s, 64 per cent within 0.5 s) and 0.169 s for S
+(105 readings; 76 and 80 per cent). The typical reading is within the tolerance, and a large minority falls on another
+peak.
+
 ---
 
 # Appendix Z. Certified Pruning of the Hypothesis Space, and the Role of p4est
@@ -8141,7 +8148,8 @@ verification of Task 2M found, can move $\sigma$ by at most $12$ with the cap, b
 $2\cdot6\sqrt{\log(1+(12500/6)^2)}\approx47$ with the logarithmic map, and by up to $12{,}500$ without a bound. A
 real event at the detection threshold of Task 2M has $\sigma$ of order $\sqrt{2\cdot77}\approx12$ (the pooled
 threshold of the capped detector at $0.25$ false events per window was $77.4$ and $74.9$ in score units on the two seeds), so one such
-transient decides the ranking of an uncapped hypothesis and cannot decide that of a capped one by itself. This is the
+transient decides the ranking of an uncapped hypothesis, while it can move a capped one by about the threshold itself:
+the bound protects relative to the identity and does not show that one transient cannot produce a capped detection. This is the
 mechanism behind Tasks 2F, 2I and 2M and behind the collapse of BOMP-PK in the daytime hours of the 2M primary day
 (Appendix Y.31): the realized false events of BOMP-PK there come from one or two stations at a time.
 
