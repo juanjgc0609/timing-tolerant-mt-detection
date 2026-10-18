@@ -7142,6 +7142,15 @@ shape used to deflate each accepted atom, and C18h differs from C18i and C18j in
 readings move by one event when only the import order changes and are not comparable with each other. The 2 Hz runs,
 including the gate candidate, are not affected.
 
+**Out of sample, declared post hoc (error E59).** The gate candidate was then run unchanged, with its terms still
+estimated on the 16 CAL events, on the R0 evaluation segment [900, 3560) s, whose 45 events never enter the terms
+(`explore_contrib/c18j_eval_posthoc.py`, `c18j_eval_analyze.py`, `results/explorations/c18/c18j_eval_analysis.txt`;
+the environment reproduces the stored CAL atoms of U8 bit for bit). With origin time at 30 false detections per hour
+it recalls 2 of 45 on U8 (0.044) and 5 of 45 on N8 (0.111), against 0.313 and 0.250 in sample, 0 and 2 of 45 for the
+registered homogeneous detector and 0.289 and 0.600 for the best pick-based associator of R0 on the same segment; LOG6
+recalls 1 and 8 of 45. The layered medium and the wider terms add a few events, and the gate is not met out of sample.
+The segment had already been used by R0, so this is a descriptive reading, not a test.
+
 **What follows.** R0 failed for a reason that is now measured: station terms truncated at 1 s, a homogeneous medium and a
 capped score each removed part of the evidence, and only together do their corrections bring the pick-free detector to
 about a third of the development events with origin times matched, still well below PhaseNet with PyOcto on the same

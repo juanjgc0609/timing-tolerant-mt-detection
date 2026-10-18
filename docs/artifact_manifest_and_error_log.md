@@ -169,7 +169,7 @@ to 2L, are also in `outputs/explore_contrib/`, with their scripts, reports and o
 
 ## 3. The design errors that inverted or nullified a result
 
-This is the central content of this manifest. The log contains 57 errors, E1 to E57. In the
+This is the central content of this manifest. The log contains 61 errors, E1 to E61. In the
 first six (E1 to E6) the resulting number looked valid, and in all six it was detected **only because
 it turned out to be implausible**, not because there was a visible fault in the code; the following ones were detected
 by controls, preregistered rules or audits, as indicated in each one.
@@ -1148,7 +1148,26 @@ validation script and report it cites are not in the repository.
 tolerance (Sections 7.2 and 8, and E46) is weakened: the contrast with Ridgecrest (0.35 to 0.41 s) is one of degree.
 **Correction:** Sections 6.2, 6.4, 7.2, 7.4 and 8 of the thesis rewritten; Appendix Y.14 was already correct.
 
-@@E59@@
+### E59. The C18j gate was met on the events that set its station terms, and fails out of sample
+**Script:** `explore_contrib/c18j_layered.py` (exploration C18j), the reading that motivated Task R1.
+**Symptom:** C18j (layered medium, +-2 s terms, 2 Hz, MT-FW without a cap) met the registered gate with 5 of 16 CAL
+events on U8 and 4 of 16 on N8 (LOC+T, 30 false per hour), with terms estimated on the same 16 events (E53). The
+leave-events-out reading of the code audit kept 5 of 16 on U8 only when the window's own events were removed from the
+terms, and gave 1 of 16 when every event inside the window was removed.
+**Cause:** E53. No reading with terms and events fully separated had been made; the R0 evaluation segment, whose 45
+events never enter the CAL terms, was not used because C18 was restricted to development data.
+**Detection:** the research audit of 18 October 2026 (Phase 2, item 7 of `docs/ROADMAP.md`).
+**Scope:** `explore_contrib/c18j_eval_posthoc.py` runs `c18j_layered.main` unchanged (the CAL terms, the same engine and
+loop) on the windows of the R0 evaluation segment [900, 3560) s; `c18j_eval_analyze.py` scores it with the R0
+functions (`results/explorations/c18/c18j_eval_analysis.txt`). The environment reproduces the stored C18j CAL atoms of
+U8 bit for bit. Out of sample the gate configuration recalls 2 of 45 events on U8 (0.044) and 5 of 45 on N8 (0.111)
+with origin time at 30 false per hour, against 0.313 and 0.250 in sample and against 0.289 and 0.600 for the best
+pick-based associator of R0 on the same segment; LOG6 recalls 1 and 8 of 45. The registered homogeneous detector
+recalled 0 and 2 of 45. The layered medium and the wider terms help, by a few events, and the gate is not met out of
+sample. The R0 evaluation segment had been used by R0, so this is a descriptive reading of used data. No registered
+number changes; R1 is not affected (it tested the hybrid on unseen data and P1 recalled 1 of 54, in line with this).
+**Correction:** Appendix Y.32 states the out-of-sample reading next to the gate. Rule for future development gates:
+the terms are estimated on events that the gate does not count.
 
 ### E60. The score of the R1 hybrid is a percentile taken within the segment it scores
 **Script:** `code/r1/r1_hybrid.py` (`hybrid`, with `hyb_dev.pct`), Task R1.
