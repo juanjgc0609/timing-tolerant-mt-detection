@@ -169,7 +169,7 @@ to 2L, are also in `outputs/explore_contrib/`, with their scripts, reports and o
 
 ## 3. The design errors that inverted or nullified a result
 
-This is the central content of this manifest. The log contains 56 errors, E1 to E56. In the
+This is the central content of this manifest. The log contains 57 errors, E1 to E57. In the
 first six (E1 to E6) the resulting number looked valid, and in all six it was detected **only because
 it turned out to be implausible**, not because there was a visible fault in the code; the following ones were detected
 by controls, preregistered rules or audits, as indicated in each one.
