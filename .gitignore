@@ -7,3 +7,9 @@ code/gamma_src/
 realdata/
 t2m_out/noise/
 code/explore_contrib/c19_parts/
+
+# Local outputs of the package and the tests (raw data and run outputs live outside the checkout, see README)
+/work/
+/.pytest_cache/
+*.egg-info/
+/build/
