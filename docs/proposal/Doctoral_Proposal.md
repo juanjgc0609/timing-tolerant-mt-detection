@@ -5,7 +5,10 @@ author: "Juan Jose Gordillo Cordoba"
 date: "October 2026"
 ---
 
-**DOCTORAL RESEARCH PROPOSAL**
+**ORIGINAL RESEARCH PLAN, IN THE FORMAT OF A DOCTORAL PROPOSAL.** The work is presented as an undergraduate thesis in
+`docs/thesis/Thesis.md`, which states the hypotheses as they stand after the real-data tests and contains the evidence
+table; this document records the broader plan with which the work began and the design of every component. Task R1 and
+the results after 17 October 2026 are reported in the thesis and in Appendix Y.33 of the evidence volume.
 
 # Timing-Tolerant, Bounded-Influence Moment-Tensor Detection of Overlapping Earthquakes: A Preregistered Benchmark and a Real-Data Test Plan
 ## Event Recall at a Fixed False-Event Rate in Sparse Seismic Networks

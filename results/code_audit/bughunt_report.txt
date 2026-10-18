@@ -1,0 +1,197 @@
+BUG HUNT REPORT - independent code audit for undiscovered errors (pick-free earthquake detection project)
+Auditor: independent (Claude), 2026-10-17. Scope: code listed in the task; known errors E1-E50 and R0 defects D1-D5 are
+not re-reported. Environment: /home/claude/venv311, OPENBLAS_NUM_THREADS=1, OPENBLAS_CORETYPE=Prescott, nice -n 5.
+All scripts and outputs written here are in /home/claude/work/bughunt/ (*_bh.py, *_bh.txt). No source, data or result file
+outside it was modified (imports may have refreshed __pycache__ bytecode of the imported project modules).
+Severity scale: [REG] changes a registered result; [EXPL] changes an exploratory number; [COSM] cosmetic / no number.
+
+(The report is written incrementally; the final summary by severity is section 0 at the end of the file.)
+
+NOTE ON LINE NUMBERS: explore_contrib/c18_tt.py and c18j_layered.py were modified by another process at 13:49:55
+(-05) during this audit (JMA2001 model and a MODEL switch for Task R1, HK kept as default, so every C18j behaviour
+checked here is unchanged). Line numbers refer to the files as they stand after that edit. The R1 path that now reuses
+c18j_layered inherits F2 (floor reads) and, if its CAL readings are computed the same way, F5 (in-sample terms).
+
+
+==================================================================================================================
+FINDINGS
+==================================================================================================================
+
+F1 [EXPL] Matched-filter kernel switched to 3 Hz without switching the deflation / Gram kernel, and inconsistently
+    across C18h, C18i and C18j.
+  Where: explore_contrib/c18h_kernel.py:20-23 (set_kernel rebinds task1o_consistent._KER only);
+    task1x_mtglrt.py:57-59 (AC = ricker(2 Hz) correlated with _KER, computed ONCE at import time);
+    task2c_methods.py:62-64 (AC, AC_HALF copied from X at import); c18i_widesc.py:15 and 29; c18j_layered.py:19 and 84
+    (r0_run, hence task1x_mtglrt, imported BEFORE set_kernel).
+  What: set_kernel changes the kernel used by matched() (readings, station terms, scores) but the deflation shape
+    X.AC (used by c10_lib._deflate, task2d synth_sub, and M.ac_at in the BOMP Gram) is whatever existed when
+    task1x_mtglrt was first imported. c18h_detect.py calls set_kernel before importing c18d_detect, so its AC is
+    "2 Hz Ricker correlated with the 3 Hz kernel". c18i_widesc.py (detect, FC=3) and c18j_layered.py (FC=3) import
+    r0_run first, so their AC stays "2 Hz wavelet x 2 Hz kernel" while the matched filter is 3 Hz.
+  Reproduction (ac_order_bh.py -> ac_order_bh.txt; each import order in a fresh interpreter):
+      c18h_detect order : AC(+-2) -0.303  AC(+-4) -0.352  AC(+-6) +0.114   (2 Hz wavelet x 3 Hz kernel)
+      c18i / c18j FC=3  : AC(+-2) -0.079  AC(+-4) -0.555  AC(+-6) +0.011   (identical to the 2 Hz reference)
+      response of a 3 Hz arrival to the 3 Hz kernel: a(+-1) 0.291, a(+-2) -0.566, a(+-4) +0.011
+    So the three "3 Hz" detector runs deflate every accepted atom (kmax 6) with three different assumed pulse shapes,
+    none of which is the 3 Hz kernel's own response, and C18i/C18j subtract a shape whose sidelobes (-0.555 at +-4
+    samples) are where the 3 Hz response has none.
+  Effect: the 3 Hz detector numbers of Y.32 (C18h: LOG6 3/16 on U8, 0 on N8; C18i: LOG6 3 and 2 of 16; C18j: uncapped
+    3 and 1 of 16) are not comparable with each other (the C18h vs C18i difference is attributed to the +-2 s terms
+    but also changes AC), and the C18i/C18j 3 Hz runs leave or create spurious residual energy after each atom, which
+    affects atoms 2..6 of every window. The 2 Hz runs (including the C18j candidate that "meets the gate", 5/16 on U8)
+    are NOT affected. Oracle maps (single-atom score maps, no deflation) are not affected.
+  Measured (c18i_f3_acfix_bh.py -> c18i_f3_acfix_bh.txt): the C18i 3 Hz LOG6 run repeated with the only change that
+    set_kernel precedes the import (C18h's AC). Events recalled of 16, stored vs re-run: N8 LOC+T 30/h 3 -> 2, 60/h
+    3 -> 4, 10/h 0 -> 1, LOC 30/h 4 -> 3; U8 LOC+T 30/h 2 -> 2, 60/h 3 -> 4, LOC 60/h 5 -> 6. So the C18i/C18j 3 Hz
+    readings move by +-1 event depending only on import order: of the size of the differences that Y.32 reads
+    between configurations (e.g. 'with the 3 Hz filter, 3 and 2 with LOG6').
+  Severity: exploratory numbers (C18h/C18i/C18j at 3 Hz); no registered result; the gate candidate (2 Hz) unaffected.
+
+F2 [REG-number, decision probably unchanged] The "exact predicted sample" is the FLOOR of the predicted time, not the
+    nearest sample, so exact-time readers lose on average 22 % of the arrival energy before any timing error.
+  Where: certified_fw.py:168 (_idx_node: (tt / DT).astype(int)), used by task2c_methods.BlockDict.idx (BOMP+SC,
+    MTSTACK+SC, GL-FW+SC of 2C), task2d_methods.node_vectors_v(peak=False) (MT-FW-EX+SC of 2D) and by every peak
+    window; c10_lib.py:131-133 (Eng.IDX/frac), c11_lib.py:358 (clone_eng), c18j_layered.py:75.
+  What: idx = int(t / DT) truncates, so the sample read by a method without peak search lies on average 0.5 sample
+    (31 ms) and up to 1 sample (62.5 ms) EARLY of the continuous prediction; the +-4-sample peak window is likewise
+    centred 0.5 sample early (covers [-4 - f, 4 - f] samples, f in [0, 1)).
+  Reproduction (floor_bias_bh.py -> floor_bias_bh.txt): 2 Hz Ricker arrival through the 2 Hz matched filter, exact
+    predicted time, f ~ U(0, 1): mean energy fraction read at the floor sample 0.783 (worst 0.419); at the nearest
+    sample 0.938 (worst 0.820). The peak-search readers recover ~1.0.
+  Effect: the handicap applies only to the comparators read at the exact predicted sample (2C: BOMP+SC, MTSTACK+SC,
+    GL-FW+SC; 2D: MT-FW-EX+SC; the convex problem of 2C-b/E33), i.e. it inflates the measured value of the peak search
+    (E35, rule 2C-a/2C-b, the "grid" attribution of E33) by an implementation detail rather than by timing error or
+    grid discretisation. With the 3 km / 0.1 s grid the true-node timing error is already of order 0.1-0.3 s, so the
+    decision of 2C-b (23 of 24) very probably stands, but the numerical gaps of 2C and the MT-FW-EX ablation of 2D are
+    biased against exact-time reading. Not tested end to end (would require re-running 2C cells with rounding).
+  Severity: changes registered numbers (2C, 2D ablation) in the direction that favours peak search; decisions unlikely
+    to flip. All comparisons that give every method the same +-4 peak search (2D BOMP-PK vs MT-FW, 2F, 2I, 2M) are
+    unaffected (the asymmetric window is common to all).
+
+F3 [COSM] Calibration windows of R0 (and the C18 readings) assume the origin at 6.5 s of window time, but the window
+    starts at the ROUNDED sample, so the true origin is 6.5 + delta, |delta| <= 1/32 s.
+  Where: r0/r0_run.py:56-59 (ts = e["t"] - 6.5; R.window rounds ts to a sample, r0_lib.py:144), the origin passed is the
+    constant 6.5; same in explore_contrib/c18a_timing.py:42-43 (readings tobs relative to 6.5).
+  Reproduction: first CAL target t = 9.67 s: ts = 3.17 s, window starts at round(3.17 x 16) / 16 = 3.1875 s, so the
+    catalogue origin sits at 6.4825 s of window time, not 6.5 (error -17.5 ms). Over the 16 CAL targets the error is
+    uniform in [-31, +31] ms and common to all readings of an event.
+  Effect: an event-common timing error of sd ~18 ms added to every catalogue reading used for +SC, S2, sigma_catalogue,
+    the C18a/C18i timing ladders and the c18j layered terms. It is absorbed by event terms where they exist and is the
+    same for every model compared; it adds noise, not bias, to the median station terms. Negligible next to the
+    0.35-0.6 s timing errors measured. Fix: pass e["t"] - k * DT (k the rounded start sample) as the window origin.
+
+F4 [EXPL / descriptive] The +SC corrections applied to PhaseNet picks are measured on matched-filter ENERGY PEAKS, while
+    PhaseNet picks ONSETS; the corrected picks inherit a phase-dependent peak-minus-onset lag.
+  Where: r0/r0_picks.py:137 (picks_sc = pick - corr_sc), corr_sc from station_corrections.estimate_station_corrections
+    (energy peak of the 2 Hz matched filter relative to the catalogue prediction).
+  What: corr = static + L_b, with L_b the lag of the MF-energy peak behind the onset for phase b. pick - corr =
+    predicted arrival - L_b, so P and S picks are pulled early by different amounts and the corrected S-P times are
+    biased by -(L_S - L_P). The verification's own numbers (r0_verification.txt 6.1 and 6.7b) show the size: with a
+    +-2 s search the S terms are +1.74 to +1.91 s at SRT/CCC/TOW2 while the PhaseNet S-onset residuals at the same
+    stations are +1.1 to +1.4 s, i.e. L_S ~ 0.4-0.6 s. With the frozen +-1 s search (D1) the S terms are instead
+    truncated near +0.1-0.2 s.
+  Effect: the +SC associator arms (GaMMA+SC, PyOcto+SC) are mis-specified independently of D1 (correcting the search
+    width alone would over-correct S picks by ~0.5 s). BESTPICK takes the max over raw and +SC arms, so the registered
+    R0 decision is unchanged; the descriptive +SC numbers and any future registered test that feeds peak-based terms to
+    onset pickers (draft R1) are affected. Fix: estimate pick-arm terms from pick residuals (pick - catalogue
+    prediction), not from MF peaks.
+
+F5 [EXPL; bears on the registered R1 gate, which survives on U8 under the proper held-out estimate] In-sample station
+    terms in every CAL development reading (C18d-C18j and the gate): the station terms are medians over the SAME 16
+    catalogue events (M >= 2.0, CAL) that are then counted as detected.
+  Where: r0/r0_run.py:53-62 (calwin = all CAL events with M >= 2.0 -> +SC, S2, sigma); explore_contrib/c18j_layered.py:
+    47-67 (corrections over net.calwin) and 106-118 (detector scored on those events by c18d_analyze.py); same pattern in
+    c18d_detect.py, c18i_widesc.py (detect), c18h_detect.py.
+  What: each target event contributes its own peak delays to the per-station/phase median that sets the predicted times
+    used to detect it (and its catalogue origin anchors the LOC+T origin). With 16 events, several station-phases have
+    only a few gated readings, so one event can move a term by up to 0.8-1.2 s. The R0 registered EVAL is not affected
+    (terms from CAL, evaluation on EVAL), and C18a used leave-one-event-out for the timing ladder, but the detector-level
+    CAL readings and the gate ("at least 5 of the 16 CAL events ... on N8 or U8") do not; the R1 draft treats the gate as
+    met. Only the "about twenty configurations" selection effect is declared, not this one.
+  Reproduction (c18j_loeo_bh.py -> c18j_loeo_bh.txt): the stored C18j run is reproduced exactly (terms identical), then
+    re-run with terms re-estimated per window without (NARROW) the calibration events that window can hit (origin in
+    [ts + 4.5, ts + 8.5) s, the LOC+T reach of its owned range) or (WIDE) every event inside the 40 s window.
+    Events recalled of 16, LOC+T at 30 false/h, in-sample / NARROW / WIDE:
+      U8 MT-FW without cap (gate candidate) 5 / 5 / 1;  N8 4 / 2 / 3;  U8 LOG6 2 / 2 / 1;  N8 LOG6 1 / 0 / 0.
+    LOC at 30/h: U8 NOCAP 5 / 5 / 1, N8 NOCAP 5 / 4 / 4, U8 LOG6 5 / 3 / 2.
+  Effect: with the held-out estimate that removes exactly the leakage (NARROW), the gate candidate still reaches 5/16 on
+    U8 (gate met at its threshold), but its N8 reading falls from 4 to 2 and the LOG6 readings fall by 0-2 events. The U8
+    pass is fragile: removing also the other events present in the window (WIDE, a stricter but still legitimate
+    out-of-sample estimate with fewer calibration events) drops it to 1/16. Y.32 / the gate log entry should report the
+    held-out reading and this sensitivity; in-sample CAL readings are optimistic by up to 2 events of 16.
+  Severity: changes exploratory numbers (C18 CAL readings); the registered gate decision is unchanged under the proper
+    (NARROW) held-out estimate, but only at the threshold.
+
+==================================================================================================================
+CHECKED AND FOUND CORRECT (no new defect)
+==================================================================================================================
+C1 Exact FROC / recall at caps. c10_analyze.Boot.recall, xc.recall_caps, station_corrections.froc_recall,
+   froc_exact.exact_HF + task1r_fair.recall_at: scores sorted descending, evaluated only at the end of each tie group
+   (no tie split), false budget F/len(windows) <= cap (no off-by-one), operating point = max hits over admissible
+   levels, re-chosen in every replicate; one event hit by several atoms counts once (key window-position x 64 + event,
+   distinct per bootstrap draw position, so duplicated windows are distinct) and extra hitting atoms are neutral
+   (neither hit nor false), as in score_events/greedy_record. Empty records and zero-event windows handled.
+C2 Hierarchical bootstrap (c10_analyze.Boot; used by C10-C16, C18e/f, 2M): strata = (regime, cell), networks resampled
+   within stratum then windows within network; pt on all windows; paired differences from the same replicates; 2M
+   p-value (1 + #{d <= 0}) / (B + 1) and Holm as registered. Shared hours across cells (declared, verified in verif_2m).
+C3 Labelling: c10_lib.label (LOC nearest event <= 5 km; LOC+T nearest among <= 5 km and |dtau| <= 0.5 s),
+   c10_lib.record (running minimum), r0_analyze.label (M >= 2 preferred, neutral for M < 2, false otherwise),
+   r0_analyze.dedupe and froc (block weights, cap from resampled hours). Independent re-implementation
+   (c18j_gate_bh.py -> c18j_gate_bh.txt) reproduces every C18i/C18j CAL reading (e.g. C18j U8 NOCAP LOC+T 30/h 5/16,
+   N8 4/16; LOG6 2/16 and 1/16; 3 Hz NOCAP 1/16 and 3/16); de-duplication changes none of them.
+C4 Window ownership and time bookkeeping (r0_run.starts, OWN [5, 8), STEP 3 s, TAUS 2.0-11.9 by 0.1 rounded to 1e-10):
+   owned absolute origins tile [lo, hi) on a 0.1 s lattice with no gap and no double ownership for EVAL (895 + 3k + 5);
+   the extra second after 3560 s is removed by Set; CAL never owns origins in [0, 5) s (no M >= 2 event there).
+   Absolute origin = window start + tau with integer starts (exact on the 1/16 s lattice). Matched filter
+   (np.convolve(D, KER[::-1], 'same'), odd 33-sample kernel centred at index 16) is an aligned cross-correlation; its
+   peak is at the arrival sample; resample_poly keeps sample 0 at t = 0.
+C5 c18_tt.first_arrival (priority 4): one-layer model equals the straight ray to 1e-13 s; for Hadley-Kanamori at source
+   depths 3, 7, 11 km and X = 0-60 km it is <= a 2-D Dijkstra first-arrival bound (0.25 km graph, 24-sub-sample edge
+   integration) by 0 to 0.026 s everywhere, i.e. direct and head-wave branches, critical distances and the
+   "faster than every layer above" condition are right (tt_check_bh.py -> tt_check_bh.txt). No CAL catalogue depth
+   falls exactly on an interface (5.5, 16 km), the one configuration where the "ztop <= zs" test would drop a head wave.
+C6 c18j_layered: per-node tables interpolate the correct phase (S from velocities / 1.73), shapes (N, T, 2, ns) of
+   tt + tau + corr are consistent with the engine's IDX; corrections = (peak delay vs homogeneous) + t_hom - t_lay =
+   observed peak - origin - t_lay, i.e. the sign that is ADDED to predicted times (same convention as +SC); the
+   readings are the same +-2 s joint P/S reads as C18i, so C18i vs C18j differ only in the medium.
+C7 Station-term sign and gauge: station_corrections.peak_delays (delay = peak - prediction, added to predictions);
+   c11_lib.jhd/joint_solve (gauge shift applied to event times and compensated in the observed station terms).
+C8 Method symmetry: MT@S0 / BOMP@S0 / HUBER-N@S0 share IDX (asserted), kmax, 5 km exclusion, +-4 peak window on the
+   uncapped energy, and the same MFn; C18e LOG6 / CAP24 patches only change the per-arrival vector (hard mode ignores
+   the capped half-energy); C18f BOMP-CAP6 patches only the block energies (peak choice, refit, deflation unchanged);
+   bomp_loop Gram (_gram with AC(I_ap - I_bq)) and refit row ordering (b, i, c) match the operator.
+C9 Leakage: no detector call receives truth (2M runner, R0 Net.run with a dummy far truth for HUBER-N, C18 detect
+   loops); truth enters only declared oracle/ceiling arms and the catalogue gate (true location, as a detection
+   criterion). EXCEPTION: in-sample station terms in the CAL gate, see F5.
+C10 t2m_data qc1 flat-run marking (runs of >= 25 identical values marked exactly), slot eligibility (+-60 s around
+   origins, invalid samples and day ends), frame and Z sign; t2m_lib slot pool disjointness (also verified in verif_2m).
+C11 c18g (P-only / S x 0.5 readings projected on the basis of the FULL P+S operator) is not the matched statistic for
+   the down-weighted data, but on the N8/U8 geometry its deflection (signal over noise mean) is not lower than the
+   matched one (c18g_subspace_bh.py -> c18g_subspace_bh.txt: ratio 1.10-1.13 for w_S 0.5, 1.7-2.4 for P only), so this
+   mis-specification does not explain the C18g loss. Not reported as a defect.
+
+==================================================================================================================
+0. SUMMARY BY SEVERITY
+==================================================================================================================
+Changes a registered result (number; decision probably unchanged):
+  F2  Exact-time readers read the FLOOR sample (certified_fw._idx_node and every engine): 0.78 of the arrival energy on
+      average instead of 0.94 at the nearest sample; biases 2C (BOMP+SC, MTSTACK+SC, GL-FW+SC, 2C-b/E33) and the 2D
+      MT-FW-EX ablation against exact-time reading, i.e. inflates the measured value of the peak search.
+Changes exploratory numbers:
+  F5  C18 CAL readings and the R1 gate use station terms estimated on the same 16 events that are scored. Held-out
+      terms: gate candidate U8 5/16 -> 5/16 (proper held-out) or 1/16 (stricter); N8 4 -> 2 or 3; LOG6 down 0-2. The
+      gate still passes on U8, exactly at the threshold; the in-sample readings are optimistic.
+  F1  3 Hz matched filter without a matching deflation/Gram kernel, and a different AC in C18h vs C18i/C18j (import
+      order): the 3 Hz detector readings move by +-1 event of 16 with the import order alone.
+  F4  +SC terms from matched-filter energy peaks applied to PhaseNet onset picks (R0 GaMMA+SC / PyOcto+SC arms): a
+      phase-dependent peak-onset lag (~0.4-0.6 s for S) is subtracted from the picks; BESTPICK unaffected.
+Cosmetic:
+  F3  R0 calibration windows and C18a readings assume origin 6.5 s while the window starts at the rounded sample
+      (event-common error <= 31 ms).
+Checked and correct: C1-C11 above (exact FROC and tie/budget handling, distinct-hit counting, hierarchical bootstrap,
+  labelling incl. neutral M < 2, window ownership / absolute time, matched-filter alignment, c18_tt against an independent
+  shortest-path solver, c18j table/term signs, station-term gauges, method symmetry in 2M/C18e/C18f, truth leakage,
+  t2m_data QC and slots).
+Scripts and outputs (all in /home/claude/work/bughunt/): tt_check_bh.py/.txt, ac_order_bh.py/.txt,
+  c18i_f3_acfix_bh.py (+ _N8/_U8 json, logs, c18i_f3_acfix_bh.txt), floor_bias_bh.py/.txt, c18g_subspace_bh.py/.txt,
+  c18j_gate_bh.py/.txt, c18j_loeo_bh.py (+ c18j_loeo[N]_{U8,N8}_bh.json/.log, c18j_loeo_bh.txt).

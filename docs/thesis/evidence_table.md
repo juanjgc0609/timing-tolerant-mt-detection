@@ -1,0 +1,18 @@
+| # | Data | Test | Claim | Value | Source (file:line) |
+|:--|:--|:--|:--|:--|:--|
+| E1 | synthetic | Task 2A (registered) | MT-FW+SC minus the best of GaMMA, PyOcto and QuakeMigrate with an STA/LTA picker, rule 2A-a, weak clutter, both seeds | +0.14/+0.26; +0.49/+0.46; MET | `results/task2a/analyze_2a_out.txt:61` |
+| E2 | synthetic | Task 2D (registered) | MT-FW+SC minus block OMP with the same peak search (BOMP-PK), rule 2D-a, strong clutter | 0/3 cells; NOT MET | `results/task2d/analyze_2d_out.txt:146` |
+| E3 | synthetic | Task 2E (registered) | Off-grid group BLASSO (TS-SFW) minus BOMP-PK, rule 2E-a, weak clutter | +0.039; 0/3; NOT MET | `results/task2e/analyze_2e_out.txt:67` |
+| E4 | synthetic | Task 2F (registered) | Capped MT-FW minus BOMP-PK in dense windows, weak clutter, seed 4242 | +0.072 [+0.048, +0.092] | `results/task2f/analyze_2f_out.txt:26` |
+| E5 | synthetic | Task 2F (registered) | Same, strong clutter, seed 8888 | +0.043 [+0.022, +0.066] | `results/task2f/analyze_2f_out.txt:30` |
+| E6 | synthetic | Task 2I (registered) | Huber fit (HUBER-N) minus BOMP-PK in dense windows, seed 5151 | +0.058 [+0.039, +0.076] | `results/task2i/analyze_2i_primary_out.txt:82` |
+| E7 | synthetic | Task 2L (registered) | Pick-free station terms S2 minus catalogue terms, standard windows, origin time required, seed 7171 | +0.057 [+0.034, +0.081] | `results/task2l/analyze_2l_out.txt:113` |
+| E8 | real noise | Task 2M (registered) | Capped MT-FW minus BOMP-PK, dense windows, primary day with transients | +0.228 [+0.148, +0.298]; MET | `results/task2M/analyze_2m_out.txt:343` |
+| E9 | real noise | Task 2M (registered) | HUBER-N minus BOMP-PK, same day | +0.241 [+0.179, +0.293]; MET | `results/task2M/analyze_2m_out.txt:345` |
+| E10 | real noise | C18f (exploratory) | Capped MT-FW minus BOMP-PK with the same cap on its energies | +0.026 [-0.009, +0.081] | `results/explorations/c18/c18f_analysis.txt:13` |
+| E11 | real data | Task R0 (registered) | Capped MT-FW (M2) minus the best PhaseNet associator, Ridgecrest, 30 false/h, origin time required | -0.383 [-0.481, -0.310] | `results/taskR0/analysis_eval.txt:13` |
+| E12 | real data | C18j (exploratory) | Uncapped MT-FW, layered medium, terms over 2 s, U8, development events recalled, in-sample / held-out / stricter held-out | 5/16; 5/16; 1/16 | `results/code_audit/c18j_loeo_bh.txt:8` |
+| E13 | real data | Task R1 (registered) | Hybrid (pick-free candidates scored by PhaseNet picks) minus the pick-based associator it extends, Hi-net swarm, 30 false/h, origin time required | 23 vs 22 of 54; p = 0.5000; NOT MET | `results/taskR1/run/analysis_eval.txt:23` |
+| E14 | real data | Task R1 (registered) | Hybrid minus the best pick-based configuration | 23 vs 26 of 54; p = 0.9688; NOT MET | `results/taskR1/run/analysis_eval.txt:26` |
+| E15 | real data | Task R1 (registered, descriptive) | Pick-free detector alone (P1) minus the associator | 1 vs 22 of 54 | `results/taskR1/run/analysis_eval.txt:29` |
+| E16 | theory | Proposition AA.9.5 (numerical check) | Gaussian null: upper 1e-4 quantile of the score for identity, cap, log maps against the bound | 28.50; 7.18; 7.18; 6.78 | `results/theory/tail_check_out.txt:6` |

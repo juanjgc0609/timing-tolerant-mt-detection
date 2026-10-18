@@ -1,0 +1,26 @@
+one-layer zs 3.0: max |c18_tt - straight| = 1.35e-13 s
+one-layer zs 7.0: max |c18_tt - straight| = 8.70e-14 s
+HK zs 3.0: c18_tt - graph over X 0-60 km: min -0.017 max +0.000 s (graph is an upper bound; c18_tt should be <= graph and close)
+   X   0.0  c18_tt   0.545  graph   0.545  diff +0.000
+   X  10.0  c18_tt   1.898  graph   1.900  diff -0.001
+   X  20.0  c18_tt   3.677  graph   3.682  diff -0.004
+   X  30.0  c18_tt   5.471  graph   5.473  diff -0.001
+   X  40.0  c18_tt   7.059  graph   7.060  diff -0.001
+   X  50.0  c18_tt   8.646  graph   8.647  diff -0.001
+   X  60.0  c18_tt  10.233  graph  10.235  diff -0.001
+HK zs 7.0: c18_tt - graph over X 0-60 km: min -0.017 max +0.000 s (graph is an upper bound; c18_tt should be <= graph and close)
+   X   0.0  c18_tt   1.238  graph   1.238  diff +0.000
+   X  10.0  c18_tt   2.151  graph   2.151  diff -0.000
+   X  20.0  c18_tt   3.679  graph   3.683  diff -0.004
+   X  30.0  c18_tt   5.258  graph   5.270  diff -0.012
+   X  40.0  c18_tt   6.843  graph   6.858  diff -0.015
+   X  50.0  c18_tt   8.429  graph   8.445  diff -0.016
+   X  60.0  c18_tt  10.015  graph  10.032  diff -0.017
+HK zs 11.0: c18_tt - graph over X 0-60 km: min -0.026 max +0.000 s (graph is an upper bound; c18_tt should be <= graph and close)
+   X   0.0  c18_tt   1.873  graph   1.873  diff +0.000
+   X  10.0  c18_tt   2.527  graph   2.527  diff -0.000
+   X  20.0  c18_tt   3.859  graph   3.860  diff -0.002
+   X  30.0  c18_tt   5.363  graph   5.364  diff -0.001
+   X  40.0  c18_tt   6.915  graph   6.916  diff -0.001
+   X  50.0  c18_tt   8.483  graph   8.497  diff -0.014
+   X  60.0  c18_tt  10.059  graph  10.085  diff -0.026

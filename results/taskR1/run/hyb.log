@@ -1,0 +1,2 @@
+cal BASE gamma_1d {"min_picks": 6, "sigma": 1.0} CAL recall 0.5666666666666667 n 20 | BASE 20 P1 174 HYB 180
+eval BASE gamma_1d {"min_picks": 6, "sigma": 1.0} CAL recall 0.5666666666666667 n 20 | BASE 29 P1 269 HYB 277

@@ -1,0 +1,7 @@
+kappa (max |K(f)| / ||K||) = 2.146; n_b 14, W 4, cap 6.0, 200000 replicates; per-hypothesis bound sigma_p = sqrt(6) + kappa (sqrt(2 n_b log(2W+1)) + sqrt(2 log(1/p)))
+   p        bound   empirical quantile of sigma: identity   cap   log
+   1e-01    23.89     4.74    4.74    4.51
+   1e-02    25.80     5.81    5.81    5.51
+   1e-03    27.26     6.52    6.52    6.18
+   1e-04    28.50     7.18    7.18    6.78
+mean sigma: identity 3.469  cap 3.469  log 3.304; sqrt(6) = 2.449

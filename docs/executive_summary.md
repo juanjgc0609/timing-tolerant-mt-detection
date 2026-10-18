@@ -9,6 +9,20 @@ Decision document. It contains the formulation, what has been measured, what was
 and the concrete pending actions. The detail is in the full proposal (appendices A to
 AA), in the audit (`audit_status.md`) and in the implementation error log.
 
+**Status as of 17 October 2026, evening: R1 registered, run once and negative; the work is presented as an
+undergraduate thesis.** Task R1 tested, on the unread Hi-net swarm of 2012 (seven borehole stations, 54 target events
+in its evaluation segment), a hybrid that adds pick-free moment-tensor candidates to a PhaseNet associator and scores
+every candidate by the picks it explains. At 30 false detections per hour with origin time, the hybrid found 23 targets
+and the associator alone 22 (exact one-sided McNemar p = 0.50, rule R1-a not met); the best associator configuration
+found 26; the pick-free detector alone found 1. An amendment before the freeze fixed the matched-filter station terms,
+whose P readings had picked up the S arrival at the nearest stations. An independent audit of the code found five more
+errors (E51 to E55), and the independent verification of R1 a sixth (E56: the development read the first 40 s of
+the evaluation segment; with those 40 s removed the primary rule gives 22 against 21, the same conclusion); none
+changes a registered decision. The theory of the deployed statistic gained a false-alarm
+bound under the peak search and a contamination bound (Proposition AA.9.5). The project is an undergraduate thesis;
+its main document is now `docs/thesis/Thesis.md`, and the proposal is kept as the record of the original plan.
+Appendix Y.33.
+
 **Status as of 16-17 October 2026: G1-R confirmed with independent real noise; R0 verified negative and its failure
 traced to truncated station terms, the medium and the cap; the gate for a new real test met on development data.** Task 2M, registered before any computation on its seeds, injected synthetic events into real
 noise of days of the Alto Tiberina network that no earlier analysis used. On the primary day, whose noise has
@@ -830,7 +844,7 @@ identical to the exhaustive search), not a pruning gain over the moment-tensor c
 
 ## 9. Note on the working method
 
-During development **fifty-five errors** were documented (E1 to E55): three of claims in the text
+During development **fifty-six errors** were documented (E1 to E56): three of claims in the text
 pointed out by the fourth independent audit (E40, "certificate" used for a statistic that is not one;
 E41, a declared dependence removed together with the arms that measure it without reporting it; E42, the real test G1'
 without an arm for the polarisation assumption that the real data contradict), thirty of experimental
@@ -851,7 +865,7 @@ not preserved outside the working container; and E50, an exploration that inheri
 drew a false conclusion about the medium; and five found by an independent audit of the code (E51 to E55): a 3 Hz
 matched filter deflated with the 2 Hz pulse, exact-time readers at the floor sample, station terms of the development
 readings estimated on the events they detect, peak-based terms applied to onset picks, and a 31 ms rounding of the
-calibration origin. Several of
+calibration origin; and E56, a development run of R1 that read the first 40 s of its evaluation segment. Several of
 them reversed or annulled a result: constraints turned into no-ops, undersampling of the
 sensitive parameter, true source on a grid node, thresholds below chance and, the most costly,
 ties of a discrete score read as a physical effect (E15), a weak comparator against an

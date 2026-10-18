@@ -1,0 +1,247 @@
+INDEPENDENT VERIFICATION OF TASK R1 (Hi-net swarm, MatchLocate2 example)
+Verifier: separate agent, 17 Oct 2026. Work folder /home/claude/work/r1_verif_indep/ (own scripts v*.py there).
+(Summary is placed at the top once all sections are done; sections below were appended as they finished.)
+
+SUMMARY
+
+Verdicts on the registered rules and numbers (all recomputed with my own code from the raw lists and the raw catalogues):
+   R1-a (primary) HYB - BASE, LOC+T 30/h: 23 vs 22 of 54, +0.019, discordant 1 / 0, exact one-sided McNemar
+        p = 0.5000 -> NOT MET.                                                       Reproduction: CONFIRMED.
+   R1-b HYB - BESTPICK (pyocto_1d n_picks 3, tol 0.5): 23 vs 26, -0.056, discordant 1 / 4, p = 0.9688 -> NOT MET.
+        The tie with pyocto_1d (4, 0.5) gives the same discordance.               Reproduction: CONFIRMED.
+   R1-c (descriptive) P1 - BASE: 1 vs 22, -0.389, 0 / 21, p = 1.0000.              CONFIRMED.
+   FROC table (HYB, BASE, BESTPICK, P1 at 10/30/60 per hour, LOC+T and LOC):       CONFIRMED (24 of 24 numbers).
+   JMA-only reading (0.9 / 0.9 / 1.0 / 0.1 at 30/h):                               CONFIRMED.
+   Deployable threshold (HYB 23, 41.8 false/h; BASE 22, 12.9/h; P1 1, 12.9/h):    CONFIRMED.
+   Block bootstrap intervals (own resampler): HYB-BASE [+0.000, +0.057], HYB-BESTPICK [-0.163, +0.000],
+        P1-BASE [-0.489, -0.288] vs the run's [+0.000, +0.058], [-0.163, +0.000], [-0.490, -0.286]: CONFIRMED.
+   BASE selection rule (GaMMA-1D min_picks 6, sigma 1.0; 17/30 on CAL, 20 detections, tie broken by grid order):
+                                                                                   CONFIRMED.
+   HYB implemented as registered (own PICKSCORE-UNION reproduces all 277 EVAL and 180 CAL detections and their pick
+        support exactly):                                                          CONFIRMED.
+   Pick terms (own, to 1e-4 s), JMA2001 times (own ray tracer, <= 6 ms), PyOcto model (byte-identical rebuild):
+                                                                                   CONFIRMED.
+   Matched-filter terms of amendment 1: logic and bookkeeping CONFIRMED; the energy-peak readings themselves CANNOT
+        VERIFY independently (not re-implemented; P1 contributes one hit).
+   JMA2001 points vs the published Maeda approximation: CANNOT VERIFY (no network access to the source).
+   Freeze (297/297 hashes, list hash 1669903f...), sealed log hash chain, ES/EN alignment, data checksums: CONFIRMED.
+   No EVAL information used to set any constant: CONFIRMED; but the development did read EVAL samples [840, 880) s
+        (see D1).
+
+Defects, by severity
+   [REG]  none found. No defect changes a registered number.
+   [DESC] D1. Development read 40 s of EVAL waveforms (t_end("cal") = 880 s). Dev PhaseNet picks reach 853.5 s and the
+          dev associator lists contain the first EVAL target (843.8 s, M 2.3, JMA); [840, 880) holds 2 EVAL targets.
+          Amendment 1 says both "no detector, picker or associator has read EVAL samples" and "the development runs read
+          the waveforms up to 880 s"; the first statement is false, and the r1_lib.t_end docstring ("CAL never reads
+          EVAL samples") likewise. No constant was set on these samples; with EVAL restricted to origins >= 880 s,
+          R1-a is 22 vs 21 of 52, discordant 1 / 0 (same conclusion). Should be stated as a protocol deviation.
+   [DESC] D2. Amendment 1 item 1 and 5 quote development values (P lag 0.265 s; pick terms -0.21/+0.17/+0.23 s; CAL BASE
+          and HYB 16/30) whereas the frozen run produced P lag 0.272 s, terms -0.22/+0.13/+0.21 s and CAL 17/30 and
+          17/30 (PhaseNet on the full record changes the picks in 600-840 s). Reports should cite the run values.
+   [DESC] D3 (interpretation, not code). The truth list limits the test: only 29 of 54 targets are found by any method
+          at any threshold; 12 of 22 targets with M 0.5-1.0 by none; 2 of 12 targets with M >= 2 (1366.78 M 2.37 and
+          1559.02 M 2.11, CC 0.57 and 0.53, each ~10 s from a JMA event) by none, possibly template-matching artefacts.
+   [COSM] D4. GaMMA's first-order eikonal (h 0.5 km) is +0.09 s (P) / +0.16 s (S) slower than the JMA2001 times;
+          shifting BASE origins up to +0.12 s changes nothing.
+   [COSM] D5. Freeze coverage: r1/pyocto_jma2001.model, the PhaseNet source code and r0_verif/pydeps,
+          hyb/pydeps_pyrocko are not hashed (the model file is byte-identical to an independent rebuild; mtimes
+          predate the freeze). FREEZE_R1.sha256 was rewritten at 19:10:33 UTC, 9 s after the amendment quoting its hash
+          and 0.03 s before the run, with identical content.
+   [COSM] D6. r0_analyze.froc counts the last 40 s block as 60 s (cap 19 instead of 18 at 60/h with unit weights);
+          not used for any R1 point estimate, same cap at 30/h. One ES/EN wording difference ("las sumas sha256" vs
+          "checksums").
+
+Own scripts and outputs: /home/claude/work/r1_verif_indep/v1_data.py ... v7_hyb.py, *.out, truth_own.json,
+own_endpoint.json, own_hyb_eval.json, own_hyb_cal.json, pyocto_jma2001_own.model.
+
+SECTION 1. FREEZE INTEGRITY AND SEALED LOG
+
+1.1 FREEZE_R1.sha256. sha256 of the list itself = 1669903f22b1e6d4f1b9656ffdc78f5c7a3bc9b4ed4145ce52e41cefcd28a2a3,
+equal to the value in amendment 1. The list has 302 lines: 297 file hashes and 5 version lines (3 TensorFlow
+dist-info names, gamma_src commit 80394dd4..., package versions pyocto 0.2.0, obspy 1.5.1, numpy 1.26.4, scipy 1.17.1,
+pandas 3.0.6, scikit-learn 1.8.0). `sha256sum -c` from /home/claude/work: 297 of 297 OK, 0 failures. gamma_src is a
+clean checkout at 80394dd4 (git status empty).
+1.2 Timing. Latest mtime among the 297 frozen files: r1/r1_queue.sh 19:09:14 UTC; all frozen code is older than the
+freeze file (birth 19:09:24 UTC) and than the amendment entry (19:10:24 UTC). The run started at 19:10:33.47 UTC (birth
+of run/picks.log) and ended 19:20:56 UTC (queue.log). FREEZE_R1.sha256 has mtime 19:10:33.44 UTC, i.e. it was rewritten
+0.03 s before the run started and 9 s after the amendment that quotes its hash; since its current hash equals the
+quoted hash, the rewrite produced identical content (consistent with r1_freeze.sh being re-run just before
+r1_queue.sh). No frozen file was modified after the run started. Not frozen but used by the run: r1/pyocto_jma2001.model
+(PyOcto travel-time table, mtime 18:59:54 UTC, before the freeze, never touched after), the PhaseNet source code and
+the r0_verif/pydeps and hyb/pydeps_pyrocko packages (only the PhaseNet checkpoint files are hashed). Minor coverage gap,
+no evidence of change.
+1.3 Data. The 60 entries of repo/data/checksums/hinet_matchlocate2_example.sha256 verify (60 of 60 OK, run from
+example/); the MatchLocate2 clone is at commit bac5ccb00816a4ec0aaab215ea1c342c730d412f as registered.
+1.4 Sealed log. Last line of PREREGISTRO_hashes.txt = d5d420a6...25c1 = sha256(PREREGISTRO_1j_1k.txt) (recomputed);
+the preceding chain entries are dated 18:49:11 UTC (R1 registration, hash 3b238aa4...) and 19:10:24 UTC (amendment 1).
+Spanish and English logs: 1191 lines each, blank lines at identical positions (62), the R1 entry starts at line 1065 and
+the amendment at line 1154 in both; the numeric tokens of every paragraph agree (one paragraph differs only by the word
+"sha256" in "las sumas sha256" vs "checksums", cosmetic). The four files in results/taskR1/log_entries/ (with
+__FECHA__ replaced by the sealed dates) are contained verbatim (whitespace-normalised) in the corresponding log.
+Verdict section 1: CONFIRMED.
+
+SECTION 2. DATA HANDLING (own parser: v1_data.py; obspy UTCDateTime for the times, haversine for the 'jma' rule)
+
+2.1 Catalogues. catalog.dat: 14 JMA events (M 2.1 to 3.2), DetectedFinal.dat: 140 detections (M -0.41 to 3.20). My
+times relative to 2012-09-02T03:20:00 agree with r1_lib.read_catalogue / read_jma to 2e-13 s, magnitudes exactly, and
+the 'jma' flag (1.0 s and 5 km) agrees for all 140 rows. Every JMA event coincides with exactly one Match&Locate row
+(the template self-detection: dt 0.00 s, 0.00 km, same magnitude), so the jma flag is unambiguous (14 flagged).
+2.2 Segment counts (mine): CAL truth 53, targets (M >= 0.5) 30, M >= 1.0 17, JMA 4; EVAL truth 84, targets 54, M >= 1.0
+32, JMA 10; tail [1960, 2000) s 3 truth events (1 with M >= 0.5), excluded as registered. Calibration windows (CAL,
+M >= 1.0, origin >= 6.5 s) = 17, equal to "calwin 17" in the run logs.
+2.3 Frame. Centre = mean of the 4 CAL JMA epicentres = (37.79200, 139.99975), equal to r1_lib.frame().
+2.4 Traces. All 21 SAC files: 100 Hz, 200001 samples, start 2012-09-02T03:20:00.000 (nz 00:00:00 + b 12000 s), end
+03:53:20.000; so i0 = 0 for every trace and the 100 Hz arrays start exactly at t = 0 (no sub-sample offset). cmpaz/cmpinc
+E 90/90, N 0/90, U 0/0; load order "ENU" and d16[:, 2] *= -1 give the registered detector frame (E, N, -U); the raw
+array given to PhaseNet keeps (E, N, U), the orientation PhaseNet expects. Station coordinates (stla, stlo) are read from
+the U headers; stel ignored, stdp absent (borehole depth not available in the header, as declared).
+Verdict section 2: CONFIRMED.
+
+SECTION 3. REGISTERED ENDPOINT RECOMPUTED WITH OWN CODE (v3_endpoint.py, v4_boot.py; no project module imported)
+
+Own labeller: a detection is a hit of the nearest truth event with M >= 0.5 within 5 km (epicentre, local
+equirectangular frame) and 0.5 s (LOC+T) or 3.0 s (LOC); otherwise neutral if it is within tolerance of only M < 0.5
+events; otherwise false. Exact FROC: allowed false = floor(rate x 1120/3600) = 3, 9, 18 at 10, 30, 60/h; threshold =
+score of the (cap+1)-th highest false detection, hits need a strictly higher score. Targets 54, JMA targets 10.
+
+   method     LOC+T 10  LOC+T 30  LOC+T 60  LOC 10  LOC 30  LOC 60   (events of 54)
+   HYB           22        23        23       24      24      24
+   BASE          21        22        22       23      23      23
+   BESTPICK      22        26        26       26      26      26
+   P1             1         1         2        1       1       3
+All 24 numbers equal analysis_eval.txt. BASE 29, HYB 277, P1 269 EVAL detections, equal.
+
+BESTPICK at LOC+T 30/h: pyocto_1d {"n_picks": 3, "tol": 0.5} with 26 (first in grid order); pyocto_1d {"n_picks": 4,
+"tol": 0.5} also has 26 with the same discordant counts against HYB (1 / 4), so the tie rule does not matter.
+Hit sets at LOC+T 30/h and exact one-sided McNemar (binomial, p = P[X >= b | n = b + c, 1/2]):
+   R1-a HYB - BASE: 23 vs 22, difference +0.019, discordant 1 (only HYB: t 1591.5 M 1.29) / 0, p = 0.5000 -> NOT MET.
+   R1-b HYB - BESTPICK: 23 vs 26, difference -0.056, discordant 1 / 4 (only BESTPICK: t 1025.2 M 0.69, 1153.2 M 0.53,
+        1160.8 M 0.71, 1568.8 M 2.20), p = 0.9688 -> NOT MET.
+   R1-c P1 - BASE: 1 vs 22, -0.389, discordant 0 / 21, p = 1.0000 (descriptive).
+All equal analysis_eval.txt, including the listed discordant events.
+JMA-only (targets = 10 EVAL truth rows flagged jma; detections hitting other truth events not false): HYB 0.9/0.9/0.9,
+BASE 0.9/0.9/0.9, BESTPICK 0.9/1.0/1.0, P1 0.1/0.1/0.2 at 10/30/60 per hour: equal. Labelling to "any JMA event within
+tolerance" instead of the nearest truth event changes nothing.
+Deployable threshold (CAL operating point, LOC+T 30/h, from hyb_cal.json; CAL targets 30): HYB CAL 17/30, threshold
+1.261 -> EVAL 23 (0.426), 13 false (41.8/h); BASE CAL 17/30, threshold -inf -> EVAL 22, 4 false (12.9/h); P1 CAL 0/30,
+threshold 5502.231 -> EVAL 1, 4 false (12.9/h): equal.
+Block bootstrap (own resampler, seed 777, 2000 replicates, 19 blocks of 60 s, weights by block multiplicity, operating
+point and BESTPICK envelope re-chosen per replicate):
+   contrast          own median  own 95% interval     analysis_eval.txt
+   HYB - BASE           +0.018   [+0.000, +0.057]     +0.018 [+0.000, +0.058]
+   HYB - BESTPICK       -0.052   [-0.163, +0.000]     -0.052 [-0.163, +0.000]
+   P1 - BASE            -0.386   [-0.489, -0.288]     -0.386 [-0.490, -0.286]
+Agreement to the resampling noise. Using the true length of the last block (40 s) for the false-per-hour budget
+instead of 60 s gives identical intervals at 30/h.
+Verdict section 3: CONFIRMED (every registered and descriptive number of analysis_eval.txt reproduced).
+
+SECTION 4. BASE SELECTION, STATION TERMS AND HYB IMPLEMENTATION
+
+4.1 BASE (v5_base.py, own labeller and FROC on picks_all.json, CAL [0, 840), 30 targets, 7 false allowed). Grid order in
+picks_all.json equals task1r_baselines (PyOcto n_picks [3,4,6,8,10] x tol [0.5,1,2]; GaMMA min_picks [3,4,5,6,8] x
+sigma [1,2]). All 10 GaMMA-1D configurations reach 17/30; the best PyOcto-1D reach 15/30. Fewest CAL detections among
+the 17/30: GaMMA (6, 1.0), (8, 1.0) and (8, 2.0) with 20 each; first in grid = {"min_picks": 6, "sigma": 1.0}. My full
+ranking equals the run's "selection" table row by row. The EVAL BASE list and all 25 BESTPICK lists in hyb_eval.json
+are exactly the picks_all.json lists restricted to [840, 1960). The associators ran once on the full record (origins
+17.5 to 1972.5 s), so no detection list is truncated at 840 or 1960 s. CONFIRMED.
+4.2 Travel times (v6_tt.py: own ray shooting in 0.02 km layers, up-going and diving rays). c18_tt.JMA2001_POINTS equals
+the registered 13 points; my P and S first-arrival times agree with c18_tt.first_arrival on the JMA2001 layers to
+<= 1 ms at the source depths of the swarm (6.3 to 8.4 km) and <= 6 ms at 3 km, for 5 to 35 km. The PyOcto model file
+r1/pyocto_jma2001.model is byte-identical to one I built with pyocto.VelocityModel1D.create_model from the registered
+points down to 40 km (VS = VP/1.73, delta 0.25, 80 x 40 km). Whether the 13 points are the published JMA2001
+approximation of Maeda could not be checked (no access outside GitHub/PyPI; the repository search API is blocked):
+CANNOT VERIFY against the source, consistent with the registration text.
+4.3 Pick terms (v7_hyb.py, own times): median over the 17 CAL truth events with M >= 1.0 of the nearest PhaseNet pick
+within +-2 s, at least 2 readings (8 to 13 per station-phase). Mine equal picks_all.json["pick_terms"] to 1e-4 s:
+P [-0.223, -0.227, -0.267, -0.163, -0.019, +0.135, +0.210], S [-0.431, -0.502, -0.612, -0.275, -0.149, +0.259, +0.478]
+(ATKH, INWH, NAZH, ONIH, THTH, TSTH, YNZH). Sign: term = pick - predicted; predicted arrival in the hybrid = origin +
+time + term, associator picks = pick - term: consistent. Their small size (|P| <= 0.27 s) also confirms that the
+PhaseNet time base (sample index / 100 from 03:20:00) and the catalogue time base agree.
+4.4 HYB (own PICKSCORE-UNION, own times and terms, own 5 km / 1.0 s de-duplication of the P1 atoms, BASE candidates
+prior score + 100 so they claim picks first, each pick used once, tolerance 0.5 s, final score = picks + 0.5 x
+percentile, 5 km / 1.5 s de-duplication). P1 after de-duplication: 269 (EVAL) and 174 (CAL), identical to the run. HYB:
+277 (EVAL) and 180 (CAL) detections, the same locations and origins as the run, the same integer pick support for every
+detection (277/277, 180/180), and the same recall (EVAL LOC+T 22/23/23, LOC 24/24/24; CAL LOC+T 17/17/18). I did not
+recompute the waveform score of the BASE events (it needs the pick-free engine); from the run output the fractional
+parts are 0.5 x k/29 (EVAL) and 0.5 x k/20 (CAL) for k = 1..n, i.e. a proper percentile. Running my hybrid with the BASE
+waveform percentile set to 0 gives the same lists and recalls, so this term cannot have changed any registered number.
+The single HYB-only hit (t 1591.5, M 1.29) is a P1 atom (0.37, 0.37, 7 km, origin 1591.7) with 3 supporting picks,
+score 3.126, above the HYB operating threshold 2.214. CONFIRMED.
+4.5 Matched-filter terms of amendment 1 (r1_run.mf_terms). The code searches the energy peaks within +-min(2 s, 0.5 x
+JMA2001 S-P) around the homogeneous prediction, converts them to delays against the JMA2001 times, and per phase takes
+the median over station-phases with >= 3 gated readings of (median reading - pick term); term = pick term + lag. This is
+what amendment 1 says. In the run (meta.json of both P1 segments) the lag is 0.272 s (P, 6 station-phases) and 0.244 s
+(S, 7), the medians of the stored per-station values, and corr_layered = pick terms + lag exactly. The amendment quotes
+0.265 / 0.244 s: those are the development values (dev/p1_cal.json lag 0.2648), the run value differs because the
+pick terms come from the single PhaseNet run on the full record (dev terms differed by <= 0.04 s). The energy-peak
+readings themselves (station_corrections.peak_delays) were not re-implemented: CANNOT VERIFY independently; P1 recall
+is 1/54 so this cannot affect R1-a beyond the one P1 atom above.
+4.6 make_net M_TARGET swap. r0_run.Net reads R.M_TARGET at call time and r1_lib is installed as the same module
+object; calwin = 17 = number of CAL truth events with M >= 1.0 and origin >= 6.5 s (it would be 30-ish with 0.5), and
+M_TARGET is restored before labelling (my independent BASE ranking with M >= 0.5 targets matches). CONFIRMED.
+
+SECTION 5. EVAL LEAKAGE BEFORE THE FREEZE
+
+r1_lib.t_end("cal") = 880 s. The development products confirm it: dev/picks_cal.json has PhaseNet picks up to 853.53 s
+(17 picks at t >= 840), and its associator lists contain events with origins up to 844.1 s (15 PyOcto-1D, 10 GaMMA-1D,
+15 PyOcto, 10 GaMMA events at t >= 840); the dev P1 atoms stop at 834.9 s (279 windows, owned origins < 840) and the dev
+hybrid lists at 834.9 s. The interval [840, 880) s belongs to EVAL and contains 2 EVAL targets: t 843.8 M 2.30 (a JMA
+event) and t 860.5 M 1.17. So, contrary to the sentence of amendment 1 "no detector, picker or associator has read EVAL
+samples" (and the r1_lib.t_end docstring "CAL never reads EVAL samples"), the development picker and associators did
+read 40 s of EVAL samples and detected the first EVAL target. The amendment does state the 880 s limit, so the fact was
+disclosed but mislabelled. Impact: in the final run, the station scales use samples [0, 840) only, the pick terms and
+matched-filter terms use CAL events only (verified above; the 831.6 s calibration window extends to 865 s but its +-2 s
+searches end before the P arrival of the 843.8 s event), the BASE choice uses CAL detections only, and no constant of
+the hybrid (0.5 s, 0.5, 5 km, 1.5 s) was set on R1 data. Sensitivity (declared, does not replace the registered
+result): with EVAL restricted to origins >= 880 s (52 targets), HYB 22 vs BASE 21, discordant 1 / 0, the same
+conclusion. Event 843.8 is hit by BASE, HYB and BESTPICK, 860.5 by none. Verdict: no leakage that could change a
+registered number; protocol statement inaccurate ([DESC]).
+
+SECTION 6. BUG HUNT AND SENSITIVITY CHECKS
+
+6.1 Spatial limits. Truth epicentres lie within 3.1 km of the frame centre (x -3.05 to 0.55, y -1.00 to 2.11 km), depths
+6.3 to 8.4 km, well inside XR = (-21.4, 21.4) and ZR = (0, 15). Stations: ATKH r 12.3, YNZH 11.8, INWH 22.3, THTH 25.0,
+NAZH 25.3 (x -25.0), ONIH 27.9 (y 21.8), TSTH 29.8 (x -21.7) km: NAZH, ONIH and TSTH lie outside the xy box, which only
+bounds the event search; PyOcto's table reaches 80 km and GaMMA's eikonal grid r reaches 60.5 km, so all station
+distances are covered. No defect.
+6.2 GaMMA eikonal accuracy (gamma_src initialize_eikonal with the run's config, h 0.5 km): its times exceed my JMA2001
+times by +0.07 to +0.10 s (P) and +0.12 to +0.17 s (S) at 5 to 32 km, nearly constant with distance (first-order
+eikonal bias). The model is the same as registered; the bias is mostly absorbed in the origin time. Origin errors of the
+LOC hits: BASE median -0.12 s, best PyOcto-1D -0.13 s (similar, so not GaMMA-specific). Sensitivity: shifting every
+BASE origin by +0.05, +0.09, +0.12 s leaves BASE at 22 and R1-a at 1 / 0, p 0.5. The only BASE LOC-but-not-LOC+T target
+(1568.8, M 2.2, JMA) has error -0.69 s and stays outside 0.5 s. No effect.
+6.3 Waveform-score window (ev - 6.5 s, nodes within 3 km, origins within 0.5 s): only a tie-breaker; setting it to 0
+reproduces every registered number (4.4).
+6.4 Segment edges: P1 EVAL windows start at 835 s (owning origins from 840 s) and the last starts at 1953 s (window to
+1993 s < 2000 s); associators on the full record; HYB built from these. No truncation.
+6.5 FROC hours in r0_analyze.froc use 60 s for the last (40 s) block: the cap would be 19 instead of 18 at 60/h with
+unit weights. froc is used in R1 only for the bootstrap at 30/h and for the CAL BASE selection at 30/h on 14 full blocks,
+where the cap is the same; the point estimates use r1_analyze.operating with 1120 s. No effect ([COSM]).
+6.6 The run's own numbers vs amendment 1 item 5 (development readings): CAL BASE 17/30 and HYB 17/30 in the final run
+vs 16/30 and 16/30 quoted; lag 0.272 vs 0.265 s; pick terms ATKH/TSTH/YNZH -0.22/+0.13/+0.21 vs -0.21/+0.17/+0.23 s.
+The differences come from the single PhaseNet run on the full record: dev and final picks are identical in [0, 600) s
+(188 of 188) but differ in [600, 840) s (92 vs 90 picks, 21 identical to 0.01 s), because the third 300 s PhaseNet
+chunk ends at 880 s in development and at 915 s in the run (different normalisation context). Not a defect of the
+run; the amendment numbers are development values ([COSM]).
+
+SECTION 7. PLAUSIBILITY OF THE TRUTH LIST AND LIMITS
+
+The 140 Match&Locate detections sit at 48 distinct locations within 3.1 km of the JMA epicentres (template-relative
+relocation), depth 6.3 to 8.4 km, minimum inter-event time 6.3 s; correlation coefficients 0.30 to 1.00 (1.00 = the 14
+template self-detections). By magnitude, EVAL targets and LOC+T 30/h hits:
+   M bin       targets  BASE  HYB  BESTPICK  P1  any method, any threshold (incl. R0-style)
+   [0.5, 1.0)     22       5    5      8      0     10
+   [1.0, 1.5)     12       3    4      3      0      4
+   [1.5, 2.0)      8       5    5      5      0      5
+   [2.0, 4.0)     12       9    9     10      1     10
+   all            54      22   23     26      1     29
+Only 29 of the 54 targets are located within 5 km / 0.5 s by any of the ~50 detection lists at any threshold, so the
+attainable recall with these 7 stations and PhaseNet is about 0.54; 12 of the 22 targets with M 0.5 to 1.0 are
+detected by nothing. Two of the 12 targets with M >= 2 are missed by every method: t 1366.78 (M 2.37) and 1559.02
+(M 2.11), both non-JMA detections with CC 0.57 and 0.53 lying 9.96 s and 9.83 s from a JMA event (1356.82, 1568.85) of
+similar size; they may be template-matching artefacts on the coda of the JMA events (not proven). This affects all
+methods equally (same denominator) and not the discordant counts. With 54 targets and a ceiling near 29, a +0.10
+difference means about 5 discordant events; the observed 1 / 0 discordance makes R1-a untestable in practice, as the
+registration predicted.
+

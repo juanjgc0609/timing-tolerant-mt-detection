@@ -169,7 +169,7 @@ to 2L, are also in `outputs/explore_contrib/`, with their scripts, reports and o
 
 ## 3. The design errors that inverted or nullified a result
 
-This is the central content of this manifest. The log contains 55 errors, E1 to E55. In the
+This is the central content of this manifest. The log contains 56 errors, E1 to E56. In the
 first six (E1 to E6) the resulting number looked valid, and in all six it was detected **only because
 it turned out to be implausible**, not because there was a visible fault in the code; the following ones were detected
 by controls, preregistered rules or audits, as indicated in each one.
@@ -1061,7 +1061,7 @@ of two imports was changed.
 (`task1x_mtglrt.AC`) is computed once when that module is first imported. C18h set the kernel before the import (a 2 Hz
 pulse correlated with the 3 Hz kernel); C18i and C18j imported first (the 2 Hz shape throughout). None of the three
 deflated with the response of the 3 Hz kernel.
-**Detection:** the independent code audit of 17 October 2026 (finding F1, `bughunt/ac_order_bh.txt`).
+**Detection:** the independent code audit of 17 October 2026 (finding F1, `results/code_audit/ac_order_bh.txt`).
 **Scope:** the 3 Hz readings of Appendix Y.32 are not comparable with each other; the 2 Hz runs, including the
 configuration that met the gate, and the single-atom oracle maps are not affected. No registered result is affected.
 **Correction:** Appendix Y.32 marks the 3 Hz readings as affected; R1 uses the 2 Hz filter only.
@@ -1072,7 +1072,7 @@ configuration that met the gate, and the single-atom oracle maps are not affecte
 error (worst case 0.42); the nearest sample gives 0.94 (worst 0.82).
 **Cause:** the predicted sample is `int(t / DT)`, which truncates, so the read sample is on average half a sample
 (31 ms) early, and the +-4-sample peak window is centred half a sample early.
-**Detection:** the independent code audit of 17 October 2026 (finding F2, `bughunt/floor_bias_bh.txt`).
+**Detection:** the independent code audit of 17 October 2026 (finding F2, `results/code_audit/floor_bias_bh.txt`).
 **Scope:** the comparators of Task 2C read at the exact sample (BOMP+SC, MTSTACK+SC, GL-FW+SC, the convex problem of
 2C-b) and the MT-FW-EX ablation of 2D are handicapped, which inflates the measured value of the peak search; the
 decisions are very probably unchanged (the timing error of the grid is already 0.1 to 0.3 s) but were not re-run.
@@ -1087,7 +1087,7 @@ registered runs remain reproducible.
 of sixteen.
 **Cause:** the station terms are medians over the same sixteen events that are then counted as detected, so each event
 contributes to the predicted times used to find it.
-**Detection:** the independent code audit of 17 October 2026 (finding F5, `bughunt/c18j_loeo_bh.txt`).
+**Detection:** the independent code audit of 17 October 2026 (finding F5, `results/code_audit/c18j_loeo_bh.txt`).
 **Scope:** re-estimating the terms without the events each window can hit, the gate configuration still recovers 5 of
 16 on U8 (gate met exactly at its threshold) and 2 instead of 4 on N8; removing every event inside the window gives 1
 of 16 on U8. R0 and R1 estimate their terms on the calibration segment and evaluate on a separate segment and are not
@@ -1114,6 +1114,21 @@ registered R0 decision are not affected. The hybrid development and R1 estimate 
 **Scope:** an error common to all readings of an event, of standard deviation about 18 ms, against timing errors of
 0.35 to 0.6 s. No result is affected.
 **Correction:** declared.
+
+### E56. A development run read forty seconds of the evaluation segment
+**Script:** `code/r1/r1_lib.py` (`t_end`), Task R1.
+**Symptom:** the amendment of R1 stated that no detector, picker or associator had read evaluation samples before the
+freeze, while the development runs read the waveforms up to 880 s and the evaluation segment starts at 840 s.
+**Cause:** the development read the calibration segment plus the 40 s window margin used everywhere in R0 and R1,
+and the margin was not cut at the start of the evaluation segment; the docstring of `t_end` claims the opposite.
+**Detection:** the independent verification of R1 (defect D1, `results/taskR1/verif_r1/r1_verification.txt`).
+**Scope:** the development picks reach 853.5 s and the development lists contain the first evaluation target (843.8
+s); two evaluation targets lie in [840, 880) s. No constant was set with those samples (the station terms use
+calibration events only, the associator configuration was chosen on calibration origins only). With the evaluation
+restricted to origins from 880 s the primary rule gives 22 against 21 of 52 targets, discordant 1 and 0, the same
+conclusion. The registered result stands; the statement of the amendment was false.
+**Correction:** declared in the result entry of the log, in Appendix Y.33 and in the thesis. Rule for future tests:
+the development reads must end at the start of the evaluation segment, margin included.
 
 ### On the order of the three errors of Task 0
 Three complete protocols, three different conclusions, and **in none of them was the cause the physics**. By

@@ -1,0 +1,12 @@
+N8 LOG6 3 Hz +-2 s terms LOC+T 10/h: stored C18i (AC 2x2) 0/16   C18h-consistent AC (2x3) 1/16
+N8 LOG6 3 Hz +-2 s terms LOC+T 30/h: stored C18i (AC 2x2) 3/16   C18h-consistent AC (2x3) 2/16
+N8 LOG6 3 Hz +-2 s terms LOC+T 60/h: stored C18i (AC 2x2) 3/16   C18h-consistent AC (2x3) 4/16
+N8 LOG6 3 Hz +-2 s terms LOC   10/h: stored C18i (AC 2x2) 2/16   C18h-consistent AC (2x3) 2/16
+N8 LOG6 3 Hz +-2 s terms LOC   30/h: stored C18i (AC 2x2) 4/16   C18h-consistent AC (2x3) 3/16
+N8 LOG6 3 Hz +-2 s terms LOC   60/h: stored C18i (AC 2x2) 6/16   C18h-consistent AC (2x3) 6/16
+U8 LOG6 3 Hz +-2 s terms LOC+T 10/h: stored C18i (AC 2x2) 0/16   C18h-consistent AC (2x3) 0/16
+U8 LOG6 3 Hz +-2 s terms LOC+T 30/h: stored C18i (AC 2x2) 2/16   C18h-consistent AC (2x3) 2/16
+U8 LOG6 3 Hz +-2 s terms LOC+T 60/h: stored C18i (AC 2x2) 3/16   C18h-consistent AC (2x3) 4/16
+U8 LOG6 3 Hz +-2 s terms LOC   10/h: stored C18i (AC 2x2) 0/16   C18h-consistent AC (2x3) 0/16
+U8 LOG6 3 Hz +-2 s terms LOC   30/h: stored C18i (AC 2x2) 3/16   C18h-consistent AC (2x3) 3/16
+U8 LOG6 3 Hz +-2 s terms LOC   60/h: stored C18i (AC 2x2) 5/16   C18h-consistent AC (2x3) 6/16

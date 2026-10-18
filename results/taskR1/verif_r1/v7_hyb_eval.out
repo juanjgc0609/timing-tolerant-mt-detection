@@ -1,0 +1,10 @@
+own pick terms P [-0.223, -0.227, -0.267, -0.163, -0.019, 0.135, 0.21] S [-0.431, -0.502, -0.612, -0.275, -0.149, 0.259, 0.478]
+run pick terms P [-0.223, -0.227, -0.267, -0.163, -0.019, 0.135, 0.21] S [-0.431, -0.502, -0.612, -0.275, -0.149, 0.259, 0.478]
+max |diff| 0.0001 s; readings per station-phase [[12, 13], [11, 12], [13, 11], [10, 13], [9, 13], [11, 13], [8, 12]]
+P1 after own dedupe 269 run 269 identical True
+own HYB n 277 run HYB n 277
+common 277 only run 0 only own 0
+integer support equal on common: 277 of 277
+own LOC+T 10/30/60: [22, 23, 23] LOC: [24, 24, 24]
+run LOC+T 10/30/60: [22, 23, 23] LOC: [24, 24, 24]
+recovered BASE waveform ranks (x n_base): [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]

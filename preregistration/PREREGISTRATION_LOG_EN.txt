@@ -1189,3 +1189,32 @@ explore_contrib/, of r1_queue.sh and env.sh, of the files of the trace folder (2
 one script) and of the two catalogues, of the PhaseNet model, the GaMMA commit and the package
 versions), with SHA-256 1669903f22b1e6d4f1b9656ffdc78f5c7a3bc9b4ed4145ce52e41cefcd28a2a3.
 Single run with r1_queue.sh; independent verification by a separate agent.
+
+Task R1, result (Sun Oct 18 02:09:37 UTC 2026, wall clock). Single run with r1_queue.sh on the frozen
+code (FREEZE_R1.sha256, 1669903f...28a2a3), started at 19:10:33 UTC and finished at 19:20:56 UTC without
+interruption; outputs in results/taskR1/run/ and analysis in results/taskR1/run/analysis_eval.txt.
+BASE chosen on CAL of the same run: GaMMA-1D (min_picks 6, sigma 1.0), 17 of 30 CAL targets with 20
+detections (a tie with two GaMMA configurations broken by the order of the grid). Matched-filter lags in
+the run: 0.272 s for P and 0.244 s for S (the amendment quoted the development values, 0.265 and 0.244 s).
+EVAL, 54 targets, LOC+T at 30 false detections per hour: HYB 23 (0.426), BASE 22 (0.407),
+BESTPICK 26 (0.481, PyOcto-1D n_picks 3, tol 0.5), P1 1 (0.019). R1-a: 1 target only HYB, 0 only
+BASE, exact one-sided McNemar p = 0.5000: NOT MET. R1-b: 1 only HYB, 4 only BESTPICK, p = 0.9688:
+NOT MET. R1-c (descriptive): P1 - BASE 1 against 22; 60 s block bootstrap: HYB - BASE +0.018
+[+0.000, +0.058], HYB - BESTPICK -0.052 [-0.163, +0.000], P1 - BASE -0.386 [-0.490, -0.286];
+JMA-only targets at 30/h: HYB and BASE 0.9, BESTPICK 1.0, P1 0.1; CAL threshold applied to EVAL:
+HYB 0.426 with 41.8 false per hour (above the budget), BASE 0.407 with 12.9, P1 0.019 with 12.9.
+Independent verification (separate agent, results/taskR1/verif_r1/r1_verification.txt): it
+reproduces with its own code the full table, the McNemar tests, the choice of BASE, the 277 HYB
+detections on EVAL and 180 on CAL, the pick terms, the JMA2001 times and the PyOcto model; no
+defect changes a registered number. Protocol deviation it found: the development read the waveforms
+up to 880 s, that is 40 s of EVAL (840 to 880 s, with 2 EVAL targets; the development picks reach
+853.5 s and the development lists contain the first EVAL target, 843.8 s); the sentence of
+amendment 1 that no detector, picker or associator had read EVAL samples is false. No constant was
+set with those samples; with EVAL restricted to origins from 880 s, R1-a gives 22 against 21 of 52,
+discordant 1 and 0, the same conclusion. Logged as error E56. Other descriptive findings: only 29
+of the 54 targets are found by any method at any threshold, and 2 targets of magnitude >= 2 are
+found by none (possible artefacts of template matching); the PyOcto model file and the PhaseNet
+code were not in the freeze list (the model is byte-identical to an independent rebuild).
+Reading: the declared prediction held. The hybrid adds no demonstrable detections
+to the pick-based associator on unseen data, and the pick-free detector alone
+finds one of the 54 targets. R1 gives no evidence for G1 on real data.

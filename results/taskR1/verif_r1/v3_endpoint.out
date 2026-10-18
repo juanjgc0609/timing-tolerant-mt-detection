@@ -1,0 +1,52 @@
+targets 54 jma 10 centre 37.792 139.99975
+BASE      0.389 (21)  0.407 (22)  0.407 (22)  0.426 (23)  0.426 (23)  0.426 (23) n det 29
+HYB       0.407 (22)  0.426 (23)  0.426 (23)  0.444 (24)  0.444 (24)  0.444 (24) n det 277
+P1        0.019 ( 1)  0.019 ( 1)  0.037 ( 2)  0.019 ( 1)  0.019 ( 1)  0.056 ( 3) n det 269
+BESTPICK  0.407 (22)  0.481 (26)  0.481 (26)  0.481 (26)  0.481 (26)  0.481 (26) n det 
+BESTPICK configs at LOC+T 30/h:
+   pyocto_1d|{"n_picks": 3, "tol": 0.5}          26  nfalse 8 thr -inf n 37
+   pyocto_1d|{"n_picks": 3, "tol": 1.0}          24  nfalse 9 thr -inf n 36
+   pyocto_1d|{"n_picks": 3, "tol": 2.0}          25  nfalse 8 thr -inf n 36
+   pyocto_1d|{"n_picks": 4, "tol": 0.5}          26  nfalse 6 thr -inf n 36
+   pyocto_1d|{"n_picks": 4, "tol": 1.0}          24  nfalse 7 thr -inf n 34
+   pyocto_1d|{"n_picks": 4, "tol": 2.0}          24  nfalse 9 thr -inf n 35
+   pyocto_1d|{"n_picks": 6, "tol": 0.5}          21  nfalse 2 thr -inf n 24
+   pyocto_1d|{"n_picks": 6, "tol": 1.0}          21  nfalse 2 thr -inf n 24
+   pyocto_1d|{"n_picks": 6, "tol": 2.0}          21  nfalse 2 thr -inf n 24
+   pyocto_1d|{"n_picks": 8, "tol": 0.5}          21  nfalse 2 thr -inf n 24
+   pyocto_1d|{"n_picks": 8, "tol": 1.0}          21  nfalse 2 thr -inf n 24
+   pyocto_1d|{"n_picks": 8, "tol": 2.0}          21  nfalse 2 thr -inf n 24
+   pyocto_1d|{"n_picks": 10, "tol": 0.5}         18  nfalse 1 thr -inf n 19
+   pyocto_1d|{"n_picks": 10, "tol": 1.0}         18  nfalse 1 thr -inf n 19
+   pyocto_1d|{"n_picks": 10, "tol": 2.0}         18  nfalse 1 thr -inf n 19
+   gamma_1d|{"min_picks": 3, "sigma": 1.0}       22  nfalse 8 thr 4.0 n 38
+   gamma_1d|{"min_picks": 3, "sigma": 2.0}       22  nfalse 8 thr 5.0 n 40
+   gamma_1d|{"min_picks": 4, "sigma": 1.0}       22  nfalse 8 thr 4.0 n 36
+   gamma_1d|{"min_picks": 4, "sigma": 2.0}       22  nfalse 8 thr 5.0 n 38
+   gamma_1d|{"min_picks": 5, "sigma": 1.0}       22  nfalse 8 thr -inf n 33
+   gamma_1d|{"min_picks": 5, "sigma": 2.0}       22  nfalse 8 thr 5.0 n 36
+   gamma_1d|{"min_picks": 6, "sigma": 1.0}       22  nfalse 4 thr -inf n 29
+   gamma_1d|{"min_picks": 6, "sigma": 2.0}       22  nfalse 6 thr -inf n 31
+   gamma_1d|{"min_picks": 8, "sigma": 1.0}       21  nfalse 0 thr -inf n 22
+   gamma_1d|{"min_picks": 8, "sigma": 2.0}       21  nfalse 1 thr -inf n 23
+chosen BESTPICK pyocto_1d|{"n_picks": 3, "tol": 0.5}
+R1-a HYB-BASE: 23 vs 22, diff +0.019, disc 1/0, p=0.5000 NOT MET
+    only HYB : t 1591.5 M 1.29
+    only BASE : 
+R1-b HYB-BESTPICK: 23 vs 26, diff -0.056, disc 1/4, p=0.9688 NOT MET
+    only HYB : t 1591.5 M 1.29
+    only BESTPICK : t 1025.2 M 0.69, t 1153.2 M 0.53, t 1160.8 M 0.71, t 1568.8 M 2.20
+R1-c P1-BASE: 1 vs 22, diff -0.389, disc 0/21, p=1.0000 NOT MET
+    only P1 : 
+    only BASE : t 843.8 M 2.30, t 896.4 M 0.98, t 977.8 M 0.89, t 999.8 M 0.64, t 1055.1 M 0.79, t 1259.3 M 1.64, t 1290.4 M 2.50, t 1356.8 M 2.50, t 1381.1 M 2.60, t 1423.2 M 2.10, t 1461.2 M 2.20, t 1541.6 M 2.90, t 1600.4 M 1.28, t 1703.3 M 2.20, t 1738.5 M 1.52, t 1745.1 M 1.64, t 1769.8 M 1.70, t 1795.2 M 1.62, t 1848.9 M 1.16, t 1870.5 M 1.39, t 1935.8 M 0.99
+   tied pyocto_1d|{"n_picks": 3, "tol": 0.5} disc 1 4 p 0.9688
+   tied pyocto_1d|{"n_picks": 4, "tol": 0.5} disc 1 4 p 0.9688
+JMA-only
+   BASE ['9/10=0.900', '9/10=0.900', '9/10=0.900']
+   HYB ['9/10=0.900', '9/10=0.900', '9/10=0.900']
+   P1 ['1/10=0.100', '1/10=0.100', '2/10=0.200']
+   BESTPICK ['9/10=0.900', '10/10=1.000', '10/10=1.000']
+deployable (CAL targets 30)
+   HYB CAL recall 17/30 thr 1.261 -> EVAL 23 (0.426), 13 false (41.8/h)
+   BASE CAL recall 17/30 thr -inf -> EVAL 22 (0.407), 4 false (12.9/h)
+   P1 CAL recall 0/30 thr 5502.231 -> EVAL 1 (0.019), 4 false (12.9/h)

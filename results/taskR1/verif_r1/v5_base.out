@@ -1,0 +1,30 @@
+gamma_1d  {"min_picks": 6, "sigma": 1.0}   CAL hits 17/30  n 20  false 1
+gamma_1d  {"min_picks": 8, "sigma": 1.0}   CAL hits 17/30  n 20  false 1
+gamma_1d  {"min_picks": 8, "sigma": 2.0}   CAL hits 17/30  n 20  false 1
+gamma_1d  {"min_picks": 6, "sigma": 2.0}   CAL hits 17/30  n 21  false 2
+gamma_1d  {"min_picks": 5, "sigma": 1.0}   CAL hits 17/30  n 22  false 2
+gamma_1d  {"min_picks": 5, "sigma": 2.0}   CAL hits 17/30  n 22  false 2
+gamma_1d  {"min_picks": 3, "sigma": 1.0}   CAL hits 17/30  n 25  false 4
+gamma_1d  {"min_picks": 3, "sigma": 2.0}   CAL hits 17/30  n 25  false 4
+gamma_1d  {"min_picks": 4, "sigma": 1.0}   CAL hits 17/30  n 25  false 4
+gamma_1d  {"min_picks": 4, "sigma": 2.0}   CAL hits 17/30  n 25  false 4
+pyocto_1d {"n_picks": 8, "tol": 0.5}       CAL hits 15/30  n 20  false 3
+pyocto_1d {"n_picks": 8, "tol": 1.0}       CAL hits 15/30  n 20  false 3
+pyocto_1d {"n_picks": 8, "tol": 2.0}       CAL hits 15/30  n 20  false 3
+pyocto_1d {"n_picks": 6, "tol": 0.5}       CAL hits 15/30  n 21  false 4
+pyocto_1d {"n_picks": 6, "tol": 1.0}       CAL hits 15/30  n 21  false 4
+pyocto_1d {"n_picks": 6, "tol": 2.0}       CAL hits 15/30  n 21  false 4
+pyocto_1d {"n_picks": 4, "tol": 0.5}       CAL hits 15/30  n 24  false 6
+pyocto_1d {"n_picks": 4, "tol": 1.0}       CAL hits 15/30  n 24  false 6
+pyocto_1d {"n_picks": 4, "tol": 2.0}       CAL hits 15/30  n 24  false 6
+pyocto_1d {"n_picks": 3, "tol": 0.5}       CAL hits 15/30  n 26  false 6
+pyocto_1d {"n_picks": 3, "tol": 1.0}       CAL hits 15/30  n 26  false 6
+pyocto_1d {"n_picks": 3, "tol": 2.0}       CAL hits 15/30  n 26  false 5
+pyocto_1d {"n_picks": 10, "tol": 0.5}      CAL hits 14/30  n 17  false 3
+pyocto_1d {"n_picks": 10, "tol": 1.0}      CAL hits 14/30  n 17  false 3
+pyocto_1d {"n_picks": 10, "tol": 2.0}      CAL hits 14/30  n 17  false 3
+SELECTED gamma_1d {"min_picks": 6, "sigma": 1.0}
+matches run table: True
+BASE list identical: True
+BESTPICK lists identical: True 25
+associator origin range 17.5 1972.5; n in [1960,2000) 25; n in [835,840) 0

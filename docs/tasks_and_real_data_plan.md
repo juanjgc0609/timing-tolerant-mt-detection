@@ -2271,10 +2271,11 @@ with origin time at 30 false detections per hour on N8 and U8. Appendix Y.32.
 **Gate for the next registered real test.** Registered before (e): on Ridgecrest CAL, with origin time required, at 30
 false detections per hour, a candidate must recall at least 5 of the 16 events of M >= 2 on N8 or U8. Met by (e), exactly
 at the threshold, after about twenty configurations on the same events (selection effect declared in the log). The
-registered test on the Hi-net swarm of MatchLocate2 (waveforms unread) is drafted in
-`preregistration/drafts/taskR1_registration_DRAFT.txt`; it is not registered, because it spends the last unseen data and
-its open choices (published 1-D model of the region, 1 Hz borehole sensors, split of the 14 JMA events, comparators) are
-the author's.
+author then fixed the open choices (truth from the Match and Locate list, which contains the JMA events, the published
+JMA2001 model, components as recorded,
+and a decision rule validated by simulation), and Task R1 was registered on 17 October 2026 as a test of a hybrid that
+adds pick-free candidates to a PhaseNet associator. It was run once and was negative: 23 against 22 of 54 targets,
+exact McNemar p = 0.50 (Appendix Y.33, `results/taskR1/`).
 ---
 
 ## TASK 1q — Search with certified pruning and p4est

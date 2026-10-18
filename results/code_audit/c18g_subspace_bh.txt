@@ -1,0 +1,4 @@
+N8 w_S 0.5: signal kept by C18g statistic / matched 0.937 [0.907, 0.970]; noise mean ratio 0.834; deflection ratio 1.130 [1.085, 1.181]
+N8 w_S 0.0: signal kept by C18g statistic / matched 0.541 [0.346, 0.793]; noise mean ratio 0.308; deflection ratio 1.704 [1.055, 2.579]
+U8 w_S 0.5: signal kept by C18g statistic / matched 0.957 [0.926, 0.983]; noise mean ratio 0.877; deflection ratio 1.095 [1.056, 1.132]
+U8 w_S 0.0: signal kept by C18g statistic / matched 0.675 [0.435, 0.883]; noise mean ratio 0.281; deflection ratio 2.366 [1.548, 3.121]

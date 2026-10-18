@@ -1,0 +1,33 @@
+C18j (layered HK, +-2 s terms, 2 Hz) on CAL: events recalled of 16 with terms estimated IN-SAMPLE (stored run) vs
+terms re-estimated per window without the events it can hit (NARROW: origin in [ts+4.5, ts+8.5)) or without every
+event inside the window (WIDE: origin in [ts-1, ts+41)).
+U8: stored C18j terms reproduced by the full-set recomputation: True
+   NARROW: 17 term sets; |held-out term - in-sample term| median 0.013 s, max 0.791 s
+   WIDE: 24 term sets; |held-out term - in-sample term| median 0.024 s, max 1.203 s
+   NOCAP LOC+T 10/h: in-sample  1/16   held-out NARROW  2/16   WIDE  1/16
+   NOCAP LOC+T 30/h: in-sample  5/16   held-out NARROW  5/16   WIDE  1/16
+   NOCAP LOC+T 60/h: in-sample  5/16   held-out NARROW  5/16   WIDE  3/16
+   NOCAP LOC   10/h: in-sample  1/16   held-out NARROW  2/16   WIDE  1/16
+   NOCAP LOC   30/h: in-sample  5/16   held-out NARROW  5/16   WIDE  1/16
+   NOCAP LOC   60/h: in-sample  6/16   held-out NARROW  6/16   WIDE  4/16
+   LOG6  LOC+T 10/h: in-sample  0/16   held-out NARROW  1/16   WIDE  1/16
+   LOG6  LOC+T 30/h: in-sample  2/16   held-out NARROW  2/16   WIDE  1/16
+   LOG6  LOC+T 60/h: in-sample  2/16   held-out NARROW  2/16   WIDE  1/16
+   LOG6  LOC   10/h: in-sample  1/16   held-out NARROW  1/16   WIDE  1/16
+   LOG6  LOC   30/h: in-sample  5/16   held-out NARROW  3/16   WIDE  2/16
+   LOG6  LOC   60/h: in-sample  6/16   held-out NARROW  5/16   WIDE  3/16
+N8: stored C18j terms reproduced by the full-set recomputation: True
+   NARROW: 17 term sets; |held-out term - in-sample term| median 0.003 s, max 0.455 s
+   WIDE: 24 term sets; |held-out term - in-sample term| median 0.013 s, max 0.905 s
+   NOCAP LOC+T 10/h: in-sample  3/16   held-out NARROW  1/16   WIDE  3/16
+   NOCAP LOC+T 30/h: in-sample  4/16   held-out NARROW  2/16   WIDE  3/16
+   NOCAP LOC+T 60/h: in-sample  5/16   held-out NARROW  2/16   WIDE  3/16
+   NOCAP LOC   10/h: in-sample  4/16   held-out NARROW  2/16   WIDE  3/16
+   NOCAP LOC   30/h: in-sample  5/16   held-out NARROW  4/16   WIDE  4/16
+   NOCAP LOC   60/h: in-sample  6/16   held-out NARROW  4/16   WIDE  4/16
+   LOG6  LOC+T 10/h: in-sample  0/16   held-out NARROW  0/16   WIDE  0/16
+   LOG6  LOC+T 30/h: in-sample  1/16   held-out NARROW  0/16   WIDE  0/16
+   LOG6  LOC+T 60/h: in-sample  2/16   held-out NARROW  1/16   WIDE  0/16
+   LOG6  LOC   10/h: in-sample  1/16   held-out NARROW  0/16   WIDE  0/16
+   LOG6  LOC   30/h: in-sample  2/16   held-out NARROW  0/16   WIDE  0/16
+   LOG6  LOC   60/h: in-sample  3/16   held-out NARROW  3/16   WIDE  1/16

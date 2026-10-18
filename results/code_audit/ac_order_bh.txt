@@ -1,0 +1,12 @@
+c18h_detect (set_kernel, then import c18d_detect)
+  X.AC: samples >= 0.5 of peak 3  AC(+-2) -0.303 AC(+-4) -0.352 AC(+-6) 0.114 | M.AC is X.AC: True | kernel in force for matched(): fc=3
+c18i_widesc detect FC=3 (import r0_run, then set_kernel)
+  X.AC: samples >= 0.5 of peak 3  AC(+-2) -0.079 AC(+-4) -0.555 AC(+-6) 0.011 | M.AC is X.AC: True | kernel in force for matched(): fc=3
+c18j_layered FC=3 (import r0_run at top, set_kernel in main)
+  X.AC: samples >= 0.5 of peak 3  AC(+-2) -0.079 AC(+-4) -0.555 AC(+-6) 0.011 | M.AC is X.AC: True | kernel in force for matched(): fc=3
+reference 2 Hz (no set_kernel)
+  X.AC: samples >= 0.5 of peak 3  AC(+-2) -0.079 AC(+-4) -0.555 AC(+-6) 0.011 | M.AC is X.AC: True | kernel in force for matched(): fc=2
+shapes:
+  2Hz wavelet * 2Hz kernel   width(>=0.5) 3 samples  a(+-1) 0.648 a(+-2) -0.079 a(+-4) -0.555 a(+-6) 0.011 min -0.566
+  2Hz wavelet * 3Hz kernel   width(>=0.5) 3 samples  a(+-1) 0.529 a(+-2) -0.303 a(+-4) -0.352 a(+-6) 0.114 min -0.617
+  3Hz wavelet * 3Hz kernel   width(>=0.5) 1 samples  a(+-1) 0.291 a(+-2) -0.566 a(+-4) 0.011 a(+-6) 0.054 min -0.566

@@ -53,6 +53,7 @@ and Appendices A to F cited here are in the main document.
   - [Y.30 Task R0: the first registered test on real data (Ridgecrest, 2019)](#y30-task-r0-the-first-registered-test-on-real-data-ridgecrest-2019)
   - [Y.31 Task 2M: bounded influence with independent real noise (Alto Tiberina, 2010)](#y31-task-2m-bounded-influence-with-independent-real-noise-alto-tiberina-2010)
   - [Y.32 After R0: what fails on real data (exploration C18)](#y32-after-r0-what-fails-on-real-data-exploration-c18)
+  - [Y.33 Task R1: a hybrid with pick-based association on the Hi-net swarm](#y33-task-r1-a-hybrid-with-pick-based-association-on-the-hi-net-swarm)
 - [Appendix Z. Certified Pruning of the Hypothesis Space, and the Role of p4est](#appendix-z-certified-pruning-of-the-hypothesis-space-and-the-role-of-p4est)
 - [Appendix AA. Theory of the Group BLASSO Detector](#appendix-aa-theory-of-the-group-blasso-detector)
 
@@ -7147,6 +7148,92 @@ swarm, whose waveforms remain unread. Its design is drafted (`preregistration/dr
 and not registered, because it spends the last unseen data and several of its choices, among them the published 1-D
 model of the region, the treatment of the 1 Hz borehole sensors and the split of the 14 catalogued events, are the
 author's to make.
+
+## Y.33 Task R1: a hybrid with pick-based association on the Hi-net swarm
+
+Registration of 17 October 2026, 18:49 UTC (log hash 3b238aa4...402e416c, sent before any detector read the
+waveforms), amendment 1 of 19:10 UTC (log hash d5d420a6...67125c1, sent before the run), freeze list
+`code/r1/FREEZE_R1.sha256` (SHA-256 1669903f...28a2a3); code `code/r1/`, `code/hyb/`; outputs `results/taskR1/`.
+
+**Origin.** After C18j met the gate on the Ridgecrest development segment, the same segment was used (development only)
+to give the pick-based comparators the same layered medium and station terms based on pick residuals: PyOcto and GaMMA
+with a 1-D model recovered 13 of 16 development events, far above the pick-free detector, and a hybrid that adds
+pick-free candidates to the best associator and scores every candidate by the PhaseNet picks it explains recovered 14
+and 13. R1 tests that hybrid, not the pick-free detector alone, against the associator it extends.
+
+**Data.** Geolab-USTC/MatchLocate2, commit bac5ccb, `example/`: continuous three-component records at 100 Hz of seven
+Hi-net borehole stations (ATKH, INWH, NAZH, ONIH, THTH, TSTH, YNZH), 2 September 2012, 03:20:00 to 03:53:20 UTC, a swarm
+of the Fukushima-Yamagata border region. Catalogues: 14 JMA events (M 2.1 to 3.2) and 140 Match and Locate detections
+(relative magnitude -0.41 to 3.2), which contain the JMA events. Development (CAL) = origins before 03:34:00 (840 s);
+evaluation (EVAL) = origins from 03:34:00 to 03:53:20 minus 40 s (1120 s).
+
+**Registered design.** Truth = the Match and Locate list; targets = truth events of magnitude 0.5 or more (30 in CAL,
+54 in EVAL); a detection hitting only smaller events is neutral. Medium: JMA2001 P velocities in the 28-point
+approximation of Y. Maeda, VS = VP/1.73, for every method. Station terms from the CAL truth events of magnitude 1.0 or
+more. BASE = the configuration of PyOcto-1D or GaMMA-1D, over the grids of Task 2A, with the highest CAL recall at 30
+false detections per hour with origin time (ties: fewer CAL detections, then PyOcto, then the first of the grid). HYB =
+PICKSCORE-UNION on BASE and P1 (thesis Section 3.6). P1 = MT-FW without cap on the layered engine. BESTPICK = the best
+configuration of both 1-D associators. R0-style comparators (homogeneous medium, raw and +SC picks) descriptive. Rules,
+fixed by the simulation `code/hyb/sim_r1_rules.py`: R1-a (primary) HYB - BASE, LOC+T, 30/h, exact one-sided McNemar on
+the discordant targets, p <= 0.025 and a positive difference; R1-b HYB - BESTPICK, the same test; R1-c descriptive (P1 -
+BASE, JMA-only targets, 60 s block-bootstrap intervals, other rates and rules, a threshold fixed on CAL). Declared
+prediction: a small gain of HYB over BASE, low power, R1-a probably not met, P1 below BASE.
+
+**Development and amendment 1.** Development read the waveforms up to 880 s, which includes the first 40 s of EVAL
+(error E56, below). The registered matched-filter terms
+(+-2 s, joint P and S reading) gave P terms of +1.66, -1.70 and +1.60 s at ATKH, TSTH and YNZH against pick terms of
+-0.21, +0.17 and +0.23 s: at ATKH and YNZH (12 km, S-P 1.9 s) the P window reaches the S arrival, whose energy is one
+hundred to one thousand times that of P in these records, and at THTH and TSTH the P energy of the CAL events is near
+or below the gate. The amendment, chosen by an alignment criterion, bounded the reading by half the predicted S-P time
+and set the matched-filter terms to the pick terms plus one onset-to-peak lag per phase, the median over station-phases
+with at least three gated readings: 0.265 s for P and 0.244 s for S. It also passed JMA2001 to PyOcto and GaMMA as its
+(depth, VP) points, because PyOcto's 1-D model does not accept the 0.25 km layers, and fixed the definitions the
+registration had left open (the BESTPICK hit set, the JMA-only reading, the CAL threshold, the run sequence). CAL
+readings (in-sample): BASE = GaMMA-1D (min_picks 6, sigma 1.0) 16 of 30, HYB 16 (17 with the registered terms), P1 2.
+The highest-scoring P1 atoms were ghosts of the S coda of the large events, 6 to 15 km to the south-west at 3 km depth
+and 2.7 to 3.9 s after the origin.
+
+**Result.** Table Y.33 (`results/taskR1/run/analysis_eval.txt`). BASE was GaMMA-1D (min_picks 6, sigma 1.0), chosen on
+CAL of the same run (17 of 30 CAL targets with 20 detections, a tie with two other GaMMA configurations broken by the
+order of the grid); the onset-to-peak lags of the run were 0.272 s for P and 0.244 s for S (PhaseNet on the full record
+changes the picks near the end of CAL, so these differ slightly from the development values quoted in the amendment).
+
+**Table Y.33. R1, EVAL (54 targets, 1120 s). Recall (events hit) at <= 10, 30, 60 false detections per hour.**
+
+| Method | LOC+T 10/h | LOC+T 30/h | LOC+T 60/h | LOC 10/h | LOC 30/h | LOC 60/h |
+|:--|--:|--:|--:|--:|--:|--:|
+| HYB | 0.407 (22) | 0.426 (23) | 0.426 (23) | 0.444 (24) | 0.444 (24) | 0.444 (24) |
+| BASE | 0.389 (21) | 0.407 (22) | 0.407 (22) | 0.426 (23) | 0.426 (23) | 0.426 (23) |
+| BESTPICK | 0.407 (22) | 0.481 (26) | 0.481 (26) | 0.481 (26) | 0.481 (26) | 0.481 (26) |
+| P1 | 0.019 (1) | 0.019 (1) | 0.037 (2) | 0.019 (1) | 0.019 (1) | 0.056 (3) |
+| R0-style best | 0.407 (22) | 0.463 (25) | 0.463 (25) | 0.463 (25) | 0.463 (25) | 0.463 (25) |
+
+R1-a: HYB 23, BASE 22; one target only HYB (origin 1591.5 s, M 1.29), none only BASE; exact one-sided McNemar p =
+0.5000; not met. R1-b: HYB 23, BESTPICK 26 (PyOcto-1D, n_picks 3, tol 0.5); one only HYB, four only BESTPICK; p =
+0.9688; not met. R1-c: P1 1 against BASE 22 (no target only P1). Block bootstrap (60 s blocks, 2000 replicates,
+operating point re-chosen): HYB - BASE +0.018 [+0.000, +0.058], HYB - BESTPICK -0.052 [-0.163, +0.000], P1 - BASE -0.386
+[-0.490, -0.286]. JMA-only targets at 30/h: HYB and BASE 0.9, BESTPICK 1.0, P1 0.1. Threshold of the CAL operating
+point applied to EVAL: HYB recall 0.426 with 13 false detections (41.8 per hour, above the budget), BASE 0.407 with 4
+(12.9 per hour), P1 0.019 with 4.
+
+**Reading.** The prediction held. The hybrid added one event to the associator and no gain is demonstrated; the
+pick-free detector alone found one target in fifty-four. A homogeneous PyOcto with raw picks did as well as the best
+1-D configuration and better than BASE, so on this swarm the published 1-D model did not help pick-based association.
+The run was not interrupted. The registration and the amendment were pushed to the public repository about one minute
+after the run started; their hashes were sent before it.
+
+**Independent verification** (`results/taskR1/verif_r1/r1_verification.txt`). A separate agent reproduced with its own
+code every number of Table Y.33, the McNemar tests, the selection of BASE, the 277 EVAL and 180 CAL detections of the
+hybrid with their pick support, the pick terms (to 1e-4 s), the JMA2001 times (within 6 ms of its own ray tracer) and
+the PyOcto model file (byte-identical); 297 of 297 frozen hashes and the hash chain passed. No defect changes a
+registered number. It found one protocol deviation: the development read the waveforms up to 880 s, the first 40 s of
+EVAL, which contain two EVAL targets, and the development lists contain the first of them; the statement of the
+amendment that no EVAL sample had been read is false (E56). No constant was set with those samples, and with EVAL
+restricted to origins from 880 s the primary rule gives 22 against 21 of 52 targets, discordant 1 and 0. It also found
+that only 29 of the 54 targets are detected by any method at any threshold, that two targets of magnitude 2 or more
+are detected by none (each about 10 s from a JMA event, with correlation coefficients of 0.57 and 0.53, possibly
+artefacts of the template matching), and that the PyOcto model file and the PhaseNet code were not in the freeze list.
+
 ---
 
 # Appendix Z. Certified Pruning of the Hypothesis Space, and the Role of p4est
@@ -8097,6 +8184,49 @@ growing, unbounded radius keeps part of each property. Exploration C18 found tha
 to real-noise transients within $-0.015$ [$-0.099$, $+0.043$] and restored most of the ranking of real events, but
 neither statistic located the Ridgecrest events with the registered timing; with station terms read over +-2 s and a
 layered medium the uncapped statistic located up to 5 of the 16 development events and the capped one none (C18j).
-What remains open is a statement on the false-alarm tail of these scores under the peak search: the maximum over
-$\pm W$ samples and over the grid makes the null law of $s_\phi$ a maximum of dependent, non-Gaussian quantities, and
-only the conformal calibration of Proposition AA.5(c) applies to it without further assumptions.
+The false-alarm tail of these scores under the peak search is treated next.
+
+**Proposition AA.9.5 (null tail under the peak search, and contamination).** Assume that, at the samples a hypothesis
+can read, the normalized matched-filter output is the white Gaussian noise of unit variance passed through the
+normalized kernel $k$ (so each component is a stationary Gaussian sequence of unit variance), that different blocks
+are independent (different stations, or P and S of one station farther apart than the kernel support), and let
+$\kappa=\max_f|\hat k(f)|/\|k\|_2$. Each block is read at the sample of largest energy among $L=2W+1$ candidates.
+Write $\sigma_\phi=\sqrt{2s_\phi}$ and let $\phi$ be the identity, the cap or the logarithmic map.
+(a) The capped and uncapped scores coincide unless some candidate sample of some block exceeds $c$ in norm, an event
+of probability at most $n_bL\,\Pr(\chi^2_3>c^2)$.
+(b) For every $p\in(0,1)$, $\Pr\big(\sigma_\phi\ge\sqrt6+\kappa\sqrt{2n_b\log L}+\kappa\sqrt{2\log(1/p)}\big)\le p$
+for one hypothesis; over $N$ hypotheses, replacing $p$ by $p/N$ bounds the probability that any of them crosses.
+(c) If at most $m$ blocks are replaced by arbitrary values (transients), the capped score satisfies
+$\sigma_{r_c}\le\sigma^{\rm clean}_{r_c}+2c\sqrt m$, so the threshold of (b) raised by $2c\sqrt m$ keeps its
+false-alarm probability under any such contamination; no finite threshold does so for the identity.
+
+*Proof.* (a) If every candidate has norm at most $c$ the cap acts as the identity on every block; a union bound over
+the $n_bL$ candidates, each with squared norm $\chi^2_3$, gives the probability. (b) For a fixed choice $s$ of one
+candidate per block, $f_s=\|Q_h^{\mathsf T}\phi(\mathbf x_s)\|$ is a composition of the map
+$\mathbf z\mapsto\mathbf x$ (convolution with $k/\|k\|_2$, operator norm $\kappa$), the block-wise radial map (1-Lipschitz:
+for a radial map the constant is $\max(\sup r',\sup r(t)/t)$, which is 1 for the identity and the cap, and for $\ell_c$
+since $\ell_c'(t)\le(1+t^2/c^2)^{-1/2}$ from $\log(1+u)\ge u/(1+u)$) and the contraction of Lemma AA.9.1; so $f_s$ is
+$\kappa$-Lipschitz in the white noise $\mathbf z$, and the read score satisfies $\sigma_\phi\le F=\max_sf_s$, which
+is $\kappa$-Lipschitz as a maximum of such functions. Gaussian concentration gives
+$\Pr(F\ge\mathbb EF+t)\le e^{-t^2/2\kappa^2}$. Each $\phi(\mathbf x_{k,w})$ is centred and isotropic with
+$\mathbb E\|\phi(\mathbf x_{k,w})\|^2\le3$, and the blocks are independent, so the covariance of $\phi(\mathbf x_s)$ is
+block-diagonal with blocks $\preceq I_3$ and $\mathbb Ef_s^2\le\operatorname{tr}(Q_h^{\mathsf T}Q_h)\le6$; each $f_s$ is
+sub-Gaussian around its mean with proxy $\kappa^2$, and the maximum of the $L^{n_b}$ of them has
+$\mathbb EF\le\sqrt6+\kappa\sqrt{2n_b\log L}$. (c) The blocks that differ contribute
+$\|r_c(\mathbf v_k)-r_c(\mathbf v_k')\|\le2c$ each, and Lemma AA.9.1 gives the bound; for the identity,
+Proposition AA.9.2(c). $\square$
+
+*Numbers* (`code/theory_tail_check.py`, `results/theory/tail_check_out.txt`). For the 2 Hz kernel at 16 Hz,
+$\kappa=2.146$. With seven stations ($n_b=14$), $W=4$ samples and $c=6$, the probability in (a) is
+$9.4\times10^{-6}$ per hypothesis ($\Pr(\chi^2_3>36)=7.5\times10^{-8}$), and $3.4\times10^{-4}$ that any of the
+$7\times640$ samples of a 40 s window exceeds the cap: under Gaussian noise the cap is inactive in all but about one
+window in three thousand, so it costs nothing in false alarms and its effects are those of (c) and of Proposition
+AA.9.3. Over $2\times10^5$ simulated hypotheses the upper quantiles of $\sigma$ at $p=10^{-2}$ and $10^{-4}$ were 5.81
+and 7.18 for the identity and the cap (identical, as (a) predicts) and 5.51 and 6.78 for the logarithmic map, against
+the bound of (b) of 25.8 and 28.5. The bound holds and is conservative by a factor of about four in $\sigma$, most of it
+from the union over the $L^{n_b}$ read positions; it is a guarantee, not a calibration, and an operating threshold is
+still better set on noise windows of the same network. What (b) and (c) add is the form of the tail (Gaussian with
+scale $\kappa$ around a mean) and the fact that, for the capped score, a threshold set on clean noise can be made safe
+against transients at a known number of arrivals by an additive margin that does not depend on their amplitude; for the
+logarithmic score the margin grows only as $\sqrt{\log}$ of the amplitude (Proposition AA.9.2(b)). Real noise is neither Gaussian nor white, and the peak search, the grid and the greedy deflation of MT-FW
+make the null law of the deployed detector a maximum of dependent quantities that (b) bounds only through $N$.

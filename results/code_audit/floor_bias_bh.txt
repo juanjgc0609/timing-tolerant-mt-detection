@@ -1,0 +1,2 @@
+mean energy fraction read at floor sample 0.783 (worst 0.419); at nearest sample 0.938 (worst 0.820)
+peak search +-4 samples recovers ~1.000; mean early bias of the floor read -31.2 ms

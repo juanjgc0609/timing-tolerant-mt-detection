@@ -1,0 +1,217 @@
+phasenet 14 s {'P': 303, 'S': 404}
+pyocto_1d {'n_picks': 3, 'tol': 0.5} 64 20 s
+pyocto_1d {'n_picks': 3, 'tol': 1.0} 63 20 s
+pyocto_1d {'n_picks': 3, 'tol': 2.0} 63 20 s
+pyocto_1d {'n_picks': 4, 'tol': 0.5} 61 21 s
+pyocto_1d {'n_picks': 4, 'tol': 1.0} 59 21 s
+pyocto_1d {'n_picks': 4, 'tol': 2.0} 60 21 s
+pyocto_1d {'n_picks': 6, 'tol': 0.5} 46 22 s
+pyocto_1d {'n_picks': 6, 'tol': 1.0} 46 22 s
+pyocto_1d {'n_picks': 6, 'tol': 2.0} 46 23 s
+pyocto_1d {'n_picks': 8, 'tol': 0.5} 45 23 s
+pyocto_1d {'n_picks': 8, 'tol': 1.0} 45 23 s
+pyocto_1d {'n_picks': 8, 'tol': 2.0} 45 23 s
+pyocto_1d {'n_picks': 10, 'tol': 0.5} 37 24 s
+pyocto_1d {'n_picks': 10, 'tol': 1.0} 37 24 s
+pyocto_1d {'n_picks': 10, 'tol': 2.0} 37 24 s
+Eikonal Solver: 
+Iter 0, error = 999.899
+Iter 1, error = 0.000
+Time: 3.104
+Eikonal Solver: 
+Iter 0, error = 999.825
+Iter 1, error = 0.000
+Time: 0.004
+Clustering (eps=8.33):   0%|          | 0/48 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 48/48 [00:00<00:00, 125750.53it/s]
+Associating 707 picks with 1 CPUs
+...............................................gamma_1d {'min_picks': 3, 'sigma': 1.0} 64 45 s
+Eikonal Solver: 
+Iter 0, error = 999.899
+Iter 1, error = 0.000
+Time: 0.004
+Eikonal Solver: 
+Iter 0, error = 999.825
+Iter 1, error = 0.000
+Time: 0.004
+Clustering (eps=8.33):   0%|          | 0/48 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 48/48 [00:00<00:00, 134576.60it/s]
+Associating 707 picks with 1 CPUs
+...............................................gamma_1d {'min_picks': 3, 'sigma': 2.0} 66 60 s
+Eikonal Solver: 
+Iter 0, error = 999.899
+Iter 1, error = 0.000
+Time: 0.004
+Eikonal Solver: 
+Iter 0, error = 999.825
+Iter 1, error = 0.000
+Time: 0.004
+Clustering (eps=8.33):   0%|          | 0/48 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 48/48 [00:00<00:00, 118010.90it/s]
+Associating 707 picks with 1 CPUs
+...............................................gamma_1d {'min_picks': 4, 'sigma': 1.0} 62 74 s
+Eikonal Solver: 
+Iter 0, error = 999.899
+Iter 1, error = 0.000
+Time: 0.005
+Eikonal Solver: 
+Iter 0, error = 999.825
+Iter 1, error = 0.000
+Time: 0.004
+Clustering (eps=8.33):   0%|          | 0/48 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 48/48 [00:00<00:00, 140689.44it/s]
+Associating 707 picks with 1 CPUs
+...............................................gamma_1d {'min_picks': 4, 'sigma': 2.0} 64 88 s
+Eikonal Solver: 
+Iter 0, error = 999.899
+Iter 1, error = 0.000
+Time: 0.004
+Eikonal Solver: 
+Iter 0, error = 999.825
+Iter 1, error = 0.000
+Time: 0.004
+Clustering (eps=8.33):   0%|          | 0/48 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 48/48 [00:00<00:00, 105021.70it/s]
+Associating 707 picks with 1 CPUs
+...............................................gamma_1d {'min_picks': 5, 'sigma': 1.0} 56 103 s
+Eikonal Solver: 
+Iter 0, error = 999.899
+Iter 1, error = 0.000
+Time: 0.004
+Eikonal Solver: 
+Iter 0, error = 999.825
+Iter 1, error = 0.000
+Time: 0.004
+Clustering (eps=8.33):   0%|          | 0/48 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 48/48 [00:00<00:00, 131500.06it/s]
+Associating 707 picks with 1 CPUs
+...............................................gamma_1d {'min_picks': 5, 'sigma': 2.0} 59 117 s
+Eikonal Solver: 
+Iter 0, error = 999.899
+Iter 1, error = 0.000
+Time: 0.008
+Eikonal Solver: 
+Iter 0, error = 999.825
+Iter 1, error = 0.000
+Time: 0.006
+Clustering (eps=8.33):   0%|          | 0/48 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 48/48 [00:00<00:00, 168615.24it/s]
+Associating 707 picks with 1 CPUs
+...............................................gamma_1d {'min_picks': 6, 'sigma': 1.0} 50 131 s
+Eikonal Solver: 
+Iter 0, error = 999.899
+Iter 1, error = 0.000
+Time: 0.004
+Eikonal Solver: 
+Iter 0, error = 999.825
+Iter 1, error = 0.000
+Time: 0.004
+Clustering (eps=8.33):   0%|          | 0/48 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 48/48 [00:00<00:00, 166248.22it/s]
+Associating 707 picks with 1 CPUs
+...............................................gamma_1d {'min_picks': 6, 'sigma': 2.0} 53 144 s
+Eikonal Solver: 
+Iter 0, error = 999.899
+Iter 1, error = 0.000
+Time: 0.004
+Eikonal Solver: 
+Iter 0, error = 999.825
+Iter 1, error = 0.000
+Time: 0.004
+Clustering (eps=8.33):   0%|          | 0/48 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 48/48 [00:00<00:00, 103509.82it/s]
+Associating 707 picks with 1 CPUs
+...............................................gamma_1d {'min_picks': 8, 'sigma': 1.0} 43 158 s
+Eikonal Solver: 
+Iter 0, error = 999.899
+Iter 1, error = 0.000
+Time: 0.004
+Eikonal Solver: 
+Iter 0, error = 999.825
+Iter 1, error = 0.000
+Time: 0.004
+Clustering (eps=8.33):   0%|          | 0/48 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 48/48 [00:00<00:00, 173258.69it/s]
+Associating 707 picks with 1 CPUs
+...............................................gamma_1d {'min_picks': 8, 'sigma': 2.0} 44 171 s
+pyocto {'n_picks': 3, 'tol': 0.5} 64 171 s
+pyocto {'n_picks': 3, 'tol': 1.0} 62 172 s
+pyocto {'n_picks': 3, 'tol': 2.0} 63 172 s
+pyocto {'n_picks': 4, 'tol': 0.5} 61 172 s
+pyocto {'n_picks': 4, 'tol': 1.0} 59 172 s
+pyocto {'n_picks': 4, 'tol': 2.0} 60 173 s
+pyocto {'n_picks': 6, 'tol': 0.5} 46 173 s
+pyocto {'n_picks': 6, 'tol': 1.0} 46 173 s
+pyocto {'n_picks': 6, 'tol': 2.0} 47 174 s
+pyocto {'n_picks': 8, 'tol': 0.5} 44 174 s
+pyocto {'n_picks': 8, 'tol': 1.0} 44 174 s
+pyocto {'n_picks': 8, 'tol': 2.0} 44 174 s
+pyocto {'n_picks': 10, 'tol': 0.5} 37 175 s
+pyocto {'n_picks': 10, 'tol': 1.0} 37 175 s
+pyocto {'n_picks': 10, 'tol': 2.0} 37 175 s
+pyocto_sc {'n_picks': 3, 'tol': 0.5} 64 175 s
+pyocto_sc {'n_picks': 3, 'tol': 1.0} 64 176 s
+pyocto_sc {'n_picks': 3, 'tol': 2.0} 64 176 s
+pyocto_sc {'n_picks': 4, 'tol': 0.5} 60 176 s
+pyocto_sc {'n_picks': 4, 'tol': 1.0} 61 176 s
+pyocto_sc {'n_picks': 4, 'tol': 2.0} 60 177 s
+pyocto_sc {'n_picks': 6, 'tol': 0.5} 45 177 s
+pyocto_sc {'n_picks': 6, 'tol': 1.0} 45 177 s
+pyocto_sc {'n_picks': 6, 'tol': 2.0} 45 178 s
+pyocto_sc {'n_picks': 8, 'tol': 0.5} 44 178 s
+pyocto_sc {'n_picks': 8, 'tol': 1.0} 44 178 s
+pyocto_sc {'n_picks': 8, 'tol': 2.0} 44 178 s
+pyocto_sc {'n_picks': 10, 'tol': 0.5} 35 179 s
+pyocto_sc {'n_picks': 10, 'tol': 1.0} 35 179 s
+pyocto_sc {'n_picks': 10, 'tol': 2.0} 35 179 s
+Clustering (eps=8.33):   0%|          | 0/47 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 47/47 [00:00<00:00, 22452.42it/s]
+Associating 707 picks with 1 CPUs
+..............................................gamma {'min_picks': 3, 'sigma': 1.0} 66 185 s
+Clustering (eps=8.33):   0%|          | 0/47 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 47/47 [00:00<00:00, 89932.61it/s]
+Associating 707 picks with 1 CPUs
+..............................................gamma {'min_picks': 3, 'sigma': 2.0} 67 190 s
+Clustering (eps=8.33):   0%|          | 0/47 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 47/47 [00:00<00:00, 171867.73it/s]
+Associating 707 picks with 1 CPUs
+..............................................gamma {'min_picks': 4, 'sigma': 1.0} 63 195 s
+Clustering (eps=8.33):   0%|          | 0/47 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 47/47 [00:00<00:00, 147886.19it/s]
+Associating 707 picks with 1 CPUs
+..............................................gamma {'min_picks': 4, 'sigma': 2.0} 63 201 s
+Clustering (eps=8.33):   0%|          | 0/47 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 47/47 [00:00<00:00, 156952.46it/s]
+Associating 707 picks with 1 CPUs
+..............................................gamma {'min_picks': 5, 'sigma': 1.0} 57 206 s
+Clustering (eps=8.33):   0%|          | 0/47 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 47/47 [00:00<00:00, 156952.46it/s]
+Associating 707 picks with 1 CPUs
+..............................................gamma {'min_picks': 5, 'sigma': 2.0} 59 212 s
+Clustering (eps=8.33):   0%|          | 0/47 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 47/47 [00:00<00:00, 86159.22it/s]
+Associating 707 picks with 1 CPUs
+..............................................gamma {'min_picks': 6, 'sigma': 1.0} 50 218 s
+Clustering (eps=8.33):   0%|          | 0/47 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 47/47 [00:00<00:00, 93294.98it/s]
+Associating 707 picks with 1 CPUs
+..............................................gamma {'min_picks': 6, 'sigma': 2.0} 53 224 s
+Clustering (eps=8.33):   0%|          | 0/47 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 47/47 [00:00<00:00, 148666.88it/s]
+Associating 707 picks with 1 CPUs
+..............................................gamma {'min_picks': 8, 'sigma': 1.0} 43 230 s
+Clustering (eps=8.33):   0%|          | 0/47 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 47/47 [00:00<00:00, 95881.46it/s]
+Associating 707 picks with 1 CPUs
+..............................................gamma {'min_picks': 8, 'sigma': 2.0} 44 236 s
+Clustering (eps=8.33):   0%|          | 0/49 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 49/49 [00:00<00:00, 161446.11it/s]
+Associating 707 picks with 1 CPUs
+................................................gamma_sc {'min_picks': 3, 'sigma': 1.0} 65 241 s
+Clustering (eps=8.33):   0%|          | 0/49 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 49/49 [00:00<00:00, 159442.12it/s]
+Associating 707 picks with 1 CPUs
+................................................gamma_sc {'min_picks': 3, 'sigma': 2.0} 66 247 s
+Clustering (eps=8.33):   0%|          | 0/49 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 49/49 [00:00<00:00, 104964.71it/s]
+Associating 707 picks with 1 CPUs
+................................................gamma_sc {'min_picks': 4, 'sigma': 1.0} 63 252 s
+Clustering (eps=8.33):   0%|          | 0/49 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 49/49 [00:00<00:00, 176564.34it/s]
+Associating 707 picks with 1 CPUs
+................................................gamma_sc {'min_picks': 4, 'sigma': 2.0} 63 258 s
+Clustering (eps=8.33):   0%|          | 0/49 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 49/49 [00:00<00:00, 146591.22it/s]
+Associating 707 picks with 1 CPUs
+................................................gamma_sc {'min_picks': 5, 'sigma': 1.0} 57 263 s
+Clustering (eps=8.33):   0%|          | 0/49 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 49/49 [00:00<00:00, 146070.29it/s]
+Associating 707 picks with 1 CPUs
+................................................gamma_sc {'min_picks': 5, 'sigma': 2.0} 58 268 s
+Clustering (eps=8.33):   0%|          | 0/49 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 49/49 [00:00<00:00, 152012.50it/s]
+Associating 707 picks with 1 CPUs
+................................................gamma_sc {'min_picks': 6, 'sigma': 1.0} 51 273 s
+Clustering (eps=8.33):   0%|          | 0/49 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 49/49 [00:00<00:00, 169431.90it/s]
+Associating 707 picks with 1 CPUs
+................................................gamma_sc {'min_picks': 6, 'sigma': 2.0} 53 279 s
+Clustering (eps=8.33):   0%|          | 0/49 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 49/49 [00:00<00:00, 176868.24it/s]
+Associating 707 picks with 1 CPUs
+................................................gamma_sc {'min_picks': 8, 'sigma': 1.0} 42 284 s
+Clustering (eps=8.33):   0%|          | 0/49 [00:00<?, ?it/s]Clustering (eps=8.33): 100%|██████████| 49/49 [00:00<00:00, 70844.85it/s]
+Associating 707 picks with 1 CPUs
+................................................gamma_sc {'min_picks': 8, 'sigma': 2.0} 43 290 s
+DONE 290
