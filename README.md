@@ -44,6 +44,13 @@ Exploratory studies C1 to C16 (calibration seed 999 only) are in `results/explor
 Y.27, Y.29 to Y.29c; exploration C18 (Ridgecrest development segment and seed 999) in `results/explorations/c18/` and
 Appendix Y.32. An independent audit of the code is in `results/code_audit/`.
 
+## How the project is run
+
+The process (stages, gates, data partitions, registration with an external timestamp, verification) is in
+`docs/protocol/RESEARCH_PROTOCOL.md`; the plan in `docs/ROADMAP.md`; the map from the original plan to what was
+implemented, refuted or is pending in `docs/TRACEABILITY.md`; decisions in `docs/decisions/`; data access in
+`docs/data_access.md`; changes in `CHANGELOG.md`.
+
 ## Repository layout
 
 ```
