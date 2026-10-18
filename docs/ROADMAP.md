@@ -9,8 +9,9 @@ audit score 53.3/100 at doctoral level.
 
 Research protocol and templates (`docs/protocol/`), traceability (`docs/TRACEABILITY.md`), decision records
 (`docs/decisions/`), data access (`docs/data_access.md`), this roadmap, changelog.
-Pending decisions of the author: licence, data access (ADR-0005), compute resources, institutional data (university,
-programme, director).
+Decisions of the author (18 October 2026): code under MIT and documents under CC BY 4.0; data access by allowing the
+domains of `docs/data_access.md` (ADR-0005, option a); learned components trained on the author's local GPU; the
+thesis is presented at Universidad Icesi (programme and director to be added to the front matter).
 
 ## Phase 1. Repository and core package
 
@@ -18,7 +19,7 @@ Deliverables: `src/ttmt/` package with configuration objects; `archive/legacy/` 
 and hash-indexed; `experiments/registered/` and `experiments/exploratory/` with one folder and card per task;
 environment lock files per scenario; unit tests of the core functions (sample index convention, subspace projection,
 radial maps, deflation, hit rule, exact FROC, partition boundary); regression tests against frozen outputs; continuous
-integration with a smoke test; analyses of archived results runnable without raw data; licence.
+integration with a smoke test; analyses of archived results runnable without raw data.
 Gate: the regression suite reproduces the registered numbers of 2F, 2M, R0 and R1 from the package.
 
 ## Phase 2. Integrity of the existing results (declared post hoc)

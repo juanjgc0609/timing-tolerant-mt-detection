@@ -2,7 +2,7 @@
 
 **A preregistered benchmark, a bounded-influence statistic, and two registered tests on real data**
 
-Undergraduate thesis (trabajo de grado) - Juan Jose Gordillo Cordoba - October 2026
+Universidad Icesi - Trabajo de grado - Juan Jose Gordillo Cordoba - October 2026
 
 ---
 

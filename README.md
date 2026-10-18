@@ -93,6 +93,7 @@ translations of what the scripts printed; numbers are unchanged, and running a s
 
 ## Licensing
 
-No license has been chosen yet for the code and documents of this project. Third-party data and software keep their
-own licenses: SCSN data (via benchflow-ai/skillsbench, Apache-2.0), INGV data (via avuan/PyMPA37, GPL-3.0), NIED Hi-net data (via Geolab-USTC/MatchLocate2, GPL-3.0 for the repository, NIED terms of use for the waveforms), PhaseNet,
-GaMMA, PyOcto and QuakeMigrate.
+Code: MIT License (`LICENSE`). Documents, figures and written results: CC BY 4.0 (`LICENSE-docs`). Third-party data
+and software keep their own licenses: SCSN data (via benchflow-ai/skillsbench, Apache-2.0), INGV data (via
+avuan/PyMPA37, GPL-3.0), NIED Hi-net data (via Geolab-USTC/MatchLocate2, GPL-3.0 for the repository, NIED terms of use
+for the waveforms), PhaseNet, GaMMA, PyOcto and QuakeMigrate.

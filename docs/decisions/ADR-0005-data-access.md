@@ -1,6 +1,6 @@
 # ADR-0005: Data access
 
-Date: 18 October 2026. Status: proposed; requires a decision of the author.
+Date: 18 October 2026. Status: accepted, option (a) (decision of the author, 18 October 2026).
 
 Context. The working environment reaches only GitHub (including release assets and LFS) and PyPI. The large public
 archives (SCEDC and NCEDC on AWS, IRIS FDSN, Zenodo, Hugging Face, the SeisBench store) are refused by the egress
