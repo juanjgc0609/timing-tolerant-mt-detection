@@ -93,11 +93,12 @@ def test_r1_end_to_end_from_raw_data(match_mode):
         ref = json.load(open(d / f"p1_{seg}.json"))
         dif = compare_rows(p1["atoms"]["NOCAP"], ref["atoms"]["NOCAP"], match_mode, label=f"P1 {seg}")
         dif["max_corr_diff"] = float(np.abs(np.array(p1["corr_layered"]) - np.array(ref["corr_layered"])).max())
-        report[f"P1_{seg}"], ok[f"P1_{seg}"] = dif, rows_ok(dif, match_mode)
+        report[f"P1run_{seg}"], ok[f"P1run_{seg}"] = dif, rows_ok(dif, match_mode)
         h = r1.run_hybrid(seg, pk, p1)
         json.dump(h, open(out / f"hyb_{seg}.json", "w"))
         href = json.load(open(d / f"hyb_{seg}.json"))
-        ok[f"base_{seg}"] = h["base"] == href["base"] and h["selection"] == href["selection"]
+        hj = json.loads(json.dumps(h))
+        ok[f"base_{seg}"] = hj["base"] == href["base"] and hj["selection"] == href["selection"]
         for key in ("BASE", "P1", "HYB"):
             dif = compare_rows(h[key], href[key], match_mode, label=f"{key} {seg}")
             report[f"{key}_{seg}"], ok[f"{key}_{seg}"] = dif, rows_ok(dif, match_mode)
