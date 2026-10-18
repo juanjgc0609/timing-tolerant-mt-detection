@@ -24,6 +24,8 @@ Dated record of changes to the project's process, code and documents. Results ar
   (`docs/TRACEABILITY.md`), decision records ADR-0001 to ADR-0005 (`docs/decisions/`), data access
   (`docs/data_access.md`), roadmap (`docs/ROADMAP.md`).
 - Target level fixed at doctoral (ADR-0001); baseline 53.3/100 on the doctoral rubric.
+- Thesis Sections 6.2, 6.4, 7.2, 7.4 and 8: synthetic generator described as it is coded (gradient medium, curved
+  rays, variable wavelet, coda) and its timing error stated in full; error E57.
 
 ## 2026-10-17 to 2026-10-18
 
