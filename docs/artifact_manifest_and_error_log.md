@@ -1148,6 +1148,48 @@ validation script and report it cites are not in the repository.
 tolerance (Sections 7.2 and 8, and E46) is weakened: the contrast with Ridgecrest (0.35 to 0.41 s) is one of degree.
 **Correction:** Sections 6.2, 6.4, 7.2, 7.4 and 8 of the thesis rewritten; Appendix Y.14 was already correct.
 
+@@E59@@
+
+### E60. The score of the R1 hybrid is a percentile taken within the segment it scores
+**Script:** `code/r1/r1_hybrid.py` (`hybrid`, with `hyb_dev.pct`), Task R1.
+**Symptom:** the score of a hybrid detection is its number of supporting picks plus 0.5 times the percentile of its
+waveform score, and the percentile is computed over the detections of the same segment (the BASE events and the P1
+atoms of that segment, separately). The score of one detection therefore depends on every other detection of the
+segment, the same waveform score maps to different values on CAL (20 BASE events, 174 P1 atoms) and on EVAL (29 and
+269), and the deployable threshold (the CAL operating point applied to EVAL) is a threshold carried to a different scale.
+**Cause:** the percentile was meant as a scale-free tie-breaker between candidates with the same pick support and was
+written as a rank within the list, which is transductive.
+**Detection:** the research audit of 18 October 2026 (Phase 2, item 4 of `docs/ROADMAP.md`); the verification of R1 had
+already shown that the term cannot change the in-segment readings (section 4.4 of `r1_verification.txt`).
+**Scope:** measured on the stored lists (`code/r1/posthoc_defects.py`, `results/taskR1/posthoc/defects_e60_e61_out.txt`).
+With picks only (weight 0) and with the P1 percentile taken against the CAL atoms, R1-a (23 against 22, discordant 1 and
+0) and R1-b (23 against 26) are unchanged. The deployable threshold of HYB gives 11 false detections in EVAL (35.4 per
+hour) with picks only and 12 (38.6 per hour) with the CAL-referenced percentile, against 13 (41.8 per hour) registered,
+with the same 23 targets: the percentile accounts for at most two of the false detections, and the hybrid stays above
+the budget of 30 per hour with any of the three scores. The failure of false-alarm calibration is not caused by this
+defect. No registered number changes.
+**Correction:** declared in Appendix Y.33. Rule for future tests: a score must be a function of the detection and of
+constants fixed before the evaluation, never a rank within the evaluation list.
+
+### E61. The R1 bootstrap intervals come from 19 blocks and cannot fall below a single discordant event
+**Script:** `code/r1/r1_analyze.py` (block bootstrap), `r0_analyze.froc`, Task R1.
+**Symptom:** the descriptive 95 per cent interval of HYB - BASE is [+0.000, +0.058], which reads as "no worse than
+BASE". The bootstrap resamples 19 blocks of 60 s, the last of 40 s counted as 60 s (verification D6), and the only
+discordant target of the contrast lies in one of them.
+**Cause:** a block bootstrap can only redistribute the discordances that occurred. With one discordant target in favour
+of HYB and none against it, no replicate can make HYB worse than BASE, so the lower bound is the atom at zero (35 per
+cent of the replicates are exactly 0) and not a statement about uncertainty; with 19 blocks the percentile interval is
+also coarse.
+**Detection:** the research audit of 18 October 2026 (Phase 2, item 4 of `docs/ROADMAP.md`).
+**Scope:** `results/taskR1/posthoc/defects_e60_e61_out.txt`. Counting the last block at its true length, or using blocks
+of 30 s (38 blocks) or 120 s (10 blocks), moves no bound by more than 0.019, so the block length is not the problem. A
+paired interval that does not resample (Newcombe 1998, method 10) gives HYB - BASE +0.019 [-0.032, +0.069], HYB - BESTPICK
+-0.056 [-0.139, +0.031] and P1 - BASE -0.389 [-0.522, -0.246]. The intervals were descriptive; the registered decisions
+rest on the exact McNemar tests, which are unaffected.
+**Correction:** declared in Appendix Y.33, where the Newcombe intervals are added next to the bootstrap ones. Rule for
+future tests: with few discordant events, report an interval for paired proportions; use the block bootstrap only when
+the number of blocks and of discordant events is large enough for the resampled distribution to have a lower tail.
+
 ### On the order of the three errors of Task 0
 Three complete protocols, three different conclusions, and **in none of them was the cause the physics**. By
 effect size: the fixed geometry (E9), the scale of the threshold (E8), and the small-sample bias

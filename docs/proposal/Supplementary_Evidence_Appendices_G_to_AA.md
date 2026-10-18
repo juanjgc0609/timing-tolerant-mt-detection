@@ -7243,6 +7243,20 @@ a robust scale of 0.222 s for P (47 readings; 55 per cent within 0.25 s, 64 per 
 (105 readings; 76 and 80 per cent). The typical reading is within the tolerance, and a large minority falls on another
 peak.
 
+**Two defects of the analysis, declared post hoc** (errors E60 and E61; `code/r1/posthoc_defects.py`,
+`results/taskR1/posthoc/defects_e60_e61_out.txt`, on the stored lists of the frozen run). First, the waveform part of
+the HYB score is a percentile taken within the segment being scored, so a score depends on the other detections of the
+segment and the CAL threshold carried to EVAL sits on a different scale. With picks only, or with the P1 percentile
+taken against the CAL atoms, R1-a and R1-b are unchanged, and the deployable threshold gives 11 and 12 false detections
+in EVAL (35.4 and 38.6 per hour) against the registered 13 (41.8), with the same 23 targets: the hybrid exceeds the
+budget of 30 per hour with any of the three scores, so the failure of false-alarm calibration does not come from this
+defect. Second, the block bootstrap resamples 19 blocks and the only discordant target of HYB - BASE lies in one of
+them, so no replicate can put HYB below BASE: the lower bound +0.000 is the atom at zero (35 per cent of replicates),
+not a statement of uncertainty. Changing the block length (30 or 120 s) or counting the last block at its true 40 s
+moves no bound by more than 0.019. A paired interval that does not resample (Newcombe, method 10) gives HYB - BASE
++0.019 [-0.032, +0.069], HYB - BESTPICK -0.056 [-0.139, +0.031] and P1 - BASE -0.389 [-0.522, -0.246]. The registered
+decisions rest on the exact McNemar tests and stand.
+
 ---
 
 # Appendix Z. Certified Pruning of the Hypothesis Space, and the Role of p4est
