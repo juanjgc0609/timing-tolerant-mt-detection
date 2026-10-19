@@ -62,14 +62,17 @@ def install(patches=None, code_dir=None):
         p = os.path.join(code_dir, sub) if sub else code_dir
         if p not in sys.path:
             sys.path.insert(0, p)
-    patches = default_patches() if patches is None else patches
-    for f in sys.meta_path:
-        if isinstance(f, _PatchFinder):
-            f.patches.update(patches)
-            return f
-    f = _PatchFinder(dict(patches))
-    sys.meta_path.insert(0, f)
-    return f
+    finder = next((f for f in sys.meta_path if isinstance(f, _PatchFinder)), None)
+    if finder is None:
+        finder = _PatchFinder({})
+        sys.meta_path.insert(0, finder)
+    # defaults never override a constant already registered; explicit patches do, constant by constant
+    for mod, vals in default_patches().items():
+        for k, v in vals.items():
+            finder.patches.setdefault(mod, {}).setdefault(k, v)
+    for mod, vals in (patches or {}).items():
+        finder.patches.setdefault(mod, {}).update(vals)
+    return finder
 
 
 def run_script(script, argv, patches=None):

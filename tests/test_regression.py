@@ -115,8 +115,8 @@ def test_r1_end_to_end_from_raw_data(match_mode):
 
 
 # ------------------------------------------------------------------------------------------- (d) 2F
-@pytest.mark.skip(reason="2F records not stored (E49); regenerated on Linux by the duplicate-scoring work (PR #4). "
-                         "The test reads results/task2f/records/ once that PR is merged.")
+@pytest.mark.skip(reason="2F records not stored (E49). PR #4 regenerated the 2F parts on Linux but keeps them out of git "
+                         "(code/task2f_parts/ is ignored); the test reads them once they are archived in results/task2f/.")
 def test_2f_from_regenerated_records():
     path = RES / "task2f" / "records"
     assert path.is_dir()

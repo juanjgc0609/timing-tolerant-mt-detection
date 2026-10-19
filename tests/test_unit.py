@@ -330,15 +330,20 @@ def test_one_to_one_froc_equals_brute_force_thresholding(tol_t):
 
 
 def test_one_to_one_matches_froc_strict_of_the_other_thread():
-    """cross-check with froc_strict.relabel (branch claude/project-thread-6f81ru), which matches in record order."""
+    """cross-check with froc_strict.relabel (PR #4, code/froc_strict.py; before the merge, branch
+    claude/project-thread-6f81ru), which matches in record order."""
     import importlib.util
     import subprocess
     import tempfile
-    try:
-        src = subprocess.run(["git", "show", "origin/claude/project-thread-6f81ru:code/froc_strict.py"],
-                             capture_output=True, text=True, check=True, cwd=str(Path(__file__).parents[1])).stdout
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        pytest.skip("froc_strict.py of claude/project-thread-6f81ru not available (git fetch origin that branch)")
+    local = Path(__file__).parents[1] / "code" / "froc_strict.py"
+    if local.is_file():
+        src = local.read_text()
+    else:
+        try:
+            src = subprocess.run(["git", "show", "origin/claude/project-thread-6f81ru:code/froc_strict.py"],
+                                 capture_output=True, text=True, check=True, cwd=str(Path(__file__).parents[1])).stdout
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            pytest.skip("froc_strict.py not available")
     with tempfile.TemporaryDirectory() as d:
         f = Path(d) / "froc_strict.py"
         f.write_text(src)
@@ -444,3 +449,16 @@ def test_shifts_stay_inside_the_segment():
         rd_ns.window(20.0, 640)                                             # shifted reads are always guarded
     with pytest.raises(ValueError):
         _reader(shifts=np.zeros(3, int))
+
+
+# ------------------------------------------------------------------------------------------- legacy harness
+def test_legacy_install_keeps_explicit_patches():
+    """run_script() calls install() again; the defaults must not drop a constant registered explicitly (this dropped
+    r1_lib.HERE once and let PyOcto write its model file into code/r1/)."""
+    from ttmt import legacy
+    f = legacy.install(patches={"r1_lib": {"HERE": "/elsewhere"}})
+    legacy.install()
+    assert f.patches["r1_lib"]["HERE"] == "/elsewhere" and "DATA" in f.patches["r1_lib"]
+    legacy.install(patches={"r1_lib": {"DATA": "/data"}})
+    assert f.patches["r1_lib"] == {"HERE": "/elsewhere", "DATA": "/data"}
+    del f.patches["r1_lib"]["HERE"]
