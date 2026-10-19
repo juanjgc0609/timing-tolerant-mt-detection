@@ -10,7 +10,8 @@ generators (rng_d, rng_n, np.random.seed(42) inside GaMMA), never from the windo
 task2c_run.run_part1_net already relies on when it regenerates the 2A windows; the 2C and 2D controls (truth,
 origins, MT-FW+SC recomputed and compared with the stored record) check it again.
 
-Seed 999 is written with zero windows: Task 2D part (ii) only checks its network and corrections.
+Seed 999 is written with its first two windows: Task 2D part (ii) checks its network and corrections and compares
+MT-FW+SC and QM-3C+SC on windows 0 and 1 (N_CONTROL).
 
     OPENBLAS_CORETYPE=SkylakeX python posthoc_e52/regen_2a_min.py --kernel SkylakeX --workers 4
     OPENBLAS_CORETYPE=Prescott python posthoc_e52/regen_2a_min.py --kernel Prescott --workers 4
@@ -105,7 +106,7 @@ def main():
                         continue
                     path = os.path.join(T.PARTS, f"seed{seed}_{regime}_{cell}_net{j}.json")
                     if not os.path.exists(path):
-                        jobs.append((seed, regime, cell, j, 0 if seed == T.CAL_SEED else T.N_WIN, path))
+                        jobs.append((seed, regime, cell, j, 2 if seed == T.CAL_SEED else T.N_WIN, path))
     jobs.sort(key=lambda x: (-T.SCEN[x[2]][1], x[0]))
     print(f"{len(jobs)} jobs ({a.kernel})", flush=True)
     t0 = time.time()
