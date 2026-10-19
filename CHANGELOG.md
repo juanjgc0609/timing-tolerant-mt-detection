@@ -40,6 +40,8 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-10-18
 
+- Scoring (E58): one-to-one hit rule `code/froc_strict.py`; post hoc rescoring of 2F, 2I and 2M under the
+  registered and corrected rules (`code/rescore/`, `results/rescore_duplicates/`).
 - Governance (phase 0): research protocol and templates (`docs/protocol/`), traceability of the original plan
   (`docs/TRACEABILITY.md`), decision records ADR-0001 to ADR-0005 (`docs/decisions/`), data access
   (`docs/data_access.md`), roadmap (`docs/ROADMAP.md`).
