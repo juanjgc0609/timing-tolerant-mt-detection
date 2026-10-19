@@ -126,8 +126,9 @@ python -m pytest -q -rs tests/test_regression.py
 The regression suite reproduces the registered outputs. Regression (a), Task 2M from its stored part files, needs no
 raw data. The R0 and R1 scoring stages and the R1 end-to-end re-run carry the `rawdata` marker and are skipped
 when `TTMT_DATA_ROOT` is not set. The 2F regression is skipped until its regenerated records are stored. Comparison:
-`--match exact` (bit for bit; the default on Linux and in CI). On other platforms the default is the declared
-tolerance of `ttmt.testing` (scores within 1e-9 absolute, identical counts, labels and analysis text). Every entry
+discrete outputs (counts, locations, origins, labels, lists, recalls, analysis texts) must be exact everywhere.
+Detector scores must be bit for bit equal on Linux (`--match exact`, the default there and in CI); elsewhere they
+must agree within the declared relative tolerance of `ttmt.testing` (1e-12; see `environments/DEVIATIONS.md`). Every entry
 point first calls `ttmt.runtime.pin_blas()`, which pins OpenBLAS to the Prescott kernel and one thread (E31).
 
 Conventions that changed numbers in the past are explicit parameters, and the legacy value is the default:

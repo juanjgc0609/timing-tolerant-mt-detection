@@ -1,5 +1,7 @@
 """Unit tests of the core functions (ROADMAP phase 1): sample index, subspace projection, radial maps and block
 statistics, readers, deflation, hit rules, exact FROC, partition boundary and shifts, kernel tie, station-term typing."""
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -264,8 +266,10 @@ def test_hit_rule_legacy_loc_has_no_time_test_and_duplicates_neutral():
 def test_hit_rule_one_to_one():
     truth, taus = [np.array([0.0, 0.0, 5.0]), np.array([3.0, 0.0, 5.0])], [6.0, 6.2]
     at = _atoms([(0.2, 0.0, 6.1, 5.0), (0.1, 0.0, 6.0, 9.0), (0.0, 0.1, 6.05, 7.0)])
-    # score order: atom 1 (9) takes event 0, atom 2 (7) the nearest unmatched (event 1), atom 0 (5) is false
-    assert S.label(at, truth, taus, 0.5, match="one_to_one") == [-1, 0, 1]
+    # record order (loop order): atom 0 takes event 0, atom 1 the nearest unmatched (event 1), atom 2 is false
+    assert S.label(at, truth, taus, 0.5, match="one_to_one") == [0, 1, -1]
+    # raw-score order: atom 1 (9) takes event 0, atom 2 (7) event 1, atom 0 (5) is false
+    assert S.label(at, truth, taus, 0.5, match="one_to_one", order="score") == [-1, 0, 1]
     assert S.label(at, truth, taus, 0.5, match="legacy") == [0, 0, 0]
     at2 = _atoms([(0.0, 0.0, 6.0, 9.0), (0.1, 0.0, 6.0, 8.0)])
     one = [S.record(at2, S.label(at2, [truth[0]], [6.0], 0.5, match="one_to_one"))]
@@ -273,6 +277,88 @@ def test_hit_rule_one_to_one():
     assert S.froc_curve(one)[2].tolist() == [0, 1] and S.froc_curve(leg)[2].tolist() == [0, 0]   # duplicate false
     with pytest.raises(ValueError):
         S.label(at2, truth, taus, 0.5, match="nearest")
+    with pytest.raises(ValueError):
+        S.label(at2, truth, taus, 0.5, match="one_to_one", order="time")
+
+
+def test_one_to_one_record_order_keeps_the_prefix_property():
+    """loop order a1 s=5 (eligible for A and B, nearest A), a2 s=3, a3 s=6 (eligible for A only). At threshold 4 only
+    a1 is admitted (the record is the running minimum 5, 3, 3) and it must hit A."""
+    A, B = np.array([0.0, 0.0, 5.0]), np.array([4.0, 0.0, 5.0])
+    at = _atoms([(1.0, 0.0, 6.0, 5.0), (20.0, 0.0, 6.0, 3.0), (-2.0, 0.0, 6.0, 6.0)])
+    lab = S.label(at, [A, B], [6.0, 6.0], None, match="one_to_one")
+    assert lab == [0, -1, -1]
+    rec = S.record(at, lab)
+    assert [r[0] for r in rec] == [5.0, 3.0, 3.0]
+    th, H, F = S.froc_curve([rec])
+    assert H.tolist() == [1, 1] and F.tolist() == [0, 2]                     # at 5: a1 hits A
+    assert S.label(at, [A, B], [6.0, 6.0], None, match="one_to_one", order="score") == [1, -1, 0]   # breaks it
+
+
+def _brute_froc(windows, tol_t):
+    """thresholding each window's loop-order prefix and matching that prefix one to one from scratch."""
+    levels = sorted({min(a["s"] for a in at[:k + 1]) for at, _t, _ta in windows for k in range(len(at))}, reverse=True)
+    out = []
+    for tau in levels:
+        h = f = 0
+        for at, truth, taus in windows:
+            run = np.minimum.accumulate([a["s"] for a in at]) if at else []
+            pre = [a for a, r in zip(at, run) if r >= tau]
+            lab = S.label(pre, truth, taus, tol_t, match="one_to_one")
+            h += len({x for x in lab if x >= 0})
+            f += sum(1 for x in lab if x < 0)
+        out.append((tau, h, f))
+    return out
+
+
+@pytest.mark.parametrize("tol_t", [None, 0.5])
+def test_one_to_one_froc_equals_brute_force_thresholding(tol_t):
+    rng = np.random.default_rng(99)
+    windows, recs = [], []
+    for _ in range(60):
+        k = int(rng.integers(0, 7))
+        truth = [np.array([rng.uniform(-8, 8), rng.uniform(-8, 8), 5.0]) for _ in range(int(rng.integers(0, 4)))]
+        taus = [float(rng.uniform(5.5, 7.5)) for _ in truth]
+        at = [{"x": np.array([rng.uniform(-10, 10), rng.uniform(-10, 10), 5.0]), "tau": float(rng.uniform(5, 8)),
+               "s": float(rng.integers(1, 30))} for _ in range(k)]                  # non-monotone, with ties
+        windows.append((at, truth, taus))
+        recs.append(S.record(at, S.label(at, truth, taus, tol_t, match="one_to_one")))
+    th, H, F = S.froc_curve(recs)
+    brute = _brute_froc(windows, tol_t)
+    assert [round(b[0], 9) for b in brute] == [round(x, 9) for x in th]
+    assert [b[1] for b in brute] == H.tolist() and [b[2] for b in brute] == F.tolist()
+
+
+def test_one_to_one_matches_froc_strict_of_the_other_thread():
+    """cross-check with froc_strict.relabel (branch claude/project-thread-6f81ru), which matches in record order."""
+    import importlib.util
+    import subprocess
+    import tempfile
+    try:
+        src = subprocess.run(["git", "show", "origin/claude/project-thread-6f81ru:code/froc_strict.py"],
+                             capture_output=True, text=True, check=True, cwd=str(Path(__file__).parents[1])).stdout
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        pytest.skip("froc_strict.py of claude/project-thread-6f81ru not available (git fetch origin that branch)")
+    with tempfile.TemporaryDirectory() as d:
+        f = Path(d) / "froc_strict.py"
+        f.write_text(src)
+        spec = importlib.util.spec_from_file_location("froc_strict", f)
+        FS = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(FS)
+    rng = np.random.default_rng(5)
+    n = 0
+    for _ in range(300):
+        truth = [np.array([rng.uniform(-8, 8), rng.uniform(-8, 8), 5.0]) for _ in range(int(rng.integers(0, 5)))]
+        taus = [float(rng.uniform(5.5, 7.5)) for _ in truth]
+        at = [{"x": np.array([rng.uniform(-10, 10), rng.uniform(-10, 10), 5.0]), "tau": float(rng.uniform(5, 8)),
+               "s": float(rng.uniform(0, 30))} for _ in range(int(rng.integers(0, 8)))]
+        locs = [list(a["x"]) + [a["tau"]] for a in at]
+        locs = [[l[0], l[1], l[2], l[3]] for l in locs]
+        for tol_t in (None, 0.5):
+            assert S.label(at, truth, taus, tol_t, match="one_to_one") == FS.relabel(locs, truth, taus, tol_t), (at, truth)
+            assert S.label(at, truth, taus, tol_t, match="legacy") == FS.relabel(locs, truth, taus, tol_t, one_to_one=False)
+            n += 1
+    assert n == 600
 
 
 def test_catalogue_rule_prefers_targets_and_one_to_one():

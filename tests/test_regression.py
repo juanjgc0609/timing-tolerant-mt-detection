@@ -6,7 +6,8 @@
 (c) R1 re-run from the raw waveforms through the package (stored picks as input) reproduces the stored P1 lists, the
     hybrid lists and the registered analysis (slow; raw data).
 (d) 2F from regenerated records: pending (its raw records were not stored, E49; they are being regenerated elsewhere).
-Comparison: ``--match exact`` on Linux, the declared tolerance of ttmt.testing elsewhere.
+Comparison: discrete outputs exact everywhere; detector scores exact on Linux (``--match exact``) and within the
+declared relative tolerance of ttmt.testing elsewhere.
 """
 import json
 import os
@@ -15,7 +16,7 @@ import numpy as np
 import pytest
 
 from ttmt import config
-from ttmt.testing import compare_rows, rows_ok
+from ttmt.testing import close, compare_rows, rows_ok
 
 RES = config.RESULTS_DIR
 
@@ -94,6 +95,7 @@ def test_r1_end_to_end_from_raw_data(match_mode):
         dif = compare_rows(p1["atoms"]["NOCAP"], ref["atoms"]["NOCAP"], match_mode, label=f"P1 {seg}")
         dif["max_corr_diff"] = float(np.abs(np.array(p1["corr_layered"]) - np.array(ref["corr_layered"])).max())
         report[f"P1run_{seg}"], ok[f"P1run_{seg}"] = dif, rows_ok(dif, match_mode)
+        ok[f"terms_{seg}"] = close(p1["corr_layered"], ref["corr_layered"], match_mode)
         h = r1.run_hybrid(seg, pk, p1)
         json.dump(h, open(out / f"hyb_{seg}.json", "w"))
         href = json.load(open(d / f"hyb_{seg}.json"))

@@ -6,9 +6,13 @@ Hit rules (``match``):
                     (r0_analyze.label): within 5 km and tol s, events of the target magnitude preferred, nearest. A
                     second detection of an event already hit gets the same label and is neutral in the FROC (it adds
                     neither a hit nor a false detection).
-  ``"one_to_one"``  ADR-0007: detections are taken in decreasing score order; each is matched to the nearest
-                    UNMATCHED event within tolerance (5 km and 0.5 s for LOC+T); a detection with no unmatched event
-                    left is false (label -1), so duplicates count as false detections.
+  ``"one_to_one"``  ADR-0007: detections are taken in order; each is matched to the nearest UNMATCHED event within
+                    tolerance (5 km and 0.5 s for LOC+T); a detection with no unmatched event left is false (label -1),
+                    so duplicates count as false detections.
+Matching order (``order``): ``"record"`` for the records of a greedy loop, whose FROC thresholds the running minimum
+of the score, so every threshold admits a prefix in loop order; matching in that order keeps the prefix property (a
+later atom with a higher raw score must not take an event from an earlier one). ``"score"`` for detection lists
+thresholded on their raw scores (R0 and R1), where every threshold admits the detections above it.
 Ported from c10_lib (label, record), froc_exact (greedy_record, exact_HF), xc.recall_caps, c10_analyze.Boot,
 c16_analyze (records, thr_at, fp_noise, transfer, combine, load), r0_analyze (dedupe, label, Set, froc).
 """
@@ -25,9 +29,10 @@ LOC_T = 0.5                                # s, LOC+T origin tolerance
 
 
 # ============================================================================================ synthetic hit rules
-def label(atoms, truth, taus, tol_t=None, tol_km=TOL_KM, match="legacy"):
-    """labels of atoms (dicts with x, tau; c10_lib.label for match legacy): index of the true event hit, or -1.
-    truth: true sources (3,); taus: their origin times; tol_t None = LOC (epicentre only)."""
+def label(atoms, truth, taus, tol_t=None, tol_km=TOL_KM, match="legacy", order="record"):
+    """labels of atoms (dicts with x, tau, s; c10_lib.label for match legacy), in loop order: index of the true event
+    hit, or -1. truth: true sources (3,); taus: their origin times; tol_t None = LOC (epicentre only); order: the
+    matching order of one_to_one (default "record": the loop order of a greedy record)."""
     if match == "legacy":
         out = []
         for a in atoms:
@@ -53,20 +58,34 @@ def label(atoms, truth, taus, tol_t=None, tol_km=TOL_KM, match="legacy"):
         ok = dist <= tol_km
         if tol_t is not None:
             ok &= np.abs(t[:, None] - et[None, :]) <= tol_t + 1e-9
-        return one_to_one(s, dist, ok).tolist()
+        return one_to_one(s, dist, ok, order=order).tolist()
     raise ValueError(f"match must be one of {MATCH}")
 
 
-def one_to_one(scores, dist, ok, prefer=None):
+ORDERS = ("record", "score")
+
+
+def match_order(scores, order):
+    """processing order of the detections: "record" = decreasing running minimum of the scores, stable (the loop
+    order); "score" = decreasing raw score, stable."""
+    s = np.asarray(scores, float)
+    if order == "record":
+        return np.argsort(-np.minimum.accumulate(s), kind="stable") if len(s) else np.zeros(0, int)
+    if order == "score":
+        return np.argsort(-s, kind="stable")
+    raise ValueError(f"order must be one of {ORDERS}, got {order!r}")
+
+
+def one_to_one(scores, dist, ok, prefer=None, order="score"):
     """ADR-0007 matching. scores (n,), dist (n, m) distances, ok (n, m) eligibility, prefer (m,) optional bool: among
     eligible unmatched events the preferred ones are taken first (the target-magnitude preference of r0_analyze).
-    Detections in decreasing score order (stable); returns labels (n,) with -1 for false."""
+    Detections in match_order(scores, order); returns labels (n,) with -1 for false."""
     n = len(scores)
     lab = np.full(n, -1, int)
     if n == 0 or dist.shape[1] == 0:
         return lab
     used = np.zeros(dist.shape[1], bool)
-    for i in np.argsort(-np.asarray(scores, float), kind="stable"):
+    for i in match_order(scores, order):
         cand = ok[i] & ~used
         if prefer is not None and (cand & prefer).any():
             cand = cand & prefer
@@ -355,10 +374,11 @@ def dedupe(atoms, dkm=5.0, dts=1.0):
     return keep
 
 
-def label_catalogue(det, cat, tol, m_target, tol_km=TOL_KM, match="legacy"):
+def label_catalogue(det, cat, tol, m_target, tol_km=TOL_KM, match="legacy", order="score"):
     """detections [x, y, z, t, s] against catalogue events {x, y, t, M}: index of the event hit or -1. Eligible:
     epicentre within tol_km and |origin error| <= tol s; events of M >= m_target preferred; nearest epicentre
-    (r0_analyze.label for match legacy; ADR-0007 one-to-one matching in score order otherwise)."""
+    (r0_analyze.label for match legacy; ADR-0007 one-to-one matching otherwise, by default in raw-score order since
+    these lists are thresholded on their raw scores)."""
     ex = np.array([[e["x"], e["y"], e["t"]] for e in cat])
     big = np.array([e["M"] >= m_target for e in cat])
     if match == "legacy":
@@ -376,7 +396,7 @@ def label_catalogue(det, cat, tol, m_target, tol_km=TOL_KM, match="legacy"):
         D = np.asarray([d[:5] for d in det], float)
         dist = np.hypot(D[:, None, 0] - ex[None, :, 0], D[:, None, 1] - ex[None, :, 1])
         ok = (dist <= tol_km) & (np.abs(ex[None, :, 2] - D[:, None, 3]) <= tol + 1e-9)
-        return one_to_one(D[:, 4], dist, ok, prefer=big)
+        return one_to_one(D[:, 4], dist, ok, prefer=big, order=order)
     raise ValueError(f"match must be one of {MATCH}")
 
 
