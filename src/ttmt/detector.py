@@ -136,16 +136,47 @@ def vectors(R, tpk, radial=NOCAP):
     return radial(v) if radial.kind != "none" else v
 
 
-def deflate(R, pred, tp, kernel=LEGACY_KERNEL):
-    """subtract the fitted atom: at every station and phase, pred (3,) times the deflation response of the kernel
-    centred on the read sample (c10_lib._deflate). In place."""
+DEFLATION = ("grid", "fractional")
+LEGACY_DEFLATION = "grid"
+
+
+def subsample_delay(R_i, t0, kernel, bound=1.0):
+    """delay (samples, |delta| <= bound) of the deflation response that best explains the residual of one station
+    around sample t0 (least squares over the three components, amplitude free per component)."""
+    from scipy.optimize import minimize_scalar
+    nt, H = R_i.shape[-1], kernel.ac_half
+    lo, hi = max(0, t0 - H), min(nt, t0 + H + 1)
+    seg = R_i[:, lo:hi]
+
+    def cost(d):
+        r = kernel.response(d)[H - (t0 - lo):H + (hi - t0)]
+        rr = float(r @ r)
+        return float((seg * seg).sum() - ((seg @ r) ** 2).sum() / rr)
+    return float(minimize_scalar(cost, bounds=(-bound, bound), method="bounded",
+                                 options={"xatol": 1e-10}).x)
+
+
+def deflate(R, pred, tp, kernel=LEGACY_KERNEL, deflation=LEGACY_DEFLATION):
+    """subtract the fitted atom: at every station and phase, the fitted vector pred (3,) read at sample tp times the
+    deflation response of the kernel. In place.
+
+    deflation (E62): ``"grid"`` (legacy, c10_lib._deflate): the response centred on the read (integer) sample, so an
+    arrival between samples leaves part of its energy in the residual (mean 5.6 %, 16.3 % at half a sample, for the
+    registered 2 Hz filter). ``"fractional"``: the response delayed by the sub-sample delay that best explains the
+    residual around the read sample (``subsample_delay``), scaled so that its value at the read sample is pred."""
+    if deflation not in DEFLATION:
+        raise ValueError(f"deflation must be one of {DEFLATION}, got {deflation!r}")
     ns, nt = R.shape[0], R.shape[-1]
     AC, H = kernel.ac, kernel.ac_half
     for b in range(2):
         for i in range(ns):
             t0 = int(tp[b, i])
             lo, hi = max(0, t0 - H), min(nt, t0 + H + 1)
-            R[i, :, lo:hi] -= np.outer(pred[b, i], AC[H - (t0 - lo):H + (hi - t0)])
+            if deflation == "grid":
+                R[i, :, lo:hi] -= np.outer(pred[b, i], AC[H - (t0 - lo):H + (hi - t0)])
+            else:
+                r = kernel.response(subsample_delay(R[i], t0, kernel))
+                R[i, :, lo:hi] -= np.outer(pred[b, i] / r[H], r[H - (t0 - lo):H + (hi - t0)])
     return R
 
 
@@ -216,6 +247,51 @@ class ProjectedEnergy(BlockStatistic):
         return r
 
 
+class ACAP(BlockStatistic):
+    """relative cap (exploratory; not used by any registered run): each block norm r_b of a hypothesis is limited to
+    c x the median block norm of that hypothesis, phi(r) = min(r, c median_b(r)), then the projected energy
+    ||Q^T phi(v)||^2 / 2 as ProjectedEnergy. An absolute cap bounds the influence of one block but saturates when the
+    whole record grows (every block reaches the cap); the relative cap is invariant to a common scale of the blocks.
+    Deflation: least-squares moment tensor of the mapped vector."""
+    name = "acap"
+
+    def __init__(self, c=3.0):
+        self.c = float(c)
+
+    def caps(self, vf):
+        nb = vf.shape[-1] // 3
+        r = np.linalg.norm(vf.reshape(vf.shape[:-1] + (nb, 3)), axis=-1)
+        return self.c * np.median(r, axis=-1, keepdims=True), r
+
+    def score(self, vf, Q):
+        cap, r = self.caps(vf)
+        v = vf.reshape(vf.shape[:-1] + (-1, 3)) * np.minimum(1.0, cap / np.maximum(r, 1e-12))[..., None]
+        v = v.reshape(vf.shape)
+        y = np.einsum("gtr,grk->gtk", v, Q)
+        return (y * y).sum(-1) / 2.0, v
+
+    def deflation(self, E, gi, tj, vf, aux):
+        G = E.G[gi]
+        m, *_ = np.linalg.lstsq(G, aux[gi, tj], rcond=None)
+        return (G @ m).reshape(2, E.ns, 3)
+
+    def phi(self, r, med=None):
+        """the mapped norm min(r, c med), med = median of r (the blocks of one hypothesis) unless given."""
+        r = np.asarray(r, float)
+        med = np.median(r) if med is None else med
+        return np.minimum(r, self.c * med)
+
+    def rho(self, r, med=None):
+        """contribution of a block of norm r to the score: phi(r)^2 / 2."""
+        return 0.5 * self.phi(r, med) ** 2
+
+    def influence(self, r, med=None):
+        """d rho / d r with the median held fixed: r below c med, 0 above."""
+        r = np.asarray(r, float)
+        med = np.median(r) if med is None else med
+        return np.where(r < self.c * med, r, 0.0)
+
+
 class Huber(BlockStatistic):
     """HUBER-N (c8_lib.stat_huber, scale_adapt False): sum_b rho_c(|v_b|) - min_a sum_b rho_c(|v_b - Q_b a|),
     c = sqrt(chi2_3 0.95). Deflation: Q a of the robust fit (c8_lib.mtfw_general)."""
@@ -263,7 +339,8 @@ ENERGY_ARGMAX = EnergyArgmax()
 
 
 # ============================================================================================ MT-FW family
-def greedy_loop(E, MFn, kmax, statistic, reader=ENERGY_ARGMAX, min_sep=5.0, kernel=LEGACY_KERNEL):
+def greedy_loop(E, MFn, kmax, statistic, reader=ENERGY_ARGMAX, min_sep=5.0, kernel=LEGACY_KERNEL,
+                deflation=LEGACY_DEFLATION):
     """MT-FW family greedy loop (c10_lib.mt_loop in mode "hard" with W = SH and no refinement; c8_lib.mtfw_general
     for HUBER-N): read every block, score every (node, origin), take the best not excluded (lowest node, then first
     origin, among ties), exclude the nodes within min_sep km of its epicentre, deflate its fitted atom.
@@ -288,13 +365,13 @@ def greedy_loop(E, MFn, kmax, statistic, reader=ENERGY_ARGMAX, min_sep=5.0, kern
         run = min(run, s)
         atoms.append({"s": s, "run": float(run), "x": src, "tau": float(E.taus[tj])})
         excluded = excluded | (np.linalg.norm(E.XN[:, :2] - src[None, :2], axis=1) <= min_sep)
-        deflate(R, statistic.deflation(E, gi, tj, vf, aux), tpk[gi, tj].copy(), kernel)
+        deflate(R, statistic.deflation(E, gi, tj, vf, aux), tpk[gi, tj].copy(), kernel, deflation)
     return atoms
 
 
-def mt_loop(E, MFn, kmax, capv=6.0, min_sep=5.0, kernel=LEGACY_KERNEL, reader=ENERGY_ARGMAX):
+def mt_loop(E, MFn, kmax, capv=6.0, min_sep=5.0, kernel=LEGACY_KERNEL, reader=ENERGY_ARGMAX, deflation=LEGACY_DEFLATION):
     """legacy signature of c10_lib.mt_loop (capv: None no cap, > 0 cap, < 0 log as in c18d_detect)."""
-    return greedy_loop(E, MFn, kmax, ProjectedEnergy(RadialMap.from_capv(capv)), reader, min_sep, kernel)
+    return greedy_loop(E, MFn, kmax, ProjectedEnergy(RadialMap.from_capv(capv)), reader, min_sep, kernel, deflation)
 
 
 # ============================================================================================ BOMP-PK
@@ -323,7 +400,7 @@ def _gram(Gb, I, kernel):
     return 0.5 * (K + K.T)
 
 
-def bomp_loop(E, MFn, kmax, min_sep=5.0, kernel=LEGACY_KERNEL):
+def bomp_loop(E, MFn, kmax, min_sep=5.0, kernel=LEGACY_KERNEL, deflation=LEGACY_DEFLATION):
     """BOMP-PK greedy loop (c10_lib.bomp_loop, mode "hard", no refinement): block energy with the pseudo-inverse of
     the block Gram at the read samples, joint least-squares refit of all accepted atoms and re-deflation from MFn."""
     ns = E.ns
@@ -355,7 +432,7 @@ def bomp_loop(E, MFn, kmax, min_sep=5.0, kernel=LEGACY_KERNEL):
         U = U.reshape(len(Is), 6)
         R = MFn.copy()
         for g, I, u in zip(Gs, Is, U):
-            deflate(R, (g @ u).reshape(2, ns, 3), I, kernel)
+            deflate(R, (g @ u).reshape(2, ns, 3), I, kernel, deflation)
     return atoms
 
 
@@ -396,6 +473,7 @@ MTFW_NOCAP = ProjectedEnergy(NOCAP)
 HUBER_N = Huber()
 
 
-def huber_loop(E, MFn, kmax, min_sep=5.0, kernel=LEGACY_KERNEL, chub=None, reader=ENERGY_ARGMAX):
+def huber_loop(E, MFn, kmax, min_sep=5.0, kernel=LEGACY_KERNEL, chub=None, reader=ENERGY_ARGMAX,
+               deflation=LEGACY_DEFLATION):
     """HUBER-N greedy loop (c8_lib.mtfw_general, stat "huber_n"); the registered R0 M4 score is the running minimum."""
-    return greedy_loop(E, MFn, kmax, Huber(chub), reader, min_sep, kernel)
+    return greedy_loop(E, MFn, kmax, Huber(chub), reader, min_sep, kernel, deflation)

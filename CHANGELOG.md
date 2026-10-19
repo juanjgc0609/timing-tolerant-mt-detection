@@ -20,6 +20,10 @@ Dated record of changes to the project's process, code and documents. Results ar
   the legacy value as default: sample rounding (E52), `Kernel` (E51), `PeakDelay` / `OnsetDelay` (E54),
   `SegmentReader` (E56), and hit rule `match="legacy" | "one_to_one"` (ADR-0007). `ttmt.runtime.pin_blas()` (E31).
   `ttmt.legacy` runs the frozen scripts unchanged, with their data paths redirected at import time.
+- E62: the greedy deflation subtracts each atom on the integer sample grid (5.6 % of an arrival's energy left on
+  average, 16.3 % at half a sample, for the 2 Hz filter). Convention `deflation="grid"` (legacy, default) or
+  `"fractional"` (`Kernel.response(delta)`). Exploratory block statistic `ACAP` (cap relative to the median block
+  norm of a hypothesis), not used by any registered run.
 - Environments: `environments/core.lock.txt`, `core.yml` and `DEVIATIONS.md` (Python 3.12; the frozen pins exactly).
   Data fetch at the registered commits with checksum verification: `tools/fetch_data.sh`.
 - Tests: unit tests, bit-for-bit equivalence with the legacy functions, and regressions against the frozen outputs.

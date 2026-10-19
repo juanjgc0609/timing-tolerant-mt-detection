@@ -53,6 +53,15 @@ class Kernel:
         sd = float(np.median(np.abs(MF)) / 0.6745)
         return MF, max(sd, 1e-12)
 
+    def response(self, delta):
+        """deflation response of a pulse delayed by delta samples (fractional), on the same support and with the
+        same normalisation as ``ac`` (response(0.0) is ac bit for bit): the filter output of the pulse sampled at
+        (k - delta) dt, k = -ac_half .. ac_half. Exact (analytic pulse), no interpolation."""
+        a0 = np.convolve(ricker(np.arange(-3.0, 3.0 + 1e-9, self.dt), self.pulse_fc), self.taps[::-1], mode="same")
+        a = np.convolve(ricker(np.arange(-3.0, 3.0 + 1e-9, self.dt) - delta * self.dt, self.pulse_fc),
+                        self.taps[::-1], mode="same")
+        return a / a0.max()
+
     def ac_at(self, lag):
         """AC(lag) in samples, 0 outside its support (task2c_methods.ac_at)."""
         lag = np.asarray(lag)

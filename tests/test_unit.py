@@ -462,3 +462,95 @@ def test_legacy_install_keeps_explicit_patches():
     legacy.install(patches={"r1_lib": {"DATA": "/data"}})
     assert f.patches["r1_lib"] == {"HERE": "/elsewhere", "DATA": "/data"}
     del f.patches["r1_lib"]["HERE"]
+
+
+# ------------------------------------------------------------------------------------------- deflation convention (E62)
+def _offgrid_atom(K, frac, pulse_fc=None, nt=640, amp=(3.0, -1.0, 2.0)):
+    from ttmt.kernel import ricker
+    t = np.arange(nt) * K.dt
+    x = np.zeros((1, 3, nt))
+    w = ricker(t - (300 + frac) * K.dt, K.pulse_fc if pulse_fc is None else pulse_fc)
+    for c in range(3):
+        x[0, c] = amp[c] * w
+    MF, _ = K.matched(x)
+    k = int(np.argmax((MF[0] ** 2).sum(0)))
+    pred = np.zeros((2, 1, 3))
+    pred[0, 0] = MF[0, :, k]                                                # the vector read at the peak sample
+    tp = np.array([[k], [5]])                                               # S block far away and zero
+    return MF, pred, tp
+
+
+def test_kernel_response_is_ac_at_zero_delay():
+    assert np.array_equal(LEGACY.response(0.0), LEGACY.ac)
+    r = LEGACY.response(0.5)
+    assert np.allclose(r[1:], r[1:][::-1], atol=1e-12)                       # half-sample delay: symmetric about H + 1/2
+    assert abs(r[LEGACY.ac_half] - r[LEGACY.ac_half + 1]) < 1e-12
+
+
+def test_grid_deflation_leaves_the_measured_fraction():
+    """E62: an arrival half a sample off the grid keeps 16.3 % of its energy after the legacy deflation (2 Hz)."""
+    left = {}
+    for frac in (0.0, 0.25, 0.5):
+        MF, pred, tp = _offgrid_atom(LEGACY, frac)
+        R = deflate(MF.copy(), pred, tp, LEGACY, "grid")
+        left[frac] = float((R ** 2).sum() / (MF ** 2).sum())
+    assert left[0.0] < 1e-20
+    assert abs(left[0.25] - 0.0427) < 5e-4 and abs(left[0.5] - 0.1633) < 5e-4
+
+
+def test_fractional_deflation_removes_an_offgrid_atom():
+    for frac in (0.13, 0.5, -0.37):
+        MF, pred, tp = _offgrid_atom(LEGACY, frac)
+        R = deflate(MF.copy(), pred, tp, LEGACY, "fractional")
+        assert np.linalg.norm(R) <= 1e-6 * np.linalg.norm(MF), frac
+    with pytest.raises(ValueError):
+        deflate(MF.copy(), pred, tp, LEGACY, "fft")
+
+
+def test_grid_is_the_default_deflation():
+    STA = _net(6)
+    E = _toy_engine(STA, np.round(np.arange(4.0, 8.0, 0.1), 10))
+    MFn, _ = _synth_atom(E, 0, 10, RNG.normal(size=6) * 50)
+    MFn = MFn + RNG.normal(size=MFn.shape)
+    a = mt_loop(E, MFn, 3)
+    b = mt_loop(E, MFn, 3, deflation="grid")
+    assert [x["s"] for x in a] == [x["s"] for x in b]
+
+
+# ------------------------------------------------------------------------------------------- ACAP (exploratory)
+def test_acap_influence_is_the_derivative_of_rho():
+    from ttmt.detector import ACAP
+    st = ACAP(3.0)
+    r = np.array([0.3, 1.0, 2.0, 2.9, 3.5, 8.0, 40.0])
+    med = 1.0
+    h = 1e-6
+    num = (st.rho(r + h, med) - st.rho(r - h, med)) / (2 * h)
+    ok = np.abs(r - 3.0) > 1e-3
+    assert np.allclose(num[ok], st.influence(r, med)[ok], rtol=1e-5, atol=1e-6)
+    assert np.allclose(st.phi(r, med), np.minimum(r, 3.0))
+    assert np.allclose(st.phi(10 * r), 10 * st.phi(r))                       # scale invariant with its own median
+
+
+def test_acap_does_not_saturate_where_the_absolute_cap_does():
+    """event-to-background separation of the projected score as a common gain g grows (the whole record louder
+    than the unit normalisation): the absolute cap 6 saturates, the relative cap does not."""
+    from ttmt.detector import ACAP
+    rng = np.random.default_rng(1)
+    STA = _net(6)
+    G = radiation_operator(np.array([0.0, 0.0, 8.0]), STA)
+    Q = basis(G)
+    nb = 12
+    sig = G @ rng.normal(size=6)
+    sig = sig / np.linalg.norm(sig.reshape(nb, 3), axis=1).max() * 5
+    stats = {"cap6": ProjectedEnergy(CAP6), "acap3": ACAP(3.0)}
+
+    def separation(st, g):
+        ev, bg = [], []
+        for _ in range(200):
+            n = rng.normal(size=(nb, 3))
+            ev.append(st.score(((sig.reshape(nb, 3) + n) * g).reshape(1, 1, -1), Q[None])[0][0, 0])
+            bg.append(st.score((n * g).reshape(1, 1, -1), Q[None])[0][0, 0])
+        return (np.mean(ev) - np.mean(bg)) / np.std(bg)
+    s = {k: (separation(v, 1.0), separation(v, 100.0)) for k, v in stats.items()}
+    assert s["cap6"][1] < 0.3 * s["cap6"][0]                                # absolute cap: saturated
+    assert s["acap3"][1] > 0.7 * s["acap3"][0] and s["acap3"][1] > 3 * s["cap6"][1]
