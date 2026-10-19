@@ -1,0 +1,19 @@
+C18j out of sample: EVAL [900.0, 3560.0) s, 45 target events (M >= 2.0), 45 blocks; station terms estimated on the 16 CAL events only
+
+U8 LOC+T 10/h  NOCAP 0.022 (1/45)  LOG6 0.000 (0/45)   | R0 registered: M1 0.000, BESTPICK 0.000
+U8 LOC+T 30/h  NOCAP 0.044 (2/45) [0.000, 0.118]  LOG6 0.022 (1/45) [0.000, 0.167]   | R0 registered: M1 0.000, BESTPICK 0.289
+U8 LOC+T 60/h  NOCAP 0.089 (4/45)  LOG6 0.089 (4/45)   | R0 registered: M1 0.000, BESTPICK 0.333
+U8 LOC   10/h  NOCAP 0.044 (2/45)  LOG6 0.022 (1/45)
+U8 LOC   30/h  NOCAP 0.089 (4/45) [0.039, 0.222]  LOG6 0.244 (11/45) [0.037, 0.378]
+U8 LOC   60/h  NOCAP 0.222 (10/45)  LOG6 0.311 (14/45)
+U8 detections after de-duplication: {'NOCAP': 838, 'LOG6': 900}; corrections P [0.57, -0.63, -0.4, 0.34, 0.28, 0.73, 0.21, 0.24] S [1.01, 1.29, 1.29, 0.85, 0.59, 0.37, 0.46, 0.3]
+
+N8 LOC+T 10/h  NOCAP 0.022 (1/45)  LOG6 0.133 (6/45)   | R0 registered: M1 0.022, BESTPICK 0.400
+N8 LOC+T 30/h  NOCAP 0.111 (5/45) [0.038, 0.205]  LOG6 0.178 (8/45) [0.098, 0.278]   | R0 registered: M1 0.044, BESTPICK 0.600
+N8 LOC+T 60/h  NOCAP 0.156 (7/45)  LOG6 0.244 (11/45)   | R0 registered: M1 0.044, BESTPICK 0.644
+N8 LOC   10/h  NOCAP 0.022 (1/45)  LOG6 0.178 (8/45)
+N8 LOC   30/h  NOCAP 0.111 (5/45) [0.038, 0.205]  LOG6 0.222 (10/45) [0.143, 0.333]
+N8 LOC   60/h  NOCAP 0.156 (7/45)  LOG6 0.289 (13/45)
+N8 detections after de-duplication: {'NOCAP': 746, 'LOG6': 804}; corrections P [0.34, -0.63, 0.72, -0.4, 0.46, 0.21, 0.57, 0.61] S [0.37, 1.29, 1.05, 1.29, 0.48, 0.46, 1.01, 0.91]
+
+C18j gate on CAL (in sample): 5/16 = 0.313 on U8 and 4/16 = 0.250 on N8 (NOCAP, LOC+T, 30/h).

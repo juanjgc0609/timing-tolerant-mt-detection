@@ -549,7 +549,9 @@ gate registered in advance for a new real test. Two qualifications were found by
 configurations had been tried on the same sixteen events, and the station terms were estimated on the events then
 counted (error E53). With terms re-estimated without the events each window can hit, the gate candidate still
 recalled 5 of 16 on one subnetwork, exactly the threshold; with every event in the window removed from the estimate,
-1 of 16 (E12).
+1 of 16 (E12). Run unchanged on the R0 evaluation segment, whose 45 events never enter the terms, the candidate recalled
+2 and 5 of 45 (0.044 and 0.111) on the same two subnetworks, so out of sample the gate is not met; this reading was
+made after R1 and is declared post hoc (error E59).
 
 ### 6.6 Second real test: a Hi-net swarm, and the hybrid (Task R1)
 
