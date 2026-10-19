@@ -1147,6 +1147,28 @@ on the upper side) are not met; 2M-a and 2M-b keep lower bounds above 0 in seed 
 **Correction:** `code/froc_strict.py` (one-to-one matching in score order; repeat atoms are false), proposed as the
 rule of future tests together with LOC+T as the headline. The registered results stand as registered.
 
+### E62. Deflation subtracts each accepted atom on the integer sample grid
+**Script:** `explore_contrib/c10_lib._deflate` (MT-FW and BOMP-PK loops), `c8_lib.mtfw_general`, `xc.mtfw_mask`,
+`certified_fw` and every greedy loop that subtracts `task1x_mtglrt.AC` centred on the read sample.
+**Symptom:** after an atom is accepted and deflated, part of each of its arrivals stays in the residual. Measured on a
+noise-free matched-filter output of one Ricker arrival (`tests/test_unit.py`, E62 tests): with the registered 2 Hz
+filter the fraction of the arrival's energy left is 0 for an arrival on the grid, 4.3 % at a quarter sample, 16.3 % at
+half a sample, and 5.6 % on average over a uniform sub-sample delay. With a 2.8 Hz pulse (the upper end of the
+generator's wavelets) through the 2 Hz filter it reaches 21.2 % (mean 7.4 %), and with the 3 Hz filter of C18h 34.0 %
+(mean 12.1 %). The phase-5 theory work gives 16 to 36 % for the same quantity.
+**Cause:** the response is subtracted at the read (integer) sample, with the amplitude read at that sample. An arrival
+whose true time falls between samples is not represented by a grid-centred copy of the response.
+**Detection:** the phase-5 theory work (identifiability of overlapping events), checked numerically in the package.
+**Scope:** every greedy deflation run (MT-FW, BOMP-PK, HUBER-N and their variants, in every task). The energy left
+behind can produce a later atom near an accepted one (a repeat, which E58 counts as neutral) or raise the residual
+seen by a nearby event. No registered number changes. The registered runs used the grid deflation and stay as
+registered.
+**Correction:** a versioned convention in the package, `deflation="grid"` (legacy, the default, numbers unchanged) or
+`"fractional"` (`ttmt.detector.deflate`): the deflation response of the `Kernel` delayed by the sub-sample delay that
+best explains the residual around the read sample (`Kernel.response(delta)`, exact for the analytic pulse), scaled so
+that its value at the read sample is the fitted vector; it removes an off-grid atom to within 1e-6 relative. Any run
+with `"fractional"` is post hoc and separately labelled.
+
 ### On the order of the three errors of Task 0
 Three complete protocols, three different conclusions, and **in none of them was the cause the physics**. By
 effect size: the fixed geometry (E9), the scale of the threshold (E8), and the small-sample bias

@@ -72,6 +72,10 @@ code/                                                 all scripts, in the origin
 results/                                              per task: README, analysis outputs, raw results
   explorations/                                       reports C7-C16, outputs of C18 (c18/)
 data/                                                 how to obtain the real data, with checksums
+src/ttmt/                                             the package (phase 1): detector core, terms, scoring, analyses
+tests/                                                unit, legacy-equivalence and regression tests
+environments/                                         lock files per scenario and their deviations
+tools/                                                data fetch
 ```
 
 ## Reproducing
@@ -83,6 +87,63 @@ described in `data/README.md`. Every task script states its command line in its 
 run from its frozen outputs, for example `python code/r0/r0_analyze.py eval <dir with the run outputs> 2000`. Paths in
 the scripts and freeze files refer to the original working directory `/home/claude/work`; place `code/` there or
 adjust the path constants at the top of the scripts.
+
+## Running the package
+
+Phase 1 (`docs/ROADMAP.md`) moved every function the confirmatory tests use into the package `src/ttmt/`. Under the
+legacy conventions each one returns the numbers of its frozen source. `code/` stays in place and byte-identical
+(`code/LEGACY_INDEX.sha256`). It is append-only. Work that adds files to `code/` indexes them with
+`python tools/update_legacy_index.py` and commits the index. Changing or removing an indexed file is an error: the
+command refuses and `tests/test_legacy_index.py` fails.
+
+Line endings. The repository is stored and checked out byte for byte (`.gitattributes`: `* -text`). With
+`core.autocrlf=true`, which is common on Windows, git would rewrite the text files to CRLF, and every freeze list
+(`code/r1/FREEZE_R1.sha256`, `data/checksums/`, the legacy index) would then fail to verify.
+
+Environment (scenario "core": the package, the tests and the R1 re-run; `environments/DEVIATIONS.md` lists what
+differs from the frozen runs):
+
+```bash
+conda env create -f environments/core.yml
+conda activate ttmt
+python -m pip install --no-deps -e .
+```
+
+Data. The three public datasets are fetched at their registered commits and verified against `data/checksums/`:
+
+```bash
+TTMT_DATA_ROOT=/path/to/realdata bash tools/fetch_data.sh
+```
+
+Paths come from configuration: `TTMT_DATA_ROOT` (default: the legacy `/home/claude/realdata`) and `TTMT_WORK_ROOT`
+(raw run outputs; default `work/`, ignored by git). Keep both outside a synced folder.
+
+Tests:
+
+```bash
+python -m pytest -q tests/test_unit.py tests/test_legacy_index.py tests/test_legacy_equivalence.py
+python -m pytest -q -rs tests/test_regression.py
+```
+
+The regression suite reproduces the registered outputs. Regression (a), Task 2M from its stored part files, needs no
+raw data. The R0 and R1 scoring stages and the R1 end-to-end re-run carry the `rawdata` marker and are skipped
+when `TTMT_DATA_ROOT` is not set. The 2F regression is skipped until its regenerated records are stored. Comparison:
+discrete outputs (counts, locations, origins, labels, lists, recalls, analysis texts) must be exact everywhere.
+Detector scores must be bit for bit equal on Linux (`--match exact`, the default there and in CI); elsewhere they
+must agree within the declared relative tolerance of `ttmt.testing` (1e-12; see `environments/DEVIATIONS.md`). Every entry
+point first calls `ttmt.runtime.pin_blas()`, which pins OpenBLAS to the Prescott kernel and one thread (E31).
+
+Conventions that changed numbers in the past are explicit parameters, and the legacy value is the default:
+`rounding="floor" | "nearest"` (E52), `Kernel` (matched filter and deflation response tied together, E51), typed
+station terms `PeakDelay` and `OnsetDelay` (E54), `SegmentReader` with a partition guard (E56), hit rule
+`match="legacy" | "one_to_one"` (ADR-0007). The reading step (`Reader`, legacy `EnergyArgmax`) and the block
+statistic (`BlockStatistic`: cap, log and Huber) are swappable components.
+
+The frozen scripts still run unchanged through a harness that redirects their data paths at import time:
+
+```bash
+python -m ttmt.legacy code/r1/r1_analyze.py eval results/taskR1/run/hyb_eval.json results/taskR1/run/hyb_cal.json OUT.txt
+```
 
 ## Language
 

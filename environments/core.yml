@@ -1,0 +1,12 @@
+# Conda environment of the ttmt package (Phase 1, scenario "core": package, unit tests, regressions, R1 re-run).
+#   conda env create -f environments/core.yml && conda activate ttmt && python -m pip install -e .
+# The pip section installs the exact pins of core.lock.txt (pip freeze of the reference env, Windows 11, 18 Oct 2026).
+# PhaseNet (tensorflow-cpu 2.15.1) and GaMMA are not part of this scenario: see environments/DEVIATIONS.md.
+name: ttmt
+channels:
+  - defaults
+dependencies:
+  - python=3.12.15
+  - pip
+  - pip:
+      - -r core.lock.txt

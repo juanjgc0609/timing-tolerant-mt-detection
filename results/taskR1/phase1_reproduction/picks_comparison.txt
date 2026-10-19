@@ -1,0 +1,61 @@
+Phase 1 reproduction of Task R1 on Windows 11 (18 October 2026). Commands in README.txt.
+
+== Pick stage (code/r1/r1_picks.py unchanged, env ttmt-picks, multiprocessing.cpu_count emulated as 2) vs results/taskR1/run/picks_all.json
+stations True ['ATKH', 'INWH', 'NAZH', 'ONIH', 'THTH', 'TSTH', 'YNZH']
+n_picks new {'P': 303, 'S': 404} stored {'P': 303, 'S': 404}
+  ATKH P: new 43 stored 43 identical True
+  ATKH S: new 64 stored 64 identical True
+  INWH P: new 44 stored 44 identical True
+  INWH S: new 63 stored 63 identical True
+  NAZH P: new 54 stored 54 identical True
+  NAZH S: new 58 stored 58 identical True
+  ONIH P: new 43 stored 43 identical True
+  ONIH S: new 66 stored 66 identical True
+  THTH P: new 37 stored 37 identical True
+  THTH S: new 47 stored 47 identical True
+  TSTH P: new 49 stored 49 identical True
+  TSTH S: new 52 stored 52 identical True
+  YNZH P: new 33 stored 33 identical True
+  YNZH S: new 54 stored 54 identical True
+station-phase lists identical: 14/14
+matched picks (within 0.05 s) 707; unmatched new 0, unmatched stored 0
+|dt| max 0 s, nonzero 0; |dprob| max 0, median 0, nonzero 0
+pick_terms max diff 0.0
+corr_sc max diff 1.7763568394002505e-15
+pyocto_1d: 15/15 configurations identical (atol 1e-9); differing: []
+gamma_1d: 0/10 configurations identical (atol 1e-9); differing: [('{"min_picks": 3, "sigma": 1.0}', 65, 64), ('{"min_picks": 3, "sigma": 2.0}', 66, 66), ('{"min_picks": 4, "sigma": 1.0}', 63, 62), ('{"min_picks": 4, "sigma": 2.0}', 64, 64), ('{"min_picks": 5, "sigma": 1.0}', 56, 56), ('{"min_picks": 5, "sigma": 2.0}', 59, 59)]
+pyocto: 15/15 configurations identical (atol 1e-9); differing: []
+pyocto_sc: 15/15 configurations identical (atol 1e-9); differing: []
+gamma: 0/10 configurations identical (atol 1e-9); differing: [('{"min_picks": 3, "sigma": 1.0}', 66, 66), ('{"min_picks": 3, "sigma": 2.0}', 67, 67), ('{"min_picks": 4, "sigma": 1.0}', 63, 63), ('{"min_picks": 4, "sigma": 2.0}', 63, 63), ('{"min_picks": 5, "sigma": 1.0}', 57, 57), ('{"min_picks": 5, "sigma": 2.0}', 59, 59)]
+gamma_sc: 0/10 configurations identical (atol 1e-9); differing: [('{"min_picks": 3, "sigma": 1.0}', 65, 65), ('{"min_picks": 3, "sigma": 2.0}', 66, 66), ('{"min_picks": 4, "sigma": 1.0}', 63, 63), ('{"min_picks": 4, "sigma": 2.0}', 63, 63), ('{"min_picks": 5, "sigma": 1.0}', 57, 57), ('{"min_picks": 5, "sigma": 2.0}', 58, 58)]
+
+gamma_1d  {"min_picks": 3, "sigma": 1.0}   n new  65 stored  64 | matched  64 unmatched stored 0 new 1 | |dt| median 0.000 max 0.087 s, |dxy| median 0.00 max 0.62 km, picks differ in 1
+gamma_1d  {"min_picks": 3, "sigma": 2.0}   n new  66 stored  66 | matched  66 unmatched stored 0 new 0 | |dt| median 0.000 max 0.489 s, |dxy| median 0.00 max 2.29 km, picks differ in 0
+gamma_1d  {"min_picks": 4, "sigma": 1.0}   n new  63 stored  62 | matched  62 unmatched stored 0 new 1 | |dt| median 0.000 max 0.087 s, |dxy| median 0.00 max 0.62 km, picks differ in 0
+gamma_1d  {"min_picks": 4, "sigma": 2.0}   n new  64 stored  64 | matched  64 unmatched stored 0 new 0 | |dt| median 0.000 max 0.489 s, |dxy| median 0.00 max 2.29 km, picks differ in 0
+gamma_1d  {"min_picks": 5, "sigma": 1.0}   n new  56 stored  56 | matched  56 unmatched stored 0 new 0 | |dt| median 0.000 max 0.087 s, |dxy| median 0.00 max 0.62 km, picks differ in 0
+gamma_1d  {"min_picks": 5, "sigma": 2.0}   n new  59 stored  59 | matched  59 unmatched stored 0 new 0 | |dt| median 0.000 max 0.489 s, |dxy| median 0.00 max 2.29 km, picks differ in 0
+gamma_1d  {"min_picks": 6, "sigma": 1.0}   n new  50 stored  50 | matched  50 unmatched stored 0 new 0 | |dt| median 0.000 max 0.004 s, |dxy| median 0.00 max 0.01 km, picks differ in 0
+gamma_1d  {"min_picks": 6, "sigma": 2.0}   n new  53 stored  53 | matched  53 unmatched stored 0 new 0 | |dt| median 0.000 max 0.020 s, |dxy| median 0.00 max 0.23 km, picks differ in 0
+gamma_1d  {"min_picks": 8, "sigma": 1.0}   n new  43 stored  43 | matched  43 unmatched stored 0 new 0 | |dt| median 0.000 max 0.004 s, |dxy| median 0.00 max 0.01 km, picks differ in 0
+gamma_1d  {"min_picks": 8, "sigma": 2.0}   n new  44 stored  44 | matched  44 unmatched stored 0 new 0 | |dt| median 0.000 max 0.020 s, |dxy| median 0.00 max 0.23 km, picks differ in 0
+gamma     {"min_picks": 3, "sigma": 1.0}   n new  66 stored  66 | matched  66 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma     {"min_picks": 3, "sigma": 2.0}   n new  67 stored  67 | matched  67 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma     {"min_picks": 4, "sigma": 1.0}   n new  63 stored  63 | matched  63 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma     {"min_picks": 4, "sigma": 2.0}   n new  63 stored  63 | matched  63 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma     {"min_picks": 5, "sigma": 1.0}   n new  57 stored  57 | matched  57 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma     {"min_picks": 5, "sigma": 2.0}   n new  59 stored  59 | matched  59 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma     {"min_picks": 6, "sigma": 1.0}   n new  50 stored  50 | matched  50 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma     {"min_picks": 6, "sigma": 2.0}   n new  53 stored  53 | matched  53 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma     {"min_picks": 8, "sigma": 1.0}   n new  43 stored  43 | matched  43 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma     {"min_picks": 8, "sigma": 2.0}   n new  44 stored  44 | matched  44 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma_sc  {"min_picks": 3, "sigma": 1.0}   n new  65 stored  65 | matched  65 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma_sc  {"min_picks": 3, "sigma": 2.0}   n new  66 stored  66 | matched  66 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma_sc  {"min_picks": 4, "sigma": 1.0}   n new  63 stored  63 | matched  63 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma_sc  {"min_picks": 4, "sigma": 2.0}   n new  63 stored  63 | matched  63 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma_sc  {"min_picks": 5, "sigma": 1.0}   n new  57 stored  57 | matched  57 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma_sc  {"min_picks": 5, "sigma": 2.0}   n new  58 stored  58 | matched  58 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma_sc  {"min_picks": 6, "sigma": 1.0}   n new  51 stored  51 | matched  51 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma_sc  {"min_picks": 6, "sigma": 2.0}   n new  53 stored  53 | matched  53 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma_sc  {"min_picks": 8, "sigma": 1.0}   n new  42 stored  42 | matched  42 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0
+gamma_sc  {"min_picks": 8, "sigma": 2.0}   n new  43 stored  43 | matched  43 unmatched stored 0 new 0 | |dt| median 0.000 max 0.000 s, |dxy| median 0.00 max 0.00 km, picks differ in 0

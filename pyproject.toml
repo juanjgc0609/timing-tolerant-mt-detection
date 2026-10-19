@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ttmt"
+version = "0.1.0"
+description = "Timing-tolerant moment-tensor detection of overlapping earthquakes (core package, Phase 1)"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+dependencies = ["numpy", "scipy", "obspy", "threadpoolctl"]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "rawdata: needs the raw datasets under TTMT_DATA_ROOT (skipped when they are missing)",
+    "slow: long regression (minutes or more)",
+]
