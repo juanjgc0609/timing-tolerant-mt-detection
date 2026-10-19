@@ -1768,7 +1768,10 @@ $$\mathbf{v}^s_b\;=\;\partial_\theta t^s_b\;=\;\big(-\mathbf{n}_s/V_b,\;1\big)\i
 Let $\mathcal{A}(T)=\{(s,b):\ \mathrm{supp}\,g(\cdot-t^s_b)\subset[0,T]\}$ be the set of arrivals
 captured by the recording window. Because the P polarization is longitudinal and the SV
 polarization orthogonal to it, the two branch contributions are orthogonal in the three-component
-space, and the whitened Fisher matrix of the reduced problem satisfies
+space, and the whitened Fisher matrix of the reduced problem satisfies (assumption added 19 October 2026: the
+orthogonality holds in a homogeneous isotropic full space at the station; at a free-surface receiver the P-to-SV
+conversion makes the P motion non-longitudinal, and anisotropy also breaks it, so (8b) is stated for receivers at
+depth or with the free-surface response removed, together with the arrival-direction assumption)
 
 $$\gamma\;=\;\frac{\|\dot g\|^2_{[0,T]}}{\sigma^2}\;
 \lambda_{\min}\!\Big(\!\!\sum_{(s,b)\in\mathcal{A}(T)}\!\! w^s_b\,\mathbf{v}^s_b(\mathbf{v}^s_b)^{\mathsf T}\Big)
@@ -2584,7 +2587,9 @@ $$\operatorname{rank}\mathcal{I}_{\mathrm{arrival}}\big|_{S=1}\le 2<4. \tag{19}$
 
 In general $(\mathbf{a},c)$ annihilates the arrival term iff
 $\mathbf{a}\cdot\mathbf{n}_s=cV_b$ for every captured station and both branches; the two branches at
-a single station force $c=0$, and then $\mathbf{a}\perp\mathbf{n}_s$ for all $s$. Therefore
+a single station force $c=0$, and then $\mathbf{a}\perp\mathbf{n}_s$ for all $s$. Therefore, if
+$\mathcal S_2\neq\emptyset$ (at least one captured station records both branches; condition added 19 October 2026,
+since with a single branch at every station the cone criterion of Corollary 2 applies instead),
 
 $$\operatorname{rank}\mathcal{I}_{\mathrm{arrival}}(\mathbf{x},\tau)=4
 \iff\{\mathbf{n}_s\}_{s\in\mathcal{A}}\ \text{spans}\ \mathbb{R}^3

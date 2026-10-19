@@ -169,7 +169,7 @@ to 2L, are also in `outputs/explore_contrib/`, with their scripts, reports and o
 
 ## 3. The design errors that inverted or nullified a result
 
-This is the central content of this manifest. The log contains 57 errors, E1 to E57. In the
+This is the central content of this manifest. The log contains 58 errors, E1 to E58. In the
 first six (E1 to E6) the resulting number looked valid, and in all six it was detected **only because
 it turned out to be implausible**, not because there was a visible fault in the code; the following ones were detected
 by controls, preregistered rules or audits, as indicated in each one.
@@ -1129,6 +1129,24 @@ restricted to origins from 880 s the primary rule gives 22 against 21 of 52 targ
 conclusion. The registered result stands; the statement of the amendment was false.
 **Correction:** declared in the result entry of the log, in Appendix Y.33 and in the thesis. Rule for future tests:
 the development reads must end at the start of the evaluation segment, margin included.
+
+### E57. The thesis described the synthetic generator as homogeneous and understated its timing error
+**Document:** `docs/thesis/Thesis.md`, Sections 6.2, 6.4, 7.2, 7.4 and 8 (also repeated by audit 7).
+**Symptom:** Section 6.2 said the generator computes arrivals "in a homogeneous medium" in a 42 km by 42 km region
+with clutter "at a weak and a strong rate", and that its timing error after station corrections is "about 0.14 s";
+Section 7.4 said a second generator was not built.
+**Cause:** the paragraph described the detectors' forward model, not `code/gen_realistic.py`, which Tasks 2A to 2F,
+2I, 2L and 2M use: a linear gradient medium with curved rays, a per-event Ricker wavelet of 1.4 to 2.8 Hz rotated in
+phase, scattered coda, station delays N(0, 0.3 s), sources in a 30 km by 30 km square (42 km is the detector grid),
+and clutter regimes that differ in amplitude (0.35 and 1.75), not in count. The 0.14 s is rms(SC - static) with weak
+clutter only (0.12 to 0.21 s; 0.20 to 0.28 s with strong clutter, `results/task2a/analyze_2a_out.txt`, Table 5) and
+leaves out the position-dependent travel-time error of the homogeneous model (for S, 5th to 95th percentile -0.38 to
++0.24 s, Appendix Y.14), which constant terms cannot absorb. `code/gen_b.py` exists but is unused, and the
+validation script and report it cites are not in the repository.
+**Detection:** project audit thread of 2026-10-18, by comparing the text with the code and Appendix Y.14.
+**Scope:** no registered number changes. The argument that the synthetic timing error lay well inside the 0.25 s
+tolerance (Sections 7.2 and 8, and E46) is weakened: the contrast with Ridgecrest (0.35 to 0.41 s) is one of degree.
+**Correction:** Sections 6.2, 6.4, 7.2, 7.4 and 8 of the thesis rewritten; Appendix Y.14 was already correct.
 
 ### E58. Repeat detections of an event are neutral, and the headline hit rule has no origin-time test
 **Script:** `froc_exact.py`, `task2c_methods.hit_of`, `explore_contrib/c10_lib.label`, `analyze_2f.Pool`,

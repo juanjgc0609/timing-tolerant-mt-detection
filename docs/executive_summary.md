@@ -846,7 +846,7 @@ identical to the exhaustive search), not a pruning gain over the moment-tensor c
 
 ## 9. Note on the working method
 
-During development **fifty-seven errors** were documented (E1 to E57): three of claims in the text
+During development **fifty-eight errors** were documented (E1 to E58): three of claims in the text
 pointed out by the fourth independent audit (E40, "certificate" used for a statistic that is not one;
 E41, a declared dependence removed together with the arms that measure it without reporting it; E42, the real test G1'
 without an arm for the polarisation assumption that the real data contradict), thirty of experimental
@@ -904,7 +904,7 @@ support (E39). The independent verification of Task 2I confirmed its positive wi
 or provenance errors, regenerated parts across the two interruptions of the run and bounded its
 scope (hit rule with origin time, equivalence per regime, cost), without adding an error to the
 log. The
-errors (fifty-seven to date) are in
+errors (fifty-eight to date) are in
 `artifact_manifest_and_error_log.md` with cause, detection and correction, together with the checks that
 would have caught them.
 

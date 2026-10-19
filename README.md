@@ -61,7 +61,7 @@ docs/
   executive_summary.md                                decision document: what is measured, discarded and pending
   method_design.md                                    design of the method and its hypotheses
   tasks_and_real_data_plan.md                         every task: design, rules, results, next steps
-  artifact_manifest_and_error_log.md                  artifacts and the register of errors E1-E57
+  artifact_manifest_and_error_log.md                  artifacts and the register of errors E1-E58
   audit_status.md, audits/                            independent audits and the status after them
   task1_step_by_step.md
 preregistration/                                      append-only registration log, hash chain, drafts

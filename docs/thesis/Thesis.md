@@ -4,6 +4,12 @@
 
 Universidad Icesi - Trabajo de grado - Juan Jose Gordillo Cordoba - October 2026
 
+Director: Uram Aníbal Sosa Aguirre
+
+> **Draft status (19 October 2026).** Passages marked **[pending #N]** rely on a result whose pull request N of the
+> repository is not yet merged (an independent verification is still open). They are confirmed or withdrawn when that
+> request is merged or closed; everything else rests on merged results.
+
 ---
 
 ## Abstract
@@ -22,10 +28,12 @@ separate AI session is stated task by task in Table 3. On a synthetic benchmark 
 timing-tolerant moment-tensor family exceeded GaMMA, PyOcto and QuakeMigrate fed by an STA/LTA picker, but block
 orthogonal matching pursuit with the same timing tolerance matched the thesis detector, and an off-grid convex
 variant was refuted. Capping each station added 0.04 to 0.07 in recall over the same detector without the cap in dense
-synthetic sequences, and on one day of real noise with transients and injected synthetic events (Alto Tiberina, Italy)
-the capped detector exceeded uncapped block pursuit by +0.228 [+0.148, +0.298] with the epicentre rule and +0.085 with
-the origin time also required; block pursuit with the same cap recovers most of that gap, so the gain belongs to the
-per-station bound. On real seismicity the
+synthetic sequences under the registered epicentre rule, and 0.02 to 0.05 when the origin time is also required and
+each event can be hit only once; under that stricter rule one registered criterion of Task 2F (strong clutter) is no
+longer met. On one day of real noise with transients and injected synthetic events (Alto Tiberina, Italy) the capped
+detector exceeded uncapped block pursuit by +0.228 [+0.148, +0.298] with the registered epicentre rule, +0.205
+[+0.133, +0.279] when each event can be hit only once, and +0.083 [+0.051, +0.118] when the origin time is also
+required; block pursuit with the same cap recovers most of that gap, so the gain belongs to the per-station bound. On real seismicity the
 pick-free detector failed: on one hour of the 2019 Ridgecrest sequence it recalled at most 0.022 of the catalogued
 events against up to 0.667 for PhaseNet with PyOcto, and on a 2012 swarm recorded by seven Hi-net stations it found 1
 of 54 target events. A hybrid that adds pick-free candidates to a pick-based associator and scores them by the
@@ -33,7 +41,8 @@ PhaseNet picks they explain found 23 of 54 against 22 for the associator alone (
 demonstrated. A short theory of the deployed statistic, written after the experiments, is consistent with both sides:
 the cap bounds the effect of one station on the score by a constant and leaves the Gaussian false-alarm tail
 unchanged, and it discards amplitude information once readings saturate, which is part of why it fails in continuous
-seismicity. The diagnosis of the real-data failures (at Ridgecrest, timing errors of 0.35 to 0.41 s against a
+seismicity; a further result shows that no score can have a uniformly bounded station influence without saturating,
+so a bound has to be relative to the background. The diagnosis of the real-data failures (at Ridgecrest, timing errors of 0.35 to 0.41 s against a
 tolerance of 0.25 s; on the swarm, a quarter or more of the readings off by more than 0.5 s,
 S-dominated energy, coda ghosts after deflation) defines what a pick-free detector would need before it can compete
 with modern pickers.
@@ -83,16 +92,19 @@ The contributions are the following, stated at the level the evidence supports.
    real noise with injected events, two on real seismicity), with exact FROC curves at a realized false-event rate and
    paired bootstrap intervals. Table 3 states, for each, whether its registration was hashed before the run, whether
    its code was frozen by a hash list, whether it was run once and whether it was verified; not all of them had every
-   step. Positive and negative results are reported in the same way, and a register of fifty-seven
-   errors found during the work is part of the record.
+   step. Positive and negative results are reported in the same way, and a register of the errors found during
+   the work (fifty-eight so far, E1 to E58, and four more under review, E59 to E62 **[pending #5, #6]**) is part of
+   the record.
 2. **Bounded influence helps in noise with transients.** A per-station cap or a Huber fit adds detections in
    dense sequences on synthetic data and on one day of real noise with transients and injected events, by a smaller
-   amount when the origin time is also required; the gain belongs to the per-station bound
+   amount when the origin time is also required and each event can be hit only once (under that rule one of the
+   registered synthetic criteria is not met, Section 6.2); the gain belongs to the per-station bound
    and not to the particular pursuit, since block orthogonal matching pursuit with the same bound recovers almost all
    of it (a descriptive arm of Task 2F and exploration C18f). Propositions in Section 4, written after the
    experiments, bound the effect of one station on the score by a constant, show that the cap
    changes the Gaussian false-alarm tail by a negligible amount, and show that it discards amplitude information when readings
-   saturate.
+   saturate; Appendix AB adds that any score whose station influence is bounded uniformly must saturate, and gives a
+   false-alarm threshold that is valid whatever the law of the amplitudes.
 3. **Two registered negative results on real seismicity, with a measured diagnosis.** The pick-free detector fails on
    the 2019 Ridgecrest aftershock sequence and on a 2012 Hi-net swarm, and the causes are measured: travel-time errors
    larger than the reading tolerance, a capped score that saturates in continuous seismicity, S-wave energy that
@@ -114,8 +126,14 @@ the evidence supports, why the pick-free detector fails on real data, and the th
 concludes. Section 9 explains how to reproduce every number, and Section 10 states what the candidate and the AI
 tools each did. The full task-by-task record, with every table, is in
 the evidence volume `docs/proposal/Supplementary_Evidence_Appendices_G_to_AA.md` (cited below as Appendix Y.n or
-AA.n); an earlier, broader design document written in the format of a doctoral proposal is kept in
-`docs/proposal/Doctoral_Proposal.md` as the record of the original plan.
+AA.n); the theory written after the experiments on identifiability, greedy recovery and the robust statistic is
+Appendix AB, in `docs/proposal/Supplementary_Evidence_Appendix_AB.md`. An earlier, broader design document written in
+the format of a doctoral proposal is kept in `docs/proposal/Doctoral_Proposal.md` as the record of the original plan.
+
+This trabajo de grado is delivered with the scope stated above: the benchmark, the bounded-influence result and the two
+real tests, after the integrity checks of phase 2 of the roadmap (`docs/ROADMAP.md`). The new model, the failure atlas
+and the confirmatory tests of phases 3 to 7 form a separate doctoral line and are not claims of this thesis
+(`docs/decisions/ADR-0006-two-products.md`); Section 8 lists them as future work.
 
 ---
 
@@ -198,7 +216,10 @@ a comparison in which the exact-time readers were also handicapped by reading th
 The grid has nodes every 3 km in a region of about 42 km by 42 km at three depths, and origin times every 0.1 s within
 the window. The best hypothesis is accepted, its least-squares moment tensor is estimated from the read vectors, the
 predicted arrivals (the moment tensor through the radiation operator, convolved with the autocorrelation of the
-matched filter) are subtracted from the data, and the search is repeated, up to a fixed number of events per window (six in the real-data tests). Hypotheses
+matched filter) are subtracted from the data at the samples where they were read, and the search is repeated, up to a fixed number of events per window (six in the real-data tests).
+Because the read samples lie on the 16 Hz grid while the true arrivals do not, even an exact, noise-free prediction
+leaves part of each accepted arrival in the data: Proposition AB.B.6 bounds the residual, and in simulation it is a
+median of 16 per cent and up to 36 per cent of the arrival amplitude (error E62 **[pending #5]**). Hypotheses
 within 5 km of an accepted one are excluded. The thesis detector, MT-FW, scores each hypothesis by the subspace energy
 of its capped readings (Section 3.4); in some tasks a local refinement (T3) relocates each accepted event on a finer
 grid. BOMP-PK is block orthogonal matching pursuit
@@ -284,13 +305,13 @@ events reported below.
 **Proposition 4 (null tail under the peak search, and contamination; AA.9.5).** Assume that at the samples a hypothesis
 can read, the matched-filter output of each component is white Gaussian noise passed through the normalised kernel
 $k$, normalised exactly to unit variance, that the three components are independent, that different blocks are
-independent, and let $\kappa=\max_f|\hat k(f)|/\|k\|_2$ and $L=2W+1$. Then:
+independent, and let $L=2W+1$. Then:
 
 (a) the capped and uncapped scores coincide unless some candidate sample exceeds $c$, an event of probability at most
 $n_bL\Pr(\chi^2_3>c^2)$;
 
 (b) for one hypothesis and every $p\in(0,1)$,
-$\Pr\big(\sigma_\phi\ge\sqrt6+\kappa\sqrt{2n_b\log L}+\kappa\sqrt{2\log(1/p)}\big)\le p$, and replacing $p$ by $p/N$
+$\Pr\big(\sigma_\phi\ge\sqrt6+\sqrt{2n_b\log L}+\sqrt{2\log(1/p)}\big)\le p$, and replacing $p$ by $p/N$
 bounds the probability that any of $N$ hypotheses crosses;
 
 (c) if at most $m$ blocks are replaced by arbitrary values, the capped score is at most its clean value plus $2c\sqrt m$,
@@ -298,20 +319,28 @@ so a threshold set on clean noise and raised by $2c\sqrt m$ keeps its false-alar
 contamination; no finite threshold does so for the identity.
 
 *Sketch of proof.* (a) is a union bound. For (b), for a fixed choice of one candidate per block the score is a
-composition of a convolution (operator norm $\kappa$), a radial map with Lipschitz constant 1 (for the cap it is the
-projection on a ball; for the logarithmic map $\ell_c'(t)\le(1+t^2/c^2)^{-1/2}\le1$ and $\ell_c(t)\le t$) and the
-contraction of Lemma 1, hence $\kappa$-Lipschitz in the white noise; the read score is at most the maximum of these
-functions over the $L^{n_b}$ choices, which is $\kappa$-Lipschitz, and Gaussian concentration [Boucheron et al. 2013]
-gives a sub-Gaussian tail around its mean; the mean is bounded by $\sqrt6$ (the trace of the projector, using that the
+composition of the map from the white noise to the read samples, a radial map with Lipschitz constant 1 (for the cap
+it is the projection on a ball; for the logarithmic map $\ell_c'(t)\le(1+t^2/c^2)^{-1/2}\le1$ and $\ell_c(t)\le t$)
+and the contraction of Lemma 1. The first map reads one sample per block and component: each of its rows is the
+normalised kernel, shifted, with norm 1, and different rows act on disjoint stretches of the noise (the independence
+assumption), so it is a partial isometry with norm 1. The score is therefore 1-Lipschitz in the white noise; the read
+score is at most the maximum of these functions over the $L^{n_b}$ choices, which is 1-Lipschitz, and Gaussian
+concentration [Boucheron et al. 2013] gives a sub-Gaussian tail around its mean; the mean is bounded by $\sqrt6$ (the trace of the projector, using that the
 transformed blocks are centred, isotropic, of variance at most one per component, and independent) plus the maximal
 inequality over the choices. (c) follows from Proposition 1 applied to each contaminated block. $\square$
 
-**Numerical check** (`code/theory_tail_check.py`, `results/theory/tail_check_out.txt`). For the 2 Hz kernel at 16 Hz,
-$\kappa=2.146$. With seven stations ($n_b=14$), $W=4$ and $c=6$, the probability in (a) is $9.4\times10^{-6}$ per
+*Erratum.* An earlier version of (b), and of AA.9.5(b), carried the factor $\kappa=\max_f|\hat k(f)|/\|k\|_2$ on the
+last two terms, the operator norm of the convolution over the whole record. That bound is valid but loose: the score
+reads one sample per block and component, and for that map the constant is 1 (Proposition AB.C.1).
+
+**Numerical check** (`code/theory_tail_check.py`, `results/theory/tail_check_out.txt`; the corrected bound is printed by
+`experiments/exploratory/THEORY-5/tail_check_c1.py`, `tail_check_c1_out.txt`, with the same seed and the same
+quantiles). With seven stations ($n_b=14$), $W=4$ and $c=6$, the probability in (a) is $9.4\times10^{-6}$ per
 hypothesis, and $3.4\times10^{-4}$ that any sample of a 40 s window exceeds the cap: under Gaussian noise the cap is
 inactive in all but about one window in three thousand. In $2\times10^5$ simulated hypotheses the upper $10^{-4}$
 quantile of $\sigma$ was 7.18 for both the identity and the cap and 6.78 for the logarithmic map, against a bound of
-28.50: the bound holds and is conservative by a factor of about four, most of it from the union over read positions.
+14.59 (28.50 with the factor $\kappa=2.146$ of the earlier version): the bound holds and is conservative by a factor of
+about two, which is the union over the $L^{n_b}$ read positions.
 
 **What the theory explains and what it does not.** Together the propositions describe a trade-off rather than an
 optimum. Under Gaussian noise the cap changes any tail probability by at most $9.4\times10^{-6}$ per hypothesis
@@ -322,8 +351,48 @@ events, and in the standard (isolated-event) windows of Task 2F with strong clut
 and 0.351 against 0.405 and 0.383 without the cap, a cost of 0.026 and 0.032. The pattern of the experiments is
 consistent with the trade-off: a gain on real noise with transients (Task 2M), concentrated in the hours with
 transients, and a loss on real aftershock sequences, where the uncapped statistic ranks real events better (Section
-6.5). The theory does not cover the greedy deflation, the grid, the station terms or non-Gaussian, coloured noise, and
-it gives a guarantee, not a calibration: operating thresholds are still set on noise windows of the same network.
+6.5). Propositions 1 to 4 do not cover the greedy deflation, the grid, the station terms or non-Gaussian, coloured
+noise, and they give a guarantee, not a calibration: operating thresholds are still set on noise windows of the same
+network. Appendix AB takes the first two of these further, as described next.
+
+**Further results (Appendix AB).** Appendix AB, also written after the experiments, proves four groups of results; each
+is checked numerically by a script in `experiments/exploratory/THEORY-5/` whose output is stored next to it.
+
+*Identifiability of overlapping events (AB.A).* No test can tell one event from two with a total error below
+$2\Phi(-\delta/2)$, where $\delta$ is the distance from the signal of the pair to the closest one-event signal (a
+two-point bound of Le Cam). Two events at the same point and instant are never identifiable, whatever their
+mechanisms. Against one-event explanations whose time and amplitude are free at every arrival, which is what a
+timing-tolerant method can afford, the margin splits by station and does not change when both events are shifted by the
+same station statics. As the separation goes to zero the margin grows linearly when the radiated amplitude vectors of
+the two events differ in direction at some arrival, and quadratically when they are parallel (the same mechanism). For
+a pair at the detection threshold of Task 2M (SNR 12.4 per event) this gives a minimum resolvable separation of about
+0.03 s in origin time with different mechanisms, 0.1 s with the same one, and 0.5 km in plan: well below the 0.25 s
+tolerance and the 5 km hit radius, so model error and the algorithm, not the information in the data, limit the
+detector in the regimes tested.
+
+*Greedy recovery with timing error (AB.B).* A computable certificate that the deployed greedy step selects a true
+event, despite statics and overlap, holds in every simulated case but never fires: the real margin between the true
+hypothesis and the best wrong one is about 15 per cent, and the score surface is almost flat just outside the hit rule,
+which is why the headline numbers are sensitive to the hit rule (Section 6.2). The energy-peak reading jumps to the
+wrong arrival when an interfering arrival exceeds 0.144 of the true one, through the negative lobe of the wavelet
+autocorrelation at 0.216 s. The deflation on the sample grid leaves a fixed fraction of every accepted arrival
+(Section 3.3).
+
+*The robust statistic (AB.C).* Besides the correction of Proposition 4(b), a threshold computed from the norms of the
+readings at each hypothesis is valid conditionally on those norms whatever their law (heavy tails, non-stationarity,
+transients) as long as the directions of the noise readings are isotropic; in simulation it had no false alarm where
+every fixed threshold calibrated on Gaussian noise failed. Any score whose change under the replacement of one block is
+bounded uniformly is itself bounded, so it saturates: bounded influence and amplitude ordering are compatible only if
+the bound is relative to the background. A cap at a multiple of the median block norm (ACAP) is the simplest radial
+score of that kind; it is scale-equivariant, bounds the influence of up to six of fourteen blocks, and leaves the
+readings untouched when no block exceeds the multiple. Whether it avoids the failure of the cap at Ridgecrest is a
+prediction, not a result.
+
+*Components of a new model (AB.D).* Results for the doctoral line (ADR-0006), not used by this thesis: a block
+contamination likelihood does not saturate only if its background has polynomial tails, its mixture over the moment
+tensor is an e-value with a universal threshold, time slides calibrate exactly the global null of no coherent source
+but not the false detections caused by real events, and no coherence certificate can guarantee the separation of
+overlapping events near the information limit.
 
 ---
 
@@ -375,10 +444,19 @@ chain, so their prior registration rests on the session record alone.
 
 The primary metric is recall of catalogued events at a fixed realized false-event rate, read from the exact
 free-response operating characteristic (FROC): detections are sorted by score, and the operating point is the
-largest number of hits whose number of false detections does not exceed the budget, with ties never split. A
-detection hits an event if its epicentre is within 5 km and, under the rule called LOC+T, its origin time within 0.5
-s (under LOC, within 3 s). A detection that hits only an event below the target magnitude is neutral, and one that
-hits nothing is false. On synthetic data the budget is 0.1 or 0.25 false events per window; on continuous real data it
+largest number of hits whose number of false detections does not exceed the budget, with ties never split. Under
+the rule called LOC a detection hits the nearest event whose epicentre is within 5 km, with no test on the origin time;
+under LOC+T its origin time must also be within 0.5 s. (Earlier versions of this section said that LOC requires the
+origin within 3 s; the code never applied a time test, error E58. On the synthetic windows the two readings coincide,
+because the true origins and the searched origins all lie within 3 s.) A detection that hits only an event below the
+target magnitude is neutral, and one that hits nothing is false. In the registered analyses a second detection of an
+event already hit was also neutral, so a method paid nothing for repeat detections. A post hoc rescoring
+(`results/rescore_duplicates/`, error E58) matches detections to events one to one in score order, so that a repeat
+detection is false, and reports every synthetic and real-noise contrast under the four combinations of the two choices;
+the results below give the registered value and, where it changes a verdict, the one-to-one LOC+T value. One-to-one
+matching with LOC+T is the primary rule of every future test (`docs/decisions/ADR-0007-primary-hit-rule.md`). The real
+tests R0 and R1 already required the origin time; they also counted repeat detections as neutral and have not been
+rescored one to one. The synthetic Task 2I is being rescored and is reported under its registered rule only. On synthetic data the budget is 0.1 or 0.25 false events per window; on continuous real data it
 is 10, 30 or 60 false detections per hour, 30 being primary. Uncertainty is given by hierarchical bootstrap over
 networks and windows on synthetic data and by a bootstrap of 60 s blocks [Kunsch 1989] on continuous data, with the
 operating point re-chosen in every replicate; multiple primary tests are corrected by Holm's procedure [142].
@@ -417,9 +495,13 @@ means a hit needs the epicentre within 5 km; "origin time required" adds an orig
 | E3 | synthetic | Task 2E (registered) | Off-grid group BLASSO (TS-SFW) minus BOMP-PK, rule 2E-a, weak clutter (epicentre rule) | +0.039; 0/3; NOT MET | `results/task2e/analyze_2e_out.txt:67` |
 | E4 | synthetic | Task 2F (registered) | Capped MT-FW minus BOMP-PK in dense windows, weak clutter, seed 4242 (epicentre rule) | +0.072 [+0.048, +0.092] | `results/task2f/analyze_2f_out.txt:26` |
 | E5 | synthetic | Task 2F (registered) | Same, strong clutter, seed 8888 (epicentre rule) | +0.043 [+0.022, +0.066] | `results/task2f/analyze_2f_out.txt:30` |
+| E5b | synthetic | Task 2F (post hoc rescoring) | Same contrast, strong clutter, one-to-one matching with origin time required, seed 4242 (8888: +0.027); below the 0.03 point criterion, rule 2F-a not met | +0.023 [+0.011, +0.036] | `results/rescore_duplicates/2f_strict-loct_out.txt:29` |
+| E5c | synthetic | Task 2F (post hoc rescoring) | Rule 2F-c (equivalence in standard windows), one-to-one matching with origin time required, seed 4242, 90% interval: not met on the upper side | +0.020; [-0.021, +0.056] | `results/rescore_duplicates/2f_strict-loct_out.txt:49` |
 | E6 | synthetic | Task 2I (registered) | Huber fit (HUBER-N) minus BOMP-PK in dense windows, seed 5151 (epicentre rule) | +0.058 [+0.039, +0.076] | `results/task2i/analyze_2i_primary_out.txt:82` |
 | E7 | synthetic | Task 2L (registered) | Pick-free station terms S2 minus catalogue terms, standard windows, origin time required, seed 7171 | +0.057 [+0.034, +0.081] | `results/task2l/analyze_2l_out.txt:113` |
 | E8 | real noise | Task 2M (registered) | Capped MT-FW minus BOMP-PK, dense windows, primary day with transients (epicentre rule) | +0.228 [+0.148, +0.298]; MET | `results/task2M/analyze_2m_out.txt:343` |
+| E8b | real noise | Task 2M (post hoc rescoring) | Capped MT-FW minus BOMP-PK, primary day, one-to-one matching (epicentre rule) | +0.205 [+0.133, +0.279]; MET | `results/rescore_duplicates/2m_strict_out.txt:343` |
+| E8c | real noise | Task 2M (post hoc rescoring) | Same, one-to-one matching with origin time required | +0.083 [+0.051, +0.118] | `results/rescore_duplicates/2m_strict_out.txt:348` |
 | E9 | real noise | Task 2M (registered) | HUBER-N minus BOMP-PK, same day (epicentre rule) | +0.241 [+0.179, +0.293]; MET | `results/task2M/analyze_2m_out.txt:345` |
 | E10 | real noise | C18f (exploratory) | Capped MT-FW minus BOMP-PK with the same cap on its energies (epicentre rule) | +0.026 [-0.009, +0.081] | `results/explorations/c18/c18f_analysis.txt:13` |
 | E11 | real data | Task R0 (registered) | Capped MT-FW (M2) minus the best PhaseNet associator, Ridgecrest, 30 false/h, origin time required | -0.383 [-0.481, -0.310] | `results/taskR0/analysis_eval.txt:13` |
@@ -427,11 +509,14 @@ means a hit needs the epicentre within 5 km; "origin time required" adds an orig
 | E13 | real data | Task R1 (registered) | Hybrid (pick-free candidates scored by PhaseNet picks) minus the pick-based associator it extends, Hi-net swarm, 30 false/h, origin time required | 23 vs 22 of 54; p = 0.5000; NOT MET | `results/taskR1/run/analysis_eval.txt:23` |
 | E14 | real data | Task R1 (registered) | Hybrid minus the best pick-based configuration | 23 vs 26 of 54; p = 0.9688; NOT MET | `results/taskR1/run/analysis_eval.txt:26` |
 | E15 | real data | Task R1 (registered, descriptive) | Pick-free detector alone (P1) minus the associator | 1 vs 22 of 54 | `results/taskR1/run/analysis_eval.txt:29` |
-| E16 | theory | Proposition AA.9.5 (numerical check) | Gaussian null: upper 1e-4 quantile of the score for identity, cap, log maps against the bound | 28.50; 7.18; 7.18; 6.78 | `results/theory/tail_check_out.txt:6` |
+| E16 | theory | Propositions AA.9.5 and AB.C.1 (numerical check) | Gaussian null: upper 1e-4 quantile of the score for identity, cap, log maps against the bound with the factor kappa of the earlier version and the corrected bound | 28.50; 14.59; 7.18; 7.18; 6.78 | `experiments/exploratory/THEORY-5/tail_check_c1_out.txt:6` |
 
 In E1 the four values are, in order, the differences at 0.1 and 0.25 false events per window in the four-station cell
-of seed 2024 and in the six-station cell of seed 7331, the smallest and largest cells of the rule; in E16 the first
-value is the bound and the other three the empirical quantiles.
+of seed 2024 and in the six-station cell of seed 7331, the smallest and largest cells of the rule. E5c gives the
+difference and its 90 per cent interval. In E16 the first two values are the bound of the earlier version of
+Proposition 4(b) and the corrected bound, and the other three the empirical quantiles. Rows marked "post hoc rescoring"
+apply the one-to-one rule of Section 5.2 to the stored outputs of the registered runs (error E58); the registered
+verdicts stand as registered.
 
 ### 6.2 Synthetic benchmark (Tasks 2A to 2F, 2I, 2L; Appendices Y.18 to Y.28)
 
@@ -484,7 +569,15 @@ interval containing zero (E3); the methodological hypothesis G1-M is refuted in 
 
 **Bounded influence (2F, 2I).** In dense windows the capped MT-FW exceeded BOMP-PK by +0.043 to +0.074 over both
 regimes and seeds, surviving Holm's correction (E4, E5), and removing the cap removed the gain; with the origin time
-required the gain was +0.024 to +0.045. All of these use the registered epicentre rule. The Huber fit with its level fixed from the noise gave +0.058 and
+required the gain was +0.024 to +0.045. All of these use the registered epicentre rule, under which a repeat detection
+of an event is neutral. Rescored post hoc with one-to-one matching, the contrasts move by at most 0.008 and every
+registered verdict of 2F stands; it is the origin-time test that changes them. With one-to-one matching and the origin
+time required, the gain is +0.045 and +0.042 with weak clutter, still meeting rule 2F-a, but +0.023 and +0.027 with
+strong clutter (E5b): the lower bounds stay above zero, the 0.03 point criterion of 2F-a is not met. Rule 2F-c, which
+asked the cap to be equivalent to BOMP-PK within 0.05 in standard windows, is also not met under that rule, on the upper
+side: the 90 per cent intervals reach +0.056 and +0.053 (E5c), so the capped detector may be better than the margin
+allows, which is a failure of equivalence and not evidence of harm. The mechanism rule 2F-b (removing the cap removes
+the gain) is met under every rule. Task 2I has not yet been rescored. The Huber fit with its level fixed from the noise gave +0.058 and
 +0.053 (E6; +0.031 and +0.019 with the origin time required),
 was not inferior to the cap within 0.03, cost about nine times as much, and fell behind the cap when the amplitude
 spread between stations was large.
@@ -501,7 +594,11 @@ Task 2M injected synthetic events into continuous noise of days of the Alto Tibe
 that no earlier analysis had used. On the primary day, one day whose noise contains transients, the capped MT-FW and
 HUBER-N exceeded BOMP-PK by +0.228 [+0.148, +0.298] and +0.241 [+0.179, +0.293] in dense windows with the registered
 epicentre rule (E8, E9), and Holm's correction rejects both; with the origin time also required the differences are
-+0.085 [+0.053, +0.120] and +0.104 [+0.080, +0.134]. Intervals that respect the hours shared by the cells are wider
++0.085 [+0.053, +0.120] and +0.104 [+0.080, +0.134]. Only 58 to 62 per cent of the epicentre-rule hits of these dense
+windows have an origin error of 0.5 s or less, and 5 to 7 per cent of all detections are repeats of an event already
+hit (error E58). Rescored with one-to-one matching the two contrasts are +0.205 [+0.133, +0.279] and +0.232 [+0.178,
++0.286] (E8b), both still met, and with the origin time also required +0.083 [+0.051, +0.118] and +0.102 [+0.078,
++0.133] (E8c); the secondary rule 2M-d (HUBER-N not inferior to the cap within 0.03) becomes met. Intervals that respect the hours shared by the cells are wider
 (a moving-block bootstrap gives [+0.088, +0.314] for the cap), still above zero. The verification described the
 contrast as "the mechanism of the hypothesis and not a general win over BOMP-type detectors": the uncapped BOMP-PK
 nearly collapses in the hours with transients; on two near-Gaussian days, the secondary replicate, by +0.057 and +0.120. A breakdown written
@@ -549,7 +646,10 @@ gate registered in advance for a new real test. Two qualifications were found by
 configurations had been tried on the same sixteen events, and the station terms were estimated on the events then
 counted (error E53). With terms re-estimated without the events each window can hit, the gate candidate still
 recalled 5 of 16 on one subnetwork, exactly the threshold; with every event in the window removed from the estimate,
-1 of 16 (E12).
+1 of 16 (E12). Run unchanged on the R0 evaluation segment, whose 45 events never enter the terms, the candidate recalled
+2 and 5 of 45 (0.044 and 0.111) on the same two subnetworks, against 0.289 and 0.600 for the best PhaseNet associator
+of R0 on the same segment, so out of sample the gate is not met; this reading was made after R1 and is declared post
+hoc (error E59) **[pending #6]**.
 
 ### 6.6 Second real test: a Hi-net swarm, and the hybrid (Task R1)
 
@@ -589,10 +689,17 @@ the origin. The code was frozen (hash list `code/r1/FREEZE_R1.sha256`) and run o
 22 (0.407), BESTPICK 26 (0.481) and P1 1 (0.019). Only one target was found by HYB and not by BASE, none the other way:
 the exact McNemar p is 0.50 and rule R1-a is not met (E13). Against BESTPICK, HYB found one target the best
 configuration missed and missed four it found (p = 0.97; E14). The block bootstrap gave medians and 95 per cent intervals of +0.018
-[+0.000, +0.058] for HYB minus BASE and -0.052 [-0.163, +0.000] for HYB minus BESTPICK. The pick-free detector alone recalled 1
+[+0.000, +0.058] for HYB minus BASE and -0.052 [-0.163, +0.000] for HYB minus BESTPICK. These intervals are descriptive
+and the lower bound of the first is not a statement about uncertainty: with one discordant target, in one of the 19
+blocks, no replicate can make HYB worse than BASE, and 35 per cent of the replicates are exactly zero. Paired intervals
+for the difference of proportions [Newcombe 1998] give +0.019 [-0.032, +0.069] for HYB minus BASE and -0.056 [-0.139,
++0.031] for HYB minus BESTPICK (error E61) **[pending #6]**. The pick-free detector alone recalled 1
 of 54 (E15) and 1 of the 10 JMA events, against 9 of 10 for HYB and BASE and all 10 for BESTPICK. With the threshold of the development
 operating point applied unchanged, HYB kept its recall but produced 41.8 false detections per hour, above the budget,
-and BASE 12.9. A homogeneous-medium PyOcto with uncorrected picks, run as a descriptive comparator, recalled 25 of 54,
+and BASE 12.9. Part of the hybrid score is a percentile of the waveform score taken within the segment being scored, so
+it is not fixed before the evaluation; scored by picks alone, or with that percentile referred to the development
+detections, the hybrid gives the same R1-a and R1-b counts and 35.4 or 38.6 false detections per hour with the
+development threshold, still above the budget (error E60) **[pending #6]**. A homogeneous-medium PyOcto with uncorrected picks, run as a descriptive comparator, recalled 25 of 54,
 more than the 1-D configuration chosen as BASE. The prediction was right: no gain was demonstrated, and the pick-free
 detector added one event in fifty-four.
 
@@ -621,9 +728,9 @@ produced the truth list.
 |:--|:--|:--|
 | G1 | A timing-tolerant moment-tensor detector with deflation, applied before picking, adds detections over the best published associator | Supported on the synthetic benchmark against associators fed by an STA/LTA picker, with operating points chosen on evaluation (2A to 2D); refuted on real seismicity against PhaseNet associators (R0); as a hybrid with a PhaseNet associator, no gain demonstrated (R1). Refuted on real data as stated. A conjecture for future work, formed after both real tests and not tested: the detector can compete only where most energy-peak readings of calibration events, with held-out station terms, lie within the reading tolerance (for example 90 per cent within 0.25 s) and against comparators fed by the same quality of picks; Ridgecrest (residual scale 0.35 to 0.41 s) and the swarm (55 per cent of P and 76 per cent of S readings within 0.25 s, post hoc) are far from it, and the synthetic benchmark was not measured in the same way |
 | G1-M | An off-grid group BLASSO with per-station time shifts adds detections over BOMP-PK | Refuted on synthetic data (2E) |
-| G1-R | Bounding the influence of each station (cap or Huber) adds detections over an unbounded pursuit in dense sequences | Confirmed twice on synthetic data (2F, 2I) and once on real noise with transients (2M); the effect belongs to the per-station bound, which BOMP-PK can also use (descriptive arm of 2F, C18f); consistent with Propositions 1 and 4, written after the results |
+| G1-R | Bounding the influence of each station (cap or Huber) adds detections over an unbounded pursuit in dense sequences | Confirmed twice on synthetic data (2F, 2I) and once on real noise with transients (2M) under the registered epicentre rule; the effect belongs to the per-station bound, which BOMP-PK can also use (descriptive arm of 2F, C18f); consistent with Propositions 1 and 4, written after the results. Rescored post hoc with one-to-one matching and the origin time required, the 2M contrasts keep lower bounds above zero, while 2F meets its rule with weak clutter only (+0.023 and +0.027 with strong clutter against a point criterion of 0.03) and its equivalence rule 2F-c fails on the upper side; 2I is not yet rescored |
 | G1-C | Pick-free station terms add detections when the origin time is required | Confirmed once on synthetic data (2L), mainly in one network geometry |
-| new | The cap trades robustness to transients for saturation in continuous seismicity | Proposed after the experiments as an explanation; its parts are proved in a simplified model (Gaussian noise, fixed readings; Propositions 1, 2, 4), and the saturation was measured at true hypocentres of real events (C18) |
+| new | The cap trades robustness to transients for saturation in continuous seismicity | Proposed after the experiments as an explanation; its parts are proved in a simplified model (Gaussian noise, fixed readings; Propositions 1, 2, 4), and the saturation was measured at true hypocentres of real events (C18). Appendix AB proves that the trade-off is unavoidable for any score whose station influence is bounded uniformly, and that a bound relative to the background (ACAP) avoids it; that ACAP helps on real data is untested |
 
 ### 7.2 Why the pick-free detector fails on real seismicity
 
@@ -653,7 +760,10 @@ away and seconds later. They take the false-detection budget before the small re
 deflation is only as good as the prediction it subtracts, and the far-field point-source prediction of a 2 Hz wavelet
 does not predict a real S coda. In R1 the pick-free detector was uncapped and subtracted its full fit, so the ghosts
 come from the shape of the prediction, not from the cap; in the capped detector of R0 the cap-sized subtraction of
-Section 3.4 would add to the effect.
+Section 3.4 would add to the effect. A third source of residual, found by the theory after the tests, acts even when
+the prediction is exact: the subtraction at the read sample of the 16 Hz grid leaves 16 to 36 per cent of each
+accepted arrival (Section 3.3, Proposition AB.B.6); for an S arrival that carries one hundred to one thousand times the
+energy of P, that residual can exceed the arrivals of the smaller events. Its share in the ghosts of R1 was not measured.
 
 ![Figure 3](figures/fig3_r1_ghost.png)
 
@@ -673,7 +783,8 @@ The defended results are three. First, the benchmark and its protocol: eleven re
 of them with a hashed registration, frozen code, a single run and a verification by a separate AI session (Table 3),
 whose negative results are reported with the same weight as the positive ones. Second, bounded influence: a per-station bound on the subspace score helps when the
 noise has transients, measured on synthetic data and on one day of real noise with injected events, and consistent
-with a bound that does not depend on the amplitude of the transient; its value for practice is as a component of any waveform-stacking or pursuit detector that runs on
+with a bound that does not depend on the amplitude of the transient. The real-noise result holds under the strictest
+hit rule; the synthetic one is smaller under that rule and meets its registered criterion only with weak clutter; its value for practice is as a component of any waveform-stacking or pursuit detector that runs on
 continuous data with telemetry defects. Third, a measured account of why a pick-free moment-tensor detector that works
 on a realistic synthetic generator does not transfer to two real sequences, with each cause quantified.
 
@@ -683,7 +794,20 @@ on a realistic synthetic generator does not transfer to two real sequences, with
 subspace of the detector, a smooth one-dimensional gradient medium (the detectors assume a homogeneous one), white
 Gaussian noise and clutter pulses that share the 2 Hz wavelet of the matched filter. A second generator was written
 (`code/gen_b.py`: layered medium, lateral heterogeneity, non-double-couple sources, attenuation, coloured noise) but
-never validated or used, and the validation script and report it cites are not in the repository.
+never validated or used, and the validation script and report it cites are not in the repository. An exploration on
+the calibration seed (C19, `results/explorations/REPORT_C19.md`, not registered) narrowed the threat of the source
+mechanism. Even the double couples were only about 81 per cent inside the detector subspace, because of the gradient
+medium, the polarisation jitter and the site factors. With CLVD, generic moment-tensor or single-force sources of equal
+radiated energy, recall changed by 0.03 or less and the dense-window advantage of the capped MT-FW over BOMP-PK stayed
+at +0.05 to +0.07; isotropic sources, which radiate no S, cost every method about 0.06 alike. A rupture of two
+double-couple subevents 0.3 s apart cost the bounded-influence detectors about twice what it cost BOMP-PK, and the
+advantage fell from +0.073 to +0.043, a change whose interval just covers zero. With polarisations scrambled the
+advantage vanished. The bounded-influence result is therefore robust to the mechanism and fragile to source
+complexity, and it depends on moment-tensor coherence of the radiation.
+*Hit rule.* The headline synthetic and real-noise contrasts use an epicentre-only rule under which repeat detections are
+neutral (Section 5.2, E58). The real-noise contrasts of 2M survive one-to-one matching with the origin time required;
+one primary criterion and the equivalence criterion of 2F do not. That the verdicts depend on the rule is consistent
+with the flat score surface just outside the hit radius found in Appendix AB.B.
 *Comparators.* In the synthetic tasks the associators were fed by an STA/LTA picker; on real data they were fed by
 PhaseNet, the strongest picker available, and won. *Operating points.* Every method's operating point was chosen on
 the evaluation data (in the same way for all methods); the deployable threshold of R1, fixed on development data,
@@ -699,7 +823,7 @@ and the package versions but not the PhaseNet source code, the auxiliary package
 byte for byte by the verifier). The pick-based BASE was below a homogeneous PyOcto with raw picks, so the published 1-D
 model did not help the associators on this swarm. *Development effort.* About twenty configurations were
 tried on the sixteen development events of Ridgecrest before the gate was met, and the station terms of those
-readings were in-sample (E53). *Registration.* The log is self-timestamped (Section 5.1); the R1 registration and
+readings were in-sample (E53); out of sample the gate is not met (E59) **[pending #6]**. *Registration.* The log is self-timestamped (Section 5.1); the R1 registration and
 amendment were pushed to the public repository about one minute after the single run started, while their hashes had
 been sent before it. The development of R1 read the first 40 s of its evaluation segment (E56); removing them does not
 change the result.
@@ -723,7 +847,8 @@ where most of the timing error is within the tolerance (against associators fed 
 with operating points chosen on the evaluation data, and no better than block pursuit with the same tolerance), and loses to PhaseNet-based association on two real sequences
 where it is not. Adding its candidates to a PhaseNet associator did not demonstrably help on unseen data. What
 survives as a contribution is the bound on the influence of each station, measured on one day of real noise and
-consistent with Propositions 1 and 4, and the record of how the method was tested.
+consistent with Propositions 1 and 4, the theory of Appendix AB that explains why such a bound must be relative to the
+background, and the record of how the method was tested.
 
 Future work follows from the diagnosis. (1) Timing: replace energy-peak readings by onset estimates, for example by
 reading the pick probability of a neural picker at the predicted time instead of the matched-filter energy, which
@@ -731,9 +856,12 @@ would turn the hybrid into a pick-informed subspace detector. MALMI [110] alread
 neural picker without associating picks; what the moment-tensor subspace and the per-station bound would add to it is
 the open question. (2) Prediction for deflation: subtract empirical
 waveforms (the stacked residual of accepted events, or templates) instead of a point-source wavelet, so that S coda
-does not leave ghosts. (3) A registered test of the logarithmic compression on real noise and real seismicity, the one
-statistic that kept both robustness and amplitude ordering in exploration. (4) A second synthetic generator and a
-second real noise network for the bounded-influence result. (5) External timestamping of every future registration.
+does not leave ghosts, and subtract at the sub-sample arrival time, which removes the residual of Proposition AB.B.6.
+(3) A registered test of a background-relative bound (ACAP, Appendix AB.C) and of the logarithmic compression on real
+noise and real seismicity, with the conditional threshold of Theorem AB.C.2. (4) A second synthetic generator, with
+two-subevent sources, and a second real noise network for the bounded-influence result. (5) External timestamping of
+every future registration. These items, with the failure atlas and the new model, form the separate doctoral line of
+ADR-0006.
 
 ---
 
@@ -746,14 +874,18 @@ and the independent verifications. The Python environment is pinned in the READM
 thread and the Prescott kernel). Table 1 is regenerated and checked against the result files by
 `python code/thesis_evidence_table.py`; the R1 analysis by `python code/r1/r1_analyze.py eval results/taskR1/run/hyb_eval.json
 results/taskR1/run/hyb_cal.json OUT.txt`; the numerical check of Proposition 4 by `python code/theory_tail_check.py
-OUT.txt`. The three figures are drawn from the stored R1 outputs by `python code/thesis_figures.py
+OUT.txt`, and with the corrected bound by `python experiments/exploratory/THEORY-5/tail_check_c1.py OUT.txt`; the
+checks of Appendix AB by the scripts in `experiments/exploratory/THEORY-5/` (NumPy and SciPy only); the
+one-to-one rescoring by the commands in `results/rescore_duplicates/README.md`. The three figures are drawn from the stored R1 outputs by `python code/thesis_figures.py
 results/taskR1/run docs/thesis/figures`. The data are public and `data/README.md` gives their sources and checksums. Paths in the scripts refer to the
 original working directory and must be adapted.
 
-The error register (`docs/artifact_manifest_and_error_log.md`) lists fifty-seven errors found during the work, from
-claims in the text to implementation defects, each with its cause, its scope and whether it affected a registered
-result; five of them (E51 to E55) were found by an audit of the code made by a separate AI session before the last real test, and one
-(E56) by the verification of that test.
+The error register (`docs/artifact_manifest_and_error_log.md`) lists fifty-eight errors found during the work (E1 to
+E58), from claims in the text to implementation defects, each with its cause, its scope and whether it affected a
+registered result; five of them (E51 to E55) were found by an audit of the code made by a separate AI session before
+the last real test, one (E56) by the verification of that test, and two (E57, E58) by the research audit of 18 October
+2026. Four more from that audit, E59 to E61 (C18j out of sample and two defects of the R1 analysis) and E62 (the
+deflation on the sample grid), are under review **[pending #5, #6]**.
 
 ---
 
@@ -847,6 +979,8 @@ Numbered references follow the numbering of the bibliography of `docs/proposal/D
   percentages," Psychometrika, vol. 12, no. 2, pp. 153-157, 1947.
 - [Nosek et al. 2018] B. A. Nosek, C. R. Ebersole, A. C. DeHaven, and D. T. Mellor, "The preregistration revolution,"
   Proc. Natl. Acad. Sci. USA, vol. 115, no. 11, pp. 2600-2606, 2018.
+- [Newcombe 1998] R. G. Newcombe, "Improved confidence intervals for the difference between binomial proportions based
+  on paired data," Statistics in Medicine, vol. 17, no. 22, pp. 2635-2650, 1998.
 - [Obara et al. 2005] K. Obara, K. Kasahara, S. Hori, and Y. Okada, "A densely distributed high-sensitivity seismograph
   network in Japan: Hi-net by National Research Institute for Earth Science and Disaster Prevention," Rev. Sci.
   Instrum., vol. 76, 021301, 2005.
