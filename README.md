@@ -92,7 +92,9 @@ adjust the path constants at the top of the scripts.
 
 Phase 1 (`docs/ROADMAP.md`) moved every function the confirmatory tests use into the package `src/ttmt/`. Under the
 legacy conventions each one returns the numbers of its frozen source. `code/` stays in place and byte-identical
-(`code/LEGACY_INDEX.sha256`).
+(`code/LEGACY_INDEX.sha256`). It is append-only. Work that adds files to `code/` indexes them with
+`python tools/update_legacy_index.py` and commits the index. Changing or removing an indexed file is an error: the
+command refuses and `tests/test_legacy_index.py` fails.
 
 Line endings. The repository is stored and checked out byte for byte (`.gitattributes`: `* -text`). With
 `core.autocrlf=true`, which is common on Windows, git would rewrite the text files to CRLF, and every freeze list

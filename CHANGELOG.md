@@ -9,8 +9,10 @@ Dated record of changes to the project's process, code and documents. Results ar
   (the Windows default of many installations), git had rewritten 1014 text files to CRLF, and every freeze list
   (`code/r1/FREEZE_R1.sha256`, `data/checksums/*`) failed to verify. After a re-checkout the freeze lists of R0, R1
   and 2M match every file present.
-- `code/` declared frozen and hash-indexed (`code/LEGACY_INDEX.sha256`, 350 files; checked by
-  `tests/test_legacy_index.py`). Its bytes are unchanged.
+- `code/` declared frozen and hash-indexed (`code/LEGACY_INDEX.sha256`; checked by `tests/test_legacy_index.py`). Its
+  bytes are unchanged. It is append-only: `python tools/update_legacy_index.py` appends new files (the five of PR #4
+  were added that way; 355 files). It refuses when an indexed file has changed or is missing. Unindexed new files make
+  the test skip with their list, and CI prints them.
 - Package `src/ttmt/` (`pyproject.toml`, `pip install -e .`): detector core (engine, energy-argmax reader, radial maps
   and block statistics, MT-FW, BOMP-PK, HUBER-N, deflation), radiation operator and subspace, homogeneous and layered
   travel times, matched filter, typed station terms, hit rules and exact FROC, partition guard, dataset readers of R0

@@ -8,8 +8,17 @@ realdata/
 t2m_out/noise/
 code/explore_contrib/c19_parts/
 
+# regenerated raw parts and run logs (rescore_duplicates; regenerable with task2f_run.py / task2i_run.py)
+code/task2f_parts/
+code/task2i_parts/
+code/log2f.txt
+code/log2i.txt
+
 # Local outputs of the package and the tests (raw data and run outputs live outside the checkout, see README)
 /work/
 /.pytest_cache/
 *.egg-info/
 /build/
+
+# built on first use by hyb_comp.pyocto_1d (Task R1); ttmt.legacy runners redirect it outside the checkout
+code/r1/pyocto_jma2001.model

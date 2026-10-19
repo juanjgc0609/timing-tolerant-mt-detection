@@ -6,8 +6,8 @@ from pathlib import Path
 CODE = Path(__file__).resolve().parents[1] / "code"
 INDEX = CODE / "LEGACY_INDEX.sha256"
 # generated locally and ignored by git: bytecode, third-party clones, model files built on first use, run parts
-IGNORED_PARTS = {"__pycache__", "gamma_src", "c19_parts", "r0_verif"}
-IGNORED_NAMES = {"pyocto_jma2001.model", "LEGACY_INDEX.sha256"}
+IGNORED_PARTS = {"__pycache__", "gamma_src", "c19_parts", "r0_verif", "task2f_parts", "task2i_parts"}
+IGNORED_NAMES = {"pyocto_jma2001.model", "LEGACY_INDEX.sha256", "log2f.txt", "log2i.txt"}
 
 
 def _index():
@@ -24,7 +24,7 @@ def _sha(p):
 
 def test_index_lists_every_file_with_its_hash():
     idx = _index()
-    assert len(idx) >= 350
+    assert len(idx) >= 355
     bad = [n for n, h in idx.items() if not (CODE / n).is_file() or _sha(CODE / n) != h]
     assert not bad, f"legacy files changed or missing (check line endings: .gitattributes '* -text'): {bad[:10]}"
 
