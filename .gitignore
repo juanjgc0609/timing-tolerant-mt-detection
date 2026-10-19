@@ -6,4 +6,9 @@ __pycache__/
 code/gamma_src/
 realdata/
 t2m_out/noise/
-code/explore_contrib/c19_parts/
+
+# regenerated raw parts and run logs (rescore_duplicates; regenerable with task2f_run.py / task2i_run.py)
+code/task2f_parts/
+code/task2i_parts/
+code/log2f.txt
+code/log2i.txt

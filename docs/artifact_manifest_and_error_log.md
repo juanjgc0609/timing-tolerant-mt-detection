@@ -1130,23 +1130,22 @@ conclusion. The registered result stands; the statement of the amendment was fal
 **Correction:** declared in the result entry of the log, in Appendix Y.33 and in the thesis. Rule for future tests:
 the development reads must end at the start of the evaluation segment, margin included.
 
-### E57. The thesis described the synthetic generator as homogeneous and understated its timing error
-**Document:** `docs/thesis/Thesis.md`, Sections 6.2, 6.4, 7.2, 7.4 and 8 (also repeated by audit 7).
-**Symptom:** Section 6.2 said the generator computes arrivals "in a homogeneous medium" in a 42 km by 42 km region
-with clutter "at a weak and a strong rate", and that its timing error after station corrections is "about 0.14 s";
-Section 7.4 said a second generator was not built.
-**Cause:** the paragraph described the detectors' forward model, not `code/gen_realistic.py`, which Tasks 2A to 2F,
-2I, 2L and 2M use: a linear gradient medium with curved rays, a per-event Ricker wavelet of 1.4 to 2.8 Hz rotated in
-phase, scattered coda, station delays N(0, 0.3 s), sources in a 30 km by 30 km square (42 km is the detector grid),
-and clutter regimes that differ in amplitude (0.35 and 1.75), not in count. The 0.14 s is rms(SC - static) with weak
-clutter only (0.12 to 0.21 s; 0.20 to 0.28 s with strong clutter, `results/task2a/analyze_2a_out.txt`, Table 5) and
-leaves out the position-dependent travel-time error of the homogeneous model (for S, 5th to 95th percentile -0.38 to
-+0.24 s, Appendix Y.14), which constant terms cannot absorb. `code/gen_b.py` exists but is unused, and the
-validation script and report it cites are not in the repository.
-**Detection:** project audit thread of 2026-10-18, by comparing the text with the code and Appendix Y.14.
-**Scope:** no registered number changes. The argument that the synthetic timing error lay well inside the 0.25 s
-tolerance (Sections 7.2 and 8, and E46) is weakened: the contrast with Ridgecrest (0.35 to 0.41 s) is one of degree.
-**Correction:** Sections 6.2, 6.4, 7.2, 7.4 and 8 of the thesis rewritten; Appendix Y.14 was already correct.
+### E58. Repeat detections of an event are neutral, and the headline hit rule has no origin-time test
+**Script:** `froc_exact.py`, `task2c_methods.hit_of`, `explore_contrib/c10_lib.label`, `analyze_2f.Pool`,
+`explore_contrib/c10_analyze.Boot` (Tasks 2A to 2M).
+**Symptom:** an atom that hits an event already hit counts neither as a hit nor as a false event, so a method pays
+nothing for repeat atoms (5 to 7 % of all atoms in 2M DENSE). The rule LOC, which carries the G1-R headlines, has no
+origin-time test, although Thesis Section 5.2 describes it as "within 3 s". On synthetic windows the two coincide
+because the origins and the search grid span 5 to 8 s. Only 58 to 62 % of the LOC hits of 2M DENSE have an origin
+error of at most 0.5 s.
+**Cause:** the nearest-event labelling was not one-to-one, and the time test was left to the secondary rule LOC+T.
+**Detection:** the research audit of 18 October 2026 (thread "Fix duplicate detection scoring").
+**Scope:** 2F, 2I and 2M were rescored post hoc (`results/rescore_duplicates/`). The one-to-one rule alone moves
+contrasts by at most 0.008 in 2F and 0.023 in 2M, and no primary verdict changes; the secondary 2M-d (seed 2718) becomes
+non-inferior. With LOC+T, 2F-a strong (+0.023 / +0.027 against the 0.03 point criterion) and 2F-c (equivalence fails
+on the upper side) are not met; 2M-a and 2M-b keep lower bounds above 0 in seed 2718.
+**Correction:** `code/froc_strict.py` (one-to-one matching in score order; repeat atoms are false), proposed as the
+rule of future tests together with LOC+T as the headline. The registered results stand as registered.
 
 ### On the order of the three errors of Task 0
 Three complete protocols, three different conclusions, and **in none of them was the cause the physics**. By
