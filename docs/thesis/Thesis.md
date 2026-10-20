@@ -7,7 +7,7 @@ Universidad Icesi - Trabajo de grado - Juan Jose Gordillo Cordoba - October 2026
 Director: Uram Aníbal Sosa Aguirre
 
 > **Draft status (19 October 2026).** Passages marked **[pending #N]** rely on a result whose pull request N of the
-> repository is not yet merged (an independent verification is still open). They are confirmed or withdrawn when that
+> repository is not yet merged (a re-implementation check is still open). They are confirmed or withdrawn when that
 > request is merged or closed; everything else rests on merged results.
 
 ---
@@ -23,11 +23,12 @@ accepted events one by one (greedy deflation). Two further ideas are tested: bou
 the score (a cap or a Huber fit), and estimating station travel-time terms without picks.
 
 Every confirmatory test was registered before its run in an append-only log sealed by a hash chain (four of them
-reused the windows of an earlier task); which tests also had a frozen code list, a single run and a verification by a
-separate AI session is stated task by task in Table 3. On a synthetic benchmark with eight registered tasks the
-timing-tolerant moment-tensor family exceeded GaMMA, PyOcto and QuakeMigrate fed by an STA/LTA picker, but block
-orthogonal matching pursuit with the same timing tolerance matched the thesis detector, and an off-grid convex
-variant was refuted. Capping each station added 0.04 to 0.07 in recall over the same detector without the cap in dense
+reused the windows of an earlier task); which tests also had a frozen code list, a single run and a re-implementation check by a
+separate AI session (not a human or tool-independent verification) is stated task by task in Table 3. On a synthetic benchmark with eight registered tasks the
+timing-tolerant moment-tensor family exceeded GaMMA, PyOcto and QuakeMigrate fed by an STA/LTA picker, with every
+method's operating point chosen on the evaluation windows and with GaMMA ahead in most weak-clutter cells at the lower
+budget when it was fed optimistic picks instead; block orthogonal matching pursuit with the same timing tolerance
+matched the thesis detector, and an off-grid convex variant was refuted. Capping each station added 0.04 to 0.07 in recall over the same detector without the cap in dense
 synthetic sequences under the registered epicentre rule, and 0.02 to 0.05 when the origin time is also required and
 each event can be hit only once; under that stricter rule one registered criterion of Task 2F (strong clutter) is no
 longer met. On one day of real noise with transients and injected synthetic events (Alto Tiberina, Italy) the capped
@@ -96,7 +97,8 @@ The contributions are the following, stated at the level the evidence supports.
    the work (fifty-eight so far, E1 to E58, and four more under review, E59 to E62 **[pending #5, #6]**) is part of
    the record.
 2. **Bounded influence helps in noise with transients.** A per-station cap or a Huber fit adds detections in
-   dense sequences on synthetic data and on one day of real noise with transients and injected events, by a smaller
+   dense sequences on synthetic data and on one day of real noise with transients and injected events, against a
+   pursuit with no robust per-station preprocessing (no despiking or robust normalisation was compared), by a smaller
    amount when the origin time is also required and each event can be hit only once (under that rule one of the
    registered synthetic criteria is not met, Section 6.2); the gain belongs to the per-station bound
    and not to the particular pursuit, since block orthogonal matching pursuit with the same bound recovers almost all
@@ -370,8 +372,9 @@ a pair at the detection threshold of Task 2M (SNR 12.4 per event) this gives a m
 tolerance and the 5 km hit radius, so model error and the algorithm, not the information in the data, limit the
 detector in the regimes tested.
 
-*Greedy recovery with timing error (AB.B).* A computable certificate that the deployed greedy step selects a true
-event, despite statics and overlap, holds in every simulated case but never fires: the real margin between the true
+*Greedy recovery with timing error (AB.B).* This part is mainly a negative result. A computable certificate that the
+deployed greedy step selects a true event, despite statics and overlap, is never contradicted in simulation but never
+fires either, so it certifies nothing in practice: the real margin between the true
 hypothesis and the best wrong one is about 15 per cent, and the score surface is almost flat just outside the hit rule,
 which is why the headline numbers are sensitive to the hit rule (Section 6.2). The energy-peak reading jumps to the
 wrong arrival when an interfering arrival exceeds 0.144 of the true one, through the negative lobe of the wavelet
@@ -388,10 +391,21 @@ score of that kind; it is scale-equivariant, bounds the influence of up to six o
 readings untouched when no block exceeds the multiple. Whether it avoids the failure of the cap at Ridgecrest is a
 prediction, not a result.
 
+*Relation to prior work.* Several of these results adapt known ones to this setting rather than being new. The
+SNR$^{-1}$ and SNR$^{-1/2}$ laws of the minimum resolvable separation are the statistical resolution limits of two
+sources with the same waveform [Shahram and Milanfar 2004; Smith 2005], and the gain from polarisation diversity is
+known for vector-sensor arrays [Nehorai and Paldi 1994]; what Part A adds is the timing-tolerant class, its invariance
+to common statics and the network matrix $F_{\rm pol}$. That a uniformly bounded influence forces a bounded score is
+close to the definition of a finite gross-error sensitivity [Hampel 1974], and a cap at a robust scale estimated from
+the same data is in the tradition of scale-equivariant M-estimation [Huber 1964, Proposal 2]; ACAP is that idea applied
+to a multi-station subspace score.
+
 *Components of a new model (AB.D).* Results for the doctoral line (ADR-0006), not used by this thesis: a block
 contamination likelihood does not saturate only if its background has polynomial tails, its mixture over the moment
-tensor is an e-value with a universal threshold, time slides calibrate exactly the global null of no coherent source
-but not the false detections caused by real events, and no coherence certificate can guarantee the separation of
+tensor is an e-value with a universal threshold, as any likelihood ratio against an exact null with a mixture
+alternative is [Vovk and Wang 2021; Ramdas et al. 2023], time slides calibrate exactly the global null of no coherent
+source but not the false detections caused by real events, as in gravitational-wave background estimation [Was et al.
+2010; Capano et al. 2016], and no coherence certificate can guarantee the separation of
 overlapping events near the information limit.
 
 ---
@@ -408,14 +422,17 @@ and, from Task 2E on, the hash is sent to the author through the chat before the
 not evaluate, any change is recorded as an amendment, the code is frozen by a list of SHA-256 hashes of every module
 it can import, the data files and the package versions, and the test is run once. A separate AI session that did not
 write the code then re-derives the numbers and looks for defects; this is an independent re-derivation by another
-instance of the same AI system, not a review by a human referee (Section 10). Exploratory work used only the calibration seed 999
+instance of the same AI system, not a review by a human referee (Section 10). It shares the model family, the
+repository and the conventions of the session that wrote the code, so errors of conception can pass through it; it is
+called a re-implementation check below, not an independent verification. No headline number (E8, E11, E13) has yet
+been re-derived by a person or with independent tooling. Exploratory work used only the calibration seed 999
 of the synthetic generator, or the development segments of the real datasets, and is labelled as such.
 
 Table 3 states which steps each registered test of the method actually had.
 
 **Table 3. The registered tests and the protocol steps each had.**
 
-| Task | Data | Registration in the hash chain before the run | Hash sent before the run | Code hash list | Run | Verification by a separate AI session | Outcome |
+| Task | Data | Registration in the hash chain before the run | Hash sent before the run | Code hash list | Run | Re-implementation check by a separate AI session | Outcome |
 |:--|:--|:--|:--|:--|:--|:--|:--|
 | 2A | synthetic, new seeds 2024, 7331 | no (predates the chain) | no | no | single | yes | rules 2A-a to 2A-d met; 2A-e met per cell, not in the strict reading |
 | 2B | windows of 2A | no | no | no | single, after a first attempt stopped at its control (BLAS kernel, declared); the analysis script was edited after its first output without declaration (E36) | no | met |
@@ -621,7 +638,7 @@ evaluation, against PhaseNet with GaMMA or PyOcto over their configuration grids
 the origin time required, the detector recalled at most 0.022 of the 45 events of magnitude 2 or more, against up to
 0.667 for the best comparator; the pooled difference was -0.383 [-0.481, -0.310] (E11), and neither registered rule
 was met. A secondary arm whose reading tolerance was widened by rule to the measured timing error changed nothing. An
-independent re-run reproduced every registered number. A closure declared after the result completed the registered
+re-run by a separate AI session reproduced every registered number. A closure declared after the result completed the registered
 contrast with BOMP-PK: +0.000 [-0.023, +0.021] with origin time and -0.050 [-0.101, -0.013] with the epicentre rule,
 BOMP-PK being better, consistent with the saturation of a capped score (Proposition 2).
 
@@ -636,7 +653,7 @@ aftershock is only partly removed and its residual can be selected again.
 On the development segment of the Ridgecrest hour only, exploration C18 tested the remedies the diagnosis named. At
 the true hypocentres of the development events, the capped score did not separate real events from event-free windows
 (area under the ROC curve 0.39 to 0.49), while the uncapped and logarithmic scores did (0.69 to 0.74 and 0.66 to
-0.72): the saturation of Proposition 2 measured directly. The independent verification of R0 found that the station
+0.72): the saturation of Proposition 2 measured directly. The re-implementation check of R0 found that the station
 terms had been read within 1 s of the homogeneous prediction while real S delays reach 1.7 to 1.9 s (error E50); with
 the reading widened to 2 s, the layered model of Hadley and Kanamori [HK 1977] predicted the readings better than the
 homogeneous one (0.45 against 0.37 to 0.39 within 0.25 s); with a term per event absorbing the origin time, the two
@@ -681,7 +698,7 @@ In development (in-sample) BASE, a GaMMA configuration, recalled 16 of 30 target
 where PhaseNet saw the full record, the same configuration was chosen with 17 of 30 CAL targets, and the onset-to-peak
 lags were 0.272 s for P and 0.244 s for S. The development
 read the waveforms up to 880 s, which includes the first 40 s of the evaluation segment; the amendment stated
-otherwise, and the independent verification found it (error E56). No constant was set with those samples. The highest-scoring
+otherwise, and the re-implementation check found it (error E56). No constant was set with those samples. The highest-scoring
 pick-free detections were ghosts of the S coda of the large events: 6 to 15 km away, at 3 km depth, 2.7 to 3.9 s after
 the origin. The code was frozen (hash list `code/r1/FREEZE_R1.sha256`) and run once.
 
@@ -709,7 +726,7 @@ detector added one event in fifty-four.
 detections per hour allowed, by exact FROC. BESTPICK is the PyOcto-1D configuration with the highest recall at 30 per
 hour. Curves end where a method has no more detections.*
 
-**Verification.** A separate AI session reproduced every number with its own code, including the 277 detections of the
+**Re-implementation check.** A separate AI session reproduced every number with its own code, including the 277 detections of the
 hybrid and their pick support, and found no defect that changes a registered number. With the evaluation restricted to
 origins from 880 s, which removes the samples read in development, the primary rule gives 22 against 21 of 52 targets,
 the same conclusion. It also found that only 29 of the 54 targets are detected by any method at any threshold, and
@@ -729,7 +746,7 @@ produced the truth list.
 | G1 | A timing-tolerant moment-tensor detector with deflation, applied before picking, adds detections over the best published associator | Supported on the synthetic benchmark against associators fed by an STA/LTA picker, with operating points chosen on evaluation (2A to 2D); refuted on real seismicity against PhaseNet associators (R0); as a hybrid with a PhaseNet associator, no gain demonstrated (R1). Refuted on real data as stated. A conjecture for future work, formed after both real tests and not tested: the detector can compete only where most energy-peak readings of calibration events, with held-out station terms, lie within the reading tolerance (for example 90 per cent within 0.25 s) and against comparators fed by the same quality of picks; Ridgecrest (residual scale 0.35 to 0.41 s) and the swarm (55 per cent of P and 76 per cent of S readings within 0.25 s, post hoc) are far from it, and the synthetic benchmark was not measured in the same way |
 | G1-M | An off-grid group BLASSO with per-station time shifts adds detections over BOMP-PK | Refuted on synthetic data (2E) |
 | G1-R | Bounding the influence of each station (cap or Huber) adds detections over an unbounded pursuit in dense sequences | Confirmed twice on synthetic data (2F, 2I) and once on real noise with transients (2M) under the registered epicentre rule; the effect belongs to the per-station bound, which BOMP-PK can also use (descriptive arm of 2F, C18f); consistent with Propositions 1 and 4, written after the results. Rescored post hoc with one-to-one matching and the origin time required, the 2M contrasts keep lower bounds above zero, while 2F meets its rule with weak clutter only (+0.023 and +0.027 with strong clutter against a point criterion of 0.03) and its equivalence rule 2F-c fails on the upper side; 2I is not yet rescored |
-| G1-C | Pick-free station terms add detections when the origin time is required | Confirmed once on synthetic data (2L), mainly in one network geometry |
+| G1-C | Pick-free station terms add detections when the origin time is required | Partially confirmed, in one geometry: the pooled gain of 2L is essentially that of the one-sided eight-station network, there is no demonstrated gain with four stations, and the terms were worse than the catalogue ones in about 22 per cent of the networks |
 | new | The cap trades robustness to transients for saturation in continuous seismicity | Proposed after the experiments as an explanation; its parts are proved in a simplified model (Gaussian noise, fixed readings; Propositions 1, 2, 4), and the saturation was measured at true hypocentres of real events (C18). Appendix AB proves that the trade-off is unavoidable for any score whose station influence is bounded uniformly, and that a bound relative to the background (ACAP) avoids it; that ACAP helps on real data is untested |
 
 ### 7.2 Why the pick-free detector fails on real seismicity
@@ -780,12 +797,16 @@ pick-free detector rarely proposed one.
 ### 7.3 What the evidence supports
 
 The defended results are three. First, the benchmark and its protocol: eleven registered tests of the method, most
-of them with a hashed registration, frozen code, a single run and a verification by a separate AI session (Table 3),
+of them with a hashed registration, frozen code, a single run and a re-implementation check by a separate AI session (Table 3),
 whose negative results are reported with the same weight as the positive ones. Second, bounded influence: a per-station bound on the subspace score helps when the
 noise has transients, measured on synthetic data and on one day of real noise with injected events, and consistent
 with a bound that does not depend on the amplitude of the transient. The real-noise result holds under the strictest
-hit rule; the synthetic one is smaller under that rule and meets its registered criterion only with weak clutter; its value for practice is as a component of any waveform-stacking or pursuit detector that runs on
-continuous data with telemetry defects. Third, a measured account of why a pick-free moment-tensor detector that works
+hit rule; the synthetic one is smaller under that rule and meets its registered criterion only with weak clutter.
+The comparator had no robust preprocessing (no despiking or robust per-station normalisation, which production systems
+use), so the result shows that a per-station bound beats no bound, not that it beats standard practice; and in
+continuous seismicity the fixed cap saturates (Section 6.5, Proposition 2), so no practical value on continuous data is
+claimed for it. Whether a background-relative bound (Appendix AB.C) keeps the gain without the saturation is untested.
+Third, a measured account of why a pick-free moment-tensor detector that works
 on a realistic synthetic generator does not transfer to two real sequences, with each cause quantified.
 
 ### 7.4 Threats to validity
@@ -818,7 +839,10 @@ about 0.54.
 likely be detected; for the gain seen in development the power was about 0.15 to 0.25, and the observed difference was
 one event. *What R1 tests.* All truth events of the swarm lie within 3.1 km of its centre while a hit needs an
 epicentre within 5 km, so R1 tests detection and origin time, not location. A second detection of an event that is
-already hit counts as neutral, never as false, for every method. The freeze list covered the project code, the data
+already hit counts as neutral, never as false, for every method. That convention favours the detectors that deflate
+imperfectly and so emit repeat detections (Proposition AB.B.6), because their repeats do not take the false-detection
+budget; in the dense windows of 2M 5 to 7 per cent of all detections were such repeats. Only 2F and 2M have been
+rescored one to one (Section 5.2); 2A to 2E, 2I, 2L, R0 and R1 keep the neutral convention. The freeze list covered the project code, the data
 and the package versions but not the PhaseNet source code, the auxiliary packages or the PyOcto model file (rebuilt
 byte for byte by the verifier). The pick-based BASE was below a homogeneous PyOcto with raw picks, so the published 1-D
 model did not help the associators on this swarm. *Development effort.* About twenty configurations were
@@ -869,7 +893,7 @@ ADR-0006.
 
 The repository holds every script, the frozen hash list of every confirmatory run, the analysis output of every task,
 the raw outputs of the two real tests and of Task 2M, the registration log with its hash chain, the error register
-and the independent verifications. The Python environment is pinned in the README (Python 3.11, NumPy 1.26.4, SciPy
+and the re-implementation checks. The Python environment is pinned in the README (Python 3.11, NumPy 1.26.4, SciPy
 1.17.1, ObsPy 1.5.1, PyOcto 0.2.0, TensorFlow-CPU 2.15.1 for PhaseNet, GaMMA at commit 80394dd, OpenBLAS with one
 thread and the Prescott kernel). Table 1 is regenerated and checked against the result files by
 `python code/thesis_evidence_table.py`; the R1 analysis by `python code/r1/r1_analyze.py eval results/taskR1/run/hyb_eval.json
@@ -905,9 +929,10 @@ non-inferiority margin); decided to present the work as an undergraduate thesis;
 documents.
 
 The AI system wrote most of the code, ran the experiments, drafted the registrations, the analyses and the documents,
-and proposed most of the method variants and diagnoses. The independent verifications of the tasks, the audit of the
+and proposed most of the method variants and diagnoses. The re-implementation checks of the tasks, the audit of the
 code and the audits of the documents were made by separate sessions of the same AI system that had not written the
-code under review; they are independent re-derivations, not reviews by human referees. The registration hashes were
+code under review; they are re-derivations by another instance of the same system, not independent verifications or reviews by
+human referees. The registration hashes were
 sent to the candidate through the chat before each run.
 
 ---
@@ -973,6 +998,8 @@ Numbered references follow the numbering of the bibliography of `docs/proposal/D
   Bull., vol. 88, pp. 1469-1478, 1977.
 - [Huber 1964] P. J. Huber, "Robust estimation of a location parameter," Ann. Math. Statist., vol. 35, no. 1,
   pp. 73-101, 1964.
+- [Capano et al. 2016] C. Capano et al., "Systematic errors in estimation of gravitational-wave candidate
+  significance," arXiv:1601.00130, 2016.
 - [Kunsch 1989] H. R. Kunsch, "The jackknife and the bootstrap for general stationary observations," Ann. Statist.,
   vol. 17, no. 3, pp. 1217-1241, 1989.
 - [McNemar 1947] Q. McNemar, "Note on the sampling error of the difference between correlated proportions or
@@ -984,12 +1011,24 @@ Numbered references follow the numbering of the bibliography of `docs/proposal/D
 - [Obara et al. 2005] K. Obara, K. Kasahara, S. Hori, and Y. Okada, "A densely distributed high-sensitivity seismograph
   network in Japan: Hi-net by National Research Institute for Earth Science and Disaster Prevention," Rev. Sci.
   Instrum., vol. 76, 021301, 2005.
+- [Nehorai and Paldi 1994] A. Nehorai and E. Paldi, "Vector-sensor array processing for electromagnetic source
+  localization," IEEE Trans. Signal Process., vol. 42, no. 2, pp. 376-398, 1994.
 - [Poiata et al. 2016] N. Poiata, C. Satriano, J.-P. Vilotte, P. Bernard, and K. Obara, "Multiband array detection and
   location of seismic sources recorded by dense seismic networks," Geophys. J. Int., vol. 205, no. 3, pp. 1548-1573,
   2016.
+- [Ramdas et al. 2023] A. Ramdas, P. Grünwald, V. Vovk, and G. Shafer, "Game-theoretic statistics and safe
+  anytime-valid inference," Statist. Sci., vol. 38, no. 4, pp. 576-601, 2023.
+- [Shahram and Milanfar 2004] M. Shahram and P. Milanfar, "Imaging below the diffraction limit: a statistical
+  analysis," IEEE Trans. Image Process., vol. 13, no. 5, pp. 677-689, 2004.
+- [Smith 2005] S. T. Smith, "Statistical resolution limits and the complexified Cramér-Rao bound," IEEE Trans.
+  Signal Process., vol. 53, no. 5, pp. 1597-1609, 2005.
 - [Ueno et al. 2002] H. Ueno, S. Hatakeyama, T. Aketagawa, J. Funasaki, and N. Hamada, "Improvement of hypocenter
   determination procedures in the Japan Meteorological Agency," Q. J. Seismol., vol. 65, pp. 123-134, 2002 (in
   Japanese).
+- [Vovk and Wang 2021] V. Vovk and R. Wang, "E-values: calibration, combination and applications," Ann. Statist.,
+  vol. 49, no. 3, pp. 1736-1754, 2021.
+- [Was et al. 2010] M. Was et al., "On the background estimation by time slides in a network of gravitational wave
+  detectors," Class. Quantum Grav., vol. 27, 015005, 2010 (arXiv:0906.2120).
 - [Zhang and Wen 2015] M. Zhang and L. Wen, "An effective method for small event detection: match and locate (M&L),"
   Geophys. J. Int., vol. 200, no. 3, pp. 1523-1537, 2015.
 

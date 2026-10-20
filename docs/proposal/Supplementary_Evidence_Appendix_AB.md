@@ -27,7 +27,7 @@ $V_S=3$ km/s, $V_P=1.73V_S$, 8-station `spread` network, radiation operator of `
 | AB.A.6 | Network form: $\delta^2\approx\omega^2\,\Delta\boldsymbol\theta^{\mathsf T}F_{\rm pol}\Delta\boldsymbol\theta$, observability weighted by polarization diversity | Corollary | — |
 | AB.A.7 | Minimum resolvable separation: $\propto\mathrm{SNR}^{-1}$ with mechanism diversity, $\propto\mathrm{SNR}^{-1/2}$ without it | Corollary | 0.034 s and 0.098 s at SNR 12.4 |
 | AB.B.1 | Exact condition for the energy-peak reading (D1) to read the correct arrival | Lemma | interference $<0.144\,\lVert\mathbf g\rVert$ |
-| AB.B.2–AB.B.4 | Computable certificate of correct selection for the deployed algorithm with statics and overlap | Lemma and Theorem | correct in 100 % of cases, but it never activates: actual margin ≈15 % |
+| AB.B.2–AB.B.4 | Computable certificate of correct selection for the deployed algorithm with statics and overlap | Lemma and Theorem; **negative result in practice** | never contradicted, but it never activates (0 of 216 cases): actual margin ≈15 %, so it certifies nothing here |
 | AB.B.5 | Recovery of $K$ events by induction | Theorem | — |
 | AB.B.6 | The deployed deflation leaves up to a fixed fraction of each arrival because of the sub-sample offset | Proposition | median residual 16 % (up to 36 %) of the amplitude |
 | AB.C.1 | **Correction of AA.9.5(b)**: the Lipschitz constant is 1, not $\kappa=2.146$ | Proposition | bound 28.50 → 14.59 (empirical 7.12) |
@@ -38,6 +38,18 @@ $V_S=3$ km/s, $V_P=1.73V_S$, 8-station `spread` network, radiation operator of `
 | AB.D.2 | The mixture version over the tensor is an e-value: universal threshold $\log(1/p)$ without calibration | Theorem | — |
 | AB.D.3 | *Time-slides*: exact p-value for the global null "no coherent source", with no floor; does not control false detections caused by real events | Proposition | — |
 | AB.D.4 | Joint decomposition: $\sigma_{\min}(\Gamma)\propto\Delta\tau$, so certificates of type AA.6(a) require SNR $\propto\Delta\tau^{-3}$ against the necessary $\Delta\tau^{-1}$ | Proposition | measured slope 2.00 of $1-\cos\theta_1$ |
+
+**Relation to prior work.** Several results adapt known ones and are not claimed as new. The SNR$^{-1}$ and
+SNR$^{-1/2}$ laws of AB.A.7 are the statistical resolution limits of two same-shape sources (Shahram and Milanfar,
+2004; Smith, 2005), and polarization diversity is known to help vector-sensor arrays (Nehorai and Paldi, 1994); new
+here are the timing-tolerant class (AB.A.3), its invariance to common statics and $F_{m pol}$ for a seismic network.
+AB.C.3 is close to the definition of a finite gross-error sensitivity (Hampel, 1974), and ACAP is a cap at a robust
+scale in the tradition of Huber's (1964) Proposal 2; new is their form for a multi-station subspace score. AB.D.2 holds
+for any likelihood ratio with a mixture alternative against an exact null (Vovk and Wang, 2021; Ramdas et al., 2023).
+Time slides are the standard background estimate of gravitational-wave searches, where the contamination of the
+background by real signals is also studied (Was et al., 2010; Capano et al., 2016); new is only the adaptation to
+continuous seismic sequences. Theorems AB.B.4 and AB.B.5 are reported as a negative result: the certificate is valid
+and vacuous in the geometry tested.
 
 Four messages for the plan:
 
@@ -915,6 +927,21 @@ The integration was carried out as follows:
 - Eldar, Y. C., Kuppinger, P., Bölcskei, H. (2010). Block-sparse signals: uncertainty relations and efficient recovery.
   *IEEE Trans. Signal Processing* 58, 3042–3054 (block coherence for BOMP; Lemma AB.B.3 is its timing-tolerant
   analogue with peak reading).
+- Shahram, M., Milanfar, P. (2004). Imaging below the diffraction limit: a statistical analysis. *IEEE Trans. Image
+  Processing* 13, 677–689.
+- Smith, S. T. (2005). Statistical resolution limits and the complexified Cramér-Rao bound. *IEEE Trans. Signal
+  Processing* 53, 1597–1609.
+- Nehorai, A., Paldi, E. (1994). Vector-sensor array processing for electromagnetic source localization. *IEEE Trans.
+  Signal Processing* 42, 376–398.
+- Huber, P. J. (1964). Robust estimation of a location parameter. *Ann. Math. Statist.* 35, 73–101 (Proposal 2: joint
+  location and scale).
+- Vovk, V., Wang, R. (2021). E-values: calibration, combination and applications. *Ann. Statist.* 49, 1736–1754.
+- Ramdas, A., Grünwald, P., Vovk, V., Shafer, G. (2023). Game-theoretic statistics and safe anytime-valid inference.
+  *Statistical Science* 38, 576–601.
+- Was, M. et al. (2010). On the background estimation by time slides in a network of gravitational wave detectors.
+  *Class. Quantum Grav.* 27, 015005 (arXiv:0906.2120).
+- Capano, C. et al. (2016). Systematic errors in estimation of gravitational-wave candidate significance.
+  arXiv:1601.00130.
 - Candès, E., Fernandez-Granda, C. (2014). Towards a mathematical theory of super-resolution. *CPAM* 67, 906–956 (the
   scaling laws of the minimum resolvable separation with the SNR).
 - Wang, R., Ramdas, A. (2022). False discovery rate control with e-values. *JRSS B* 84, 822–852.
