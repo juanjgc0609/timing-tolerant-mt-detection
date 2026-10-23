@@ -1140,12 +1140,17 @@ because the origins and the search grid span 5 to 8 s. Only 58 to 62 % of the LO
 error of at most 0.5 s.
 **Cause:** the nearest-event labelling was not one-to-one, and the time test was left to the secondary rule LOC+T.
 **Detection:** the research audit of 18 October 2026 (thread "Fix duplicate detection scoring").
-**Scope:** 2F, 2I and 2M were rescored post hoc (`results/rescore_duplicates/`). The one-to-one rule alone moves
-contrasts by at most 0.008 in 2F and 0.023 in 2M, and no primary verdict changes; the secondary 2M-d (seed 2718) becomes
-non-inferior. With LOC+T, 2F-a strong (+0.023 / +0.027 against the 0.03 point criterion) and 2F-c (equivalence fails
-on the upper side) are not met; 2M-a and 2M-b keep lower bounds above 0 in seed 2718.
-**Correction:** `code/froc_strict.py` (one-to-one matching in score order; repeat atoms are false), proposed as the
-rule of future tests together with LOC+T as the headline. The registered results stand as registered.
+**Scope:** 2A, 2B, 2F, 2I, 2M, R0 and R1 were rescored post hoc (`results/rescore_duplicates/`; 2F and 2I from
+parts regenerated with the frozen code and archived in `results/task2f/records/` and `results/task2i/records/`). The
+one-to-one rule alone moves contrasts by at most 0.008 in 2F, 0.003 in 2I and 0.023 in 2M, leaves R0's primary
+reading and all of R1 unchanged, and changes no primary verdict; the secondary 2M-d (seed 2718) becomes non-inferior.
+2A and 2B store no locations, so only repeats-as-false applies there; their verdicts are unchanged. With LOC+T,
+2F-a strong (+0.023 / +0.027 against the 0.03 point criterion), 2F-c (equivalence fails on the upper side) and 2I-a
+(seed 6262, +0.019 against 0.03) are not met; 2M-a and 2M-b keep lower bounds above 0 in seed 2718. 2C, 2D, 2E and
+2L were not rescored: their raw records are not stored.
+**Correction:** `code/froc_strict.py` (one-to-one matching in record order; repeat atoms are false) and
+`ttmt.scoring.label(match="one_to_one")` (ADR-0007), proposed as the rule of future tests together with LOC+T as the
+headline. The registered results stand as registered.
 
 ### E62. Deflation subtracts each accepted atom on the integer sample grid
 **Script:** `explore_contrib/c10_lib._deflate` (MT-FW and BOMP-PK loops), `c8_lib.mtfw_general`, `xc.mtfw_mask`,

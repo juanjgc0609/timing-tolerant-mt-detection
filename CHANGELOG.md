@@ -3,6 +3,14 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-10-23
+
+- Scoring (E58, CR-21): the 2I primary arm regenerated with the frozen code and rescored under the registered and
+  one-to-one rules, with and without origin time; 2A and 2B rescored with repeats as false (`rescore/rescore_2a2b.py`);
+  R0 and R1 rescored with `--match one_to_one`. Regenerated 2F and 2I parts archived with checksums in
+  `results/task2f/records/` and `results/task2i/records/`; regression tests (d) and (e) reproduce the registered 2F and
+  2I analyses from them. Coverage table in `results/rescore_duplicates/README.md`.
+
 ## 2026-10-18 (phase 1: repository and core package)
 
 - Line endings: `.gitattributes` `* -text`, so that every file is checked out byte for byte. With `core.autocrlf=true`
