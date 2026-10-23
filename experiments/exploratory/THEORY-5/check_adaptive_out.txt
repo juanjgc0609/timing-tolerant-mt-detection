@@ -1,0 +1,32 @@
+kappa = 2.146; n_b = 14; W = 4; L = 9; cap c = 6.0; ACAP c1 = 3.0, orden 7/14
+ruido gaussiano, 200000 hipotesis: mediana de la norma de la lectura de pico 2.442; cuantil 7/14 medio 2.397 -> radio efectivo de ACAP 7.19
+C.1  cota por hipotesis de sigma (gaussiana):
+   p       AA.9.5(b) (kappa)   corregida (Lip 1)   cuantil empirico: identidad  tope  log  acap
+   1e-02    25.80               13.33               5.82   5.82   5.52   5.82
+   1e-03    27.26               14.01               6.62   6.62   6.26   6.62
+   1e-04    28.50               14.59               7.12   7.12   6.76   7.12
+C.2  umbral condicional del Teorema C.2 bajo ruido gaussiano
+   p       tasa realizada (identidad tope log acap)          mediana del umbral (id tope log acap)
+   1e-02   0.0e+00  0.0e+00  0.0e+00  0.0e+00      7.79   7.79   7.39   7.79
+   1e-03   0.0e+00  0.0e+00  0.0e+00  0.0e+00      8.85   8.85   8.39   8.85
+   1e-04   0.0e+00  0.0e+00  0.0e+00  0.0e+00      9.75   9.75   9.24   9.75
+   holgura de la cota HKZ frente al cuantil condicional exacto (p = 1e-3, identidad, 400 casos): cociente mediano 1.397, rango 1.331..1.546
+C.3  ruido heavy_iso, 50000 hipotesis (t de Student nu = 2, escala lognormal por bloque, transitorios 15 % de bloques, 1e2..1e4):
+   p       umbral condicional: tasa (id tope log acap)    umbral fijo gaussiano 1e-3: tasa
+   1e-02   0.0e+00  0.0e+00  0.0e+00  0.0e+00          
+   1e-03   0.0e+00  0.0e+00  0.0e+00  0.0e+00          9.6e-01  5.4e-01  8.1e-01  8.9e-01
+C.3  ruido heavy_pol, 50000 hipotesis (t de Student nu = 2, escala lognormal por bloque, transitorios 15 % de bloques, 1e2..1e4):
+   p       umbral condicional: tasa (id tope log acap)    umbral fijo gaussiano 1e-3: tasa
+   1e-02   0.0e+00  0.0e+00  0.0e+00  0.0e+00          
+   1e-03   0.0e+00  0.0e+00  0.0e+00  0.0e+00          9.6e-01  5.5e-01  8.3e-01  9.0e-01
+C.4  equivariancia de escala de ACAP: error relativo maximo 8.1e-16
+     m = 1 bloques reemplazados (amplitud hasta 1e5): violaciones de la Prop. C.4(b) = 0, max |cambio| / cota = 0.259
+     m = 3 bloques reemplazados (amplitud hasta 1e5): violaciones de la Prop. C.4(b) = 0, max |cambio| / cota = 0.259
+     m = 6 bloques reemplazados (amplitud hasta 1e5): violaciones de la Prop. C.4(b) = 0, max |cambio| / cota = 0.259
+     no saturacion: evento a*w sobre un fondo saturado (todas las normas del fondo = 20)
+       a =    0:  identidad      21.3  tope   6.38  log   10.07  acap      21.3   (cota del tope c sqrt(n_b) = 22.45)
+       a =    1:  identidad      83.6  tope  15.47  log   27.59  acap      83.6   (cota del tope c sqrt(n_b) = 22.45)
+       a =    3:  identidad     231.7  tope  19.80  log   43.08  acap     231.7   (cota del tope c sqrt(n_b) = 22.45)
+       a =   10:  identidad     754.9  tope  20.54  log   54.35  acap     754.9   (cota del tope c sqrt(n_b) = 22.45)
+       a =   30:  identidad    2251.3  tope  20.61  log   62.42  acap    2251.3   (cota del tope c sqrt(n_b) = 22.45)
+       a =  100:  identidad    7489.6  tope  20.62  log   70.14  acap    7489.6   (cota del tope c sqrt(n_b) = 22.45)

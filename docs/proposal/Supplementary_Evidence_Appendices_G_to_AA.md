@@ -7142,6 +7142,15 @@ shape used to deflate each accepted atom, and C18h differs from C18i and C18j in
 readings move by one event when only the import order changes and are not comparable with each other. The 2 Hz runs,
 including the gate candidate, are not affected.
 
+**Out of sample, declared post hoc (error E59).** The gate candidate was then run unchanged, with its terms still
+estimated on the 16 CAL events, on the R0 evaluation segment [900, 3560) s, whose 45 events never enter the terms
+(`explore_contrib/c18j_eval_posthoc.py`, `c18j_eval_analyze.py`, `results/explorations/c18/c18j_eval_analysis.txt`;
+the environment reproduces the stored CAL atoms of U8 bit for bit). With origin time at 30 false detections per hour
+it recalls 2 of 45 on U8 (0.044) and 5 of 45 on N8 (0.111), against 0.313 and 0.250 in sample, 0 and 2 of 45 for the
+registered homogeneous detector and 0.289 and 0.600 for the best pick-based associator of R0 on the same segment; LOG6
+recalls 1 and 8 of 45. The layered medium and the wider terms add a few events, and the gate is not met out of sample.
+The segment had already been used by R0, so this is a descriptive reading, not a test.
+
 **What follows.** R0 failed for a reason that is now measured: station terms truncated at 1 s, a homogeneous medium and a
 capped score each removed part of the evidence, and only together do their corrections bring the pick-free detector to
 about a third of the development events with origin times matched, still well below PhaseNet with PyOcto on the same
@@ -7242,6 +7251,20 @@ run, with terms that leave out each event, the energy-peak readings of the 17 CA
 a robust scale of 0.222 s for P (47 readings; 55 per cent within 0.25 s, 64 per cent within 0.5 s) and 0.169 s for S
 (105 readings; 76 and 80 per cent). The typical reading is within the tolerance, and a large minority falls on another
 peak.
+
+**Two defects of the analysis, declared post hoc** (errors E60 and E61; `code/r1/posthoc_defects.py`,
+`results/taskR1/posthoc/defects_e60_e61_out.txt`, on the stored lists of the frozen run). First, the waveform part of
+the HYB score is a percentile taken within the segment being scored, so a score depends on the other detections of the
+segment and the CAL threshold carried to EVAL sits on a different scale. With picks only, or with the P1 percentile
+taken against the CAL atoms, R1-a and R1-b are unchanged, and the deployable threshold gives 11 and 12 false detections
+in EVAL (35.4 and 38.6 per hour) against the registered 13 (41.8), with the same 23 targets: the hybrid exceeds the
+budget of 30 per hour with any of the three scores, so the failure of false-alarm calibration does not come from this
+defect. Second, the block bootstrap resamples 19 blocks and the only discordant target of HYB - BASE lies in one of
+them, so no replicate can put HYB below BASE: the lower bound +0.000 is the atom at zero (35 per cent of replicates),
+not a statement of uncertainty. Changing the block length (30 or 120 s) or counting the last block at its true 40 s
+moves no bound by more than 0.019. A paired interval that does not resample (Newcombe, method 10) gives HYB - BASE
++0.019 [-0.032, +0.069], HYB - BESTPICK -0.056 [-0.139, +0.031] and P1 - BASE -0.389 [-0.522, -0.246]. The registered
+decisions rest on the exact McNemar tests and stand.
 
 ---
 
@@ -8200,11 +8223,11 @@ The false-alarm tail of these scores under the peak search is treated next.
 can read, the normalized matched-filter output is the white Gaussian noise of unit variance passed through the
 normalized kernel $k$ (so each component is a stationary Gaussian sequence of unit variance), that different blocks
 are independent (different stations, or P and S of one station farther apart than the kernel support), and let
-$\kappa=\max_f|\hat k(f)|/\|k\|_2$. Each block is read at the sample of largest energy among $L=2W+1$ candidates.
+$\kappa=\max_f|\hat k(f)|/\|k\|_2$ (used only in the erratum below). Each block is read at the sample of largest energy among $L=2W+1$ candidates.
 Write $\sigma_\phi=\sqrt{2s_\phi}$ and let $\phi$ be the identity, the cap or the logarithmic map.
 (a) The capped and uncapped scores coincide unless some candidate sample of some block exceeds $c$ in norm, an event
 of probability at most $n_bL\,\Pr(\chi^2_3>c^2)$.
-(b) For every $p\in(0,1)$, $\Pr\big(\sigma_\phi\ge\sqrt6+\kappa\sqrt{2n_b\log L}+\kappa\sqrt{2\log(1/p)}\big)\le p$
+(b) For every $p\in(0,1)$, $\Pr\big(\sigma_\phi\ge\sqrt6+\sqrt{2n_b\log L}+\sqrt{2\log(1/p)}\big)\le p$
 for one hypothesis; over $N$ hypotheses, replacing $p$ by $p/N$ bounds the probability that any of them crosses.
 (c) If at most $m$ blocks are replaced by arbitrary values (transients), the capped score satisfies
 $\sigma_{r_c}\le\sigma^{\rm clean}_{r_c}+2c\sqrt m$, so the threshold of (b) raised by $2c\sqrt m$ keeps its
@@ -8213,16 +8236,18 @@ false-alarm probability under any such contamination; no finite threshold does s
 *Proof.* (a) If every candidate has norm at most $c$ the cap acts as the identity on every block; a union bound over
 the $n_bL$ candidates, each with squared norm $\chi^2_3$, gives the probability. (b) For a fixed choice $s$ of one
 candidate per block, $f_s=\|Q_h^{\mathsf T}\phi(\mathbf x_s)\|$ is a composition of the map
-$\mathbf z\mapsto\mathbf x$ (convolution with $k/\|k\|_2$, operator norm $\kappa$), the block-wise radial map (1-Lipschitz:
+$\mathbf z\mapsto\mathbf x_s$ from the white noise to the $3n_b$ read samples (one row per block and component, each
+row the normalised kernel shifted, of norm 1, and different rows supported on disjoint stretches of $\mathbf z$ by the
+independence assumption: a partial isometry, of norm 1), the block-wise radial map (1-Lipschitz:
 for a radial map the constant is $\max(\sup r',\sup r(t)/t)$, which is 1 for the identity and the cap, and for $\ell_c$
 since $\ell_c'(t)\le(1+t^2/c^2)^{-1/2}$ from $\log(1+u)\ge u/(1+u)$) and the contraction of Lemma AA.9.1; so $f_s$ is
-$\kappa$-Lipschitz in the white noise $\mathbf z$, and the read score satisfies $\sigma_\phi\le F=\max_sf_s$, which
-is $\kappa$-Lipschitz as a maximum of such functions. Gaussian concentration gives
-$\Pr(F\ge\mathbb EF+t)\le e^{-t^2/2\kappa^2}$. Each $\phi(\mathbf x_{k,w})$ is centred and isotropic with
+1-Lipschitz in the white noise $\mathbf z$, and the read score satisfies $\sigma_\phi\le F=\max_sf_s$, which
+is 1-Lipschitz as a maximum of such functions. Gaussian concentration gives
+$\Pr(F\ge\mathbb EF+t)\le e^{-t^2/2}$. Each $\phi(\mathbf x_{k,w})$ is centred and isotropic with
 $\mathbb E\|\phi(\mathbf x_{k,w})\|^2\le3$, and the blocks are independent, so the covariance of $\phi(\mathbf x_s)$ is
 block-diagonal with blocks $\preceq I_3$ and $\mathbb Ef_s^2\le\operatorname{tr}(Q_h^{\mathsf T}Q_h)\le6$; each $f_s$ is
-sub-Gaussian around its mean with proxy $\kappa^2$, and the maximum of the $L^{n_b}$ of them has
-$\mathbb EF\le\sqrt6+\kappa\sqrt{2n_b\log L}$. (c) The blocks that differ contribute
+sub-Gaussian around its mean with proxy 1, and the maximum of the $L^{n_b}$ of them has
+$\mathbb EF\le\sqrt6+\sqrt{2n_b\log L}$. (c) The blocks that differ contribute
 $\|r_c(\mathbf v_k)-r_c(\mathbf v_k')\|\le2c$ each, and Lemma AA.9.1 gives the bound; for the identity,
 Proposition AA.9.2(c). $\square$
 
@@ -8233,10 +8258,18 @@ $7\times640$ samples of a 40 s window exceeds the cap: under Gaussian noise the 
 window in three thousand, so it costs nothing in false alarms and its effects are those of (c) and of Proposition
 AA.9.3. Over $2\times10^5$ simulated hypotheses the upper quantiles of $\sigma$ at $p=10^{-2}$ and $10^{-4}$ were 5.81
 and 7.18 for the identity and the cap (identical, as (a) predicts) and 5.51 and 6.78 for the logarithmic map, against
-the bound of (b) of 25.8 and 28.5. The bound holds and is conservative by a factor of about four in $\sigma$, most of it
-from the union over the $L^{n_b}$ read positions; it is a guarantee, not a calibration, and an operating threshold is
+the bound of (b) of 13.33 and 14.59. The bound holds and is conservative by a factor of about two in $\sigma$, which is
+the union over the $L^{n_b}$ read positions; it is a guarantee, not a calibration, and an operating threshold is
 still better set on noise windows of the same network. What (b) and (c) add is the form of the tail (Gaussian with
-scale $\kappa$ around a mean) and the fact that, for the capped score, a threshold set on clean noise can be made safe
+unit scale around a mean) and the fact that, for the capped score, a threshold set on clean noise can be made safe
 against transients at a known number of arrivals by an additive margin that does not depend on their amplitude; for the
 logarithmic score the margin grows only as $\sqrt{\log}$ of the amplitude (Proposition AA.9.2(b)). Real noise is neither Gaussian nor white, and the peak search, the grid and the greedy deflation of MT-FW
 make the null law of the deployed detector a maximum of dependent quantities that (b) bounds only through $N$.
+
+*Erratum (19 October 2026).* The first version of (b) carried the factor $\kappa$ (2.146 for the 2 Hz kernel at
+16 Hz) on its last two terms, taking the operator norm of the convolution over the whole record as the Lipschitz
+constant of the read score; the bound 28.5 at $p=10^{-4}$ was valid but loose by that factor, and the statement that
+most of its looseness came from the union over read positions was wrong. The constant is 1 because the score reads one
+sample per block and component (Proposition AB.C.1, Appendix AB). The corrected bounds are printed next to the old ones
+by `experiments/exploratory/THEORY-5/tail_check_c1.py` (output `tail_check_c1_out.txt`), with the seed and the
+quantiles of `results/theory/tail_check_out.txt`, which is unchanged.

@@ -1,0 +1,47 @@
+Ricker 2.0 Hz: omega^2 = ||s'||^2 = 197.39 s^-2, psi = ||s''||^2 = 54549.1 s^-4, psi - omega^4 = 15585.5 s^-4
+A.1  un arribo: residuo exacto R frente a los terminos principales
+   polarizaciones distintas: |g1| 1.568 |g2| 1.216; termino de primer orden omega^2 D^2 |g1 x g2|^2/|g1+g2|^2
+     D =  0.100 s: R = 5.3382e-01; principal 1.4243e+00; cociente 0.37480
+     D =  0.030 s: R = 7.5988e-02; principal 1.2818e-01; cociente 0.59280
+     D =  0.010 s: R = 1.2917e-02; principal 1.4243e-02; cociente 0.90692
+     D =  0.003 s: R = 1.2701e-03; principal 1.2818e-03; cociente 0.99086
+     D =  0.001 s: R = 1.4228e-04; principal 1.4243e-04; cociente 0.99898
+   polarizaciones paralelas (|g1| = 1.3, |g2| = 0.6): termino (psi - omega^4)/4 D^4 (|g1||g2|/(|g1|+|g2|))^2
+     D =  0.100 s: R = 4.8664e-02; principal 6.5666e-02; cociente 0.74109
+     D =  0.030 s: R = 5.1849e-04; principal 5.3190e-04; cociente 0.97479
+     D =  0.010 s: R = 6.5481e-06; principal 6.5666e-06; cociente 0.99718
+     D =  0.003 s: R = 5.3176e-08; principal 5.3190e-08; cociente 0.99975
+   separacion grande (Prop. A.5'): R >= m^2 (1 - alpha^2) - 4 alpha M m, alpha = sup_{|u|>=D/2}|a(u)|
+     D = 0.50 s: alpha = 5.55e-01; min sobre 200 pares de (R - cota) = 2.161e-01
+     D = 0.75 s: alpha = 1.16e-01; min sobre 200 pares de (R - cota) = 4.418e-02
+     D = 1.00 s: alpha = 9.87e-02; min sobre 200 pares de (R - cota) = 2.548e-03
+     D = 1.50 s: alpha = 1.82e-03; min sobre 200 pares de (R - cota) = 1.036e-03
+     D = 2.00 s: alpha = 1.18e-06; min sobre 200 pares de (R - cota) = 5.301e-07
+A.2  margen de red delta_1 / sqrt(E1) (E1 = E2 = 1), red 'spread' de 8 estaciones, fuente en (2, -3, 9) km
+   S1 colocados, mecanismos distintos
+     dtau(s)   delta_1 exacto   cota relajacion   lineal 1er orden   lineal 2o orden
+       0.003     2.3527e-02      1.9717e-02       1.9718e-02       2.5488e-04
+       0.010     7.8374e-02      6.5702e-02       6.5727e-02       2.8321e-03
+       0.030     2.3382e-01      1.9653e-01       1.9718e-01       2.5488e-02
+       0.100     7.2906e-01      4.2674e-01       6.5727e-01       2.8321e-01
+       0.300     9.4099e-01      4.8573e-01       1.9718e+00       2.5488e+00
+       1.000     1.0000e+00      5.0268e-01       6.5727e+00       2.8321e+01
+   S2 colocados, mismo mecanismo
+     dtau(s)   delta_1 exacto   cota relajacion   lineal 1er orden   lineal 2o orden
+       0.003     2.8086e-04      2.8086e-04       0.0000e+00       2.8089e-04
+       0.010     3.1175e-03      3.1175e-03       0.0000e+00       3.1210e-03
+       0.030     2.7800e-02      2.7800e-02       0.0000e+00       2.8089e-02
+       0.100     2.7800e-01      2.7597e-01       0.0000e+00       3.1210e-01
+       0.300     8.9392e-01      5.2791e-01       0.0000e+00       2.8089e+00
+       1.000     1.0000e+00      6.4075e-01       0.0000e+00       3.1210e+01
+   S3 mismo mecanismo y origen, separacion horizontal dx (columna = dx en km)
+     dtau(s)   delta_1 exacto   cota relajacion   lineal 1er orden   lineal 2o orden
+       0.030     1.1493e-03      8.9049e-04       4.5536e-05       8.8986e-04
+       0.100     1.2661e-02      9.7962e-03       5.0457e-04       9.8479e-03
+       0.300     1.0753e-01      7.9900e-02       4.5040e-03       8.7616e-02
+       1.000     6.7751e-01      4.9638e-01       4.8397e-02       9.3375e-01
+       2.000     9.0300e-01      4.0213e-01       1.8198e-01       3.5103e+00
+A.3  pendientes log-log de delta_1 en dtau pequeno y separacion minima resoluble
+   S1 colocados, mecanismos distintos: pendiente 1.00; SNR 12.4: 0.034 s; SNR 30: 0.014 s; SNR 100: 0.004 s
+   S2 colocados, mismo mecanismo: pendiente 2.00; SNR 12.4: 0.098 s; SNR 30: 0.061 s; SNR 100: 0.033 s
+   S3 mismo mecanismo y origen, separacion horizontal dx (columna = dx en km): pendiente 1.97; SNR 12.4: 0.542 km; SNR 30: 0.304 km; SNR 100: 0.163 km

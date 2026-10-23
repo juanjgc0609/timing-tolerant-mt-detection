@@ -1,0 +1,47 @@
+R1, declared post hoc defects E60 (within-segment percentile score) and E61 (19-block bootstrap)
+Inputs: stored lists of the frozen run; truth and catalogue from the MatchLocate2 example (checksums of
+data/checksums/hinet_matchlocate2_example.sha256). The registered numbers are not changed.
+
+E60. Within-segment percentile score of HYB
+   CAL: BASE events 20, P1 atoms 174; percentile steps 0.5/20 (BASE) and 0.5/174 (P1); HYB fractional parts in [0.0029, 0.5000]
+   EVAL: BASE events 29, P1 atoms 269; percentile steps 0.5/29 (BASE) and 0.5/269 (P1); HYB fractional parts in [0.0019, 0.5000]
+   P1 raw score at within-segment percentile 0.25: CAL 86.8, EVAL 90.0
+   P1 raw score at within-segment percentile 0.50: CAL 244.2, EVAL 228.4
+   P1 raw score at within-segment percentile 0.75: CAL 899.3, EVAL 873.3
+   HYB detections that are P1 atoms (re-scored in the third variant): EVAL 248, CAL 160
+   registered (picks + 0.5 x within-segment percentile):
+      in-segment LOC+T 30/h: HYB 23, BASE 22, BESTPICK 26 of 54
+      R1-a HYB 23 vs BASE 22 of 54, discordant 1/0, McNemar p = 0.5000
+      R1-b HYB 23 vs BESTPICK 26 of 54, discordant 1/4, McNemar p = 0.9688
+      deployable: CAL threshold 1.261 (17/30 on CAL) -> EVAL 23/54, 13 false (41.8 per hour; budget 30)
+   picks only (W_WAVE = 0):
+      in-segment LOC+T 30/h: HYB 23, BASE 22, BESTPICK 26 of 54
+      R1-a HYB 23 vs BASE 22 of 54, discordant 1/0, McNemar p = 0.5000
+      R1-b HYB 23 vs BESTPICK 26 of 54, discordant 1/4, McNemar p = 0.9688
+      deployable: CAL threshold 1.000 (17/30 on CAL) -> EVAL 23/54, 11 false (35.4 per hour; budget 30)
+   P1 percentile against the CAL atoms:
+      in-segment LOC+T 30/h: HYB 23, BASE 22, BESTPICK 26 of 54
+      R1-a HYB 23 vs BASE 22 of 54, discordant 1/0, McNemar p = 0.5000
+      R1-b HYB 23 vs BESTPICK 26 of 54, discordant 1/4, McNemar p = 0.9688
+      deployable: CAL threshold 1.261 (17/30 on CAL) -> EVAL 23/54, 12 false (38.6 per hour; budget 30)
+
+E61. Block bootstrap of the contrasts (LOC+T 30/h, 2000 replicates, seed of the run)
+   registered: 19 blocks of 60 s, the last one 40 s long and counted as 60 s
+      HYB - BASE: median +0.018, 95% [+0.000, +0.058], share <= 0 0.354, share = 0 0.354
+      HYB - BESTPICK: median -0.052, 95% [-0.163, +0.000], share <= 0 0.993, share = 0 0.107
+      P1 - BASE: median -0.386, 95% [-0.490, -0.286], share <= 0 1.000, share = 0 0.000
+   last block at its true length:
+      HYB - BASE: median +0.018, 95% [+0.000, +0.058], share <= 0 0.355, share = 0 0.355
+      HYB - BESTPICK: median -0.052, 95% [-0.163, +0.000], share <= 0 0.993, share = 0 0.107
+      P1 - BASE: median -0.386, 95% [-0.490, -0.286], share <= 0 1.000, share = 0 0.000
+   blocks of 30 s (38 blocks, last 10 s at its true length):
+      HYB - BASE: median +0.018, 95% [+0.000, +0.059], share <= 0 0.367, share = 0 0.367
+      HYB - BESTPICK: median -0.053, 95% [-0.167, +0.019], share <= 0 0.952, share = 0 0.098
+      P1 - BASE: median -0.386, 95% [-0.500, -0.275], share <= 0 1.000, share = 0 0.000
+   blocks of 120 s (10 blocks, last 40 s at its true length):
+      HYB - BASE: median +0.019, 95% [+0.000, +0.057], share <= 0 0.340, share = 0 0.340
+      HYB - BESTPICK: median -0.051, 95% [-0.167, +0.000], share <= 0 0.987, share = 0 0.103
+      P1 - BASE: median -0.386, 95% [-0.492, -0.267], share <= 0 1.000, share = 0 0.000
+   HYB - BASE: discordant targets 1/0 in 1 of 19 blocks; difference +0.019, Newcombe paired 95% [-0.032, +0.069]
+   HYB - BESTPICK: discordant targets 1/4 in 3 of 19 blocks; difference -0.056, Newcombe paired 95% [-0.139, +0.031]
+   P1 - BASE: discordant targets 0/21 in 15 of 19 blocks; difference -0.389, Newcombe paired 95% [-0.522, -0.246]
