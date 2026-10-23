@@ -43,8 +43,10 @@ Rules reported: `legacy` (registered), `legacy-loct` (registered nearest-event r
   `task2i_run.py run --seeds 5151,6262 --arms prim`; `rescore/rescore_2i.py legacy` reproduces every number of
   `results/task2i/analyze_2i_primary_out.txt` except the run times (2288 of 2310 numbers identical; the other 22 are
   the timing section). The secondary arms thr, s25 and s80 were not regenerated.
-- The regenerated 2F and 2I parts are archived in `results/task2f/records/` and `results/task2i/records/`
-  (`*.tar.xz` with `SHA256SUMS`; 5.8 and 5.7 MB). `tests/test_regression.py` (d) and (e) extract them and check the
+- The 2F and 2I parts archived in `results/task2f/records/` and `results/task2i/records/` (`*.tar.xz` with
+  `SHA256SUMS`; 5.8 and 5.7 MB) are a **regeneration** with the frozen code, not the original registered records,
+  which were never stored (E49). Their equivalence to the registered runs rests on reproducing every registered
+  number above, not on the bytes of the original files. `tests/test_regression.py` (d) and (e) extract them and check the
   reproduction above on every CI run.
 - 2A, 2B: `rescore/rescore_2a2b.py legacy` reproduces `analyze_2a_out.txt` and `analyze_2b_out.txt` (every number).
 - R0, R1: `python -m ttmt.analysis.r0 eval results/taskR0/verif_r0/analysis 2000` and `python -m ttmt.analysis.r1 eval
@@ -128,7 +130,8 @@ cell). Outputs: `2a_dedup_out.txt`, `2b_dedup_out.txt`.
 ## Reproduce
 
 ```bash
-cd code
+cd code      # run from code/: the archives extract to code/task2f_parts and code/task2i_parts, the paths the
+            # frozen scripts read (rescore_2f.py and rescore_2i.py take no parts argument; they are append-only)
 python rescore/rescore_2m.py strict OUT.txt 2000 2718=../results/task2M/parts_2718 3141=../results/task2M/parts_3141
 python rescore/dup_stats_2m.py
 tar -xJf ../results/task2f/records/task2f_parts.tar.xz       # or regenerate (about 6.4 CPU-hours):
