@@ -471,8 +471,11 @@ event already hit was also neutral, so a method paid nothing for repeat detectio
 detection is false, and reports every synthetic and real-noise contrast under the four combinations of the two choices;
 the results below give the registered value and, where it changes a verdict, the one-to-one LOC+T value. One-to-one
 matching with LOC+T is the primary rule of every future test (`docs/decisions/ADR-0007-primary-hit-rule.md`). The real
-tests R0 and R1 already required the origin time; they also counted repeat detections as neutral and have not been
-rescored one to one. The synthetic Task 2I is being rescored and is reported under its registered rule only. On synthetic data the budget is 0.1 or 0.25 false events per window; on continuous real data it
+tests R0 and R1 already required the origin time; they also counted repeat detections as neutral, and rescored one to
+one their results do not change (the primary R0 contrast stays at -0.383 and R1 is identical). Tasks 2A and 2B stored
+no detection locations, so their rescoring can only count repeats as false; no verdict changes and no cell moves by more
+than 0.06. Tasks 2C, 2D, 2E and 2L were not rescored, because their raw detection records were not stored and have not
+been regenerated; their verdicts stand only under the registered convention. On synthetic data the budget is 0.1 or 0.25 false events per window; on continuous real data it
 is 10, 30 or 60 false detections per hour, 30 being primary. Uncertainty is given by hierarchical bootstrap over
 networks and windows on synthetic data and by a bootstrap of 60 s blocks [Kunsch 1989] on continuous data, with the
 operating point re-chosen in every replicate; multiple primary tests are corrected by Holm's procedure [142].
@@ -514,6 +517,7 @@ means a hit needs the epicentre within 5 km; "origin time required" adds an orig
 | E5b | synthetic | Task 2F (post hoc rescoring) | Same contrast, strong clutter, one-to-one matching with origin time required, seed 4242 (8888: +0.027); below the 0.03 point criterion, rule 2F-a not met | +0.023 [+0.011, +0.036] | `results/rescore_duplicates/2f_strict-loct_out.txt:29` |
 | E5c | synthetic | Task 2F (post hoc rescoring) | Rule 2F-c (equivalence in standard windows), one-to-one matching with origin time required, seed 4242, 90% interval: not met on the upper side | +0.020; [-0.021, +0.056] | `results/rescore_duplicates/2f_strict-loct_out.txt:49` |
 | E6 | synthetic | Task 2I (registered) | Huber fit (HUBER-N) minus BOMP-PK in dense windows, seed 5151 (epicentre rule) | +0.058 [+0.039, +0.076] | `results/task2i/analyze_2i_primary_out.txt:82` |
+| E6b | synthetic | Task 2I (post hoc rescoring) | Huber fit minus BOMP-PK in dense windows, one-to-one matching with origin time required, seed 6262 (5151: +0.032, met); the lower bound stays above zero but the point is below the 0.03 criterion, rule 2I-a not met | +0.019 [+0.008, +0.030] | `results/rescore_duplicates/2i_strict-loct_out.txt:83` |
 | E7 | synthetic | Task 2L (registered) | Pick-free station terms S2 minus catalogue terms, standard windows, origin time required, seed 7171 | +0.057 [+0.034, +0.081] | `results/task2l/analyze_2l_out.txt:113` |
 | E8 | real noise | Task 2M (registered) | Capped MT-FW minus BOMP-PK, dense windows, primary day with transients (epicentre rule) | +0.228 [+0.148, +0.298]; MET | `results/task2M/analyze_2m_out.txt:343` |
 | E8b | real noise | Task 2M (post hoc rescoring) | Capped MT-FW minus BOMP-PK, primary day, one-to-one matching (epicentre rule) | +0.205 [+0.133, +0.279]; MET | `results/rescore_duplicates/2m_strict_out.txt:343` |
@@ -593,10 +597,13 @@ strong clutter (E5b): the lower bounds stay above zero, the 0.03 point criterion
 asked the cap to be equivalent to BOMP-PK within 0.05 in standard windows, is also not met under that rule, on the upper
 side: the 90 per cent intervals reach +0.056 and +0.053 (E5c), so the capped detector may be better than the margin
 allows, which is a failure of equivalence and not evidence of harm. The mechanism rule 2F-b (removing the cap removes
-the gain) is met under every rule. Task 2I has not yet been rescored. The Huber fit with its level fixed from the noise gave +0.058 and
+the gain) is met under every rule. The Huber fit with its level fixed from the noise gave +0.058 and
 +0.053 (E6; +0.031 and +0.019 with the origin time required),
 was not inferior to the cap within 0.03, cost about nine times as much, and fell behind the cap when the amplitude
-spread between stations was large.
+spread between stations was large. Rescored post hoc with one-to-one matching, 2I moves by at most 0.003 and every
+verdict stands; with the origin time also required, rule 2I-a is no longer met: the gain is +0.032 for seed 5151 but
++0.019 for seed 6262 (E6b), whose lower bound +0.008 stays above zero while the point falls below the 0.03 criterion.
+Non-inferiority to the cap (2I-b) and equivalence to BOMP-PK in standard windows (2I-c) are met under every rule.
 
 **Pick-free station terms (2L).** Station terms estimated jointly with the hypocentres of twenty calibration events
 from matched-filter energy peaks alone, instead of catalogue corrections, added +0.057 and +0.062 in standard windows
@@ -744,7 +751,7 @@ produced the truth list.
 |:--|:--|:--|
 | G1 | A timing-tolerant moment-tensor detector with deflation, applied before picking, adds detections over the best published associator | Supported on the synthetic benchmark against associators fed by an STA/LTA picker, with operating points chosen on evaluation (2A to 2D); refuted on real seismicity against PhaseNet associators (R0); as a hybrid with a PhaseNet associator, no gain demonstrated (R1). Refuted on real data as stated. A conjecture for future work, formed after both real tests and not tested: the detector can compete only where most energy-peak readings of calibration events, with held-out station terms, lie within the reading tolerance (for example 90 per cent within 0.25 s) and against comparators fed by the same quality of picks; Ridgecrest (residual scale 0.35 to 0.41 s) and the swarm (55 per cent of P and 76 per cent of S readings within 0.25 s, post hoc) are far from it, and the synthetic benchmark was not measured in the same way |
 | G1-M | An off-grid group BLASSO with per-station time shifts adds detections over BOMP-PK | Refuted on synthetic data (2E) |
-| G1-R | Bounding the influence of each station (cap or Huber) adds detections over an unbounded pursuit in dense sequences | Confirmed twice on synthetic data (2F, 2I) and once on real noise with transients (2M) under the registered epicentre rule; the effect belongs to the per-station bound, which BOMP-PK can also use (descriptive arm of 2F, C18f); consistent with Propositions 1 and 4, written after the results. Rescored post hoc with one-to-one matching and the origin time required, the 2M contrasts keep lower bounds above zero, while 2F meets its rule with weak clutter only (+0.023 and +0.027 with strong clutter against a point criterion of 0.03) and its equivalence rule 2F-c fails on the upper side; 2I is not yet rescored |
+| G1-R | Bounding the influence of each station (cap or Huber) adds detections over an unbounded pursuit in dense sequences | Confirmed twice on synthetic data (2F, 2I) and once on real noise with transients (2M) under the registered epicentre rule; the effect belongs to the per-station bound, which BOMP-PK can also use (descriptive arm of 2F, C18f); consistent with Propositions 1 and 4, written after the results. Rescored post hoc with one-to-one matching and the origin time required, the 2M contrasts keep lower bounds above zero, while 2F meets its rule with weak clutter only (+0.023 and +0.027 with strong clutter against a point criterion of 0.03) and its equivalence rule 2F-c fails on the upper side; under the same rule 2I-a is met for one seed of two (+0.019 against 0.03 for seed 6262, E6b), while 2I-b and 2I-c are met |
 | G1-C | Pick-free station terms add detections when the origin time is required | Partially confirmed, in one geometry: the pooled gain of 2L is essentially that of the one-sided eight-station network, there is no demonstrated gain with four stations, and the terms were worse than the catalogue ones in about 22 per cent of the networks |
 | new | The cap trades robustness to transients for saturation in continuous seismicity | Proposed after the experiments as an explanation; its parts are proved in a simplified model (Gaussian noise, fixed readings; Propositions 1, 2, 4), and the saturation was measured at true hypocentres of real events (C18). Appendix AB proves that the trade-off is unavoidable for any score whose station influence is bounded uniformly, and that a bound relative to the background (ACAP) avoids it; that ACAP helps on real data is untested |
 
@@ -800,7 +807,8 @@ of them with a hashed registration, frozen code, a single run and a re-implement
 whose negative results are reported with the same weight as the positive ones. Second, bounded influence: a per-station bound on the subspace score helps when the
 noise has transients, measured on synthetic data and on one day of real noise with injected events, and consistent
 with a bound that does not depend on the amplitude of the transient. The real-noise result holds under the strictest
-hit rule; the synthetic one is smaller under that rule and meets its registered criterion only with weak clutter.
+hit rule; the synthetic one is smaller under that rule and meets its registered criterion only with weak clutter
+(2F) and only for one of two seeds (2I).
 The comparator had no robust preprocessing (no despiking or robust per-station normalisation, which production systems
 use), so the result shows that a per-station bound beats no bound, not that it beats standard practice; and in
 continuous seismicity the fixed cap saturates (Section 6.5, Proposition 2), so no practical value on continuous data is
@@ -826,7 +834,8 @@ advantage vanished. The bounded-influence result is therefore robust to the mech
 complexity, and it depends on moment-tensor coherence of the radiation.
 *Hit rule.* The headline synthetic and real-noise contrasts use an epicentre-only rule under which repeat detections are
 neutral (Section 5.2, E58). The real-noise contrasts of 2M survive one-to-one matching with the origin time required;
-one primary criterion and the equivalence criterion of 2F do not. That the verdicts depend on the rule is consistent
+one primary criterion and the equivalence criterion of 2F do not, and the primary criterion of 2I fails for one of
+its two seeds. That the verdicts depend on the rule is consistent
 with the flat score surface just outside the hit radius found in Appendix AB.B.
 *Comparators.* In the synthetic tasks the associators were fed by an STA/LTA picker; on real data they were fed by
 PhaseNet, the strongest picker available, and won. *Operating points.* Every method's operating point was chosen on
@@ -840,8 +849,10 @@ one event. *What R1 tests.* All truth events of the swarm lie within 3.1 km of i
 epicentre within 5 km, so R1 tests detection and origin time, not location. A second detection of an event that is
 already hit counts as neutral, never as false, for every method. That convention favours the detectors that deflate
 imperfectly and so emit repeat detections (Proposition AB.B.6), because their repeats do not take the false-detection
-budget; in the dense windows of 2M 5 to 7 per cent of all detections were such repeats. Only 2F and 2M have been
-rescored one to one (Section 5.2); 2A to 2E, 2I, 2L, R0 and R1 keep the neutral convention. The freeze list covered the project code, the data
+budget; in the dense windows of 2M 5 to 7 per cent of all detections were such repeats. 2F, 2I, 2M, R0 and R1 have
+been rescored one to one, and 2A and 2B with repeats counted as false (Section 5.2); the verdicts of R0, R1, 2A and 2B
+do not change. Tasks 2C, 2D, 2E and 2L could not be rescored, because their raw detection records were not stored, so
+their verdicts rest on the neutral convention alone (critique CR-21). The freeze list covered the project code, the data
 and the package versions but not the PhaseNet source code, the auxiliary packages or the PyOcto model file (rebuilt
 byte for byte by the verifier). The pick-based BASE was below a homogeneous PyOcto with raw picks, so the published 1-D
 model did not help the associators on this swarm. *Development effort.* About twenty configurations were

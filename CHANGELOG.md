@@ -5,6 +5,9 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-10-23
 
+- Thesis: Sections 5.2, 6.2, 7.3, 7.4 and Table 2 updated for the 2I, 2A, 2B, R0 and R1 rescoring (rule 2I-a not met
+  under one-to-one LOC+T for seed 6262, +0.019 against 0.03; the other verdicts unchanged); the coverage gap of 2C, 2D,
+  2E and 2L (records not stored, not rescored) stated; Table 1 gains row E6b.
 - Scoring (E58, CR-21): the 2I primary arm regenerated with the frozen code and rescored under the registered and
   one-to-one rules, with and without origin time; 2A and 2B rescored with repeats as false (`rescore/rescore_2a2b.py`);
   R0 and R1 rescored with `--match one_to_one`. Regenerated 2F and 2I parts archived with checksums in
