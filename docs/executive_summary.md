@@ -846,7 +846,7 @@ identical to the exhaustive search), not a pruning gain over the moment-tensor c
 
 ## 9. Note on the working method
 
-During development **fifty-eight errors** were documented (E1 to E58): three of claims in the text
+During development **sixty-two errors** were documented (E1 to E62): three of claims in the text
 pointed out by the fourth independent audit (E40, "certificate" used for a statistic that is not one;
 E41, a declared dependence removed together with the arms that measure it without reporting it; E42, the real test G1'
 without an arm for the polarisation assumption that the real data contradict), thirty of experimental
@@ -867,7 +867,11 @@ not preserved outside the working container; and E50, an exploration that inheri
 drew a false conclusion about the medium; and five found by an independent audit of the code (E51 to E55): a 3 Hz
 matched filter deflated with the 2 Hz pulse, exact-time readers at the floor sample, station terms of the development
 readings estimated on the events they detect, peak-based terms applied to onset picks, and a 31 ms rounding of the
-calibration origin; and E56, a development run of R1 that read the first 40 s of its evaluation segment. Several of
+calibration origin; E56, a development run of R1 that read the first 40 s of its evaluation segment; and six found by
+the research audit of October 2026 (E57 to E62): a thesis description of the synthetic generator that did not match the
+code, repeat detections counted as neutral and a headline hit rule without an origin-time test, the C18j gate met only
+in sample, a within-segment percentile in the R1 hybrid score, R1 bootstrap intervals bounded by a single discordant
+event, and a deflation that subtracts on the integer sample grid. Several of
 them reversed or annulled a result: constraints turned into no-ops, undersampling of the
 sensitive parameter, true source on a grid node, thresholds below chance and, the most costly,
 ties of a discrete score read as a physical effect (E15), a weak comparator against an
@@ -904,7 +908,7 @@ support (E39). The independent verification of Task 2I confirmed its positive wi
 or provenance errors, regenerated parts across the two interruptions of the run and bounded its
 scope (hit rule with origin time, equivalence per regime, cost), without adding an error to the
 log. The
-errors (fifty-eight to date) are in
+errors (sixty-two to date) are in
 `artifact_manifest_and_error_log.md` with cause, detection and correction, together with the checks that
 would have caught them.
 

@@ -1,0 +1,4 @@
+# Store and check out every file byte-for-byte: no line-ending conversion.
+# The freeze lists (code/r1/FREEZE_R1.sha256, data/checksums/, code/LEGACY_INDEX.sha256)
+# hash the LF bytes, and core.autocrlf=true on Windows would rewrite them.
+* -text

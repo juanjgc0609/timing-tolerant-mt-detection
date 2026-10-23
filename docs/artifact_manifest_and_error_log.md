@@ -169,7 +169,7 @@ to 2L, are also in `outputs/explore_contrib/`, with their scripts, reports and o
 
 ## 3. The design errors that inverted or nullified a result
 
-This is the central content of this manifest. The log contains 58 errors, E1 to E58. In the
+This is the central content of this manifest. The log contains 62 errors, E1 to E62. In the
 first six (E1 to E6) the resulting number looked valid, and in all six it was detected **only because
 it turned out to be implausible**, not because there was a visible fault in the code; the following ones were detected
 by controls, preregistered rules or audits, as indicated in each one.
@@ -1164,6 +1164,92 @@ non-inferior. With LOC+T, 2F-a strong (+0.023 / +0.027 against the 0.03 point cr
 on the upper side) are not met; 2M-a and 2M-b keep lower bounds above 0 in seed 2718.
 **Correction:** `code/froc_strict.py` (one-to-one matching in score order; repeat atoms are false), proposed as the
 rule of future tests together with LOC+T as the headline. The registered results stand as registered.
+
+### E59. The C18j gate was met on the events that set its station terms, and fails out of sample
+**Script:** `explore_contrib/c18j_layered.py` (exploration C18j), the reading that motivated Task R1.
+**Symptom:** C18j (layered medium, +-2 s terms, 2 Hz, MT-FW without a cap) met the registered gate with 5 of 16 CAL
+events on U8 and 4 of 16 on N8 (LOC+T, 30 false per hour), with terms estimated on the same 16 events (E53). The
+leave-events-out reading of the code audit kept 5 of 16 on U8 only when the window's own events were removed from the
+terms, and gave 1 of 16 when every event inside the window was removed.
+**Cause:** E53. No reading with terms and events fully separated had been made; the R0 evaluation segment, whose 45
+events never enter the CAL terms, was not used because C18 was restricted to development data.
+**Detection:** the research audit of 18 October 2026 (Phase 2, item 7 of `docs/ROADMAP.md`).
+**Scope:** `explore_contrib/c18j_eval_posthoc.py` runs `c18j_layered.main` unchanged (the CAL terms, the same engine and
+loop) on the windows of the R0 evaluation segment [900, 3560) s; `c18j_eval_analyze.py` scores it with the R0
+functions (`results/explorations/c18/c18j_eval_analysis.txt`). The environment reproduces the stored C18j CAL atoms of
+U8 bit for bit. Out of sample the gate configuration recalls 2 of 45 events on U8 (0.044) and 5 of 45 on N8 (0.111)
+with origin time at 30 false per hour, against 0.313 and 0.250 in sample and against 0.289 and 0.600 for the best
+pick-based associator of R0 on the same segment; LOG6 recalls 1 and 8 of 45. The registered homogeneous detector
+recalled 0 and 2 of 45. The layered medium and the wider terms help, by a few events, and the gate is not met out of
+sample. The R0 evaluation segment had been used by R0, so this is a descriptive reading of used data. No registered
+number changes; R1 is not affected (it tested the hybrid on unseen data and P1 recalled 1 of 54, in line with this).
+**Correction:** Appendix Y.32 states the out-of-sample reading next to the gate. Rule for future development gates:
+the terms are estimated on events that the gate does not count.
+
+### E60. The score of the R1 hybrid is a percentile taken within the segment it scores
+**Script:** `code/r1/r1_hybrid.py` (`hybrid`, with `hyb_dev.pct`), Task R1.
+**Symptom:** the score of a hybrid detection is its number of supporting picks plus 0.5 times the percentile of its
+waveform score, and the percentile is computed over the detections of the same segment (the BASE events and the P1
+atoms of that segment, separately). The score of one detection therefore depends on every other detection of the
+segment, the same waveform score maps to different values on CAL (20 BASE events, 174 P1 atoms) and on EVAL (29 and
+269), and the deployable threshold (the CAL operating point applied to EVAL) is a threshold carried to a different scale.
+**Cause:** the percentile was meant as a scale-free tie-breaker between candidates with the same pick support and was
+written as a rank within the list, which is transductive.
+**Detection:** the research audit of 18 October 2026 (Phase 2, item 4 of `docs/ROADMAP.md`); the verification of R1 had
+already shown that the term cannot change the in-segment readings (section 4.4 of `r1_verification.txt`).
+**Scope:** measured on the stored lists (`code/r1/posthoc_defects.py`, `results/taskR1/posthoc/defects_e60_e61_out.txt`).
+With picks only (weight 0) and with the P1 percentile taken against the CAL atoms, R1-a (23 against 22, discordant 1 and
+0) and R1-b (23 against 26) are unchanged. The deployable threshold of HYB gives 11 false detections in EVAL (35.4 per
+hour) with picks only and 12 (38.6 per hour) with the CAL-referenced percentile, against 13 (41.8 per hour) registered,
+with the same 23 targets: the percentile accounts for at most two of the false detections, and the hybrid stays above
+the budget of 30 per hour with any of the three scores. The failure of false-alarm calibration is not caused by this
+defect. No registered number changes.
+**Correction:** declared in Appendix Y.33. Rule for future tests: a score must be a function of the detection and of
+constants fixed before the evaluation, never a rank within the evaluation list.
+
+### E61. The R1 bootstrap intervals come from 19 blocks and cannot fall below a single discordant event
+**Script:** `code/r1/r1_analyze.py` (block bootstrap), `r0_analyze.froc`, Task R1.
+**Symptom:** the descriptive 95 per cent interval of HYB - BASE is [+0.000, +0.058], which reads as "no worse than
+BASE". The bootstrap resamples 19 blocks of 60 s, the last of 40 s counted as 60 s (verification D6), and the only
+discordant target of the contrast lies in one of them.
+**Cause:** a block bootstrap can only redistribute the discordances that occurred. With one discordant target in favour
+of HYB and none against it, no replicate can make HYB worse than BASE, so the lower bound is the atom at zero (35 per
+cent of the replicates are exactly 0) and not a statement about uncertainty; with 19 blocks the percentile interval is
+also coarse.
+**Detection:** the research audit of 18 October 2026 (Phase 2, item 4 of `docs/ROADMAP.md`).
+**Scope:** `results/taskR1/posthoc/defects_e60_e61_out.txt`. Counting the last block at its true length, or using blocks
+of 30 s (38 blocks) or 120 s (10 blocks), moves no bound by more than 0.019, so the block length is not the problem. A
+paired interval that does not resample (Newcombe 1998, method 10) gives HYB - BASE +0.019 [-0.032, +0.069], HYB - BESTPICK
+-0.056 [-0.139, +0.031] and P1 - BASE -0.389 [-0.522, -0.246]. The intervals were descriptive; the registered decisions
+rest on the exact McNemar tests, which are unaffected.
+**Correction:** declared in Appendix Y.33, where the Newcombe intervals are added next to the bootstrap ones. Rule for
+future tests: with few discordant events, report an interval for paired proportions; use the block bootstrap only when
+the number of blocks and of discordant events is large enough for the resampled distribution to have a lower tail.
+
+### E62. Deflation subtracts each accepted atom on the integer sample grid
+**Script:** `explore_contrib/c10_lib._deflate` (MT-FW and BOMP-PK loops), `c8_lib.mtfw_general`, `xc.mtfw_mask`,
+`certified_fw` and every greedy loop that subtracts `task1x_mtglrt.AC` centred on the read sample.
+**Symptom:** after an atom is accepted and deflated, part of each of its arrivals stays in the residual. Measured on a
+noise-free matched-filter output of one Ricker arrival (`tests/test_unit.py`, E62 tests): with the registered 2 Hz
+filter the fraction of the arrival's energy left is 0 for an arrival on the grid, 4.3 % at a quarter sample, 16.3 % at
+half a sample, and 5.6 % on average over a uniform sub-sample delay. With a 2.8 Hz pulse (the upper end of the
+generator's wavelets) through the 2 Hz filter it reaches 21.2 % (mean 7.4 %), and with the 3 Hz filter of C18h 34.0 %
+(mean 12.1 %). These are fractions of energy. The phase-5 theory (Proposition AB.B.6, Appendix AB) measures a different
+quantity, the peak amplitude of the residual relative to the arrival, $\sup_t\|\mathbf L_{ib}(t)\|/\|\mathbf g_{ib}\|$:
+0.387 at half a sample (against 0.163 in energy), and in its greedy simulation a median of 0.16 to 0.19 (depending on the
+NumPy version) and a maximum of 0.36. That 16 appears in both is a coincidence.
+**Cause:** the response is subtracted at the read (integer) sample, with the amplitude read at that sample. An arrival
+whose true time falls between samples is not represented by a grid-centred copy of the response.
+**Detection:** the phase-5 theory work (identifiability of overlapping events), checked numerically in the package.
+**Scope:** every greedy deflation run (MT-FW, BOMP-PK, HUBER-N and their variants, in every task). The energy left
+behind can produce a later atom near an accepted one (a repeat, which E58 counts as neutral) or raise the residual
+seen by a nearby event. No registered number changes. The registered runs used the grid deflation and stay as
+registered.
+**Correction:** a versioned convention in the package, `deflation="grid"` (legacy, the default, numbers unchanged) or
+`"fractional"` (`ttmt.detector.deflate`): the deflation response of the `Kernel` delayed by the sub-sample delay that
+best explains the residual around the read sample (`Kernel.response(delta)`, exact for the analytic pulse), scaled so
+that its value at the read sample is the fitted vector; it removes an off-grid atom to within 1e-6 relative. Any run
+with `"fractional"` is post hoc and separately labelled.
 
 ### On the order of the three errors of Task 0
 Three complete protocols, three different conclusions, and **in none of them was the cause the physics**. By

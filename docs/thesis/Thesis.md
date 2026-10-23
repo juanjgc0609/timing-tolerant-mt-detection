@@ -6,10 +6,6 @@ Universidad Icesi - Trabajo de grado - Juan Jose Gordillo Cordoba - October 2026
 
 Director: Uram Aníbal Sosa Aguirre
 
-> **Draft status (19 October 2026).** Passages marked **[pending #N]** rely on a result whose pull request N of the
-> repository is not yet merged (a re-implementation check is still open). They are confirmed or withdrawn when that
-> request is merged or closed; everything else rests on merged results.
-
 ---
 
 ## Abstract
@@ -94,7 +90,7 @@ The contributions are the following, stated at the level the evidence supports.
    paired bootstrap intervals. Table 3 states, for each, whether its registration was hashed before the run, whether
    its code was frozen by a hash list, whether it was run once and whether it was verified; not all of them had every
    step. Positive and negative results are reported in the same way, and a register of the errors found during
-   the work (fifty-eight so far, E1 to E58, and four more under review, E59 to E62 **[pending #5, #6]**) is part of
+   the work (sixty-two so far, E1 to E62) is part of
    the record.
 2. **Bounded influence helps in noise with transients.** A per-station cap or a Huber fit adds detections in
    dense sequences on synthetic data and on one day of real noise with transients and injected events, against a
@@ -221,7 +217,8 @@ predicted arrivals (the moment tensor through the radiation operator, convolved 
 matched filter) are subtracted from the data at the samples where they were read, and the search is repeated, up to a fixed number of events per window (six in the real-data tests).
 Because the read samples lie on the 16 Hz grid while the true arrivals do not, even an exact, noise-free prediction
 leaves part of each accepted arrival in the data: Proposition AB.B.6 bounds the residual, and in simulation it is a
-median of 16 per cent and up to 36 per cent of the arrival amplitude (error E62 **[pending #5]**). Hypotheses
+median of 16 to 19 per cent, depending on the numerical environment, and up to 36 per cent of the peak amplitude of
+the arrival (error E62). Hypotheses
 within 5 km of an accepted one are excluded. The thesis detector, MT-FW, scores each hypothesis by the subspace energy
 of its capped readings (Section 3.4); in some tasks a local refinement (T3) relocates each accepted event on a finer
 grid. BOMP-PK is block orthogonal matching pursuit
@@ -325,7 +322,9 @@ composition of the map from the white noise to the read samples, a radial map wi
 it is the projection on a ball; for the logarithmic map $\ell_c'(t)\le(1+t^2/c^2)^{-1/2}\le1$ and $\ell_c(t)\le t$)
 and the contraction of Lemma 1. The first map reads one sample per block and component: each of its rows is the
 normalised kernel, shifted, with norm 1, and different rows act on disjoint stretches of the noise (the independence
-assumption), so it is a partial isometry with norm 1. The score is therefore 1-Lipschitz in the white noise; the read
+assumption), so it is a partial isometry with norm 1. If the P and S readings of a station are closer than the
+kernel support, the rows overlap and the constant becomes $\sqrt{1+|\rho(t_S-t_P)|}\le\sqrt2$, with $\rho$ the kernel
+autocorrelation. The score is therefore 1-Lipschitz in the white noise; the read
 score is at most the maximum of these functions over the $L^{n_b}$ choices, which is 1-Lipschitz, and Gaussian
 concentration [Boucheron et al. 2013] gives a sub-Gaussian tail around its mean; the mean is bounded by $\sqrt6$ (the trace of the projector, using that the
 transformed blocks are centred, isotropic, of variance at most one per component, and independent) plus the maximal
@@ -666,7 +665,7 @@ recalled 5 of 16 on one subnetwork, exactly the threshold; with every event in t
 1 of 16 (E12). Run unchanged on the R0 evaluation segment, whose 45 events never enter the terms, the candidate recalled
 2 and 5 of 45 (0.044 and 0.111) on the same two subnetworks, against 0.289 and 0.600 for the best PhaseNet associator
 of R0 on the same segment, so out of sample the gate is not met; this reading was made after R1 and is declared post
-hoc (error E59) **[pending #6]**.
+hoc (error E59).
 
 ### 6.6 Second real test: a Hi-net swarm, and the hybrid (Task R1)
 
@@ -710,13 +709,13 @@ configuration missed and missed four it found (p = 0.97; E14). The block bootstr
 and the lower bound of the first is not a statement about uncertainty: with one discordant target, in one of the 19
 blocks, no replicate can make HYB worse than BASE, and 35 per cent of the replicates are exactly zero. Paired intervals
 for the difference of proportions [Newcombe 1998] give +0.019 [-0.032, +0.069] for HYB minus BASE and -0.056 [-0.139,
-+0.031] for HYB minus BESTPICK (error E61) **[pending #6]**. The pick-free detector alone recalled 1
++0.031] for HYB minus BESTPICK (error E61). The pick-free detector alone recalled 1
 of 54 (E15) and 1 of the 10 JMA events, against 9 of 10 for HYB and BASE and all 10 for BESTPICK. With the threshold of the development
 operating point applied unchanged, HYB kept its recall but produced 41.8 false detections per hour, above the budget,
 and BASE 12.9. Part of the hybrid score is a percentile of the waveform score taken within the segment being scored, so
 it is not fixed before the evaluation; scored by picks alone, or with that percentile referred to the development
 detections, the hybrid gives the same R1-a and R1-b counts and 35.4 or 38.6 false detections per hour with the
-development threshold, still above the budget (error E60) **[pending #6]**. A homogeneous-medium PyOcto with uncorrected picks, run as a descriptive comparator, recalled 25 of 54,
+development threshold, still above the budget (error E60). A homogeneous-medium PyOcto with uncorrected picks, run as a descriptive comparator, recalled 25 of 54,
 more than the 1-D configuration chosen as BASE. The prediction was right: no gain was demonstrated, and the pick-free
 detector added one event in fifty-four.
 
@@ -778,8 +777,8 @@ deflation is only as good as the prediction it subtracts, and the far-field poin
 does not predict a real S coda. In R1 the pick-free detector was uncapped and subtracted its full fit, so the ghosts
 come from the shape of the prediction, not from the cap; in the capped detector of R0 the cap-sized subtraction of
 Section 3.4 would add to the effect. A third source of residual, found by the theory after the tests, acts even when
-the prediction is exact: the subtraction at the read sample of the 16 Hz grid leaves 16 to 36 per cent of each
-accepted arrival (Section 3.3, Proposition AB.B.6); for an S arrival that carries one hundred to one thousand times the
+the prediction is exact: the subtraction at the read sample of the 16 Hz grid leaves up to 36 per cent of the peak
+amplitude of each accepted arrival, with a median of 16 to 19 per cent (Section 3.3, Proposition AB.B.6); for an S arrival that carries one hundred to one thousand times the
 energy of P, that residual can exceed the arrivals of the smaller events. Its share in the ghosts of R1 was not measured.
 
 ![Figure 3](figures/fig3_r1_ghost.png)
@@ -847,7 +846,7 @@ and the package versions but not the PhaseNet source code, the auxiliary package
 byte for byte by the verifier). The pick-based BASE was below a homogeneous PyOcto with raw picks, so the published 1-D
 model did not help the associators on this swarm. *Development effort.* About twenty configurations were
 tried on the sixteen development events of Ridgecrest before the gate was met, and the station terms of those
-readings were in-sample (E53); out of sample the gate is not met (E59) **[pending #6]**. *Registration.* The log is self-timestamped (Section 5.1); the R1 registration and
+readings were in-sample (E53); out of sample the gate is not met (E59). *Registration.* The log is self-timestamped (Section 5.1); the R1 registration and
 amendment were pushed to the public repository about one minute after the single run started, while their hashes had
 been sent before it. The development of R1 read the first 40 s of its evaluation segment (E56); removing them does not
 change the result.
@@ -904,12 +903,12 @@ one-to-one rescoring by the commands in `results/rescore_duplicates/README.md`. 
 results/taskR1/run docs/thesis/figures`. The data are public and `data/README.md` gives their sources and checksums. Paths in the scripts refer to the
 original working directory and must be adapted.
 
-The error register (`docs/artifact_manifest_and_error_log.md`) lists fifty-eight errors found during the work (E1 to
-E58), from claims in the text to implementation defects, each with its cause, its scope and whether it affected a
+The error register (`docs/artifact_manifest_and_error_log.md`) lists sixty-two errors found during the work (E1 to
+E62), from claims in the text to implementation defects, each with its cause, its scope and whether it affected a
 registered result; five of them (E51 to E55) were found by an audit of the code made by a separate AI session before
-the last real test, one (E56) by the verification of that test, and two (E57, E58) by the research audit of 18 October
-2026. Four more from that audit, E59 to E61 (C18j out of sample and two defects of the R1 analysis) and E62 (the
-deflation on the sample grid), are under review **[pending #5, #6]**.
+the last real test, one (E56) by the verification of that test, and six (E57 to E62) by the research audit of 18 October
+2026, among them C18j out of sample (E59), two defects of the R1 analysis (E60, E61) and the deflation on the sample
+grid (E62).
 
 ---
 

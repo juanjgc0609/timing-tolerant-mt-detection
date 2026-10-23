@@ -24,7 +24,21 @@ Fixed seeds inside each script.
 ## Endpoint and analysis
 Every output is stored next to its script (`*_out.txt`). Re-run on 19 October 2026 with NumPy 2.x and SciPy: the
 outputs of `check_identifiability`, `check_adaptive`, `check_extensions` and `diag_greedy` are identical;
-`check_greedy` (the longest) was still running at integration, and its stored output is that of 18 October.
+`check_greedy` (the longest) was identical in the re-implementation check of 20 October once the hand-written note
+below was removed.
+
+## Environment
+The stored outputs were produced and re-run with Python 3.13.16, NumPy 2.5.3 and SciPy 1.18.1. Under the frozen core
+environment (`environments/core.lock.txt`: Python 3.12, NumPy 1.26.4, SciPy 1.17.1, `OPENBLAS_CORETYPE=Prescott`) the
+re-implementation check of 20 October 2026 found `tail_check_c1`, `check_identifiability` and `check_extensions`
+identical, `check_adaptive` identical up to rounding (7.9e-16 against 8.1e-16), and `diag_greedy` different: median
+0.188, 90th percentile 0.313, maximum 0.356 of the residual peak amplitude, against 0.157, 0.316 and 0.362 stored,
+because the greedy step picks other nodes in some of its 6 replicates. Appendix AB reports the range.
+
+## Note on `check_greedy_out.txt`
+The B.4 line of that output measures the residual in a window that can fall on another arrival; the valid figure of
+the deflation residual is the one of `diag_greedy_out.txt`. (This note was first appended by hand to the stored output;
+it was moved here so that every stored output is exactly what its script prints.)
 
 ## Cost and risks
 Minutes per script except `check_greedy.py` (61,425 hypotheses x 216 replicates). The script comments are in Spanish,

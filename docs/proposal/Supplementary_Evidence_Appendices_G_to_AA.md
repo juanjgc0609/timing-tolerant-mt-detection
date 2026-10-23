@@ -7142,6 +7142,15 @@ shape used to deflate each accepted atom, and C18h differs from C18i and C18j in
 readings move by one event when only the import order changes and are not comparable with each other. The 2 Hz runs,
 including the gate candidate, are not affected.
 
+**Out of sample, declared post hoc (error E59).** The gate candidate was then run unchanged, with its terms still
+estimated on the 16 CAL events, on the R0 evaluation segment [900, 3560) s, whose 45 events never enter the terms
+(`explore_contrib/c18j_eval_posthoc.py`, `c18j_eval_analyze.py`, `results/explorations/c18/c18j_eval_analysis.txt`;
+the environment reproduces the stored CAL atoms of U8 bit for bit). With origin time at 30 false detections per hour
+it recalls 2 of 45 on U8 (0.044) and 5 of 45 on N8 (0.111), against 0.313 and 0.250 in sample, 0 and 2 of 45 for the
+registered homogeneous detector and 0.289 and 0.600 for the best pick-based associator of R0 on the same segment; LOG6
+recalls 1 and 8 of 45. The layered medium and the wider terms add a few events, and the gate is not met out of sample.
+The segment had already been used by R0, so this is a descriptive reading, not a test.
+
 **What follows.** R0 failed for a reason that is now measured: station terms truncated at 1 s, a homogeneous medium and a
 capped score each removed part of the evidence, and only together do their corrections bring the pick-free detector to
 about a third of the development events with origin times matched, still well below PhaseNet with PyOcto on the same
@@ -7242,6 +7251,20 @@ run, with terms that leave out each event, the energy-peak readings of the 17 CA
 a robust scale of 0.222 s for P (47 readings; 55 per cent within 0.25 s, 64 per cent within 0.5 s) and 0.169 s for S
 (105 readings; 76 and 80 per cent). The typical reading is within the tolerance, and a large minority falls on another
 peak.
+
+**Two defects of the analysis, declared post hoc** (errors E60 and E61; `code/r1/posthoc_defects.py`,
+`results/taskR1/posthoc/defects_e60_e61_out.txt`, on the stored lists of the frozen run). First, the waveform part of
+the HYB score is a percentile taken within the segment being scored, so a score depends on the other detections of the
+segment and the CAL threshold carried to EVAL sits on a different scale. With picks only, or with the P1 percentile
+taken against the CAL atoms, R1-a and R1-b are unchanged, and the deployable threshold gives 11 and 12 false detections
+in EVAL (35.4 and 38.6 per hour) against the registered 13 (41.8), with the same 23 targets: the hybrid exceeds the
+budget of 30 per hour with any of the three scores, so the failure of false-alarm calibration does not come from this
+defect. Second, the block bootstrap resamples 19 blocks and the only discordant target of HYB - BASE lies in one of
+them, so no replicate can put HYB below BASE: the lower bound +0.000 is the atom at zero (35 per cent of replicates),
+not a statement of uncertainty. Changing the block length (30 or 120 s) or counting the last block at its true 40 s
+moves no bound by more than 0.019. A paired interval that does not resample (Newcombe, method 10) gives HYB - BASE
++0.019 [-0.032, +0.069], HYB - BESTPICK -0.056 [-0.139, +0.031] and P1 - BASE -0.389 [-0.522, -0.246]. The registered
+decisions rest on the exact McNemar tests and stand.
 
 ---
 

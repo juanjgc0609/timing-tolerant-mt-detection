@@ -1,0 +1,13 @@
+# Conda environment of the pick stage (PhaseNet with TensorFlow-CPU 2.15.1, GaMMA, PyOcto 0.2.0 with pyrocko).
+#   conda env create -f environments/picks.yml && conda activate ttmt-picks && python -m pip install --no-deps -e .
+#   git clone https://github.com/AI4EPS/PhaseNet.git $PHASENET_HOME/PhaseNet  (checkout 62005c6195638f88d077f8870ea895971062715a)
+#   git clone https://github.com/AI4EPS/GaMMA.git $GAMMA_SRC                    (checkout 80394dd4a4c29450da599f507916ecf1db6203dd)
+# tensorflow 2.15 needs Python <= 3.11.
+name: ttmt-picks
+channels:
+  - defaults
+dependencies:
+  - python=3.11.17
+  - pip
+  - pip:
+      - -r picks.lock.txt

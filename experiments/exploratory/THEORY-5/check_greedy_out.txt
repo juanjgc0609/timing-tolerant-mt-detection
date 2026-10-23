@@ -25,4 +25,3 @@ B.3  certificados del Teorema B.4 con seleccion equivocada: 0
 B.4  amplitud residual de la fuente hallada tras la deflacion desplegada (fraccion de ||g_ib||, max en +-0.5 s del arribo): mediana sobre bloques 0.266, maximo 388.649 (72 casos)
      residuo de un arribo aislado sup_t |a(t) - a(d) a(t - d)| (prediccion de la Prop. B.6):
        d =  0.0 ms: 0.000  d =  6.2 ms: 0.077  d = 12.5 ms: 0.154  d = 18.8 ms: 0.232  d = 25.0 ms: 0.310  d = 31.2 ms: 0.387
-NOTA: la linea B.4 de arriba usa una ventana que puede caer sobre otro arribo; la cifra valida del residuo de deflacion es la de diag_greedy_out.txt (mediana 0.157, p90 0.316, max 0.362).

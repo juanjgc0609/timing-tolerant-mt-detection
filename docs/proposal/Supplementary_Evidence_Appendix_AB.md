@@ -29,7 +29,7 @@ $V_S=3$ km/s, $V_P=1.73V_S$, 8-station `spread` network, radiation operator of `
 | AB.B.1 | Exact condition for the energy-peak reading (D1) to read the correct arrival | Lemma | interference $<0.144\,\lVert\mathbf g\rVert$ |
 | AB.B.2–AB.B.4 | Computable certificate of correct selection for the deployed algorithm with statics and overlap | Lemma and Theorem; **negative result in practice** | never contradicted, but it never activates (0 of 216 cases): actual margin ≈15 %, so it certifies nothing here |
 | AB.B.5 | Recovery of $K$ events by induction | Theorem | — |
-| AB.B.6 | The deployed deflation leaves up to a fixed fraction of each arrival because of the sub-sample offset | Proposition | median residual 16 % (up to 36 %) of the amplitude |
+| AB.B.6 | The deployed deflation leaves up to a fixed fraction of each arrival because of the sub-sample offset | Proposition | median residual 16 to 19 % (up to 36 %) of the peak amplitude |
 | AB.C.1 | **Correction of AA.9.5(b)**: the Lipschitz constant is 1, not $\kappa=2.146$ | Proposition | bound 28.50 → 14.59 (empirical 7.12) |
 | AB.C.2 | **Conditional** tail valid for any amplitude law (heavy tails, non-stationary, isotropic transients) | Theorem | median threshold 9.75 at $p=10^{-4}$ |
 | AB.C.3 | **Impossibility**: influence bounded in the absolute sense implies saturation | Proposition | — |
@@ -42,7 +42,8 @@ $V_S=3$ km/s, $V_P=1.73V_S$, 8-station `spread` network, radiation operator of `
 **Relation to prior work.** Several results adapt known ones and are not claimed as new. The SNR$^{-1}$ and
 SNR$^{-1/2}$ laws of AB.A.7 are the statistical resolution limits of two same-shape sources (Shahram and Milanfar,
 2004; Smith, 2005), and polarization diversity is known to help vector-sensor arrays (Nehorai and Paldi, 1994); new
-here are the timing-tolerant class (AB.A.3), its invariance to common statics and $F_{m pol}$ for a seismic network.
+here are the timing-tolerant class (AB.A.3), its invariance to common statics and $F_{
+m pol}$ for a seismic network.
 AB.C.3 is close to the definition of a finite gross-error sensitivity (Hampel, 1974), and ACAP is a cap at a robust
 scale in the tradition of Huber's (1964) Proposal 2; new is their form for a multi-station subspace score. AB.D.2 holds
 for any likelihood ratio with a mixture alternative against an exact null (Vovk and Wang, 2021; Ramdas et al., 2023).
@@ -541,8 +542,12 @@ Results (`check_greedy_out.txt`, and `diag_greedy.py` / `diag_greedy_out.txt` fo
   (another LOC rule, another grid, another tolerance) move hits and misses. This agrees with the sensitivity of the
   headline figures to the hit rule that the audit noted (LOC against LOC+T).
 - **The deflation residual is the one predicted by Proposition AB.B.6.** In the blocks with $\lVert\mathbf g_{ib}\rVert\ge0.1$ of the
-  maximum, the maximum residual within $\pm0.5$ s of the arrival is a median fraction of **0.16**, 90th percentile of 0.32 and maximum of
-  0.36 of the amplitude of the arrival, against $c(\delta)=0.077,0.154,0.232,0.310,0.387$ for offsets of 6, 12, 19, 25 and 31 ms. An
+  maximum, the maximum residual within $\pm0.5$ s of the arrival is a median fraction of **0.16 to 0.19** of the peak
+  amplitude of the arrival, 90th percentile 0.31 to 0.32 and maximum 0.36 (`diag_greedy.py`, seed 99, 87 blocks from 6
+  replicates: 0.157 / 0.316 / 0.362 with NumPy 2.5.3, the stored output, and 0.188 / 0.313 / 0.356 with the frozen
+  NumPy 1.26.4, where the greedy picks other nodes in some replicates; the sample is too small for the median to be
+  stable across environments). This is a fraction of amplitude, not of energy: at half a sample the energy left is
+  0.163 while the peak amplitude left is 0.387 (error E62), against $c(\delta)=0.077,0.154,0.232,0.310,0.387$ for offsets of 6, 12, 19, 25 and 31 ms. An
   event of 100 noise standard deviations at a station leaves there, without noise and with the exact model, a residual of 16 to
   36 standard deviations: it is interference for any other overlapping event and a source of duplicate detections.
 
