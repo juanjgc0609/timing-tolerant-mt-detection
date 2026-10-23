@@ -14,3 +14,4 @@ the error register and the sealed log are the index to them.
 |:--|:--|:--|
 | `exploratory/P6-power` | S1 (done) | How many targets does a paired recall test need? |
 | `exploratory/ATLAS-0` | S0 | Which regimes, budgets and counting rule define the failure atlas, fixed before it runs? |
+| `exploratory/THEORY-5` | S1 (done) | Do the statements of Appendix AB hold numerically? |
