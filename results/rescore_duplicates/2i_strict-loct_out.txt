@@ -1,0 +1,324 @@
+# Tarea 2I - HUBER-N+SC frente a BOMP-PK+SC y MT-FW+SC tope 6 (analyze_2i.py)
+
+Recall de eventos a eventos falsos realizados por ventana <= 0.1 / <= 0.25 (FROC exacta, punto de operacion por metodo sobre la evaluacion; agrupado = un umbral por metodo). Diferencias pareadas: punto [IC 95% jerarquico: estratos regimen x celda, redes y ventanas; 2000 replicas; punto de operacion re-elegido en cada replica]. Cota inferior unilateral 97.5 = extremo inferior del IC 95; IC 90 = percentiles 5 y 95.
+
+Controles de datos:
+  semilla 5151, brazo prim, dense: 120 redes x 3 celdas x 2 regimenes, 3600 ventanas, 14477 eventos, k en [3, 4, 5]; sd media del log de los factores de sitio por ventana 0.467
+  semilla 5151, brazo prim, std: 120 redes x 3 celdas x 2 regimenes, 3600 ventanas, 2938 eventos, k en [0, 1, 2]; sd media del log de los factores de sitio por ventana 0.467
+      (TAG densas, TAG estandar, sd de sitio) [(5201, 5202, 0.5)]; OPENBLAS_CORETYPE ['Prescott']; OpenBLAS cargadas [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]; partes escritas entre 2026-10-18 23:02:57 y 2026-10-23 20:54:41 UTC
+  semilla 5151, brazo thr: NO CORRIDO (partes ausentes)
+  semilla 5151, brazo s25: NO CORRIDO (partes ausentes)
+  semilla 5151, brazo s80: NO CORRIDO (partes ausentes)
+  semilla 6262, brazo prim, dense: 120 redes x 3 celdas x 2 regimenes, 3600 ventanas, 14407 eventos, k en [3, 4, 5]; sd media del log de los factores de sitio por ventana 0.464
+  semilla 6262, brazo prim, std: 120 redes x 3 celdas x 2 regimenes, 3600 ventanas, 2891 eventos, k en [0, 1, 2]; sd media del log de los factores de sitio por ventana 0.467
+      (TAG densas, TAG estandar, sd de sitio) [(5201, 5202, 0.5)]; OPENBLAS_CORETYPE ['Prescott']; OpenBLAS cargadas [(('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'), ('Katmai', 'libscipy_openblas-6cdc3b4a.so'))]; partes escritas entre 2026-10-18 23:03:42 y 2026-10-23 20:55:01 UTC
+  semilla 6262, brazo thr: NO CORRIDO (partes ausentes)
+  semilla 6262, brazo s25: NO CORRIDO (partes ausentes)
+  semilla 6262, brazo s80: NO CORRIDO (partes ausentes)
+
+## Recall por metodo (brazo primario), tope 0.1 / tope 0.25, con IC 95
+  dense both   5151: 3600 ventanas, 14477 eventos
+      BOMP-PK+SC      0.027 [0.021, 0.032]   0.065 [0.058, 0.073]
+      MT-FW+SC        0.054 [0.046, 0.061]   0.099 [0.090, 0.111]
+      MT-FW-NOCAP+SC  0.026 [0.021, 0.032]   0.064 [0.058, 0.074]
+      HUBER-N+SC      0.048 [0.042, 0.055]   0.096 [0.088, 0.105]
+  dense both   6262: 3600 ventanas, 14407 eventos
+      BOMP-PK+SC      0.028 [0.022, 0.034]   0.075 [0.066, 0.086]
+      MT-FW+SC        0.052 [0.046, 0.059]   0.103 [0.094, 0.113]
+      MT-FW-NOCAP+SC  0.028 [0.022, 0.034]   0.075 [0.066, 0.085]
+      HUBER-N+SC      0.046 [0.040, 0.054]   0.094 [0.085, 0.105]
+  dense thin   5151: 1800 ventanas, 7191 eventos
+      BOMP-PK+SC      0.029 [0.021, 0.037]   0.067 [0.057, 0.078]
+      MT-FW+SC        0.058 [0.047, 0.071]   0.111 [0.095, 0.129]
+      MT-FW-NOCAP+SC  0.029 [0.022, 0.037]   0.066 [0.056, 0.078]
+      HUBER-N+SC      0.056 [0.047, 0.066]   0.106 [0.094, 0.120]
+  dense thin   6262: 1800 ventanas, 7232 eventos
+      BOMP-PK+SC      0.032 [0.023, 0.042]   0.087 [0.072, 0.103]
+      MT-FW+SC        0.058 [0.047, 0.071]   0.115 [0.100, 0.130]
+      MT-FW-NOCAP+SC  0.032 [0.023, 0.043]   0.086 [0.072, 0.102]
+      HUBER-N+SC      0.053 [0.041, 0.062]   0.107 [0.093, 0.125]
+  dense strong 5151: 1800 ventanas, 7286 eventos
+      BOMP-PK+SC      0.024 [0.017, 0.032]   0.063 [0.052, 0.077]
+      MT-FW+SC        0.048 [0.038, 0.058]   0.089 [0.077, 0.102]
+      MT-FW-NOCAP+SC  0.024 [0.017, 0.032]   0.063 [0.053, 0.077]
+      HUBER-N+SC      0.042 [0.032, 0.052]   0.086 [0.075, 0.098]
+  dense strong 6262: 1800 ventanas, 7175 eventos
+      BOMP-PK+SC      0.023 [0.017, 0.032]   0.065 [0.054, 0.078]
+      MT-FW+SC        0.046 [0.038, 0.055]   0.091 [0.078, 0.102]
+      MT-FW-NOCAP+SC  0.023 [0.017, 0.032]   0.065 [0.054, 0.078]
+      HUBER-N+SC      0.042 [0.034, 0.052]   0.082 [0.071, 0.095]
+  std   both   5151: 3600 ventanas, 2938 eventos
+      BOMP-PK+SC      0.158 [0.131, 0.184]   0.277 [0.248, 0.304]
+      MT-FW+SC        0.193 [0.168, 0.218]   0.300 [0.273, 0.325]
+      MT-FW-NOCAP+SC  0.155 [0.130, 0.182]   0.275 [0.247, 0.302]
+      HUBER-N+SC      0.187 [0.159, 0.224]   0.306 [0.280, 0.332]
+  std   both   6262: 3600 ventanas, 2891 eventos
+      BOMP-PK+SC      0.161 [0.138, 0.186]   0.294 [0.267, 0.325]
+      MT-FW+SC        0.203 [0.179, 0.229]   0.311 [0.283, 0.338]
+      MT-FW-NOCAP+SC  0.160 [0.137, 0.185]   0.293 [0.265, 0.324]
+      HUBER-N+SC      0.201 [0.175, 0.232]   0.308 [0.280, 0.332]
+  std   thin   5151: 1800 ventanas, 1439 eventos
+      BOMP-PK+SC      0.184 [0.137, 0.234]   0.336 [0.296, 0.383]
+      MT-FW+SC        0.236 [0.201, 0.280]   0.370 [0.334, 0.410]
+      MT-FW-NOCAP+SC  0.182 [0.133, 0.234]   0.337 [0.296, 0.381]
+      HUBER-N+SC      0.251 [0.184, 0.288]   0.376 [0.333, 0.412]
+  std   thin   6262: 1800 ventanas, 1480 eventos
+      BOMP-PK+SC      0.193 [0.160, 0.236]   0.366 [0.320, 0.409]
+      MT-FW+SC        0.259 [0.222, 0.308]   0.387 [0.350, 0.425]
+      MT-FW-NOCAP+SC  0.193 [0.158, 0.236]   0.363 [0.314, 0.405]
+      HUBER-N+SC      0.255 [0.206, 0.291]   0.368 [0.325, 0.411]
+  std   strong 5151: 1800 ventanas, 1499 eventos
+      BOMP-PK+SC      0.135 [0.107, 0.167]   0.227 [0.194, 0.263]
+      MT-FW+SC        0.157 [0.129, 0.187]   0.244 [0.212, 0.278]
+      MT-FW-NOCAP+SC  0.135 [0.107, 0.167]   0.225 [0.193, 0.261]
+      HUBER-N+SC      0.153 [0.124, 0.190]   0.245 [0.213, 0.282]
+  std   strong 6262: 1800 ventanas, 1411 eventos
+      BOMP-PK+SC      0.133 [0.104, 0.165]   0.247 [0.210, 0.282]
+      MT-FW+SC        0.167 [0.131, 0.198]   0.251 [0.216, 0.288]
+      MT-FW-NOCAP+SC  0.133 [0.104, 0.164]   0.247 [0.209, 0.282]
+      HUBER-N+SC      0.165 [0.127, 0.198]   0.248 [0.218, 0.287]
+
+## Regla 2I-a (superioridad, ventanas densas): HUBER-N+SC - BOMP-PK+SC a tope 0.25, agrupando regimenes y celdas
+  5151: +0.032 [+0.022, +0.040]; cota inferior unilateral 97.5 = +0.0219 > 0: SI; punto +0.0317 >= 0.03: SI; p(d* <= 0) = 0.0005; DE bootstrap 0.0046 -> SE CUMPLE
+  6262: +0.019 [+0.008, +0.030]; cota inferior unilateral 97.5 = +0.0085 > 0: SI; punto +0.0190 >= 0.03: NO; p(d* <= 0) = 0.0005; DE bootstrap 0.0056 -> NO SE CUMPLE
+  -> 2I-a NO SE CUMPLE (por semilla: ['SI', 'NO'])
+
+## Regla 2I-b (no inferioridad, ventanas densas): HUBER-N+SC - MT-FW+SC a tope 0.25, margen -0.03
+  5151: -0.002 [-0.015, +0.006]; cota inferior unilateral 97.5 = -0.0146 > -0.03: SI; p(d* <= -0.03) = 0.0005; DE bootstrap 0.0054 -> SE CUMPLE
+  6262: -0.008 [-0.018, +0.003]; cota inferior unilateral 97.5 = -0.0182 > -0.03: SI; p(d* <= -0.03) = 0.0005; DE bootstrap 0.0054 -> SE CUMPLE
+  -> 2I-b SE CUMPLE (por semilla: ['SI', 'SI'])
+
+## Regla 2I-c (equivalencia, ventanas estandar): HUBER-N+SC - BOMP-PK+SC a tope 0.25, TOST, margen 0.05
+  5151: 3600 ventanas, 2938 eventos; diferencia +0.0296; IC 90 [+0.0115, +0.0491] dentro de [-0.05, +0.05]: SI; IC 95 [+0.009, +0.053]; p(d* <= -0.05) = 0.0005, p(d* >= +0.05) = 0.0420; DE bootstrap 0.0112 -> SE CUMPLE
+  6262: 3600 ventanas, 2891 eventos; diferencia +0.0142; IC 90 [-0.0069, +0.0305] dentro de [-0.05, +0.05]: SI; IC 95 [-0.011, +0.034]; p(d* <= -0.05) = 0.0005, p(d* >= +0.05) = 0.0005; DE bootstrap 0.0114 -> SE CUMPLE
+  -> 2I-c SE CUMPLE (por semilla: ['SI', 'SI'])
+
+## Veredictos
+  2I-a: NO SE CUMPLE    2I-b: SE CUMPLE    2I-c: SE CUMPLE
+  Interpretacion registrada: a falla -> segun el registro, el piloto fue un artefacto de seleccion.
+
+## Secundario / descriptivo: contrastes agrupados y por regimen, tope 0.1 y tope 0.25 (IC 95)
+   (MT-FW+SC - BOMP-PK+SC en ventanas densas por regimen es la replica de 2F-a; MT-FW+SC - MT-FW-NOCAP+SC y MT-FW-NOCAP+SC - BOMP-PK+SC, la de 2F-b; MT-FW+SC - BOMP-PK+SC en estandar, la de 2F-c)
+  dense both   5151 HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.021 [+0.015, +0.029]; tope 0.25 +0.032 [+0.022, +0.040]; IC 90 a 0.25 [+0.024, +0.039]
+  dense both   5151 HUBER-N+SC - MT-FW+SC: tope 0.1 -0.006 [-0.013, +0.003]; tope 0.25 -0.002 [-0.015, +0.006]; IC 90 a 0.25 [-0.013, +0.005]
+  dense both   5151 MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.027 [+0.018, +0.035]; tope 0.25 +0.034 [+0.023, +0.047]; IC 90 a 0.25 [+0.025, +0.045]
+  dense both   5151 MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.028 [+0.018, +0.035]; tope 0.25 +0.034 [+0.022, +0.047]; IC 90 a 0.25 [+0.024, +0.045]
+  dense both   5151 MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 -0.001 [-0.001, +0.001]; tope 0.25 -0.000 [-0.002, +0.002]; IC 90 a 0.25 [-0.001, +0.001]
+  dense both   5151 HUBER-N+SC - MT-FW-NOCAP+SC: tope 0.1 +0.022 [+0.015, +0.029]; tope 0.25 +0.032 [+0.022, +0.040]; IC 90 a 0.25 [+0.023, +0.039]
+  dense both   6262 HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.019 [+0.012, +0.026]; tope 0.25 +0.019 [+0.008, +0.030]; IC 90 a 0.25 [+0.010, +0.029]
+  dense both   6262 HUBER-N+SC - MT-FW+SC: tope 0.1 -0.006 [-0.013, +0.002]; tope 0.25 -0.008 [-0.018, +0.003]; IC 90 a 0.25 [-0.016, +0.001]
+  dense both   6262 MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.025 [+0.015, +0.033]; tope 0.25 +0.027 [+0.015, +0.040]; IC 90 a 0.25 [+0.017, +0.038]
+  dense both   6262 MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.025 [+0.016, +0.033]; tope 0.25 +0.028 [+0.015, +0.040]; IC 90 a 0.25 [+0.018, +0.038]
+  dense both   6262 MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.000 [-0.001, +0.001]; tope 0.25 -0.001 [-0.003, +0.001]; IC 90 a 0.25 [-0.002, +0.001]
+  dense both   6262 HUBER-N+SC - MT-FW-NOCAP+SC: tope 0.1 +0.019 [+0.012, +0.026]; tope 0.25 +0.020 [+0.009, +0.031]; IC 90 a 0.25 [+0.011, +0.029]
+  dense thin   5151 HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.028 [+0.017, +0.038]; tope 0.25 +0.039 [+0.026, +0.053]; IC 90 a 0.25 [+0.028, +0.051]
+  dense thin   5151 HUBER-N+SC - MT-FW+SC: tope 0.1 -0.002 [-0.015, +0.010]; tope 0.25 -0.005 [-0.022, +0.012]; IC 90 a 0.25 [-0.019, +0.010]
+  dense thin   5151 MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.030 [+0.018, +0.043]; tope 0.25 +0.045 [+0.026, +0.063]; IC 90 a 0.25 [+0.028, +0.060]
+  dense thin   5151 MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.029 [+0.018, +0.042]; tope 0.25 +0.045 [+0.026, +0.062]; IC 90 a 0.25 [+0.029, +0.060]
+  dense thin   5151 MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.000 [-0.002, +0.002]; tope 0.25 -0.000 [-0.004, +0.003]; IC 90 a 0.25 [-0.003, +0.002]
+  dense thin   5151 HUBER-N+SC - MT-FW-NOCAP+SC: tope 0.1 +0.027 [+0.017, +0.038]; tope 0.25 +0.040 [+0.027, +0.053]; IC 90 a 0.25 [+0.028, +0.051]
+  dense thin   6262 HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.021 [+0.007, +0.031]; tope 0.25 +0.020 [+0.004, +0.039]; IC 90 a 0.25 [+0.006, +0.037]
+  dense thin   6262 HUBER-N+SC - MT-FW+SC: tope 0.1 -0.005 [-0.019, +0.005]; tope 0.25 -0.008 [-0.024, +0.010]; IC 90 a 0.25 [-0.021, +0.008]
+  dense thin   6262 MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.026 [+0.012, +0.040]; tope 0.25 +0.028 [+0.007, +0.047]; IC 90 a 0.25 [+0.011, +0.044]
+  dense thin   6262 MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.026 [+0.011, +0.041]; tope 0.25 +0.029 [+0.008, +0.048]; IC 90 a 0.25 [+0.012, +0.045]
+  dense thin   6262 MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.000 [-0.002, +0.002]; tope 0.25 -0.001 [-0.006, +0.003]; IC 90 a 0.25 [-0.005, +0.002]
+  dense thin   6262 HUBER-N+SC - MT-FW-NOCAP+SC: tope 0.1 +0.021 [+0.007, +0.031]; tope 0.25 +0.021 [+0.004, +0.040]; IC 90 a 0.25 [+0.007, +0.037]
+  dense strong 5151 HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.018 [+0.008, +0.027]; tope 0.25 +0.023 [+0.010, +0.035]; IC 90 a 0.25 [+0.011, +0.033]
+  dense strong 5151 HUBER-N+SC - MT-FW+SC: tope 0.1 -0.007 [-0.018, +0.004]; tope 0.25 -0.004 [-0.017, +0.010]; IC 90 a 0.25 [-0.014, +0.008]
+  dense strong 5151 MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.025 [+0.012, +0.036]; tope 0.25 +0.026 [+0.010, +0.042]; IC 90 a 0.25 [+0.012, +0.039]
+  dense strong 5151 MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.025 [+0.012, +0.036]; tope 0.25 +0.026 [+0.009, +0.042]; IC 90 a 0.25 [+0.012, +0.039]
+  dense strong 5151 MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.000 [-0.001, +0.001]; tope 0.25 +0.000 [-0.002, +0.002]; IC 90 a 0.25 [-0.002, +0.002]
+  dense strong 5151 HUBER-N+SC - MT-FW-NOCAP+SC: tope 0.1 +0.018 [+0.008, +0.027]; tope 0.25 +0.023 [+0.009, +0.035]; IC 90 a 0.25 [+0.011, +0.033]
+  dense strong 6262 HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.019 [+0.009, +0.029]; tope 0.25 +0.016 [+0.004, +0.030]; IC 90 a 0.25 [+0.006, +0.028]
+  dense strong 6262 HUBER-N+SC - MT-FW+SC: tope 0.1 -0.004 [-0.014, +0.007]; tope 0.25 -0.009 [-0.022, +0.005]; IC 90 a 0.25 [-0.020, +0.003]
+  dense strong 6262 MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.023 [+0.011, +0.034]; tope 0.25 +0.026 [+0.009, +0.041]; IC 90 a 0.25 [+0.012, +0.039]
+  dense strong 6262 MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.023 [+0.011, +0.034]; tope 0.25 +0.026 [+0.010, +0.041]; IC 90 a 0.25 [+0.012, +0.039]
+  dense strong 6262 MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.000 [-0.001, +0.001]; tope 0.25 -0.000 [-0.003, +0.001]; IC 90 a 0.25 [-0.002, +0.001]
+  dense strong 6262 HUBER-N+SC - MT-FW-NOCAP+SC: tope 0.1 +0.019 [+0.009, +0.029]; tope 0.25 +0.017 [+0.004, +0.030]; IC 90 a 0.25 [+0.006, +0.028]
+  std   both   5151 HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.029 [+0.006, +0.062]; tope 0.25 +0.030 [+0.009, +0.053]; IC 90 a 0.25 [+0.011, +0.049]
+  std   both   5151 HUBER-N+SC - MT-FW+SC: tope 0.1 -0.006 [-0.031, +0.025]; tope 0.25 +0.007 [-0.015, +0.030]; IC 90 a 0.25 [-0.011, +0.027]
+  std   both   5151 MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.035 [+0.008, +0.065]; tope 0.25 +0.023 [-0.003, +0.047]; IC 90 a 0.25 [+0.000, +0.043]
+  std   both   5151 MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.038 [+0.010, +0.067]; tope 0.25 +0.025 [-0.003, +0.048]; IC 90 a 0.25 [+0.002, +0.044]
+  std   both   5151 MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 -0.003 [-0.008, +0.000]; tope 0.25 -0.002 [-0.005, +0.001]; IC 90 a 0.25 [-0.004, +0.001]
+  std   both   5151 HUBER-N+SC - MT-FW-NOCAP+SC: tope 0.1 +0.032 [+0.009, +0.062]; tope 0.25 +0.031 [+0.010, +0.054]; IC 90 a 0.25 [+0.013, +0.050]
+  std   both   6262 HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.040 [+0.018, +0.065]; tope 0.25 +0.014 [-0.011, +0.034]; IC 90 a 0.25 [-0.007, +0.030]
+  std   both   6262 HUBER-N+SC - MT-FW+SC: tope 0.1 -0.002 [-0.028, +0.024]; tope 0.25 -0.003 [-0.026, +0.018]; IC 90 a 0.25 [-0.023, +0.014]
+  std   both   6262 MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.042 [+0.016, +0.070]; tope 0.25 +0.017 [-0.010, +0.042]; IC 90 a 0.25 [-0.006, +0.037]
+  std   both   6262 MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.043 [+0.016, +0.070]; tope 0.25 +0.018 [-0.008, +0.045]; IC 90 a 0.25 [-0.005, +0.040]
+  std   both   6262 MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 -0.001 [-0.004, +0.000]; tope 0.25 -0.001 [-0.009, +0.001]; IC 90 a 0.25 [-0.008, +0.001]
+  std   both   6262 HUBER-N+SC - MT-FW-NOCAP+SC: tope 0.1 +0.041 [+0.019, +0.065]; tope 0.25 +0.015 [-0.009, +0.038]; IC 90 a 0.25 [-0.006, +0.034]
+  std   thin   5151 HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.067 [+0.017, +0.105]; tope 0.25 +0.040 [+0.001, +0.070]; IC 90 a 0.25 [+0.006, +0.065]
+  std   thin   5151 HUBER-N+SC - MT-FW+SC: tope 0.1 +0.015 [-0.045, +0.042]; tope 0.25 +0.006 [-0.029, +0.031]; IC 90 a 0.25 [-0.025, +0.028]
+  std   thin   5151 MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.051 [+0.005, +0.107]; tope 0.25 +0.034 [-0.010, +0.075]; IC 90 a 0.25 [-0.002, +0.069]
+  std   thin   5151 MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.054 [+0.006, +0.112]; tope 0.25 +0.033 [-0.009, +0.075]; IC 90 a 0.25 [+0.000, +0.070]
+  std   thin   5151 MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 -0.002 [-0.019, +0.004]; tope 0.25 +0.001 [-0.009, +0.006]; IC 90 a 0.25 [-0.006, +0.004]
+  std   thin   5151 HUBER-N+SC - MT-FW-NOCAP+SC: tope 0.1 +0.069 [+0.021, +0.109]; tope 0.25 +0.039 [+0.003, +0.070]; IC 90 a 0.25 [+0.008, +0.064]
+  std   thin   6262 HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.062 [+0.014, +0.094]; tope 0.25 +0.001 [-0.032, +0.038]; IC 90 a 0.25 [-0.027, +0.032]
+  std   thin   6262 HUBER-N+SC - MT-FW+SC: tope 0.1 -0.005 [-0.056, +0.026]; tope 0.25 -0.020 [-0.056, +0.012]; IC 90 a 0.25 [-0.050, +0.008]
+  std   thin   6262 MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.067 [+0.022, +0.114]; tope 0.25 +0.021 [-0.014, +0.059]; IC 90 a 0.25 [-0.008, +0.053]
+  std   thin   6262 MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.067 [+0.022, +0.115]; tope 0.25 +0.024 [-0.011, +0.066]; IC 90 a 0.25 [-0.005, +0.060]
+  std   thin   6262 MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.000 [-0.006, +0.000]; tope 0.25 -0.003 [-0.016, +0.002]; IC 90 a 0.25 [-0.014, +0.001]
+  std   thin   6262 HUBER-N+SC - MT-FW-NOCAP+SC: tope 0.1 +0.062 [+0.014, +0.095]; tope 0.25 +0.005 [-0.028, +0.046]; IC 90 a 0.25 [-0.023, +0.040]
+  std   strong 5151 HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.017 [-0.010, +0.044]; tope 0.25 +0.018 [-0.010, +0.045]; IC 90 a 0.25 [-0.006, +0.041]
+  std   strong 5151 HUBER-N+SC - MT-FW+SC: tope 0.1 -0.004 [-0.033, +0.026]; tope 0.25 +0.001 [-0.029, +0.029]; IC 90 a 0.25 [-0.023, +0.025]
+  std   strong 5151 MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.021 [-0.010, +0.052]; tope 0.25 +0.017 [-0.014, +0.049]; IC 90 a 0.25 [-0.008, +0.043]
+  std   strong 5151 MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.022 [-0.010, +0.052]; tope 0.25 +0.019 [-0.013, +0.050]; IC 90 a 0.25 [-0.008, +0.044]
+  std   strong 5151 MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 -0.001 [-0.005, +0.000]; tope 0.25 -0.001 [-0.006, +0.001]; IC 90 a 0.25 [-0.004, +0.000]
+  std   strong 5151 HUBER-N+SC - MT-FW-NOCAP+SC: tope 0.1 +0.018 [-0.009, +0.044]; tope 0.25 +0.019 [-0.009, +0.046]; IC 90 a 0.25 [-0.005, +0.042]
+  std   strong 6262 HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.032 [+0.003, +0.058]; tope 0.25 +0.001 [-0.022, +0.032]; IC 90 a 0.25 [-0.019, +0.027]
+  std   strong 6262 HUBER-N+SC - MT-FW+SC: tope 0.1 -0.002 [-0.039, +0.033]; tope 0.25 -0.003 [-0.032, +0.029]; IC 90 a 0.25 [-0.025, +0.025]
+  std   strong 6262 MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.034 [-0.006, +0.069]; tope 0.25 +0.004 [-0.027, +0.036]; IC 90 a 0.25 [-0.021, +0.032]
+  std   strong 6262 MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.034 [-0.005, +0.069]; tope 0.25 +0.004 [-0.026, +0.037]; IC 90 a 0.25 [-0.021, +0.033]
+  std   strong 6262 MT-FW-NOCAP+SC - BOMP-PK+SC: tope 0.1 +0.000 [-0.004, +0.000]; tope 0.25 +0.000 [-0.006, +0.002]; IC 90 a 0.25 [-0.005, +0.001]
+  std   strong 6262 HUBER-N+SC - MT-FW-NOCAP+SC: tope 0.1 +0.032 [+0.003, +0.059]; tope 0.25 +0.001 [-0.021, +0.033]; IC 90 a 0.25 [-0.017, +0.028]
+  Replica de 2F en estos datos (criterios de 2F aplicados de forma descriptiva; 2F uso 10 ventanas por red):
+    5151 thin: MT-FW+SC - BOMP-PK+SC +0.045 [+0.026, +0.063]: cota inferior > 0 SI, punto >= 0.03 SI
+    5151 strong: MT-FW+SC - BOMP-PK+SC +0.026 [+0.010, +0.042]: cota inferior > 0 SI, punto >= 0.03 NO
+    5151 ambos: MT-FW+SC - MT-FW-NOCAP+SC +0.034 [+0.022, +0.047] (cota inferior > 0 SI); MT-FW-NOCAP+SC - BOMP-PK+SC -0.000 [-0.002, +0.002] (|punto| <= 0.02 SI)
+    5151 estandar: MT-FW+SC - BOMP-PK+SC +0.023, IC 90 [+0.000, +0.043] (dentro de +-0.05: SI)
+    6262 thin: MT-FW+SC - BOMP-PK+SC +0.028 [+0.007, +0.047]: cota inferior > 0 SI, punto >= 0.03 NO
+    6262 strong: MT-FW+SC - BOMP-PK+SC +0.026 [+0.009, +0.041]: cota inferior > 0 SI, punto >= 0.03 NO
+    6262 ambos: MT-FW+SC - MT-FW-NOCAP+SC +0.028 [+0.015, +0.040] (cota inferior > 0 SI); MT-FW-NOCAP+SC - BOMP-PK+SC -0.001 [-0.003, +0.001] (|punto| <= 0.02 SI)
+    6262 estandar: MT-FW+SC - BOMP-PK+SC +0.017, IC 90 [-0.006, +0.037] (dentro de +-0.05: SI)
+
+## Descriptivo: por celda y regimen (tope 0.25, IC 95)
+  dense 5151 thin   4 st.        (600 v., 2362 ev.): BOMP-PK+SC 0.049  MT-FW+SC 0.095  MT-FW-NOCAP+SC 0.049  HUBER-N+SC 0.077 | H-N - BOMP +0.028 [+0.007, +0.049]; H-N - MT-FW -0.018 [-0.041, +0.006]; MT-FW - BOMP +0.046 [+0.021, +0.068]
+  dense 5151 thin   6 st.        (600 v., 2377 ev.): BOMP-PK+SC 0.056  MT-FW+SC 0.112  MT-FW-NOCAP+SC 0.056  HUBER-N+SC 0.096 | H-N - BOMP +0.040 [+0.019, +0.065]; H-N - MT-FW -0.016 [-0.045, +0.011]; MT-FW - BOMP +0.056 [+0.030, +0.086]
+  dense 5151 thin   one-sided 8  (600 v., 2452 ev.): BOMP-PK+SC 0.080  MT-FW+SC 0.135  MT-FW-NOCAP+SC 0.080  HUBER-N+SC 0.128 | H-N - BOMP +0.049 [+0.020, +0.083]; H-N - MT-FW -0.007 [-0.036, +0.030]; MT-FW - BOMP +0.055 [+0.020, +0.085]
+  dense 5151 strong 4 st.        (600 v., 2401 ev.): BOMP-PK+SC 0.031  MT-FW+SC 0.057  MT-FW-NOCAP+SC 0.032  HUBER-N+SC 0.052 | H-N - BOMP +0.021 [+0.008, +0.037]; H-N - MT-FW -0.004 [-0.027, +0.017]; MT-FW - BOMP +0.025 [+0.005, +0.048]
+  dense 5151 strong 6 st.        (600 v., 2434 ev.): BOMP-PK+SC 0.075  MT-FW+SC 0.101  MT-FW-NOCAP+SC 0.075  HUBER-N+SC 0.094 | H-N - BOMP +0.019 [-0.009, +0.042]; H-N - MT-FW -0.007 [-0.039, +0.019]; MT-FW - BOMP +0.026 [-0.009, +0.060]
+  dense 5151 strong one-sided 8  (600 v., 2451 ev.): BOMP-PK+SC 0.074  MT-FW+SC 0.111  MT-FW-NOCAP+SC 0.073  HUBER-N+SC 0.106 | H-N - BOMP +0.032 [+0.006, +0.059]; H-N - MT-FW -0.005 [-0.029, +0.021]; MT-FW - BOMP +0.037 [+0.005, +0.066]
+  dense 6262 thin   4 st.        (600 v., 2385 ev.): BOMP-PK+SC 0.069  MT-FW+SC 0.107  MT-FW-NOCAP+SC 0.068  HUBER-N+SC 0.092 | H-N - BOMP +0.023 [-0.002, +0.046]; H-N - MT-FW -0.015 [-0.043, +0.012]; MT-FW - BOMP +0.038 [+0.008, +0.067]
+  dense 6262 thin   6 st.        (600 v., 2437 ev.): BOMP-PK+SC 0.075  MT-FW+SC 0.115  MT-FW-NOCAP+SC 0.076  HUBER-N+SC 0.113 | H-N - BOMP +0.038 [+0.003, +0.067]; H-N - MT-FW -0.002 [-0.032, +0.026]; MT-FW - BOMP +0.040 [+0.000, +0.071]
+  dense 6262 thin   one-sided 8  (600 v., 2410 ev.): BOMP-PK+SC 0.106  MT-FW+SC 0.124  MT-FW-NOCAP+SC 0.106  HUBER-N+SC 0.113 | H-N - BOMP +0.007 [-0.023, +0.044]; H-N - MT-FW -0.011 [-0.037, +0.022]; MT-FW - BOMP +0.018 [-0.016, +0.053]
+  dense 6262 strong 4 st.        (600 v., 2376 ev.): BOMP-PK+SC 0.047  MT-FW+SC 0.058  MT-FW-NOCAP+SC 0.046  HUBER-N+SC 0.059 | H-N - BOMP +0.013 [-0.004, +0.032]; H-N - MT-FW +0.001 [-0.017, +0.020]; MT-FW - BOMP +0.011 [-0.007, +0.032]
+  dense 6262 strong 6 st.        (600 v., 2409 ev.): BOMP-PK+SC 0.061  MT-FW+SC 0.091  MT-FW-NOCAP+SC 0.061  HUBER-N+SC 0.079 | H-N - BOMP +0.018 [-0.007, +0.046]; H-N - MT-FW -0.012 [-0.039, +0.018]; MT-FW - BOMP +0.030 [-0.000, +0.060]
+  dense 6262 strong one-sided 8  (600 v., 2390 ev.): BOMP-PK+SC 0.080  MT-FW+SC 0.108  MT-FW-NOCAP+SC 0.077  HUBER-N+SC 0.098 | H-N - BOMP +0.018 [+0.000, +0.044]; H-N - MT-FW -0.010 [-0.028, +0.013]; MT-FW - BOMP +0.027 [+0.001, +0.056]
+  std   5151 thin   4 st.        (600 v., 503 ev.): BOMP-PK+SC 0.314  MT-FW+SC 0.308  MT-FW-NOCAP+SC 0.312  HUBER-N+SC 0.326 | H-N - BOMP +0.012 [-0.045, +0.065]; H-N - MT-FW +0.018 [-0.044, +0.075]; MT-FW - BOMP -0.006 [-0.070, +0.061]
+  std   5151 thin   6 st.        (600 v., 454 ev.): BOMP-PK+SC 0.352  MT-FW+SC 0.383  MT-FW-NOCAP+SC 0.352  HUBER-N+SC 0.401 | H-N - BOMP +0.048 [-0.026, +0.103]; H-N - MT-FW +0.018 [-0.041, +0.064]; MT-FW - BOMP +0.031 [-0.051, +0.104]
+  std   5151 thin   one-sided 8  (600 v., 482 ev.): BOMP-PK+SC 0.365  MT-FW+SC 0.442  MT-FW-NOCAP+SC 0.367  HUBER-N+SC 0.434 | H-N - BOMP +0.068 [+0.011, +0.134]; H-N - MT-FW -0.008 [-0.057, +0.042]; MT-FW - BOMP +0.077 [+0.008, +0.145]
+  std   5151 strong 4 st.        (600 v., 511 ev.): BOMP-PK+SC 0.155  MT-FW+SC 0.159  MT-FW-NOCAP+SC 0.155  HUBER-N+SC 0.168 | H-N - BOMP +0.014 [-0.031, +0.047]; H-N - MT-FW +0.010 [-0.033, +0.059]; MT-FW - BOMP +0.004 [-0.056, +0.045]
+  std   5151 strong 6 st.        (600 v., 490 ev.): BOMP-PK+SC 0.247  MT-FW+SC 0.280  MT-FW-NOCAP+SC 0.245  HUBER-N+SC 0.280 | H-N - BOMP +0.033 [-0.033, +0.087]; H-N - MT-FW +0.000 [-0.066, +0.057]; MT-FW - BOMP +0.033 [-0.032, +0.100]
+  std   5151 strong one-sided 8  (600 v., 498 ev.): BOMP-PK+SC 0.281  MT-FW+SC 0.315  MT-FW-NOCAP+SC 0.281  HUBER-N+SC 0.309 | H-N - BOMP +0.028 [-0.026, +0.081]; H-N - MT-FW -0.006 [-0.057, +0.043]; MT-FW - BOMP +0.034 [-0.022, +0.092]
+  std   6262 thin   4 st.        (600 v., 494 ev.): BOMP-PK+SC 0.304  MT-FW+SC 0.338  MT-FW-NOCAP+SC 0.302  HUBER-N+SC 0.320 | H-N - BOMP +0.016 [-0.044, +0.087]; H-N - MT-FW -0.018 [-0.067, +0.053]; MT-FW - BOMP +0.034 [-0.043, +0.102]
+  std   6262 thin   6 st.        (600 v., 489 ev.): BOMP-PK+SC 0.399  MT-FW+SC 0.419  MT-FW-NOCAP+SC 0.391  HUBER-N+SC 0.395 | H-N - BOMP -0.004 [-0.069, +0.072]; H-N - MT-FW -0.025 [-0.086, +0.047]; MT-FW - BOMP +0.020 [-0.045, +0.096]
+  std   6262 thin   one-sided 8  (600 v., 497 ev.): BOMP-PK+SC 0.398  MT-FW+SC 0.437  MT-FW-NOCAP+SC 0.390  HUBER-N+SC 0.404 | H-N - BOMP +0.006 [-0.053, +0.068]; H-N - MT-FW -0.032 [-0.084, +0.020]; MT-FW - BOMP +0.038 [-0.024, +0.103]
+  std   6262 strong 4 st.        (600 v., 471 ev.): BOMP-PK+SC 0.142  MT-FW+SC 0.144  MT-FW-NOCAP+SC 0.140  HUBER-N+SC 0.138 | H-N - BOMP -0.004 [-0.034, +0.047]; H-N - MT-FW -0.006 [-0.045, +0.055]; MT-FW - BOMP +0.002 [-0.053, +0.052]
+  std   6262 strong 6 st.        (600 v., 467 ev.): BOMP-PK+SC 0.293  MT-FW+SC 0.293  MT-FW-NOCAP+SC 0.293  HUBER-N+SC 0.315 | H-N - BOMP +0.021 [-0.034, +0.082]; H-N - MT-FW +0.021 [-0.030, +0.089]; MT-FW - BOMP +0.000 [-0.067, +0.058]
+  std   6262 strong one-sided 8  (600 v., 473 ev.): BOMP-PK+SC 0.298  MT-FW+SC 0.323  MT-FW-NOCAP+SC 0.298  HUBER-N+SC 0.294 | H-N - BOMP -0.004 [-0.060, +0.053]; H-N - MT-FW -0.030 [-0.083, +0.023]; MT-FW - BOMP +0.025 [-0.034, +0.090]
+
+## Secundario: regla de acierto con coincidencia de tiempo de origen (<= 5 km Y |error de origen| <= 0.5 s); puntajes sin cambio; mismo bootstrap
+  dense 5151: regla registrada recalculada desde las posiciones guardadas: 18103 etiquetas distintas de las guardadas
+      both   recall 0.1/0.25: BOMP-PK+SC 0.027/0.066  MT-FW+SC 0.054/0.101  MT-FW-NOCAP+SC 0.027/0.066  HUBER-N+SC 0.048/0.097
+          HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.021 [+0.015, +0.029]; tope 0.25 +0.031 [+0.022, +0.040]; IC 90 a 0.25 [+0.024, +0.039]
+          HUBER-N+SC - MT-FW+SC: tope 0.1 -0.006 [-0.014, +0.003]; tope 0.25 -0.004 [-0.015, +0.006]; IC 90 a 0.25 [-0.014, +0.004]
+          MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.027 [+0.018, +0.036]; tope 0.25 +0.035 [+0.023, +0.047]; IC 90 a 0.25 [+0.025, +0.046]
+      thin   recall 0.1/0.25: BOMP-PK+SC 0.029/0.068  MT-FW+SC 0.059/0.113  MT-FW-NOCAP+SC 0.029/0.067  HUBER-N+SC 0.056/0.107
+          HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.028 [+0.017, +0.038]; tope 0.25 +0.040 [+0.027, +0.054]; IC 90 a 0.25 [+0.028, +0.051]
+          HUBER-N+SC - MT-FW+SC: tope 0.1 -0.003 [-0.016, +0.010]; tope 0.25 -0.005 [-0.022, +0.012]; IC 90 a 0.25 [-0.019, +0.010]
+          MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.030 [+0.018, +0.043]; tope 0.25 +0.045 [+0.026, +0.063]; IC 90 a 0.25 [+0.028, +0.060]
+      strong recall 0.1/0.25: BOMP-PK+SC 0.024/0.064  MT-FW+SC 0.049/0.090  MT-FW-NOCAP+SC 0.024/0.063  HUBER-N+SC 0.042/0.086
+          HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.018 [+0.007, +0.027]; tope 0.25 +0.022 [+0.009, +0.035]; IC 90 a 0.25 [+0.011, +0.033]
+          HUBER-N+SC - MT-FW+SC: tope 0.1 -0.008 [-0.018, +0.004]; tope 0.25 -0.004 [-0.017, +0.009]; IC 90 a 0.25 [-0.015, +0.007]
+          MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.026 [+0.012, +0.036]; tope 0.25 +0.026 [+0.010, +0.043]; IC 90 a 0.25 [+0.013, +0.040]
+  dense 6262: regla registrada recalculada desde las posiciones guardadas: 17917 etiquetas distintas de las guardadas
+      both   recall 0.1/0.25: BOMP-PK+SC 0.028/0.076  MT-FW+SC 0.052/0.104  MT-FW-NOCAP+SC 0.028/0.075  HUBER-N+SC 0.047/0.095
+          HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.019 [+0.012, +0.026]; tope 0.25 +0.019 [+0.008, +0.030]; IC 90 a 0.25 [+0.010, +0.029]
+          HUBER-N+SC - MT-FW+SC: tope 0.1 -0.006 [-0.013, +0.002]; tope 0.25 -0.009 [-0.019, +0.003]; IC 90 a 0.25 [-0.017, +0.001]
+          MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.024 [+0.016, +0.033]; tope 0.25 +0.028 [+0.015, +0.040]; IC 90 a 0.25 [+0.017, +0.038]
+      thin   recall 0.1/0.25: BOMP-PK+SC 0.032/0.088  MT-FW+SC 0.059/0.116  MT-FW-NOCAP+SC 0.032/0.087  HUBER-N+SC 0.053/0.108
+          HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.020 [+0.007, +0.031]; tope 0.25 +0.020 [+0.003, +0.040]; IC 90 a 0.25 [+0.006, +0.037]
+          HUBER-N+SC - MT-FW+SC: tope 0.1 -0.007 [-0.019, +0.005]; tope 0.25 -0.008 [-0.025, +0.009]; IC 90 a 0.25 [-0.022, +0.007]
+          MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.027 [+0.012, +0.041]; tope 0.25 +0.028 [+0.007, +0.049]; IC 90 a 0.25 [+0.012, +0.045]
+      strong recall 0.1/0.25: BOMP-PK+SC 0.023/0.065  MT-FW+SC 0.046/0.092  MT-FW-NOCAP+SC 0.023/0.065  HUBER-N+SC 0.042/0.082
+          HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.018 [+0.009, +0.029]; tope 0.25 +0.017 [+0.004, +0.030]; IC 90 a 0.25 [+0.006, +0.028]
+          HUBER-N+SC - MT-FW+SC: tope 0.1 -0.004 [-0.014, +0.007]; tope 0.25 -0.009 [-0.022, +0.006]; IC 90 a 0.25 [-0.020, +0.003]
+          MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.022 [+0.010, +0.033]; tope 0.25 +0.026 [+0.009, +0.041]; IC 90 a 0.25 [+0.012, +0.039]
+  std   5151: regla registrada recalculada desde las posiciones guardadas: 3503 etiquetas distintas de las guardadas
+      both   recall 0.1/0.25: BOMP-PK+SC 0.158/0.277  MT-FW+SC 0.194/0.301  MT-FW-NOCAP+SC 0.156/0.276  HUBER-N+SC 0.190/0.307
+          HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.032 [+0.007, +0.062]; tope 0.25 +0.030 [+0.008, +0.052]; IC 90 a 0.25 [+0.011, +0.049]
+          HUBER-N+SC - MT-FW+SC: tope 0.1 -0.004 [-0.032, +0.024]; tope 0.25 +0.007 [-0.016, +0.029]; IC 90 a 0.25 [-0.013, +0.025]
+          MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.036 [+0.009, +0.067]; tope 0.25 +0.023 [-0.003, +0.048]; IC 90 a 0.25 [+0.002, +0.045]
+      thin   recall 0.1/0.25: BOMP-PK+SC 0.185/0.339  MT-FW+SC 0.241/0.372  MT-FW-NOCAP+SC 0.183/0.341  HUBER-N+SC 0.251/0.376
+          HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.066 [+0.018, +0.106]; tope 0.25 +0.037 [-0.001, +0.070]; IC 90 a 0.25 [+0.004, +0.065]
+          HUBER-N+SC - MT-FW+SC: tope 0.1 +0.010 [-0.045, +0.042]; tope 0.25 +0.004 [-0.029, +0.031]; IC 90 a 0.25 [-0.025, +0.027]
+          MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.056 [+0.005, +0.109]; tope 0.25 +0.033 [-0.011, +0.076]; IC 90 a 0.25 [-0.003, +0.069]
+      strong recall 0.1/0.25: BOMP-PK+SC 0.135/0.227  MT-FW+SC 0.157/0.245  MT-FW-NOCAP+SC 0.135/0.227  HUBER-N+SC 0.153/0.245
+          HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.018 [-0.010, +0.044]; tope 0.25 +0.017 [-0.011, +0.045]; IC 90 a 0.25 [-0.007, +0.041]
+          HUBER-N+SC - MT-FW+SC: tope 0.1 -0.003 [-0.034, +0.025]; tope 0.25 -0.001 [-0.029, +0.029]; IC 90 a 0.25 [-0.025, +0.024]
+          MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.021 [-0.008, +0.053]; tope 0.25 +0.018 [-0.014, +0.049]; IC 90 a 0.25 [-0.008, +0.044]
+  std   6262: regla registrada recalculada desde las posiciones guardadas: 3420 etiquetas distintas de las guardadas
+      both   recall 0.1/0.25: BOMP-PK+SC 0.163/0.296  MT-FW+SC 0.205/0.313  MT-FW-NOCAP+SC 0.161/0.293  HUBER-N+SC 0.201/0.308
+          HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.039 [+0.018, +0.064]; tope 0.25 +0.012 [-0.011, +0.034]; IC 90 a 0.25 [-0.008, +0.030]
+          HUBER-N+SC - MT-FW+SC: tope 0.1 -0.004 [-0.028, +0.024]; tope 0.25 -0.004 [-0.027, +0.017]; IC 90 a 0.25 [-0.024, +0.013]
+          MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.043 [+0.016, +0.071]; tope 0.25 +0.017 [-0.011, +0.042]; IC 90 a 0.25 [-0.006, +0.038]
+      thin   recall 0.1/0.25: BOMP-PK+SC 0.193/0.369  MT-FW+SC 0.261/0.388  MT-FW-NOCAP+SC 0.193/0.366  HUBER-N+SC 0.255/0.368
+          HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.062 [+0.014, +0.094]; tope 0.25 -0.001 [-0.033, +0.037]; IC 90 a 0.25 [-0.028, +0.031]
+          HUBER-N+SC - MT-FW+SC: tope 0.1 -0.005 [-0.056, +0.027]; tope 0.25 -0.020 [-0.056, +0.012]; IC 90 a 0.25 [-0.050, +0.007]
+          MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.068 [+0.021, +0.115]; tope 0.25 +0.019 [-0.015, +0.057]; IC 90 a 0.25 [-0.010, +0.050]
+      strong recall 0.1/0.25: BOMP-PK+SC 0.133/0.247  MT-FW+SC 0.168/0.251  MT-FW-NOCAP+SC 0.133/0.247  HUBER-N+SC 0.165/0.249
+          HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.032 [+0.003, +0.059]; tope 0.25 +0.001 [-0.022, +0.032]; IC 90 a 0.25 [-0.018, +0.028]
+          HUBER-N+SC - MT-FW+SC: tope 0.1 -0.003 [-0.040, +0.031]; tope 0.25 -0.002 [-0.033, +0.029]; IC 90 a 0.25 [-0.027, +0.024]
+          MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.035 [-0.004, +0.069]; tope 0.25 +0.004 [-0.026, +0.038]; IC 90 a 0.25 [-0.020, +0.033]
+
+## Secundario: umbral de Huber (redes del brazo thr; BOMP-PK+SC, MT-FW+SC y HUBER-N+SC de las mismas ventanas del brazo prim)
+  5151: brazo thr no corrido
+  6262: brazo thr no corrido
+
+## Secundario: sd de los factores de sitio (redes de los brazos s25 / s80; sd 0.5 = las mismas redes y flujos del brazo prim)
+  dense 5151 sd 0.25: brazo s25 no corrido
+  dense 5151 sd 0.5: 600 ventanas, 2420 eventos; recall 0.1/0.25 BOMP-PK+SC 0.021/0.057  MT-FW+SC 0.075/0.117  MT-FW-NOCAP+SC 0.021/0.057  HUBER-N+SC 0.057/0.110
+          HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.037 [+0.022, +0.057]; tope 0.25 +0.053 [+0.029, +0.079]
+          HUBER-N+SC - MT-FW+SC: tope 0.1 -0.018 [-0.037, +0.010]; tope 0.25 -0.007 [-0.030, +0.017]
+          MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.055 [+0.031, +0.073]; tope 0.25 +0.060 [+0.028, +0.090]
+          MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.055 [+0.031, +0.073]; tope 0.25 +0.060 [+0.029, +0.090]
+  dense 5151 sd 0.8: brazo s80 no corrido
+  std   5151 sd 0.25: brazo s25 no corrido
+  std   5151 sd 0.5: 600 ventanas, 504 eventos; recall 0.1/0.25 BOMP-PK+SC 0.206/0.361  MT-FW+SC 0.208/0.337  MT-FW-NOCAP+SC 0.202/0.359  HUBER-N+SC 0.240/0.361
+          HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.034 [-0.035, +0.098]; tope 0.25 +0.000 [-0.055, +0.053]
+          HUBER-N+SC - MT-FW+SC: tope 0.1 +0.032 [-0.035, +0.091]; tope 0.25 +0.024 [-0.034, +0.086]
+          MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.002 [-0.074, +0.077]; tope 0.25 -0.024 [-0.088, +0.040]
+          MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.006 [-0.065, +0.083]; tope 0.25 -0.022 [-0.082, +0.042]
+  std   5151 sd 0.8: brazo s80 no corrido
+  dense 6262 sd 0.25: brazo s25 no corrido
+  dense 6262 sd 0.5: 600 ventanas, 2383 eventos; recall 0.1/0.25 BOMP-PK+SC 0.028/0.074  MT-FW+SC 0.053/0.106  MT-FW-NOCAP+SC 0.029/0.075  HUBER-N+SC 0.050/0.102
+          HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.023 [+0.003, +0.041]; tope 0.25 +0.027 [-0.000, +0.056]
+          HUBER-N+SC - MT-FW+SC: tope 0.1 -0.003 [-0.026, +0.018]; tope 0.25 -0.005 [-0.033, +0.025]
+          MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.026 [+0.003, +0.048]; tope 0.25 +0.032 [+0.003, +0.060]
+          MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.025 [+0.003, +0.047]; tope 0.25 +0.031 [+0.001, +0.061]
+  dense 6262 sd 0.8: brazo s80 no corrido
+  std   6262 sd 0.25: brazo s25 no corrido
+  std   6262 sd 0.5: 600 ventanas, 501 eventos; recall 0.1/0.25 BOMP-PK+SC 0.156/0.277  MT-FW+SC 0.190/0.281  MT-FW-NOCAP+SC 0.154/0.275  HUBER-N+SC 0.184/0.277
+          HUBER-N+SC - BOMP-PK+SC: tope 0.1 +0.028 [-0.020, +0.081]; tope 0.25 +0.000 [-0.041, +0.049]
+          HUBER-N+SC - MT-FW+SC: tope 0.1 -0.006 [-0.064, +0.052]; tope 0.25 -0.004 [-0.060, +0.044]
+          MT-FW+SC - BOMP-PK+SC: tope 0.1 +0.034 [-0.027, +0.093]; tope 0.25 +0.004 [-0.047, +0.066]
+          MT-FW+SC - MT-FW-NOCAP+SC: tope 0.1 +0.036 [-0.026, +0.095]; tope 0.25 +0.006 [-0.046, +0.068]
+  std   6262 sd 0.8: brazo s80 no corrido
+
+## Sensibilidad (descriptivo): bootstrap con la red como unidad de replicacion compartida por los dos regimenes (como en 2F); tope 0.25
+  dense 5151 HUBER-N+SC - BOMP-PK+SC: +0.032 [+0.022, +0.040]; IC 90 [+0.024, +0.039]; DE 0.0046
+  dense 5151 HUBER-N+SC - MT-FW+SC: -0.002 [-0.016, +0.007]; IC 90 [-0.014, +0.005]; DE 0.0057
+  dense 5151 MT-FW+SC - BOMP-PK+SC: +0.034 [+0.023, +0.047]; IC 90 [+0.025, +0.045]; DE 0.0061
+  std   5151 HUBER-N+SC - BOMP-PK+SC: +0.030 [+0.009, +0.052]; IC 90 [+0.012, +0.048]; DE 0.0110
+  std   5151 MT-FW+SC - BOMP-PK+SC: +0.023 [-0.004, +0.048]; IC 90 [+0.000, +0.044]; DE 0.0134
+  dense 6262 HUBER-N+SC - BOMP-PK+SC: +0.019 [+0.009, +0.030]; IC 90 [+0.010, +0.028]; DE 0.0055
+  dense 6262 HUBER-N+SC - MT-FW+SC: -0.008 [-0.018, +0.003]; IC 90 [-0.017, +0.001]; DE 0.0054
+  dense 6262 MT-FW+SC - BOMP-PK+SC: +0.027 [+0.014, +0.039]; IC 90 [+0.017, +0.038]; DE 0.0064
+  std   6262 HUBER-N+SC - BOMP-PK+SC: +0.014 [-0.012, +0.033]; IC 90 [-0.009, +0.030]; DE 0.0118
+  std   6262 MT-FW+SC - BOMP-PK+SC: +0.017 [-0.010, +0.040]; IC 90 [-0.006, +0.036]; DE 0.0131
+
+## DE bootstrap de los contrastes de las reglas frente a la planificada (DE piloto x raiz(redes y ventanas))
+  5151 2I-a: DE 0.0046; planificada 0.0079 (piloto 0.0194)
+  5151 2I-b: DE 0.0054; planificada 0.0073 (piloto 0.0178)
+  5151 2I-c: DE 0.0112; planificada 0.0085 (piloto 0.0233)
+  6262 2I-a: DE 0.0056; planificada 0.0079 (piloto 0.0194)
+  6262 2I-b: DE 0.0054; planificada 0.0073 (piloto 0.0178)
+  6262 2I-c: DE 0.0114; planificada 0.0085 (piloto 0.0233)
+
+## Tiempos (s por ventana, media; un proceso por nucleo, 2 procesos en paralelo)
+  5151 prim dense: BOMP-PK+SC 0.731  MT-FW+SC 0.123  MT-FW-NOCAP+SC 0.122  HUBER-N+SC 1.189
+  5151 prim std  : BOMP-PK+SC 0.513  MT-FW+SC 0.088  MT-FW-NOCAP+SC 0.086  HUBER-N+SC 0.846
+  5151 prim preparacion por parte (red, catalogo, SC, operadores) 0.8 s; total por parte 19.4 s; suma 3.89 h de CPU
+  6262 prim dense: BOMP-PK+SC 0.715  MT-FW+SC 0.123  MT-FW-NOCAP+SC 0.122  HUBER-N+SC 1.186
+  6262 prim std  : BOMP-PK+SC 0.504  MT-FW+SC 0.088  MT-FW-NOCAP+SC 0.087  HUBER-N+SC 0.846
+  6262 prim preparacion por parte (red, catalogo, SC, operadores) 0.8 s; total por parte 19.3 s; suma 3.86 h de CPU

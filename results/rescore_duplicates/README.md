@@ -1,7 +1,7 @@
-# Rescoring of 2F, 2I and 2M with a one-to-one hit rule
+# Rescoring with a one-to-one hit rule (2A, 2B, 2F, 2I, 2M, R0, R1)
 
-Post hoc, descriptive. The registered results and verdicts of 2F, 2I and 2M stand as registered; this folder reports
-how they move under a stricter hit rule (error register E58).
+Post hoc, descriptive. The registered results and verdicts stand as registered; this folder reports how they move
+under a stricter hit rule (error register E58). Coverage by task is in the last table (critique CR-21).
 
 ## What was wrong with the registered rule
 
@@ -18,7 +18,8 @@ how they move under a stricter hit rule (error register E58).
 
 ## Corrected rule (`code/froc_strict.py`)
 
-Atoms are matched in record (score) order to the nearest eligible true event that is **still unmatched**. An atom
+Atoms are matched in record order (the loop order, along which the running-minimum score of the record never
+increases) to the nearest eligible true event that is **still unmatched**. An atom
 with no unmatched eligible event is **false**. This is the JAFROC convention (marks after the first on a lesion are
 non-lesion localisations) and the COCO-style detection convention. The matching only looks at earlier atoms, so every
 threshold is still a prefix of the record and the exact FROC and the bootstrap code are unchanged; only the labels
@@ -38,7 +39,20 @@ Rules reported: `legacy` (registered), `legacy-loct` (registered nearest-event r
   `results/task2f/analyze_2f_out.txt` except the run times (1209 of 1249 numbers identical; the other 40 are the timing section).
 - In every window and method, `froc_strict.relabel(..., one_to_one=False)` on the stored locations reproduces the
   stored labels (asserted in the rescoring scripts).
-- 2I: see the 2I section below.
+- 2I: the primary arm (`prim`, 1440 parts) was regenerated the same way (`task2i_code_hashes.txt` passes) with
+  `task2i_run.py run --seeds 5151,6262 --arms prim`; `rescore/rescore_2i.py legacy` reproduces every number of
+  `results/task2i/analyze_2i_primary_out.txt` except the run times (2288 of 2310 numbers identical; the other 22 are
+  the timing section). The secondary arms thr, s25 and s80 were not regenerated.
+- The 2F and 2I parts archived in `results/task2f/records/` and `results/task2i/records/` (`*.tar.xz` with
+  `SHA256SUMS`; 5.8 and 5.7 MB) are a **regeneration** with the frozen code, not the original registered records,
+  which were never stored (E49). Their equivalence to the registered runs rests on reproducing every registered
+  number above, not on the bytes of the original files. `tests/test_regression.py` (d) and (e) extract them and check the
+  reproduction above on every CI run.
+- 2A, 2B: `rescore/rescore_2a2b.py legacy` reproduces `analyze_2a_out.txt` and `analyze_2b_out.txt` (every number).
+- R0, R1: `python -m ttmt.analysis.r0 eval results/taskR0/verif_r0/analysis 2000` and `python -m ttmt.analysis.r1 eval
+  results/taskR1/run/hyb_eval.json results/taskR1/run/hyb_cal.json OUT` reproduce the stored analyses byte for byte
+  (the R0 folder with every method; `results/taskR0/analysis_eval.txt` itself is reproduced by `run_close` for M1 and
+  M3, `tests/test_regression.py` (b)); `--match one_to_one` gives the rescoring.
 
 ## 2M (REAL arm, cells pooled, @0.25; seed 2718 primary)
 
@@ -68,17 +82,68 @@ The repeat-hit correction alone moves every 2F contrast by at most 0.008; the or
 verdicts. In 2F, BOMP-PK-CAP+SC (descriptive) stores no locations: under `strict` it gets
 `froc_strict.drop_duplicates` of its stored labels, and it is left out of the LOC+T runs.
 
+## 2I (HUBER-N+SC versus BOMP-PK+SC and MT-FW+SC, primary arm, @0.25; seeds 5151 / 6262)
+
+| Reading | legacy | strict | legacy-loct | strict-loct |
+|---|---|---|---|---|
+| 2I-a HUBER-N - BOMP-PK, dense | +0.058 / +0.053, met | +0.059 / +0.056, met | +0.031 / +0.019, **not met** | +0.032 / +0.019, **not met** |
+| 2I-b HUBER-N - MT-FW (margin -0.03), lower bound | -0.023 / -0.018, met | -0.022 / -0.018, met | -0.015 / -0.019, met | -0.015 / -0.018, met |
+| 2I-c TOST (standard windows), 90% CI | [-0.010, +0.027] / [-0.013, +0.024], met | [-0.010, +0.028] / [-0.013, +0.024], met | [+0.011, +0.049] / [-0.008, +0.030], met | [+0.012, +0.049] / [-0.007, +0.031], met |
+
+Under LOC+T, 2I-a fails in seed 6262 on the point criterion only (+0.019 against 0.03; lower bound +0.008 > 0), so the
+registered interpretation flips to "a fails". The one-to-one rule alone moves the three registered 2I contrasts by at most 0.003.
+Every 2I method stores locations, so the full one-to-one rule applies.
+
+## 2A and 2B (stored records without locations)
+
+The parts of 2A and 2B store (score, label) per atom but no locations or origin times, so only the weaker variant
+applies: `froc_strict.drop_duplicates` turns a repeated event index into a false event (no reassignment, no LOC+T).
+GaMMA and PyOcto store per-window counts per configuration and keep their registered scoring. The 2A-e operating
+points are re-frozen on the seed-999 calibration under the same rule (`rescore/rescore_2a2b.py dedup`).
+Every registered 2A verdict (2A-a to 2A-e, both regimes) and 2B (both regimes) is unchanged. The cell differences of
+the rule lines move by at most 0.06 (2A-b, 6 st., seed 2024, thin: +0.24/+0.29 -> +0.21/+0.28; one-sided 8 rises +0.31/+0.24 -> +0.37/+0.30).
+The strict reading of 2A-e in the thin regime goes from not met to met (seed 7331 rate within 2x the budget in every
+cell). Outputs: `2a_dedup_out.txt`, `2b_dedup_out.txt`.
+
+## R0 and R1 (real data, stored detection lists; `ttmt.analysis.r0` / `r1 --match one_to_one`, ADR-0007)
+
+- R0: the registered primary contrast (thesis detector minus BESTPICK, LOC+T, 30/h) stays -0.383 [-0.481, -0.310],
+  and no LOC+T reading changes. Under LOC, M3 on U8 at 10/h drops from 0.067 to 0.044 (M1 - M3 at 10/h: -0.022 ->
+  -0.017). Output: `r0_one_to_one_out.txt`.
+- R1: the analysis is identical under both rules (R1-a 23 vs 22 of 54, p = 0.50; R1-b 23 vs 26, p = 0.97: both not
+  met). Output: `r1_one_to_one_out.txt`.
+
+## Coverage by task (critique CR-21)
+
+| Task | One-to-one applied | Origin time (LOC+T) | Verdict change |
+|---|---|---|---|
+| 2A, 2B | repeats as false only (no locations stored) | not possible | none (2A-e strict reading, thin, becomes met) |
+| 2C, 2D, 2E, 2L | **no**: their raw records are not stored and were not regenerated | no | open |
+| 2F | yes (regenerated parts) | yes | 2F-a strong and 2F-c fail under LOC+T |
+| 2I | yes (regenerated primary arm) | yes | 2I-a fails under LOC+T (seed 6262) |
+| 2M | yes (stored parts) | yes (registered secondary) | 2M-d (2718) becomes non-inferior; primaries hold |
+| R0 | yes | yes (registered primary) | none |
+| R1 | yes | yes (registered primary) | none |
+
+2C, 2D, 2E and 2L would need their runs regenerated from the frozen code, as was done for 2F and 2I.
+
 ## Reproduce
 
 ```bash
-cd code
+cd code      # run from code/: the archives extract to code/task2f_parts and code/task2i_parts, the paths the
+            # frozen scripts read (rescore_2f.py and rescore_2i.py take no parts argument; they are append-only)
 python rescore/rescore_2m.py strict OUT.txt 2000 2718=../results/task2M/parts_2718 3141=../results/task2M/parts_3141
 python rescore/dup_stats_2m.py
-OPENBLAS_CORETYPE=Prescott python task2f_run.py run --seeds 4242,8888 --workers 4     # about 6.4 CPU-hours
+tar -xJf ../results/task2f/records/task2f_parts.tar.xz       # or regenerate (about 6.4 CPU-hours):
+OPENBLAS_CORETYPE=Prescott python task2f_run.py run --seeds 4242,8888 --workers 4
 python rescore/rescore_2f.py strict-loct OUT.txt                                     # legacy | legacy-loct | strict
+tar -xJf ../results/task2i/records/task2i_parts.tar.xz       # or regenerate (about 7.7 CPU-hours):
 OPENBLAS_CORETYPE=Prescott python task2i_run.py run --seeds 5151,6262 --arms prim --workers 4
 python rescore/rescore_2i.py strict-loct OUT.txt
+python rescore/rescore_2a2b.py dedup WORKDIR
+TTMT_DATA_ROOT=... python -m ttmt.analysis.r0 eval ../results/taskR0/verif_r0/analysis 2000 --out OUT.txt --match one_to_one
+TTMT_DATA_ROOT=... python -m ttmt.analysis.r1 eval ../results/taskR1/run/hyb_eval.json ../results/taskR1/run/hyb_cal.json OUT.txt --match one_to_one
 ```
 
 Environment: Python 3.11, numpy 1.26.4, scipy 1.17.1, pandas 3.0.6, scikit-learn 1.8.0, pyproj 3.7.2,
-quakemigrate 1.2.2, obspy 1.5.1, threadpoolctl. The regenerated parts are ignored by git (31 MB for 2F).
+quakemigrate 1.2.2, obspy 1.5.1, threadpoolctl. The extracted parts folders are ignored by git; the archives are tracked.

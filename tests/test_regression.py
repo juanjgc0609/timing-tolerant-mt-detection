@@ -5,7 +5,8 @@
     of the raw data folders).
 (c) R1 re-run from the raw waveforms through the package (stored picks as input) reproduces the stored P1 lists, the
     hybrid lists and the registered analysis (slow; raw data).
-(d) 2F from regenerated records: pending (its raw records were not stored, E49; they are being regenerated elsewhere).
+(d) 2F from its regenerated records (results/task2f/records/, E49) reproduces results/task2f/analyze_2f_out.txt except
+    the run times; (e) the same for the primary arm of 2I (results/task2i/records/, analyze_2i_primary_out.txt).
 Comparison: discrete outputs exact everywhere; detector scores exact on Linux (``--match exact``) and within the
 declared relative tolerance of ttmt.testing elsewhere.
 """
@@ -115,8 +116,64 @@ def test_r1_end_to_end_from_raw_data(match_mode):
 
 
 # ------------------------------------------------------------------------------------------- (d) 2F
-@pytest.mark.skip(reason="2F records not stored (E49). PR #4 regenerated the 2F parts on Linux but keeps them out of git "
-                         "(code/task2f_parts/ is ignored); the test reads them once they are archived in results/task2f/.")
-def test_2f_from_regenerated_records():
-    path = RES / "task2f" / "records"
-    assert path.is_dir()
+def _numbers(text):
+    import re
+    return re.findall(r"[-+]?\d+\.\d+", text)
+
+
+def _extract(archive, dest):
+    import hashlib
+    import tarfile
+    sums = dict(line.split()[::-1] for line in (archive.parent / "SHA256SUMS").read_text().splitlines())
+    assert hashlib.sha256(archive.read_bytes()).hexdigest() == sums[archive.name]
+    with tarfile.open(archive) as tf:
+        tf.extractall(dest, filter="data")
+    return dest / archive.name.split(".")[0]
+
+
+@pytest.mark.slow
+def test_2f_from_regenerated_records(tmp_path):
+    """the 2F parts regenerated with the frozen code (results/task2f/records/, E49) reproduce every number of the
+    registered analysis except the run times (section "Times", the last 40 numbers before the verdicts)."""
+    import functools
+    from ttmt import legacy
+    legacy.install()
+    import analyze_2f as A
+    parts = _extract(RES / "task2f" / "records" / "task2f_parts.tar.xz", tmp_path)
+    load = A.load_arm
+    A.load_arm = functools.partial(load, parts=str(parts))
+    out = tmp_path / "analyze_2f_out.txt"
+    try:
+        import sys
+        argv, sys.argv = sys.argv, ["analyze_2f.py", "--out", str(out)]
+        A.main()
+    finally:
+        sys.argv, A.load_arm = argv, load
+    got = out.read_text()
+    ref = _text(RES / "task2f" / "analyze_2f_out.txt")
+    cut = lambda t: t.split("\n## Tiempos")[0].split("\n## Times")[0]  # noqa: E731
+    assert _numbers(cut(got)) == _numbers(cut(ref))
+    assert _numbers(got.split("Veredictos")[1]) == _numbers(ref.split("Verdicts")[1])
+
+# ------------------------------------------------------------------------------------------- (e) 2I
+@pytest.mark.slow
+def test_2i_from_regenerated_records(tmp_path):
+    """the 2I primary-arm parts regenerated with the frozen code (results/task2i/records/) reproduce every number of
+    results/task2i/analyze_2i_primary_out.txt except the run times (the secondary arms thr, s25 and s80 were not
+    regenerated, as in that file)."""
+    import functools
+    import sys
+    from ttmt import legacy
+    legacy.install()
+    import analyze_2i as A
+    parts = _extract(RES / "task2i" / "records" / "task2i_parts.tar.xz", tmp_path)
+    load = A.load
+    A.load = functools.partial(load, parts=str(parts))
+    out = tmp_path / "analyze_2i_out.txt"
+    argv, sys.argv = sys.argv, ["analyze_2i.py", "--out", str(out)]
+    try:
+        A.main()
+    finally:
+        sys.argv, A.load = argv, load
+    cut = lambda t: t.split("\n## Tiempos")[0].split("\n## Times")[0]  # noqa: E731
+    assert _numbers(cut(out.read_text())) == _numbers(cut(_text(RES / "task2i" / "analyze_2i_primary_out.txt")))
