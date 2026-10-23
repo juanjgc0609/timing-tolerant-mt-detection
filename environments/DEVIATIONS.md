@@ -54,7 +54,8 @@ relative 1e-12 elsewhere.
   ':' in their names, so the tree is exported from git blobs with ':' replaced by '-';
 - EQNet at 7dd24ed (editable). The current repository serves PhaseNet, PhaseNet+ and PhaseNet-DAS. The 2022 EQNet
   model (shift-and-stack of learned features) has no released weights. An `EQNet2-v0` weight release (AI4EPS/models,
-  11 Oct 2026) has no public inference code. See the B2 report.
+  11 Oct 2026) has no public inference code. So EQNet cannot run in the atlas core set until weights or inference
+  code for it are public.
 
 numpy is 2.5.2 here, against 1.26.4 in the core env. The comparators are not part of the frozen pipeline.
 
