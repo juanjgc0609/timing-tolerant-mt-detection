@@ -169,7 +169,7 @@ to 2L, are also in `outputs/explore_contrib/`, with their scripts, reports and o
 
 ## 3. The design errors that inverted or nullified a result
 
-This is the central content of this manifest. The log contains 61 errors, E1 to E61. In the
+This is the central content of this manifest. The log contains 62 errors, E1 to E62. In the
 first six (E1 to E6) the resulting number looked valid, and in all six it was detected **only because
 it turned out to be implausible**, not because there was a visible fault in the code; the following ones were detected
 by controls, preregistered rules or audits, as indicated in each one.
@@ -1130,6 +1130,24 @@ conclusion. The registered result stands; the statement of the amendment was fal
 **Correction:** declared in the result entry of the log, in Appendix Y.33 and in the thesis. Rule for future tests:
 the development reads must end at the start of the evaluation segment, margin included.
 
+### E57. The thesis described the synthetic generator as homogeneous and understated its timing error
+**Document:** `docs/thesis/Thesis.md`, Sections 6.2, 6.4, 7.2, 7.4 and 8 (also repeated by audit 7).
+**Symptom:** Section 6.2 said the generator computes arrivals "in a homogeneous medium" in a 42 km by 42 km region
+with clutter "at a weak and a strong rate", and that its timing error after station corrections is "about 0.14 s";
+Section 7.4 said a second generator was not built.
+**Cause:** the paragraph described the detectors' forward model, not `code/gen_realistic.py`, which Tasks 2A to 2F,
+2I, 2L and 2M use: a linear gradient medium with curved rays, a per-event Ricker wavelet of 1.4 to 2.8 Hz rotated in
+phase, scattered coda, station delays N(0, 0.3 s), sources in a 30 km by 30 km square (42 km is the detector grid),
+and clutter regimes that differ in amplitude (0.35 and 1.75), not in count. The 0.14 s is rms(SC - static) with weak
+clutter only (0.12 to 0.21 s; 0.20 to 0.28 s with strong clutter, `results/task2a/analyze_2a_out.txt`, Table 5) and
+leaves out the position-dependent travel-time error of the homogeneous model (for S, 5th to 95th percentile -0.38 to
++0.24 s, Appendix Y.14), which constant terms cannot absorb. `code/gen_b.py` exists but is unused, and the
+validation script and report it cites are not in the repository.
+**Detection:** project audit thread of 2026-10-18, by comparing the text with the code and Appendix Y.14.
+**Scope:** no registered number changes. The argument that the synthetic timing error lay well inside the 0.25 s
+tolerance (Sections 7.2 and 8, and E46) is weakened: the contrast with Ridgecrest (0.35 to 0.41 s) is one of degree.
+**Correction:** Sections 6.2, 6.4, 7.2, 7.4 and 8 of the thesis rewritten; Appendix Y.14 was already correct.
+
 ### E58. Repeat detections of an event are neutral, and the headline hit rule has no origin-time test
 **Script:** `froc_exact.py`, `task2c_methods.hit_of`, `explore_contrib/c10_lib.label`, `analyze_2f.Pool`,
 `explore_contrib/c10_analyze.Boot` (Tasks 2A to 2M).
@@ -1151,28 +1169,6 @@ reading and all of R1 unchanged, and changes no primary verdict; the secondary 2
 **Correction:** `code/froc_strict.py` (one-to-one matching in record order; repeat atoms are false) and
 `ttmt.scoring.label(match="one_to_one")` (ADR-0007), proposed as the rule of future tests together with LOC+T as the
 headline. The registered results stand as registered.
-
-### E62. Deflation subtracts each accepted atom on the integer sample grid
-**Script:** `explore_contrib/c10_lib._deflate` (MT-FW and BOMP-PK loops), `c8_lib.mtfw_general`, `xc.mtfw_mask`,
-`certified_fw` and every greedy loop that subtracts `task1x_mtglrt.AC` centred on the read sample.
-**Symptom:** after an atom is accepted and deflated, part of each of its arrivals stays in the residual. Measured on a
-noise-free matched-filter output of one Ricker arrival (`tests/test_unit.py`, E62 tests): with the registered 2 Hz
-filter the fraction of the arrival's energy left is 0 for an arrival on the grid, 4.3 % at a quarter sample, 16.3 % at
-half a sample, and 5.6 % on average over a uniform sub-sample delay. With a 2.8 Hz pulse (the upper end of the
-generator's wavelets) through the 2 Hz filter it reaches 21.2 % (mean 7.4 %), and with the 3 Hz filter of C18h 34.0 %
-(mean 12.1 %). The phase-5 theory work gives 16 to 36 % for the same quantity.
-**Cause:** the response is subtracted at the read (integer) sample, with the amplitude read at that sample. An arrival
-whose true time falls between samples is not represented by a grid-centred copy of the response.
-**Detection:** the phase-5 theory work (identifiability of overlapping events), checked numerically in the package.
-**Scope:** every greedy deflation run (MT-FW, BOMP-PK, HUBER-N and their variants, in every task). The energy left
-behind can produce a later atom near an accepted one (a repeat, which E58 counts as neutral) or raise the residual
-seen by a nearby event. No registered number changes. The registered runs used the grid deflation and stay as
-registered.
-**Correction:** a versioned convention in the package, `deflation="grid"` (legacy, the default, numbers unchanged) or
-`"fractional"` (`ttmt.detector.deflate`): the deflation response of the `Kernel` delayed by the sub-sample delay that
-best explains the residual around the read sample (`Kernel.response(delta)`, exact for the analytic pulse), scaled so
-that its value at the read sample is the fitted vector; it removes an off-grid atom to within 1e-6 relative. Any run
-with `"fractional"` is post hoc and separately labelled.
 
 ### E59. The C18j gate was met on the events that set its station terms, and fails out of sample
 **Script:** `explore_contrib/c18j_layered.py` (exploration C18j), the reading that motivated Task R1.
@@ -1234,6 +1230,31 @@ rest on the exact McNemar tests, which are unaffected.
 **Correction:** declared in Appendix Y.33, where the Newcombe intervals are added next to the bootstrap ones. Rule for
 future tests: with few discordant events, report an interval for paired proportions; use the block bootstrap only when
 the number of blocks and of discordant events is large enough for the resampled distribution to have a lower tail.
+
+### E62. Deflation subtracts each accepted atom on the integer sample grid
+**Script:** `explore_contrib/c10_lib._deflate` (MT-FW and BOMP-PK loops), `c8_lib.mtfw_general`, `xc.mtfw_mask`,
+`certified_fw` and every greedy loop that subtracts `task1x_mtglrt.AC` centred on the read sample.
+**Symptom:** after an atom is accepted and deflated, part of each of its arrivals stays in the residual. Measured on a
+noise-free matched-filter output of one Ricker arrival (`tests/test_unit.py`, E62 tests): with the registered 2 Hz
+filter the fraction of the arrival's energy left is 0 for an arrival on the grid, 4.3 % at a quarter sample, 16.3 % at
+half a sample, and 5.6 % on average over a uniform sub-sample delay. With a 2.8 Hz pulse (the upper end of the
+generator's wavelets) through the 2 Hz filter it reaches 21.2 % (mean 7.4 %), and with the 3 Hz filter of C18h 34.0 %
+(mean 12.1 %). These are fractions of energy. The phase-5 theory (Proposition AB.B.6, Appendix AB) measures a different
+quantity, the peak amplitude of the residual relative to the arrival, $\sup_t\|\mathbf L_{ib}(t)\|/\|\mathbf g_{ib}\|$:
+0.387 at half a sample (against 0.163 in energy), and in its greedy simulation a median of 0.16 to 0.19 (depending on the
+NumPy version) and a maximum of 0.36. That 16 appears in both is a coincidence.
+**Cause:** the response is subtracted at the read (integer) sample, with the amplitude read at that sample. An arrival
+whose true time falls between samples is not represented by a grid-centred copy of the response.
+**Detection:** the phase-5 theory work (identifiability of overlapping events), checked numerically in the package.
+**Scope:** every greedy deflation run (MT-FW, BOMP-PK, HUBER-N and their variants, in every task). The energy left
+behind can produce a later atom near an accepted one (a repeat, which E58 counts as neutral) or raise the residual
+seen by a nearby event. No registered number changes. The registered runs used the grid deflation and stay as
+registered.
+**Correction:** a versioned convention in the package, `deflation="grid"` (legacy, the default, numbers unchanged) or
+`"fractional"` (`ttmt.detector.deflate`): the deflation response of the `Kernel` delayed by the sub-sample delay that
+best explains the residual around the read sample (`Kernel.response(delta)`, exact for the analytic pulse), scaled so
+that its value at the read sample is the fitted vector; it removes an off-grid atom to within 1e-6 relative. Any run
+with `"fractional"` is post hoc and separately labelled.
 
 ### On the order of the three errors of Task 0
 Three complete protocols, three different conclusions, and **in none of them was the cause the physics**. By

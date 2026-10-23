@@ -1,0 +1,12 @@
+SNR 120, dtau 3 s, eps 0.15 s; fuente mas fuerte en su nodo verdadero
+  rep  T_nodo_verdadero  LB(Lema B.2)  max T equivocado  fuga Lambda en ese nodo  dist(km)  |dtau|(s)
+    0           118.1          87.6             94.7                 121.7       6.0     0.9
+    1           117.3          74.0             92.8                  98.4      19.2     2.7
+    2           110.3         -20.0            101.5                 110.7       6.0     0.1
+    3           117.0          88.8            120.7                 148.8       9.0     3.9
+    4           118.1          95.9            109.1                 110.0       4.2     1.2
+    5           116.5          63.8             83.8                  91.0       6.0     0.8
+    6           117.8          48.4            106.0                 124.6       3.0     1.1
+    7           120.6          57.7             83.4                  95.5      24.7     4.1
+  medianas: LB/T_verdadero = 0.59; max T equivocado/T_verdadero = 0.85; (fuga + N_W)/T_verdadero = 1.11
+residuo de la deflacion desplegada en bloques con ||g_ib|| >= 0.1 max (87 bloques): mediana 0.157, p90 0.316, max 0.362 de ||g_ib||

@@ -1,0 +1,23 @@
+D.1  verosimilitud de contaminacion, eps = 0.05, fondo t isotropa nu = 3.0
+   influencia maxima de un bloque (sup_m ell - inf ell) frente a la amplitud M del transitorio:
+     M =   1e+01: sup ell =   10.35, cota log(eps+(1-eps) N_max/f) =   10.35, inf ell =  -3.00; prediccion (nu+3) log M =  13.82
+     M =   1e+02: sup ell =   24.08, cota log(eps+(1-eps) N_max/f) =   24.08, inf ell =  -3.00; prediccion (nu+3) log M =  27.63
+     M =   1e+03: sup ell =   37.89, cota log(eps+(1-eps) N_max/f) =   37.89, inf ell =  -3.00; prediccion (nu+3) log M =  41.45
+     M =   1e+04: sup ell =   51.71, cota log(eps+(1-eps) N_max/f) =   51.71, inf ell =  -3.00; prediccion (nu+3) log M =  55.26
+   evidencia de un evento exacto a*w por bloque sobre fondo denso b = 20, error de modelo s = 1 + gamma |a w| (gamma = 0.2):
+     a =    30: ell =   4.572
+     a =   100: ell =   6.297; pendiente en log a = 1.43
+     a =   300: ell =   9.390; pendiente en log a = 2.81
+     a =  1000: ell =  13.000; pendiente en log a = 3.00
+     a =  3000: ell =  16.303; pendiente en log a = 3.01
+     (prediccion de la Proposicion D.1(b): pendiente nu = 3.0)
+D.2  S_mix = log E_pi[prod_k exp(ell_k(m))], pi = N(0, 10^2 I), 4000 muestras de m; nulo: bloques t isotropos
+   fondo bien especificado: media de exp(S_mix) = 0.000; p=0.1: mezcla 0.0000, GLR 0.0000; p=0.01: mezcla 0.0000, GLR 0.0000; p=0.001: mezcla 0.0000, GLR 0.0000
+   fondo real con colas mas pesadas (nu 1.5): media de exp(S_mix) = 0.001; p=0.1: mezcla 0.0000, GLR 0.0013; p=0.01: mezcla 0.0000, GLR 0.0008; p=0.001: mezcla 0.0000, GLR 0.0003
+   fondo real 2x mas ancho: media de exp(S_mix) = 0.000; p=0.1: mezcla 0.0000, GLR 0.0000; p=0.01: mezcla 0.0000, GLR 0.0000; p=0.001: mezcla 0.0000, GLR 0.0000
+D.4  colocados, origen separado dtau: 1 - cos(theta_1) entre los subespacios de las dos hipotesis
+     dtau = 0.003 s: 1 - cos theta_1 = 8.881e-04, sigma_min(Gamma) = 2.980e-02
+     dtau = 0.010 s: 1 - cos theta_1 = 9.847e-03, sigma_min(Gamma) = 9.923e-02; pendiente 2.00
+     dtau = 0.030 s: 1 - cos theta_1 = 8.700e-02, sigma_min(Gamma) = 2.950e-01; pendiente 1.98
+     dtau = 0.100 s: 1 - cos theta_1 = 7.846e-01, sigma_min(Gamma) = 8.858e-01; pendiente 1.83
+     dtau = 0.300 s: 1 - cos theta_1 = 6.788e-01, sigma_min(Gamma) = 8.239e-01; pendiente -0.13
