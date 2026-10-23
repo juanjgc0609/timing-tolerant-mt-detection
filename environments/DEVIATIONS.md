@@ -38,3 +38,27 @@ to 19 335. The legacy code run on the same Windows machine gives values identica
 segments, bit for bit, so the difference comes from the platform, not from the port. Rule (`ttmt.testing`): discrete
 outputs exact on every platform; continuous detector scores and station terms bit for bit on Linux and within
 relative 1e-12 elsewhere.
+
+## Comparator environments of the atlas (`gpu.lock.txt`, `gpu_weights.sha256`, `eqc.conda-explicit.txt`)
+
+`ttmt-gpu` is a conda clone of the local `mt-gpu-test` env, which stays unmodified: Python 3.12.14, torch
+2.13.0+cu130, CUDA on the RTX 4060 Laptop GPU. Installed into it:
+- SeisBench 0.12.6, with the PhaseNet and EQTransformer weights `original`, `stead`, `instance`, `scedc` and `ethz`
+  (`SEISBENCH_CACHE_ROOT=C:\Users\juanj\ttmt\seisbench_cache`; sha256 in `gpu_weights.sha256`);
+- PyOcto 0.2.0 with pyrocko 2026.6.2;
+- GaMMA at 80394dd (editable, no dependencies), with numba 0.68.0 and scikit-learn 1.8.0, the frozen version (GaMMA's
+  own metadata asks for 1.7);
+- PhaseNO v1.0.0 (sun-hongyu/PhaseNO, commit 1c6d3f0, archived as Zenodo 10.5281/zenodo.10224301). The repository
+  given in the brief, AI4EPS/PhaseNO, does not exist. PhaseNO's code is a notebook written for torch 1.12, PyG 2.2 and
+  pytorch-lightning 1.9; here it runs with torch_geometric 2.8.1 and pytorch-lightning 2.6.6. Its example files have
+  ':' in their names, so the tree is exported from git blobs with ':' replaced by '-';
+- EQNet at 7dd24ed (editable). The current repository serves PhaseNet, PhaseNet+ and PhaseNet-DAS. The 2022 EQNet
+  model (shift-and-stack of learned features) has no released weights. An `EQNet2-v0` weight release (AI4EPS/models,
+  11 Oct 2026) has no public inference code. So EQNet cannot run in the atlas core set until weights or inference
+  code for it are public.
+
+numpy is 2.5.2 here, against 1.26.4 in the core env. The comparators are not part of the frozen pipeline.
+
+EQcorrscan 0.5.2 has no Windows wheel on PyPI, and its source build fails. conda-forge has a Windows build, but it
+would replace numpy, scipy and MKL under the pip-installed torch stack of `ttmt-gpu`. It therefore lives in a separate
+env, `ttmt-eqc` (conda-forge only, Python 3.12, numpy 2.5.4, obspy 1.5.1; `eqc.conda-explicit.txt`).
