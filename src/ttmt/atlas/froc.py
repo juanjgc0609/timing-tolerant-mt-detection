@@ -32,11 +32,26 @@ def label(det, truth, target=None):
 
 
 def duplicate(det, half_sep):
-    """the duplicator control of ADR-0008 item 3, as a Detections object."""
+    """the duplicator control of ADR-0008 item 3, as a Detections object; half_sep scalar or one value per
+    detection (duplicator_shift)."""
     from .schema import Detections
     s, xy, t = S.duplicator(det.s, det.xyz[:, :2], det.t, half_sep)
     xyz = np.c_[xy, np.r_[det.xyz[:, 2], det.xyz[:, 2]]]
-    return Detections(t, xyz, s, dict(det.meta, control="duplicator", half_sep=half_sep))
+    return Detections(t, xyz, s, dict(det.meta, control="duplicator"))
+
+
+def duplicator_shift(det, truth, sep, cap=1.0):
+    """half-shift (d,) of the duplicator of ADR-0008 item 3: for every detection, half the separation (cells.separation,
+    the arrival separation that defines T) of the catalogued event nearest to it in the normalised cost of
+    ttmt.stats.cost_matrix. A copy then lands on the bisector of that event's pair, where LOC+T-V never makes it
+    eligible; one shift per record would land copies on partners at other separations (review of PR #12).
+    Separations above cap (isolated events, or none) use cap: such copies cannot reach another event."""
+    if len(det) == 0 or truth.n_events == 0:
+        return np.zeros(len(det))
+    c = S.cost_matrix(det.xyz[:, :2], det.t, truth.xyz[:, :2], truth.t)
+    near = np.argmin(c, axis=1)
+    sp = np.asarray(sep, float)[near]
+    return 0.5 * np.where(np.isfinite(sp), np.minimum(sp, cap), cap)
 
 
 def isolated_duplicates(labels, det, truth, regime):
@@ -103,16 +118,13 @@ def score_record(pool, truth, k, subsets, net_centroid, ev_block, det_block, run
     """label every method's detections of one record and add them to the pool. k: subset size; subsets: per event
     its station indices (cells.station_subset); ev_block (m,) and det_block: callable t -> block id; runs: name ->
     Detections. duplicator_of: name of the comparator whose duplicator is added as "dup:<name>", with half_sep half
-    the median origin separation of the record's T targets (ADR-0008 item 3)."""
+    the separation of the event nearest to each detection (duplicator_shift; ADR-0008 item 3)."""
     cells, sep, _, _ = C.assign(truth, k, subsets, net_centroid)
     reg = regime_of(sep)
     reg[~truth.target] = ""
     if duplicator_of is not None:
-        t = np.sort(truth.t[truth.target])
-        gaps = np.diff(t)
-        tsep = gaps[(gaps >= 0.1) & (gaps < 1.0)]
-        half = 0.5 * float(np.median(tsep)) if len(tsep) else 0.25
-        runs = dict(runs, **{"dup:" + duplicator_of: duplicate(runs[duplicator_of], half)})
+        det = runs[duplicator_of]
+        runs = dict(runs, **{"dup:" + duplicator_of: duplicate(det, duplicator_shift(det, truth, sep))})
     entry = {}
     for name, det in runs.items():
         entry[name] = (det.s, label(det, truth), np.array([det_block(x) for x in det.t], int))

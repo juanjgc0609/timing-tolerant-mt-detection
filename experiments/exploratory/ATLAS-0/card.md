@@ -113,8 +113,9 @@ parts and adds only what the card must fix.
   normalised cost to the event is at most half their cost to every other catalogued event (`ttmt.stats.label_voronoi`,
   called by `ttmt.atlas.froc.label`). For isolated events it is LOC+T. A detection matched to a catalogued event that is
   not a target (an event of the noise record, or an event outside the station subset of the run) is neutral.
-- Negative control: the duplicator of the best comparator (each detection twice, at origin +- half the separation)
-  runs in every analysis; if it beats its comparator in T at one-sided 0.025, the metric is broken and no claim is
+- Negative control: the duplicator of the best comparator runs in every analysis: each detection twice, at origin
+  +- half the separation of the catalogued event nearest to it (`ttmt.atlas.froc.duplicator_shift`; one shift per
+  record would land copies on partners at other separations); if it beats its comparator in T at one-sided 0.025, the metric is broken and no claim is
   made. Duplicates of isolated events are reported per method (`ttmt.atlas.froc.isolated_duplicates`).
 - Endpoint: recall of the targets of a regime at 30 false detections per hour (exact FROC, operating point per
   method on the evaluated data), pooled with prevalence weights. Default: weights 1 (each evaluated target counts
@@ -131,6 +132,10 @@ parts and adds only what the card must fix.
   against the truth of task T3.V, where the point estimate in C must not fall below -0.05. G4 is not confirmatory.
 - Planning: semi-synthetic analyses are sized for a gain of 0.05 in T (`experiments/exploratory/P6-SAP/sample_size.py`,
   part 4 gives the number of blocks).
+
+Anchor precondition: the size of H2 (the margin sign-flip test at 30 blocks, measured at 0.032 against a nominal
+0.025 in the review of PR #11) is settled in `ttmt.stats` by the statistical design thread, and this section is
+updated to the corrected test, before the card is anchored.
 
 The atlas itself (phase 3) makes no beat claim: it describes strata and tests H-ATLAS and the predictions above.
 

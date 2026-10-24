@@ -208,3 +208,26 @@ def test_location_failures():
     det = Detections([10.2, 31.0], np.zeros((2, 3)), [2.0, 1.0])
     out = I.location_failures(det, tr)
     assert out["frac_fail"] == pytest.approx(0.5)
+
+
+def test_duplicator_shift_per_pair_with_mixed_separations():
+    """review of PR #12: one shift per record lets copies land on partners at other separations; the per-detection
+    shift of ADR-0008 item 3 must gain no partner at any separation."""
+    rng = np.random.default_rng(7)
+    sta = ring()
+    n = 200
+    t1 = 20.0 + 10.0 * np.arange(n)
+    sep = rng.uniform(0.1, 1.0, n)
+    t = np.r_[t1, t1 + sep]
+    xyz = np.tile(np.c_[rng.uniform(-8, 8, (n, 2)), np.full(n, 8.0)], (2, 1))
+    tr = Truth(np.arange(2 * n), t, xyz, np.ones(2 * n), arrivals(t, xyz, sta), np.full((2 * n, 8), 10.0),
+               0.0, t.max() + 20, pair=np.r_[np.arange(n), np.arange(n)])
+    first = Detections(t1, xyz[:n], rng.uniform(1, 2, n))
+    _, s, _, _ = C.assign(tr, 8, [np.arange(8)] * tr.n_events, [0, 0])
+    assert np.allclose(s[:n], sep)
+    dup = F.duplicate(first, F.duplicator_shift(first, tr, s))
+    lab = F.label(dup, tr)
+    assert not (lab >= n).any()                          # no partner hit
+    # a single record-wide shift (the defect) does take partners
+    bad = F.duplicate(first, 0.5 * float(np.median(sep)))
+    assert (F.label(bad, tr) >= n).sum() > 20
