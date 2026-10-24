@@ -5,6 +5,12 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-10-24
 
+- Atlas (phase 3; K1, K6, K9, CR-02, CR-03, CR-05, CR-14, CR-24): ATLAS-0 card final draft, ready to be anchored. It
+  copies ADR-0008 (regimes T and C, LOC+T-V with the duplicator control, H1 then H2, G4 primary on semi-synthetic
+  data), keeps the 240 cells as descriptive strata, restates H-ATLAS on the pooled regime T, fixes the 60-trial tuning
+  budget with its ledger, names `prototype-v1` as the internal baseline, and adds the fine-tuned-picker comparator, the
+  domain gate per generator, the K_mec/E scope and the 4-station contamination stratum. Harness `ttmt.atlas` (schema,
+  cells, scoring on `ttmt.stats`, pick and event diagnostics) with `tests/test_atlas.py`, run in CI.
 - Statistics (K1, K2, K9, CR-02, CR-07, CR-08): ADR-0008 (accepted by the author on 24 October), one rule for "the model beats the comparators"
   (pooled regimes instead of counted cells, LOC+T-V hit rule with a duplicator control, block sign-flip tests,
   intersection-union over comparators, fixed sequence H1 -> H2, equal tuning budget, G4 on semi-synthetic data first).

@@ -14,5 +14,5 @@ the error register and the sealed log are the index to them.
 |:--|:--|:--|
 | `exploratory/P6-power` | S1 (done) | How many targets does a paired recall test need? |
 | `exploratory/P6-SAP` | S1 (done) | Which beat rule is testable, and how many blocks and targets does each phase 6 test need? (ADR-0008) |
-| `exploratory/ATLAS-0` | S0 | Which regimes, budgets and counting rule define the failure atlas, fixed before it runs? |
+| `exploratory/ATLAS-0` | S0 (final draft, to be anchored) | Where and through which stage does each tuned published pipeline lose detectable events? Regimes and rule of ADR-0008 |
 | `exploratory/THEORY-5` | S1 (done) | Do the statements of Appendix AB hold numerically? |
