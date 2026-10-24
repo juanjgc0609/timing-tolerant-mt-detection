@@ -1,7 +1,7 @@
 # Experiment card: P6-SAP. The single beat rule and the sample size of phase 6
 
 Stage: S1 (done, 23 October 2026). Statistics only; no data read.
-Owner decisions: ADR-0008 is proposed; the atlas thread co-signs it and copies it into ATLAS-0 before anchoring.
+Owner decisions: ADR-0008 accepted by the author on 24 October 2026; the atlas thread copies it into ATLAS-0 before anchoring.
 
 ## Question
 Which decision rule can show that the model beats every tuned comparator, holding its error rate, with a number of
@@ -25,5 +25,5 @@ fixed sequence H1 -> H2, the LOC+T-V hit rule and its duplicator control, the qu
 - The false-alarm budget check needs 7 to 150 hours of record for dispersions 1 to 20.
 
 ## Consequence for the plan
-K1, K2, K9 and CR-08 resolved by ADR-0008 if co-signed. The data request of phase 6 is sized per regime: R3 (cheap
+K1, K2, K9 and CR-08 resolved by ADR-0008. The data request of phase 6 is sized per regime: R3 (cheap
 injection) at +0.05, R2 (real) at +0.10, and R2 tests the target regime only with network decimation (CR-04).
