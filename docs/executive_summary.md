@@ -337,7 +337,9 @@ cap 6, −0.008 [−0.023, +0.006] and −0.002 [−0.018, +0.012], with lower b
 standard windows it is equivalent to BOMP-PK+SC, +0.010 (90 CI [−0.010, +0.027]) and +0.007 (90 CI [−0.013, +0.024])
 (2I-c). The independent verification confirms the positive (provenance, symmetry, rederived statistics and
 six regenerated parts identical across the two interruptions) and fixes its scope: with the hit
-rule that requires origin time within 0.5 s the gain drops to +0.031 and +0.019; equivalence is
+rule that requires origin time within 0.5 s the gain drops to +0.031 and +0.019, so under that rule 2I-a is not met on
+6262 (+0.019 against the 0.03 point criterion, lower bound +0.008 > 0; the post hoc one-to-one rescoring, E58, gives
++0.032 and +0.019 and changes no verdict, `results/rescore_duplicates/2i_strict-loct_out.txt`); equivalence is
 met pooled but not with weak clutter on 6262 (−0.032 [−0.064, −0.003]); the recall with all atoms
 accepted does not rise, so the gain is one of ranking and atom choice, not of more events
 found; at cap 0.1 it falls somewhat below the cap on 5151 (−0.018); it costs about 9 times MT-FW; and the
@@ -675,6 +677,7 @@ and 5 standard windows per network; recall at 0.25 false events per window, pool
 | 2I-a: HUBER-N+SC over BOMP-PK+SC in dense windows | met | met | +0.058 [+0.039, +0.076] and +0.053 [+0.037, +0.070] |
 | 2I-b: non-inferior to MT-FW+SC with cap 6 in dense windows (margin 0.03) | met | met | −0.008 [−0.023, +0.006] and −0.002 [−0.018, +0.012] |
 | 2I-c: equivalence with BOMP-PK+SC in standard windows (TOST, margin 0.05) | met | met | +0.010 (90 CI [−0.010, +0.027]) and +0.007 (90 CI [−0.013, +0.024]) |
+| Post hoc rescoring (E58), one-to-one with origin time within 0.5 s | 2I-a met, 2I-b and 2I-c met | 2I-a NOT met, 2I-b and 2I-c met | 2I-a +0.032 [+0.022, +0.040] and +0.019 [+0.008, +0.030]; the origin-time test, not one-to-one matching (at most 0.001), makes 2I-a fail on 6262 (`results/rescore_duplicates/2i_strict-loct_out.txt`) |
 | Independent verification | — | — | positive confirmed; scope: +0.031 and +0.019 with origin time within 0.5 s; equivalence not met with weak clutter on 6262 (−0.032 [−0.064, −0.003]); the recall with all atoms accepted does not rise (it ranks and chooses better, it does not find more events); −0.018 against the cap at 0.1 on 5151; ~9 times the cost of MT-FW; low absolute recall |
 | Secondary arms (descriptive, 20 networks per cell and regime, unverified) | — | — | thresholds 2.50 and 3.37 indistinguishable from the registered one (+0.003 and +0.005; +0.001 and +0.006 in dense), threshold 5 lower (−0.013 and −0.023); sd 0.25: cap − BOMP-PK +0.005 and +0.009, HUBER-N − BOMP-PK +0.036 and +0.002; sd 0.8: HUBER-N − BOMP-PK +0.100 and +0.072, HUBER-N − cap −0.055 [−0.113, +0.002] and −0.069 [−0.121, −0.019] |
 
