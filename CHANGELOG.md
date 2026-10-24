@@ -5,6 +5,10 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-10-24
 
+- Atlas follow-up to PR #13: the ATLAS-0 card quotes the amended item 7 of ADR-0008 (H2 by the clustered score
+  test at the level of the design check, at least 30 blocks; Holm threshold of non-inferiority at 0.03 scaled by that
+  level); real-data pairs closer than 9 sigma_t are excluded from T (`ttmt.atlas.froc.truth_precision_targets`,
+  `score_record(..., sigma_t=...)`).
 - Atlas (phase 3; K1, K6, K9, CR-02, CR-03, CR-05, CR-14, CR-24): ATLAS-0 card final draft, ready to be anchored. It
   copies ADR-0008 (regimes T and C, LOC+T-V with the duplicator control, H1 then H2, G4 primary on semi-synthetic
   data), keeps the 240 cells as descriptive strata, restates H-ATLAS on the pooled regime T, fixes the 60-trial tuning
