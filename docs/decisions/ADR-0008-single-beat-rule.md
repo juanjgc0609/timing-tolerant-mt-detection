@@ -68,19 +68,32 @@ Nothing says where the phase-4 gate G4 is measured (K9).
 7. **The rule.** The model beats the comparators when, in this fixed order at 0.025 each:
    - **H1**: superiority in T (H0: recall difference <= 0 against every comparator); and then
    - **H2**: non-inferiority in C with margin 0.05 (H0: difference <= -0.05 against every comparator), by the
-     studentised sign-flip test on d_j + 0.05 n_j, at a calibrated level.
-   With a margin the shifted block sums are not symmetric, so the sign-flip test is only asymptotically exact, and the
-   approach is slow when discordant targets are rare: at the least favourable configuration of the intersection-union
-   test (one comparator exactly at the margin, the others clearly beaten) its size at a nominal 0.025 is 0.026 to 0.033
-   with 30 to 120 blocks (independent review of PR #11). H2 is therefore run at the largest level of
-   {0.025, 0.02, 0.015, 0.01, 0.005} whose simulated size, worst case over the registered range of method correlation
-   (0.5 to 0.9) and intra-block correlation (0 to 0.2) plus 1.645 Monte Carlo standard errors, is at most 0.025
-   (`sample_size.py calibrate`, 4,000 simulations); at 50 blocks with 3 targets per block that level is 0.015. H2 needs
-   at least 50 blocks. H1 is exact, so its size is at most 0.025 by construction (0.016 or less in simulation).
-   H2 is tested only if H1 is rejected; with H2 at its calibrated level the family-wise error is at most 0.025.
+     clustered score test `ttmt.stats.ni_score_pvalue` on the per-block discordant counts.
+   The score statistic is the sum over blocks of (b_j - c_j) + 0.05 n_j, with b_j and c_j the targets of block j hit
+   only by the model and only by the comparator. Its variance is computed under the restricted null: the
+   cluster-robust sum of squares centred at the null, floored at the multinomial variance of Tango (1998) at the
+   restricted maximum-likelihood estimate, so a run with no discordant target is not declared non-inferior on few
+   targets (30 targets give p = 0.11). The reference is Student's t with Satterthwaite degrees of freedom for block
+   variances that grow with block size and intra-block correlation (Bell and McCaffrey 2002), so few or very unequal
+   blocks give few degrees of freedom. The margin sign-flip test of the first draft had size up to 0.033 at the least
+   favourable configuration of the intersection-union test (one comparator exactly at the margin, the others clearly
+   beaten; review of PR #11), and the score test with a design-effect variance had size up to 0.06 to 0.11 with large,
+   very unequal, strongly correlated blocks (30 targets per block, dispersion 0.3, intra-block correlation 0.4;
+   review of PR #13). No asymptotic test is exact for every block structure, so a **design check** fixes the level
+   of H2 before the run: the largest level of {0.025, 0.02, 0.015, 0.01, 0.005} whose simulated size at the least
+   favourable configuration, worst case over the registered range plus 1.645 Monte Carlo standard errors, is at most
+   0.025 (`sample_size.py calibrate`: 2,000 simulations per configuration, the three worst configurations simulated
+   again with 8,000 fresh simulations so that the maximum is not inflated by Monte Carlo noise). The range covers
+   recall, method correlation, intra-block correlation and the mean and dispersion of targets per block, with its ends
+   taken from development data (`sample_size.py estimate`); the registration quotes the range and the level. Over the default
+   range (1 to 10 targets per block, intra-block correlation up to 0.2) the level is 0.025 from 30 to 300 blocks; with
+   the extreme blocks above it is 0.025 up to 50 blocks, 0.02 at 100 and 0.015 at 300 (part 3 of the output). H2
+   needs at least 30 blocks, the same minimum as item 5. H1 is exact, so its size is at most 0.025 by construction
+   (0.019 or less in simulation). H2 is tested only if H1 is rejected; with H2 at the level of the design check the
+   family-wise error is at most 0.025.
    Secondary hypotheses, tested only if H1 and H2 are rejected, form one Holm family at 0.025: superiority in
    [0.1, 0.5) s, superiority in [0.5, 1) s, and non-inferiority in C at the tighter margin 0.03, whose Holm threshold
-   is multiplied by its own calibrated level divided by 0.025. Cells are described with their estimates and
+   is multiplied by the level of the design check divided by 0.025. Cells are described with their estimates and
    intervals, never counted. The claim is worded "superior in the regime T, which holds Y % of the events of dense
    sequences, and not inferior by more than 0.05 elsewhere", with Y the prevalence of item 4 and its interval.
 8. **Effect sizes for planning.** Semi-synthetic analyses are sized for a gain of 0.05 in T and real ones for 0.10,

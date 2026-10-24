@@ -20,9 +20,10 @@ of SHA-256(<tag commit hash> || <Release created_at>). Number of blocks: <B>, fr
 Methods. As in R2 (core set, model's picker arm, 60-configuration budget, provenance table).
 Endpoint. Recall under LOC+T-V at 30 false detections per hour, operating point per method on the evaluated record,
 weights = real prevalence of each cell / its share in the design (<table>, ADR-0008 item 4); duplicator control.
-Rules. H1 superiority in T, then H2 non-inferiority by 0.05 in C, intersection-union of block sign-flip tests,
-H1 at one-sided 0.025 and H2 at the calibrated level <a2> (`sample_size.py calibrate`, ADR-0008 item 7), fixed
-sequence; secondary Holm family (SAP Section 2); intervals stratified by network (SAP 7.5);
+Rules. H1 superiority in T, then H2 non-inferiority by 0.05 in C, intersection-union of pairwise tests (H1 block
+sign-flip at one-sided 0.025; H2 clustered score test at the level <a2> of the design check `sample_size.py calibrate` over the range
+from `sample_size.py estimate` on development <path>,
+ADR-0008 item 7), fixed sequence; secondary Holm family (SAP Section 2); intervals stratified by network (SAP 7.5);
 budget check stratified by parent event and the e-value check at 3 to 15 km and 1 to 4 s (SAP 7.6, CR-01). Power of the
 chain <p>, size <s>.
 Prediction. <declared from development>.

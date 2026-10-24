@@ -105,6 +105,14 @@ class PairedTests(unittest.TestCase):
                           sims=2000, n_flip=99, seed=41)
         self.assertLessEqual(r["power_H2"], 0.025 + 1.5 * np.sqrt(0.025 * 0.975 / 2000))
 
+    def test_h2_size_with_large_unequal_blocks(self):
+        """Few large, very unequal, strongly correlated blocks (30 targets per block, dispersion 0.3, icc 0.4, rho 0.9;
+        review of PR #13, where the design-effect variance gave size 0.06 to 0.11): the restricted-null variance with
+        Satterthwaite degrees of freedom keeps H2 at 0.025."""
+        r = ss.run_design(60, m=30, k=0.3, p0=0.2, delta_r=0.05, delta_c=-0.05, rho=0.9, icc=0.4, n_comp=1,
+                          sims=2000, n_flip=99, seed=43)
+        self.assertLessEqual(r["power_H2"], 0.025 + 1.5 * np.sqrt(0.025 * 0.975 / 2000))
+
     def test_tau_keeps_marginal_recall(self):
         rng = np.random.default_rng(8)
         _, reg, ha, _ = ss.simulate_hits(rng, 20000, 3.0, 0, 0.5, 0.40, 0.10, -0.05, 0.7, 0.1, 0.6, 1)

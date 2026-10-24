@@ -28,8 +28,10 @@ Endpoint. Recall under LOC+T-V (ADR-0008 item 2) at 30 false detections per hour
 method on the evaluated record, prevalence weights <table> (ADR-0008 item 4); duplicator negative control on the best
 comparator (item 3); deployable threshold fixed on development (secondary).
 Rules. H1 (only if T is testable) superiority in T, then H2 non-inferiority by 0.05 in C, each an intersection-union
-of block sign-flip tests over the comparators, H1 at one-sided 0.025 and H2 at the calibrated level <a2> from
-`sample_size.py calibrate --blocks <B>` (ADR-0008 item 7), fixed sequence; blocks of 1 h (or T/30) within each
+of pairwise tests over the comparators (H1 block sign-flip at one-sided 0.025; H2 clustered score test at the level
+<a2> of the design check `sample_size.py calibrate --blocks <B> --p0 <range> --m <range> --k <range> --rho <range> --icc <range>`, ends
+from `sample_size.py estimate` on development <path>, ADR-0008 item 7), fixed
+sequence; blocks of 1 h (or T/30) within each
 sequence; secondary Holm family and descriptive readings as in SAP Section 2; intervals SAP 7.5; budget check SAP 7.6.
 Simulated with `sample_size.py` for this design (rho <r>, icc <i>, <m> targets per block, f <f>, +0.10 in T): power of
 the chain <p>, size <s> (output <path>).

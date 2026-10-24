@@ -37,10 +37,11 @@ session (CR-19).
 17. Prevalence weights equal the registered table.
 
 ## E. Statistics
-18. [STOP] Blocks as registered (definition, count; at least 50 for H2); each sign-flip p-value reproduced (exact or
-    with the registered seed and number of sign vectors; raw for H1, studentised for non-inferiority), the IUT p-value
-    is the largest pairwise one, and H2 is compared with the calibrated level quoted in the registration, reproduced
-    with `sample_size.py calibrate` for the registered design.
+18. [STOP] Blocks as registered (definition, count); each H1 sign-flip p-value reproduced (exact or with the
+    registered seed and number of sign vectors) and each non-inferiority p-value reproduced with the clustered score
+    test from the per-block discordant counts; the IUT p-value is the largest pairwise one; H2 is compared with the
+    level of the design check quoted in the registration, reproduced with `sample_size.py calibrate` over the
+    registered range.
 19. [STOP] Fixed sequence respected: H2 reported as tested only if H1 was rejected; secondary Holm family only after
     both; no hypothesis added, dropped or reordered.
 20. Intervals: stratified block bootstrap with the registered replicates and seed, operating points recomputed per

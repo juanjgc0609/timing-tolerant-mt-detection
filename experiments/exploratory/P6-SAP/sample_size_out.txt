@@ -20,25 +20,35 @@ design, seed 20261019.
     24 x 100             0.12                  0.000                    0.997
     24 x 400             0.48                  0.331                    1.000
 
-3. Size at the least favourable configuration of the intersection-union test: one comparator at the
-   boundary (n_comp 1), 3 targets per block on average, f 0.3, 4000 simulations. H1 at gain 0 (exact test);
-   H2 at true difference -0.05 with the studentised sign-flip, worst case over rho 0.5/0.7/0.9 and icc 0/0.2,
-   and the calibrated level of H2 (largest level whose size + 1.645 MC se <= 0.025):
-     30 blocks: size H1 0.007   size H2 at 0.025 0.039, at 0.02 0.032, at 0.015 0.026   calibrated level 0.01
-     50 blocks: size H1 0.013   size H2 at 0.025 0.028, at 0.02 0.025, at 0.015 0.019   calibrated level 0.015
-    100 blocks: size H1 0.016   size H2 at 0.025 0.031, at 0.02 0.026, at 0.015 0.021   calibrated level 0.015
-    300 blocks: size H1 0.019   size H2 at 0.025 0.029, at 0.02 0.024, at 0.015 0.018   calibrated level 0.015
+3. Size at the least favourable configuration of the intersection-union test (one comparator at the
+   boundary, n_comp 1), f 0.3. H1 at gain 0: exact block sign-flip, worst over rho 0.5/0.9 and icc 0/0.2,
+   4000 simulations. H2 at true difference -0.05: score test under the restricted null (robust variance
+   floored at Tango's, Satterthwaite t), worst over recall 0.2/0.4/0.7/0.85, targets per block (mean,
+   dispersion) (1, 1)/(3, 1)/(10, 0.5)/(30, 0.3), rho 0.5/0.9, icc 0/0.2/0.4, 2000 simulations each; level
+   of the design check = largest level whose worst size + 1.645 MC se <= 0.025, the worst size taken from
+   8000 fresh simulations of the 3 worst configurations of the screen. The second line drops the extreme
+   blocks (30, 0.3) and icc 0.4, the default range of `calibrate`.
+     30 blocks: size H1 0.007   worst size H2 at 0.025 0.011 (p0 0.85, m 10, k 0.5, rho 0.9, icc 0.4), at 0.02 0.007   level 0.025
+               default range: worst size H2 at 0.025 0.008 (p0 0.2, m 3, rho 0.5, icc 0.0)   level 0.025
+     50 blocks: size H1 0.013   worst size H2 at 0.025 0.015 (p0 0.2, m 10, k 0.5, rho 0.5, icc 0.4), at 0.02 0.011   level 0.025
+               default range: worst size H2 at 0.025 0.013 (p0 0.7, m 3, rho 0.5, icc 0.2)   level 0.025
+    100 blocks: size H1 0.016   worst size H2 at 0.025 0.025 (p0 0.85, m 10, k 0.5, rho 0.9, icc 0.4), at 0.02 0.020   level 0.02
+               default range: worst size H2 at 0.025 0.018 (p0 0.85, m 3, rho 0.9, icc 0.0)   level 0.025
+    300 blocks: size H1 0.019   worst size H2 at 0.025 0.034 (p0 0.85, m 30, k 0.3, rho 0.5, icc 0.4), at 0.02 0.025   level 0.015
+               default range: worst size H2 at 0.025 0.022 (p0 0.2, m 10, rho 0.5, icc 0.0)   level 0.025
+   Zero discordance: 30 blocks of one target each, none discordant, gives p = 0.109 (not non-inferior);
+   the margin sign-flip of PR #11 gave p = 0.0001 there.
 
 4. Blocks for 80 % power, share of targets in the target regime f = 0.3: blocks (targets in regime / total)
-   gain  rho  icc   H1 alone                    chain H1 -> H2 (H2 at 0.015, calibrated at 50 blocks)
+   gain  rho  icc   H1 alone                    chain H1 -> H2 (H2 at 0.025)
    +0.05 0.5  0.1    1450 (1304 / 4347)          1450 (1304 / 4347)         
    +0.05 0.7  0.1    1100 (992 / 3311)           1100 (992 / 3311)          
    +0.05 0.9  0.1     700 (634 / 2113)            700 (634 / 2113)          
    +0.05 0.7  0.3    1150 (1032 / 3444)          1150 (1032 / 3444)         
-   +0.10 0.5  0.1     425 (382 / 1278)            725 (655 / 2179)          
-   +0.10 0.7  0.1     325 (292 / 978)             550 (495 / 1653)          
-   +0.10 0.9  0.1     206 (184 / 620)             337 (302 / 1009)          
-   +0.10 0.7  0.3     300 (268 / 899)             575 (519 / 1730)          
+   +0.10 0.5  0.1     425 (382 / 1278)            675 (605 / 2023)          
+   +0.10 0.7  0.1     325 (292 / 978)             525 (470 / 1570)          
+   +0.10 0.9  0.1     206 (184 / 620)             300 (268 / 899)           
+   +0.10 0.7  0.3     300 (268 / 899)             525 (470 / 1570)          
 
 5. Hours of record for the false-alarm budget check (30/h, tolerance 20 %, level 0.975, pass probability 0.80):
    phi 1: 7.4 h   phi 5: 37.2 h   phi 10: 74.4 h   phi 20: 148.9 h

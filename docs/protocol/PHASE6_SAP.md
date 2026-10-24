@@ -104,13 +104,17 @@ within each sequence. d_j and n_j as in ADR-0008 item 5 (`block_sums` with the p
 
 7.3 **Test.** Block sign-flip p-value, exact when at most 16 blocks are non-zero, otherwise 100,000 random sign
 vectors from seed 20261023 (`signflip_pvalue`); the clustered McNemar z of Durkalski et al. is reported next to it.
-H1 uses the raw sum (exact). Non-inferiority tests use the studentised statistic at the level calibrated for the
-registered design (`sample_size.py calibrate`, ADR-0008 item 7), quoted in the registration; H2 needs at least 50
-blocks. The tests are conditional on the operating points of 7.1, which are chosen on all evaluated blocks; the
+H1 uses the raw sum (exact). Non-inferiority tests (H2 and the secondary margin 0.03) use the clustered score test
+`ni_score_pvalue` from the per-block discordant counts (`block_counts`): variance under the restricted null
+(cluster-robust, floored at Tango's 1998 multinomial variance) and a Student t reference with Satterthwaite degrees of
+freedom. They run at 0.025 unless the design check of ADR-0008 item 7 lowers the level: `sample_size.py calibrate`
+over the registered range of recall, method correlation, intra-block correlation and mean and dispersion of targets
+per block, whose ends come from development data (`sample_size.py estimate`); range and level are quoted in the
+registration. The tests are conditional on the operating points of 7.1, which are chosen on all evaluated blocks; the
 bootstrap of 7.5 recomputes them in each replicate.
 
-7.4 **Multiplicity.** Intersection-union over comparators (`iut`), fixed sequence H1 then H2 (`fixed_sequence`, with H2
-at its calibrated level), Holm over the secondary family (`holm`). Sizes are checked at the least favourable
+7.4 **Multiplicity.** Intersection-union over comparators (`iut`), fixed sequence H1 then H2 (H2 at the level of the design
+check), Holm over the secondary family (`holm`). Sizes are checked at the least favourable
 configuration of the intersection-union test, one comparator at the boundary and the others clearly beaten, which
 equals the size of one pairwise test.
 

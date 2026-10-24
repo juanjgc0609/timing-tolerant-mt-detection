@@ -11,11 +11,15 @@ Dated record of changes to the project's process, code and documents. Results ar
   budget with its ledger, names `prototype-v1` as the internal baseline, and adds the fine-tuned-picker comparator, the
   domain gate per generator, the K_mec/E scope and the 4-station contamination stratum. Harness `ttmt.atlas` (schema,
   cells, scoring on `ttmt.stats`, pick and event diagnostics) with `tests/test_atlas.py`, run in CI.
-- Statistics (review of PR #11): H2 of ADR-0008 runs the studentised sign-flip test at a level calibrated by
-  simulation at the least favourable configuration of the intersection-union test (one comparator at the margin),
-  with at least 50 blocks (`sample_size.py calibrate`; 0.015 at 50 blocks); the nominal 0.025 gave size 0.026 to
-  0.033. `tau` in the sample-size model no longer moves the marginal recall. R2 tests the target regime only for pairs
-  at least nine times the truth's origin-time error apart (SAP 3.4).
+- Statistics (reviews of PR #11 and #13): H2 of ADR-0008 runs a clustered score test (`ttmt.stats.ni_score_pvalue`)
+  instead of the margin sign-flip test: variance under the restricted null (cluster-robust, floored at Tango's 1998
+  multinomial variance, so no discordance on few targets is not non-inferior) and a Student t reference with
+  Satterthwaite degrees of freedom. Its level is fixed by a design check (`sample_size.py calibrate`) over a range of
+  recall, correlations and targets per block taken from development data (`sample_size.py estimate`); the earlier
+  forms had size up to 0.033 (sign-flip) and 0.06 to 0.11 (design-effect variance, large unequal blocks) at the least
+  favourable configuration of the intersection-union test. H2 needs at least 30 blocks, as H1. `froc.gate` takes the
+  H2 level. `tau` in the sample-size model no longer moves the marginal recall. R2 tests the target regime only for
+  pairs at least nine times the truth's origin-time error apart (SAP 3.4).
 
 - Statistics (K1, K2, K9, CR-02, CR-07, CR-08): ADR-0008 (accepted by the author on 24 October), one rule for "the model beats the comparators"
   (pooled regimes instead of counted cells, LOC+T-V hit rule with a duplicator control, block sign-flip tests,
