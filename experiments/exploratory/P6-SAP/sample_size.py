@@ -47,7 +47,8 @@ def phi2(a, b, rho):
     x = np.linspace(-9.0, a, 6001)
     pdf = np.exp(-x ** 2 / 2) / sqrt(2 * np.pi)
     cond = np.array([ND.cdf((b - rho * xi) / sqrt(1 - rho ** 2)) for xi in x])
-    return float(np.trapezoid(pdf * cond, x))
+    trapezoid = getattr(np, "trapezoid", None) or np.trapz      # numpy < 2 (the core lock pins 1.26.4)
+    return float(trapezoid(pdf * cond, x))
 
 
 def discordance(p_a, p_b, rho):
