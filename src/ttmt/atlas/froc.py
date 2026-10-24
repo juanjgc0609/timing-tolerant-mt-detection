@@ -21,6 +21,34 @@ ALPHA = 0.025                            # one-sided, ADR-0008 items 5 and 7
 NI_MARGIN = 0.05                         # H2
 NI_MARGIN_SECONDARY = 0.03
 MIN_BLOCKS = 30                          # below it an interval is indicative (SAP S7.5)
+MIN_BLOCKS_H2 = 50                       # H2 is not tested with fewer blocks (ADR-0008 item 7, PR #13)
+TRUTH_PRECISION_FACTOR = 9.0             # a real-data pair enters T only if its separation >= 9 sigma_t (SAP 3.4)
+
+
+def alpha_h2_default(n_blocks):
+    """calibrated level of H2 for a design of n_blocks blocks (ADR-0008 item 7: the largest level of
+    {0.025, 0.02, 0.015, 0.01, 0.005} whose worst simulated size plus 1.645 Monte Carlo standard errors is at most
+    0.025; `experiments/exploratory/P6-SAP/sample_size.py calibrate`). The tabulated values are 0.015 from 50 to 300
+    blocks; below 50 H2 is not tested (None). Above 300 the level must be calibrated for the design and passed in."""
+    if n_blocks < MIN_BLOCKS_H2:
+        return None
+    if n_blocks <= 300:
+        return 0.015
+    raise ValueError("more than 300 blocks: calibrate the H2 level with sample_size.py calibrate and pass alpha_h2")
+
+
+def holm_weighted(pvalues, alpha, scale):
+    """Holm step-down in which hypothesis i's threshold alpha / (m - k) is multiplied by scale[i] (ADR-0008 item 7:
+    the threshold of non-inferiority at 0.03 is multiplied by its calibrated level divided by 0.025). Booleans in the
+    input order; with every scale 1 it is ttmt.stats.holm."""
+    p = np.asarray(pvalues, float)
+    order = np.argsort(p, kind="stable")
+    rej = np.zeros(p.size, bool)
+    for k, i in enumerate(order):
+        if p[i] > alpha / (p.size - k) * scale[i]:
+            break
+        rej[i] = True
+    return rej.tolist()
 
 
 def label(det, truth, target=None):
@@ -113,12 +141,30 @@ class Pool:
             r[0], r[1], r[2] = np.r_[r[0], np.asarray(s, float)], np.r_[r[1], lab], np.r_[r[2], np.asarray(blk, int)]
 
 
+def truth_precision_targets(truth, sigma_t, factor=TRUTH_PRECISION_FACTOR):
+    """target flags after the truth-precision rule of the phase-6 plan (SAP 3.4, PR #13): with real truth whose
+    origin-time standard deviation is sigma_t, an event closer in origin time than factor * sigma_t to another
+    catalogued event is excluded (it becomes a non-target, so detections of it are neutral). sigma_t None: unchanged
+    (semi-synthetic truth is exact)."""
+    if sigma_t is None or truth.n_events < 2:
+        return truth.target.copy()
+    o = np.argsort(truth.t, kind="stable")
+    gap = np.diff(truth.t[o])
+    near = np.empty(truth.n_events)
+    near[o] = np.minimum(np.r_[np.inf, gap], np.r_[gap, np.inf])
+    return truth.target & (near >= factor * sigma_t)
+
+
 def score_record(pool, truth, k, subsets, net_centroid, ev_block, det_block, runs, duplicator_of=None,
-                 weights=None):
+                 weights=None, sigma_t=None):
     """label every method's detections of one record and add them to the pool. k: subset size; subsets: per event
     its station indices (cells.station_subset); ev_block (m,) and det_block: callable t -> block id; runs: name ->
     Detections. duplicator_of: name of the comparator whose duplicator is added as "dup:<name>", with half_sep half
-    the separation of the event nearest to each detection (duplicator_shift; ADR-0008 item 3)."""
+    the separation of the event nearest to each detection (duplicator_shift; ADR-0008 item 3). sigma_t: origin-time
+    standard deviation of a real truth catalogue (measured on T3.V); pairs closer than 9 sigma_t are excluded."""
+    if sigma_t is not None:
+        from dataclasses import replace
+        truth = replace(truth, target=truth_precision_targets(truth, sigma_t))
     cells, sep, _, _ = C.assign(truth, k, subsets, net_centroid)
     reg = regime_of(sep)
     reg[~truth.target] = ""
@@ -228,13 +274,17 @@ def _pairwise(pool, a, b, mask, budget, margin, signs):
     return dict(diff=diff, p=float(p), n=float(n.sum()), blocks=int((n > 0).sum()))
 
 
-def gate(pool, model, comparators, budget=BUDGETS[0], duplicator_of=None, signs=None):
+def gate(pool, model, comparators, budget=BUDGETS[0], duplicator_of=None, signs=None, alpha_h2=None,
+         alpha_ni03=None):
     """the rule of ADR-0008 item 7 on a pooled evaluation.
-    H1: superiority in T against every comparator (IUT of sign-flip p-values); H2, only if H1 is rejected:
-    non-inferiority in C at margin 0.05. Secondary family (only if H1 and H2): superiority in [0.1, 0.5) s, in
-    [0.5, 1) s, non-inferiority in C at 0.03, Holm at 0.025. duplicator_of: (comparator, its duplicator run name) for
-    the negative control of item 3; if the duplicator beats its comparator in T at 0.025 the metric is broken and
-    no claim is made."""
+    H1: superiority in T against every comparator (IUT of exact sign-flip p-values) at 0.025. H2, only if H1 is
+    rejected: non-inferiority in C at margin 0.05 (studentised sign-flip test, ttmt.stats.signflip_pvalue with a
+    margin) at its calibrated level alpha_h2 (default alpha_h2_default of the number of blocks with C targets); with
+    fewer than 50 such blocks H2 is "not tested" and no beat claim is made. Secondary Holm family at 0.025, only if
+    H1 and H2 are rejected: superiority in [0.1, 0.5) s, in [0.5, 1) s, and non-inferiority in C at 0.03, whose
+    threshold is multiplied by alpha_ni03 / 0.025 (alpha_ni03: its own calibrated level; default alpha_h2).
+    duplicator_of: (comparator, its duplicator run name) for the negative control of item 3; if the duplicator beats
+    its comparator in T at 0.025 the metric is broken and no claim is made."""
     T = pool.ev_regime == "T"
     Cm = (pool.ev_regime == "C") | (pool.ev_regime == "iso")
     sep_bin = np.array([C.cell_axes(c)[0] if c >= 0 else -1 for c in pool.ev_cell])
@@ -244,16 +294,25 @@ def gate(pool, model, comparators, budget=BUDGETS[0], duplicator_of=None, signs=
         ctl = _pairwise(pool, dup, comp, T, budget, 0.0, signs)
         res["control"] = dict(ctl, broken=bool(ctl["p"] <= ALPHA))
     h1 = {c: _pairwise(pool, model, c, T, budget, 0.0, signs) for c in comparators}
-    h2 = {c: _pairwise(pool, model, c, Cm, budget, NI_MARGIN, signs) for c in comparators}
-    p1, p2 = S.iut([r["p"] for r in h1.values()]), S.iut([r["p"] for r in h2.values()])
-    rej1, rej2 = S.fixed_sequence([p1, p2], ALPHA)
-    res.update(H1=dict(p=p1, rows=h1, rejected=rej1), H2=dict(p=p2, rows=h2, rejected=rej2))
+    p1 = S.iut([r["p"] for r in h1.values()])
+    rej1 = bool(p1 <= ALPHA)
+    res["H1"] = dict(p=p1, rows=h1, rejected=rej1, level=ALPHA)
+    nb_c = int(np.unique(pool.ev_block[Cm]).size)
+    level = alpha_h2 if alpha_h2 is not None else alpha_h2_default(nb_c)
+    if level is None:
+        res["H2"] = dict(p=float("nan"), rows={}, rejected=False, level=None, tested=False, blocks=nb_c)
+    else:
+        h2 = {c: _pairwise(pool, model, c, Cm, budget, NI_MARGIN, signs) for c in comparators}
+        p2 = S.iut([r["p"] for r in h2.values()])
+        res["H2"] = dict(p=p2, rows=h2, rejected=bool(rej1 and p2 <= level), level=level, tested=rej1, blocks=nb_c)
+    rej2 = res["H2"]["rejected"]
     if rej1 and rej2:
-        fam = {"T[0.1,0.5)": (T & (sep_bin == 1), 0.0), "T[0.5,1)": (T & (sep_bin == 2), 0.0),
-               "C NI 0.03": (Cm, NI_MARGIN_SECONDARY)}
+        a03 = level if alpha_ni03 is None else alpha_ni03
+        fam = {"T[0.1,0.5)": (T & (sep_bin == 1), 0.0, 1.0), "T[0.5,1)": (T & (sep_bin == 2), 0.0, 1.0),
+               "C NI 0.03": (Cm, NI_MARGIN_SECONDARY, a03 / ALPHA)}
         ps = {k: S.iut([_pairwise(pool, model, c, mk, budget, mg, signs)["p"] for c in comparators])
-              for k, (mk, mg) in fam.items()}
-        rej = S.holm(list(ps.values()), ALPHA)
+              for k, (mk, mg, _) in fam.items()}
+        rej = holm_weighted(list(ps.values()), ALPHA, [v[2] for v in fam.values()])
         res["secondary"] = {k: dict(p=p, rejected=r) for (k, p), r in zip(ps.items(), rej)}
     broken = res.get("control", {}).get("broken", False)
     res["beats"] = bool(rej1 and rej2 and not broken)

@@ -5,6 +5,10 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-10-24
 
+- Atlas follow-up to PR #13: `ttmt.atlas.froc.gate` runs H2 at its calibrated level (0.015 from 50 to 300 blocks,
+  `alpha_h2_default`), does not test H2 with fewer than 50 blocks, and scales the Holm threshold of non-inferiority at
+  0.03 (`holm_weighted`); real-data pairs closer than 9 sigma_t are excluded from T (`truth_precision_targets`). The
+  ATLAS-0 card quotes the amended item 7.
 - Atlas (phase 3; K1, K6, K9, CR-02, CR-03, CR-05, CR-14, CR-24): ATLAS-0 card final draft, ready to be anchored. It
   copies ADR-0008 (regimes T and C, LOC+T-V with the duplicator control, H1 then H2, G4 primary on semi-synthetic
   data), keeps the 240 cells as descriptive strata, restates H-ATLAS on the pooled regime T, fixes the 60-trial tuning

@@ -143,10 +143,11 @@ def _pool(seed, n_records=40, sep=0.4):
 
 
 def test_gate_on_toy_evaluation():
-    pool = _pool(4)
+    pool = _pool(4, n_records=60)
     assert (pool.ev_regime == "T").sum() > 0 and (pool.ev_regime == "iso").sum() > 0
     res = F.gate(pool, "perfect", ["merging"], duplicator_of=("merging", "dup:merging"))
     assert res["H1"]["rejected"] and res["H2"]["rejected"] and res["beats"]
+    assert res["H1"]["level"] == 0.025 and res["H2"]["level"] == 0.015
     assert not res["control"]["broken"]
     rev = F.gate(pool, "merging", ["perfect"])
     assert not rev["H1"]["rejected"] and not rev["beats"]
@@ -231,3 +232,28 @@ def test_duplicator_shift_per_pair_with_mixed_separations():
     # a single record-wide shift (the defect) does take partners
     bad = F.duplicate(first, 0.5 * float(np.median(sep)))
     assert (F.label(bad, tr) >= n).sum() > 20
+
+
+def test_h2_needs_50_blocks_and_calibrated_level():
+    assert F.alpha_h2_default(49) is None and F.alpha_h2_default(50) == 0.015 and F.alpha_h2_default(300) == 0.015
+    with pytest.raises(ValueError):
+        F.alpha_h2_default(301)
+    res = F.gate(_pool(4, n_records=40), "perfect", ["merging"])
+    assert res["H1"]["rejected"] and not res["H2"]["tested"] and not res["beats"]
+
+
+def test_holm_weighted():
+    rng = np.random.default_rng(8)
+    for _ in range(100):
+        p = rng.uniform(0, 0.05, 3)
+        assert F.holm_weighted(p, 0.025, [1, 1, 1]) == S.holm(p, 0.025)
+    # the scaled threshold of the third hypothesis: 0.02 passes alone at 0.025 but not at 0.025 * 0.6
+    assert F.holm_weighted([0.001, 0.002, 0.02], 0.025, [1, 1, 1]) == [True, True, True]
+    assert F.holm_weighted([0.001, 0.002, 0.02], 0.025, [1, 1, 0.6]) == [True, True, False]
+
+
+def test_truth_precision_excludes_close_pairs():
+    tr = _one_station_truth([10.0, 10.3, 30.0, 30.9, 60.0])
+    keep = F.truth_precision_targets(tr, sigma_t=0.05)            # 9 sigma = 0.45 s
+    assert keep.tolist() == [False, False, True, True, True]
+    assert F.truth_precision_targets(tr, None).all()
