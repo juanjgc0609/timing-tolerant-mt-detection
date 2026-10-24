@@ -1,7 +1,8 @@
 # ADR-0008: One rule for "the model beats the comparators"
 
 Date: 23 October 2026. Status: accepted by the author on 24 October 2026 (proposed by the statistical design
-thread; H2 test calibrated after the independent review the same day, item 7); the atlas thread writes it into the ATLAS-0 card before the card is anchored. It resolves conflicts K1, K2 and
+thread; H2 test revised after the independent reviews of PR #11 and #13, item 7); signed by the atlas thread on 24 October 2026 and written into the ATLAS-0 card (section "The single
+rule"), which applies it through `ttmt.atlas.froc` before the card is anchored. It resolves conflicts K1, K2 and
 K9 of the master plan and critique items CR-02 and CR-08; it extends ADR-0007 for close pairs.
 
 ## Context
