@@ -18,7 +18,7 @@ Model of one design (all parameters are inputs; defaults are the R1 / P6-power v
 Subcommands
   power   power and size of one design;
   solve   smallest number of blocks (and expected targets) reaching the target power;
-  calibrate  level of H2 whose simulated size is <= 0.025 for a design (ADR-0008 item 7);
+  calibrate  design check of H2: the level whose simulated size is <= 0.025 over a parameter range (ADR-0008 item 7);
   hours   hours of record the false-alarm budget check needs;
   connor  closed-form number of independent targets (Connor 1987), a lower bound used to bracket `solve`;
   estimate  p, rho and icc from a CSV of development hits (columns: block, regime, then one 0/1 column per method);
@@ -148,31 +148,41 @@ def solve(target="power_chain", power=0.8, lo=25, hi=6000, **kw):
 ALPHA_GRID = (0.025, 0.02, 0.015, 0.01, 0.005)
 
 
-def h2_sizes(n_blocks, rhos=(0.5, 0.7, 0.9), iccs=(0.0, 0.2), sims=4000, margin=0.05, **kw):
-    """Simulated size of H2 at every level of ALPHA_GRID, worst case over a parameter range, at the least favourable
-    configuration of the intersection-union test: one comparator exactly at the margin (n_comp 1; review of PR #11).
-    Returns {level: worst size}."""
-    worst = {a: 0.0 for a in ALPHA_GRID}
-    for rho in rhos:
-        for icc in iccs:
-            if icc > rho:
-                continue
-            p = run_design(n_blocks, delta_r=0.10, delta_c=-margin, margin=margin, rho=rho, icc=icc, n_comp=1,
-                           sims=sims, n_flip=999, keep_p=True, **kw)["p_H2"]
-            for a in ALPHA_GRID:
-                worst[a] = max(worst[a], float(np.mean(p <= a)))
-    return worst
+def h2_sizes(n_blocks, p0s=(0.2, 0.4, 0.7, 0.85), ms=((1, 1.0), (3, 1.0), (10, 0.5)), rhos=(0.5, 0.9),
+             iccs=(0.0, 0.2), sims=2000, margin=0.05, f=0.3, seed=20261024):
+    """Simulated size of H2 (clustered score test, ttmt.stats.ni_score_pvalue) at every level of ALPHA_GRID, worst
+    case over recall p0, targets per block (m, k), method correlation and intra-block correlation, at the least
+    favourable configuration of the intersection-union test: one comparator exactly at the margin (n_comp 1; reviews
+    of PR #11 and #13). Returns ({level: worst size}, the configuration of the worst size at 0.025)."""
+    worst, arg = {a: 0.0 for a in ALPHA_GRID}, None
+    for p0 in p0s:
+        for m, k in ms:
+            for rho in rhos:
+                for icc in iccs:
+                    if icc > rho:
+                        continue
+                    p = run_design(n_blocks, m=m, k=k, f=f, p0=p0, delta_r=0.05, delta_c=-margin, margin=margin,
+                                   rho=rho, icc=icc, n_comp=1, sims=sims, n_flip=99, keep_p=True, seed=seed)["p_H2"]
+                    for a in ALPHA_GRID:
+                        s = float(np.mean(p <= a))
+                        if s > worst[a]:
+                            worst[a] = s
+                            if a == 0.025:
+                                arg = dict(p0=p0, m=m, k=k, rho=rho, icc=icc)
+    return worst, arg
 
 
-def calibrate_alpha_h2(n_blocks, target=0.025, sims=4000, **kw):
-    """Level at which H2 is run for a design (ADR-0008 item 7): the largest level of ALPHA_GRID whose worst simulated
-    size plus 1.645 Monte Carlo standard errors is at most target. Returns (level or None, its size, all sizes)."""
-    sizes = h2_sizes(n_blocks, sims=sims, **kw)
+def calibrate_alpha_h2(n_blocks, target=0.025, sims=2000, **kw):
+    """Design check of H2 (ADR-0008 item 7): the largest level of ALPHA_GRID whose worst simulated size over the
+    registered parameter range, plus 1.645 Monte Carlo standard errors, is at most target. With the clustered score
+    test this is 0.025 or 0.02 over the default range (part 3 of the output). Returns (level or None, its size, all
+    sizes, worst configuration)."""
+    sizes, arg = h2_sizes(n_blocks, sims=sims, **kw)
     for a in ALPHA_GRID:
         s = sizes[a]
         if s + 1.645 * sqrt(max(s, 1e-3) * (1 - s) / sims) <= target:
-            return a, s, sizes
-    return None, sizes[ALPHA_GRID[-1]], sizes
+            return a, s, sizes, arg
+    return None, sizes[ALPHA_GRID[-1]], sizes, arg
 
 
 def hours_needed(budget=30.0, phi=5.0, tol=0.20, level=0.975, pass_prob=0.80):
@@ -267,24 +277,27 @@ def table(sims=400):
         a, b, c = per_cell_vs_pooled(nc, pc)
         lines.append(f"   {nc:>3d} x {pc:<4d}        {a:>8.2f}             {b:>10.3f}                 {c:>8.3f}")
     lines.append("")
-    lines.append("3. Size at the least favourable configuration of the intersection-union test: one comparator at the")
-    lines.append("   boundary (n_comp 1), 3 targets per block on average, f 0.3, 4000 simulations. H1 at gain 0 (exact test);")
-    lines.append("   H2 at true difference -0.05 with the studentised sign-flip, worst case over rho 0.5/0.7/0.9 and icc 0/0.2,")
-    lines.append("   and the calibrated level of H2 (largest level whose size + 1.645 MC se <= 0.025):")
+    lines.append("3. Size at the least favourable configuration of the intersection-union test (one comparator at the")
+    lines.append("   boundary, n_comp 1), f 0.3. H1 at gain 0: exact block sign-flip, worst over rho 0.5/0.9 and icc 0/0.2,")
+    lines.append("   4000 simulations. H2 at true difference -0.05: clustered score test (Tango 1998 with a design effect), worst")
+    lines.append("   over recall 0.2/0.4/0.7/0.85, targets per block 1/3/10, rho 0.5/0.9, icc 0/0.2, 2000 simulations each;")
+    lines.append("   level of the design check = largest level whose worst size + 1.645 MC se <= 0.025.")
     for nb in (30, 50, 100, 300):
         h1 = max(run_design(nb, delta_r=0.0, rho=r, icc=i, n_comp=1, sims=4000, n_flip=999)["power_H1"]
                  for r, i in ((0.5, 0.0), (0.9, 0.2)))
-        a, sa, sizes = calibrate_alpha_h2(nb)
-        lines.append(f"   {nb:>4d} blocks: size H1 {h1:.3f}   size H2 at 0.025 {sizes[0.025]:.3f}, at 0.02 {sizes[0.02]:.3f}, "
-                     f"at 0.015 {sizes[0.015]:.3f}   calibrated level {a}")
+        a, sa, sizes, arg = calibrate_alpha_h2(nb)
+        lines.append(f"   {nb:>4d} blocks: size H1 {h1:.3f}   worst size H2 at 0.025 {sizes[0.025]:.3f} (p0 {arg['p0']}, "
+                     f"m {arg['m']}, rho {arg['rho']}, icc {arg['icc']}), at 0.02 {sizes[0.02]:.3f}   level {a}")
+    lines.append("   Zero discordance: 30 blocks of one target each, none discordant, gives p = 0.104 (not non-inferior);")
+    lines.append("   the margin sign-flip of PR #11 gave p = 0.0001 there.")
     lines.append("")
     lines.append("4. Blocks for 80 % power, share of targets in the target regime f = 0.3: blocks (targets in regime / total)")
-    lines.append("   gain  rho  icc   H1 alone                    chain H1 -> H2 (H2 at 0.015, calibrated at 50 blocks)")
+    lines.append("   gain  rho  icc   H1 alone                    chain H1 -> H2 (H2 at 0.025)")
     for d in (0.05, 0.10):
         for rho, icc in ((0.5, 0.1), (0.7, 0.1), (0.9, 0.1), (0.7, 0.3)):
             cells = []
             for tgt in ("power_H1", "power_chain"):
-                b, r = solve(tgt, delta_r=d, rho=rho, icc=icc, f=0.3, sims=sims, hi=6400, alpha_h2=0.015)
+                b, r = solve(tgt, delta_r=d, rho=rho, icc=icc, f=0.3, sims=sims, hi=6400)
                 cells.append(f"{b:>5d} ({r['targets_R']:.0f} / {r['targets']:.0f})" if b else "> 6400 blocks")
             lines.append(f"   +{d:.2f} {rho}  {icc}   " + "".join(f"{c:<28s}" for c in cells))
     lines.append("")
@@ -326,16 +339,19 @@ def main(argv=None):
     p.add_argument("--target", default="power_chain", choices=["power_H1", "power_H2", "power_chain"])
     p.add_argument("--power", type=float, default=0.8); p.add_argument("--max-blocks", type=int, default=6000)
     p = sub.add_parser("calibrate"); p.add_argument("--blocks", type=int, required=True)
-    p.add_argument("--m", type=float, default=3.0); p.add_argument("--k", type=float, default=1.0)
+    p.add_argument("--p0", type=float, nargs="+", default=[0.2, 0.4, 0.7, 0.85], help="recalls of the registered range")
+    p.add_argument("--m", type=float, nargs="+", default=[1, 3, 10], help="mean targets per block of the range")
+    p.add_argument("--k", type=float, default=1.0); p.add_argument("--rho", type=float, nargs="+", default=[0.5, 0.9])
+    p.add_argument("--icc", type=float, nargs="+", default=[0.0, 0.2])
     p.add_argument("--f", type=float, default=0.3); p.add_argument("--margin", type=float, default=0.05)
-    p.add_argument("--sims", type=int, default=4000)
+    p.add_argument("--sims", type=int, default=2000)
     p = sub.add_parser("hours"); p.add_argument("--budget", type=float, default=30.0)
     p.add_argument("--phi", type=float, default=5.0); p.add_argument("--tol", type=float, default=0.2)
     p.add_argument("--pass-prob", type=float, default=0.8)
     p = sub.add_parser("connor"); p.add_argument("--p0", type=float, default=0.40)
     p.add_argument("--delta", type=float, default=0.10); p.add_argument("--rho", type=float, default=0.7)
     p.add_argument("--alpha", type=float, default=0.025)
-    p.add_argument("--alpha-h2", type=float, default=None, help="level of H2 (default: alpha; use `calibrate`)"); p.add_argument("--power", type=float, default=0.8)
+    p.add_argument("--power", type=float, default=0.8)
     p.add_argument("--margin", type=float, default=0.0)
     p = sub.add_parser("estimate"); p.add_argument("csv")
     p = sub.add_parser("table"); p.add_argument("--sims", type=int, default=400)
@@ -346,8 +362,10 @@ def main(argv=None):
         b, r = solve(a.target, a.power, hi=a.max_blocks, **_kw(a))
         print(json.dumps({"blocks": b, **r}, indent=1))
     elif a.cmd == "calibrate":
-        lvl, s, sizes = calibrate_alpha_h2(a.blocks, sims=a.sims, m=a.m, k=a.k, f=a.f, margin=a.margin)
-        print(json.dumps({"alpha_h2": lvl, "size": s, "sizes": {str(k): v for k, v in sizes.items()}}, indent=1))
+        lvl, s, sizes, arg = calibrate_alpha_h2(a.blocks, sims=a.sims, p0s=a.p0, ms=[(m, a.k) for m in a.m],
+                                                rhos=a.rho, iccs=a.icc, f=a.f, margin=a.margin)
+        print(json.dumps({"alpha_h2": lvl, "size": s, "sizes": {str(k): v for k, v in sizes.items()}, "worst": arg},
+                         indent=1))
     elif a.cmd == "hours":
         print(f"{hours_needed(a.budget, a.phi, a.tol, pass_prob=a.pass_prob):.1f} hours")
     elif a.cmd == "connor":
