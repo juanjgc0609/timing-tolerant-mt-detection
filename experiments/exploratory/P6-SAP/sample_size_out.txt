@@ -1,0 +1,41 @@
+Sample size of the single beat rule (ADR-0008) and of the phase 6 tests (docs/protocol/PHASE6_SAP.md, S9).
+Block sign-flip tests, intersection-union over 2 comparators at equal recall 0.40, one-sided alpha 0.025,
+fixed sequence H1 (superiority in the target regime) -> H2 (non-inferiority, margin 0.05, true difference 0,
+in the complement). Targets per block: negative binomial, mean 3, dispersion 1. 400 simulations per
+design, seed 20261019.
+
+1. Independent targets, closed form (Connor 1987), one comparator, alpha 0.025, power 0.80:
+   superiority   rho 0.5  rho 0.7  rho 0.9
+   +0.05            1031      788      458
+   +0.10             264      205      127
+   +0.15             121       95       64
+   NI 0.03, true 0     2806     2135     1212
+   NI 0.05, true 0     1011      769      437
+   (P6-power used alpha 0.05 one-sided; at the registered 0.025 the numbers are about 25 % larger.)
+
+2. K2: per-cell rule against one pooled test, true gain +0.05 in every target cell, rho 0.7, 2000 sims:
+   cells x targets   share of cells won   P(majority of cells won)   power of the pooled test
+    10 x 100             0.12                  0.000                    0.860
+    10 x 400             0.47                  0.314                    1.000
+    24 x 100             0.12                  0.000                    0.997
+    24 x 400             0.48                  0.331                    1.000
+
+3. Size of the rules (should be <= 0.025): H1 at gain 0, H2 at true difference -0.05; 300 blocks, f 0.3
+   rho 0.5 icc 0.0: size H1 0.005   size H2 0.010
+   rho 0.9 icc 0.0: size H1 0.005   size H2 0.007
+   rho 0.5 icc 0.2: size H1 0.005   size H2 0.007
+   rho 0.9 icc 0.2: size H1 0.005   size H2 0.003
+
+4. Blocks for 80 % power, share of targets in the target regime f = 0.3: blocks (targets in regime / total)
+   gain  rho  icc   H1 alone                    chain H1 -> H2
+   +0.05 0.5  0.1    1450 (1304 / 4347)          1450 (1304 / 4347)         
+   +0.05 0.7  0.1    1100 (992 / 3311)           1100 (992 / 3311)          
+   +0.05 0.9  0.1     700 (634 / 2113)            700 (634 / 2113)          
+   +0.05 0.7  0.3    1150 (1032 / 3444)          1150 (1032 / 3444)         
+   +0.10 0.5  0.1     425 (382 / 1278)            675 (605 / 2023)          
+   +0.10 0.7  0.1     325 (292 / 978)             525 (470 / 1570)          
+   +0.10 0.9  0.1     206 (184 / 620)             287 (258 / 861)           
+   +0.10 0.7  0.3     300 (268 / 899)             525 (470 / 1570)          
+
+5. Hours of record for the false-alarm budget check (30/h, tolerance 20 %, level 0.975, pass probability 0.80):
+   phi 1: 7.4 h   phi 5: 37.2 h   phi 10: 74.4 h   phi 20: 148.9 h
