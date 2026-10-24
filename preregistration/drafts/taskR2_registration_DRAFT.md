@@ -17,7 +17,8 @@ Targets and truth. Dense or nodal network <name> with its catalogue <name, versi
 4 to 12 stations of the same network that exclude the stations used to build the truth (network decimation, CR-04),
 subsets drawn by <rule> before the run. Targets: catalogue events with M >= Mc(t) and at least 4 usable stations of the
 subset. Excluded events and neutral detections as in SAP 3.3; enhanced catalogue for the sensitivity of SAP 3.4:
-<name>. Regime T can be tested only if the truth resolves pairs at 0.1 to 1 s: <yes/no and why>. Expected targets in T
+<name>. Regime T can be tested only if the truth resolves pairs at 0.1 to 1 s with origin-time standard deviation sigma_t
+(measured on T3.V) at most a ninth of their separation (SAP 3.4): sigma_t = <value>, pairs qualifying <n>. Expected targets in T
 and C from the catalogue: <numbers>.
 Methods. Model <tag, version>; comparators: core set of ATLAS-0 (PhaseNet and PhaseNO with GaMMA and PyOcto, EQNet,
 template matching where the truth is not its own, BOMP-PK and MT-FW) and the best comparator with the model's picker
@@ -27,7 +28,8 @@ Endpoint. Recall under LOC+T-V (ADR-0008 item 2) at 30 false detections per hour
 method on the evaluated record, prevalence weights <table> (ADR-0008 item 4); duplicator negative control on the best
 comparator (item 3); deployable threshold fixed on development (secondary).
 Rules. H1 (only if T is testable) superiority in T, then H2 non-inferiority by 0.05 in C, each an intersection-union
-of block sign-flip tests over the comparators, one-sided 0.025, fixed sequence; blocks of 1 h (or T/30) within each
+of block sign-flip tests over the comparators, H1 at one-sided 0.025 and H2 at the calibrated level <a2> from
+`sample_size.py calibrate --blocks <B>` (ADR-0008 item 7), fixed sequence; blocks of 1 h (or T/30) within each
 sequence; secondary Holm family and descriptive readings as in SAP Section 2; intervals SAP 7.5; budget check SAP 7.6.
 Simulated with `sample_size.py` for this design (rho <r>, icc <i>, <m> targets per block, f <f>, +0.10 in T): power of
 the chain <p>, size <s> (output <path>).

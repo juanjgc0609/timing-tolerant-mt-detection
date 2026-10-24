@@ -18,6 +18,7 @@ Model of one design (all parameters are inputs; defaults are the R1 / P6-power v
 Subcommands
   power   power and size of one design;
   solve   smallest number of blocks (and expected targets) reaching the target power;
+  calibrate  level of H2 whose simulated size is <= 0.025 for a design (ADR-0008 item 7);
   hours   hours of record the false-alarm budget check needs;
   connor  closed-form number of independent targets (Connor 1987), a lower bound used to bracket `solve`;
   estimate  p, rho and icc from a CSV of development hits (columns: block, regime, then one 0/1 column per method);
@@ -82,7 +83,9 @@ def simulate_hits(rng, n_blocks, m, k, f, p0, delta_r, delta_c, rho, icc, tau, n
         e = sqrt(rho_e) * common + sqrt(1 - rho_e) * rng.standard_normal(n)
         return sqrt(icc) * u + sqrt(1 - icc) * e
     v = rng.normal(0.0, tau, n_blocks)[block] if tau > 0 else 0.0
-    thr_a = np.where(reg, ND.inv_cdf(p0 + delta_r), ND.inv_cdf(p0 + delta_c)) + v
+    # the block shift v ~ N(0, tau^2) is added to the threshold, so the threshold is scaled by sqrt(1 + tau^2) to keep
+    # the marginal recall at p0 + delta (review of PR #11)
+    thr_a = np.where(reg, ND.inv_cdf(p0 + delta_r), ND.inv_cdf(p0 + delta_c)) * sqrt(1 + tau ** 2) + v
     hit_a = latent() < thr_a
     thr0 = ND.inv_cdf(p0)
     hit_c = np.array([latent() < thr0 for _ in range(n_comp)])
@@ -90,7 +93,7 @@ def simulate_hits(rng, n_blocks, m, k, f, p0, delta_r, delta_c, rho, icc, tau, n
 
 
 def run_design(n_blocks, m=3.0, k=1.0, f=0.3, p0=0.40, delta_r=0.10, delta_c=0.0, rho=0.7, icc=0.10, tau=0.0,
-               n_comp=2, alpha=0.025, margin=0.05, sims=1000, n_flip=1999, seed=20261019):
+               n_comp=2, alpha=0.025, margin=0.05, sims=1000, n_flip=1999, seed=20261019, alpha_h2=None, keep_p=False):
     """Power of H1 (superiority over every comparator in R*), H2 (non-inferiority by margin in the complement) and of
     the fixed sequence H1 -> H2; mean targets in R* and in total."""
     rng = np.random.default_rng(seed)
@@ -99,6 +102,7 @@ def run_design(n_blocks, m=3.0, k=1.0, f=0.3, p0=0.40, delta_r=0.10, delta_c=0.0
     signs = rng.integers(0, 2, size=(n_flip, n_blocks), dtype=np.int8).astype(np.float64) * 2 - 1
     r1 = r2 = both = 0
     n_r = n_t = 0
+    p2_all = []
     for _ in range(sims):
         block, reg, ha, hc = simulate_hits(rng, n_blocks, m, k, f, p0, delta_r, delta_c, rho, icc, tau, n_comp)
         n_r += reg.sum(); n_t += reg.size
@@ -108,12 +112,17 @@ def run_design(n_blocks, m=3.0, k=1.0, f=0.3, p0=0.40, delta_r=0.10, delta_c=0.0
             p1.append(st.signflip_pvalue(d, n, signs=signs))
             d, n = st.block_sums(ha[~reg], c[~reg], block[~reg], n_blocks)
             p2.append(st.signflip_pvalue(d, n, margin=margin, signs=signs))
-        _, b = st.fixed_sequence([st.iut(p1), st.iut(p2)], alpha)
-        r1 += st.iut(p1) <= alpha
-        r2 += st.iut(p2) <= alpha
-        both += b
-    return {"blocks": n_blocks, "targets_R": n_r / sims, "targets": n_t / sims, "power_H1": r1 / sims,
-            "power_H2": r2 / sims, "power_chain": both / sims}
+        a2 = alpha if alpha_h2 is None else alpha_h2
+        h1, h2 = st.iut(p1) <= alpha, st.iut(p2) <= a2
+        p2_all.append(st.iut(p2))
+        r1 += h1
+        r2 += h2
+        both += h1 and h2
+    out = {"blocks": n_blocks, "targets_R": n_r / sims, "targets": n_t / sims, "power_H1": r1 / sims,
+           "power_H2": r2 / sims, "power_chain": both / sims}
+    if keep_p:
+        out["p_H2"] = np.array(p2_all)
+    return out
 
 
 def solve(target="power_chain", power=0.8, lo=25, hi=6000, **kw):
@@ -134,6 +143,36 @@ def solve(target="power_chain", power=0.8, lo=25, hi=6000, **kw):
         else:
             lo = mid
     return top, best
+
+
+ALPHA_GRID = (0.025, 0.02, 0.015, 0.01, 0.005)
+
+
+def h2_sizes(n_blocks, rhos=(0.5, 0.7, 0.9), iccs=(0.0, 0.2), sims=4000, margin=0.05, **kw):
+    """Simulated size of H2 at every level of ALPHA_GRID, worst case over a parameter range, at the least favourable
+    configuration of the intersection-union test: one comparator exactly at the margin (n_comp 1; review of PR #11).
+    Returns {level: worst size}."""
+    worst = {a: 0.0 for a in ALPHA_GRID}
+    for rho in rhos:
+        for icc in iccs:
+            if icc > rho:
+                continue
+            p = run_design(n_blocks, delta_r=0.10, delta_c=-margin, margin=margin, rho=rho, icc=icc, n_comp=1,
+                           sims=sims, n_flip=999, keep_p=True, **kw)["p_H2"]
+            for a in ALPHA_GRID:
+                worst[a] = max(worst[a], float(np.mean(p <= a)))
+    return worst
+
+
+def calibrate_alpha_h2(n_blocks, target=0.025, sims=4000, **kw):
+    """Level at which H2 is run for a design (ADR-0008 item 7): the largest level of ALPHA_GRID whose worst simulated
+    size plus 1.645 Monte Carlo standard errors is at most target. Returns (level or None, its size, all sizes)."""
+    sizes = h2_sizes(n_blocks, sims=sims, **kw)
+    for a in ALPHA_GRID:
+        s = sizes[a]
+        if s + 1.645 * sqrt(max(s, 1e-3) * (1 - s) / sims) <= target:
+            return a, s, sizes
+    return None, sizes[ALPHA_GRID[-1]], sizes
 
 
 def hours_needed(budget=30.0, phi=5.0, tol=0.20, level=0.975, pass_prob=0.80):
@@ -228,20 +267,24 @@ def table(sims=400):
         a, b, c = per_cell_vs_pooled(nc, pc)
         lines.append(f"   {nc:>3d} x {pc:<4d}        {a:>8.2f}             {b:>10.3f}                 {c:>8.3f}")
     lines.append("")
-    lines.append("3. Size of the rules (should be <= 0.025): H1 at gain 0, H2 at true difference -0.05; 300 blocks, f 0.3")
-    for icc in (0.0, 0.2):
-        for rho in (0.5, 0.9):
-            a = run_design(300, delta_r=0.0, delta_c=0.0, rho=rho, icc=icc, sims=sims)
-            b = run_design(300, delta_r=0.10, delta_c=-0.05, rho=rho, icc=icc, sims=sims)
-            lines.append(f"   rho {rho} icc {icc}: size H1 {a['power_H1']:.3f}   size H2 {b['power_H2']:.3f}")
+    lines.append("3. Size at the least favourable configuration of the intersection-union test: one comparator at the")
+    lines.append("   boundary (n_comp 1), 3 targets per block on average, f 0.3, 4000 simulations. H1 at gain 0 (exact test);")
+    lines.append("   H2 at true difference -0.05 with the studentised sign-flip, worst case over rho 0.5/0.7/0.9 and icc 0/0.2,")
+    lines.append("   and the calibrated level of H2 (largest level whose size + 1.645 MC se <= 0.025):")
+    for nb in (30, 50, 100, 300):
+        h1 = max(run_design(nb, delta_r=0.0, rho=r, icc=i, n_comp=1, sims=4000, n_flip=999)["power_H1"]
+                 for r, i in ((0.5, 0.0), (0.9, 0.2)))
+        a, sa, sizes = calibrate_alpha_h2(nb)
+        lines.append(f"   {nb:>4d} blocks: size H1 {h1:.3f}   size H2 at 0.025 {sizes[0.025]:.3f}, at 0.02 {sizes[0.02]:.3f}, "
+                     f"at 0.015 {sizes[0.015]:.3f}   calibrated level {a}")
     lines.append("")
     lines.append("4. Blocks for 80 % power, share of targets in the target regime f = 0.3: blocks (targets in regime / total)")
-    lines.append("   gain  rho  icc   H1 alone                    chain H1 -> H2")
+    lines.append("   gain  rho  icc   H1 alone                    chain H1 -> H2 (H2 at 0.015, calibrated at 50 blocks)")
     for d in (0.05, 0.10):
         for rho, icc in ((0.5, 0.1), (0.7, 0.1), (0.9, 0.1), (0.7, 0.3)):
             cells = []
             for tgt in ("power_H1", "power_chain"):
-                b, r = solve(tgt, delta_r=d, rho=rho, icc=icc, f=0.3, sims=sims, hi=6400)
+                b, r = solve(tgt, delta_r=d, rho=rho, icc=icc, f=0.3, sims=sims, hi=6400, alpha_h2=0.015)
                 cells.append(f"{b:>5d} ({r['targets_R']:.0f} / {r['targets']:.0f})" if b else "> 6400 blocks")
             lines.append(f"   +{d:.2f} {rho}  {icc}   " + "".join(f"{c:<28s}" for c in cells))
     lines.append("")
@@ -264,6 +307,7 @@ def _design_args(p):
     p.add_argument("--tau", type=float, default=0.0, help="sd of the block shift of the proposed method (latent)")
     p.add_argument("--n-comp", type=int, default=2, help="number of comparators in the intersection-union test")
     p.add_argument("--alpha", type=float, default=0.025)
+    p.add_argument("--alpha-h2", type=float, default=None, help="level of H2 (default: alpha; use `calibrate`)")
     p.add_argument("--margin", type=float, default=0.05, help="non-inferiority margin of H2 (ADR-0008)")
     p.add_argument("--sims", type=int, default=1000)
     p.add_argument("--seed", type=int, default=20261019)
@@ -271,7 +315,7 @@ def _design_args(p):
 
 def _kw(a):
     return dict(m=a.m, k=a.k, f=a.f, p0=a.p0, delta_r=a.delta_r, delta_c=a.delta_c, rho=a.rho, icc=a.icc, tau=a.tau,
-                n_comp=a.n_comp, alpha=a.alpha, margin=a.margin, sims=a.sims, seed=a.seed)
+                n_comp=a.n_comp, alpha=a.alpha, margin=a.margin, sims=a.sims, seed=a.seed, alpha_h2=a.alpha_h2)
 
 
 def main(argv=None):
@@ -281,12 +325,17 @@ def main(argv=None):
     p = sub.add_parser("solve"); _design_args(p)
     p.add_argument("--target", default="power_chain", choices=["power_H1", "power_H2", "power_chain"])
     p.add_argument("--power", type=float, default=0.8); p.add_argument("--max-blocks", type=int, default=6000)
+    p = sub.add_parser("calibrate"); p.add_argument("--blocks", type=int, required=True)
+    p.add_argument("--m", type=float, default=3.0); p.add_argument("--k", type=float, default=1.0)
+    p.add_argument("--f", type=float, default=0.3); p.add_argument("--margin", type=float, default=0.05)
+    p.add_argument("--sims", type=int, default=4000)
     p = sub.add_parser("hours"); p.add_argument("--budget", type=float, default=30.0)
     p.add_argument("--phi", type=float, default=5.0); p.add_argument("--tol", type=float, default=0.2)
     p.add_argument("--pass-prob", type=float, default=0.8)
     p = sub.add_parser("connor"); p.add_argument("--p0", type=float, default=0.40)
     p.add_argument("--delta", type=float, default=0.10); p.add_argument("--rho", type=float, default=0.7)
-    p.add_argument("--alpha", type=float, default=0.025); p.add_argument("--power", type=float, default=0.8)
+    p.add_argument("--alpha", type=float, default=0.025)
+    p.add_argument("--alpha-h2", type=float, default=None, help="level of H2 (default: alpha; use `calibrate`)"); p.add_argument("--power", type=float, default=0.8)
     p.add_argument("--margin", type=float, default=0.0)
     p = sub.add_parser("estimate"); p.add_argument("csv")
     p = sub.add_parser("table"); p.add_argument("--sims", type=int, default=400)
@@ -296,6 +345,9 @@ def main(argv=None):
     elif a.cmd == "solve":
         b, r = solve(a.target, a.power, hi=a.max_blocks, **_kw(a))
         print(json.dumps({"blocks": b, **r}, indent=1))
+    elif a.cmd == "calibrate":
+        lvl, s, sizes = calibrate_alpha_h2(a.blocks, sims=a.sims, m=a.m, k=a.k, f=a.f, margin=a.margin)
+        print(json.dumps({"alpha_h2": lvl, "size": s, "sizes": {str(k): v for k, v in sizes.items()}}, indent=1))
     elif a.cmd == "hours":
         print(f"{hours_needed(a.budget, a.phi, a.tol, pass_prob=a.pass_prob):.1f} hours")
     elif a.cmd == "connor":

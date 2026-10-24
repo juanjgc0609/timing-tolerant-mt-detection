@@ -17,9 +17,13 @@ fixed sequence H1 -> H2, the LOC+T-V hit rule and its duplicator control, the qu
 - At one-sided 0.025, 80 % power needs about 790 independent targets for +0.05 and 205 for +0.10 (rho 0.7);
   non-inferiority needs 2,135 for a margin of 0.03 and 770 for 0.05.
 - Clustered design (3 targets per block, icc 0.1, rho 0.7, 30 % of targets in T, two comparators at equal recall):
-  +0.05 needs about 1,100 blocks (990 targets in T, 3,300 in total); +0.10 needs 525 blocks for the chain H1 -> H2
-  (470 in T, 1,570 in total). The size of the rules is 0.003 to 0.010 (conservative: the intersection-union test needs
-  every comparator beaten).
+  +0.05 needs about 1,100 blocks (990 targets in T, 3,300 in total); +0.10 needs 550 blocks for the chain H1 -> H2
+  with H2 at its calibrated level 0.015 (495 in T, 1,650 in total).
+- Size must be checked at the least favourable configuration of the intersection-union test (one comparator at the
+  boundary; independent review of PR #11). There H1 is exact, but the non-inferiority sign-flip test is not: its size
+  at a nominal 0.025 is about 0.03 with 30 to 120 blocks. H2 is therefore studentised and run at a level calibrated
+  by simulation (0.01 at 30 blocks, 0.015 from 50 to 300 blocks, part 3; `sample_size.py calibrate`). H1's size
+  is at most 0.019.
 - LOC+T counts two detections of one event as a resolved pair; nearest-event eligibility does not fix it (the
   duplicator resolves about half the pairs); the dominance condition of LOC+T-V does (at most 1 of 200).
 - The false-alarm budget check needs 7 to 150 hours of record for dispersions 1 to 20.

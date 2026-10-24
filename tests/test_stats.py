@@ -90,6 +90,19 @@ class PairedTests(unittest.TestCase):
         r = ss.run_design(200, delta_r=0.0, delta_c=0.0, icc=0.3, rho=0.6, m=4, k=0.5, sims=400, n_flip=999, seed=7)
         self.assertLessEqual(r["power_H1"], 0.025 + 2.6 * np.sqrt(0.025 * 0.975 / 400))
 
+    def test_h2_size_at_minimum_blocks_with_calibrated_level(self):
+        """H2 at its least favourable configuration (one comparator at the margin), 50 blocks (the minimum of ADR-0008),
+        worst simulated parameters (rho 0.9, icc 0.2), at the calibrated level 0.015 (review of PR #11)."""
+        r = ss.run_design(50, delta_r=0.10, delta_c=-0.05, rho=0.9, icc=0.2, n_comp=1, sims=1500, n_flip=999, seed=21,
+                          alpha_h2=0.015)
+        self.assertLessEqual(r["power_H2"], 0.025 + 1.0 * np.sqrt(0.025 * 0.975 / 1500))
+
+    def test_tau_keeps_marginal_recall(self):
+        rng = np.random.default_rng(8)
+        _, reg, ha, _ = ss.simulate_hits(rng, 20000, 3.0, 0, 0.5, 0.40, 0.10, -0.05, 0.7, 0.1, 0.6, 1)
+        self.assertAlmostEqual(ha[reg].mean(), 0.50, delta=0.01)
+        self.assertAlmostEqual(ha[~reg].mean(), 0.35, delta=0.01)
+
     def test_power_increases_with_blocks(self):
         a = ss.run_design(60, sims=200, seed=3)["power_H1"]
         b = ss.run_design(400, sims=200, seed=3)["power_H1"]

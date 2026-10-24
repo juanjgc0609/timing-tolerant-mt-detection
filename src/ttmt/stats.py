@@ -141,14 +141,21 @@ def normal_sf(z):
     return 0.5 * (1.0 - erf(z / sqrt(2.0)))
 
 
-def signflip_pvalue(d, n=None, margin=0.0, n_flip=100_000, rng=None, exact_max=16, signs=None):
+def signflip_pvalue(d, n=None, margin=0.0, n_flip=100_000, rng=None, exact_max=16, signs=None, studentize=None):
     """One-sided block sign-flip p-value for H0: recall(A) - recall(B) <= -margin, against A better.
 
-    T = sum_j d'_j with d'_j = d_j + margin * n_j. Under the exchangeability null (margin 0: the two methods' labels
-    are exchangeable within each target) every d_j is symmetric about 0 and independent across blocks, so flipping the
-    sign of each block's d_j gives the exact null distribution of T: the test is the randomisation form of the
-    clustered McNemar test and holds its level for any dependence inside a block. With a margin the shift makes the
-    null mean zero but not necessarily symmetric; its level is checked by simulation (sample_size.py).
+    Margin 0 (superiority): T = sum_j d_j. Under the exchangeability null (the two methods' labels are exchangeable
+    within each target) every d_j is symmetric about 0 and independent across blocks, so flipping the sign of each
+    block's d_j gives the exact null distribution of T: the randomisation form of the clustered McNemar test, valid for
+    any dependence inside a block.
+
+    Margin > 0 (non-inferiority): d'_j = d_j + margin * n_j has mean zero at the boundary but is not symmetric, so the
+    raw sum is not exact (its size reached 0.032 at 30 blocks, review of PR #11). The statistic is then studentised by
+    the standard deviation of the flipped sample, t(s) = mean(s d') / (sd(s d') / sqrt(B)), which is asymptotically
+    exact under asymmetry (Janssen 1999). Asymptotics are slow when discordances are rare (high method correlation,
+    few targets per block), so H2 is run at a level calibrated by simulation for each design (ADR-0008 item 7,
+    sample_size.calibrate_alpha_h2), never at a nominal 0.025 unchecked. studentize=None picks raw for margin 0 and
+    studentised otherwise.
 
     Exact enumeration when the number of non-zero blocks is <= exact_max, otherwise Monte Carlo with
     p = (1 + #{T* >= T}) / (1 + n_flip). A precomputed (n_flip, B) matrix of i.i.d. +-1 can be passed as signs (the
@@ -157,17 +164,34 @@ def signflip_pvalue(d, n=None, margin=0.0, n_flip=100_000, rng=None, exact_max=1
     d = d[d != 0]
     if d.size == 0:
         return 1.0
-    t = d.sum()
-    tol = 1e-9 * max(1.0, np.abs(d).sum())
+    stud = (margin != 0) if studentize is None else studentize
     if signs is None and d.size <= exact_max:
         s = ((np.arange(2 ** d.size)[:, None] >> np.arange(d.size)) & 1) * 2.0 - 1.0
-        return float(np.mean(s @ d >= t - tol))
-    if signs is None:
-        rng = np.random.default_rng() if rng is None else rng
-        signs = rng.integers(0, 2, size=(n_flip, d.size), dtype=np.int8) * 2 - 1
+        include_observed = False
     else:
-        signs = signs[:, : d.size]
-    return float((1 + np.sum(signs @ d >= t - tol)) / (1 + signs.shape[0]))
+        if signs is None:
+            rng = np.random.default_rng() if rng is None else rng
+            s = rng.integers(0, 2, size=(n_flip, d.size), dtype=np.int8) * 2.0 - 1.0
+        else:
+            s = signs[:, : d.size]
+        include_observed = True
+    if stud and d.size > 1:
+        stat = lambda x: _t_stat(x)
+        t, tstar = stat(d[None, :])[0], stat(s * d)
+    else:
+        t, tstar = d.sum(), s @ d
+    tol = 1e-9 * max(1.0, abs(t)) if np.isfinite(t) else 0.0
+    k = np.sum(tstar >= t - tol)
+    return float((1 + k) / (1 + s.shape[0])) if include_observed else float(k / s.shape[0])
+
+
+def _t_stat(x):
+    """Row-wise one-sample t statistic of the flipped block sums (0 where the spread is 0)."""
+    b = x.shape[1]
+    m = x.mean(axis=1)
+    sd = x.std(axis=1, ddof=1)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        return np.where(sd > 0, m / (sd / np.sqrt(b)), np.sign(m) * np.inf)
 
 
 # ---------------------------------------------------------------- S7.4 multiplicity

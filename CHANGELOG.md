@@ -5,6 +5,12 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-10-24
 
+- Statistics (review of PR #11): H2 of ADR-0008 runs the studentised sign-flip test at a level calibrated by
+  simulation at the least favourable configuration of the intersection-union test (one comparator at the margin),
+  with at least 50 blocks (`sample_size.py calibrate`; 0.015 at 50 blocks); the nominal 0.025 gave size 0.026 to
+  0.033. `tau` in the sample-size model no longer moves the marginal recall. R2 tests the target regime only for pairs
+  at least nine times the truth's origin-time error apart (SAP 3.4).
+
 - Statistics (K1, K2, K9, CR-02, CR-07, CR-08): ADR-0008 (accepted by the author on 24 October), one rule for "the model beats the comparators"
   (pooled regimes instead of counted cells, LOC+T-V hit rule with a duplicator control, block sign-flip tests,
   intersection-union over comparators, fixed sequence H1 -> H2, equal tuning budget, G4 on semi-synthetic data first).

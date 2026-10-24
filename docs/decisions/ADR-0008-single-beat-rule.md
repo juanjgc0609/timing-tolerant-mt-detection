@@ -1,7 +1,7 @@
 # ADR-0008: One rule for "the model beats the comparators"
 
 Date: 23 October 2026. Status: accepted by the author on 24 October 2026 (proposed by the statistical design
-thread); the atlas thread writes it into the ATLAS-0 card before the card is anchored. It resolves conflicts K1, K2 and
+thread; H2 test calibrated after the independent review the same day, item 7); the atlas thread writes it into the ATLAS-0 card before the card is anchored. It resolves conflicts K1, K2 and
 K9 of the master plan and critique items CR-02 and CR-08; it extends ADR-0007 for close pairs.
 
 ## Context
@@ -56,7 +56,8 @@ Nothing says where the phase-4 gate G4 is measured (K9).
    semi-synthetic data, a time block of real data, at least 30 per sequence), d_j is the weighted sum over the
    block's targets of (hit by the model - hit by k), and the signs of whole blocks are flipped. It is the exact
    randomisation form of the clustered McNemar test (Durkalski et al. 2003), valid for any dependence inside a block.
-   One-sided level 0.025. The paired 95 % interval of the stratified block bootstrap (unit = block, strata = sequence
+   One-sided level 0.025. The test is conditional on the operating points, which are chosen on all evaluated blocks;
+   the bootstrap below recomputes them. The paired 95 % interval of the stratified block bootstrap (unit = block, strata = sequence
    or network, operating points recomputed in each replicate) is reported with every test; it is flagged indicative
    with fewer than 30 blocks or an atom above 5 % at a bound.
 6. **Beating the comparators** means beating each of them: the claim against the comparator set is an
@@ -65,11 +66,20 @@ Nothing says where the phase-4 gate G4 is measured (K9).
    under item 9, plus the best comparator re-run with the model's picker when that picker is fine-tuned (CR-03).
 7. **The rule.** The model beats the comparators when, in this fixed order at 0.025 each:
    - **H1**: superiority in T (H0: recall difference <= 0 against every comparator); and then
-   - **H2**: non-inferiority in C with margin 0.05 (H0: difference <= -0.05 against every comparator, the sign-flip test
-     on d_j + 0.05 n_j).
-   H2 is tested only if H1 is rejected, so the family-wise error is 0.025 without adjustment. Secondary hypotheses,
-   tested only if H1 and H2 are rejected, form one Holm family at 0.025: superiority in [0.1, 0.5) s, superiority in
-   [0.5, 1) s, and non-inferiority in C at the tighter margin 0.03. Cells are described with their estimates and
+   - **H2**: non-inferiority in C with margin 0.05 (H0: difference <= -0.05 against every comparator), by the
+     studentised sign-flip test on d_j + 0.05 n_j, at a calibrated level.
+   With a margin the shifted block sums are not symmetric, so the sign-flip test is only asymptotically exact, and the
+   approach is slow when discordant targets are rare: at the least favourable configuration of the intersection-union
+   test (one comparator exactly at the margin, the others clearly beaten) its size at a nominal 0.025 is 0.026 to 0.033
+   with 30 to 120 blocks (independent review of PR #11). H2 is therefore run at the largest level of
+   {0.025, 0.02, 0.015, 0.01, 0.005} whose simulated size, worst case over the registered range of method correlation
+   (0.5 to 0.9) and intra-block correlation (0 to 0.2) plus 1.645 Monte Carlo standard errors, is at most 0.025
+   (`sample_size.py calibrate`, 4,000 simulations); at 50 blocks with 3 targets per block that level is 0.015. H2 needs
+   at least 50 blocks. H1 is exact, so its size is at most 0.025 by construction (0.016 or less in simulation).
+   H2 is tested only if H1 is rejected; with H2 at its calibrated level the family-wise error is at most 0.025.
+   Secondary hypotheses, tested only if H1 and H2 are rejected, form one Holm family at 0.025: superiority in
+   [0.1, 0.5) s, superiority in [0.5, 1) s, and non-inferiority in C at the tighter margin 0.03, whose Holm threshold
+   is multiplied by its own calibrated level divided by 0.025. Cells are described with their estimates and
    intervals, never counted. The claim is worded "superior in the regime T, which holds Y % of the events of dense
    sequences, and not inferior by more than 0.05 elsewhere", with Y the prevalence of item 4 and its interval.
 8. **Effect sizes for planning.** Semi-synthetic analyses are sized for a gain of 0.05 in T and real ones for 0.10,
@@ -98,5 +108,8 @@ Nothing says where the phase-4 gate G4 is measured (K9).
 - Earlier registered results keep their rules. The atlas description by cell (phase 3) is unaffected: it is
   descriptive, and its hypothesis on comparator losses is tested by its own card.
 - A real-data claim in T is possible only where the truth resolves pairs at 0.1 to 1 s: a dense or nodal network
-  decimated to subsets of 4 to 12 stations (CR-04). Otherwise T is tested on semi-synthetic data only, and the claim on
+  decimated to subsets of 4 to 12 stations (CR-04). LOC+T-V also narrows the origin window of a co-located pair to a
+  third of its separation (0.033 to 0.33 s in T), so the truth's origin-time error must be well below that: a pair
+  enters T in real data only if its separation is at least nine times the truth's origin-time standard deviation
+  measured on T3.V (PHASE6_SAP, Section 3.4). Otherwise T is tested on semi-synthetic data only, and the claim on
   real data is limited to C.
