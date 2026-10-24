@@ -39,4 +39,3 @@ design, seed 20261019.
 
 5. Hours of record for the false-alarm budget check (30/h, tolerance 20 %, level 0.975, pass probability 0.80):
    phi 1: 7.4 h   phi 5: 37.2 h   phi 10: 74.4 h   phi 20: 148.9 h
-   phi 1: 7.4 h   phi 5: 37.2 h   phi 10: 74.4 h   phi 20: 148.9 h

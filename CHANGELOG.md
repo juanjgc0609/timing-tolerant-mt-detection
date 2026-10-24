@@ -3,6 +3,14 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-10-24
+
+- Statistics (K1, K2, K9, CR-02, CR-07, CR-08): proposed ADR-0008, one rule for "the model beats the comparators"
+  (pooled regimes instead of counted cells, LOC+T-V hit rule with a duplicator control, block sign-flip tests,
+  intersection-union over comparators, fixed sequence H1 -> H2, equal tuning budget, G4 on semi-synthetic data first).
+  Analysis plan `docs/protocol/PHASE6_SAP.md`, conformance checklist, drafts of R2 and R3, `ttmt.stats` with its tests
+  and the sample-size tool `experiments/exploratory/P6-SAP/`.
+
 ## 2026-10-23
 
 - Scoring (E58, CR-21): the 2I primary arm regenerated with the frozen code and rescored under the registered and

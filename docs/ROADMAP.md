@@ -117,7 +117,8 @@ run by a GitHub Release, OpenTimestamps and OSF Registries (ADR-0004), with comp
 before the run, deployable thresholds, and a verification that includes a number re-derived by a person. Size: by
 exploration P6-power, a registered gain of 0.05 in recall needs about 400 to 1,200 independent targets for 80 per cent
 power, and a gain of 0.10 needs 150 to 300 (R1, with 54, had power 0.11 to 0.13 for 0.05). The data request is sized
-by that table; a single small sequence does not suffice.
+by that table; a single small sequence does not suffice. The decision rule is the single beat rule of ADR-0008 and the
+analysis plan is `docs/protocol/PHASE6_SAP.md`, sized by `experiments/exploratory/P6-SAP/`.
 
 ## Phase 7. Thesis
 
