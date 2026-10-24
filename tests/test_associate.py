@@ -318,3 +318,15 @@ def test_seeds_are_the_anchored_atlas_list():
     rng = np.random.default_rng(stored[7])
     sp = SP.space_of("phasenet+pyocto")
     assert cfg == {k: sp[k].draw(rng) for k in sorted(sp)} and s == stored[7]
+
+
+def test_amendment_1_spaces_and_objective_guard(tmp_path):
+    assert SP.REAL["as_tint"] == SP.LogUniform(0.1, 5.0)
+    assert SP.PYOCTO["as_min_interevent_time"] == SP.LogUniform(0.1, 5.0)
+    rng = np.random.default_rng(8)
+    only_c = toy_record(toy_truth(rng, n_pairs=0, n_iso=6, span=300.0))
+    with pytest.raises(ValueError):
+        TU.objective([only_c], [Detections(only_c.truth.t, only_c.truth.xyz, np.ones(only_c.truth.n_events))])
+    with pytest.raises(ValueError):                 # refused before any trial is spent
+        TU.run("eqnet", lambda c, r: None, [only_c], ledger=tmp_path / "l.csv", log=lambda *_: None)
+    assert not (tmp_path / "l.csv").exists()

@@ -10,8 +10,8 @@ phase_sel.txt, not the simulated-annealing relocation (hypolocSA.dat), because o
 
 Binary: TTMT_REAL_BIN or Frame.fixed["real"]["binary"] (built with gcc -O2 -fopenmp REAL.c -lm).
 
-Tuned (space.REAL): as_np0 -> np0 (minimum P picks), as_nps0 -> nps0 (minimum P + S picks), as_tint -> tint (the
-card's "window"; REAL's minimum interval between two events, s). Fixed: the -S defaults of REAL's synthetic demo
+Tuned (space.REAL): as_np0 -> np0 (minimum P picks), as_nps0 -> nps0 (minimum P + S picks), as_tint -> tint (REAL's
+minimum interval between two events, s; log-uniform in [0.1, 5] s by ATLAS-0 amendment 1, ADR-0009). Fixed: the -S defaults of REAL's synthetic demo
 (ns0 2, npsboth0 2, std0 0.5 s, dtps 0, nrt 1.5), a -R search radius of 25 km around the station of the initiating
 pick with 2 km grid steps, and the -G table grid (0.01 deg, 1 km). The run folder is deleted after reading.
 """

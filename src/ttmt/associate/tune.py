@@ -4,10 +4,10 @@ ADR-0008 item 9; critique items CR-03 and CR-07).
 Objective of a configuration: the development recall in T and in C (C includes the isolated events, as in
 ``ttmt.atlas.froc.gate``) at 30 false detections per hour under LOC+T-V, each weighted as in the endpoint (the
 prevalence weights of the records, 1 by default), pooled over the tuning records of the method, with the operating
-point chosen on those records (``ttmt.atlas.froc.hits``). The card names the two recalls but not how they are combined
-into the one number a search maximises; the default here is their mean, ``objective = (recall_T + recall_C) / 2``, so
-neither regime decides alone. Both recalls are kept in the ledger, so the atlas thread can reselect under another
-combination without rerunning anything.
+point chosen on those records (``ttmt.atlas.froc.hits``). The search maximises their unweighted mean,
+``objective = (recall_T + recall_C) / 2``, ties to the lower trial (ATLAS-0 amendment 1, ADR-0009 item 2). Both
+recalls are kept in the ledger. A tuning partition without targets in T or in C is an error (the mean would silently
+become the one defined recall); :func:`run` checks it before the first trial, so no trial is spent on it.
 
 Only records of the tuning partition are accepted (``TuningRecord.partition == "tune"``); the split of noise hours
 and injection seeds is :func:`tuning_split` (30 / 70 by a hash of the hour, card "Tuning").
@@ -89,9 +89,16 @@ def objective(records, dets, budget=BUDGET):
     got = F.hits(pool, "m", budget)
     T = pool.ev_regime == "T"
     Cm = (pool.ev_regime == "C") | (pool.ev_regime == "iso")
+    if not T.any() or not Cm.any():
+        raise ValueError(f"the tuning records hold {int(T.sum())} targets in T and {int(Cm.sum())} in C; both are needed")
     rT, rC = F.recall(pool, got, T), F.recall(pool, got, Cm)
-    obj = float(np.nanmean([rT, rC])) if np.isfinite([rT, rC]).any() else float("nan")
-    return obj, rT, rC, int(T.sum()), int(Cm.sum()), float(hours.sum())
+    return float((rT + rC) / 2), rT, rC, int(T.sum()), int(Cm.sum()), float(hours.sum())
+
+
+def check_records(records):
+    """raise unless the tuning records hold targets in both regimes (objective of an empty detection set)."""
+    from ..atlas.schema import Detections
+    objective(records, [Detections(np.zeros(0), np.zeros((0, 3)), np.zeros(0)) for _ in records])
 
 
 def code_version():
@@ -111,6 +118,7 @@ def run(method, runner, records, ledger=L.LEDGER, n_trials=SP.N_TRIALS, env="", 
     objective nan, and still counts in the budget). Returns the ledger rows of the method."""
     if not records:
         raise ValueError("no tuning records")
+    check_records(records)
     have = L.done(method, ledger)
     part, code = partition_hash(records), code_version()
     for i, seed, cfg in (trials if trials is not None else SP.trials(method, n_trials)):

@@ -30,8 +30,9 @@ device) and `repro_puente.py` (gate G3a, target 1).
 - Pick-based pipelines are tuned jointly: one draw covers the picker (`pk_*`) and the associator (`as_*`).
 - Objective: development recall in T and in C (C includes the isolated events) at 30 false detections per hour under
   LOC+T-V, with the operating point set on the tuning records (`ttmt.atlas.froc`), events weighted as in the
-  endpoint. The search maximises `(recall_T + recall_C) / 2` (see "Choices to confirm"); both recalls go to the
-  ledger.
+  endpoint. The search maximises `(recall_T + recall_C) / 2`, ties to the lower trial (ATLAS-0 amendment 1,
+  ADR-0009 item 2); both recalls go to the ledger. A tuning partition without targets in T or in C is refused before
+  the first trial.
 - Only records whose partition is `"tune"` are accepted; `tune.tuning_split` is the 30/70 split by hash of the hour.
 - Ledger: `experiments/exploratory/ATLAS-0/tuning_ledger.csv`, append-only (a repeated (method, trial) is refused),
   one row per trial including failed ones (status `error`, objective nan; a failed trial still spends its place).
@@ -65,18 +66,14 @@ solver in place. The test checks that two calls give identical detections and pi
 | PyOcto "tolerance in [0.3, 2] s" | velocity-model `tolerance` |
 | PyOcto "association cutoff in [0.5, 2] s" | `pick_match_tolerance` (s). PyOcto's `association_cutoff_distance` is in km, so it cannot be meant |
 | REAL "minimum P picks", "minimum total picks" | `np0`, `nps0` |
-| REAL "window in [1, 5] s" | `tint`, REAL's minimum interval between two events |
+| REAL "window in [1, 5] s" | `tint`, REAL's minimum interval between two events, log-uniform in [0.1, 5] s (amendment 1) |
+| PyOcto (amendment 1) | `min_interevent_time` log-uniform in [0.1, 5] s (default 3 s kept two events < 3 s apart from being reported) |
 | ranges without a stated distribution | uniform (log-uniform only where the card says so) |
 
-### Choices to confirm (atlas thread, before the first tuning run)
+### Fixed minimum time between output events (ADR-0009 item 1)
 
-1. REAL `tint` in [1, 5] s: REAL then cannot report two events closer than 1 s, so its recall in T is capped at
-   about one event per pair by construction, which makes it a straw man in exactly the regime the atlas tests
-   (P-RE1 is stated on 0.5-3 s). Proposal: `tint` log-uniform in [0.1, 5] s, the range Puente et al. tuned in
-   (they used 0.1 s).
-2. Objective scalar: the mean of the T and C recalls. If the atlas prefers another combination (for example T only,
-   since H1 is stated in T), the ledger already holds both recalls and the best trial can be reselected without
-   running anything.
+After amendment 1 neither REAL nor PyOcto has a fixed one. GaMMA has no explicit minimum interval (its mixture
+components are separated by the data). The waveform methods are listed here when their wrappers are written.
 
 ## Pretrained weights against the atlas data (CR-22)
 
@@ -98,7 +95,8 @@ the training set; "region": same region, other period.
 | eqnet/none | no released weights for the 2022 EQNet model (environments/DEVIATIONS.md) | - | not stated | - | - | - | - |
 
 Declared overlaps that matter for the tuned space: PhaseNet `instance` (one of the two weights the card tunes) was
-trained on Italian data from 2005-2020, which covers the Alto Tiberina 2010 noise days; the STEAD-trained weights are
+trained on Italian data from 2005-2020, which covers the Alto Tiberina 2010 noise days (ADR-0009 item 3: on those
+records `instance` results are reported apart, flagged "training-period overlap"); the STEAD-trained weights are
 global and may contain any of the three regions. PhaseNet `original` and PhaseNO (northern California) do not cover
 Ridgecrest, Hi-net or Alto Tiberina.
 
@@ -110,7 +108,24 @@ S8-S9; in the supplement S8-S9 are the subduction results). Deviations are liste
 times from `ttmt.traveltime` instead of NonLinLoc, the SCSN station list fetched from SCEDC (the paper gives no list),
 events with fewer than 10 picks not generated, GaMMA with ncpu = 1.
 
-CLOUD_DRY_RUN
+Cloud dry run (24 October 2026, not the gate): the SCEDC station service is not reachable from the cloud container,
+so the run used a stand-in layout, the 23 Ridgecrest stations of GaMMA's tests (`tests/comparison/stations_ridgecrest.csv`
+at 80394dd), with about 36 picks per event. Recall against Table S10 (5 % relative tolerance):
+
+| Events | False picks | PyOcto (S10) | REAL (S10) | GaMMA (S10) |
+|:--|:--|:--|:--|:--|
+| 100 | 30 % | 0.990 (1.00) | 0.980 (0.98) | 0.530 (1.00) |
+| 100 | 100 % | 1.000 (0.98) | 0.980 (0.98) | 0.430 (0.99) |
+| 100 | 300 % | 1.000 (0.99) | 0.990 (0.99) | 0.520 (0.99) |
+| 500 | 30 % | 0.986 (0.97) | 0.902 (0.93) | 0.566 (0.99) |
+| 500 | 100 % | 0.982 (0.98) | 0.894 (0.93) | 0.630 (1.00) |
+| 500 | 300 % | 0.974 (0.98) | | |
+
+PyOcto and REAL are within 5 % in every condition run. GaMMA is not, and the cause is the stand-in layout: Table S3
+sets `dbscan_min_samples = 20`, sized for the full SCSN; with 23 stations GaMMA's DBSCAN discards many events as
+noise. On the same 100-event, 30 % record, `dbscan_min_samples = 5` gives recall 1.00 (precision 0.98) and 20 gives
+0.53, with everything else unchanged. The gate run uses the SCEDC station list on the GPU machine
+(`repro_puente.py fetch-stations`).
 
 Targets 2 (PhaseNet on the SeisBench ETHZ benchmark with `pick-benchmark`) and 3 (QuakeMigrate on its published
 example) need the GPU machine and, for 3, an install; they are not done yet.

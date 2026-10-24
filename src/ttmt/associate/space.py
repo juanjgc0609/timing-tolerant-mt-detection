@@ -81,9 +81,12 @@ EQTRANSFORMER = {"pk_peak_distance": LogUniform(0.05, 0.5), "pk_threshold": LogU
 
 # associators
 GAMMA = {"as_min_picks": IntRange(3, 8), "as_max_sigma11": Uniform(0.3, 2.0), "as_method": Choice(("BGMM", "GMM"))}
+# ATLAS-0 amendment 1 (ADR-0009 item 1): REAL tint and PyOcto min_interevent_time log-uniform in [0.1, 5] s, so neither
+# is kept from reporting two events inside regime T by construction
 PYOCTO = {"as_min_picks": IntRange(3, 8), "as_tolerance": Uniform(0.3, 2.0),
-          "as_pick_match_tolerance": Uniform(0.5, 2.0)}       # card: "association cutoff in [0.5, 2] s"
-REAL = {"as_np0": IntRange(3, 6), "as_nps0": IntRange(5, 12), "as_tint": Uniform(1.0, 5.0)}   # card: "window"
+          "as_pick_match_tolerance": Uniform(0.5, 2.0),        # card: "association cutoff in [0.5, 2] s"
+          "as_min_interevent_time": LogUniform(0.1, 5.0)}
+REAL = {"as_np0": IntRange(3, 6), "as_nps0": IntRange(5, 12), "as_tint": LogUniform(0.1, 5.0)}
 
 # waveform methods
 QUAKEMIGRATE = {"wf_threshold": Uniform(1.2, 3.0), "wf_stalta": Choice(((0.2, 1.0), (0.5, 5.0))),

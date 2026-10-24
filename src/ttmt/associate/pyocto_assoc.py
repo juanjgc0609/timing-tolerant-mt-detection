@@ -2,7 +2,8 @@
 
 Tuned (space.PYOCTO): as_min_picks -> n_picks; as_tolerance -> the velocity model's tolerance (s); the card's
 "association cutoff in [0.5, 2] s" -> pick_match_tolerance (s), the only association cutoff of PyOcto in seconds
-(association_cutoff_distance is in km). n_p_picks = n_s_picks = n_p_and_s_picks = max(1, n_picks // 3), as R0 and
+(association_cutoff_distance is in km); as_min_interevent_time -> min_interevent_time (s; ATLAS-0 amendment 1,
+ADR-0009; the fixed value applies when a configuration does not carry it). n_p_picks = n_s_picks = n_p_and_s_picks = max(1, n_picks // 3), as R0 and
 R1, unless fixed. Fixed (Frame.fixed["pyocto"] may override): one thread (n_threads = 1), the 1-D model of the frame as a PyOcto
 table, time_before from the frame, PyOcto's defaults otherwise.
 """
@@ -53,7 +54,8 @@ def associate(frame, picks, cfg):
         velocity_model=velocity_model(frame, cfg["as_tolerance"], fx), time_before=float(frame.time_before),
         pick_match_tolerance=float(cfg["as_pick_match_tolerance"]), n_picks=n,
         n_p_picks=fx["n_p_picks"] or k, n_s_picks=fx["n_s_picks"] or k, n_p_and_s_picks=fx["n_p_and_s_picks"] or k,
-        n_threads=1, **{key: fx[key] for key in PASS})
+        n_threads=1, **{key: fx[key] for key in PASS if key != "min_interevent_time"},
+        min_interevent_time=float(cfg.get("as_min_interevent_time", fx["min_interevent_time"])))
     with quiet():
         events, assignments = assoc.associate(pk, st)
     if events is None or len(events) == 0:
