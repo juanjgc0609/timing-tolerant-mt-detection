@@ -222,19 +222,25 @@ def _pairwise(pool, a, b, mask, budget, margin, signs):
     ga, gb = hits(pool, a, budget), hits(pool, b, budget)
     w = pool.ev_weight * mask
     d, n = S.block_sums(ga, gb, pool.ev_block, pool.n_blocks, w)
-    p = S.signflip_pvalue(d, n, margin=margin, signs=signs) if signs is not None else \
-        S.signflip_pvalue(d, n, margin=margin, rng=np.random.default_rng(0))
+    if margin:      # non-inferiority: clustered score test (ADR-0008 item 7), not the margin sign-flip
+        bb, cc, nn = S.block_counts(ga, gb, pool.ev_block, pool.n_blocks, w)
+        p = S.ni_score_pvalue(bb, cc, nn, margin)
+    elif signs is not None:
+        p = S.signflip_pvalue(d, n, signs=signs)
+    else:
+        p = S.signflip_pvalue(d, n, rng=np.random.default_rng(0))
     diff = S.paired_difference(d, n) if n.sum() > 0 else float("nan")
     return dict(diff=diff, p=float(p), n=float(n.sum()), blocks=int((n > 0).sum()))
 
 
-def gate(pool, model, comparators, budget=BUDGETS[0], duplicator_of=None, signs=None):
+def gate(pool, model, comparators, budget=BUDGETS[0], duplicator_of=None, signs=None, alpha_h2=ALPHA):
     """the rule of ADR-0008 item 7 on a pooled evaluation.
     H1: superiority in T against every comparator (IUT of sign-flip p-values); H2, only if H1 is rejected:
     non-inferiority in C at margin 0.05. Secondary family (only if H1 and H2): superiority in [0.1, 0.5) s, in
     [0.5, 1) s, non-inferiority in C at 0.03, Holm at 0.025. duplicator_of: (comparator, its duplicator run name) for
     the negative control of item 3; if the duplicator beats its comparator in T at 0.025 the metric is broken and
-    no claim is made."""
+    no claim is made. alpha_h2: level of H2, 0.025 unless the registered design check (sample_size.py calibrate)
+    lowered it; the Holm threshold of the secondary non-inferiority is scaled by the same factor."""
     T = pool.ev_regime == "T"
     Cm = (pool.ev_regime == "C") | (pool.ev_regime == "iso")
     sep_bin = np.array([C.cell_axes(c)[0] if c >= 0 else -1 for c in pool.ev_cell])
@@ -246,13 +252,15 @@ def gate(pool, model, comparators, budget=BUDGETS[0], duplicator_of=None, signs=
     h1 = {c: _pairwise(pool, model, c, T, budget, 0.0, signs) for c in comparators}
     h2 = {c: _pairwise(pool, model, c, Cm, budget, NI_MARGIN, signs) for c in comparators}
     p1, p2 = S.iut([r["p"] for r in h1.values()]), S.iut([r["p"] for r in h2.values()])
-    rej1, rej2 = S.fixed_sequence([p1, p2], ALPHA)
+    rej1 = bool(p1 <= ALPHA)
+    rej2 = bool(rej1 and p2 <= alpha_h2)
     res.update(H1=dict(p=p1, rows=h1, rejected=rej1), H2=dict(p=p2, rows=h2, rejected=rej2))
     if rej1 and rej2:
         fam = {"T[0.1,0.5)": (T & (sep_bin == 1), 0.0), "T[0.5,1)": (T & (sep_bin == 2), 0.0),
                "C NI 0.03": (Cm, NI_MARGIN_SECONDARY)}
         ps = {k: S.iut([_pairwise(pool, model, c, mk, budget, mg, signs)["p"] for c in comparators])
               for k, (mk, mg) in fam.items()}
+        ps["C NI 0.03"] = min(1.0, ps["C NI 0.03"] * ALPHA / alpha_h2)
         rej = S.holm(list(ps.values()), ALPHA)
         res["secondary"] = {k: dict(p=p, rejected=r) for (k, p), r in zip(ps.items(), rej)}
     broken = res.get("control", {}).get("broken", False)

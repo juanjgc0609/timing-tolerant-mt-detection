@@ -11,7 +11,7 @@ The reviewer checks each analysis against `docs/protocol/SAP_CONFORMANCE_CHECKLI
 | Test | Data | Truth | Regimes tested | Status |
 |:--|:--|:--|:--|:--|
 | G4 (phase 4) | development: semi-synthetic (primary), real development (secondary) | injection; T3.V truth for real | T and C (ADR-0008) | gate, not confirmatory |
-| R2 | real sequences reserved under T3.R4, from networks not used in development | dense or nodal network decimated to 4-12 station subsets; reviewed catalogue | T only where the truth resolves pairs at 0.1-1 s, C always | confirmatory |
+| R2 | real sequences reserved under T3.R4, from networks not used in development | dense or nodal network decimated to 4-12 station subsets; reviewed catalogue | T only where the truth resolves pairs at 0.1-1 s with origin-time error below a ninth of their separation (3.4), C always | confirmatory |
 | R3 | semi-synthetic: recorded events of the reserved networks injected into their own continuous noise | injection | T and C | confirmatory |
 
 The doctoral claim needs H1 and H2 met in R3 and H2 met in R2 (H1 in R2 too when R2 can test T). The two
@@ -58,7 +58,13 @@ nearest calibration event.
 A method that fails on a block (crash, timeout) scores no detection there (counted as misses); a sensitivity analysis
 removes such blocks for every method.
 
-3.4 **Imperfect truth (T3.V3).** A detection that matches no catalogued event is false in the primary analysis. In a
+3.4 **Imperfect truth (T3.V3).** Truth precision in T: LOC+T-V counts a detection for one event of a co-located pair
+only within a third of their separation of it (0.033 to 0.33 s in T). If the truth's own origin-time error is
+comparable, the truth decides hits in T for every method and pulls the paired difference toward zero. Before the run,
+the origin-time standard deviation sigma_t of the truth catalogue is measured on T3.V (against a higher-resolution
+reference or by the scatter of repeated relocations), and a pair enters T in R2 only if its separation is at least
+9 sigma_t; pairs closer than that are excluded events. If no pair qualifies, R2 does not test T.
+A detection that matches no catalogued event is false in the primary analysis. In a
 sensitivity analysis it is neutral when it matches, by LOC+T, an event of an independent enhanced catalogue produced
 by none of the compared methods (named in the registration). A catalogue produced by template matching is never used
 to score template matching.
@@ -98,9 +104,19 @@ within each sequence. d_j and n_j as in ADR-0008 item 5 (`block_sums` with the p
 
 7.3 **Test.** Block sign-flip p-value, exact when at most 16 blocks are non-zero, otherwise 100,000 random sign
 vectors from seed 20261023 (`signflip_pvalue`); the clustered McNemar z of Durkalski et al. is reported next to it.
+H1 uses the raw sum (exact). Non-inferiority tests (H2 and the secondary margin 0.03) use the clustered score test
+`ni_score_pvalue` from the per-block discordant counts (`block_counts`): variance under the restricted null
+(cluster-robust, floored at Tango's 1998 multinomial variance) and a Student t reference with Satterthwaite degrees of
+freedom. They run at 0.025 unless the design check of ADR-0008 item 7 lowers the level: `sample_size.py calibrate`
+over the registered range of recall, method correlation, intra-block correlation and mean and dispersion of targets
+per block, whose ends come from development data (`sample_size.py estimate`); range and level are quoted in the
+registration. The tests are conditional on the operating points of 7.1, which are chosen on all evaluated blocks; the
+bootstrap of 7.5 recomputes them in each replicate.
 
-7.4 **Multiplicity.** Intersection-union over comparators (`iut`), fixed sequence H1 then H2 (`fixed_sequence`), Holm
-over the secondary family (`holm`).
+7.4 **Multiplicity.** Intersection-union over comparators (`iut`), fixed sequence H1 then H2 (H2 at the level of the design
+check), Holm over the secondary family (`holm`). Sizes are checked at the least favourable
+configuration of the intersection-union test, one comparator at the boundary and the others clearly beaten, which
+equals the size of one pairwise test.
 
 7.5 **Intervals.** Stratified block bootstrap, 10,000 replicates, seed 20261023, strata = sequence (R2) or network
 (R3), operating points and the best comparator recomputed in each replicate (`block_bootstrap`); percentile 95 %

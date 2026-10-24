@@ -90,6 +90,35 @@ class PairedTests(unittest.TestCase):
         r = ss.run_design(200, delta_r=0.0, delta_c=0.0, icc=0.3, rho=0.6, m=4, k=0.5, sims=400, n_flip=999, seed=7)
         self.assertLessEqual(r["power_H1"], 0.025 + 2.6 * np.sqrt(0.025 * 0.975 / 400))
 
+    def test_h2_zero_discordance_is_not_non_inferior(self):
+        """30 blocks of one target, none discordant, cannot exclude a difference below -0.05 (review of PR #13)."""
+        z = np.zeros(30)
+        self.assertGreater(st.ni_score_pvalue(z, z, np.ones(30), 0.05), 0.05)
+        self.assertLess(st.ni_score_pvalue(np.zeros(1000), np.zeros(1000), np.ones(1000), 0.05), 1e-6)
+        c = z.copy(); c[0] = 1
+        self.assertGreater(st.ni_score_pvalue(z, c, np.ones(30), 0.05), 0.2)
+
+    def test_h2_size_at_least_favourable_configuration(self):
+        """H2 (score test) at 0.025 with one comparator at the margin, 30 blocks, the worst simulated configuration of
+        part 3 (recall 0.85, 10 targets per block, rho 0.9, icc 0.2)."""
+        r = ss.run_design(30, m=10, k=0.5, p0=0.85, delta_r=0.05, delta_c=-0.05, rho=0.9, icc=0.2, n_comp=1,
+                          sims=2000, n_flip=99, seed=41)
+        self.assertLessEqual(r["power_H2"], 0.025 + 1.5 * np.sqrt(0.025 * 0.975 / 2000))
+
+    def test_h2_size_with_large_unequal_blocks(self):
+        """Few large, very unequal, strongly correlated blocks (30 targets per block, dispersion 0.3, icc 0.4, rho 0.9;
+        review of PR #13, where the design-effect variance gave size 0.06 to 0.11): the restricted-null variance with
+        Satterthwaite degrees of freedom keeps H2 at 0.025."""
+        r = ss.run_design(60, m=30, k=0.3, p0=0.2, delta_r=0.05, delta_c=-0.05, rho=0.9, icc=0.4, n_comp=1,
+                          sims=2000, n_flip=99, seed=43)
+        self.assertLessEqual(r["power_H2"], 0.025 + 1.5 * np.sqrt(0.025 * 0.975 / 2000))
+
+    def test_tau_keeps_marginal_recall(self):
+        rng = np.random.default_rng(8)
+        _, reg, ha, _ = ss.simulate_hits(rng, 20000, 3.0, 0, 0.5, 0.40, 0.10, -0.05, 0.7, 0.1, 0.6, 1)
+        self.assertAlmostEqual(ha[reg].mean(), 0.50, delta=0.01)
+        self.assertAlmostEqual(ha[~reg].mean(), 0.35, delta=0.01)
+
     def test_power_increases_with_blocks(self):
         a = ss.run_design(60, sims=200, seed=3)["power_H1"]
         b = ss.run_design(400, sims=200, seed=3)["power_H1"]
