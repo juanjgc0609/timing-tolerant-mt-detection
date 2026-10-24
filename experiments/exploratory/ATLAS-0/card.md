@@ -196,7 +196,8 @@ Search spaces (default):
   in [0.05, 0.5] s (log-uniform), probability threshold in [0.03, 0.5] (log-uniform), weights;
 - PhaseNO: the same peak distance and threshold, its published weights;
 - GaMMA: minimum picks {3, ..., 8}, time sigma or tolerance in [0.3, 2] s, method {BGMM, GMM};
-- PyOcto: minimum picks {3, ..., 8}, tolerance in [0.3, 2] s, association cutoff in [0.5, 2] s;
+- PyOcto: minimum picks {3, ..., 8}, tolerance in [0.3, 2] s, association cutoff in [0.5, 2] s (amended: see
+  Amendment 1);
 - REAL: minimum P picks {3, ..., 6}, minimum total picks {5, ..., 12}, window in [1, 5] s (amended: see Amendment 1);
 - QuakeMigrate: detection threshold in [1.2, 3], STA/LTA windows {(0.2, 1.0), (0.5, 5.0)} s, marginal window in
   [0.3, 1] s;
@@ -276,7 +277,10 @@ platforms (EQcorrscan on Windows) is run on Linux or reported as not tested.
 ## Amendment 1 (ADR-0009; anchored as `reg/ATLAS-0/amendment-1`, before any tuning trial)
 The registered text above is kept; these items replace it where they differ. Seeds stay those of registration 1.
 1. REAL: `tint` (minimum time between two events) log-uniform in [0.1, 5] s, instead of "window in [1, 5] s", which
-   kept REAL from outputting two events closer than 1 s in regime T.
+   kept REAL from outputting two events closer than 1 s in regime T. PyOcto: `min_interevent_time` log-uniform in
+   [0.1, 5] s is added (its default of 3 s had the same effect); "tolerance" is the velocity model's tolerance and
+   "association cutoff" is `pick_match_tolerance`. A fixed minimum time between output events of any other method is
+   listed in the ledger.
 2. Tuning objective: the unweighted mean of the development recall in T and in C, each at 30 false detections per hour
    under LOC+T-V and weighted within its regime as in the endpoint; the ledger stores both and the mean; ties go to
    the lower trial number.
