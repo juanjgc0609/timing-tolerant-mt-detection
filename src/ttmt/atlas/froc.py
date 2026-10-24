@@ -21,6 +21,7 @@ ALPHA = 0.025                            # one-sided, ADR-0008 items 5 and 7
 NI_MARGIN = 0.05                         # H2
 NI_MARGIN_SECONDARY = 0.03
 MIN_BLOCKS = 30                          # below it an interval is indicative (SAP S7.5)
+TRUTH_PRECISION_FACTOR = 9.0             # a real-data pair enters T only if its separation >= 9 sigma_t (SAP 3.4)
 
 
 def label(det, truth, target=None):
@@ -113,12 +114,30 @@ class Pool:
             r[0], r[1], r[2] = np.r_[r[0], np.asarray(s, float)], np.r_[r[1], lab], np.r_[r[2], np.asarray(blk, int)]
 
 
+def truth_precision_targets(truth, sigma_t, factor=TRUTH_PRECISION_FACTOR):
+    """target flags after the truth-precision rule of the phase-6 plan (SAP 3.4): with real truth whose origin-time
+    standard deviation is sigma_t, an event closer in origin time than factor * sigma_t to another catalogued event
+    is excluded (it becomes a non-target, so detections of it are neutral). sigma_t None: unchanged (semi-synthetic
+    truth is exact)."""
+    if sigma_t is None or truth.n_events < 2:
+        return truth.target.copy()
+    o = np.argsort(truth.t, kind="stable")
+    gap = np.diff(truth.t[o])
+    near = np.empty(truth.n_events)
+    near[o] = np.minimum(np.r_[np.inf, gap], np.r_[gap, np.inf])
+    return truth.target & (near >= factor * sigma_t)
+
+
 def score_record(pool, truth, k, subsets, net_centroid, ev_block, det_block, runs, duplicator_of=None,
-                 weights=None):
+                 weights=None, sigma_t=None):
     """label every method's detections of one record and add them to the pool. k: subset size; subsets: per event
     its station indices (cells.station_subset); ev_block (m,) and det_block: callable t -> block id; runs: name ->
     Detections. duplicator_of: name of the comparator whose duplicator is added as "dup:<name>", with half_sep half
-    the separation of the event nearest to each detection (duplicator_shift; ADR-0008 item 3)."""
+    the separation of the event nearest to each detection (duplicator_shift; ADR-0008 item 3). sigma_t: origin-time
+    standard deviation of a real truth catalogue (measured on T3.V); pairs closer than 9 sigma_t are excluded."""
+    if sigma_t is not None:
+        from dataclasses import replace
+        truth = replace(truth, target=truth_precision_targets(truth, sigma_t))
     cells, sep, _, _ = C.assign(truth, k, subsets, net_centroid)
     reg = regime_of(sep)
     reg[~truth.target] = ""

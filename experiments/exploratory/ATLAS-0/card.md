@@ -124,18 +124,34 @@ parts and adds only what the card must fix.
 - Test: block sign-flip test of the paired recall difference (`ttmt.stats.signflip_pvalue`); the block is an injected
   network realisation in semi-synthetic data and a time block of real data; one-sided 0.025; stratified block-bootstrap
   interval reported with every test, indicative with fewer than 30 blocks.
-- Beating the comparators: an intersection-union test over the comparator set, in the fixed order H1 (superiority in
-  T) then H2 (non-inferiority in C, margin 0.05); secondary Holm family at 0.025 only after both: superiority in
-  [0.1, 0.5) s, in [0.5, 1) s, and non-inferiority in C at 0.03 (`ttmt.atlas.froc.gate`).
+- Beating the comparators: an intersection-union test over the comparator set (the claim holds only against every
+  comparator). ADR-0008 item 7, as amended by PR #13 (`ttmt.atlas.froc.gate`):
+  - H1: superiority in T (H0: recall difference <= 0 against every comparator), exact sign-flip test at 0.025;
+    and then
+  - H2: non-inferiority in C with margin 0.05 (H0: difference <= -0.05 against every comparator), by the clustered
+    score test `ttmt.stats.ni_score_pvalue` on the per-block discordant counts (variance under the restricted null,
+    Student's t with Satterthwaite degrees of freedom), at the level of the design check: the largest of
+    {0.025, 0.02, 0.015, 0.01, 0.005} whose simulated size at the least favourable configuration, worst case over the
+    registered range plus 1.645 Monte Carlo standard errors, is at most 0.025
+    (`experiments/exploratory/P6-SAP/sample_size.py calibrate`, over a range whose ends come from development data
+    via `sample_size.py estimate`). Over the default range the level is 0.025; with large, very unequal blocks it can
+    drop to 0.02 or 0.015. The run passes that level as `gate(..., alpha_h2=...)`, and the registration quotes the
+    range and the level. H2 needs at least 30 blocks, the same minimum as the test above.
+  - H2 is tested only if H1 is rejected, so the family-wise error is at most 0.025.
+  - Secondary hypotheses, tested only if H1 and H2 are rejected, form one Holm family at 0.025: superiority in
+    [0.1, 0.5) s, superiority in [0.5, 1) s, and non-inferiority in C at margin 0.03, whose Holm threshold is
+    multiplied by the level of the design check divided by 0.025.
 - Where G4 is measured (K9): primary on semi-synthetic injection into real development noise (known truth), with
   injection and deflation libraries disjoint by event and by time block; secondary on real development data scored
   against the truth of task T3.V, where the point estimate in C must not fall below -0.05. G4 is not confirmatory.
+  Truth precision (phase-6 plan 3.4): on real truth, a pair enters T only if its origin separation is at least 9
+  times the truth's origin-time standard deviation measured on T3.V; closer events are excluded (neutral,
+  `ttmt.atlas.froc.truth_precision_targets`). Semi-synthetic truth is exact and needs no exclusion.
 - Planning: semi-synthetic analyses are sized for a gain of 0.05 in T (`experiments/exploratory/P6-SAP/sample_size.py`,
   part 4 gives the number of blocks).
 
-Anchor precondition: the size of H2 (the margin sign-flip test at 30 blocks, measured at 0.032 against a nominal
-0.025 in the review of PR #11) is settled in `ttmt.stats` by the statistical design thread, and this section is
-updated to the corrected test, before the card is anchored.
+Anchor precondition: PR #13 (H2 by the clustered score test, level from the design check) is merged; this section
+already states the amended rule.
 
 The atlas itself (phase 3) makes no beat claim: it describes strata and tests H-ATLAS and the predictions above.
 
@@ -253,3 +269,6 @@ platforms (EQcorrscan on Windows) is run on Linux or reported as not tested.
   ledger; prototype-v1 named as the internal baseline (K6); fine-tuned-picker comparator and 2 x 2 factorial (CR-03);
   domain gate per generator (CR-05); K_mec/E scope (CR-14); contamination stratum with 4 stations (CR-24); EGF
   correlation covariate (CR-06); pretrained-weight provenance (CR-22); Ridgecrest marked spent as truth (CR-23).
+- 24 October 2026, later: duplicator shifted per detection (review of PR #12); ADR-0008 item 7 as amended by PR #13
+  (H2 by the clustered score test at the level of the design check, at least 30 blocks; Holm threshold of the
+  0.03 margin scaled by that level); truth-precision rule of 9 sigma_t for real-data pairs in T.
