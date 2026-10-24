@@ -29,9 +29,10 @@ tuning run, the comparator thread raised three points:
    model's tolerance and "association cutoff" is `pick_match_tolerance`, both with the ranges of the card. Any other
    method with a fixed minimum time between output events is listed in the ledger with its value.
 2. Tuning objective, for every method, the prototype and the phase-4 model included: the unweighted mean of the
-   development recall in T and the development recall in C, each at 30 false detections per hour under LOC+T-V and
-   weighted within its regime as in the endpoint (ADR-0008 item 4). The ledger stores both recalls and the mean; the
-   configuration with the largest mean is selected, ties broken by the lower trial number.
+   development recall in T and the development recall in C (C holds every target outside T, the isolated events
+   with separation above 3 s included, as in `ttmt.atlas.froc.gate` and ADR-0008), each at 30 false detections per
+   hour under LOC+T-V and weighted within its regime as in the endpoint (ADR-0008 item 4). The ledger stores both
+   recalls and the mean; the configuration with the largest mean is selected, ties broken by the lower trial number.
 3. `instance` overlap: the ledger and the atlas report declare that PhaseNet `instance` was trained on data that
    include the Alto Tiberina 2010 period. On Alto Tiberina records, results of pipelines using `instance` are reported
    separately and flagged "training-period overlap"; the comparator chosen there is the better of `original` and
@@ -40,7 +41,8 @@ tuning run, the comparator thread raised three points:
 
 ## Consequences
 
-REAL and PyOcto can separate events inside regime T, so their failures there are measured, not built in. Tuning is reproducible from
+REAL and PyOcto can separate events inside regime T, so their failures there are measured, not built in. The
+registered lines of the card are not edited; its Amendment 1 section carries the changes. Tuning is reproducible from
 the ledger with one stated objective. The `instance` overlap is visible and conservative for any beat claim, and the
 atlas does not attribute a picker success on Alto Tiberina to generalisation. The rule of ADR-0008 and the comparator
 set are unchanged; PyOcto, a core comparator, becomes stronger in T, which makes H1 harder, not easier.
