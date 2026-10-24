@@ -186,7 +186,7 @@ its metadata.
 Run by the thread "Comparadores y ajuste"; the atlas reads its ledger. Every method, the prototype and the phase-4
 model included, gets 60 configurations drawn by the same random search with the same seed list over the search space
 below, scored on the same development tuning partition by the same objective: development recall in T and in C at
-30 false detections per hour under LOC+T-V, weighted as in the endpoint. Every configuration tried is appended to
+30 false detections per hour under LOC+T-V, weighted as in the endpoint (combination fixed in Amendment 1). Every configuration tried is appended to
 `experiments/exploratory/ATLAS-0/tuning_ledger.csv` (method, trial, parameters, objective, time); its SHA-256 enters
 the freeze, and a sensitivity table over the ledger is published. Tuning and reading partitions split the noise hours
 and the injection seeds 30/70 by a hash of the hour, so no noise sample or injected event is shared.
@@ -197,7 +197,7 @@ Search spaces (default):
 - PhaseNO: the same peak distance and threshold, its published weights;
 - GaMMA: minimum picks {3, ..., 8}, time sigma or tolerance in [0.3, 2] s, method {BGMM, GMM};
 - PyOcto: minimum picks {3, ..., 8}, tolerance in [0.3, 2] s, association cutoff in [0.5, 2] s;
-- REAL: minimum P picks {3, ..., 6}, minimum total picks {5, ..., 12}, window in [1, 5] s;
+- REAL: minimum P picks {3, ..., 6}, minimum total picks {5, ..., 12}, window in [1, 5] s (amended: see Amendment 1);
 - QuakeMigrate: detection threshold in [1.2, 3], STA/LTA windows {(0.2, 1.0), (0.5, 5.0)} s, marginal window in
   [0.3, 1] s;
 - MALMI: migration threshold in [0.1, 0.5], picker {PhaseNet, EQTransformer}, stack window in [0.3, 1] s;
@@ -272,3 +272,14 @@ platforms (EQcorrscan on Windows) is run on Linux or reported as not tested.
 - 24 October 2026, later: duplicator shifted per detection (review of PR #12); ADR-0008 item 7 as amended by PR #13
   (H2 by the clustered score test at the level of the design check, at least 30 blocks; Holm threshold of the
   0.03 margin scaled by that level); truth-precision rule of 9 sigma_t for real-data pairs in T.
+
+## Amendment 1 (ADR-0009; anchored as `reg/ATLAS-0/amendment-1`, before any tuning trial)
+The registered text above is kept; these items replace it where they differ. Seeds stay those of registration 1.
+1. REAL: `tint` (minimum time between two events) log-uniform in [0.1, 5] s, instead of "window in [1, 5] s", which
+   kept REAL from outputting two events closer than 1 s in regime T.
+2. Tuning objective: the unweighted mean of the development recall in T and in C, each at 30 false detections per hour
+   under LOC+T-V and weighted within its regime as in the endpoint; the ledger stores both and the mean; ties go to
+   the lower trial number.
+3. CR-22: PhaseNet `instance` weights are trained on INSTANCE (Italy, 2005-2020), which covers Alto Tiberina 2010. On
+   those records `instance` results are reported separately with a "training-period overlap" flag, the comparator is
+   the better of `original` and `instance`, and no atlas claim rests on an `instance` result there alone.
