@@ -238,3 +238,29 @@ def test_truth_precision_excludes_close_pairs():
     keep = F.truth_precision_targets(tr, sigma_t=0.05)            # 9 sigma = 0.45 s
     assert keep.tolist() == [False, False, True, True, True]
     assert F.truth_precision_targets(tr, None).all()
+
+
+def test_anchor_seeds():
+    import hashlib
+    from ttmt.atlas import seeds as Z
+    h = hashlib.sha256(b"7bafb7abd308d0376ff1176d3d7abeb989aa0564" b"2026-10-24T22:37:39Z").digest()
+    assert Z.master_seed() == int.from_bytes(h[:8], "big") == 0x8e1a8d5630dc0d52
+    t = Z.tuning_seeds()
+    assert len(t) == 60 and len(set(t)) == 60
+    a, b = Z.rng("inject", 3).random(4), Z.rng("inject", 3).random(4)
+    assert np.array_equal(a, b) and not np.array_equal(a, Z.rng("inject", 4).random(4))
+    with pytest.raises(KeyError):
+        Z.rng("unregistered", 0)
+    from pathlib import Path
+    assert Z.check_file(Path(__file__).parents[1] / "experiments/exploratory/ATLAS-0/seeds.json")
+
+
+def test_intervals_use_anchored_streams():
+    from ttmt.atlas import seeds as Z
+    pool = _pool(4)
+    a = F.pooled_loss(pool, "merging", n_boot=50)
+    b = F.pooled_loss(pool, "merging", n_boot=50, seed=None)
+    c = F.pooled_loss(pool, "merging", n_boot=50, seed=12345)
+    assert a == b
+    assert Z.rng("bootstrap", 1).integers(0, 10**9) == Z.rng("bootstrap", 1).integers(0, 10**9)
+    assert set(a) == set(c)

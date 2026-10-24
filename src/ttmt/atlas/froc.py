@@ -14,6 +14,7 @@ import numpy as np
 
 from .. import stats as S
 from . import cells as C
+from . import seeds as Z
 
 FALSE, NEUTRAL = S.FALSE, S.NEUTRAL
 BUDGETS = (30.0, 10.0, 100.0)            # false detections per hour; the first is primary
@@ -206,10 +207,16 @@ def cell_recalls(pool, got, mult=None):
     return np.divide(h, n, out=np.full(C.N_CELLS, np.nan), where=n > 0)
 
 
-def describe(pool, methods, budget=BUDGETS[0], n_boot=2000, seed=12345):
+def _gen(seed, stream, index):
+    """an integer seed gives its own generator; None gives the anchored stream (ttmt.atlas.seeds)."""
+    return Z.rng(stream, index) if seed is None else np.random.default_rng(seed)
+
+
+def describe(pool, methods, budget=BUDGETS[0], n_boot=2000, seed=None):
     """the descriptive tables of the atlas: per method, the recall of every cell and of the regimes T, C and iso
-    with stratified block-bootstrap 95 % intervals (operating points re-derived per replicate). No test."""
-    rng = np.random.default_rng(seed)
+    with stratified block-bootstrap 95 % intervals (operating points re-derived per replicate). No test.
+    seed None: the anchored stream ("bootstrap", 0)."""
+    rng = _gen(seed, "bootstrap", 0)
     strata = _strata(pool)
     regmask = {r: pool.ev_regime == r for r in ("T", "C", "iso")}
     out = {}
@@ -247,7 +254,7 @@ def _pairwise(pool, a, b, mask, budget, margin, signs):
     elif signs is not None:
         p = S.signflip_pvalue(d, n, signs=signs)
     else:
-        p = S.signflip_pvalue(d, n, rng=np.random.default_rng(0))
+        p = S.signflip_pvalue(d, n, rng=Z.rng("signflip", 0))
     diff = S.paired_difference(d, n) if n.sum() > 0 else float("nan")
     return dict(diff=diff, p=float(p), n=float(n.sum()), blocks=int((n > 0).sum()))
 
@@ -288,10 +295,11 @@ def gate(pool, model, comparators, budget=BUDGETS[0], duplicator_of=None, signs=
     return res
 
 
-def pooled_loss(pool, method, budget=BUDGETS[0], n_boot=2000, seed=12345, mask=None):
+def pooled_loss(pool, method, budget=BUDGETS[0], n_boot=2000, seed=None, mask=None):
     """the loss of the atlas hypothesis (card, H-ATLAS): recall of the isolated events (separation > 3 s),
     standardised to the (SNR, stations, distance) mix of the events of mask (default regime T), minus the recall of
-    the events of mask; point and stratified block-bootstrap 95 % interval."""
+    the events of mask; point and stratified block-bootstrap 95 % interval. seed None: the anchored stream
+    ("bootstrap", 1)."""
     mask = (pool.ev_regime == "T") if mask is None else mask
     iso = pool.ev_regime == "iso"
     key = np.array([C.cell_axes(c)[1:] if c >= 0 else (-1, -1, -1) for c in pool.ev_cell])
@@ -312,7 +320,7 @@ def pooled_loss(pool, method, budget=BUDGETS[0], n_boot=2000, seed=12345, mask=N
         r_iso = acc / tot if tot > 0 else np.nan
         return r_iso - r_t
 
-    rng = np.random.default_rng(seed)
+    rng = _gen(seed, "bootstrap", 1)
     strata = _strata(pool)
     pt = stat(np.ones(pool.n_blocks))
     reps = np.array([stat(_multiplicity(pool, np.concatenate([s[rng.integers(0, s.size, s.size)] for s in strata])))
