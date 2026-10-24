@@ -117,6 +117,18 @@ def block_sums(hit_a, hit_b, block, n_blocks=None, weights=None):
     return d, n
 
 
+def block_counts(hit_a, hit_b, block, n_blocks=None, weights=None):
+    """Per block j: b_j = weighted count of targets hit by A only, c_j = by B only, n_j = weighted count of targets."""
+    block = np.asarray(block, int)
+    nb = (int(block.max()) + 1 if block.size else 0) if n_blocks is None else n_blocks
+    w = np.ones(block.size) if weights is None else np.asarray(weights, float)
+    a, b_ = np.asarray(hit_a, bool), np.asarray(hit_b, bool)
+    b = np.bincount(block, weights=w * (a & ~b_), minlength=nb)
+    c = np.bincount(block, weights=w * (~a & b_), minlength=nb)
+    n = np.bincount(block, weights=w, minlength=nb)
+    return b, c, n
+
+
 def paired_difference(d, n):
     """Recall difference A - B pooled over blocks: sum d / sum n."""
     return float(np.sum(d) / np.sum(n))
@@ -192,6 +204,51 @@ def _t_stat(x):
     sd = x.std(axis=1, ddof=1)
     with np.errstate(divide="ignore", invalid="ignore"):
         return np.where(sd > 0, m / (sd / np.sqrt(b)), np.sign(m) * np.inf)
+
+
+def ni_score_pvalue(b, c, n, margin):
+    """One-sided p-value for H0: recall(A) - recall(B) <= -margin from per-block discordant counts (ADR-0008 item 7,
+    H2). Tango's (1998) paired score test, whose variance n (p10 + p01 - delta0^2) is evaluated at the restricted
+    maximum-likelihood estimate under delta0 = -margin, multiplied by a design effect for clustering: the ratio of the
+    cluster-robust variance of sum(b - c) to its multinomial variance at the unrestricted estimates, floored at 1.
+
+    The variance under the restricted null is what the margin sign-flip lacks: with no discordant target the restricted
+    estimate is p01 = margin, so 30 targets without discordance give z = sqrt(30 * 0.05 / 0.95) = 1.26 (p = 0.10, not
+    non-inferior), while 1,000 give z = 7.2. Its size at the least favourable configuration is checked over recall,
+    targets per block, method correlation and intra-block correlation in tests/test_stats.py and
+    experiments/exploratory/P6-SAP/sample_size_out.txt (part 3)."""
+    b, c, n = (np.asarray(x, float) for x in (b, c, n))
+    B, C, N = b.sum(), c.sum(), n.sum()
+    if N <= 0:
+        return 1.0
+    d0 = -float(margin)
+    # restricted MLE of p01 (B-only) with p10 = p01 + d0: the score is decreasing in p01 on (lo, hi)
+    lo, hi = max(0.0, -d0), (1.0 - d0) / 2.0
+    def score(q):
+        p10 = q + d0
+        out = -2.0 * (N - B - C) / (1.0 - 2.0 * q - d0)
+        out += B / p10 if B > 0 else 0.0
+        out += C / q if C > 0 else 0.0
+        return out
+    a_, z_ = lo + 1e-12, hi - 1e-12
+    if score(a_) <= 0:
+        q = a_
+    else:
+        for _ in range(200):
+            mid = (a_ + z_) / 2
+            a_, z_ = (mid, z_) if score(mid) > 0 else (a_, mid)
+        q = (a_ + z_) / 2
+    v0 = N * max(2.0 * q + d0 - d0 * d0, 1e-12)
+    nb = int(np.count_nonzero(n))
+    de = 1.0
+    if nb > 1 and (B + C) > 0:
+        dhat = (B - C) / N
+        robust = nb / (nb - 1) * np.sum(((b - c) - dhat * n) ** 2)
+        iid = N * ((B + C) / N - dhat * dhat)
+        if iid > 0:
+            de = max(1.0, robust / iid)
+    z = (B - C - N * d0) / sqrt(de * v0)
+    return normal_sf(z)
 
 
 # ---------------------------------------------------------------- S7.4 multiplicity

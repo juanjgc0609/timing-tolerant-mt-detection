@@ -110,8 +110,8 @@ def run_design(n_blocks, m=3.0, k=1.0, f=0.3, p0=0.40, delta_r=0.10, delta_c=0.0
         for c in hc:
             d, n = st.block_sums(ha[reg], c[reg], block[reg], n_blocks)
             p1.append(st.signflip_pvalue(d, n, signs=signs))
-            d, n = st.block_sums(ha[~reg], c[~reg], block[~reg], n_blocks)
-            p2.append(st.signflip_pvalue(d, n, margin=margin, signs=signs))
+            bb, cc, nn = st.block_counts(ha[~reg], c[~reg], block[~reg], n_blocks)
+            p2.append(st.ni_score_pvalue(bb, cc, nn, margin))
         a2 = alpha if alpha_h2 is None else alpha_h2
         h1, h2 = st.iut(p1) <= alpha, st.iut(p2) <= a2
         p2_all.append(st.iut(p2))
