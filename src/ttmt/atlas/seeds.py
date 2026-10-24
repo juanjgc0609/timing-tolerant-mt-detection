@@ -10,8 +10,10 @@ Named streams (card, "Tuning" and "Truth"):
 - "tuning", trial: the configuration drawn in trial 0..59 of the random search, the same list for every method;
 - "inject", record: the injected events and timing errors of one semi-synthetic record (one block);
 - "subset", record: tie-free draws of station subsets, if a design needs any beyond cells.station_subset;
-- "bootstrap", analysis: resampling of blocks for the intervals;
-- "signflip", analysis: the Monte Carlo signs of ttmt.stats.signflip_pvalue when the exact test is too large.
+- "bootstrap", analysis: resampling of blocks for the intervals (0: froc.describe, 1: froc.pooled_loss);
+- "signflip", analysis: the Monte Carlo signs of ttmt.stats.signflip_pvalue when the exact test is too large
+  (0: froc.gate, when no signs are passed).
+The layout of these streams was fixed in PR #16, before any atlas data were drawn.
 The partition of noise hours and injection seeds into tuning and reading (30/70) is by a hash of the hour (card,
 "Tuning") and does not use these streams."""
 import hashlib

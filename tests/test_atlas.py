@@ -253,3 +253,14 @@ def test_anchor_seeds():
         Z.rng("unregistered", 0)
     from pathlib import Path
     assert Z.check_file(Path(__file__).parents[1] / "experiments/exploratory/ATLAS-0/seeds.json")
+
+
+def test_intervals_use_anchored_streams():
+    from ttmt.atlas import seeds as Z
+    pool = _pool(4)
+    a = F.pooled_loss(pool, "merging", n_boot=50)
+    b = F.pooled_loss(pool, "merging", n_boot=50, seed=None)
+    c = F.pooled_loss(pool, "merging", n_boot=50, seed=12345)
+    assert a == b
+    assert Z.rng("bootstrap", 1).integers(0, 10**9) == Z.rng("bootstrap", 1).integers(0, 10**9)
+    assert set(a) == set(c)

@@ -8,7 +8,8 @@ Dated record of changes to the project's process, code and documents. Results ar
 - ATLAS-0 anchored (tag `reg/ATLAS-0/registration-1` on 7bafb7a, Release `created_at` 2026-10-24T22:37:39Z). Seeds
   derived after the anchor (ADR-0004 item 4) by `ttmt.atlas.seeds`: master `8e1a8d5630dc0d52`, named child streams
   (tuning, inject, subset, bootstrap, signflip) and the 60-trial tuning seed list, stored in
-  `experiments/exploratory/ATLAS-0/seeds.json` (`python -m ttmt.atlas.seeds --check`).
+  `experiments/exploratory/ATLAS-0/seeds.json` (`python -m ttmt.atlas.seeds --check`). `froc.describe`, `froc.pooled_loss`
+  and the Monte Carlo signs of `froc.gate` draw from the bootstrap and signflip streams by default.
 - Atlas follow-up to PR #13: the ATLAS-0 card quotes the amended item 7 of ADR-0008 (H2 by the clustered score
   test at the level of the design check, at least 30 blocks; Holm threshold of non-inferiority at 0.03 scaled by that
   level); real-data pairs closer than 9 sigma_t are excluded from T (`ttmt.atlas.froc.truth_precision_targets`,
