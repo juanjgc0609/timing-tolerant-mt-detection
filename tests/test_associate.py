@@ -245,6 +245,7 @@ def test_gamma_wrapper_serial_and_deterministic(tmp_path):
 
 def test_pyocto_wrapper(tmp_path):
     pytest.importorskip("pyocto")
+    pytest.importorskip("pyrocko")                    # PyOcto's 1-D tables need it (comparator env, not core)
     from ttmt.associate import pyocto_assoc as PO
     rng = np.random.default_rng(4)
     tr = toy_truth(rng, n_pairs=0, n_iso=12, span=400.0)
@@ -267,6 +268,7 @@ def test_real_wrapper(tmp_path):
 
 def test_pipeline_trial_end_to_end(tmp_path):
     pytest.importorskip("pyocto")
+    pytest.importorskip("pyrocko")
     from ttmt.associate import pipeline as PL
     rng = np.random.default_rng(6)
     tr = toy_truth(rng, n_pairs=4, n_iso=8, span=400.0)
@@ -287,3 +289,20 @@ def test_pipeline_trial_end_to_end(tmp_path):
     assert mr.min_picks == 6 and len(mr.picks) >= 0.95 * tr.n_events * 16
     obj, rT, rC, *_ = TU.objective([rec], [mr.det])
     assert rC >= 0.9 and 0.0 <= rT <= 1.0
+
+
+def test_manifest_roundtrip(tmp_path):
+    rng = np.random.default_rng(7)
+    tr = toy_truth(rng, n_pairs=2, n_iso=3, span=300.0)
+    np.savez(tmp_path / "truth.npz", id=tr.id, t=tr.t, xyz=tr.xyz, mag=tr.mag, arr_t=tr.arr_t, snr=tr.snr, t0=tr.t0,
+             t1=tr.t1, pair=tr.pair)
+    man = {"records": [{"name": "r0", "partition": "tune", "truth": "truth.npz", "k": 8,
+                        "stations": {"code": [f"S{i}" for i in range(8)], "xyz": ring().tolist()},
+                        "subsets": [list(range(8))] * tr.n_events, "centroid": [0, 0],
+                        "block_edges": [0, 150, 300], "prob": {"original": "p.npz"},
+                        "frame": {"xlim": [-30, 30], "ylim": [-30, 30], "zlim": [0, 20]}}]}
+    (tmp_path / "m.json").write_text(json.dumps(man))
+    (rec,) = TU.load_manifest(tmp_path / "m.json", "phasenet+pyocto")
+    assert rec.truth.n_events == tr.n_events and np.array_equal(rec.truth.pair, tr.pair)
+    assert rec.data["frame"].zlim == (0, 20) and str(rec.data["prob"]("original")).endswith("p.npz")
+    assert rec.block(160.0) == 1 and np.allclose(rec.block_hours, 150 / 3600)
