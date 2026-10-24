@@ -33,6 +33,8 @@ tuning run, the comparator thread raised three points:
    with separation above 3 s included, as in `ttmt.atlas.froc.gate` and ADR-0008), each at 30 false detections per
    hour under LOC+T-V and weighted within its regime as in the endpoint (ADR-0008 item 4). The ledger stores both
    recalls and the mean; the configuration with the largest mean is selected, ties broken by the lower trial number.
+   If the tuning partition has no target in T or in C, the objective is undefined (no fallback to the other recall)
+   and tuning stops until the partition is fixed.
 3. `instance` overlap: the ledger and the atlas report declare that PhaseNet `instance` was trained on data that
    include the Alto Tiberina 2010 period. On Alto Tiberina records, results of pipelines using `instance` are reported
    separately and flagged "training-period overlap"; the comparator chosen there is the better of `original` and

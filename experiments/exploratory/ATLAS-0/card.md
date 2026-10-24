@@ -284,7 +284,8 @@ PyOcto, tuning objective). Seeds stay those of registration 1.
 2. Tuning objective: the unweighted mean of the development recall in T and in C (C holds every target outside T,
    the isolated events with separation above 3 s included, as in `ttmt.atlas.froc.gate`), each at 30 false
    detections per hour under LOC+T-V and weighted within its regime as in the endpoint; the ledger stores both and the
-   mean; ties go to the lower trial number.
+   mean; ties go to the lower trial number. If the tuning partition has no target in T or in C, the objective is
+   undefined (no fallback to the other recall) and tuning stops until the partition is fixed.
 3. CR-22: PhaseNet `instance` weights are trained on INSTANCE (Italy, 2005-2020), which covers Alto Tiberina 2010. On
    those records `instance` results are reported separately with a "training-period overlap" flag, the comparator is
    the better of `original` and `instance`, and no atlas claim rests on an `instance` result there alone.
