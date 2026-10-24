@@ -18,7 +18,8 @@ session (CR-19).
    margins included (E56).
 6. Causal split: every estimate from the test network uses records ending at least 1 h before evaluation (SAP 3.2).
 7. Eligibility was produced by the frozen script; excluded station-hours, events and blocks match its output (SAP 3.3).
-8. Regimes and cells were computed from the catalogue or injection design, not from method outputs (SAP Section 6).
+8. Regimes and cells were computed from the catalogue or injection design, not from method outputs (SAP Section 6);
+   in R2, pairs in T have separation of at least 9 sigma_t of the truth, with sigma_t measured on T3.V (SAP 3.4).
 9. Pretrained-weight provenance table present; overlaps declared (SAP 3.6).
 10. The use ledger shows no earlier configuration on the evaluated segments (SAP 3.5).
 
@@ -36,8 +37,11 @@ session (CR-19).
 17. Prevalence weights equal the registered table.
 
 ## E. Statistics
-18. [STOP] Blocks as registered (definition, count); each sign-flip p-value reproduced (exact or with the registered
-    seed and number of sign vectors), the IUT p-value is the largest pairwise one.
+18. [STOP] Blocks as registered (definition, count); each H1 sign-flip p-value reproduced (exact or with the
+    registered seed and number of sign vectors) and each non-inferiority p-value reproduced with the clustered score
+    test from the per-block discordant counts; the IUT p-value is the largest pairwise one; H2 is compared with the
+    level of the design check quoted in the registration, reproduced with `sample_size.py calibrate` over the
+    registered range.
 19. [STOP] Fixed sequence respected: H2 reported as tested only if H1 was rejected; secondary Holm family only after
     both; no hypothesis added, dropped or reordered.
 20. Intervals: stratified block bootstrap with the registered replicates and seed, operating points recomputed per

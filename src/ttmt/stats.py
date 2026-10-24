@@ -24,6 +24,7 @@ from math import comb, erf, sqrt
 from statistics import NormalDist
 
 import numpy as np
+from scipy.stats import t as student_t
 
 FALSE, NEUTRAL = -1, -2
 
@@ -117,6 +118,18 @@ def block_sums(hit_a, hit_b, block, n_blocks=None, weights=None):
     return d, n
 
 
+def block_counts(hit_a, hit_b, block, n_blocks=None, weights=None):
+    """Per block j: b_j = weighted count of targets hit by A only, c_j = by B only, n_j = weighted count of targets."""
+    block = np.asarray(block, int)
+    nb = (int(block.max()) + 1 if block.size else 0) if n_blocks is None else n_blocks
+    w = np.ones(block.size) if weights is None else np.asarray(weights, float)
+    a, b_ = np.asarray(hit_a, bool), np.asarray(hit_b, bool)
+    b = np.bincount(block, weights=w * (a & ~b_), minlength=nb)
+    c = np.bincount(block, weights=w * (~a & b_), minlength=nb)
+    n = np.bincount(block, weights=w, minlength=nb)
+    return b, c, n
+
+
 def paired_difference(d, n):
     """Recall difference A - B pooled over blocks: sum d / sum n."""
     return float(np.sum(d) / np.sum(n))
@@ -141,14 +154,20 @@ def normal_sf(z):
     return 0.5 * (1.0 - erf(z / sqrt(2.0)))
 
 
-def signflip_pvalue(d, n=None, margin=0.0, n_flip=100_000, rng=None, exact_max=16, signs=None):
+def signflip_pvalue(d, n=None, margin=0.0, n_flip=100_000, rng=None, exact_max=16, signs=None, studentize=None):
     """One-sided block sign-flip p-value for H0: recall(A) - recall(B) <= -margin, against A better.
 
-    T = sum_j d'_j with d'_j = d_j + margin * n_j. Under the exchangeability null (margin 0: the two methods' labels
-    are exchangeable within each target) every d_j is symmetric about 0 and independent across blocks, so flipping the
-    sign of each block's d_j gives the exact null distribution of T: the test is the randomisation form of the
-    clustered McNemar test and holds its level for any dependence inside a block. With a margin the shift makes the
-    null mean zero but not necessarily symmetric; its level is checked by simulation (sample_size.py).
+    Margin 0 (superiority): T = sum_j d_j. Under the exchangeability null (the two methods' labels are exchangeable
+    within each target) every d_j is symmetric about 0 and independent across blocks, so flipping the sign of each
+    block's d_j gives the exact null distribution of T: the randomisation form of the clustered McNemar test, valid for
+    any dependence inside a block.
+
+    Margin > 0 (non-inferiority): d'_j = d_j + margin * n_j has mean zero at the boundary but is not symmetric, so the
+    raw sum is not exact (its size reached 0.032 at 30 blocks, review of PR #11). The statistic is then studentised by
+    the standard deviation of the flipped sample, t(s) = mean(s d') / (sd(s d') / sqrt(B)), which is asymptotically
+    exact under asymmetry (Janssen 1999), but slow when discordances are rare and wrong with no discordance at all, so
+    the registered non-inferiority test is ni_score_pvalue (ADR-0008 item 7, review of PR #13); the margin form stays
+    for comparison. studentize=None picks raw for margin 0 and studentised otherwise.
 
     Exact enumeration when the number of non-zero blocks is <= exact_max, otherwise Monte Carlo with
     p = (1 + #{T* >= T}) / (1 + n_flip). A precomputed (n_flip, B) matrix of i.i.d. +-1 can be passed as signs (the
@@ -157,17 +176,82 @@ def signflip_pvalue(d, n=None, margin=0.0, n_flip=100_000, rng=None, exact_max=1
     d = d[d != 0]
     if d.size == 0:
         return 1.0
-    t = d.sum()
-    tol = 1e-9 * max(1.0, np.abs(d).sum())
+    stud = (margin != 0) if studentize is None else studentize
     if signs is None and d.size <= exact_max:
         s = ((np.arange(2 ** d.size)[:, None] >> np.arange(d.size)) & 1) * 2.0 - 1.0
-        return float(np.mean(s @ d >= t - tol))
-    if signs is None:
-        rng = np.random.default_rng() if rng is None else rng
-        signs = rng.integers(0, 2, size=(n_flip, d.size), dtype=np.int8) * 2 - 1
+        include_observed = False
     else:
-        signs = signs[:, : d.size]
-    return float((1 + np.sum(signs @ d >= t - tol)) / (1 + signs.shape[0]))
+        if signs is None:
+            rng = np.random.default_rng() if rng is None else rng
+            s = rng.integers(0, 2, size=(n_flip, d.size), dtype=np.int8) * 2.0 - 1.0
+        else:
+            s = signs[:, : d.size]
+        include_observed = True
+    if stud and d.size > 1:
+        stat = lambda x: _t_stat(x)
+        t, tstar = stat(d[None, :])[0], stat(s * d)
+    else:
+        t, tstar = d.sum(), s @ d
+    tol = 1e-9 * max(1.0, abs(t)) if np.isfinite(t) else 0.0
+    k = np.sum(tstar >= t - tol)
+    return float((1 + k) / (1 + s.shape[0])) if include_observed else float(k / s.shape[0])
+
+
+def _t_stat(x):
+    """Row-wise one-sample t statistic of the flipped block sums (0 where the spread is 0)."""
+    b = x.shape[1]
+    m = x.mean(axis=1)
+    sd = x.std(axis=1, ddof=1)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        return np.where(sd > 0, m / (sd / np.sqrt(b)), np.sign(m) * np.inf)
+
+
+def ni_score_pvalue(b, c, n, margin):
+    """One-sided p-value for H0: recall(A) - recall(B) <= -margin from per-block discordant counts (ADR-0008 item 7,
+    H2). Score statistic U = sum_j u_j, u_j = (b_j - c_j) + margin n_j, which has mean 0 at the boundary of H0.
+
+    Its variance is computed under the restricted null (review of PR #13): the cluster-robust sum of u_j^2 (centred at
+    the null, so no small-sample leverage correction is needed), floored at Tango's (1998) multinomial variance
+    N (p10 + p01 - delta0^2) at the restricted maximum-likelihood estimate. The floor is what the margin sign-flip
+    lacked: with no discordant target the restricted estimate is p01 = margin, so 30 targets without discordance give
+    p = 0.11 (not non-inferior), while 1,000 give p < 1e-6. The reference is Student's t with Satterthwaite degrees of
+    freedom (Bell and McCaffrey 2002) for block variances proportional to n_j (1 + (n_j - 1) r), r the intra-block
+    correlation implied by the ratio of the two variances, so few or very unequal blocks give few degrees of freedom.
+    Its size at the least favourable configuration is checked over recall, targets per block (mean and dispersion),
+    method correlation and intra-block correlation in tests/test_stats.py and
+    experiments/exploratory/P6-SAP/sample_size_out.txt (part 3); the design check of item 7 lowers the level where
+    that size exceeds 0.025."""
+    b, c, n = (np.asarray(x, float) for x in (b, c, n))
+    keep = n > 0
+    b, c, n = b[keep], c[keep], n[keep]
+    B, C, N = b.sum(), c.sum(), n.sum()
+    if N <= 0:
+        return 1.0
+    d0 = -float(margin)
+    # restricted MLE of p01 (B-only) with p10 = p01 + d0: the score is decreasing in p01 on (lo, hi)
+    lo, hi = max(0.0, -d0), (1.0 - d0) / 2.0
+    def score(q):
+        p10 = q + d0
+        out = -2.0 * (N - B - C) / (1.0 - 2.0 * q - d0)
+        out += B / p10 if B > 0 else 0.0
+        out += C / q if C > 0 else 0.0
+        return out
+    a_, z_ = lo + 1e-12, hi - 1e-12
+    if score(a_) <= 0:
+        q = a_
+    else:
+        for _ in range(200):
+            mid = (a_ + z_) / 2
+            a_, z_ = (mid, z_) if score(mid) > 0 else (a_, mid)
+        q = (a_ + z_) / 2
+    v0 = N * max(2.0 * q + d0 - d0 * d0, 1e-12)
+    u = (b - c) - d0 * n
+    v = max(float(np.sum(u * u)), v0)
+    nw = float(np.sum(n * n) / N)
+    r = 0.0 if nw <= 1.0 else min(1.0, max(0.0, (v / v0 - 1.0) / (nw - 1.0)))
+    s = n * (1.0 + (n - 1.0) * r)
+    df = max(float(s.sum() ** 2 / np.sum(s * s)), 1.0)
+    return float(student_t.sf(u.sum() / sqrt(v), df))
 
 
 # ---------------------------------------------------------------- S7.4 multiplicity
