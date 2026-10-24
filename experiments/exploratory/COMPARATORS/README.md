@@ -23,8 +23,9 @@ device) and `repro_puente.py` (gate G3a, target 1).
 
 ## The tuning protocol as implemented (card "Tuning", ADR-0008 item 9, CR-07)
 
-- Budget: 60 configurations per method, trial i drawn with seed `SEEDS[i]`, the same 60 seeds for every method
-  (`space.SEEDS`, from `numpy.random.SeedSequence(20261024)`). A draw visits the parameters in sorted name order with
+- Budget: 60 configurations per method, trial i drawn with `numpy.random.default_rng(tuning_seeds()[i])`, the
+  anchored seed list of ATLAS-0 (`ttmt.atlas.seeds.tuning_seeds`, ADR-0004 item 4; `seeds.json`), the same for every
+  method. A draw visits the parameters in sorted name order with
   one generator per trial, so a trial is redrawn from its seed alone.
 - Pick-based pipelines are tuned jointly: one draw covers the picker (`pk_*`) and the associator (`as_*`).
 - Objective: development recall in T and in C (C includes the isolated events) at 30 false detections per hour under

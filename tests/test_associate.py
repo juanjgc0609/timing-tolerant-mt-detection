@@ -149,9 +149,11 @@ def test_run_is_resumable_and_records_failures(tmp_path):
     err = [r for r in rows if r["status"] == "error"]
     assert all(json.loads(r["params"])["wf_threshold"] > 0.65 for r in err)
     assert all(r["partition"] == rows[0]["partition"] and r["code"] for r in rows)
+    ok = [r for r in rows if r["status"] == "ok"]
+    top = max(float(r["objective"]) for r in ok)
     b = L.best("eqnet", p)
-    assert json.loads(b["params"])["wf_threshold"] == max(json.loads(r["params"])["wf_threshold"]
-                                                           for r in rows if r["status"] == "ok")
+    assert float(b["objective"]) == top
+    assert int(b["trial"]) == min(int(r["trial"]) for r in ok if float(r["objective"]) == top)
 
 
 # ------------------------------------------------------------------------------------------------- pickers
@@ -306,3 +308,13 @@ def test_manifest_roundtrip(tmp_path):
     assert rec.truth.n_events == tr.n_events and np.array_equal(rec.truth.pair, tr.pair)
     assert rec.data["frame"].zlim == (0, 20) and str(rec.data["prob"]("original")).endswith("p.npz")
     assert rec.block(160.0) == 1 and np.allclose(rec.block_hours, 150 / 3600)
+
+
+def test_seeds_are_the_anchored_atlas_list():
+    from ttmt.atlas.seeds import tuning_seeds
+    stored = json.load(open(L.REPO_ROOT / "experiments" / "exploratory" / "ATLAS-0" / "seeds.json"))["tuning_seeds"]
+    assert list(SP.SEEDS) == tuning_seeds() == stored
+    i, s, cfg = SP.trials("phasenet+pyocto")[7]
+    rng = np.random.default_rng(stored[7])
+    sp = SP.space_of("phasenet+pyocto")
+    assert cfg == {k: sp[k].draw(rng) for k in sorted(sp)} and s == stored[7]

@@ -1,7 +1,9 @@
 """Search spaces and the shared random search of the ATLAS-0 tuning (card, section "Tuning"; ADR-0008 item 9).
 
-Every method gets the same budget: N_TRIALS configurations, trial i drawn with SEEDS[i] by :func:`draw`. The seeds are
-the same list for every method, so the budget and the draw procedure are identical; only the space differs. A draw
+Every method gets the same budget: N_TRIALS configurations, trial i drawn with SEEDS[i] by :func:`draw`, that is with
+``numpy.random.default_rng(ttmt.atlas.seeds.tuning_seeds()[i])``: the anchored seed list of ATLAS-0 (ADR-0004 item 4,
+stream "tuning"; also in experiments/exploratory/ATLAS-0/seeds.json), the same for every method, the prototype and the
+model included. No other seed is used for tuning. A draw
 visits the parameters in sorted name order, one generator per trial, so adding a method never changes the draws of
 another and a trial can be redrawn from its seed alone.
 
@@ -17,9 +19,9 @@ from dataclasses import dataclass
 
 import numpy as np
 
-N_TRIALS = 60
-ROOT_SEED = 20261024          # date of the ATLAS-0 final draft; fixed before any trial was run
-SEEDS = tuple(int(s) for s in np.random.SeedSequence(ROOT_SEED).generate_state(N_TRIALS, dtype=np.uint32))
+from ..atlas.seeds import N_TRIALS, tuning_seeds
+
+SEEDS = tuple(tuning_seeds())
 
 
 @dataclass(frozen=True)
