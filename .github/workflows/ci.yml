@@ -29,7 +29,7 @@ jobs:
       - name: Files in code/ not yet in the legacy index (informative; code/ is append-only)
         run: python tools/update_legacy_index.py --check || echo "::warning::code/ has unindexed files; run python tools/update_legacy_index.py"
       - name: Unit tests, legacy index and legacy equivalence
-        run: python -m pytest -q -rs tests/test_unit.py tests/test_stats.py tests/test_legacy_index.py tests/test_legacy_equivalence.py tests/test_atlas.py tests/test_synth.py
+        run: python -m pytest -q -rs tests/test_unit.py tests/test_stats.py tests/test_legacy_index.py tests/test_legacy_equivalence.py tests/test_atlas.py tests/test_associate.py tests/test_synth.py
       - name: Regression (a), 2M from stored parts, exact
         # raw-data regressions (R0, R1) skip: TTMT_DATA_ROOT is not set on CI
         run: python -m pytest -q -rs --match exact tests/test_regression.py

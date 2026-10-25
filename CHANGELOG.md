@@ -16,6 +16,12 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-10-24
 
+- ATLAS-0 amendment 1 (ADR-0009), before any tuning trial: REAL `tint` and PyOcto `min_interevent_time` log-uniform
+  in [0.1, 5] s; tuning objective is the mean of the development recalls in T and C (isolated events in C);
+  PhaseNet `instance` overlap with Alto Tiberina 2010 declared and reported separately (CR-22); tuning/reading split
+  by 300 s noise block (`realdata.tune_read`, fallback both ways); one seed rule for realisations and the event
+  library from the anchored master (`seeds.realisation_rng`, `seeds.library_rng`). Anchor
+  `reg/ATLAS-0/amendment-1` is the owner's step.
 - ATLAS-0 anchored (tag `reg/ATLAS-0/registration-1` on 7bafb7a, Release `created_at` 2026-10-24T22:37:39Z). Seeds
   derived after the anchor (ADR-0004 item 4) by `ttmt.atlas.seeds`: master `8e1a8d5630dc0d52`, named child streams
   (tuning, inject, subset, bootstrap, signflip) and the 60-trial tuning seed list, stored in
