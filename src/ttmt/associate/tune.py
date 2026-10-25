@@ -11,8 +11,8 @@ become the one defined recall); :func:`run` checks it before the first trial, so
 
 Only records of the tuning partition are accepted (``TuningRecord.partition == "tune"``). The partition comes from the
 generator's manifest (ATLAS-0 amendment 1, ADR-0009 item 4: 300 s noise blocks split 30 / 70 by
-``ttmt.synth.realdata.tune_read``); :func:`tuning_split` is that function, not a second definition, and
-:func:`load_manifest` refuses a record whose noise blocks are not all in the tuning partition.
+``ttmt.synth.realdata.tune_read``, with the generator's per-dataset fallback): the record's "partition" field is read,
+never recomputed. :func:`tuning_split` only calls that function, for checks outside the manifest.
 """
 import hashlib
 import json
@@ -168,9 +168,8 @@ def load_manifest(path, method):
     "prob": {"original": path, "instance": path, ...}, "frame": {"xlim", "ylim", "zlim", "time_before"},
     "velocity": "hadley_kanamori" | "jma2001" | [[top, vp], ...]}]}. truth.npz holds the fields of
     ttmt.atlas.schema.Truth (id, t, xyz, mag, arr_t, snr, t0, t1, target, pair, kmec, arr_t_obs). Paths are relative
-    to the manifest. Only the pick-based pipelines read "prob". A record may list "dataset" and "noise_blocks" (start
-    times of its 300 s noise blocks); each must be in the tuning partition by :func:`tuning_split`, else the manifest is
-    refused."""
+    to the manifest. Only the pick-based pipelines read "prob". "partition" is the generator's label (ADR-0009 item 4,
+    fallback included) and is not recomputed here."""
     import os
 
     from ..atlas.schema import Stations, Truth
@@ -180,9 +179,6 @@ def load_manifest(path, method):
     man = json.load(open(path))
     out = []
     for r in man["records"]:
-        bad = [b for b in r.get("noise_blocks", []) if tuning_split(r["dataset"], b) != "tune"]
-        if bad:
-            raise ValueError(f"record {r['name']!r}: noise blocks {bad[:5]} are not in the tuning partition")
         z = np.load(os.path.join(root, r["truth"]), allow_pickle=False)
         f = {k: z[k] for k in z.files}
         truth = Truth(f["id"], f["t"], f["xyz"], f["mag"], f["arr_t"], f["snr"], float(f["t0"]), float(f["t1"]),

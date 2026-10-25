@@ -307,20 +307,13 @@ def test_manifest_roundtrip(tmp_path):
                         "frame": {"xlim": [-30, 30], "ylim": [-30, 30], "zlim": [0, 20]}}]}
     (tmp_path / "m.json").write_text(json.dumps(man))
     (rec,) = TU.load_manifest(tmp_path / "m.json", "phasenet+pyocto")
-    starts = np.arange(40) * 300.0
-    lab = np.array([TU.tuning_split("ds", a) for a in starts])
-    man["records"][0].update(dataset="ds", noise_blocks=starts[lab == "tune"].tolist())
-    (tmp_path / "m.json").write_text(json.dumps(man))
-    assert len(TU.load_manifest(tmp_path / "m.json", "phasenet+pyocto")) == 1
-    man["records"][0]["noise_blocks"] = starts[lab == "read"][:1].tolist()
-    (tmp_path / "m.json").write_text(json.dumps(man))
-    with pytest.raises(ValueError):
-        TU.load_manifest(tmp_path / "m.json", "phasenet+pyocto")
-    (tmp_path / "m.json").write_text(json.dumps(dict(records=[dict(man["records"][0], noise_blocks=[])])))
-    (rec,) = TU.load_manifest(tmp_path / "m.json", "phasenet+pyocto")
     assert rec.truth.n_events == tr.n_events and np.array_equal(rec.truth.pair, tr.pair)
     assert rec.data["frame"].zlim == (0, 20) and str(rec.data["prob"]("original")).endswith("p.npz")
     assert rec.block(160.0) == 1 and np.allclose(rec.block_hours, 150 / 3600)
+    man["records"][0]["partition"] = "read"
+    (tmp_path / "m.json").write_text(json.dumps(man))
+    with pytest.raises(ValueError):
+        TU.load_manifest(tmp_path / "m.json", "phasenet+pyocto")
 
 
 def test_seeds_are_the_anchored_atlas_list():
