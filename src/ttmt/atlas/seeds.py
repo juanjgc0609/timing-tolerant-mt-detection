@@ -8,14 +8,16 @@ which other streams are drawn.
 
 Named streams (card, "Tuning" and "Truth"):
 - "tuning", trial: the configuration drawn in trial 0..59 of the random search, the same list for every method;
-- "inject", record: the injected events and timing errors of one semi-synthetic record (one block);
-- "subset", record: tie-free draws of station subsets, if a design needs any beyond cells.station_subset;
+- "inject", (set key, block, r): the injected events and timing errors of realisation r on noise block `block` of a
+  semi-synthetic set (`realisation_rng`); "inject", 1000000 + j: event library j, drawn whole
+  (`library_rng`). A realisation key has three indices and a library key one, so they never coincide;
+- "subset", (set key, block, r): the contamination station draws of that realisation (`realisation_rng`);
 - "bootstrap", analysis: resampling of blocks for the intervals (0: froc.describe, 1: froc.pooled_loss);
 - "signflip", analysis: the Monte Carlo signs of ttmt.stats.signflip_pvalue when the exact test is too large
   (0: froc.gate, when no signs are passed).
 The layout of these streams was fixed in PR #16, before any atlas data were drawn.
-The partition of noise hours and injection seeds into tuning and reading (30/70) is by a hash of the hour (card,
-"Tuning") and does not use these streams."""
+Realisation keys, library keys and the partition rule were added by amendment 1 (ADR-0009). The partition of noise
+blocks into tuning and reading (30/70) is `ttmt.synth.realdata.tune_read` and does not use these streams."""
 import hashlib
 import json
 from pathlib import Path
@@ -52,6 +54,32 @@ def seed_sequence(name, *index, master=None):
 def rng(name, *index, master=None):
     """numpy Generator (PCG64) of stream `name` at `index`."""
     return np.random.default_rng(seed_sequence(name, *index, master=master))
+
+
+def set_key(set_id):
+    """integer key of a semi-synthetic set: the first 4 bytes, big-endian, of sha256(set_id)."""
+    return int.from_bytes(hashlib.sha256(str(set_id).encode("utf-8")).digest()[:4], "big")
+
+
+def realisation_rng(set_id, block, r, stream="inject", master=None):
+    """generator of realisation r on noise block number `block` (the block starting at record t0 + 300 block s) of
+    set `set_id` (ADR-0009 item 5): stream "inject" for its events, "subset" for its contamination stations."""
+    if stream not in ("inject", "subset"):
+        raise KeyError("a realisation draws only from the streams 'inject' and 'subset'")
+    if int(block) < 0 or int(r) < 0:
+        raise ValueError("block and r are non-negative")
+    return rng(stream, set_key(set_id), int(block), int(r), master=master)
+
+
+LIBRARY_OFFSET = 1_000_000
+
+
+def library_rng(j, master=None):
+    """generator of event library j, drawn whole (medium, event sequence, receiver effects; ADR-0009 item 5):
+    stream ("inject", 1000000 + j)."""
+    if int(j) < 0:
+        raise ValueError("library index is non-negative")
+    return rng("inject", LIBRARY_OFFSET + int(j), master=master)
 
 
 def tuning_seeds(n=N_TRIALS, master=None):

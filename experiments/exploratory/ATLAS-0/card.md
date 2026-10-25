@@ -272,3 +272,35 @@ platforms (EQcorrscan on Windows) is run on Linux or reported as not tested.
 - 24 October 2026, later: duplicator shifted per detection (review of PR #12); ADR-0008 item 7 as amended by PR #13
   (H2 by the clustered score test at the level of the design check, at least 30 blocks; Holm threshold of the
   0.03 margin scaled by that level); truth-precision rule of 9 sigma_t for real-data pairs in T.
+
+## Amendment 1 (ADR-0009; anchored as `reg/ATLAS-0/amendment-1`, before any tuning trial)
+The registered text above is kept unchanged; these items replace it where they differ (search spaces of REAL and
+PyOcto, tuning objective). Seeds stay those of registration 1.
+1. REAL: `tint` (minimum time between two events) log-uniform in [0.1, 5] s, instead of "window in [1, 5] s", which
+   kept REAL from outputting two events closer than 1 s in regime T. PyOcto: `min_interevent_time` log-uniform in
+   [0.1, 5] s is added (its default of 3 s had the same effect); "tolerance" is the velocity model's tolerance and
+   "association cutoff" is `pick_match_tolerance`. A fixed minimum time between output events of any other method is
+   listed in the ledger.
+2. Tuning objective: the unweighted mean of the development recall in T and in C (C holds every target outside T,
+   the isolated events with separation above 3 s included, as in `ttmt.atlas.froc.gate`), each at 30 false
+   detections per hour under LOC+T-V and weighted within its regime as in the endpoint; the ledger stores both and the
+   mean; ties go to the lower trial number. If the tuning partition has no target in T or in C, the objective is
+   undefined (no fallback to the other recall) and tuning stops until the partition is fixed.
+3. CR-22: PhaseNet `instance` weights are trained on INSTANCE (Italy, 2005-2020), which covers Alto Tiberina 2010. On
+   those records `instance` results are reported separately with a "training-period overlap" flag, the comparator is
+   the better of `original` and `instance`, and no atlas claim rests on an `instance` result there alone.
+4. Tuning and reading partitions: the unit is the noise block of 300 s, not the hour, because a set of one hour
+   (Ridgecrest) or of 2,000 s (Hi-net) cannot be split by the hour. Blocks are the consecutive 300 s windows of a
+   record, start = `rec.t0` + 300 i in seconds on the record's time axis (`rec.t0` = 0 for these sets), the last
+   partial block dropped (`ttmt.synth.realdata.blocks`). Only noise-role blocks enter the split; EGF-role blocks (`realdata.block_roles`)
+   are in neither partition. A noise block goes to tuning when
+   `int.from_bytes(sha256(f"{dataset}|{start:.3f}|tune-read-v1".encode()).digest()[:8], "little") / 2**64 < 0.3`
+   (`realdata.tune_read`). Per dataset, if no noise block falls in tuning, the one with the smallest value moves to
+   tuning; if none falls in reading, the one with the largest value moves to reading. Blocks do not overlap and
+   every realisation and injected event follows its block.
+5. Seeds of semi-synthetic data, one rule, all from the anchored master of registration 1: realisation r on noise
+   block i of set s draws its events from `ttmt.atlas.seeds.realisation_rng(s, i, r)` (stream "inject", key
+   (first 4 bytes big-endian of sha256(s), i, r)) and its contamination stations from
+   `realisation_rng(s, i, r, "subset")`; event library j (drawn whole: medium, event sequence, receiver effects;
+   Ridgecrest j = 0, Hi-net j = 1) from `library_rng(j)` (stream "inject", key 1000000 + j). Seeds hashed from a
+   commit or any other string are not used.
