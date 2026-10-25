@@ -8,7 +8,7 @@ re-derive them.
 ## Context
 
 The ATLAS-0 card was anchored on 24 October 2026 (tag `reg/ATLAS-0/registration-1` on 7bafb7a). Preparing the first
-tuning run, the comparator thread raised three points:
+tuning run, the comparator thread raised three points, and the generator thread a fourth:
 1. The REAL search space gives "window in [1, 5] s". The parameter it maps to in REAL is `tint`, the minimum time
    between two events. With `tint` >= 1 s REAL cannot output two events closer than 1 s, so in regime T (arrival
    separation in [0.1, 1) s) it is a straw man by construction, and prediction P-RE1 (separation 0.5-3 s) would be
@@ -21,6 +21,8 @@ tuning run, the comparator thread raised three points:
 3. CR-22 requires the ledger to declare overlaps of pretrained weights with an atlas network and period. The SeisBench
    PhaseNet weights `instance` are trained on INSTANCE (Italy, 2005 to 2020), which covers the Alto Tiberina 2010
    noise records.
+4. The generator thread found that the 30/70 split "by a hash of the hour" cannot split the Ridgecrest set (one
+   hour) or the Hi-net set (2,000 s), and asked for seeds for the shared event library, which no record owns.
 
 ## Decision
 
@@ -40,6 +42,12 @@ tuning run, the comparator thread raised three points:
    separately and flagged "training-period overlap"; the comparator chosen there is the better of `original` and
    `instance` as tuned, so the overlap can only make the comparator stronger. No claim of the atlas rests on an
    `instance` result on Alto Tiberina alone. Other weights are checked the same way when the ledger lists them.
+4. Partition unit: the noise block of 300 s. A block goes to tuning when the first 8 bytes of
+   sha256("<dataset>|<block start>|tune-read-v1"), read as a fraction of 2^64, are below 0.3; if a partition would be
+   empty, the block with the smallest hash value is moved into it. Blocks do not overlap and every injected event
+   follows its block (Ridgecrest: 10 tuning and 60 reading realisations; Hi-net: 10 and 30).
+5. Event-library seeds: `ttmt.atlas.seeds.rng("inject", 1000000 + j)` for library event j; record indices stay below
+   1,000,000, so no library seed equals a record seed.
 
 ## Consequences
 

@@ -289,3 +289,10 @@ PyOcto, tuning objective). Seeds stay those of registration 1.
 3. CR-22: PhaseNet `instance` weights are trained on INSTANCE (Italy, 2005-2020), which covers Alto Tiberina 2010. On
    those records `instance` results are reported separately with a "training-period overlap" flag, the comparator is
    the better of `original` and `instance`, and no atlas claim rests on an `instance` result there alone.
+4. Tuning and reading partitions: the unit hashed is the noise block of 300 s, not the hour, because a set of one hour
+   (Ridgecrest) or of 2,000 s (Hi-net) cannot be split by the hour. A block goes to tuning when the first 8 bytes of
+   sha256("<dataset>|<block start>|tune-read-v1"), read as a fraction of 2^64, are below 0.3; if a partition would be
+   empty, the block with the smallest hash value is moved into it. Every injected event follows its block. Blocks do not
+   overlap.
+5. Seeds of the shared event library: `rng("inject", 1000000 + j)` for library event j; record indices stay below
+   1,000,000.
