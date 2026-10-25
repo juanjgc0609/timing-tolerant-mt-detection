@@ -124,10 +124,12 @@ def test_objective_and_partition_guard():
         TU.TuningRecord("r", tr, 8, [np.arange(8)] * tr.n_events, (0, 0), [0, 1200], "read")
 
 
-def test_tuning_split_is_thirty_seventy():
-    s = [TU.tuning_split(f"hour-{i}") for i in range(5000)]
-    assert abs(np.mean([x == "tune" for x in s]) - 0.30) < 0.02
-    assert TU.tuning_split("hour-1") == TU.tuning_split("hour-1")
+def test_tuning_split_is_the_generator_rule():
+    from ttmt.synth.realdata import tune_read
+    starts = np.arange(2000) * 300.0
+    s = [TU.tuning_split("altotiberina_days", a) for a in starts]
+    assert s == [tune_read("altotiberina_days", a) for a in starts]
+    assert abs(np.mean([x == "tune" for x in s]) - 0.30) < 0.03
 
 
 def test_run_is_resumable_and_records_failures(tmp_path):
@@ -304,6 +306,17 @@ def test_manifest_roundtrip(tmp_path):
                         "block_edges": [0, 150, 300], "prob": {"original": "p.npz"},
                         "frame": {"xlim": [-30, 30], "ylim": [-30, 30], "zlim": [0, 20]}}]}
     (tmp_path / "m.json").write_text(json.dumps(man))
+    (rec,) = TU.load_manifest(tmp_path / "m.json", "phasenet+pyocto")
+    starts = np.arange(40) * 300.0
+    lab = np.array([TU.tuning_split("ds", a) for a in starts])
+    man["records"][0].update(dataset="ds", noise_blocks=starts[lab == "tune"].tolist())
+    (tmp_path / "m.json").write_text(json.dumps(man))
+    assert len(TU.load_manifest(tmp_path / "m.json", "phasenet+pyocto")) == 1
+    man["records"][0]["noise_blocks"] = starts[lab == "read"][:1].tolist()
+    (tmp_path / "m.json").write_text(json.dumps(man))
+    with pytest.raises(ValueError):
+        TU.load_manifest(tmp_path / "m.json", "phasenet+pyocto")
+    (tmp_path / "m.json").write_text(json.dumps(dict(records=[dict(man["records"][0], noise_blocks=[])])))
     (rec,) = TU.load_manifest(tmp_path / "m.json", "phasenet+pyocto")
     assert rec.truth.n_events == tr.n_events and np.array_equal(rec.truth.pair, tr.pair)
     assert rec.data["frame"].zlim == (0, 20) and str(rec.data["prob"]("original")).endswith("p.npz")

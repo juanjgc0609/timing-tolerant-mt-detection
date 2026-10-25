@@ -33,7 +33,9 @@ device) and `repro_puente.py` (gate G3a, target 1).
   endpoint. The search maximises `(recall_T + recall_C) / 2`, ties to the lower trial (ATLAS-0 amendment 1,
   ADR-0009 item 2); both recalls go to the ledger. A tuning partition without targets in T or in C is refused before
   the first trial.
-- Only records whose partition is `"tune"` are accepted; `tune.tuning_split` is the 30/70 split by hash of the hour.
+- Only records whose partition is `"tune"` are accepted. The partition comes from the generator's manifest (ADR-0009
+  item 4: 300 s noise blocks, 30/70 by `ttmt.synth.realdata.tune_read`); `tune.tuning_split` calls that function, and
+  `load_manifest` refuses a record whose listed noise blocks are not all in the tuning partition.
 - Ledger: `experiments/exploratory/ATLAS-0/tuning_ledger.csv`, append-only (a repeated (method, trial) is refused),
   one row per trial including failed ones (status `error`, objective nan; a failed trial still spends its place).
   Columns: method, trial, seed, params, objective, recall_T, recall_C, n_T, n_C, hours, status, error, wall_s,

@@ -9,8 +9,10 @@ point chosen on those records (``ttmt.atlas.froc.hits``). The search maximises t
 recalls are kept in the ledger. A tuning partition without targets in T or in C is an error (the mean would silently
 become the one defined recall); :func:`run` checks it before the first trial, so no trial is spent on it.
 
-Only records of the tuning partition are accepted (``TuningRecord.partition == "tune"``); the split of noise hours
-and injection seeds is :func:`tuning_split` (30 / 70 by a hash of the hour, card "Tuning").
+Only records of the tuning partition are accepted (``TuningRecord.partition == "tune"``). The partition comes from the
+generator's manifest (ATLAS-0 amendment 1, ADR-0009 item 4: 300 s noise blocks split 30 / 70 by
+``ttmt.synth.realdata.tune_read``); :func:`tuning_split` is that function, not a second definition, and
+:func:`load_manifest` refuses a record whose noise blocks are not all in the tuning partition.
 """
 import hashlib
 import json
@@ -26,13 +28,13 @@ from . import ledger as L
 from . import space as SP
 
 BUDGET = F.BUDGETS[0]
-TUNE_FRACTION = 0.30
 
 
-def tuning_split(key, fraction=TUNE_FRACTION):
-    """"tune" or "read" for a noise hour or an injection seed (any str), by the first 8 bytes of its SHA-256."""
-    h = int.from_bytes(hashlib.sha256(str(key).encode()).digest()[:8], "big") / 2.0 ** 64
-    return "tune" if h < fraction else "read"
+def tuning_split(dataset, block_start):
+    """"tune" or "read" for the 300 s noise block of dataset starting at block_start: ttmt.synth.realdata.tune_read
+    (ADR-0009 item 4), the single definition of the partition."""
+    from ..synth.realdata import tune_read
+    return tune_read(dataset, block_start)
 
 
 @dataclass
@@ -166,7 +168,9 @@ def load_manifest(path, method):
     "prob": {"original": path, "instance": path, ...}, "frame": {"xlim", "ylim", "zlim", "time_before"},
     "velocity": "hadley_kanamori" | "jma2001" | [[top, vp], ...]}]}. truth.npz holds the fields of
     ttmt.atlas.schema.Truth (id, t, xyz, mag, arr_t, snr, t0, t1, target, pair, kmec, arr_t_obs). Paths are relative
-    to the manifest. Only the pick-based pipelines read "prob"."""
+    to the manifest. Only the pick-based pipelines read "prob". A record may list "dataset" and "noise_blocks" (start
+    times of its 300 s noise blocks); each must be in the tuning partition by :func:`tuning_split`, else the manifest is
+    refused."""
     import os
 
     from ..atlas.schema import Stations, Truth
@@ -176,6 +180,9 @@ def load_manifest(path, method):
     man = json.load(open(path))
     out = []
     for r in man["records"]:
+        bad = [b for b in r.get("noise_blocks", []) if tuning_split(r["dataset"], b) != "tune"]
+        if bad:
+            raise ValueError(f"record {r['name']!r}: noise blocks {bad[:5]} are not in the tuning partition")
         z = np.load(os.path.join(root, r["truth"]), allow_pickle=False)
         f = {k: z[k] for k in z.files}
         truth = Truth(f["id"], f["t"], f["xyz"], f["mag"], f["arr_t"], f["snr"], float(f["t0"]), float(f["t1"]),
