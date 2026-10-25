@@ -9,8 +9,8 @@ Dated record of changes to the project's process, code and documents. Results ar
   layered engine with free surface, Q and borehole receivers; no operator shared with the detector, checked by
   `tests/test_synth.py`), injection of recorded events (EGF) and of full-wave events with known tensors into the real
   noise of Ridgecrest and Hi-net, with the `ttmt.atlas.schema.Truth` of every record, the card SNR, pair ids, K_mec/E,
-  the largest correlation with the atom library and the 4-station contamination variants. Seeds from the anchored
-  streams of `ttmt.atlas.seeds`. Tuning/reading partition by a hash of the 300 s noise block (the records are one hour
+  the largest correlation with the atom library and the 4-station contamination variants. Seeds `ttmt.atlas.seeds.realisation_rng`
+  and `library_rng` (ADR-0009 item 5; helpers ported from #19). Tuning/reading partition by a hash of the 300 s noise block (the records are one hour
   or less, so a hash of the hour cannot split them). Data card `data/cards/synth_v2.md`; validation
   `tools/validate_synth.py`, report `results/synth_v2/README.md`.
 

@@ -10,8 +10,7 @@
 - Time blocks: each record is cut into 300 s blocks; a seeded hash gives every block one role, EGF or noise
   (`realdata.block_roles`). Recorded events used as injections (EGFs) come only from EGF blocks; injections go only
   into noise blocks. The catalogued events of a noise block stay in the noise as neutral events (target False).
-- Partitions: the noise blocks are split 30/70 into `tune` and `read` by a hash of the block start, with at least one
-  block in each (`realdata.partition_blocks`); every realisation inherits the partition of its block, so tuning and
+- Partitions: the noise blocks are split 30/70 into `tune` and `read` (`realdata.partition_blocks`, rule below); every realisation inherits the partition of its block, so tuning and
   reading never share a noise sample or an injection seed. `ttmt.synth.sets.SetReader` serves one partition and
   raises `PartitionError` on any other.
 - Sources:
@@ -41,11 +40,14 @@
 - CR-06 atom library: by default every catalogued event of the noise blocks, cut [-5, +35] s
   (`realdata.template_candidates`), that is, the events a template or deflation method would take from the record
   the injections go into. A method whose dictionary differs recomputes the covariate with `inject.max_cc`.
-- Seeds: every realisation is one record of the anchored streams of ATLAS-0 (`ttmt.atlas.seeds`, master
-  8e1a8d5630dc0d52): injections, timing errors and amplitudes from `rng("inject", record)`, contamination stations from
-  `rng("subset", record)`. Record indices: Ridgecrest EGF 0-69, Hi-net EGF 1000-1039, known-tensor sets 2000+ and
-  3000+. The full-wave event libraries draw from `rng("inject", 1_000_000 + j)`, a range no record uses.
-- Partitions deviate from the card's "hash of the hour": the records are one hour (Ridgecrest) and 2000 s (Hi-net), so
-  the hash is of the 300 s noise block.
+- Seeds (ADR-0009 item 5): realisation r on noise block i (start = record t0 + 300 i) of set s draws its injections,
+  timing errors and amplitudes from `ttmt.atlas.seeds.realisation_rng(s, i, r)` and its contamination stations from
+  `realisation_rng(s, i, r, "subset")`, all children of the anchored master 8e1a8d5630dc0d52; s, i, r and the master
+  are in `Truth.meta`. Full-wave event library j (Ridgecrest 0, Hi-net 1) is drawn whole (medium, event sequence,
+  receiver effects) from `library_rng(j)`.
+- Partitions (ADR-0009 item 4, replacing the card's "hash of the hour", since the records are one hour and 2000 s):
+  a noise block goes to tuning when the first 8 bytes of sha256(f"{dataset}|{start:.3f}|tune-read-v1"), little-endian,
+  over 2^64 are below 0.3; per dataset, an empty tuning partition takes the noise block of smallest value, an empty
+  reading partition the one of largest value. EGF-role blocks are in neither partition.
 - Files: under `$TTMT_WORK_ROOT/synth/<set id>/` (not in git); manifests with SHA-256 and float fingerprints in
   `data/manifests/synth/`. A rebuild on another platform is checked with `SetReader(..., verify="fingerprint")`.

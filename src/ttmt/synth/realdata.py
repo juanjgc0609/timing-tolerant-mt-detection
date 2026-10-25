@@ -144,6 +144,14 @@ def partition_blocks(dataset, starts, salt="tune-read-v1", tune_frac=0.3):
     return dict(zip([float(a) for a in starts], part.tolist()))
 
 
+
+def tune_read_split(rec, block_s=BLOCK_S):
+    """ADR-0009 item 4 for one record: [((start, end), role)] for every block, role 'egf' (in neither partition),
+    'tune' or 'read' (``partition_blocks`` on the noise-role blocks, with the fallback both ways)."""
+    roles = block_roles(rec, block_s=block_s)
+    part = partition_blocks(rec.dataset, [bl[0] for bl, r in roles if r == "noise"])
+    return [(bl, r if r == "egf" else part[float(bl[0])]) for bl, r in roles]
+
 # ------------------------------------------------------------------------------------------------ picking
 _SOS = {}
 

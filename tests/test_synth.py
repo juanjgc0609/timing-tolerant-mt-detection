@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 
 from ttmt.partition import PartitionError
-from ttmt.synth import analytic, fk, inject, media, picklists, sets
+from ttmt.synth import analytic, fk, inject, media, picklists, realdata, sets
 from ttmt.synth import source as SRC
 
 SYNTH = Path(__file__).resolve().parents[1] / "src" / "ttmt" / "synth"
@@ -133,3 +133,36 @@ def test_picklists():
     assert np.all(tr.arr_t[:, :, 1] > tr.arr_t[:, :, 0])
     err = (tr.arr_t_obs - tr.arr_t).ravel()
     assert 0.1 < err.std() < 0.35
+
+
+def test_partition_rule_adr0009():
+    """realdata.partition_blocks is the rule of ADR-0009 item 4, fallback both ways."""
+    import hashlib
+
+    def u(ds, a):
+        h = hashlib.sha256(f"{ds}|{a:.3f}|tune-read-v1".encode()).digest()[:8]
+        return int.from_bytes(h, "little") / 2 ** 64
+
+    starts = [300.0 * i for i in range(12)]
+    p = realdata.partition_blocks("ridgecrest_2019", starts)
+    raw = {a: ("tune" if u("ridgecrest_2019", a) < 0.3 else "read") for a in starts}
+    assert p == raw
+    lo = [a for a in starts if raw[a] == "read"]
+    p = realdata.partition_blocks("ridgecrest_2019", lo)
+    assert [a for a in lo if p[a] == "tune"] == [min(lo, key=lambda a: u("ridgecrest_2019", a))]
+    hi = [a for a in starts if raw[a] == "tune"]
+    p = realdata.partition_blocks("ridgecrest_2019", hi)
+    assert [a for a in hi if p[a] == "read"] == [max(hi, key=lambda a: u("ridgecrest_2019", a))]
+
+
+def test_tune_read_split_hinet_fallback():
+    """Hi-net: no noise block hashes below 0.3, so the noise block of smallest value goes to tuning (ADR-0009)."""
+    import types
+    rec = types.SimpleNamespace(dataset="hinet_2012", t0=0.0, t1=2000.0)
+    sp = realdata.tune_read_split(rec)
+    noise = [(bl, r) for bl, r in sp if r != "egf"]
+    assert len(sp) == 6 and noise
+    assert sum(r == "tune" for _bl, r in noise) >= 1 and sum(r == "read" for _bl, r in noise) >= 1
+    u = {bl[0]: realdata.block_hash("hinet_2012", bl[0], "tune-read-v1") for bl, _r in noise}
+    assert all(v >= 0.3 for v in u.values())
+    assert [bl[0] for bl, r in noise if r == "tune"] == [min(u, key=u.get)]

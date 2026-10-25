@@ -13,11 +13,11 @@ Partitions (ATLAS-0, Tuning): 'tune' and 'read' split the noise blocks 30/70 by 
 (``realdata.partition_blocks``, at least one block each); every realisation on a block inherits its partition, so no noise sample is shared. A
 :class:`SetReader` serves one partition and raises :class:`ttmt.partition.PartitionError` on any other.
 
-Seeds (ADR-0004 item 4): with ``anchor='ATLAS-0'`` every realisation is one record of the anchored streams of
-``ttmt.atlas.seeds``: record index = ``record_offset`` + its position in the set; its injections, timing errors and
-amplitudes draw from ``rng('inject', record)`` and its contamination stations from ``rng('subset', record)``; the record
-index and the master seed go into Truth.meta. Any other anchor string (e.g. 'pre-anchor-dev') hashes into a
-development seed with ``derive_seed`` and is flagged ``pre_anchor`` in the manifest.
+Seeds (ADR-0004 item 4, ADR-0009 item 5): with ``anchor='ATLAS-0'`` (the default) realisation r on noise block i
+(the block starting at rec.t0 + 300 i) of set s draws its injections, timing errors and amplitudes from
+``ttmt.atlas.seeds.realisation_rng(s, i, r)`` and its contamination stations from ``realisation_rng(s, i, r,
+'subset')``; s, i, r and the master seed go into Truth.meta. Any other anchor string hashes into a development seed
+with ``derive_seed``, is flagged ``pre_anchor`` in the manifest and must not be used for tuning or reading.
 """
 import hashlib
 import json
@@ -107,17 +107,20 @@ def subset_k(xyz, codes, k):
     return station_subset(xyz, codes, np.ones(len(codes), bool), k).tolist()
 
 
-def build(set_id, rec, sources, per_block, anchor="pre-anchor-dev", inj_cfg=None, atoms=None, atom_ids=None,
-          source_meta=None, blocks=None, log=print, record_offset=0):
+def build(set_id, rec, sources, per_block, anchor="ATLAS-0", inj_cfg=None, atoms=None, atom_ids=None,
+          source_meta=None, blocks=None, log=print):
     """build a set: per_block realisations on every noise-role block of rec (or the given blocks); writes files and the
     manifest; returns the manifest dict."""
     root = set_root(set_id)
     root.mkdir(parents=True, exist_ok=True)
     c = INJ.config(inj_cfg)
+    split = {float(bl[0]): r for bl, r in RD.tune_read_split(rec)}
     if blocks is None:
-        blocks = [bl for bl, r in RD.block_roles(rec) if r == "noise"]
+        blocks = [bl for bl, r in RD.tune_read_split(rec) if r != "egf"]
+    if any(split.get(float(a)) not in ("tune", "read") for a, _b in blocks):
+        raise ValueError("injections go only into noise-role blocks")
     sub4 = subset_k(rec.xyz, rec.codes, 4)
-    parts = RD.partition_blocks(rec.dataset, [a for a, _b in blocks])
+    parts = {float(a): split[float(a)] for a, _b in blocks}
     reals, files = [], {}
     for a, b in blocks:
         part = parts[float(a)]
@@ -127,12 +130,13 @@ def build(set_id, rec, sources, per_block, anchor="pre-anchor-dev", inj_cfg=None
         files[nf.name] = {"sha256": sha256(nf), "fingerprint": fingerprint(noise)}
         for r in range(per_block):
             label = f"{set_id}_{a:07.1f}_{r:03d}"
+            i = int(round((a - rec.t0) / RD.BLOCK_S))
             if anchor == "ATLAS-0":
                 from ..atlas import seeds as SEEDS
-                record = record_offset + len(reals)
-                seed, rng_sub = SEEDS.rng("inject", record), SEEDS.rng("subset", record)
-                seed_rec = {"record": record, "master_seed_hex": f"{SEEDS.master_seed():016x}",
-                            "streams": ["inject", "subset"]}
+                seed = SEEDS.realisation_rng(set_id, i, r)
+                rng_sub = SEEDS.realisation_rng(set_id, i, r, "subset")
+                seed_rec = {"set_id": set_id, "block_index": i, "r": r,
+                            "master_seed_hex": f"{SEEDS.master_seed():016x}", "streams": ["inject", "subset"]}
             else:
                 seed = derive_seed(anchor, set_id, a, r)
                 rng_sub = np.random.default_rng(seed ^ 0x5EED)
@@ -155,7 +159,7 @@ def build(set_id, rec, sources, per_block, anchor="pre-anchor-dev", inj_cfg=None
             log(f"{label} {part} targets {reals[-1]['n_targets']} pairs {reals[-1]['n_pairs']}")
     man = {"set_id": set_id, "generator": GENERATOR_VERSION, "dataset": rec.dataset, "fs": rec.fs,
            "components": "E, N, Z up", "stations": rec.codes, "xyz": np.asarray(rec.xyz).tolist(),
-           "anchor": anchor, "pre_anchor": anchor != "ATLAS-0", "record_offset": record_offset, "inject_config": c,
+           "anchor": anchor, "pre_anchor": anchor != "ATLAS-0", "inject_config": c,
            "inject_config_hash": INJ.config_hash(c), "source_meta": source_meta or {},
            "partitions": {"rule": "realdata.partition_blocks: sha256(dataset|block start|tune-read-v1) < 0.3 -> tune, "
                                   "at least one block per partition",

@@ -264,3 +264,18 @@ def test_intervals_use_anchored_streams():
     assert a == b
     assert Z.rng("bootstrap", 1).integers(0, 10**9) == Z.rng("bootstrap", 1).integers(0, 10**9)
     assert set(a) == set(c)
+
+
+def test_realisation_and_library_seeds():
+    import hashlib
+    from ttmt.atlas import seeds as Z
+    assert Z.set_key("rc-egf") == int.from_bytes(hashlib.sha256(b"rc-egf").digest()[:4], "big")
+    a = Z.realisation_rng("rc-egf", 3, 0).random(3)
+    assert np.array_equal(a, Z.realisation_rng("rc-egf", 3, 0).random(3))
+    others = [Z.realisation_rng("rc-egf", 3, 1), Z.realisation_rng("rc-egf", 4, 0), Z.realisation_rng("hn-egf", 3, 0),
+              Z.realisation_rng("rc-egf", 3, 0, "subset"), Z.library_rng(0)]
+    assert all(not np.array_equal(a, g.random(3)) for g in others)
+    with pytest.raises(KeyError):
+        Z.realisation_rng("rc-egf", 0, 0, "tuning")
+    with pytest.raises(ValueError):
+        Z.library_rng(-1)
