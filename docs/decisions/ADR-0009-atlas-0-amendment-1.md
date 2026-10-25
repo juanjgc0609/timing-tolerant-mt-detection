@@ -22,7 +22,9 @@ tuning run, the comparator thread raised three points, and the generator thread 
    PhaseNet weights `instance` are trained on INSTANCE (Italy, 2005 to 2020), which covers the Alto Tiberina 2010
    noise records.
 4. The generator thread found that the 30/70 split "by a hash of the hour" cannot split the Ridgecrest set (one
-   hour) or the Hi-net set (2,000 s), and asked for seeds for the shared event library, which no record owns.
+   hour) or the Hi-net set (2,000 s), and asked for seeds for the shared event library, which no record owns. Its
+   realisations were seeded from a hash of a commit string, which is known before the Release exists and so is
+   weaker than ADR-0004 item 4.
 
 ## Decision
 
@@ -42,12 +44,20 @@ tuning run, the comparator thread raised three points, and the generator thread 
    separately and flagged "training-period overlap"; the comparator chosen there is the better of `original` and
    `instance` as tuned, so the overlap can only make the comparator stronger. No claim of the atlas rests on an
    `instance` result on Alto Tiberina alone. Other weights are checked the same way when the ledger lists them.
-4. Partition unit: the noise block of 300 s. A block goes to tuning when the first 8 bytes of
-   sha256("<dataset>|<block start>|tune-read-v1"), read as a fraction of 2^64, are below 0.3; if a partition would be
-   empty, the block with the smallest hash value is moved into it. Blocks do not overlap and every injected event
-   follows its block (Ridgecrest: 10 tuning and 60 reading realisations; Hi-net: 10 and 30).
-5. Event-library seeds: `ttmt.atlas.seeds.rng("inject", 1000000 + j)` for library event j; record indices stay below
-   1,000,000, so no library seed equals a record seed.
+4. Partition unit: the unit is the noise block of 300 s, not the hour, because a set of one hour
+   (Ridgecrest) or of 2,000 s (Hi-net) cannot be split by the hour. Blocks are the consecutive 300 s windows of a
+   record, start = record t0 + 300 i in seconds from the dataset's t0_utc, the last partial block dropped
+   (`ttmt.synth.realdata.blocks`). Only noise-role blocks enter the split; EGF-role blocks (`realdata.block_roles`)
+   are in neither partition. A noise block goes to tuning when
+   `int.from_bytes(sha256(f"{dataset}|{start:.3f}|tune-read-v1".encode()).digest()[:8], "little") / 2**64 < 0.3`
+   (`realdata.tune_read`). Per dataset, if no noise block falls in tuning, the one with the smallest value moves to
+   tuning; if none falls in reading, the one with the largest value moves to reading. Blocks do not overlap and
+   every realisation and injected event follows its block.
+5. Seeds of semi-synthetic data, one rule, all from the anchored master of registration 1: realisation r on noise
+   block i of set s draws its events from `ttmt.atlas.seeds.realisation_rng(s, i, r)` (stream "inject", key
+   (first 4 bytes big-endian of sha256(s), i, r)) and its contamination stations from
+   `realisation_rng(s, i, r, "subset")`; event j of the shared event library from `library_rng(j)` (stream
+   "inject", key 1000000 + j). Seeds hashed from a commit or any other string are not used.
 
 ## Consequences
 

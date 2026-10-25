@@ -289,10 +289,17 @@ PyOcto, tuning objective). Seeds stay those of registration 1.
 3. CR-22: PhaseNet `instance` weights are trained on INSTANCE (Italy, 2005-2020), which covers Alto Tiberina 2010. On
    those records `instance` results are reported separately with a "training-period overlap" flag, the comparator is
    the better of `original` and `instance`, and no atlas claim rests on an `instance` result there alone.
-4. Tuning and reading partitions: the unit hashed is the noise block of 300 s, not the hour, because a set of one hour
-   (Ridgecrest) or of 2,000 s (Hi-net) cannot be split by the hour. A block goes to tuning when the first 8 bytes of
-   sha256("<dataset>|<block start>|tune-read-v1"), read as a fraction of 2^64, are below 0.3; if a partition would be
-   empty, the block with the smallest hash value is moved into it. Every injected event follows its block. Blocks do not
-   overlap.
-5. Seeds of the shared event library: `rng("inject", 1000000 + j)` for library event j; record indices stay below
-   1,000,000.
+4. Tuning and reading partitions: the unit is the noise block of 300 s, not the hour, because a set of one hour
+   (Ridgecrest) or of 2,000 s (Hi-net) cannot be split by the hour. Blocks are the consecutive 300 s windows of a
+   record, start = record t0 + 300 i in seconds from the dataset's t0_utc, the last partial block dropped
+   (`ttmt.synth.realdata.blocks`). Only noise-role blocks enter the split; EGF-role blocks (`realdata.block_roles`)
+   are in neither partition. A noise block goes to tuning when
+   `int.from_bytes(sha256(f"{dataset}|{start:.3f}|tune-read-v1".encode()).digest()[:8], "little") / 2**64 < 0.3`
+   (`realdata.tune_read`). Per dataset, if no noise block falls in tuning, the one with the smallest value moves to
+   tuning; if none falls in reading, the one with the largest value moves to reading. Blocks do not overlap and
+   every realisation and injected event follows its block.
+5. Seeds of semi-synthetic data, one rule, all from the anchored master of registration 1: realisation r on noise
+   block i of set s draws its events from `ttmt.atlas.seeds.realisation_rng(s, i, r)` (stream "inject", key
+   (first 4 bytes big-endian of sha256(s), i, r)) and its contamination stations from
+   `realisation_rng(s, i, r, "subset")`; event j of the shared event library from `library_rng(j)` (stream
+   "inject", key 1000000 + j). Seeds hashed from a commit or any other string are not used.
