@@ -310,6 +310,14 @@ def test_manifest_roundtrip(tmp_path):
     assert rec.truth.n_events == tr.n_events and np.array_equal(rec.truth.pair, tr.pair)
     assert rec.data["frame"].zlim == (0, 20) and str(rec.data["prob"]("original")).endswith("p.npz")
     assert rec.block(160.0) == 1 and np.allclose(rec.block_hours, 150 / 3600)
+    # Hi-net: no noise block hashes below 0.3, so the block at 0 s is "tune" only by the ADR-0009 fallback; the
+    # generator's label is accepted as written
+    from ttmt.synth.realdata import tune_read
+    hinet = [0.0, 600.0, 1200.0, 1500.0]
+    assert all(tune_read("hinet_2012", b) == "read" for b in hinet)
+    man["records"][0].update(dataset="hinet_2012", noise_blocks=hinet[:1])
+    (tmp_path / "m.json").write_text(json.dumps(man))
+    assert len(TU.load_manifest(tmp_path / "m.json", "phasenet+pyocto")) == 1
     man["records"][0]["partition"] = "read"
     (tmp_path / "m.json").write_text(json.dumps(man))
     with pytest.raises(ValueError):
