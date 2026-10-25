@@ -10,15 +10,17 @@ hashes, the anchor string the seeds derive from, and per realisation its label, 
 station, so a rebuild on another platform can be checked to a tolerance when the bytes differ).
 
 Partitions (ATLAS-0, Tuning): 'tune' and 'read' split the noise blocks 30/70 by a hash of the block start
-(``realdata.tune_read``); every realisation on a block inherits its partition, so no noise sample is shared. A
+(``realdata.partition_blocks``, at least one block each); every realisation on a block inherits its partition, so no noise sample is shared. A
 :class:`SetReader` serves one partition and raises :class:`ttmt.partition.PartitionError` on any other.
 
-Seeds (ADR-0004 item 4): ``derive_seed(anchor, set_id, block, r)`` hashes the anchor string (the anchor commit of the
-experiment card); builds made before the anchor use ``anchor='pre-anchor-dev'`` and are flagged in the manifest.
+Seeds (ADR-0004 item 4): with ``anchor='ATLAS-0'`` every realisation is one record of the anchored streams of
+``ttmt.atlas.seeds``: record index = ``record_offset`` + its position in the set; its injections, timing errors and
+amplitudes draw from ``rng('inject', record)`` and its contamination stations from ``rng('subset', record)``; the record
+index and the master seed go into Truth.meta. Any other anchor string (e.g. 'pre-anchor-dev') hashes into a
+development seed with ``derive_seed`` and is flagged ``pre_anchor`` in the manifest.
 """
 import hashlib
 import json
-import os
 from pathlib import Path
 
 import numpy as np
@@ -99,15 +101,14 @@ def truth_from_dict(d):
 
 # ------------------------------------------------------------------------------------------------ build
 def subset_k(xyz, codes, k):
-    """the k stations nearest the network centroid, ties broken by code (ATLAS-0, stratum 3; full availability)."""
-    xyz = np.asarray(xyz, float)
-    d = np.hypot(*(xyz[:, :2] - xyz[:, :2].mean(0)).T)
-    order = sorted(range(len(codes)), key=lambda i: (round(float(d[i]), 9), codes[i]))
-    return sorted(order[:k])
+    """the k stations nearest the network centroid, ties broken by code (``ttmt.atlas.cells.station_subset`` with every
+    station available: the injected records have no gaps)."""
+    from ..atlas.cells import station_subset
+    return station_subset(xyz, codes, np.ones(len(codes), bool), k).tolist()
 
 
 def build(set_id, rec, sources, per_block, anchor="pre-anchor-dev", inj_cfg=None, atoms=None, atom_ids=None,
-          source_meta=None, blocks=None, log=print):
+          source_meta=None, blocks=None, log=print, record_offset=0):
     """build a set: per_block realisations on every noise-role block of rec (or the given blocks); writes files and the
     manifest; returns the manifest dict."""
     root = set_root(set_id)
@@ -116,19 +117,29 @@ def build(set_id, rec, sources, per_block, anchor="pre-anchor-dev", inj_cfg=None
     if blocks is None:
         blocks = [bl for bl, r in RD.block_roles(rec) if r == "noise"]
     sub4 = subset_k(rec.xyz, rec.codes, 4)
+    parts = RD.partition_blocks(rec.dataset, [a for a, _b in blocks])
     reals, files = [], {}
     for a, b in blocks:
-        part = RD.tune_read(rec.dataset, a)
+        part = parts[float(a)]
         nf = root / f"noise_{a:07.1f}.npz"
         noise = rec.cut(a, b).astype(np.float32)
         np.savez_compressed(nf, noise=noise)
         files[nf.name] = {"sha256": sha256(nf), "fingerprint": fingerprint(noise)}
         for r in range(per_block):
-            seed = derive_seed(anchor, set_id, a, r)
             label = f"{set_id}_{a:07.1f}_{r:03d}"
+            if anchor == "ATLAS-0":
+                from ..atlas import seeds as SEEDS
+                record = record_offset + len(reals)
+                seed, rng_sub = SEEDS.rng("inject", record), SEEDS.rng("subset", record)
+                seed_rec = {"record": record, "master_seed_hex": f"{SEEDS.master_seed():016x}",
+                            "streams": ["inject", "subset"]}
+            else:
+                seed = derive_seed(anchor, set_id, a, r)
+                rng_sub = np.random.default_rng(seed ^ 0x5EED)
+                seed_rec = {"seed": seed}
             sig, _noise, truth = INJ.realise(rec, (a, b), sources, seed, c, atoms, atom_ids, label)
-            rng = np.random.default_rng(seed ^ 0x5EED)
-            variants = INJ.contamination_variants(sub4, rng)
+            variants = INJ.contamination_variants(sub4, rng_sub)
+            truth.meta.update(seed_rec)
             truth.meta.update({"partition": part, "subset4": sub4, "contamination_variants": variants,
                                "generator": GENERATOR_VERSION, "anchor": anchor, "set_id": set_id,
                                "source_meta": source_meta or {}})
@@ -138,15 +149,16 @@ def build(set_id, rec, sources, per_block, anchor="pre-anchor-dev", inj_cfg=None
             tf.write_text(json.dumps(truth_to_dict(truth)))
             files[sf.name] = {"sha256": sha256(sf), "fingerprint": fingerprint(sig.astype(np.float32))}
             files[tf.name] = {"sha256": sha256(tf)}
-            reals.append({"label": label, "seed": seed, "block": [a, b], "partition": part,
+            reals.append({"label": label, **seed_rec, "block": [a, b], "partition": part,
                           "noise": nf.name, "sig": sf.name, "truth": tf.name, "variants": variants,
                           "n_targets": int(truth.target.sum()), "n_pairs": int(len(set(truth.pair[truth.target]) - {-1}))})
             log(f"{label} {part} targets {reals[-1]['n_targets']} pairs {reals[-1]['n_pairs']}")
     man = {"set_id": set_id, "generator": GENERATOR_VERSION, "dataset": rec.dataset, "fs": rec.fs,
            "components": "E, N, Z up", "stations": rec.codes, "xyz": np.asarray(rec.xyz).tolist(),
-           "anchor": anchor, "pre_anchor": anchor == "pre-anchor-dev", "inject_config": c,
+           "anchor": anchor, "pre_anchor": anchor != "ATLAS-0", "record_offset": record_offset, "inject_config": c,
            "inject_config_hash": INJ.config_hash(c), "source_meta": source_meta or {},
-           "partitions": {"rule": "realdata.tune_read: sha256(dataset|block start|tune-read-v1) < 0.3 -> tune",
+           "partitions": {"rule": "realdata.partition_blocks: sha256(dataset|block start|tune-read-v1) < 0.3 -> tune, "
+                                  "at least one block per partition",
                           "tune": [x["label"] for x in reals if x["partition"] == "tune"],
                           "read": [x["label"] for x in reals if x["partition"] == "read"]},
            "realisations": reals, "files": files}
@@ -172,12 +184,12 @@ class SetReader:
         ent = self.man["files"][name]
         if self.verify == "sha256":
             if sha256(self.root / name) != ent["sha256"]:
-                raise IOError(f"checksum mismatch: {name}")
+                raise OSError(f"checksum mismatch: {name}")
         elif self.verify == "fingerprint" and arr is not None:
             fp = np.array(fingerprint(arr))
             ref = np.array(ent["fingerprint"])
             if not np.allclose(fp, ref, rtol=self.tol, atol=0):
-                raise IOError(f"fingerprint mismatch: {name}")
+                raise OSError(f"fingerprint mismatch: {name}")
 
     def _real(self, label):
         r = next((x for x in self.man["realisations"] if x["label"] == label), None)

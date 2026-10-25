@@ -131,6 +131,19 @@ def tune_read(dataset, block_start, salt="tune-read-v1", tune_frac=0.3):
     return "tune" if block_hash(dataset, block_start, salt) < tune_frac else "read"
 
 
+def partition_blocks(dataset, starts, salt="tune-read-v1", tune_frac=0.3):
+    """tune_read for a list of block starts, with at least one block in each partition when there are two or more
+    (a record with few blocks can otherwise draw no tuning block: the block of lowest hash moves to 'tune', or of
+    highest hash to 'read')."""
+    u = np.array([block_hash(dataset, a, salt) for a in starts])
+    part = np.where(u < tune_frac, "tune", "read")
+    if len(starts) >= 2 and not (part == "tune").any():
+        part[int(np.argmin(u))] = "tune"
+    if len(starts) >= 2 and not (part == "read").any():
+        part[int(np.argmax(u))] = "read"
+    return dict(zip([float(a) for a in starts], part.tolist()))
+
+
 # ------------------------------------------------------------------------------------------------ picking
 _SOS = {}
 
@@ -231,3 +244,22 @@ def egf_library(rec, pre=5.0, post=35.0, iso_pre=8.0, iso_post=30.0, iso_dm=2.0,
         out.append(EGF(f"{rec.dataset}:{e['t']:.2f}", float(e["t"]), np.array([e["x"], e["y"], e["z"]], float),
                        float(e["M"]), t_cut, seg.copy(), arr, ps, blk, nsd))
     return out
+
+
+def template_candidates(rec, pre=5.0, post=35.0, min_mag=None, salt="egf-noise-v1"):
+    """default atom library for the CR-06 correlation: every catalogued event inside the noise-role blocks (the events a
+    template or deflation method would take from the record the injections go into), cut [t - pre, t + post]."""
+    roles = block_roles(rec, salt)
+    nb = [bl for bl, r in roles if r == "noise"]
+    out, ids = [], []
+    for e in rec.catalogue:
+        if min_mag is not None and e["M"] < min_mag:
+            continue
+        if not any(a <= e["t"] < b for a, b in nb):
+            continue
+        try:
+            out.append(rec.cut(e["t"] - pre, e["t"] + post).copy())
+            ids.append(f"{rec.dataset}:{e['t']:.2f}")
+        except ValueError:
+            continue
+    return out, ids
