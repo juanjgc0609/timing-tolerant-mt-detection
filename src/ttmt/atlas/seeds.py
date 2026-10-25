@@ -9,7 +9,7 @@ which other streams are drawn.
 Named streams (card, "Tuning" and "Truth"):
 - "tuning", trial: the configuration drawn in trial 0..59 of the random search, the same list for every method;
 - "inject", (set key, block, r): the injected events and timing errors of realisation r on noise block `block` of a
-  semi-synthetic set (`realisation_rng`); "inject", 1000000 + j: event j of the shared event library
+  semi-synthetic set (`realisation_rng`); "inject", 1000000 + j: event library j, drawn whole
   (`library_rng`). A realisation key has three indices and a library key one, so they never coincide;
 - "subset", (set key, block, r): the contamination station draws of that realisation (`realisation_rng`);
 - "bootstrap", analysis: resampling of blocks for the intervals (0: froc.describe, 1: froc.pooled_loss);
@@ -75,7 +75,8 @@ LIBRARY_OFFSET = 1_000_000
 
 
 def library_rng(j, master=None):
-    """generator of event j of the shared event library (ADR-0009 item 5): stream ("inject", 1000000 + j)."""
+    """generator of event library j, drawn whole (medium, event sequence, receiver effects; ADR-0009 item 5):
+    stream ("inject", 1000000 + j)."""
     if int(j) < 0:
         raise ValueError("library index is non-negative")
     return rng("inject", LIBRARY_OFFSET + int(j), master=master)

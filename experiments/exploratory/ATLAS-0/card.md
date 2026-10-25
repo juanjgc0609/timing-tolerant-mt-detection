@@ -291,8 +291,8 @@ PyOcto, tuning objective). Seeds stay those of registration 1.
    the better of `original` and `instance`, and no atlas claim rests on an `instance` result there alone.
 4. Tuning and reading partitions: the unit is the noise block of 300 s, not the hour, because a set of one hour
    (Ridgecrest) or of 2,000 s (Hi-net) cannot be split by the hour. Blocks are the consecutive 300 s windows of a
-   record, start = record t0 + 300 i in seconds from the dataset's t0_utc, the last partial block dropped
-   (`ttmt.synth.realdata.blocks`). Only noise-role blocks enter the split; EGF-role blocks (`realdata.block_roles`)
+   record, start = `rec.t0` + 300 i in seconds on the record's time axis (`rec.t0` = 0 for these sets), the last
+   partial block dropped (`ttmt.synth.realdata.blocks`). Only noise-role blocks enter the split; EGF-role blocks (`realdata.block_roles`)
    are in neither partition. A noise block goes to tuning when
    `int.from_bytes(sha256(f"{dataset}|{start:.3f}|tune-read-v1".encode()).digest()[:8], "little") / 2**64 < 0.3`
    (`realdata.tune_read`). Per dataset, if no noise block falls in tuning, the one with the smallest value moves to
@@ -301,5 +301,6 @@ PyOcto, tuning objective). Seeds stay those of registration 1.
 5. Seeds of semi-synthetic data, one rule, all from the anchored master of registration 1: realisation r on noise
    block i of set s draws its events from `ttmt.atlas.seeds.realisation_rng(s, i, r)` (stream "inject", key
    (first 4 bytes big-endian of sha256(s), i, r)) and its contamination stations from
-   `realisation_rng(s, i, r, "subset")`; event j of the shared event library from `library_rng(j)` (stream
-   "inject", key 1000000 + j). Seeds hashed from a commit or any other string are not used.
+   `realisation_rng(s, i, r, "subset")`; event library j (drawn whole: medium, event sequence, receiver effects;
+   Ridgecrest j = 0, Hi-net j = 1) from `library_rng(j)` (stream "inject", key 1000000 + j). Seeds hashed from a
+   commit or any other string are not used.
