@@ -355,7 +355,7 @@ def test_records_from_a_generator_set(tmp_path):
 
     class Reader:                                       # the SetReader interface write_manifest uses
         set_id, partition = "ss_toy_v1", "tune"
-        man = {"dataset": "hinet_2012", "fs": 100.0, "stations": [f"S{i}" for i in range(7)], "xyz": sta.tolist(),
+        man = {"dataset": "hinet_2012", "fs": 100.0, "catalogue_centroid": [1.0, -2.0], "stations": [f"S{i}" for i in range(7)], "xyz": sta.tolist(),
                "realisations": [{"label": "a", "partition": "tune", "block_index": 0, "r": 0},
                                 {"label": "b", "partition": "read", "block_index": 1, "r": 0}]}
 
@@ -376,10 +376,15 @@ def test_records_from_a_generator_set(tmp_path):
     paths = R.write_manifest(Reader(), str(tmp_path), annotate, log=lambda *_: None)
     recs = TU.load_manifest(paths["PhaseNet"], "phasenet+pyocto")
     assert [r.k for r in recs] == [4, 6] and all(r.partition == "tune" for r in recs)
+    assert [r.name for r in recs] == ["a__k4", "a__k6"] and recs[0].centroid == (1.0, -2.0)
     assert all(len(s) == r.k for r in recs for s in r.subsets if s is not None)
     assert recs[0].data["frame"].velocity.name.startswith("JMA2001")
     for w in ("original", "instance"):
         assert str(recs[0].data["prob"](w)).endswith(f"prob_a_PhaseNet_{w}.npz")
+    nocen = Reader()
+    nocen.man = {k: v for k, v in Reader.man.items() if k != "catalogue_centroid"}
+    with pytest.raises(KeyError):
+        R.write_manifest(nocen, str(tmp_path), annotate)
     bad = Reader()
     bad.partition = "read"
     with pytest.raises(ValueError):

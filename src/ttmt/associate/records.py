@@ -8,8 +8,10 @@ stations nearest the network centroid (``cells.station_subset``; the block cover
 the 70 s window around each origin inside the block), the realisation as the one bootstrap block (card, "Analysis":
 the block is an injected network realisation) and the partition label the generator wrote, never recomputed.
 
-The distance axis uses the centroid of the development catalogue (card, axis 4); here that is the epicentral centroid
-of the injected events of the tuning partition of the set, so that no reading realisation is opened.
+The distance axis uses the centroid of the network's development catalogue (card, axis 4), read from the set
+manifest's "catalogue_centroid"; a manifest without it is refused, never replaced by another centroid. Record names
+are the atlas run names (label__k<k>). Both follow ttmt.atlas.plan (run_name, catalogue_centroid), so tuning and the
+atlas share the same axes.
 """
 import json
 import os
@@ -21,6 +23,20 @@ from . import pickers
 
 VELOCITY = {"ridgecrest_2019": "hadley_kanamori", "hinet_2012": "jma2001"}
 TRUTH_FIELDS = ("id", "t", "xyz", "mag", "arr_t", "snr", "target", "pair", "kmec", "arr_t_obs")
+
+
+def run_name(label, k, variant=""):
+    """the atlas run name (ttmt.atlas.plan.run_name)."""
+    return f"{label}__k{k}" + (f"__{variant}" if variant else "")
+
+
+def catalogue_centroid(manifest):
+    """(x, y) local km of the development catalogue (ttmt.atlas.plan.catalogue_centroid); KeyError if absent."""
+    c = manifest.get("catalogue_centroid")
+    if c is None:
+        raise KeyError(f"manifest of {manifest.get('set_id')!r} has no catalogue_centroid (card item 4: distance to "
+                       "the centroid of the network's development catalogue)")
+    return tuple(map(float, c[:2]))
 
 
 def save_truth(path, truth):
@@ -62,10 +78,9 @@ def write_manifest(reader, out, annotate, pickers_=(("PhaseNet", "original"), ("
     os.makedirs(root, exist_ok=True)
     codes, sta_xyz, fs = list(man["stations"]), np.asarray(man["xyz"], float), float(man["fs"])
     ks = [k for k in C.STATION_COUNTS if k <= len(codes)]
+    centroid = catalogue_centroid(man)
     labels = list(reader)
     truths = {lab: reader.truth(lab) for lab in labels}
-    tgt = [t.xyz[t.target] for t in truths.values() if t.target is not None and t.target.any()]
-    centroid = C.centroid(np.concatenate(tgt)) if tgt else sta_xyz[:, :2].mean(axis=0)
     models = sorted({m for m, _w in pickers_})
     recs = {m: [] for m in models}
     real = {r["label"]: r for r in man["realisations"]}
@@ -83,7 +98,7 @@ def write_manifest(reader, out, annotate, pickers_=(("PhaseNet", "original"), ("
             sub = subsets_for(truth, sta_xyz, codes, k)
             for m in models:
                 recs[m].append({
-                    "name": f"{lab}_k{k}", "partition": r["partition"], "truth": f"truth_{lab}.npz", "k": k,
+                    "name": run_name(lab, k), "partition": r["partition"], "truth": f"truth_{lab}.npz", "k": k,
                     "stations": {"code": codes, "xyz": sta_xyz.tolist()},
                     "subsets": [None if s is None else s.tolist() for s in sub],
                     "centroid": [float(centroid[0]), float(centroid[1])],
