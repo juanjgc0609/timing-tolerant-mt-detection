@@ -12,7 +12,8 @@ Dated record of changes to the project's process, code and documents. Results ar
   the largest correlation with the atom library and the 4-station contamination variants. Seeds `ttmt.atlas.seeds.realisation_rng`
   and `library_rng` (ADR-0009 item 5; helpers ported from #19). Tuning/reading partition by a hash of the 300 s noise block (the records are one hour
   or less, so a hash of the hour cannot split them). Data card `data/cards/synth_v2.md`; validation
-  `tools/validate_synth.py`, report `results/synth_v2/README.md`.
+  `tools/validate_synth.py`, report `results/synth_v2/README.md`. `SetReader` refuses a set not seeded from the anchor
+  (`pre_anchor`) unless `allow_pre_anchor=True`.
 
 ## 2026-10-24
 

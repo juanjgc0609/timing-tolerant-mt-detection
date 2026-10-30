@@ -1,0 +1,5393 @@
+{
+ "set_id": "ss_ridgecrest_2019_egf_v1",
+ "generator": "ttmt.synth v2.0",
+ "dataset": "ridgecrest_2019",
+ "fs": 100.0,
+ "components": "E, N, Z up",
+ "stations": [
+  "CCC",
+  "CLC",
+  "JRC2",
+  "LRL",
+  "MPM",
+  "SLA",
+  "SRT",
+  "TOW2",
+  "WBM",
+  "WCS2",
+  "WRC2"
+ ],
+ "xyz": [
+  [
+   15.735940810994691,
+   -17.20771102880067,
+   0.0
+  ],
+  [
+   -5.306472501566847,
+   15.125229071199463,
+   0.0
+  ],
+  [
+   -24.39439262122066,
+   33.66616157119951,
+   0.0
+  ],
+  [
+   -12.948324121344527,
+   -22.25684892880032,
+   0.0
+  ],
+  [
+   4.4930890248005895,
+   42.0610065711993,
+   0.0
+  ],
+  [
+   23.070709396766482,
+   23.487828971199292,
+   0.0
+  ],
+  [
+   -19.125209031835833,
+   1.4054949711994023,
+   0.0
+  ],
+  [
+   -20.423086443208067,
+   14.326884871199665,
+   0.0
+  ],
+  [
+   -31.767998178939756,
+   -7.93001742880033,
+   0.0
+  ],
+  [
+   -20.457407488184547,
+   38.41619837119981,
+   0.0
+  ],
+  [
+   -10.081613680359494,
+   29.820099471199345,
+   0.0
+  ]
+ ],
+ "anchor": "ATLAS-0",
+ "pre_anchor": false,
+ "inject_config": {
+  "block_s": 300.0,
+  "group_dt": 40.0,
+  "first": 10.0,
+  "p_single": 0.3,
+  "p_self": 0.2,
+  "dist_bins": [
+   [
+    0.0,
+    1.0
+   ],
+   [
+    1.0,
+    5.0
+   ],
+   [
+    5.0,
+    15.0
+   ]
+  ],
+  "sep_bins": [
+   [
+    0.0,
+    0.1
+   ],
+   [
+    0.1,
+    0.5
+   ],
+   [
+    0.5,
+    1.0
+   ],
+   [
+    1.0,
+    3.0
+   ]
+  ],
+  "snr_range": [
+   3.0,
+   60.0
+  ],
+  "energy_ratio": [
+   1.0,
+   10.0,
+   100.0
+  ],
+  "timing_static_sd": 0.0,
+  "timing_event_sd": 0.0,
+  "max_egf_scale": 1.0,
+  "taper_s": 0.5
+ },
+ "inject_config_hash": "a2af3a6066f1f2a5",
+ "source_meta": {
+  "kind": "egf",
+  "n": 12,
+  "ids": [
+   "ridgecrest_2019:182.54",
+   "ridgecrest_2019:619.82",
+   "ridgecrest_2019:821.11",
+   "ridgecrest_2019:1913.92",
+   "ridgecrest_2019:2001.16",
+   "ridgecrest_2019:2058.65",
+   "ridgecrest_2019:2429.12",
+   "ridgecrest_2019:2604.57",
+   "ridgecrest_2019:3076.98",
+   "ridgecrest_2019:3159.41",
+   "ridgecrest_2019:3223.92",
+   "ridgecrest_2019:3257.09"
+  ],
+  "egf_blocks": [
+   0.0,
+   600.0,
+   1800.0,
+   2400.0,
+   3000.0
+  ],
+  "egf_kwargs": {},
+  "atoms": "realdata.template_candidates",
+  "n_atoms": 50
+ },
+ "partitions": {
+  "rule": "realdata.partition_blocks: sha256(dataset|block start|tune-read-v1) < 0.3 -> tune, at least one block per partition",
+  "tune": [
+   "ss_ridgecrest_2019_egf_v1_02100.0_000",
+   "ss_ridgecrest_2019_egf_v1_02100.0_001",
+   "ss_ridgecrest_2019_egf_v1_02100.0_002",
+   "ss_ridgecrest_2019_egf_v1_02100.0_003",
+   "ss_ridgecrest_2019_egf_v1_02100.0_004",
+   "ss_ridgecrest_2019_egf_v1_02100.0_005",
+   "ss_ridgecrest_2019_egf_v1_02100.0_006",
+   "ss_ridgecrest_2019_egf_v1_02100.0_007",
+   "ss_ridgecrest_2019_egf_v1_02100.0_008",
+   "ss_ridgecrest_2019_egf_v1_02100.0_009"
+  ],
+  "read": [
+   "ss_ridgecrest_2019_egf_v1_00300.0_000",
+   "ss_ridgecrest_2019_egf_v1_00300.0_001",
+   "ss_ridgecrest_2019_egf_v1_00300.0_002",
+   "ss_ridgecrest_2019_egf_v1_00300.0_003",
+   "ss_ridgecrest_2019_egf_v1_00300.0_004",
+   "ss_ridgecrest_2019_egf_v1_00300.0_005",
+   "ss_ridgecrest_2019_egf_v1_00300.0_006",
+   "ss_ridgecrest_2019_egf_v1_00300.0_007",
+   "ss_ridgecrest_2019_egf_v1_00300.0_008",
+   "ss_ridgecrest_2019_egf_v1_00300.0_009",
+   "ss_ridgecrest_2019_egf_v1_00900.0_000",
+   "ss_ridgecrest_2019_egf_v1_00900.0_001",
+   "ss_ridgecrest_2019_egf_v1_00900.0_002",
+   "ss_ridgecrest_2019_egf_v1_00900.0_003",
+   "ss_ridgecrest_2019_egf_v1_00900.0_004",
+   "ss_ridgecrest_2019_egf_v1_00900.0_005",
+   "ss_ridgecrest_2019_egf_v1_00900.0_006",
+   "ss_ridgecrest_2019_egf_v1_00900.0_007",
+   "ss_ridgecrest_2019_egf_v1_00900.0_008",
+   "ss_ridgecrest_2019_egf_v1_00900.0_009",
+   "ss_ridgecrest_2019_egf_v1_01200.0_000",
+   "ss_ridgecrest_2019_egf_v1_01200.0_001",
+   "ss_ridgecrest_2019_egf_v1_01200.0_002",
+   "ss_ridgecrest_2019_egf_v1_01200.0_003",
+   "ss_ridgecrest_2019_egf_v1_01200.0_004",
+   "ss_ridgecrest_2019_egf_v1_01200.0_005",
+   "ss_ridgecrest_2019_egf_v1_01200.0_006",
+   "ss_ridgecrest_2019_egf_v1_01200.0_007",
+   "ss_ridgecrest_2019_egf_v1_01200.0_008",
+   "ss_ridgecrest_2019_egf_v1_01200.0_009",
+   "ss_ridgecrest_2019_egf_v1_01500.0_000",
+   "ss_ridgecrest_2019_egf_v1_01500.0_001",
+   "ss_ridgecrest_2019_egf_v1_01500.0_002",
+   "ss_ridgecrest_2019_egf_v1_01500.0_003",
+   "ss_ridgecrest_2019_egf_v1_01500.0_004",
+   "ss_ridgecrest_2019_egf_v1_01500.0_005",
+   "ss_ridgecrest_2019_egf_v1_01500.0_006",
+   "ss_ridgecrest_2019_egf_v1_01500.0_007",
+   "ss_ridgecrest_2019_egf_v1_01500.0_008",
+   "ss_ridgecrest_2019_egf_v1_01500.0_009",
+   "ss_ridgecrest_2019_egf_v1_02700.0_000",
+   "ss_ridgecrest_2019_egf_v1_02700.0_001",
+   "ss_ridgecrest_2019_egf_v1_02700.0_002",
+   "ss_ridgecrest_2019_egf_v1_02700.0_003",
+   "ss_ridgecrest_2019_egf_v1_02700.0_004",
+   "ss_ridgecrest_2019_egf_v1_02700.0_005",
+   "ss_ridgecrest_2019_egf_v1_02700.0_006",
+   "ss_ridgecrest_2019_egf_v1_02700.0_007",
+   "ss_ridgecrest_2019_egf_v1_02700.0_008",
+   "ss_ridgecrest_2019_egf_v1_02700.0_009",
+   "ss_ridgecrest_2019_egf_v1_03300.0_000",
+   "ss_ridgecrest_2019_egf_v1_03300.0_001",
+   "ss_ridgecrest_2019_egf_v1_03300.0_002",
+   "ss_ridgecrest_2019_egf_v1_03300.0_003",
+   "ss_ridgecrest_2019_egf_v1_03300.0_004",
+   "ss_ridgecrest_2019_egf_v1_03300.0_005",
+   "ss_ridgecrest_2019_egf_v1_03300.0_006",
+   "ss_ridgecrest_2019_egf_v1_03300.0_007",
+   "ss_ridgecrest_2019_egf_v1_03300.0_008",
+   "ss_ridgecrest_2019_egf_v1_03300.0_009"
+  ]
+ },
+ "realisations": [
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00300.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 1,
+   "r": 0,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    300.0,
+    600.0
+   ],
+   "partition": "read",
+   "noise": "noise_00300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00300.0_000.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00300.0_000.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      6
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      7,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      7,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00300.0_001",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 1,
+   "r": 1,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    300.0,
+    600.0
+   ],
+   "partition": "read",
+   "noise": "noise_00300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00300.0_001.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00300.0_001.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      1
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 8,
+   "n_pairs": 1
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00300.0_002",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 1,
+   "r": 2,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    300.0,
+    600.0
+   ],
+   "partition": "read",
+   "noise": "noise_00300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00300.0_002.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00300.0_002.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      6
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      6,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 11,
+   "n_pairs": 4
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00300.0_003",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 1,
+   "r": 3,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    300.0,
+    600.0
+   ],
+   "partition": "read",
+   "noise": "noise_00300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00300.0_003.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00300.0_003.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      7
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      7,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00300.0_004",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 1,
+   "r": 4,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    300.0,
+    600.0
+   ],
+   "partition": "read",
+   "noise": "noise_00300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00300.0_004.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00300.0_004.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      6,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 11,
+   "n_pairs": 4
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00300.0_005",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 1,
+   "r": 5,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    300.0,
+    600.0
+   ],
+   "partition": "read",
+   "noise": "noise_00300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00300.0_005.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00300.0_005.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      7
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00300.0_006",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 1,
+   "r": 6,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    300.0,
+    600.0
+   ],
+   "partition": "read",
+   "noise": "noise_00300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00300.0_006.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00300.0_006.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      1
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      6,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 11,
+   "n_pairs": 4
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00300.0_007",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 1,
+   "r": 7,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    300.0,
+    600.0
+   ],
+   "partition": "read",
+   "noise": "noise_00300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00300.0_007.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00300.0_007.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      7
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      6,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 13,
+   "n_pairs": 6
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00300.0_008",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 1,
+   "r": 8,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    300.0,
+    600.0
+   ],
+   "partition": "read",
+   "noise": "noise_00300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00300.0_008.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00300.0_008.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      1
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      6
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 11,
+   "n_pairs": 4
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00300.0_009",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 1,
+   "r": 9,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    300.0,
+    600.0
+   ],
+   "partition": "read",
+   "noise": "noise_00300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00300.0_009.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00300.0_009.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 13,
+   "n_pairs": 6
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00900.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 3,
+   "r": 0,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    900.0,
+    1200.0
+   ],
+   "partition": "read",
+   "noise": "noise_00900.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00900.0_000.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00900.0_000.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      6,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00900.0_001",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 3,
+   "r": 1,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    900.0,
+    1200.0
+   ],
+   "partition": "read",
+   "noise": "noise_00900.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00900.0_001.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00900.0_001.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      6
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 11,
+   "n_pairs": 4
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00900.0_002",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 3,
+   "r": 2,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    900.0,
+    1200.0
+   ],
+   "partition": "read",
+   "noise": "noise_00900.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00900.0_002.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00900.0_002.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      6,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 13,
+   "n_pairs": 6
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00900.0_003",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 3,
+   "r": 3,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    900.0,
+    1200.0
+   ],
+   "partition": "read",
+   "noise": "noise_00900.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00900.0_003.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00900.0_003.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      1
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      6,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 13,
+   "n_pairs": 6
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00900.0_004",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 3,
+   "r": 4,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    900.0,
+    1200.0
+   ],
+   "partition": "read",
+   "noise": "noise_00900.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00900.0_004.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00900.0_004.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      1
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00900.0_005",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 3,
+   "r": 5,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    900.0,
+    1200.0
+   ],
+   "partition": "read",
+   "noise": "noise_00900.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00900.0_005.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00900.0_005.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      6
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00900.0_006",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 3,
+   "r": 6,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    900.0,
+    1200.0
+   ],
+   "partition": "read",
+   "noise": "noise_00900.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00900.0_006.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00900.0_006.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      6
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      7,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 13,
+   "n_pairs": 6
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00900.0_007",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 3,
+   "r": 7,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    900.0,
+    1200.0
+   ],
+   "partition": "read",
+   "noise": "noise_00900.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00900.0_007.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00900.0_007.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      7
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      6,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 9,
+   "n_pairs": 2
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00900.0_008",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 3,
+   "r": 8,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    900.0,
+    1200.0
+   ],
+   "partition": "read",
+   "noise": "noise_00900.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00900.0_008.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00900.0_008.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      6
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      7,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      7,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 13,
+   "n_pairs": 6
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_00900.0_009",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 3,
+   "r": 9,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    900.0,
+    1200.0
+   ],
+   "partition": "read",
+   "noise": "noise_00900.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_00900.0_009.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_00900.0_009.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      6,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      6
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01200.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 4,
+   "r": 0,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1200.0,
+    1500.0
+   ],
+   "partition": "read",
+   "noise": "noise_01200.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01200.0_000.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01200.0_000.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      6
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01200.0_001",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 4,
+   "r": 1,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1200.0,
+    1500.0
+   ],
+   "partition": "read",
+   "noise": "noise_01200.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01200.0_001.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01200.0_001.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      6
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      7,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 9,
+   "n_pairs": 2
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01200.0_002",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 4,
+   "r": 2,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1200.0,
+    1500.0
+   ],
+   "partition": "read",
+   "noise": "noise_01200.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01200.0_002.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01200.0_002.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      6
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      6,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      6
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01200.0_003",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 4,
+   "r": 3,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1200.0,
+    1500.0
+   ],
+   "partition": "read",
+   "noise": "noise_01200.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01200.0_003.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01200.0_003.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 13,
+   "n_pairs": 6
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01200.0_004",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 4,
+   "r": 4,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1200.0,
+    1500.0
+   ],
+   "partition": "read",
+   "noise": "noise_01200.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01200.0_004.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01200.0_004.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01200.0_005",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 4,
+   "r": 5,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1200.0,
+    1500.0
+   ],
+   "partition": "read",
+   "noise": "noise_01200.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01200.0_005.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01200.0_005.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 13,
+   "n_pairs": 6
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01200.0_006",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 4,
+   "r": 6,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1200.0,
+    1500.0
+   ],
+   "partition": "read",
+   "noise": "noise_01200.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01200.0_006.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01200.0_006.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      6
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01200.0_007",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 4,
+   "r": 7,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1200.0,
+    1500.0
+   ],
+   "partition": "read",
+   "noise": "noise_01200.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01200.0_007.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01200.0_007.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      7
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 13,
+   "n_pairs": 6
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01200.0_008",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 4,
+   "r": 8,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1200.0,
+    1500.0
+   ],
+   "partition": "read",
+   "noise": "noise_01200.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01200.0_008.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01200.0_008.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      6
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      7,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01200.0_009",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 4,
+   "r": 9,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1200.0,
+    1500.0
+   ],
+   "partition": "read",
+   "noise": "noise_01200.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01200.0_009.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01200.0_009.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      7,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 11,
+   "n_pairs": 4
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01500.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 5,
+   "r": 0,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1500.0,
+    1800.0
+   ],
+   "partition": "read",
+   "noise": "noise_01500.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01500.0_000.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01500.0_000.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      7
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      6
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01500.0_001",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 5,
+   "r": 1,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1500.0,
+    1800.0
+   ],
+   "partition": "read",
+   "noise": "noise_01500.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01500.0_001.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01500.0_001.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      1
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      6,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 10,
+   "n_pairs": 3
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01500.0_002",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 5,
+   "r": 2,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1500.0,
+    1800.0
+   ],
+   "partition": "read",
+   "noise": "noise_01500.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01500.0_002.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01500.0_002.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      7,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      6
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 10,
+   "n_pairs": 3
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01500.0_003",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 5,
+   "r": 3,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1500.0,
+    1800.0
+   ],
+   "partition": "read",
+   "noise": "noise_01500.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01500.0_003.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01500.0_003.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      7
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      6,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 10,
+   "n_pairs": 3
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01500.0_004",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 5,
+   "r": 4,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1500.0,
+    1800.0
+   ],
+   "partition": "read",
+   "noise": "noise_01500.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01500.0_004.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01500.0_004.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      7
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 11,
+   "n_pairs": 4
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01500.0_005",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 5,
+   "r": 5,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1500.0,
+    1800.0
+   ],
+   "partition": "read",
+   "noise": "noise_01500.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01500.0_005.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01500.0_005.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01500.0_006",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 5,
+   "r": 6,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1500.0,
+    1800.0
+   ],
+   "partition": "read",
+   "noise": "noise_01500.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01500.0_006.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01500.0_006.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      6
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      7,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 13,
+   "n_pairs": 6
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01500.0_007",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 5,
+   "r": 7,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1500.0,
+    1800.0
+   ],
+   "partition": "read",
+   "noise": "noise_01500.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01500.0_007.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01500.0_007.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      7
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      6
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 11,
+   "n_pairs": 4
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01500.0_008",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 5,
+   "r": 8,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1500.0,
+    1800.0
+   ],
+   "partition": "read",
+   "noise": "noise_01500.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01500.0_008.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01500.0_008.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      7
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_01500.0_009",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 5,
+   "r": 9,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    1500.0,
+    1800.0
+   ],
+   "partition": "read",
+   "noise": "noise_01500.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_01500.0_009.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_01500.0_009.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      7
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 13,
+   "n_pairs": 6
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 7,
+   "r": 0,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2100.0,
+    2400.0
+   ],
+   "partition": "tune",
+   "noise": "noise_02100.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02100.0_000.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02100.0_000.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      6
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      6
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_001",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 7,
+   "r": 1,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2100.0,
+    2400.0
+   ],
+   "partition": "tune",
+   "noise": "noise_02100.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02100.0_001.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02100.0_001.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      7
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      7,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      7,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 11,
+   "n_pairs": 4
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_002",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 7,
+   "r": 2,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2100.0,
+    2400.0
+   ],
+   "partition": "tune",
+   "noise": "noise_02100.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02100.0_002.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02100.0_002.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 13,
+   "n_pairs": 6
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_003",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 7,
+   "r": 3,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2100.0,
+    2400.0
+   ],
+   "partition": "tune",
+   "noise": "noise_02100.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02100.0_003.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02100.0_003.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_004",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 7,
+   "r": 4,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2100.0,
+    2400.0
+   ],
+   "partition": "tune",
+   "noise": "noise_02100.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02100.0_004.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02100.0_004.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 11,
+   "n_pairs": 4
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_005",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 7,
+   "r": 5,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2100.0,
+    2400.0
+   ],
+   "partition": "tune",
+   "noise": "noise_02100.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02100.0_005.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02100.0_005.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      1
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_006",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 7,
+   "r": 6,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2100.0,
+    2400.0
+   ],
+   "partition": "tune",
+   "noise": "noise_02100.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02100.0_006.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02100.0_006.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      6
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_007",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 7,
+   "r": 7,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2100.0,
+    2400.0
+   ],
+   "partition": "tune",
+   "noise": "noise_02100.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02100.0_007.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02100.0_007.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      6,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 14,
+   "n_pairs": 7
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_008",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 7,
+   "r": 8,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2100.0,
+    2400.0
+   ],
+   "partition": "tune",
+   "noise": "noise_02100.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02100.0_008.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02100.0_008.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      7,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 10,
+   "n_pairs": 3
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_009",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 7,
+   "r": 9,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2100.0,
+    2400.0
+   ],
+   "partition": "tune",
+   "noise": "noise_02100.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02100.0_009.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02100.0_009.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      6
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 11,
+   "n_pairs": 4
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02700.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 9,
+   "r": 0,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2700.0,
+    3000.0
+   ],
+   "partition": "read",
+   "noise": "noise_02700.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02700.0_000.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02700.0_000.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      1
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      7,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02700.0_001",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 9,
+   "r": 1,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2700.0,
+    3000.0
+   ],
+   "partition": "read",
+   "noise": "noise_02700.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02700.0_001.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02700.0_001.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      1
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02700.0_002",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 9,
+   "r": 2,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2700.0,
+    3000.0
+   ],
+   "partition": "read",
+   "noise": "noise_02700.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02700.0_002.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02700.0_002.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      7
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02700.0_003",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 9,
+   "r": 3,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2700.0,
+    3000.0
+   ],
+   "partition": "read",
+   "noise": "noise_02700.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02700.0_003.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02700.0_003.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 13,
+   "n_pairs": 6
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02700.0_004",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 9,
+   "r": 4,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2700.0,
+    3000.0
+   ],
+   "partition": "read",
+   "noise": "noise_02700.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02700.0_004.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02700.0_004.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      7,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02700.0_005",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 9,
+   "r": 5,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2700.0,
+    3000.0
+   ],
+   "partition": "read",
+   "noise": "noise_02700.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02700.0_005.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02700.0_005.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 11,
+   "n_pairs": 4
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02700.0_006",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 9,
+   "r": 6,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2700.0,
+    3000.0
+   ],
+   "partition": "read",
+   "noise": "noise_02700.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02700.0_006.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02700.0_006.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      1
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      6,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 11,
+   "n_pairs": 4
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02700.0_007",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 9,
+   "r": 7,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2700.0,
+    3000.0
+   ],
+   "partition": "read",
+   "noise": "noise_02700.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02700.0_007.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02700.0_007.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 13,
+   "n_pairs": 6
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02700.0_008",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 9,
+   "r": 8,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2700.0,
+    3000.0
+   ],
+   "partition": "read",
+   "noise": "noise_02700.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02700.0_008.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02700.0_008.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      1
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      1
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      7,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_02700.0_009",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 9,
+   "r": 9,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    2700.0,
+    3000.0
+   ],
+   "partition": "read",
+   "noise": "noise_02700.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_02700.0_009.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_02700.0_009.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      6
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      7,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 13,
+   "n_pairs": 6
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_03300.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 11,
+   "r": 0,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    3300.0,
+    3600.0
+   ],
+   "partition": "read",
+   "noise": "noise_03300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_03300.0_000.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_03300.0_000.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      7
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      7,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      7,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_03300.0_001",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 11,
+   "r": 1,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    3300.0,
+    3600.0
+   ],
+   "partition": "read",
+   "noise": "noise_03300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_03300.0_001.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_03300.0_001.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      1
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_03300.0_002",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 11,
+   "r": 2,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    3300.0,
+    3600.0
+   ],
+   "partition": "read",
+   "noise": "noise_03300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_03300.0_002.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_03300.0_002.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      1
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 14,
+   "n_pairs": 7
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_03300.0_003",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 11,
+   "r": 3,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    3300.0,
+    3600.0
+   ],
+   "partition": "read",
+   "noise": "noise_03300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_03300.0_003.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_03300.0_003.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      7
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      7,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      6,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 13,
+   "n_pairs": 6
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_03300.0_004",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 11,
+   "r": 4,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    3300.0,
+    3600.0
+   ],
+   "partition": "read",
+   "noise": "noise_03300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_03300.0_004.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_03300.0_004.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      7
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 10,
+   "n_pairs": 3
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_03300.0_005",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 11,
+   "r": 5,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    3300.0,
+    3600.0
+   ],
+   "partition": "read",
+   "noise": "noise_03300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_03300.0_005.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_03300.0_005.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      10
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      7,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 11,
+   "n_pairs": 4
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_03300.0_006",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 11,
+   "r": 6,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    3300.0,
+    3600.0
+   ],
+   "partition": "read",
+   "noise": "noise_03300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_03300.0_006.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_03300.0_006.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      6
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      6
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 12,
+   "n_pairs": 5
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_03300.0_007",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 11,
+   "r": 7,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    3300.0,
+    3600.0
+   ],
+   "partition": "read",
+   "noise": "noise_03300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_03300.0_007.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_03300.0_007.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      1
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      7,
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      6
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 14,
+   "n_pairs": 7
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_03300.0_008",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 11,
+   "r": 8,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    3300.0,
+    3600.0
+   ],
+   "partition": "read",
+   "noise": "noise_03300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_03300.0_008.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_03300.0_008.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      10
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      1
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      7
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 13,
+   "n_pairs": 6
+  },
+  {
+   "label": "ss_ridgecrest_2019_egf_v1_03300.0_009",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "block_index": 11,
+   "r": 9,
+   "master_seed_hex": "8e1a8d5630dc0d52",
+   "streams": [
+    "inject",
+    "subset"
+   ],
+   "block": [
+    3300.0,
+    3600.0
+   ],
+   "partition": "read",
+   "noise": "noise_03300.0.npz",
+   "sig": "sig_ss_ridgecrest_2019_egf_v1_03300.0_009.npz",
+   "truth": "truth_ss_ridgecrest_2019_egf_v1_03300.0_009.json",
+   "variants": [
+    [
+     "x3_1sta",
+     [
+      6
+     ],
+     3.0
+    ],
+    [
+     "x10_1sta",
+     [
+      6
+     ],
+     10.0
+    ],
+    [
+     "x3_2sta",
+     [
+      1,
+      7
+     ],
+     3.0
+    ],
+    [
+     "x10_2sta",
+     [
+      1,
+      10
+     ],
+     10.0
+    ]
+   ],
+   "n_targets": 13,
+   "n_pairs": 6
+  }
+ ],
+ "files": {
+  "noise_00300.0.npz": {
+   "sha256": "5181c2d9a3dbe2abe35abff1211f1cb542528377455a67c4520243eb546f2e2d",
+   "fingerprint": [
+    8.49245206440544e-07,
+    3.9049957078074816e-07,
+    1.4690889872903311e-07,
+    6.799276465326307e-07,
+    5.273612949326192e-08,
+    1.8171881443688448e-07,
+    2.9584243497365365e-07,
+    3.688405559168715e-07,
+    1.4147824880935567e-07,
+    1.4946984978934305e-07,
+    3.0480056047221255e-07
+   ]
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00300.0_000.npz": {
+   "sha256": "19fb704adf8a9424b9760f89aa7ffc10fa359a65de9ec1dea52f54b6593f5592",
+   "fingerprint": [
+    7.1113518830147674e-06,
+    5.9544687957891144e-06,
+    1.422664452013262e-06,
+    3.053032608521506e-06,
+    2.5816772009860255e-07,
+    4.978729571082679e-06,
+    1.0361543840298402e-05,
+    6.429847802538202e-06,
+    4.19750297650819e-06,
+    1.1467919184803554e-06,
+    8.855173421545983e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00300.0_000.json": {
+   "sha256": "1059557d6ffa657bf1e346238ac7eb5a862a8d309cec1f84491151860f82c704"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00300.0_001.npz": {
+   "sha256": "150a3eb283e3f606d47e4a12f7a6c7cbe91b066bd56d48cfb243264dbefeb746",
+   "fingerprint": [
+    1.0408302814746081e-06,
+    8.545496099581196e-07,
+    3.6406650419632935e-07,
+    7.04855662581169e-07,
+    2.271839779484505e-08,
+    4.6947119912686017e-07,
+    7.666269611069732e-07,
+    9.907663699710646e-07,
+    1.791760986337672e-07,
+    3.213344222359509e-07,
+    1.1094611503480344e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00300.0_001.json": {
+   "sha256": "3b2adccf10ac62c325cb15a3f697877e08ab3fa8b0caa75b6ae82c4ef61c5aa1"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00300.0_002.npz": {
+   "sha256": "879e48c3807f5fd6fd0406472b6d3c80afc49889469a3b4b63d0b1b71ec0d370",
+   "fingerprint": [
+    1.3359385370823895e-06,
+    3.5442723068726166e-07,
+    2.784035564645108e-07,
+    7.69505684640353e-07,
+    5.3781098141413006e-08,
+    3.5843394891147806e-07,
+    1.2986636845480783e-06,
+    8.96413211328599e-07,
+    3.3281400030541343e-07,
+    2.3560150730749523e-07,
+    8.379569885866413e-07
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00300.0_002.json": {
+   "sha256": "3fa4031a7beb53d5619366c2e6adeb50283a540c9b6660e6f6b81afe27fa514a"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00300.0_003.npz": {
+   "sha256": "6763cef9c65994cf0fc130fc6c4418a68ef5d55479490cfac0f28a2319c4bbf0",
+   "fingerprint": [
+    4.358347586865048e-06,
+    3.3238283745946714e-06,
+    8.879388906957503e-07,
+    1.678979815441056e-06,
+    1.523732569177751e-07,
+    1.7263358637027606e-06,
+    6.845251940280466e-06,
+    3.924610048205042e-06,
+    2.3197120384209667e-06,
+    6.66649420004948e-07,
+    5.079428093226469e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00300.0_003.json": {
+   "sha256": "098b0ccb9e45c0e99b42e79808040c5d6f4beb78614ac239d8f87ea52ea8b3c1"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00300.0_004.npz": {
+   "sha256": "fb523fbec151d548e943cc220c9af7594a7ab25daa2ef71b57e30195d0253ede",
+   "fingerprint": [
+    4.923360485301913e-07,
+    3.793556762894941e-07,
+    1.5773146673595429e-07,
+    3.5859124981886684e-07,
+    2.105844060747389e-08,
+    1.7243111885254525e-07,
+    4.1620234992488187e-07,
+    4.6801848725213476e-07,
+    8.9146806639816e-08,
+    1.364594422366756e-07,
+    4.6548692563589213e-07
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00300.0_004.json": {
+   "sha256": "c176d7332521f977c4138ca5de2d320c509b05dc0cea849bc1949d43a4476c50"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00300.0_005.npz": {
+   "sha256": "14f3d232c8740ee94b17ef45170f27dfaec702e63eb90fa074bc85ef4b95ed79",
+   "fingerprint": [
+    2.713325616437489e-06,
+    1.6125859671845618e-06,
+    4.835873821052913e-07,
+    1.055337619253389e-06,
+    7.773669973234713e-08,
+    9.73953917709483e-07,
+    3.3577437362951447e-06,
+    1.997020309461257e-06,
+    1.1336676048477617e-06,
+    3.5606950693944397e-07,
+    2.438641278325384e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00300.0_005.json": {
+   "sha256": "e4c9f8d8ed746a8906d249bb968999ff1a45ec9ee2f07c139350fb035056fb96"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00300.0_006.npz": {
+   "sha256": "435184df131f762f62b19f0fdc05f1a42743f3814b1d27529b31315361c6a2ce",
+   "fingerprint": [
+    2.0154481139478093e-06,
+    1.8503324245556007e-06,
+    7.155982916183331e-07,
+    1.297882212259621e-06,
+    7.640358429130348e-08,
+    1.075114112082767e-06,
+    2.1724784363265885e-06,
+    2.323672626613157e-06,
+    5.062732118460253e-07,
+    7.091512358943572e-07,
+    2.5279414713792647e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00300.0_006.json": {
+   "sha256": "ddaf8722858cea4b9dafa83b9e0d2ae66bb056a456311e20c281b3af2aeeabd8"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00300.0_007.npz": {
+   "sha256": "870438c5c3414767c2dd70d23a8048eab96906255ae2bf430b1f27cfb71efcc8",
+   "fingerprint": [
+    2.094226307955252e-06,
+    1.2196494626180643e-06,
+    5.426152084881187e-07,
+    1.146231270097451e-06,
+    4.4574308220021584e-08,
+    8.460260869902508e-07,
+    1.109175931136087e-06,
+    1.618302894546815e-06,
+    2.2135005359358008e-07,
+    5.27086046463166e-07,
+    1.371252113474809e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00300.0_007.json": {
+   "sha256": "bdfe46f31c27473cefa480652bf48c64853a3dd9f112c91f94d987cf634c8159"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00300.0_008.npz": {
+   "sha256": "6f0b924255c5fdf0ea16dcd5dc438d4fcdb48e03f34de471bdda9ee375f744ef",
+   "fingerprint": [
+    4.69633625706854e-06,
+    1.7659618585986003e-06,
+    6.986930247913011e-07,
+    2.609402123954162e-06,
+    7.330459738605554e-08,
+    2.630852750731042e-06,
+    1.91557141654779e-06,
+    2.726454293581945e-06,
+    6.909828304699631e-07,
+    6.441715841420873e-07,
+    3.027956846267805e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00300.0_008.json": {
+   "sha256": "3b3e92ec74fae2547f6d2c95046ef6b6b4cba46e14c42880f9e037da02b2854d"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00300.0_009.npz": {
+   "sha256": "f828c8ffb386f06f3b3ef5900584c63f78efa65d2600948aa0ce5ecdcb888b4a",
+   "fingerprint": [
+    3.358457656479998e-07,
+    2.6998003926297405e-07,
+    8.140143787370807e-08,
+    2.2490152326403505e-07,
+    1.5178735448719808e-08,
+    1.329772365015777e-07,
+    3.129255308147139e-07,
+    3.1528402217487406e-07,
+    8.141684211333611e-08,
+    7.073415112447441e-08,
+    2.575987290065692e-07
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00300.0_009.json": {
+   "sha256": "7b3a4c95560eedc37a82cd7fef7f4dddeed8d22a4aeb0e59edbd20d05666c59b"
+  },
+  "noise_00900.0.npz": {
+   "sha256": "cc45831635138894f82b96d216b3464237774bcdbbb2e3bc4038fd0e13b6fb47",
+   "fingerprint": [
+    1.5441649160626983e-05,
+    4.846532316198641e-06,
+    2.619890974282145e-06,
+    9.913695604930366e-06,
+    2.547816296664647e-07,
+    5.012940062284103e-06,
+    9.498203395719185e-06,
+    1.4469266090133404e-05,
+    3.324075645490045e-06,
+    1.967196706049051e-06,
+    8.079257398448953e-06
+   ]
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00900.0_000.npz": {
+   "sha256": "e77f6150446dd2f8b33285d0f9c3c9252a3b53250a9e436bf5262c6ae728a0bd",
+   "fingerprint": [
+    5.105887741919035e-07,
+    6.311096202478102e-07,
+    1.807236207190557e-07,
+    3.217621128786311e-07,
+    2.8570166641511692e-08,
+    3.04176147156648e-07,
+    7.508114438383562e-07,
+    5.878024691895299e-07,
+    2.7978598864803605e-07,
+    1.445444170187086e-07,
+    7.070762441210977e-07
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00900.0_000.json": {
+   "sha256": "ce6c0066d55fe6c217d92eaed205b9230a86faad9030a477205d0098b9c91ddf"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00900.0_001.npz": {
+   "sha256": "6c0bb098115c996d872752660f17bb2eadb4109e741e7defef75a83908d0363d",
+   "fingerprint": [
+    1.684409497002422e-05,
+    3.819595855008541e-06,
+    2.023922739343835e-06,
+    9.572281474251612e-06,
+    3.2725889649927404e-07,
+    1.2221633566995732e-05,
+    5.353361350863052e-06,
+    8.232329181388833e-06,
+    3.2382170933389955e-06,
+    1.8879901541283554e-06,
+    9.590097125364574e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00900.0_001.json": {
+   "sha256": "9822d90985c15fe3422a6cd832b556f3d9963071469bdfdeeb969e5579fa7bd5"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00900.0_002.npz": {
+   "sha256": "574ebd8fa048488585c862961c23022bade4f90261b6fcfa421e7e86c3b9df26",
+   "fingerprint": [
+    1.753928594075913e-05,
+    4.032648512804383e-06,
+    2.3427879036782384e-06,
+    1.0374676425730679e-05,
+    3.3416131502541954e-07,
+    1.2947065148720198e-05,
+    4.653718408453789e-06,
+    8.711765345157699e-06,
+    2.9740982710776287e-06,
+    2.201856081835412e-06,
+    9.920811548356912e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00900.0_002.json": {
+   "sha256": "3a5d0f18e02a99fa2fde07a94ca5dae8753d8e6b15e9f9bd6ad6809ba870c483"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00900.0_003.npz": {
+   "sha256": "6636d01ede090d7850b305b4227ecae201e2105d93a1e70d5794ee101e85f216",
+   "fingerprint": [
+    2.691725662928044e-06,
+    7.191148066102286e-07,
+    3.9690984479005335e-07,
+    1.2994124600277635e-06,
+    7.004654508878424e-08,
+    6.338316809927227e-07,
+    2.7908310282494194e-06,
+    1.634216208519931e-06,
+    6.862114318037052e-07,
+    3.084549079302872e-07,
+    1.7217560415423083e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00900.0_003.json": {
+   "sha256": "95d986041213c3f404133e6105b39f1e0d8894374fc8a6382176f84fae03e4cd"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00900.0_004.npz": {
+   "sha256": "592d56cbad37f8e359eb9ebffd7947f7f32e13b6b84653f311ccf02fd06765c5",
+   "fingerprint": [
+    3.6591431753241666e-06,
+    1.2924472838917281e-06,
+    6.6861883855332e-07,
+    2.1269107124422226e-06,
+    1.0543411474651157e-07,
+    1.9375889452153263e-06,
+    2.305213100876599e-06,
+    2.453612248787031e-06,
+    6.752814201031676e-07,
+    6.10714123599276e-07,
+    2.426172752275064e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00900.0_004.json": {
+   "sha256": "0403775e57acb1fdd8196f969515629b1ac75ba4a4da2f97644a9b87c358141f"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00900.0_005.npz": {
+   "sha256": "361c59484c9e54c941e5a99a15dd94331b21b1f5458c23a5d5badc9442a2e54b",
+   "fingerprint": [
+    6.996785806650077e-06,
+    1.5815786965131343e-06,
+    9.380418224670938e-07,
+    4.143893217644454e-06,
+    1.6173787585935782e-07,
+    4.833478547386036e-06,
+    2.4498279978148902e-06,
+    3.5322807276801904e-06,
+    1.2838870187360486e-06,
+    8.616742596473129e-07,
+    3.9071925439098805e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00900.0_005.json": {
+   "sha256": "6725213973ff5d9c3d0455c44bf37f014fbf22d9740b1e84d51299d02336eed8"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00900.0_006.npz": {
+   "sha256": "aedf7ae6256da028a9f4b83b1340ea8057e481b1a4e4758ab086de1dedbdc209",
+   "fingerprint": [
+    3.3017433557355774e-05,
+    8.786082277977966e-06,
+    4.209977350752165e-06,
+    1.8953683320857088e-05,
+    6.366391492012724e-07,
+    2.5285666080570324e-05,
+    1.0690017115407434e-05,
+    1.680534801590626e-05,
+    6.779533806381416e-06,
+    3.868818880502446e-06,
+    2.020903561977624e-05
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00900.0_006.json": {
+   "sha256": "9c830a3a65ea2deefe53af32f4f2c40542ea3b7be083fe61971467bd48e82733"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00900.0_007.npz": {
+   "sha256": "699293a3d33e8ec3693803896a4b758a4896cb37c907cdb219fd4173eefcec8c",
+   "fingerprint": [
+    1.364090802253266e-05,
+    2.0371292391111186e-05,
+    3.926524538118735e-06,
+    3.524352696703804e-06,
+    6.889341816959112e-07,
+    9.638701995524141e-06,
+    3.664217406525069e-05,
+    1.8895534117328532e-05,
+    1.4342672434536038e-05,
+    2.6683066666723923e-06,
+    2.879791482306864e-05
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00900.0_007.json": {
+   "sha256": "411c5c8cfeeb5d0b535f224b0306f45d8adf4e5f46281ff4684beb456e0cc2ea"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00900.0_008.npz": {
+   "sha256": "9d5f7ad77aa4580b18bba296fe87aba96201e8c053a76b5764a554f83dfe0a1e",
+   "fingerprint": [
+    1.6381841145740057e-05,
+    2.348199051094865e-05,
+    4.604951035057553e-06,
+    4.227419705895988e-06,
+    8.245738841255204e-07,
+    1.1332174029081159e-05,
+    4.3000846801226316e-05,
+    2.2045712583453723e-05,
+    1.6882744501019365e-05,
+    3.1399547926030713e-06,
+    3.3494531991259775e-05
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00900.0_008.json": {
+   "sha256": "5537ab15abc302e88291cb799614a87341d390c83a1d8554d3848cdbfe60bdcd"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_00900.0_009.npz": {
+   "sha256": "d6cb0b0e83c4ce2d62ffdff5133e769b4c02cc4ef1419f03da2d0f1d81eadaf9",
+   "fingerprint": [
+    4.158533533660286e-05,
+    1.6643464310146395e-05,
+    5.535321847181635e-06,
+    2.0156901646885895e-05,
+    9.96101252293623e-07,
+    2.9961831940892726e-05,
+    2.6806512646419222e-05,
+    2.5721779048294113e-05,
+    1.348114557699622e-05,
+    4.670196038085073e-06,
+    3.2500993685681506e-05
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_00900.0_009.json": {
+   "sha256": "0e2ef841209a1d1529d50005ca9495579e1f4fb239321f6df960cad687c8b770"
+  },
+  "noise_01200.0.npz": {
+   "sha256": "2324b34ac3649e6ebccc80bf2778872db6467a69d85cee82dc672f86ecd12aca",
+   "fingerprint": [
+    0.011753282446281032,
+    0.001149420813487489,
+    0.0012790168704436846,
+    0.0010767574916681927,
+    0.0003513346101875245,
+    0.001957160946142386,
+    0.00478182360797363,
+    0.005254655616159353,
+    0.0008298689705904436,
+    0.0006351165948467779,
+    0.006878561401308577
+   ]
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01200.0_000.npz": {
+   "sha256": "4f78a3e980ec0098dfc7cdbbe06db9670502b6a86834162b8d03d83429a5e3cf",
+   "fingerprint": [
+    1.213092003474034e-06,
+    9.751403222067226e-07,
+    4.092028531052912e-07,
+    8.132487698790359e-07,
+    2.726135608662861e-08,
+    4.696706046716238e-07,
+    7.920861132320484e-07,
+    1.0918299376555727e-06,
+    1.6882351646623163e-07,
+    3.649904668452225e-07,
+    1.1380574210180128e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01200.0_000.json": {
+   "sha256": "4d851e8c050bb02643090e8f2f50bf3465d6ee6089854089cebe0121762d398e"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01200.0_001.npz": {
+   "sha256": "9522a1a96b9eaf397e3252bac320faefdec8a2b1dc3b4f27315d5b8de002f8f5",
+   "fingerprint": [
+    1.3526469194063751e-05,
+    1.9778421064584623e-05,
+    3.894696806423712e-06,
+    3.5938188166648123e-06,
+    6.93485710270688e-07,
+    9.457898538268477e-06,
+    3.605879407011892e-05,
+    1.8555407071323075e-05,
+    1.4064985836914026e-05,
+    2.6727781282771796e-06,
+    2.819994509935218e-05
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01200.0_001.json": {
+   "sha256": "152056da0fd2d4ea17c56d24f63f487aa0e42746b79fb941ab433f2e70777169"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01200.0_002.npz": {
+   "sha256": "f8169e6c97b7530877ca1f009753b37e97b14cd0a7708687f6455fe48bf437c3",
+   "fingerprint": [
+    2.730599809870479e-05,
+    4.015121658996167e-05,
+    7.766386775101026e-06,
+    6.903311184256644e-06,
+    1.3660816309176863e-06,
+    1.9239148363100214e-05,
+    7.277525291685752e-05,
+    3.7247151636236395e-05,
+    2.869527427586666e-05,
+    5.241996566514753e-06,
+    5.695115734079874e-05
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01200.0_002.json": {
+   "sha256": "39b68b2199452c73531c873d511b8e5409794999b8ea11aae4c043f33dc815b0"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01200.0_003.npz": {
+   "sha256": "aa47b93991a62350a45c89b4653ea5bcaef4c8c32202a415777ad2c83b2a7443",
+   "fingerprint": [
+    3.0013618109812304e-06,
+    1.9475609216992602e-06,
+    6.204172827346107e-07,
+    1.4339077416441228e-06,
+    1.1562533820778723e-07,
+    9.540944691089245e-07,
+    3.947819074181699e-06,
+    2.5962806075102777e-06,
+    1.0755957822469042e-06,
+    5.268489517243899e-07,
+    2.8799950759750895e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01200.0_003.json": {
+   "sha256": "3ac4ecd4bbca90d016458dd734ad12eaae1e66001fc03f5f6977233e5c8d44d8"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01200.0_004.npz": {
+   "sha256": "5e2e8287982b49b8afb87b896d8977ec49c3f758069d369af9ce58bc7573fe8e",
+   "fingerprint": [
+    3.73462355641192e-06,
+    1.364691384234896e-06,
+    7.318024054508566e-07,
+    2.3613003371223035e-06,
+    1.2150829549028873e-07,
+    2.5502760859547844e-06,
+    1.7143918011189762e-06,
+    2.4099142235867673e-06,
+    7.21369908624603e-07,
+    7.042902688356467e-07,
+    2.498254236657279e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01200.0_004.json": {
+   "sha256": "1af9c306c1e63c9c1516e6ab816b4c1cfa9071f1d03eead7253e1de5ccc35d8d"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01200.0_005.npz": {
+   "sha256": "0905cefcff7ec9a3e473bd74b79e9d5f101f5455064fda68c04e59adc36a99bb",
+   "fingerprint": [
+    4.589849354460244e-06,
+    1.926672183037157e-06,
+    8.287810035962934e-07,
+    2.318114212185866e-06,
+    8.865334469844539e-08,
+    1.6688059070185464e-06,
+    2.2160680035052453e-06,
+    2.8403668510390254e-06,
+    4.951629787138903e-07,
+    7.660283041418765e-07,
+    2.2946455742149032e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01200.0_005.json": {
+   "sha256": "dc4b021bc0ff43482f23c7f37c60afc0b09332db8fe92527ed762b683c00f5c3"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01200.0_006.npz": {
+   "sha256": "2ca62fba68996179f05c6624055fc19aeee58e13c33977b6cee012de4a7a97fd",
+   "fingerprint": [
+    1.430647634668721e-05,
+    1.7924736335967382e-05,
+    3.791948563534753e-06,
+    4.346788774566893e-06,
+    6.491981022884384e-07,
+    8.830566489336633e-06,
+    3.3725702280421926e-05,
+    1.7788562659511932e-05,
+    1.2722384162393443e-05,
+    2.6559729911510226e-06,
+    2.596806540843527e-05
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01200.0_006.json": {
+   "sha256": "9357f866b51bc3a709ee5e5ee6fa5f4a52ab97888867933e65c552e4dc73d64b"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01200.0_007.npz": {
+   "sha256": "8c1bece23df7b0c75d8e99b468ec67f6a1cac34e1d307c4dffd3140c87864a45",
+   "fingerprint": [
+    1.77846609554839e-06,
+    2.0012139059394882e-06,
+    6.892815558061792e-07,
+    1.090615851006319e-06,
+    1.5237678357973502e-07,
+    1.109734775847289e-06,
+    3.2381558947212554e-06,
+    2.429780473687618e-06,
+    1.040415308753269e-06,
+    6.363759447940291e-07,
+    2.6353758990395905e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01200.0_007.json": {
+   "sha256": "7421c6c6dfcd2ce28cc131fe683fe54c11c83a17b792efbba934950d09a02227"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01200.0_008.npz": {
+   "sha256": "ef7455996a1cc1c28a27df0f882d2a6ee6704a9fea0e0b6455d44be3144997d1",
+   "fingerprint": [
+    2.933774803908196e-06,
+    1.6224301235202811e-06,
+    7.471359096811418e-07,
+    1.671963666411158e-06,
+    5.563215202232787e-08,
+    1.098728185127467e-06,
+    1.9419837507036204e-06,
+    2.24786135194958e-06,
+    4.378767572578531e-07,
+    6.636801612387645e-07,
+    2.2023829385248623e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01200.0_008.json": {
+   "sha256": "3f8ea1374a12a14acce87ece8549a8d69dd48ab5d3a30a6cdc77c510431a1211"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01200.0_009.npz": {
+   "sha256": "37a748b5c8d4ac9c5d548f87b41e6f8b27f1f3eaab1c345d5ec02945be81942b",
+   "fingerprint": [
+    3.142123268443483e-06,
+    1.343001709280118e-06,
+    6.305973309590167e-07,
+    1.8964771049263954e-06,
+    8.874384426531878e-08,
+    2.0048837541368477e-06,
+    1.6264541826294162e-06,
+    2.190427229311856e-06,
+    5.998398444041453e-07,
+    6.112734904177759e-07,
+    2.1439460200151936e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01200.0_009.json": {
+   "sha256": "f95ade61ae167e964d4f5eae0933aaab46caa1645badce01f0ec78816dfb7031"
+  },
+  "noise_01500.0.npz": {
+   "sha256": "78c4b5c2a2ba5c336cb8c79b3e938e3399c3eec17ed6e1e9b44f9f41035273e0",
+   "fingerprint": [
+    1.1397783004040743e-05,
+    1.501324721468574e-06,
+    1.4298379620857552e-06,
+    5.007666635479039e-06,
+    1.1096759535569828e-07,
+    1.819544031019861e-06,
+    2.850179974666193e-06,
+    3.1721291027735765e-06,
+    6.074328404976583e-07,
+    6.653832780939829e-07,
+    4.219339264149709e-06
+   ]
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01500.0_000.npz": {
+   "sha256": "94b5b0c17f055f6e5f8fe6aae986524f1df0309c87c8e283c28c09b0010dd8ca",
+   "fingerprint": [
+    1.2283847040555603e-05,
+    2.6252591151166654e-06,
+    1.5983197727608467e-06,
+    7.435694849504407e-06,
+    2.503211089547105e-07,
+    9.413567525473249e-06,
+    2.855733421864592e-06,
+    5.951385173067581e-06,
+    2.1309578823853906e-06,
+    1.4998684464564226e-06,
+    6.838713182989455e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01500.0_000.json": {
+   "sha256": "7a4395caf8fb3df9a6aa3b873b057196b41eb2b30dd6fff74783eb8aeaaba987"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01500.0_001.npz": {
+   "sha256": "8db1c117bb7b5e7becc2867e8922f30049d7c43fbb44544f4baed1ef8db2f053",
+   "fingerprint": [
+    2.1152163575840458e-06,
+    1.3661555015154494e-06,
+    4.3900533964499144e-07,
+    1.0839404212329115e-06,
+    3.21143261416123e-08,
+    5.416227314182148e-07,
+    1.4688789651567899e-06,
+    1.600666760945624e-06,
+    2.5114963361621553e-07,
+    3.889942729892628e-07,
+    1.5104759801993116e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01500.0_001.json": {
+   "sha256": "fb0831354ed670bda72fa2f4ff01b4ca307786a4ddcef1566fb487a9af14ad79"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01500.0_002.npz": {
+   "sha256": "45f3cdcb843e96a083a5c0c76068b82904ad178914d4bbd126d5820003cc478a",
+   "fingerprint": [
+    2.3802996805590777e-05,
+    1.5609591211327554e-05,
+    4.250980887572511e-06,
+    1.1259807657117015e-05,
+    7.142391804771436e-07,
+    1.7493763723336624e-05,
+    2.6065115067849656e-05,
+    1.883959983547676e-05,
+    1.1435839027531205e-05,
+    3.361054727848754e-06,
+    2.600595072543562e-05
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01500.0_002.json": {
+   "sha256": "71e85927d67cdd16b81615025e565c1ffda339630661748918479060c3f24b7e"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01500.0_003.npz": {
+   "sha256": "08f3e0b1d9808001f5ae7bf420d21ba3ed74227121f0a9106c88a6dbbff79d4b",
+   "fingerprint": [
+    8.246285459090678e-06,
+    1.0556180271739546e-05,
+    2.2004215378659754e-06,
+    2.383483624913228e-06,
+    3.912508963027616e-07,
+    5.176193276938767e-06,
+    1.995000763461092e-05,
+    1.0258741191928202e-05,
+    7.674183736111965e-06,
+    1.5110048259564633e-06,
+    1.5503048170534287e-05
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01500.0_003.json": {
+   "sha256": "0ed5f11a5808399f16312d529dc23514e66e454de731ce46e96780beef6f50a3"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01500.0_004.npz": {
+   "sha256": "1c871168433acfe39613d7b4a23125312bd0c09fa1715b8024154d0b5c481599",
+   "fingerprint": [
+    1.617386182517168e-05,
+    3.2951646360884305e-06,
+    1.9928567672618285e-06,
+    9.499398743026883e-06,
+    3.0211026776701095e-07,
+    1.1954326313552836e-05,
+    4.141919086900931e-06,
+    7.5893149596701285e-06,
+    2.8406711462726496e-06,
+    1.8416280137874437e-06,
+    8.91505059627008e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01500.0_004.json": {
+   "sha256": "d75072347183ce2b7804a54cecbb6f4c40ee64e908a869231ebff21562ced1f7"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01500.0_005.npz": {
+   "sha256": "fb0c9c651f9e1bbfe91cc157e3693cedfc61d42453d4b570cfa4ee73f2a95a07",
+   "fingerprint": [
+    1.6101160983748884e-05,
+    4.70471933664001e-06,
+    2.176499667631725e-06,
+    9.324010074314071e-06,
+    3.670734202999938e-07,
+    1.2390937831472284e-05,
+    6.344300347196306e-06,
+    8.71615978166489e-06,
+    3.7522695416325155e-06,
+    1.9823874996084373e-06,
+    1.0605137982276596e-05
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01500.0_005.json": {
+   "sha256": "55ddd65e9a946bd3686239a4f60a860cd0626d06eec07ddae9fc707e9c629a53"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01500.0_006.npz": {
+   "sha256": "fb5effadcbc69e2e6d765db1ae4d67db2dd41c7f2f99eb4533ef84c93caf9bea",
+   "fingerprint": [
+    4.0401987119181346e-06,
+    1.0135337678185492e-06,
+    4.851808282812638e-07,
+    2.047284339226623e-06,
+    7.223121072669357e-08,
+    1.899745510228509e-06,
+    2.282370229037924e-06,
+    2.021634705434934e-06,
+    8.046451419932803e-07,
+    3.9217490955875144e-07,
+    2.237108352832785e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01500.0_006.json": {
+   "sha256": "d493e5763acd78a9576bc491002a6e2640e83fa91c32dfae56fde395986eefa4"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01500.0_007.npz": {
+   "sha256": "eedd5d8508d469e0c87bc179be1451f7139ec08949c0cb228667913d941601bf",
+   "fingerprint": [
+    4.30867079219399e-06,
+    1.8379565460789917e-06,
+    6.305884958998273e-07,
+    2.053793665851664e-06,
+    1.038664414531243e-07,
+    2.4045483148643604e-06,
+    3.1912513068105445e-06,
+    2.578082194807206e-06,
+    1.3247297411733902e-06,
+    5.05457956218385e-07,
+    3.160881914533894e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01500.0_007.json": {
+   "sha256": "6ddb3537b7e4117c3870c30323f51e29af398795755e4c20da0e8014868cf013"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01500.0_008.npz": {
+   "sha256": "50487350482ba67a279b149c62ff79fc7615f80b36bc9e9a6c401559e8ce199a",
+   "fingerprint": [
+    2.740696250270381e-06,
+    8.61728710875018e-07,
+    5.164400459078611e-07,
+    1.6391069290365244e-06,
+    9.253387887708343e-08,
+    1.168538688519743e-06,
+    2.1084879142450947e-06,
+    1.8668367894816005e-06,
+    5.572118555022296e-07,
+    4.7357330553240054e-07,
+    1.8175403978726172e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01500.0_008.json": {
+   "sha256": "c3c4c35a486c76c3cd804d7904dfc68f4228b524db8a04544f9b312f1ae9216c"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_01500.0_009.npz": {
+   "sha256": "b226e1ee1e753345c044b2e1e6fad31b0292803ae5dab20b5d73afa3d24824ca",
+   "fingerprint": [
+    2.4324312793230854e-05,
+    7.493707572044756e-06,
+    3.3368372495601165e-06,
+    1.3873728472366196e-05,
+    5.278636824623322e-07,
+    1.8670811832063023e-05,
+    9.800328688336239e-06,
+    1.370808989661148e-05,
+    5.597965021747455e-06,
+    3.107140357513469e-06,
+    1.6029690031410976e-05
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_01500.0_009.json": {
+   "sha256": "5f1484419f9ec0376641d16335f43db2f16284cd1403c5825b98ab9fcbd5a7d2"
+  },
+  "noise_02100.0.npz": {
+   "sha256": "6560e8f4dfb17ae0556df6dd89bcafcd78647f35ef8f58551a8e394a91925da7",
+   "fingerprint": [
+    2.385226039440725e-06,
+    1.162793462097627e-06,
+    2.114758747213325e-07,
+    1.4294968803835005e-06,
+    2.020793858447776e-08,
+    2.1043978156541977e-07,
+    1.0134068623530832e-06,
+    5.652481496021791e-07,
+    1.2152069214904256e-07,
+    1.0592891965523584e-07,
+    6.195668516979368e-07
+   ]
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02100.0_000.npz": {
+   "sha256": "8822b962573b9b2e331e7b63375b7bf5daf9c5dd22dcc35e271ddc0fece8c551",
+   "fingerprint": [
+    9.120604913492258e-06,
+    2.249584805877238e-06,
+    1.1808103100085503e-06,
+    5.241735636835946e-06,
+    1.8164572393922215e-07,
+    6.817161622582554e-06,
+    2.227967844904948e-06,
+    4.0548130287878355e-06,
+    1.3931385387972885e-06,
+    1.0809682123958632e-06,
+    4.8725601970167036e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02100.0_000.json": {
+   "sha256": "e2fc12fe52fe95c3788098a8745fdcecb5fc4996e4bf15133699f78eb7b74e2d"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02100.0_001.npz": {
+   "sha256": "8a2ed1165d5c2fda7a89a18b0f8994ad3648ca554f94644d01979db617455b28",
+   "fingerprint": [
+    1.2058907315646922e-06,
+    4.428249501382885e-07,
+    2.22047527487456e-07,
+    6.438742379803714e-07,
+    4.3402045431088794e-08,
+    2.277287985250596e-07,
+    7.175775721568335e-07,
+    7.094106162834717e-07,
+    1.4717620193906454e-07,
+    2.0706097629305823e-07,
+    4.6491300960174804e-07
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02100.0_001.json": {
+   "sha256": "a406122a59e1198fc1375681b43b13d20e04a1ac9b5b8d9cec1172f274ba22cb"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02100.0_002.npz": {
+   "sha256": "266e64d713c51369c32eaffdc79c3a1c53d34d7de2653b0670d280b43fa5742b",
+   "fingerprint": [
+    1.5321701140243307e-06,
+    8.580294188202895e-07,
+    4.441688202258033e-07,
+    1.0089320758554412e-06,
+    7.355993285278737e-08,
+    3.9822845436309543e-07,
+    1.57975251082253e-06,
+    1.4012023307530157e-06,
+    3.0415773619388265e-07,
+    4.102509606546677e-07,
+    1.2624644989194726e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02100.0_002.json": {
+   "sha256": "effc22a9d0863edc14daaedb9f5d4bf0f237eef67ca90d5cf0182ec18adc8000"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02100.0_003.npz": {
+   "sha256": "3de32f5d87e8509c569bf9e8cc567030628701d4bd7c1bb69904488fc7d69828",
+   "fingerprint": [
+    1.6091362999732716e-06,
+    7.26903756141353e-07,
+    3.44413692799333e-07,
+    8.982345184154205e-07,
+    5.716156570376211e-08,
+    3.6525912089856147e-07,
+    1.248749181750222e-06,
+    1.119463016000274e-06,
+    2.571972738278613e-07,
+    3.019120790699787e-07,
+    9.457832236398716e-07
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02100.0_003.json": {
+   "sha256": "249b180a6b2a32434fff17b9bcf67ea8990589f6ced525a3db3899a564fdac70"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02100.0_004.npz": {
+   "sha256": "77d8c2b6636e124097bbe3ca0e6384661dc1be6e5798c8974a0bb4488b754e5d",
+   "fingerprint": [
+    1.4529976028629227e-06,
+    9.673441882958413e-07,
+    2.9544737297249564e-07,
+    7.745893091836925e-07,
+    2.4997675785790075e-08,
+    2.3362453799022386e-07,
+    1.4499688366783448e-06,
+    1.2263456174485683e-06,
+    2.283158924247872e-07,
+    2.4023756588507076e-07,
+    1.2632859237473485e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02100.0_004.json": {
+   "sha256": "b490fad231ca1cbebfc8452affb71e9676a149fda1c735c73e1e0398c25cc6eb"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02100.0_005.npz": {
+   "sha256": "a212a02e308216ef34a48199d7828f723462c7729196973d6207e21d69892859",
+   "fingerprint": [
+    2.915434297597861e-06,
+    7.925188113581626e-07,
+    4.6097892325696327e-07,
+    1.782984190170779e-06,
+    9.102360070195763e-08,
+    2.033431657213429e-06,
+    1.255975759872459e-06,
+    1.7569926098074001e-06,
+    5.470416862221251e-07,
+    4.6128127491481414e-07,
+    1.6650243744337997e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02100.0_005.json": {
+   "sha256": "acb39a9ca974c40302b1f222a824c2111fa0a16dcd0065893e0177778785f052"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02100.0_006.npz": {
+   "sha256": "780ed4649992999bd3abe784f2e1e25f5b588b4bdd0520fe9343f6dba1c988fb",
+   "fingerprint": [
+    1.1994243930138003e-06,
+    4.0837437857097135e-07,
+    2.463301281689409e-07,
+    6.4081839737903e-07,
+    4.51377791885797e-08,
+    2.5530352588186405e-07,
+    8.342085577053697e-07,
+    7.405009630287448e-07,
+    1.8953921922753763e-07,
+    2.260067270760452e-07,
+    5.477002016724393e-07
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02100.0_006.json": {
+   "sha256": "8b1d27cac4bf0e0bc0b9beecb05131c4b4721e4ce541015f0f55724dc59b666d"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02100.0_007.npz": {
+   "sha256": "8e00d972ca886c9ad473ba8e173faa4214b754a9061c089f53b74ab8d6c065e0",
+   "fingerprint": [
+    1.1271708766614444e-06,
+    1.0882518223318183e-06,
+    2.675681464826847e-07,
+    4.908626572991532e-07,
+    4.6957922143161814e-08,
+    7.628453324947308e-07,
+    1.7129894019361397e-06,
+    1.153312773442469e-06,
+    6.876212643209337e-07,
+    2.14569234782956e-07,
+    1.5285863194600601e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02100.0_007.json": {
+   "sha256": "1c14c2ae3d3e1b2ca122c0a42c1f64a069476d3a290f78f5b6cd1c6b2246b2f2"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02100.0_008.npz": {
+   "sha256": "9afd53ea0178b8aa736f07cc80f6a77d995a6b4f049d91c66462218aa2b01af3",
+   "fingerprint": [
+    2.586157939387354e-06,
+    6.026248872325668e-07,
+    3.1929526774155325e-07,
+    1.564898954737265e-06,
+    5.4147692797370476e-08,
+    2.0148847943105846e-06,
+    5.804134868164909e-07,
+    1.2718045996107375e-06,
+    4.4878180294129427e-07,
+    3.022962552900155e-07,
+    1.4164517762447628e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02100.0_008.json": {
+   "sha256": "e5a1c26df44b9935a42dfb56cef6592b438841be1b9a757fb14484de3a083dfe"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02100.0_009.npz": {
+   "sha256": "c47f7de87715998d5770f759c4a1755d960d7c4932737a276225f9c72b9b294c",
+   "fingerprint": [
+    2.26194867915186e-06,
+    4.774466678854713e-07,
+    2.6728377996120425e-07,
+    1.3077456697521377e-06,
+    4.496299351457269e-08,
+    1.6212302131490677e-06,
+    6.493858528723474e-07,
+    1.0958458155097358e-06,
+    4.046577308430476e-07,
+    2.4892697762348654e-07,
+    1.2272613210005631e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02100.0_009.json": {
+   "sha256": "ad81c339b36eb881af5e022d3545e835091fb3ab063c5be4cfe400d31c0d3e44"
+  },
+  "noise_02700.0.npz": {
+   "sha256": "0d86a3974bc8826e60e63a351bf7cc5377f3ff57ce42f79b134e8baadac77f95",
+   "fingerprint": [
+    2.277066789599314e-05,
+    2.301318853309978e-06,
+    1.4037464116551399e-06,
+    5.325491956889495e-06,
+    4.4167791686302713e-07,
+    6.648465641974481e-06,
+    1.0862700691615404e-05,
+    1.2353337873100048e-05,
+    2.1457804912153627e-06,
+    6.317549578639677e-07,
+    5.3121835297427365e-06
+   ]
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02700.0_000.npz": {
+   "sha256": "31b26672313a4d3874d00cd3e4f599d8575e28091d6e875134545489c800bd24",
+   "fingerprint": [
+    3.013645072701948e-06,
+    6.695151052499146e-07,
+    3.691684752400257e-07,
+    1.3064048047323108e-06,
+    5.947059830857902e-08,
+    6.127056845086748e-07,
+    2.2797461508907783e-06,
+    1.4257865676206567e-06,
+    6.016771487019004e-07,
+    2.7324309138784566e-07,
+    1.3557570762863193e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02700.0_000.json": {
+   "sha256": "42f8270e031a72f18b003e6dead4663f308d0ddf43dd9030f177073f3bd6b34d"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02700.0_001.npz": {
+   "sha256": "ee0c84990bfc781c16ba951eff4b535beac4cf0cc67635e4c9df72049e2e0afa",
+   "fingerprint": [
+    1.5871044634832005e-05,
+    3.5248607372462656e-06,
+    2.0197020531199988e-06,
+    9.42718626118974e-06,
+    3.5322443322060213e-07,
+    1.1988784408999807e-05,
+    4.155732870261296e-06,
+    7.742535529754107e-06,
+    2.803822841029675e-06,
+    1.8945489200145455e-06,
+    8.857528157416948e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02700.0_001.json": {
+   "sha256": "1f85ad6447e531519508073d0c7b599ac8399353ce2911982b346a06c8fddef9"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02700.0_002.npz": {
+   "sha256": "039b435191bfbfd16bc81b21d9f966f33b82c2eedc3b8ab98f77accfa42a20d2",
+   "fingerprint": [
+    4.992437751783144e-07,
+    2.587971973224669e-07,
+    1.3070347731884635e-07,
+    3.240538730986428e-07,
+    3.512056199655338e-08,
+    1.8392381567254246e-07,
+    6.96806275851318e-07,
+    5.077478384987379e-07,
+    1.714992391572957e-07,
+    1.2784342392916003e-07,
+    4.209686335364908e-07
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02700.0_002.json": {
+   "sha256": "69ca908b6e600561f988576857a125c40e5d435e53bee067e015c1fa559db915"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02700.0_003.npz": {
+   "sha256": "8cf37365071dcf2e68b3c1efe99c9fe9394283d0e7b2ce2070428b79286560ba",
+   "fingerprint": [
+    9.369675524911067e-07,
+    7.788939000646049e-07,
+    3.207993131692252e-07,
+    6.263518308978604e-07,
+    3.648948953661212e-08,
+    4.096765638544897e-07,
+    7.783571458103438e-07,
+    1.0266451626794724e-06,
+    1.2271777639361958e-07,
+    3.155514458330237e-07,
+    9.387803946891564e-07
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02700.0_003.json": {
+   "sha256": "7e6971298f1940c2e6049cb767ca1c4abd066bc50f2eff53ec2139f314fc0bc4"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02700.0_004.npz": {
+   "sha256": "699a3b13d045eefcff3f9a341e74309899bb72f4b91115d27bc08f1bfaa3d787",
+   "fingerprint": [
+    2.0175754175072826e-06,
+    5.37652886076462e-07,
+    3.063085946277891e-07,
+    9.85151454204087e-07,
+    5.844286340570559e-08,
+    4.356433691545038e-07,
+    1.5598428351909565e-06,
+    1.1153759379817036e-06,
+    3.769736263373828e-07,
+    2.6625146423173096e-07,
+    9.160097045890821e-07
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02700.0_004.json": {
+   "sha256": "728d4df5fc3d17d0bb2cd17bb496d82c4f004012230b1025aaf300758eef3807"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02700.0_005.npz": {
+   "sha256": "acda58f011d573f2c6fa5316f937c57acbfacf3a1baf9ab0781a8b4ac9271803",
+   "fingerprint": [
+    6.760386290545126e-06,
+    8.506329176291485e-06,
+    1.775052226982299e-06,
+    2.035964067121145e-06,
+    3.0708159905220306e-07,
+    4.146830893753307e-06,
+    1.6007024606868522e-05,
+    8.258345978973284e-06,
+    6.102230233033556e-06,
+    1.2238607854409478e-06,
+    1.2341498427552384e-05
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02700.0_005.json": {
+   "sha256": "6f2d6baa546feba4c04e4f3fbcb096d4c3cb5475ba3fa78479f44e3014421712"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02700.0_006.npz": {
+   "sha256": "7dec5ecbc396551a0a7e67dd7bd519c8668b15bde7f1fce86c6292dcaa675ceb",
+   "fingerprint": [
+    1.234223340925201e-05,
+    4.221275337848492e-06,
+    1.682517762947181e-06,
+    6.94249403985045e-06,
+    2.64297699714504e-07,
+    9.34168859924176e-06,
+    5.675743021699688e-06,
+    7.006337764928931e-06,
+    3.08729814981351e-06,
+    1.4905997970763306e-06,
+    8.643287631523234e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02700.0_006.json": {
+   "sha256": "07c98e5ab0a5590bdd754f57e7560e336cff7da3227b8f662913eddbec012edf"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02700.0_007.npz": {
+   "sha256": "714e179f9bfc85414db95ccd6796820a47d6e61eada8602f12a5ee4da7934273",
+   "fingerprint": [
+    2.5988986075281262e-05,
+    4.29319198135497e-06,
+    2.544180625744673e-06,
+    1.0042241207532817e-05,
+    5.095652278653961e-07,
+    1.4826806545471757e-05,
+    6.352149997611183e-06,
+    1.3474476102929777e-05,
+    4.11700025843218e-06,
+    1.974504263982822e-06,
+    1.1839214745761082e-05
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02700.0_007.json": {
+   "sha256": "ca4bdc3e5054b01b9e0342a345c7690c58a1be4db2bd004e32ce2d781d25a786"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02700.0_008.npz": {
+   "sha256": "8f3969c4aa156802f62db2921205a2bf6827f25a4debf1365ba9ae20477276e2",
+   "fingerprint": [
+    1.0035652197091123e-05,
+    2.3768056713543895e-06,
+    1.2233302234727526e-06,
+    5.778804932757466e-06,
+    1.8203032349612877e-07,
+    6.954520861688234e-06,
+    2.6138988745005605e-06,
+    4.880180402598004e-06,
+    1.6735572848040606e-06,
+    1.1338746923746693e-06,
+    5.530753641014846e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02700.0_008.json": {
+   "sha256": "6e3fef4400f522b90eb02de21d3d1c7dbac6f055f2a08c031d82d6e64932c83c"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_02700.0_009.npz": {
+   "sha256": "96f889fe915c6c5ebc814471954d9c4e4ab996422c49e61284b1519930bf9233",
+   "fingerprint": [
+    2.051580542469108e-06,
+    6.159642737316301e-07,
+    3.062947035002924e-07,
+    9.866982510330206e-07,
+    4.882026846092661e-08,
+    5.464816621147011e-07,
+    1.6775928154606806e-06,
+    1.1694591224216375e-06,
+    4.5453129360159696e-07,
+    2.446801760682019e-07,
+    1.092168007512028e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_02700.0_009.json": {
+   "sha256": "75e8825879f924779ca612f179689a8fe454fa9c49ea3a56bbbec23e0f7551b6"
+  },
+  "noise_03300.0.npz": {
+   "sha256": "d34670ac8c1fb160e010ce52f468fbbb3a1dec75b04a4d0a0701e7b5a044586a",
+   "fingerprint": [
+    0.002473756814164899,
+    6.852091165201769e-05,
+    0.00013505839159297714,
+    0.0012245482303924612,
+    1.3875761768129214e-05,
+    0.00020589685322960235,
+    0.001071876500748441,
+    0.00117619169858893,
+    0.00025601854665559037,
+    5.629253608649163e-05,
+    0.0003441606425859536
+   ]
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_03300.0_000.npz": {
+   "sha256": "9438ac3729eb525ee4d120d901b5e5d41bba2b3814d9ccfd3809716ec2c91360",
+   "fingerprint": [
+    3.3796645555809717e-06,
+    9.195307950335086e-07,
+    4.406382401038347e-07,
+    1.507087883986769e-06,
+    5.8971940090155614e-08,
+    7.002530615264792e-07,
+    2.6910777712561566e-06,
+    1.7994769841183598e-06,
+    6.531613230174492e-07,
+    3.3826567113871926e-07,
+    1.7797252749657686e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_03300.0_000.json": {
+   "sha256": "eed2ffc5587616133a20bf346c3a2327f76ce3b6b520671ea5cd003dd09782d4"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_03300.0_001.npz": {
+   "sha256": "55945964d5f1ca6f55f5b8ddba4d8d1db74bda7c6c4cb2555f465378a913192e",
+   "fingerprint": [
+    1.6172053324379482e-05,
+    2.1246074412774936e-05,
+    4.361958518420394e-06,
+    5.084642752416383e-06,
+    7.514422190695809e-07,
+    1.1319236610464086e-05,
+    3.763522095790765e-05,
+    2.0368926237159063e-05,
+    1.4688307389160037e-05,
+    3.031965858378711e-06,
+    3.0496945085991638e-05
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_03300.0_001.json": {
+   "sha256": "0b7f0093b15644f93b85fdbdec83a27ab0155db18fa17725efa138dc837edde7"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_03300.0_002.npz": {
+   "sha256": "f3f70006d14100ff79da393bca4bb31e1f717e9fb8f1eb5d00219811ff10ebcc",
+   "fingerprint": [
+    6.404338675762838e-06,
+    6.166004797924024e-06,
+    1.340994209965822e-06,
+    2.289433973438057e-06,
+    2.2377620576611351e-07,
+    3.5555024689681567e-06,
+    1.0583305564547892e-05,
+    6.246489203705173e-06,
+    4.097004079617871e-06,
+    9.771817832371038e-07,
+    8.680082384262093e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_03300.0_002.json": {
+   "sha256": "163d48ac814884d362225adfa403209381c1f15de317ee73a801ef633592fc5d"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_03300.0_003.npz": {
+   "sha256": "4f186ece3aaac2a6ca8ca4902c5c0c5f0e8beebf41988c698010d49c36c2993e",
+   "fingerprint": [
+    1.6629113317282242e-06,
+    6.962066579954724e-07,
+    2.2574419069015566e-07,
+    7.654647758089839e-07,
+    3.386711771719668e-08,
+    3.0974930704915624e-07,
+    1.152628105634165e-06,
+    9.480482385900669e-07,
+    2.5462176363327077e-07,
+    1.837940758087737e-07,
+    8.26543196991079e-07
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_03300.0_003.json": {
+   "sha256": "4c1c10af007193c0f98f4eef5708d5ae467b50f4086c2f329ad833196f3cfa8e"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_03300.0_004.npz": {
+   "sha256": "38ce49244369b803a22c9d051e6b00f8f20ef05f56962a5d1e62c6ab52d16224",
+   "fingerprint": [
+    2.2667504887546107e-06,
+    1.2196556567431986e-06,
+    3.9146831816930525e-07,
+    1.1725550188793152e-06,
+    3.6534181419168114e-08,
+    5.484839502349261e-07,
+    1.6883248993225144e-06,
+    1.5708776208667428e-06,
+    3.316389361900064e-07,
+    3.182835220475021e-07,
+    1.5767124446935126e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_03300.0_004.json": {
+   "sha256": "5e8745397c062642da947e9bfae8f2199f071cbd593f1ae7d636cf8dfc7efda5"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_03300.0_005.npz": {
+   "sha256": "22ea989ba6657a4d727b5fd173de5bda86efd663857bcbdc09a83d07441f616a",
+   "fingerprint": [
+    3.1118596119390696e-05,
+    2.361283791403173e-05,
+    5.942503749448504e-06,
+    1.3827390433768435e-05,
+    1.0178514129002918e-06,
+    2.3347985800953077e-05,
+    4.009547606743334e-05,
+    2.6925589191609734e-05,
+    1.727229617601901e-05,
+    4.580183079631987e-06,
+    3.816685055867605e-05
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_03300.0_005.json": {
+   "sha256": "a09892e7d98ee3465d2198e3a3d7eb909ef255f1562e71673d14869f32b0a974"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_03300.0_006.npz": {
+   "sha256": "f27d5bca41959fe9f35e3ed6a5b7d60df9f64fcfbdaa4f917424b100863bd968",
+   "fingerprint": [
+    1.0707839607338683e-06,
+    5.656149578330385e-07,
+    2.0993249889467075e-07,
+    5.212260855097991e-07,
+    2.3940245993319786e-08,
+    2.6412605315511656e-07,
+    6.710289823069332e-07,
+    6.04772068217968e-07,
+    2.0876887970613862e-07,
+    1.671788976033479e-07,
+    5.965728479133502e-07
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_03300.0_006.json": {
+   "sha256": "3f8f1093a536eb53f47b319da8a26020560633b1cee1c4d8a510666558f9884b"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_03300.0_007.npz": {
+   "sha256": "74321cb59c244fdef4f4fc01623c57a3e4e43d5e6f19ee8de0ddaede291b7042",
+   "fingerprint": [
+    3.647152977843176e-06,
+    1.4119034647746348e-06,
+    6.968877786013231e-07,
+    1.824059121502736e-06,
+    8.35335945166452e-08,
+    8.310091665593521e-07,
+    2.5692589829614127e-06,
+    2.302935263744021e-06,
+    5.738776226647065e-07,
+    5.987892970759548e-07,
+    2.032566455537706e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_03300.0_007.json": {
+   "sha256": "6fc7c7895bce0735b92ae9d49d9226366e023e4f860f89f4771fd3fb6c27499a"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_03300.0_008.npz": {
+   "sha256": "23b9244b9ead0ade5819889e07c2ebaa6cf8428cfdcb17e2b1481e6dffed1c73",
+   "fingerprint": [
+    1.539465591024979e-05,
+    3.2635532036082e-06,
+    1.8155177242942312e-06,
+    8.350689112884516e-06,
+    2.549656342819841e-07,
+    1.005928725390171e-05,
+    4.374741004015567e-06,
+    7.109957797933466e-06,
+    2.464333739295639e-06,
+    1.6366571465191392e-06,
+    7.966449236668865e-06
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_03300.0_008.json": {
+   "sha256": "47e29bcd7b4ed1680054d4c1070290d3dad50a91d3f929eacfa8a37cada39113"
+  },
+  "sig_ss_ridgecrest_2019_egf_v1_03300.0_009.npz": {
+   "sha256": "435b742ae22e8db4a0d5f5ef8ec69515e8359a3a46bdc3ed3dd32058d46c32eb",
+   "fingerprint": [
+    1.3243489681992162e-05,
+    1.1588836419828723e-05,
+    2.804701246704521e-06,
+    5.279071572861586e-06,
+    4.771556023814324e-07,
+    8.783253502864959e-06,
+    2.1064964691122395e-05,
+    1.2600857796188218e-05,
+    8.525291526506913e-06,
+    2.0745012348789053e-06,
+    1.781055731270676e-05
+   ]
+  },
+  "truth_ss_ridgecrest_2019_egf_v1_03300.0_009.json": {
+   "sha256": "aff47b33105dd57b2af76282e5199d0e1470470c6ee8511629a7325502ea8d1f"
+  }
+ }
+}

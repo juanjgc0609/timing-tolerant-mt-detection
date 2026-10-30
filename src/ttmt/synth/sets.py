@@ -173,11 +173,15 @@ def build(set_id, rec, sources, per_block, anchor="ATLAS-0", inj_cfg=None, atoms
 
 # ------------------------------------------------------------------------------------------------ read
 class SetReader:
-    """realisations of one partition of a set. verify: 'sha256' (exact bytes), 'fingerprint' (rel. tolerance tol, for
+    """realisations of one partition of a set; a set not built from the ATLAS-0 anchor (manifest ``pre_anchor``) is
+    refused unless ``allow_pre_anchor`` (development only). verify: 'sha256' (exact bytes), 'fingerprint' (rel. tolerance tol, for
     a rebuild on another platform) or None."""
 
-    def __init__(self, set_id, partition, verify="sha256", tol=1e-6, manifest=None):
+    def __init__(self, set_id, partition, verify="sha256", tol=1e-6, manifest=None, allow_pre_anchor=False):
         self.man = json.loads(Path(manifest or MANIFEST_DIR / f"{set_id}.json").read_text())
+        if self.man.get("pre_anchor", True) and not allow_pre_anchor:
+            raise PartitionError(f"set {set_id!r} is not seeded from the ATLAS-0 anchor (pre_anchor); it serves no "
+                                 "tuning or reading (pass allow_pre_anchor=True for development only)")
         self.set_id, self.partition, self.verify, self.tol = set_id, partition, verify, tol
         if partition not in ("tune", "read"):
             raise PartitionError(f"unknown partition {partition!r}")

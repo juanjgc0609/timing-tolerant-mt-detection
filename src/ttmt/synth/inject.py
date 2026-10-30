@@ -188,9 +188,10 @@ def plan(rng, c, n_sources, xyz=None):
 
 
 def realise(rec, block, sources, seed, c=None, atoms=None, atom_ids=None, label=""):
-    """seed: an integer or a numpy Generator (the anchored stream ``ttmt.atlas.seeds.rng('inject', record)``)."""
     """one realisation: (signal, noise, Truth). block: (start, end) record time of the noise block; sources: list of
-    Source on the record's stations; atoms: optional template / deflation library for CR-06."""
+    Source on the record's stations; seed: a numpy Generator (for ATLAS-0 the anchored stream
+    ``ttmt.atlas.seeds.realisation_rng(set_id, i, r)``, ADR-0009 item 5) or an integer; atoms: optional template /
+    deflation library for CR-06."""
     c = config(c)
     rng = seed if isinstance(seed, np.random.Generator) else np.random.default_rng(seed)
     fs = rec.fs

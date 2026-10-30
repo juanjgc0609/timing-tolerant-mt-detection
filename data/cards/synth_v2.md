@@ -31,6 +31,14 @@
   (0-1, 1-5, 5-15 km) when one is available, or is the same source again (20 per cent: co-located, same mechanism),
   with energy ratio 1, 10 or 100. The first event of a group gets a network SNR drawn log-uniform in [3, 60]; EGFs
   are never amplified (scale <= 1, so their SNR is at most their recorded one).
+- Generator design parameters (choices of the generator, not registered parameters; fixed in `inject.DEFAULT` and
+  `fklib.DEFAULT` before the first set that feeds tuning, and recorded with their hash in every manifest):
+  - `p_self` = 0.2: probability that the partner of a pair is the same source again (co-located, same mechanism,
+    K_mec = 0), so that pairs with separation < 0.1 s and no spatial offset exist in every set;
+  - `dist_bins` = (0-1, 1-5, 5-15 km): the partner of a pair is drawn from a uniformly chosen spatial-separation bin of
+    the spec (§13) among the sources available in that bin, otherwise any other source;
+  - `cluster_frac` = 0.5 (full-wave library only): fraction of events placed 0.2-5 km (`cluster_km`) from a previous
+    event, so that the 0-1 and 1-5 km bins have candidates.
 - Truth per target: arr_t (true arrivals) and arr_t_obs (with the optional injected timing error, zero by default),
   per-station SNR as the ATLAS-0 card defines it (exact: signal and noise are stored apart), pair id, kmec when the
   tensors are known, and in `meta`: seed, configuration and its hash, source id and kind, injection scale, spatial

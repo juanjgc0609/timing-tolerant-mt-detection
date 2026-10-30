@@ -105,7 +105,7 @@ def test_truth_roundtrip_and_reader(tmp_path, monkeypatch):
     assert np.array_equal(t2.pair, t.pair) and np.isnan(t2.kmec[1]) and t2.arr_t.shape == (2, 3, 2)
     v = inject.truth_contaminated(t, [1], 10.0)
     assert np.allclose(v.snr[:, 1], 0.1) and np.allclose(v.snr[:, 0], 1.0)
-    man = {"realisations": [{"label": "L1", "partition": "tune"}], "files": {}}
+    man = {"realisations": [{"label": "L1", "partition": "tune"}], "files": {}, "pre_anchor": False}
     p = tmp_path / "m.json"
     p.write_text(json.dumps(man))
     r = sets.SetReader("x", "read", manifest=p)
@@ -114,6 +114,11 @@ def test_truth_roundtrip_and_reader(tmp_path, monkeypatch):
         r._real("L1")
     with pytest.raises(PartitionError):
         sets.SetReader("x", "eval", manifest=p)
+    q = tmp_path / "dev.json"                    # a set not seeded from the anchor serves no tuning or reading
+    q.write_text(json.dumps({**man, "pre_anchor": True}))
+    with pytest.raises(PartitionError):
+        sets.SetReader("x", "tune", manifest=q)
+    assert sets.SetReader("x", "tune", manifest=q, allow_pre_anchor=True).labels == ["L1"]
 
 
 def test_contamination_and_subsets():
