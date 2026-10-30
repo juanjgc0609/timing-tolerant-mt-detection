@@ -3,6 +3,10 @@
  "generator": "ttmt.synth v2.0",
  "dataset": "ridgecrest_2019",
  "fs": 100.0,
+ "catalogue_centroid": [
+  -0.2747382117996583,
+  -0.2711125494179734
+ ],
  "components": "E, N, Z up",
  "stations": [
   "CCC",
@@ -3980,7 +3984,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00300.0_000.json": {
-   "sha256": "1059557d6ffa657bf1e346238ac7eb5a862a8d309cec1f84491151860f82c704"
+   "sha256": "18f26f95159c95006d8e99acdcd3ae8e081526d4669f275df3603986e97fca5d"
   },
   "sig_ss_ridgecrest_2019_egf_v1_00300.0_001.npz": {
    "sha256": "150a3eb283e3f606d47e4a12f7a6c7cbe91b066bd56d48cfb243264dbefeb746",
@@ -3999,7 +4003,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00300.0_001.json": {
-   "sha256": "3b2adccf10ac62c325cb15a3f697877e08ab3fa8b0caa75b6ae82c4ef61c5aa1"
+   "sha256": "510ab7cbe031358eff953349a1a90b2d99b43a5f59bdef8ce06a002d1fe0f2d6"
   },
   "sig_ss_ridgecrest_2019_egf_v1_00300.0_002.npz": {
    "sha256": "879e48c3807f5fd6fd0406472b6d3c80afc49889469a3b4b63d0b1b71ec0d370",
@@ -4018,7 +4022,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00300.0_002.json": {
-   "sha256": "3fa4031a7beb53d5619366c2e6adeb50283a540c9b6660e6f6b81afe27fa514a"
+   "sha256": "2c23ba9dc7041ff16f808eb6199628e8587efbdc1bb5ffa39c1b361b688ab4e7"
   },
   "sig_ss_ridgecrest_2019_egf_v1_00300.0_003.npz": {
    "sha256": "6763cef9c65994cf0fc130fc6c4418a68ef5d55479490cfac0f28a2319c4bbf0",
@@ -4037,7 +4041,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00300.0_003.json": {
-   "sha256": "098b0ccb9e45c0e99b42e79808040c5d6f4beb78614ac239d8f87ea52ea8b3c1"
+   "sha256": "8c73ec749127e140d33643a2b376ee3afa822cd3131d664182d6f46aad496bba"
   },
   "sig_ss_ridgecrest_2019_egf_v1_00300.0_004.npz": {
    "sha256": "fb523fbec151d548e943cc220c9af7594a7ab25daa2ef71b57e30195d0253ede",
@@ -4056,7 +4060,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00300.0_004.json": {
-   "sha256": "c176d7332521f977c4138ca5de2d320c509b05dc0cea849bc1949d43a4476c50"
+   "sha256": "63781f3949d2018aaeb9c4faf23dac289f305d3041a8df3a96c18b7377fdcbd8"
   },
   "sig_ss_ridgecrest_2019_egf_v1_00300.0_005.npz": {
    "sha256": "14f3d232c8740ee94b17ef45170f27dfaec702e63eb90fa074bc85ef4b95ed79",
@@ -4075,7 +4079,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00300.0_005.json": {
-   "sha256": "e4c9f8d8ed746a8906d249bb968999ff1a45ec9ee2f07c139350fb035056fb96"
+   "sha256": "2eb578ad456e677f4538185b4c3f3e4a3bd67ad89410fe2cbd4f653e0af9f731"
   },
   "sig_ss_ridgecrest_2019_egf_v1_00300.0_006.npz": {
    "sha256": "435184df131f762f62b19f0fdc05f1a42743f3814b1d27529b31315361c6a2ce",
@@ -4094,7 +4098,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00300.0_006.json": {
-   "sha256": "ddaf8722858cea4b9dafa83b9e0d2ae66bb056a456311e20c281b3af2aeeabd8"
+   "sha256": "ae3eee4fea220f992066cfe348fa2ac22b5dc25ea45a4144617760f3254018c1"
   },
   "sig_ss_ridgecrest_2019_egf_v1_00300.0_007.npz": {
    "sha256": "870438c5c3414767c2dd70d23a8048eab96906255ae2bf430b1f27cfb71efcc8",
@@ -4113,7 +4117,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00300.0_007.json": {
-   "sha256": "bdfe46f31c27473cefa480652bf48c64853a3dd9f112c91f94d987cf634c8159"
+   "sha256": "6dac339feb3c6d3a2582c46b58205cc4f4aa08385e5b8b20d265d11aba3505e1"
   },
   "sig_ss_ridgecrest_2019_egf_v1_00300.0_008.npz": {
    "sha256": "6f0b924255c5fdf0ea16dcd5dc438d4fcdb48e03f34de471bdda9ee375f744ef",
@@ -4132,7 +4136,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00300.0_008.json": {
-   "sha256": "3b3e92ec74fae2547f6d2c95046ef6b6b4cba46e14c42880f9e037da02b2854d"
+   "sha256": "d3bbe9dac52e8857879f6d81347319e40561b30d23e9d17d2fc3dfcbf4fe5223"
   },
   "sig_ss_ridgecrest_2019_egf_v1_00300.0_009.npz": {
    "sha256": "f828c8ffb386f06f3b3ef5900584c63f78efa65d2600948aa0ce5ecdcb888b4a",
@@ -4151,7 +4155,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00300.0_009.json": {
-   "sha256": "7b3a4c95560eedc37a82cd7fef7f4dddeed8d22a4aeb0e59edbd20d05666c59b"
+   "sha256": "d2ab4b69d18d316361252ddb24c3ca3a5392ad3618e0c18f5663c792231a1a9d"
   },
   "noise_00900.0.npz": {
    "sha256": "cc45831635138894f82b96d216b3464237774bcdbbb2e3bc4038fd0e13b6fb47",
@@ -4186,7 +4190,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00900.0_000.json": {
-   "sha256": "ce6c0066d55fe6c217d92eaed205b9230a86faad9030a477205d0098b9c91ddf"
+   "sha256": "bb6e79b62ab1a2b3fd89fea6aaa1d48a4af0311f274e1447e53ee69ad489b81d"
   },
   "sig_ss_ridgecrest_2019_egf_v1_00900.0_001.npz": {
    "sha256": "6c0bb098115c996d872752660f17bb2eadb4109e741e7defef75a83908d0363d",
@@ -4205,7 +4209,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00900.0_001.json": {
-   "sha256": "9822d90985c15fe3422a6cd832b556f3d9963071469bdfdeeb969e5579fa7bd5"
+   "sha256": "43f7c95dc74e354851d300618671788ac91b7b8e924787849a64860f3ba2c092"
   },
   "sig_ss_ridgecrest_2019_egf_v1_00900.0_002.npz": {
    "sha256": "574ebd8fa048488585c862961c23022bade4f90261b6fcfa421e7e86c3b9df26",
@@ -4224,7 +4228,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00900.0_002.json": {
-   "sha256": "3a5d0f18e02a99fa2fde07a94ca5dae8753d8e6b15e9f9bd6ad6809ba870c483"
+   "sha256": "f2c5a6f11123fe20bd31384b1599279e8e69bcfa2368adcdb512c7cf886a4a5f"
   },
   "sig_ss_ridgecrest_2019_egf_v1_00900.0_003.npz": {
    "sha256": "6636d01ede090d7850b305b4227ecae201e2105d93a1e70d5794ee101e85f216",
@@ -4243,7 +4247,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00900.0_003.json": {
-   "sha256": "95d986041213c3f404133e6105b39f1e0d8894374fc8a6382176f84fae03e4cd"
+   "sha256": "025e7230268814d1f25343b7b4b7641c61de0ec9da2b1b5718c6ea9189ce68ea"
   },
   "sig_ss_ridgecrest_2019_egf_v1_00900.0_004.npz": {
    "sha256": "592d56cbad37f8e359eb9ebffd7947f7f32e13b6b84653f311ccf02fd06765c5",
@@ -4262,7 +4266,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00900.0_004.json": {
-   "sha256": "0403775e57acb1fdd8196f969515629b1ac75ba4a4da2f97644a9b87c358141f"
+   "sha256": "8828144b4cdaa63e7801fda094fb9061386c4f062d88e49872ee438910d78f19"
   },
   "sig_ss_ridgecrest_2019_egf_v1_00900.0_005.npz": {
    "sha256": "361c59484c9e54c941e5a99a15dd94331b21b1f5458c23a5d5badc9442a2e54b",
@@ -4281,7 +4285,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00900.0_005.json": {
-   "sha256": "6725213973ff5d9c3d0455c44bf37f014fbf22d9740b1e84d51299d02336eed8"
+   "sha256": "64faa353cc3c94d5a8ee3f69b020c44974ea0c5f72a976d256bd14e3d6308b51"
   },
   "sig_ss_ridgecrest_2019_egf_v1_00900.0_006.npz": {
    "sha256": "aedf7ae6256da028a9f4b83b1340ea8057e481b1a4e4758ab086de1dedbdc209",
@@ -4300,7 +4304,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00900.0_006.json": {
-   "sha256": "9c830a3a65ea2deefe53af32f4f2c40542ea3b7be083fe61971467bd48e82733"
+   "sha256": "b585001f70b9fb0ad0d49c28ec86731ddb8ba7629b6f11e886ec38141f034a00"
   },
   "sig_ss_ridgecrest_2019_egf_v1_00900.0_007.npz": {
    "sha256": "699293a3d33e8ec3693803896a4b758a4896cb37c907cdb219fd4173eefcec8c",
@@ -4319,7 +4323,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00900.0_007.json": {
-   "sha256": "411c5c8cfeeb5d0b535f224b0306f45d8adf4e5f46281ff4684beb456e0cc2ea"
+   "sha256": "24b191495dd3948a3862db4b603f05683211dedc0662cbe3d0ef8d68918cbc5d"
   },
   "sig_ss_ridgecrest_2019_egf_v1_00900.0_008.npz": {
    "sha256": "9d5f7ad77aa4580b18bba296fe87aba96201e8c053a76b5764a554f83dfe0a1e",
@@ -4338,7 +4342,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00900.0_008.json": {
-   "sha256": "5537ab15abc302e88291cb799614a87341d390c83a1d8554d3848cdbfe60bdcd"
+   "sha256": "9c138404800e42c555e9b46d8a495fc3c1341b9ea1a371441b4ba32e59f2dfc3"
   },
   "sig_ss_ridgecrest_2019_egf_v1_00900.0_009.npz": {
    "sha256": "d6cb0b0e83c4ce2d62ffdff5133e769b4c02cc4ef1419f03da2d0f1d81eadaf9",
@@ -4357,7 +4361,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_00900.0_009.json": {
-   "sha256": "0e2ef841209a1d1529d50005ca9495579e1f4fb239321f6df960cad687c8b770"
+   "sha256": "32dfdbcaf82d5169ee47edf63baa4d65282d75839aaa6b55ef216b11c4f7036f"
   },
   "noise_01200.0.npz": {
    "sha256": "2324b34ac3649e6ebccc80bf2778872db6467a69d85cee82dc672f86ecd12aca",
@@ -4392,7 +4396,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01200.0_000.json": {
-   "sha256": "4d851e8c050bb02643090e8f2f50bf3465d6ee6089854089cebe0121762d398e"
+   "sha256": "49b74a6675e1691e60265dd54f6f3f8f27dd50158c86828924d6d514c6faff4e"
   },
   "sig_ss_ridgecrest_2019_egf_v1_01200.0_001.npz": {
    "sha256": "9522a1a96b9eaf397e3252bac320faefdec8a2b1dc3b4f27315d5b8de002f8f5",
@@ -4411,7 +4415,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01200.0_001.json": {
-   "sha256": "152056da0fd2d4ea17c56d24f63f487aa0e42746b79fb941ab433f2e70777169"
+   "sha256": "93fe074f48c1aba065c00f896fb0a275ab8b44ac3b4f2a37eafb175144af9578"
   },
   "sig_ss_ridgecrest_2019_egf_v1_01200.0_002.npz": {
    "sha256": "f8169e6c97b7530877ca1f009753b37e97b14cd0a7708687f6455fe48bf437c3",
@@ -4430,7 +4434,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01200.0_002.json": {
-   "sha256": "39b68b2199452c73531c873d511b8e5409794999b8ea11aae4c043f33dc815b0"
+   "sha256": "26dcfd4976003e37398f6b24a77eab29c6543c39ae05704646e6dac2f3b9db6c"
   },
   "sig_ss_ridgecrest_2019_egf_v1_01200.0_003.npz": {
    "sha256": "aa47b93991a62350a45c89b4653ea5bcaef4c8c32202a415777ad2c83b2a7443",
@@ -4449,7 +4453,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01200.0_003.json": {
-   "sha256": "3ac4ecd4bbca90d016458dd734ad12eaae1e66001fc03f5f6977233e5c8d44d8"
+   "sha256": "75f711d4336654195f18d79f1b1a4f3abf178c6368dc2c5567dd2e5f977085f3"
   },
   "sig_ss_ridgecrest_2019_egf_v1_01200.0_004.npz": {
    "sha256": "5e2e8287982b49b8afb87b896d8977ec49c3f758069d369af9ce58bc7573fe8e",
@@ -4468,7 +4472,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01200.0_004.json": {
-   "sha256": "1af9c306c1e63c9c1516e6ab816b4c1cfa9071f1d03eead7253e1de5ccc35d8d"
+   "sha256": "ca4cd5b330a37dbe41ef1b47ece3f268830d353e8e512df17a839cf72d120ecf"
   },
   "sig_ss_ridgecrest_2019_egf_v1_01200.0_005.npz": {
    "sha256": "0905cefcff7ec9a3e473bd74b79e9d5f101f5455064fda68c04e59adc36a99bb",
@@ -4487,7 +4491,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01200.0_005.json": {
-   "sha256": "dc4b021bc0ff43482f23c7f37c60afc0b09332db8fe92527ed762b683c00f5c3"
+   "sha256": "e2108f0abe8c3eddf06c5ba2941350af3892fa927794375d3e93e547b0fd4c8c"
   },
   "sig_ss_ridgecrest_2019_egf_v1_01200.0_006.npz": {
    "sha256": "2ca62fba68996179f05c6624055fc19aeee58e13c33977b6cee012de4a7a97fd",
@@ -4506,7 +4510,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01200.0_006.json": {
-   "sha256": "9357f866b51bc3a709ee5e5ee6fa5f4a52ab97888867933e65c552e4dc73d64b"
+   "sha256": "09ffe3e56405a74c7c61a3211b89d2272410047d7bab1f6c3ef1e83af0ab7b8a"
   },
   "sig_ss_ridgecrest_2019_egf_v1_01200.0_007.npz": {
    "sha256": "8c1bece23df7b0c75d8e99b468ec67f6a1cac34e1d307c4dffd3140c87864a45",
@@ -4525,7 +4529,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01200.0_007.json": {
-   "sha256": "7421c6c6dfcd2ce28cc131fe683fe54c11c83a17b792efbba934950d09a02227"
+   "sha256": "24120781c91ec52edad1e701906830974efdf88683451f947784ab1aed227f2a"
   },
   "sig_ss_ridgecrest_2019_egf_v1_01200.0_008.npz": {
    "sha256": "ef7455996a1cc1c28a27df0f882d2a6ee6704a9fea0e0b6455d44be3144997d1",
@@ -4544,7 +4548,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01200.0_008.json": {
-   "sha256": "3f8ea1374a12a14acce87ece8549a8d69dd48ab5d3a30a6cdc77c510431a1211"
+   "sha256": "6a0592dde3f8dce98844d35eae6410a30698c759121502e818507aec7db1a4bb"
   },
   "sig_ss_ridgecrest_2019_egf_v1_01200.0_009.npz": {
    "sha256": "37a748b5c8d4ac9c5d548f87b41e6f8b27f1f3eaab1c345d5ec02945be81942b",
@@ -4563,7 +4567,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01200.0_009.json": {
-   "sha256": "f95ade61ae167e964d4f5eae0933aaab46caa1645badce01f0ec78816dfb7031"
+   "sha256": "518b1ba71138bbed531d6c492a423d60dd31108963f99c5a13339069a44503c3"
   },
   "noise_01500.0.npz": {
    "sha256": "78c4b5c2a2ba5c336cb8c79b3e938e3399c3eec17ed6e1e9b44f9f41035273e0",
@@ -4598,7 +4602,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01500.0_000.json": {
-   "sha256": "7a4395caf8fb3df9a6aa3b873b057196b41eb2b30dd6fff74783eb8aeaaba987"
+   "sha256": "f425b0c004a3ef64f407fb6fef3e349cc83d8729315cc848cc571ba2a5e11ba1"
   },
   "sig_ss_ridgecrest_2019_egf_v1_01500.0_001.npz": {
    "sha256": "8db1c117bb7b5e7becc2867e8922f30049d7c43fbb44544f4baed1ef8db2f053",
@@ -4617,7 +4621,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01500.0_001.json": {
-   "sha256": "fb0831354ed670bda72fa2f4ff01b4ca307786a4ddcef1566fb487a9af14ad79"
+   "sha256": "f70134ecdcd097bada4145ef90d10ac39dedf6891bf2cc6c1a47d57d3b23a070"
   },
   "sig_ss_ridgecrest_2019_egf_v1_01500.0_002.npz": {
    "sha256": "45f3cdcb843e96a083a5c0c76068b82904ad178914d4bbd126d5820003cc478a",
@@ -4636,7 +4640,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01500.0_002.json": {
-   "sha256": "71e85927d67cdd16b81615025e565c1ffda339630661748918479060c3f24b7e"
+   "sha256": "f58c182f771094c64c13fd4eda0117df5c83fa63a29c7a542b6b296af807b887"
   },
   "sig_ss_ridgecrest_2019_egf_v1_01500.0_003.npz": {
    "sha256": "08f3e0b1d9808001f5ae7bf420d21ba3ed74227121f0a9106c88a6dbbff79d4b",
@@ -4655,7 +4659,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01500.0_003.json": {
-   "sha256": "0ed5f11a5808399f16312d529dc23514e66e454de731ce46e96780beef6f50a3"
+   "sha256": "9d0a80c856d5c797fca938408f853c5449fb394c7f656437765a664425fea2d2"
   },
   "sig_ss_ridgecrest_2019_egf_v1_01500.0_004.npz": {
    "sha256": "1c871168433acfe39613d7b4a23125312bd0c09fa1715b8024154d0b5c481599",
@@ -4674,7 +4678,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01500.0_004.json": {
-   "sha256": "d75072347183ce2b7804a54cecbb6f4c40ee64e908a869231ebff21562ced1f7"
+   "sha256": "ce61fb179a5fdbe2025e4318727e1eaddfa3650ba93aa43a7feee330783e52bc"
   },
   "sig_ss_ridgecrest_2019_egf_v1_01500.0_005.npz": {
    "sha256": "fb0c9c651f9e1bbfe91cc157e3693cedfc61d42453d4b570cfa4ee73f2a95a07",
@@ -4693,7 +4697,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01500.0_005.json": {
-   "sha256": "55ddd65e9a946bd3686239a4f60a860cd0626d06eec07ddae9fc707e9c629a53"
+   "sha256": "1a6beb98adff366d24a1c4a148d6af79f66ead1dd1d3bbc040ed752f371d9fe7"
   },
   "sig_ss_ridgecrest_2019_egf_v1_01500.0_006.npz": {
    "sha256": "fb5effadcbc69e2e6d765db1ae4d67db2dd41c7f2f99eb4533ef84c93caf9bea",
@@ -4712,7 +4716,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01500.0_006.json": {
-   "sha256": "d493e5763acd78a9576bc491002a6e2640e83fa91c32dfae56fde395986eefa4"
+   "sha256": "d44273db6be43df543cd47888ffaf3f4474abe7368942e6aa5bfa2225cfe08eb"
   },
   "sig_ss_ridgecrest_2019_egf_v1_01500.0_007.npz": {
    "sha256": "eedd5d8508d469e0c87bc179be1451f7139ec08949c0cb228667913d941601bf",
@@ -4731,7 +4735,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01500.0_007.json": {
-   "sha256": "6ddb3537b7e4117c3870c30323f51e29af398795755e4c20da0e8014868cf013"
+   "sha256": "76374e6d74ea7856fdcb5108e9a35ec3fe375034fddf27c722d6246f50015fe1"
   },
   "sig_ss_ridgecrest_2019_egf_v1_01500.0_008.npz": {
    "sha256": "50487350482ba67a279b149c62ff79fc7615f80b36bc9e9a6c401559e8ce199a",
@@ -4750,7 +4754,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01500.0_008.json": {
-   "sha256": "c3c4c35a486c76c3cd804d7904dfc68f4228b524db8a04544f9b312f1ae9216c"
+   "sha256": "72359a49700d5a48233a8e49a39932bd78411cbe9fb37ffe141dee58b8578eab"
   },
   "sig_ss_ridgecrest_2019_egf_v1_01500.0_009.npz": {
    "sha256": "b226e1ee1e753345c044b2e1e6fad31b0292803ae5dab20b5d73afa3d24824ca",
@@ -4769,7 +4773,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_01500.0_009.json": {
-   "sha256": "5f1484419f9ec0376641d16335f43db2f16284cd1403c5825b98ab9fcbd5a7d2"
+   "sha256": "b94b075586fe578392265e726712b78749c0874af862beea243bca51858b5d06"
   },
   "noise_02100.0.npz": {
    "sha256": "6560e8f4dfb17ae0556df6dd89bcafcd78647f35ef8f58551a8e394a91925da7",
@@ -4804,7 +4808,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02100.0_000.json": {
-   "sha256": "e2fc12fe52fe95c3788098a8745fdcecb5fc4996e4bf15133699f78eb7b74e2d"
+   "sha256": "821e2a2cd1d776fc6fe1312257d79ddc3e4d10353a2fc8b82433fe9711a6a8b7"
   },
   "sig_ss_ridgecrest_2019_egf_v1_02100.0_001.npz": {
    "sha256": "8a2ed1165d5c2fda7a89a18b0f8994ad3648ca554f94644d01979db617455b28",
@@ -4823,7 +4827,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02100.0_001.json": {
-   "sha256": "a406122a59e1198fc1375681b43b13d20e04a1ac9b5b8d9cec1172f274ba22cb"
+   "sha256": "6b5f34ecbf578e01863ba6bdfe289db8e4a0f2bccaf76816132a5429e50caed3"
   },
   "sig_ss_ridgecrest_2019_egf_v1_02100.0_002.npz": {
    "sha256": "266e64d713c51369c32eaffdc79c3a1c53d34d7de2653b0670d280b43fa5742b",
@@ -4842,7 +4846,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02100.0_002.json": {
-   "sha256": "effc22a9d0863edc14daaedb9f5d4bf0f237eef67ca90d5cf0182ec18adc8000"
+   "sha256": "42a1f5bd80e583b37ad1c1d4f8d509bb4c13303feba9f26df2de602f5490af9c"
   },
   "sig_ss_ridgecrest_2019_egf_v1_02100.0_003.npz": {
    "sha256": "3de32f5d87e8509c569bf9e8cc567030628701d4bd7c1bb69904488fc7d69828",
@@ -4861,7 +4865,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02100.0_003.json": {
-   "sha256": "249b180a6b2a32434fff17b9bcf67ea8990589f6ced525a3db3899a564fdac70"
+   "sha256": "24657f9b2b3b8a0a8310dd08e359313c840fc4042852105cb40e3aee9d001c04"
   },
   "sig_ss_ridgecrest_2019_egf_v1_02100.0_004.npz": {
    "sha256": "77d8c2b6636e124097bbe3ca0e6384661dc1be6e5798c8974a0bb4488b754e5d",
@@ -4880,7 +4884,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02100.0_004.json": {
-   "sha256": "b490fad231ca1cbebfc8452affb71e9676a149fda1c735c73e1e0398c25cc6eb"
+   "sha256": "28c57de34a90d539ca96fb12db15500b734c882f853a17d0db974e31443d40e5"
   },
   "sig_ss_ridgecrest_2019_egf_v1_02100.0_005.npz": {
    "sha256": "a212a02e308216ef34a48199d7828f723462c7729196973d6207e21d69892859",
@@ -4899,7 +4903,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02100.0_005.json": {
-   "sha256": "acb39a9ca974c40302b1f222a824c2111fa0a16dcd0065893e0177778785f052"
+   "sha256": "24f40aeb7d91e6593fe3fe05f146fabbb289bd1b8a7b0a0f81c44cd8a7717c6f"
   },
   "sig_ss_ridgecrest_2019_egf_v1_02100.0_006.npz": {
    "sha256": "780ed4649992999bd3abe784f2e1e25f5b588b4bdd0520fe9343f6dba1c988fb",
@@ -4918,7 +4922,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02100.0_006.json": {
-   "sha256": "8b1d27cac4bf0e0bc0b9beecb05131c4b4721e4ce541015f0f55724dc59b666d"
+   "sha256": "0eedbad8454b5a88019c8ddc0be8df05249fbf9b08f3aecda781e97f69e9ef1a"
   },
   "sig_ss_ridgecrest_2019_egf_v1_02100.0_007.npz": {
    "sha256": "8e00d972ca886c9ad473ba8e173faa4214b754a9061c089f53b74ab8d6c065e0",
@@ -4937,7 +4941,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02100.0_007.json": {
-   "sha256": "1c14c2ae3d3e1b2ca122c0a42c1f64a069476d3a290f78f5b6cd1c6b2246b2f2"
+   "sha256": "343d1779a35e48140f8f6757b8328a840d680af4a9db954fbd13dd83de258563"
   },
   "sig_ss_ridgecrest_2019_egf_v1_02100.0_008.npz": {
    "sha256": "9afd53ea0178b8aa736f07cc80f6a77d995a6b4f049d91c66462218aa2b01af3",
@@ -4956,7 +4960,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02100.0_008.json": {
-   "sha256": "e5a1c26df44b9935a42dfb56cef6592b438841be1b9a757fb14484de3a083dfe"
+   "sha256": "656a277e17323859401a824a958305dba38245489343aa543b9e9d35fd3baf6d"
   },
   "sig_ss_ridgecrest_2019_egf_v1_02100.0_009.npz": {
    "sha256": "c47f7de87715998d5770f759c4a1755d960d7c4932737a276225f9c72b9b294c",
@@ -4975,7 +4979,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02100.0_009.json": {
-   "sha256": "ad81c339b36eb881af5e022d3545e835091fb3ab063c5be4cfe400d31c0d3e44"
+   "sha256": "802f8660a69f3d675f5d068530945dba8284eed38a461f35094213c87709a424"
   },
   "noise_02700.0.npz": {
    "sha256": "0d86a3974bc8826e60e63a351bf7cc5377f3ff57ce42f79b134e8baadac77f95",
@@ -5010,7 +5014,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02700.0_000.json": {
-   "sha256": "42f8270e031a72f18b003e6dead4663f308d0ddf43dd9030f177073f3bd6b34d"
+   "sha256": "b1200e604f8a0ecad0db3aa4d9bfc236932267c1786ee12da6fe3fc25aa88aab"
   },
   "sig_ss_ridgecrest_2019_egf_v1_02700.0_001.npz": {
    "sha256": "ee0c84990bfc781c16ba951eff4b535beac4cf0cc67635e4c9df72049e2e0afa",
@@ -5029,7 +5033,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02700.0_001.json": {
-   "sha256": "1f85ad6447e531519508073d0c7b599ac8399353ce2911982b346a06c8fddef9"
+   "sha256": "0a829489f0c3586400399911f5eee8e8a13ed1900b8beb23a2e431bb528777de"
   },
   "sig_ss_ridgecrest_2019_egf_v1_02700.0_002.npz": {
    "sha256": "039b435191bfbfd16bc81b21d9f966f33b82c2eedc3b8ab98f77accfa42a20d2",
@@ -5048,7 +5052,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02700.0_002.json": {
-   "sha256": "69ca908b6e600561f988576857a125c40e5d435e53bee067e015c1fa559db915"
+   "sha256": "e0c1e368f3e828c3229a75827d409607d6288cc98dce024dd812e8c286ed8d5d"
   },
   "sig_ss_ridgecrest_2019_egf_v1_02700.0_003.npz": {
    "sha256": "8cf37365071dcf2e68b3c1efe99c9fe9394283d0e7b2ce2070428b79286560ba",
@@ -5067,7 +5071,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02700.0_003.json": {
-   "sha256": "7e6971298f1940c2e6049cb767ca1c4abd066bc50f2eff53ec2139f314fc0bc4"
+   "sha256": "449650402bfee1988e31c25718cfa9ecdfeaac589ae6da498ee7386e81fbe046"
   },
   "sig_ss_ridgecrest_2019_egf_v1_02700.0_004.npz": {
    "sha256": "699a3b13d045eefcff3f9a341e74309899bb72f4b91115d27bc08f1bfaa3d787",
@@ -5086,7 +5090,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02700.0_004.json": {
-   "sha256": "728d4df5fc3d17d0bb2cd17bb496d82c4f004012230b1025aaf300758eef3807"
+   "sha256": "8e1302976fbe4251c299eaad4f0d04b6464e1fcfc9404cba142995595087a3c8"
   },
   "sig_ss_ridgecrest_2019_egf_v1_02700.0_005.npz": {
    "sha256": "acda58f011d573f2c6fa5316f937c57acbfacf3a1baf9ab0781a8b4ac9271803",
@@ -5105,7 +5109,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02700.0_005.json": {
-   "sha256": "6f2d6baa546feba4c04e4f3fbcb096d4c3cb5475ba3fa78479f44e3014421712"
+   "sha256": "632a833420be692d8b2d2c32a817c7c7d9aa2bf6b99e3feb9874b6ba17e59fcb"
   },
   "sig_ss_ridgecrest_2019_egf_v1_02700.0_006.npz": {
    "sha256": "7dec5ecbc396551a0a7e67dd7bd519c8668b15bde7f1fce86c6292dcaa675ceb",
@@ -5124,7 +5128,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02700.0_006.json": {
-   "sha256": "07c98e5ab0a5590bdd754f57e7560e336cff7da3227b8f662913eddbec012edf"
+   "sha256": "da194c2c826f6ce370f6bade77ea63b346eb46eb37037048787f7ded7ec6b017"
   },
   "sig_ss_ridgecrest_2019_egf_v1_02700.0_007.npz": {
    "sha256": "714e179f9bfc85414db95ccd6796820a47d6e61eada8602f12a5ee4da7934273",
@@ -5143,7 +5147,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02700.0_007.json": {
-   "sha256": "ca4bdc3e5054b01b9e0342a345c7690c58a1be4db2bd004e32ce2d781d25a786"
+   "sha256": "a8005701840a63e5118cdf1d46b04620da27388469bed4146a2069de9ef4cc6e"
   },
   "sig_ss_ridgecrest_2019_egf_v1_02700.0_008.npz": {
    "sha256": "8f3969c4aa156802f62db2921205a2bf6827f25a4debf1365ba9ae20477276e2",
@@ -5162,7 +5166,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02700.0_008.json": {
-   "sha256": "6e3fef4400f522b90eb02de21d3d1c7dbac6f055f2a08c031d82d6e64932c83c"
+   "sha256": "b2baa4072d50a8582cf6d90cef407f5b9b9df58fe8d67205259f16881a3b14c8"
   },
   "sig_ss_ridgecrest_2019_egf_v1_02700.0_009.npz": {
    "sha256": "96f889fe915c6c5ebc814471954d9c4e4ab996422c49e61284b1519930bf9233",
@@ -5181,7 +5185,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_02700.0_009.json": {
-   "sha256": "75e8825879f924779ca612f179689a8fe454fa9c49ea3a56bbbec23e0f7551b6"
+   "sha256": "e4916fd1772a8ee5717fbd3e7bece0dfe895ee2ccbc179737173e3d45a676ad1"
   },
   "noise_03300.0.npz": {
    "sha256": "d34670ac8c1fb160e010ce52f468fbbb3a1dec75b04a4d0a0701e7b5a044586a",
@@ -5216,7 +5220,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_03300.0_000.json": {
-   "sha256": "eed2ffc5587616133a20bf346c3a2327f76ce3b6b520671ea5cd003dd09782d4"
+   "sha256": "fe605a4629f81bbc1fc73ed0fc872f29d43e8f7fc89895fec7bd8cdfe45a105a"
   },
   "sig_ss_ridgecrest_2019_egf_v1_03300.0_001.npz": {
    "sha256": "55945964d5f1ca6f55f5b8ddba4d8d1db74bda7c6c4cb2555f465378a913192e",
@@ -5235,7 +5239,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_03300.0_001.json": {
-   "sha256": "0b7f0093b15644f93b85fdbdec83a27ab0155db18fa17725efa138dc837edde7"
+   "sha256": "f44f895651cb2ca5e27df0df0c1b471effbb7c391ffee5a6a04a2d795198b8d0"
   },
   "sig_ss_ridgecrest_2019_egf_v1_03300.0_002.npz": {
    "sha256": "f3f70006d14100ff79da393bca4bb31e1f717e9fb8f1eb5d00219811ff10ebcc",
@@ -5254,7 +5258,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_03300.0_002.json": {
-   "sha256": "163d48ac814884d362225adfa403209381c1f15de317ee73a801ef633592fc5d"
+   "sha256": "fb26f55c9937c080c5d2caed81676df5f7e165eda1799ef3968373dd0b070e3f"
   },
   "sig_ss_ridgecrest_2019_egf_v1_03300.0_003.npz": {
    "sha256": "4f186ece3aaac2a6ca8ca4902c5c0c5f0e8beebf41988c698010d49c36c2993e",
@@ -5273,7 +5277,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_03300.0_003.json": {
-   "sha256": "4c1c10af007193c0f98f4eef5708d5ae467b50f4086c2f329ad833196f3cfa8e"
+   "sha256": "77cf2d40f70a44e36053195151a522de8d1ec7d07b57fc3a42f8a3fff4aea91a"
   },
   "sig_ss_ridgecrest_2019_egf_v1_03300.0_004.npz": {
    "sha256": "38ce49244369b803a22c9d051e6b00f8f20ef05f56962a5d1e62c6ab52d16224",
@@ -5292,7 +5296,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_03300.0_004.json": {
-   "sha256": "5e8745397c062642da947e9bfae8f2199f071cbd593f1ae7d636cf8dfc7efda5"
+   "sha256": "2aa56f0f4aa19a57508d2f3aad789bd22c67220448bec3e95868f82acf80b782"
   },
   "sig_ss_ridgecrest_2019_egf_v1_03300.0_005.npz": {
    "sha256": "22ea989ba6657a4d727b5fd173de5bda86efd663857bcbdc09a83d07441f616a",
@@ -5311,7 +5315,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_03300.0_005.json": {
-   "sha256": "a09892e7d98ee3465d2198e3a3d7eb909ef255f1562e71673d14869f32b0a974"
+   "sha256": "d08e4d3adcf86ef783188fac8e9201c2726fc0374ad7952a0589b63ae1d8d820"
   },
   "sig_ss_ridgecrest_2019_egf_v1_03300.0_006.npz": {
    "sha256": "f27d5bca41959fe9f35e3ed6a5b7d60df9f64fcfbdaa4f917424b100863bd968",
@@ -5330,7 +5334,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_03300.0_006.json": {
-   "sha256": "3f8f1093a536eb53f47b319da8a26020560633b1cee1c4d8a510666558f9884b"
+   "sha256": "112cd6b53b8a2323d9c50b7e327c52752122e4601bdbeb222d8d8655fa876ae9"
   },
   "sig_ss_ridgecrest_2019_egf_v1_03300.0_007.npz": {
    "sha256": "74321cb59c244fdef4f4fc01623c57a3e4e43d5e6f19ee8de0ddaede291b7042",
@@ -5349,7 +5353,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_03300.0_007.json": {
-   "sha256": "6fc7c7895bce0735b92ae9d49d9226366e023e4f860f89f4771fd3fb6c27499a"
+   "sha256": "3947fe2410e6378d396f7a832ffb53aaefab359a939dc455d648d85c763d3134"
   },
   "sig_ss_ridgecrest_2019_egf_v1_03300.0_008.npz": {
    "sha256": "23b9244b9ead0ade5819889e07c2ebaa6cf8428cfdcb17e2b1481e6dffed1c73",
@@ -5368,7 +5372,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_03300.0_008.json": {
-   "sha256": "47e29bcd7b4ed1680054d4c1070290d3dad50a91d3f929eacfa8a37cada39113"
+   "sha256": "f493bfa4083fed646924f1efad217132a60c6f63797e81c06ed26032b5e99516"
   },
   "sig_ss_ridgecrest_2019_egf_v1_03300.0_009.npz": {
    "sha256": "435b742ae22e8db4a0d5f5ef8ec69515e8359a3a46bdc3ed3dd32058d46c32eb",
@@ -5387,7 +5391,7 @@
    ]
   },
   "truth_ss_ridgecrest_2019_egf_v1_03300.0_009.json": {
-   "sha256": "aff47b33105dd57b2af76282e5199d0e1470470c6ee8511629a7325502ea8d1f"
+   "sha256": "1f52dd692517ec51b1ee488601d91b5bb4e04daf235cb9acf7fac92ba376ddb9"
   }
  }
 }
