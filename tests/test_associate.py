@@ -349,6 +349,7 @@ def test_amendment_1_spaces_and_objective_guard(tmp_path):
 
 def test_records_from_a_generator_set(tmp_path):
     from ttmt.associate import records as R
+    from ttmt.atlas import cells as C
     rng = np.random.default_rng(3)
     sta = ring(7)
     tr = toy_truth(rng, n_pairs=2, n_iso=3, span=300.0, sta=sta)
@@ -377,7 +378,9 @@ def test_records_from_a_generator_set(tmp_path):
     recs = TU.load_manifest(paths["PhaseNet"], "phasenet+pyocto")
     assert [r.k for r in recs] == [4, 6] and all(r.partition == "tune" for r in recs)
     assert [r.name for r in recs] == ["a__k4", "a__k6"] and recs[0].centroid == (1.0, -2.0)
-    assert all(len(s) == r.k for r in recs for s in r.subsets if s is not None)
+    full = {k: C.station_subset(sta, Reader.man["stations"], np.ones(7, bool), k).tolist() for k in (4, 6)}
+    assert all(len(r.subsets) == tr.n_events and all(list(s) == full[r.k] for s in r.subsets) for r in recs)
+    assert all(r.stratum == 0 for r in recs)
     assert recs[0].data["frame"].velocity.name.startswith("JMA2001")
     for w in ("original", "instance"):
         assert str(recs[0].data["prob"](w)).endswith(f"prob_a_PhaseNet_{w}.npz")

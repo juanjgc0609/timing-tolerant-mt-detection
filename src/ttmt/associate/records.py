@@ -4,8 +4,8 @@
 "tune")``, which refuses every other partition and every set not seeded from the ATLAS-0 anchor), runs the pickers on
 each realisation, and writes the manifest that :func:`ttmt.associate.tune.load_manifest` reads: per realisation and
 per station count k of the card (``cells.STATION_COUNTS``, those the network has), one record with its truth, the k
-stations nearest the network centroid (``cells.station_subset``; the block covers every station, so availability is
-the 70 s window around each origin inside the block), the realisation as the one bootstrap block (card, "Analysis":
+stations nearest the network centroid (``cells.station_subset`` with every station available, as the atlas plan:
+every event of the run has that subset), the realisation as the one bootstrap block (card, "Analysis":
 the block is an injected network realisation) and the partition label the generator wrote, never recomputed.
 
 The distance axis uses the centroid of the network's development catalogue (card, axis 4), read from the set
@@ -59,11 +59,15 @@ def stream_of(data, codes, fs, t0, net="XX", band="HH"):
     return st
 
 
-def subsets_for(truth, sta_xyz, codes, k):
-    """per event the k stations nearest the network centroid among those whose data cover [t - 10 s, t + 60 s]."""
-    cov = [[(truth.t0, truth.t1)]] * len(codes)
-    avail = C.availability(truth.t, cov)
-    return [C.station_subset(sta_xyz, codes, avail[e], k) for e in range(len(truth.t))]
+def subsets(stations_xyz, codes):
+    """{k: station indices} of the controlled subsets the network can fill, every station available (the injected
+    records have no gaps); the rule of ttmt.atlas.plan.subsets, so every event of a run has the same subset."""
+    out = {}
+    for k in C.STATION_COUNTS:
+        sub = C.station_subset(stations_xyz, codes, np.ones(len(codes), bool), k)
+        if sub is not None:
+            out[k] = [int(i) for i in sub]
+    return out
 
 
 def write_manifest(reader, out, annotate, pickers_=(("PhaseNet", "original"), ("PhaseNet", "instance")), log=print):
@@ -77,14 +81,15 @@ def write_manifest(reader, out, annotate, pickers_=(("PhaseNet", "original"), ("
     root = os.path.join(out, reader.set_id)
     os.makedirs(root, exist_ok=True)
     codes, sta_xyz, fs = list(man["stations"]), np.asarray(man["xyz"], float), float(man["fs"])
-    ks = [k for k in C.STATION_COUNTS if k <= len(codes)]
+    subs = subsets(sta_xyz, codes)
+    ks = sorted(subs)
     centroid = catalogue_centroid(man)
     labels = list(reader)
     truths = {lab: reader.truth(lab) for lab in labels}
     models = sorted({m for m, _w in pickers_})
     recs = {m: [] for m in models}
     real = {r["label"]: r for r in man["realisations"]}
-    for i, lab in enumerate(labels):
+    for lab in labels:
         truth, r = truths[lab], real[lab]
         save_truth(os.path.join(root, f"truth_{lab}.npz"), truth)
         st = stream_of(reader.data(lab), codes, fs, truth.t0)
@@ -95,14 +100,13 @@ def write_manifest(reader, out, annotate, pickers_=(("PhaseNet", "original"), ("
             pickers.save_probabilities(os.path.join(root, name), p, dt, t0, codes, m, w)
             prob.setdefault(m, {})[w] = name
         for k in ks:
-            sub = subsets_for(truth, sta_xyz, codes, k)
             for m in models:
                 recs[m].append({
                     "name": run_name(lab, k), "partition": r["partition"], "truth": f"truth_{lab}.npz", "k": k,
                     "stations": {"code": codes, "xyz": sta_xyz.tolist()},
-                    "subsets": [None if s is None else s.tolist() for s in sub],
+                    "subsets": [subs[k]] * len(truth.t),
                     "centroid": [float(centroid[0]), float(centroid[1])],
-                    "block_edges": [float(truth.t0), float(truth.t1)], "stratum": i,
+                    "block_edges": [float(truth.t0), float(truth.t1)], "stratum": 0,
                     "prob": prob[m], "velocity": VELOCITY.get(man["dataset"], "hadley_kanamori"),
                     "dataset": man["dataset"], "set_id": reader.set_id, "label": lab,
                     "block_index": r.get("block_index"), "r": r.get("r")})
