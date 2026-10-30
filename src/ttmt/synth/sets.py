@@ -157,7 +157,10 @@ def build(set_id, rec, sources, per_block, anchor="ATLAS-0", inj_cfg=None, atoms
                           "noise": nf.name, "sig": sf.name, "truth": tf.name, "variants": variants,
                           "n_targets": int(truth.target.sum()), "n_pairs": int(len(set(truth.pair[truth.target]) - {-1}))})
             log(f"{label} {part} targets {reals[-1]['n_targets']} pairs {reals[-1]['n_pairs']}")
+    from ..atlas.cells import centroid
+    cat_xy = centroid([[e["x"], e["y"], e["z"]] for e in rec.catalogue]).tolist() if rec.catalogue else None
     man = {"set_id": set_id, "generator": GENERATOR_VERSION, "dataset": rec.dataset, "fs": rec.fs,
+           "catalogue_centroid": cat_xy,
            "components": "E, N, Z up", "stations": rec.codes, "xyz": np.asarray(rec.xyz).tolist(),
            "anchor": anchor, "pre_anchor": anchor != "ATLAS-0", "inject_config": c,
            "inject_config_hash": INJ.config_hash(c), "source_meta": source_meta or {},

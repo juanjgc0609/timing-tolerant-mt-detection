@@ -14,7 +14,9 @@ the optional injected timing error), and the per-station SNR of the card:
     [tP - 5 s, tP - 0.5 s], both band-passed 2-20 Hz.
 Per target (``meta['targets']``): source id and kind, injection scale, the largest normalised correlation of the
 injected waveform with any template or deflation atom of a given library (CR-06), the radiated vectors g_ib measured on
-the noise-free injected waveform, and the empirical K_mec/E of the pair from those vectors.
+the noise-free injected waveform, and the empirical K_mec/E of the pair from those vectors. ``meta['max_cc']``: the
+same correlation per event of the truth, shape (m,), nan for the neutral catalogued events (read by the atlas scope
+CC < 0.5).
 """
 import hashlib
 import json
@@ -295,6 +297,7 @@ def realise(rec, block, sources, seed, c=None, atoms=None, atom_ids=None, label=
                   arr_t_obs=np.array(arr_obs, float).reshape(len(ts), ns, 2),
                   meta={"seed": None if isinstance(seed, np.random.Generator) else int(seed), "config_hash": config_hash(c), "config": c, "dataset": rec.dataset,
                         "block": [a, b], "targets": tmeta, "kmec_empirical": kmec_emp.tolist(),
+                        "max_cc": [x["max_cc"] for x in tmeta] + [float("nan")] * nn,
                         "stations": rec.codes, "xyz": rec.xyz.tolist(), "fs": fs,
                         "components": "E, N, Z up", "label": label})
     return sig, noise, truth

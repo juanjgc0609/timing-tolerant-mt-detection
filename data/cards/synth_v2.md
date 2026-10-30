@@ -43,7 +43,8 @@
   per-station SNR as the ATLAS-0 card defines it (exact: signal and noise are stored apart), pair id, kmec when the
   tensors are known, and in `meta`: seed, configuration and its hash, source id and kind, injection scale, spatial
   separation of the pair, the radiated vectors g_ib measured on the noise-free injected waveform, the largest
-  normalised network correlation with the default atom library (CR-06), and the 4-station contamination variants
+  normalised network correlation with the default atom library (CR-06; also per event as `meta.max_cc`, nan for
+  neutral events), and the 4-station contamination variants
   (CR-24).
 - CR-06 atom library: by default every catalogued event of the noise blocks, cut [-5, +35] s
   (`realdata.template_candidates`), that is, the events a template or deflation method would take from the record
@@ -57,5 +58,7 @@
   a noise block goes to tuning when the first 8 bytes of sha256(f"{dataset}|{start:.3f}|tune-read-v1"), little-endian,
   over 2^64 are below 0.3; per dataset, an empty tuning partition takes the noise block of smallest value, an empty
   reading partition the one of largest value. EGF-role blocks are in neither partition.
+- Manifest: also `catalogue_centroid`, the (x, y) centroid in local km of the dataset's development catalogue
+  (`ttmt.atlas.cells.centroid`), the origin of the card's distance axis.
 - Files: under `$TTMT_WORK_ROOT/synth/<set id>/` (not in git); manifests with SHA-256 and float fingerprints in
   `data/manifests/synth/`. A rebuild on another platform is checked with `SetReader(..., verify="fingerprint")`.
