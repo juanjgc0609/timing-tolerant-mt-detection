@@ -7,6 +7,9 @@ Modules:
               atlas and the rule of ADR-0008 (H1 in T, then H2 in C, with the duplicator control), on ttmt.stats
   instrument  pick-level and event-level diagnostics (lost, merged, wrong-phase picks; merged and split events;
               picker- versus associator-limited misses; LOC hits that fail LOC+T)
+  seeds       the synthetic seeds derived from the anchor (ADR-0004 item 4, ADR-0009 item 5)
+  plan        the run plan: every realisation of a set with each controlled station subset and contamination variant
+  run         the analysis of the reading partition: regimes, H-ATLAS loss and duplicator control per scope
 Comparator wrappers and their tuning live with the comparators (thread "Comparadores y ajuste"); they hand the atlas
 Detections and Picks in the schema below. Only numpy is needed here.
 """

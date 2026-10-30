@@ -3,6 +3,14 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-10-30
+
+- Atlas run harness: `ttmt.atlas.plan` (the run plan of a set manifest: station subsets k = 4, 6, 8, 12 by
+  `cells.station_subset`, contamination variants on the 4-station subset, CR-24) and `ttmt.atlas.run` (pools the
+  reading runs by realisation, reports regimes, H-ATLAS loss and the duplicator control per scope: all sets, each set,
+  correlation < 0.5 (CR-06) and each contamination variant). The run refuses the tuning partition and needs
+  `experiments/exploratory/ATLAS-0/gate.json` with at least two passed reproduction targets.
+
 ## 2026-10-24
 
 - ATLAS-0 amendment 1 (ADR-0009), before any tuning trial: REAL `tint` and PyOcto `min_interevent_time` log-uniform
