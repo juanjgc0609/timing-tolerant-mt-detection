@@ -10,6 +10,10 @@ Dated record of changes to the project's process, code and documents. Results ar
   reading runs by realisation, reports regimes, H-ATLAS loss and the duplicator control per scope: all sets, each set,
   correlation < 0.5 (CR-06) and each contamination variant). The run refuses the tuning partition and needs
   `experiments/exploratory/ATLAS-0/gate.json` with at least two passed reproduction targets.
+- Atlas sensitivity to the bootstrap unit (review of PR #21): every scope also reports the number of distinct noise
+  blocks and a sensitivity row that resamples whole noise blocks (`froc.describe` / `pooled_loss` with `cluster`),
+  with H-ATLAS read against both; the registered unit stays the realisation. Noted in
+  `experiments/exploratory/ATLAS-0/run_log.md`.
 
 ## 2026-10-24
 

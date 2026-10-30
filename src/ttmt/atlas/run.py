@@ -7,6 +7,12 @@ one set with its injected events), holding all its station-subset runs; its hour
 since every run emits its own false detections. The bootstrap is stratified by set (sequence or network). The
 operating point of a method is set on the whole pooled evaluation at the budget.
 
+Sensitivity to the bootstrap unit (review of PR #21): realisations of one set on the same 300 s noise block share
+every noise sample, so the false detections driven by the noise are not independent across them. Next to the
+registered intervals, every scope reports the number of distinct noise blocks and a sensitivity row whose bootstrap
+draws noise blocks (all realisations of a noise block together, within the set strata), with H-ATLAS read against
+both. The registered unit stays the realisation; the sensitivity row is descriptive and is stated in the run log.
+
 Scopes reported: every set pooled; each set alone; the stratum of injected events whose largest correlation to any
 template or deflation atom is below 0.5 (CR-06; truth.meta["max_cc"] per event); each contamination variant of the
 4-station subsets (CR-24), apart from the main pool. A run is read only from the "read" partition, and only once the
@@ -50,7 +56,7 @@ def build_pool(rows, truth_of, dets_of, methods, centroid_of, target_filter=None
     bad = [r["run"] for r in rows if r["partition"] != "read"]
     if bad:
         raise ValueError(f"the atlas reads the 'read' partition only; {len(bad)} runs are not, e.g. {bad[0]}")
-    blocks, sets, hours, stratum = OrderedDict(), OrderedDict(), [], []
+    blocks, sets, noise, hours, stratum, cluster = OrderedDict(), OrderedDict(), OrderedDict(), [], [], []
     truths = [truth_of(r) for r in rows]
     for r, tr in zip(rows, truths):
         key = (r["set_id"], r["label"])
@@ -59,8 +65,9 @@ def build_pool(rows, truth_of, dets_of, methods, centroid_of, target_filter=None
             sets.setdefault(r["set_id"], len(sets))
             hours.append(0.0)
             stratum.append(sets[r["set_id"]])
+            cluster.append(noise.setdefault((r["set_id"], int(r["block_index"])), len(noise)))
         hours[blocks[key]] += tr.hours
-    pool = F.Pool(np.array(hours), np.array(stratum, int))
+    pool = F.Pool(np.array(hours), np.array(stratum, int), block_cluster=np.array(cluster, int))
     for r, tr in zip(rows, truths):
         if target_filter is not None:
             tr = replace(tr, target=tr.target & np.asarray(target_filter(tr), bool))
@@ -76,13 +83,40 @@ def _regimes(d):
     return {m: {g: dict(zip(("recall", "lo", "hi", "n"), v)) for g, v in x["regime"].items()} for m, x in d.items()}
 
 
+LOSS_FLOOR = 0.2                                            # card, H-ATLAS: every core pipeline loses >= 20 %
+
+
+def h_atlas_reading(losses):
+    """H-ATLAS on the losses (pooled_loss) of the core pipelines: refuted if the upper bound of any is below 0.20,
+    confirmed if every lower bound is at least 0.20, otherwise undecided."""
+    refuted_by = sorted(m for m, x in losses.items() if np.isfinite(x["hi"]) and x["hi"] < LOSS_FLOOR)
+    if refuted_by:
+        verdict = "refuted"
+    elif losses and all(np.isfinite(x["lo"]) and x["lo"] >= LOSS_FLOOR for x in losses.values()):
+        verdict = "confirmed"
+    else:
+        verdict = "undecided"
+    return dict(verdict=verdict, refuted_by=refuted_by)
+
+
 def scope_report(pool, methods, comparators, n_boot=2000):
-    """the regime table, H-ATLAS loss and duplicator control of one pool."""
+    """the regime table, H-ATLAS loss and duplicator control of one pool, with the noise-block sensitivity row."""
     d = F.describe(pool, methods, n_boot=n_boot)
+    core = [m for m in methods if not m.startswith("dup:")]
+    loss = {m: F.pooled_loss(pool, m, n_boot=n_boot) for m in core}
+    pipes = list(comparators) or core                       # H-ATLAS is read on the core pipelines (comparators)
     out = dict(blocks=int(pool.n_blocks), hours=float(pool.block_hours.sum()),
                targets={g: int((pool.ev_regime == g).sum()) for g in ("T", "C", "iso")},
                indicative=bool(pool.n_blocks < F.MIN_BLOCKS), regimes=_regimes(d),
-               h_atlas={m: F.pooled_loss(pool, m, n_boot=n_boot) for m in methods if not m.startswith("dup:")})
+               h_atlas=loss, h_atlas_reading=h_atlas_reading({m: loss[m] for m in pipes}))
+    if pool.block_cluster is not None:
+        nc = F.n_clusters(pool, pool.block_cluster)
+        ds = F.describe(pool, methods, n_boot=n_boot, cluster=pool.block_cluster)
+        ls = {m: F.pooled_loss(pool, m, n_boot=n_boot, cluster=pool.block_cluster) for m in core}
+        out["noise_blocks"] = nc
+        out["sensitivity_noise_block"] = dict(unit="noise block", blocks=nc, indicative=bool(nc < F.MIN_BLOCKS),
+                                              regimes=_regimes(ds), h_atlas=ls,
+                                              h_atlas_reading=h_atlas_reading({m: ls[m] for m in pipes}))
     ctl = {}
     for c in comparators:
         if "dup:" + c in pool.runs:
