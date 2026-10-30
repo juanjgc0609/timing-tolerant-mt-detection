@@ -3,6 +3,7 @@ tuning objective under LOC+T-V, the picker peak extraction, the 1-D model handed
 programs are installed) the GaMMA, PyOcto and REAL wrappers on a toy network."""
 import json
 import os
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -383,3 +384,24 @@ def test_records_from_a_generator_set(tmp_path):
     bad.partition = "read"
     with pytest.raises(ValueError):
         R.write_manifest(bad, str(tmp_path), annotate)
+
+
+def test_reproduction_gate(tmp_path):
+    import importlib
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "experiments" / "exploratory" / "COMPARATORS"))
+    G = importlib.import_module("gate")
+    from repro_puente import S10
+    runs = [dict(method=m, n_events=n, noise=z, recall=v[1] * 1.01, status="ok")
+            for m in ("pyocto", "gamma") for (n, z), v in S10[m].items() if v is not None]
+    for stations, want in ((23, False), (400, True)):
+        (tmp_path / "p.json").write_text(json.dumps(dict(stations=stations, station_file="s.csv", runs=runs)))
+        g = G.build(str(tmp_path / "p.json"))
+        assert g["targets"]["puente_pyocto"]["passed"] is want and g["targets"]["puente_gamma"]["passed"] is want
+    runs[0]["recall"] *= 1.1
+    (tmp_path / "p.json").write_text(json.dumps(dict(stations=400, station_file="s.csv", runs=runs)))
+    g = G.build(str(tmp_path / "p.json"))
+    assert not g["targets"]["puente_pyocto"]["passed"] and g["passed"] == 1
+    (tmp_path / "e.json").write_text(json.dumps(dict(conditions=[dict(name="P F1", value=0.97, published=0.98)])))
+    g = G.build(ethz=str(tmp_path / "e.json"))
+    assert g["targets"]["ethz_phasenet"]["passed"] and g["targets"]["quakemigrate_example"]["evidence"] == "not run"

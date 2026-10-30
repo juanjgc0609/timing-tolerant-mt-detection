@@ -130,6 +130,12 @@ noise. On the same 100-event, 30 % record, `dbscan_min_samples = 5` gives recall
 0.53, with everything else unchanged. The gate run uses the SCEDC station list on the GPU machine
 (`repro_puente.py fetch-stations`).
 
+`gate.py write [--puente run.json] [--ethz ethz.json] [--quakemigrate qm.json]` writes
+`experiments/exploratory/ATLAS-0/gate.json`, which the atlas reads before any data: one entry per target
+(`puente_pyocto`, `puente_gamma`, `ethz_phasenet`, `quakemigrate_example`), passed when every published condition
+run is within 5 %. A Puente run on fewer than 100 stations is the stand-in and never passes. The committed file has
+no target passed: the Puente targets wait on the device run, and targets 2 and 3 are not implemented yet.
+
 Targets 2 (PhaseNet on the SeisBench ETHZ benchmark with `pick-benchmark`) and 3 (QuakeMigrate on its published
 example) need the GPU machine and, for 3, an install; they are not done yet.
 

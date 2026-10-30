@@ -1,0 +1,22 @@
+{
+ "targets": {
+  "puente_pyocto": {
+   "passed": false,
+   "evidence": "not run on the published network; cloud dry run on a 23-station stand-in only (COMPARATORS/README.md, G3a): 6/6 conditions within 5%, not counted. Needs repro_puente.py fetch-stations and run on the device."
+  },
+  "puente_gamma": {
+   "passed": false,
+   "evidence": "not run on the published network; cloud dry run on a 23-station stand-in only: 0.43-0.63 recall, as Table S3 dbscan_min_samples=20 needs the full SCSN. Needs the device run."
+  },
+  "ethz_phasenet": {
+   "passed": false,
+   "evidence": "not run"
+  },
+  "quakemigrate_example": {
+   "passed": false,
+   "evidence": "not run"
+  }
+ },
+ "passed": 0,
+ "required": 2
+}
