@@ -344,3 +344,42 @@ def test_amendment_1_spaces_and_objective_guard(tmp_path):
     with pytest.raises(ValueError):                 # refused before any trial is spent
         TU.run("eqnet", lambda c, r: None, [only_c], ledger=tmp_path / "l.csv", log=lambda *_: None)
     assert not (tmp_path / "l.csv").exists()
+
+
+def test_records_from_a_generator_set(tmp_path):
+    from ttmt.associate import records as R
+    rng = np.random.default_rng(3)
+    sta = ring(7)
+    tr = toy_truth(rng, n_pairs=2, n_iso=3, span=300.0, sta=sta)
+
+    class Reader:                                       # the SetReader interface write_manifest uses
+        set_id, partition = "ss_toy_v1", "tune"
+        man = {"dataset": "hinet_2012", "fs": 100.0, "stations": [f"S{i}" for i in range(7)], "xyz": sta.tolist(),
+               "realisations": [{"label": "a", "partition": "tune", "block_index": 0, "r": 0},
+                                {"label": "b", "partition": "read", "block_index": 1, "r": 0}]}
+
+        def __iter__(self):
+            return iter(["a"])
+
+        def truth(self, label):
+            assert label == "a"
+            return tr
+
+        def data(self, label):
+            return np.zeros((7, 3, 3000))
+
+    def annotate(stream, codes, model, weights, t0):
+        assert len(stream) == 21 and stream[0].stats.sampling_rate == 100.0
+        return np.zeros((len(codes), 3000, 2), np.float32), 0.01, t0
+
+    paths = R.write_manifest(Reader(), str(tmp_path), annotate, log=lambda *_: None)
+    recs = TU.load_manifest(paths["PhaseNet"], "phasenet+pyocto")
+    assert [r.k for r in recs] == [4, 6] and all(r.partition == "tune" for r in recs)
+    assert all(len(s) == r.k for r in recs for s in r.subsets if s is not None)
+    assert recs[0].data["frame"].velocity.name.startswith("JMA2001")
+    for w in ("original", "instance"):
+        assert str(recs[0].data["prob"](w)).endswith(f"prob_a_PhaseNet_{w}.npz")
+    bad = Reader()
+    bad.partition = "read"
+    with pytest.raises(ValueError):
+        R.write_manifest(bad, str(tmp_path), annotate)
