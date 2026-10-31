@@ -1,7 +1,6 @@
 """Closed-form whole-space displacement of a point moment tensor (Aki and Richards 2002, eq. 4.29): the reference of
 the engine test. Near, intermediate and far field; moment-rate function a Gaussian of unit area."""
 import numpy as np
-from scipy.special import erf
 
 from .fk import MT_ORDER
 

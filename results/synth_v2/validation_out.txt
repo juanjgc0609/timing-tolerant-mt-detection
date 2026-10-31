@@ -1,0 +1,38 @@
+1. Engine against the whole-space solution (vp 6, vs 3.5, rho 2.7; source 5 km deep; Gaussian moment rate, f_gauss 4 Hz)
+   L factor 1.5: max relative error per distance [0.00504, 0.00553, 0.00635] (worst component Myy), 7 s
+   L factor 3.0: max relative error per distance [0.0005, 0.0005, 0.00061] (worst component Mxy), 12 s
+   default L factor 3: worst relative error, 6 components x 3 distances      6.114e-04  (< 0.01)  ok
+   L factor 6.0: max relative error per distance [0.0005, 0.0005, 0.00061] (worst component Mxy), 23 s
+2. Free surface: vertical-incidence P on a half-space (source Mzz below the receiver). The ratio tends to 2 as
+   the near- and intermediate-field terms (relative size ~ wavelength / depth) vanish
+   depth   10 km: surface / whole-space P pulse (L2 over +-0.3 s) = 1.9987
+   depth   30 km: surface / whole-space P pulse (L2 over +-0.3 s) = 1.9998
+   |ratio - 2| at 30 km                                                      1.974e-04  (< 0.005)  ok
+3. Borehole receiver 2 km deep (CR-09): direct P and the free-surface ghost (source below the receiver)
+   source  20 km: direct peak 3.960 s (ray 4.000), ghost 4.620 s (ray 4.667); ghost / direct +0.8176 (far-field image: +0.8182); relative difference -0.0007
+   source  40 km: direct peak 7.300 s (ray 7.333), ghost 7.960 s (ray 8.000); ghost / direct +0.9044 (far-field image: +0.9048); relative difference -0.0004
+   |ghost delay - 2 zr / vp| (s)                                             6.667e-03  (< 0.021)  ok
+   |ghost / direct / far-field ratio - 1| at 40 km (tends to 0 with depth)   3.919e-04  (< 0.005)  ok
+4. Layered medium crust_a: P arrival of the engine against ray theory (own tracer) and the detector's tracer.
+   Engine arrival: time of the peak of the displacement-vector norm of the P pulse (the far-field displacement
+   of a Gaussian moment rate is a Gaussian centred on the arrival); elastic copy of the model (Q = 1e9) and
+   the model with its Q (constant-Q dispersion makes the 10 Hz band arrive slightly earlier than the 1 Hz
+   reference of the ray times)
+   own tracer against ttmt.traveltime, max |dt| (s)                          8.349e-13  (< 1e-06)  ok
+   crust_a_elastic  engine - ray (s) at X [5.0, 15.0, 30.0, 45.0, 60.0] km: [0.001, 0.001, 0.002, 0.002, 0.214] (rays: ['direct', 'direct', 'direct', 'direct', 'direct'])
+   crust_a          engine - ray (s) at X [5.0, 15.0, 30.0, 45.0, 60.0] km: [-0.003, -0.007, -0.009, -0.011, 0.023] (rays: ['direct', 'direct', 'direct', 'direct', 'direct'])
+   at 60 km the direct P grazes the 4-12 km layer and is weaker than the head wave 0.04 s behind it and the
+   wide-angle reflections, so the peak of the +-0.1 s window is not the first arrival (not an engine error)
+   elastic model, X <= 45 km: max |engine P - ray P| (s)                     2.356e-03  (< 0.01)  ok
+6. Semi-synthetic sets (data/manifests/synth)
+   ss_hinet_2012_egf_v1: 40 realisations (10 tune, 30 read), source egf (n 8), 7 stations, anchor 'ATLAS-0'
+      targets 432, pairs 197; network SNR quantiles 10/50/90 [0.0, 1.6, 9.3]; SNR bins <4/4-8/8-20/>=20: [309, 71, 40, 12]
+      separation bins ('<0.1', '0.1-0.5', '0.5-1', '1-3', '>3'): [45, 71, 75, 92, 149]; regime T [0.1, 1) s: 146
+      max CC to the atom library: median 0.645, p90 0.818, fraction < 0.5 0.000 (CR-06); injection scale median 1
+      K_mec/E empirical (measured vectors) 10/50/90 [0.0002, 0.0242, 0.4379]
+   ss_ridgecrest_2019_egf_v1: 70 realisations (10 tune, 60 read), source egf (n 12), 11 stations, anchor 'ATLAS-0'
+      targets 830, pairs 340; network SNR quantiles 10/50/90 [0.7, 4.5, 16.6]; SNR bins <4/4-8/8-20/>=20: [371, 216, 185, 58]
+      separation bins ('<0.1', '0.1-0.5', '0.5-1', '1-3', '>3'): [42, 181, 198, 248, 161]; regime T [0.1, 1) s: 379
+      max CC to the atom library: median 0.116, p90 0.709, fraction < 0.5 0.831 (CR-06); injection scale median 0.986
+      K_mec/E empirical (measured vectors) 10/50/90 [0.0011, 0.0315, 0.1814]
+validation passed
