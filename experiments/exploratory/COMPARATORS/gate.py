@@ -6,8 +6,10 @@ gate.json is {"targets": {name: {"passed": bool, "evidence": str}}}; the atlas r
 targets passed. Targets (card): puente_pyocto and puente_gamma (Puente et al. 2025, crustal scenario, Table S10,
 parameters of Tables S3-S5, from repro_puente.py run), ethz_phasenet (SeisBench pick-benchmark, in-domain ETHZ) and
 quakemigrate_example (Winder et al. 2026, stated event counts). A target passes when every published condition it was
-run on is within 5 per cent (relative) of the published value. A Puente run on fewer than MIN_STATIONS stations is the
-cloud stand-in, not the published network, and never passes. ethz and quakemigrate evidence files are
+run on is within 5 per cent (relative) of the published value. A Puente run passes only on a station list written by
+``repro_puente.py fetch-stations`` from the SCEDC service (provenance file next to the list, checksum unchanged): the
+paper gives no list, so the gate fixes the network by its source and filter, not by a count. Any other list, such as
+the 23-station cloud stand-in, never passes. ethz and quakemigrate evidence files are
 {"conditions": [{"name", "value", "published"}], "source": str}. A target without evidence is written as not passed.
 """
 import argparse
@@ -15,15 +17,16 @@ import json
 import sys
 from pathlib import Path
 
+import repro_puente
+
 GATE = Path(__file__).resolve().parents[1] / "ATLAS-0" / "gate.json"
 TOL = 0.05
-MIN_STATIONS = 100            # the SCSN list of the scenario has several hundred; the cloud stand-in has 23
 NAMES = ("puente_pyocto", "puente_gamma", "ethz_phasenet", "quakemigrate_example")
 
 
 def puente(path, tol=TOL):
     """{target: (passed, evidence)} from a repro_puente.py run file."""
-    from repro_puente import S10
+    S10 = repro_puente.S10
     res = json.load(open(path))
     out = {}
     for m in ("pyocto", "gamma"):
@@ -32,10 +35,12 @@ def puente(path, tol=TOL):
         rel = [(r["recall"] - S10[m][(r["n_events"], r["noise"])][1]) / S10[m][(r["n_events"], r["noise"])][1]
                for r in rows]
         ok = sum(abs(x) <= tol for x in rel)
-        stand_in = res["stations"] < MIN_STATIONS
+        src = res.get("station_source") or {}
+        stand_in = not str(src.get("service", "")).startswith("SCEDC")
         passed = bool(rows) and ok == len(rows) and not stand_in
         ev = (f"{path}: {ok}/{len(rows)} conditions within {tol:.0%} of Table S10 recall on {res['stations']} stations"
-              f" ({res['station_file']})" + ("; stand-in network, not the published one" if stand_in else ""))
+              f" ({res['station_file']}, {src.get('service', 'no provenance')} {src.get('network', '')}"
+              f" {src.get('channel', '')})" + ("; not a fetch-stations SCEDC list, does not count" if stand_in else ""))
         out[f"puente_{m}"] = (passed, ev)
     return out
 

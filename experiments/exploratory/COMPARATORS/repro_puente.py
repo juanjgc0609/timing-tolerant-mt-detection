@@ -77,7 +77,26 @@ def fetch_stations(out):
         fh.write("code,latitude,longitude,elevation_m\n")
         for r in rows:
             fh.write("{},{:.5f},{:.5f},{:.1f}\n".format(*r))
+    src = dict(service="SCEDC FDSN", network="CI", channel="HH?,BH?", box_lonlat=[lon0, lat0, lon1, lat1],
+               pad_km=PAD_KM, date="2020-01-01", n_stations=len(rows), sha256=file_sha256(out))
+    with open(out + ".source.json", "w") as fh:
+        json.dump(src, fh, indent=1)
     print(len(rows), "stations ->", out)
+
+
+def file_sha256(path):
+    import hashlib
+    return hashlib.sha256(open(path, "rb").read()).hexdigest()
+
+
+def station_source(path):
+    """the provenance written by fetch-stations next to a station file, None if absent or if the file changed since."""
+    import os
+    side = str(path) + ".source.json"
+    if not os.path.exists(side):
+        return None
+    src = json.load(open(side))
+    return src if src.get("sha256") == file_sha256(path) else None
 
 
 def load_stations(path):
@@ -164,7 +183,8 @@ def run(args):
     from ttmt.associate import pipeline as PL
     stations = load_stations(args.stations)
     vel = Velocity1D.hadley_kanamori()
-    out = {"stations": len(stations.code), "station_file": args.stations, "seed": args.seed, "runs": []}
+    out = {"stations": len(stations.code), "station_file": args.stations, "station_source": station_source(args.stations),
+           "seed": args.seed, "runs": []}
     for n in args.events:
         for noise in args.noise:
             rng = np.random.default_rng([args.seed, n, int(round(noise * 100))])

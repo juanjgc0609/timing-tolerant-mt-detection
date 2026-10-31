@@ -133,7 +133,10 @@ noise. On the same 100-event, 30 % record, `dbscan_min_samples = 5` gives recall
 `gate.py write [--puente run.json] [--ethz ethz.json] [--quakemigrate qm.json]` writes
 `experiments/exploratory/ATLAS-0/gate.json`, which the atlas reads before any data: one entry per target
 (`puente_pyocto`, `puente_gamma`, `ethz_phasenet`, `quakemigrate_example`), passed when every published condition
-run is within 5 %. A Puente run on fewer than 100 stations is the stand-in and never passes. The committed file has
+run is within 5 %. A Puente run counts only on a list written by `fetch-stations` from SCEDC (CI, HH/BH, the
+scenario box plus 50 km, 2020-01-01; provenance in `<list>.source.json`, checked by SHA-256). The paper gives no
+station list, so the network is fixed by its source and filter, not by a count; any other list, such as the cloud
+stand-in, never passes. The committed file has
 no target passed: the Puente targets wait on the device run, and targets 2 and 3 are not implemented yet.
 
 Targets 2 (PhaseNet on the SeisBench ETHZ benchmark with `pick-benchmark`) and 3 (QuakeMigrate on its published

@@ -402,14 +402,23 @@ def test_reproduction_gate(tmp_path):
     from repro_puente import S10
     runs = [dict(method=m, n_events=n, noise=z, recall=v[1] * 1.01, status="ok")
             for m in ("pyocto", "gamma") for (n, z), v in S10[m].items() if v is not None]
-    for stations, want in ((23, False), (400, True)):
-        (tmp_path / "p.json").write_text(json.dumps(dict(stations=stations, station_file="s.csv", runs=runs)))
+    scedc = dict(service="SCEDC FDSN", network="CI", channel="HH?,BH?")
+    for src, want in ((None, False), (scedc, True)):
+        (tmp_path / "p.json").write_text(json.dumps(dict(stations=54, station_file="s.csv", station_source=src,
+                                                         runs=runs)))
         g = G.build(str(tmp_path / "p.json"))
         assert g["targets"]["puente_pyocto"]["passed"] is want and g["targets"]["puente_gamma"]["passed"] is want
     runs[0]["recall"] *= 1.1
-    (tmp_path / "p.json").write_text(json.dumps(dict(stations=400, station_file="s.csv", runs=runs)))
+    (tmp_path / "p.json").write_text(json.dumps(dict(stations=54, station_file="s.csv", station_source=scedc,
+                                                     runs=runs)))
     g = G.build(str(tmp_path / "p.json"))
     assert not g["targets"]["puente_pyocto"]["passed"] and g["passed"] == 1
     (tmp_path / "e.json").write_text(json.dumps(dict(conditions=[dict(name="P F1", value=0.97, published=0.98)])))
     g = G.build(ethz=str(tmp_path / "e.json"))
     assert g["targets"]["ethz_phasenet"]["passed"] and g["targets"]["quakemigrate_example"]["evidence"] == "not run"
+    sta = tmp_path / "s.csv"
+    sta.write_text("code,latitude,longitude,elevation_m\nA,35,-117,0\n")
+    (tmp_path / "s.csv.source.json").write_text(json.dumps(dict(scedc, sha256=G.repro_puente.file_sha256(sta))))
+    assert G.repro_puente.station_source(sta)["network"] == "CI"
+    sta.write_text("code,latitude,longitude,elevation_m\nB,35,-117,0\n")
+    assert G.repro_puente.station_source(sta) is None
