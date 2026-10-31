@@ -14,7 +14,9 @@ the optional injected timing error), and the per-station SNR of the card:
     [tP - 5 s, tP - 0.5 s], both band-passed 2-20 Hz.
 Per target (``meta['targets']``): source id and kind, injection scale, the largest normalised correlation of the
 injected waveform with any template or deflation atom of a given library (CR-06), the radiated vectors g_ib measured on
-the noise-free injected waveform, and the empirical K_mec/E of the pair from those vectors.
+the noise-free injected waveform, and the empirical K_mec/E of the pair from those vectors. ``meta['max_cc']``: the
+same correlation per event of the truth, shape (m,), nan for the neutral catalogued events (read by the atlas scope
+CC < 0.5).
 """
 import hashlib
 import json
@@ -26,7 +28,8 @@ from ..atlas.schema import Truth
 
 SEP_BINS = ((0.0, 0.1), (0.1, 0.5), (0.5, 1.0), (1.0, 3.0))
 DEFAULT = {
-    "block_s": 300.0, "group_dt": 40.0, "first": 10.0, "p_single": 0.3,
+    "block_s": 300.0, "group_dt": 40.0, "first": 10.0, "p_single": 0.3, "p_self": 0.2,
+    "dist_bins": ((0.0, 1.0), (1.0, 5.0), (5.0, 15.0)),
     "sep_bins": SEP_BINS, "snr_range": (3.0, 60.0), "energy_ratio": (1.0, 10.0, 100.0),
     "timing_static_sd": 0.0, "timing_event_sd": 0.0,             # per-station shifts of the injected waveform (s)
     "max_egf_scale": 1.0, "taper_s": 0.5,
@@ -154,7 +157,7 @@ def _shift(x, fs, dt):
 
 
 # ------------------------------------------------------------------------------------------------ realisation
-def plan(rng, c, n_sources, mags=None):
+def plan(rng, c, n_sources, xyz=None):
     """origin times (record-relative), source indices, pair ids and energy ratios of the targets of one block."""
     groups = []
     t = c["first"]
@@ -169,6 +172,14 @@ def plan(rng, c, n_sources, mags=None):
             ev.append({"t": t0, "src": int(rng.integers(n_sources)), "pair": -1, "rel": 1.0})
             continue
         a, b = rng.choice(n_sources, 2, replace=False)
+        if xyz is not None:                     # partner from a spatial-separation bin of the spec (0-1, 1-5, 5-15 km)
+            lo_d, hi_d = c["dist_bins"][int(rng.integers(len(c["dist_bins"])))]
+            d = np.linalg.norm(xyz - xyz[a], axis=1)
+            cand = np.flatnonzero((d >= lo_d) & (d < hi_d) & (np.arange(n_sources) != a))
+            if len(cand):
+                b = int(rng.choice(cand))
+        if rng.random() < c["p_self"]:          # the same source twice: co-located, same mechanism (K_mec = 0)
+            b = a
         lo, hi = c["sep_bins"][int(rng.integers(len(c["sep_bins"])))]
         dt = rng.uniform(lo, hi) * (1 if rng.random() < 0.5 else -1)
         er = float(rng.choice(c["energy_ratio"]))
@@ -180,15 +191,17 @@ def plan(rng, c, n_sources, mags=None):
 
 def realise(rec, block, sources, seed, c=None, atoms=None, atom_ids=None, label=""):
     """one realisation: (signal, noise, Truth). block: (start, end) record time of the noise block; sources: list of
-    Source on the record's stations; atoms: optional template / deflation library for CR-06."""
+    Source on the record's stations; seed: a numpy Generator (for ATLAS-0 the anchored stream
+    ``ttmt.atlas.seeds.realisation_rng(set_id, i, r)``, ADR-0009 item 5) or an integer; atoms: optional template /
+    deflation library for CR-06."""
     c = config(c)
-    rng = np.random.default_rng(seed)
+    rng = seed if isinstance(seed, np.random.Generator) else np.random.default_rng(seed)
     fs = rec.fs
     a, b = block
     noise = rec.cut(a, b).copy()
     ns, _, n = noise.shape
     sig = np.zeros_like(noise)
-    ev = plan(rng, c, len(sources))
+    ev = plan(rng, c, len(sources), np.array([s.xyz for s in sources]))
     for e in ev:
         e["t"] += a                                     # block-relative -> record time
     st_static = rng.normal(0.0, c["timing_static_sd"], ns) if c["timing_static_sd"] > 0 else np.zeros(ns)
@@ -248,7 +261,9 @@ def realise(rec, block, sources, seed, c=None, atoms=None, atom_ids=None, label=
         seg = sc * unit[:, :, max(0, int((np.nanmin(obs) - 1.0 - a) * fs)):int((np.nanmax(obs) + 6.0 - a) * fs)]
         cc, ia = max_cc(seg, [atoms[j] for j in keep], fs)
         ia = keep[ia] if ia >= 0 else -1
-        tmeta.append({"source": s.id, "kind": s.kind, "family": s.family, "scale": float(sc),
+        part = [r_[1] for r_ in rows if r_[0]["pair"] == e["pair"] and r_[1] is not s] if e["pair"] >= 0 else []
+        dxy = float(np.linalg.norm(part[0].xyz - s.xyz)) if part else (0.0 if e["pair"] >= 0 else None)
+        tmeta.append({"source": s.id, "kind": s.kind, "family": s.family, "scale": float(sc), "pair_dist_km": dxy,
                       "log10_scale": float(np.log10(sc)), "max_cc": cc,
                       "max_cc_atom": (atom_ids[ia] if atom_ids and ia >= 0 else None),
                       "g": gvec[-1].tolist(), "tensor": None if s.tensor is None else np.asarray(s.tensor).tolist()})
@@ -280,8 +295,9 @@ def realise(rec, block, sources, seed, c=None, atoms=None, atom_ids=None, label=
                   target=np.r_[np.ones(m, bool), np.zeros(nn, bool)], pair=np.r_[pair, -np.ones(nn, int)],
                   kmec=np.r_[kmec, np.full(nn, np.nan)],
                   arr_t_obs=np.array(arr_obs, float).reshape(len(ts), ns, 2),
-                  meta={"seed": int(seed), "config_hash": config_hash(c), "config": c, "dataset": rec.dataset,
+                  meta={"seed": None if isinstance(seed, np.random.Generator) else int(seed), "config_hash": config_hash(c), "config": c, "dataset": rec.dataset,
                         "block": [a, b], "targets": tmeta, "kmec_empirical": kmec_emp.tolist(),
+                        "max_cc": [x["max_cc"] for x in tmeta] + [float("nan")] * nn,
                         "stations": rec.codes, "xyz": rec.xyz.tolist(), "fs": fs,
                         "components": "E, N, Z up", "label": label})
     return sig, noise, truth

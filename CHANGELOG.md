@@ -15,6 +15,18 @@ Dated record of changes to the project's process, code and documents. Results ar
   with H-ATLAS read against both; the registered unit stays the realisation. Noted in
   `experiments/exploratory/ATLAS-0/run_log.md`.
 
+## 2026-10-25
+
+- Generator v2 and semi-synthetic sets for ATLAS-0 (CR-05, CR-06, CR-09, CR-14, CR-24): `ttmt.synth` (full-wave
+  layered engine with free surface, Q and borehole receivers; no operator shared with the detector, checked by
+  `tests/test_synth.py`), injection of recorded events (EGF) and of full-wave events with known tensors into the real
+  noise of Ridgecrest and Hi-net, with the `ttmt.atlas.schema.Truth` of every record, the card SNR, pair ids, K_mec/E,
+  the largest correlation with the atom library and the 4-station contamination variants. Seeds `ttmt.atlas.seeds.realisation_rng`
+  and `library_rng` (ADR-0009 item 5; helpers ported from #19). Tuning/reading partition by a hash of the 300 s noise block (the records are one hour
+  or less, so a hash of the hour cannot split them). Data card `data/cards/synth_v2.md`; validation
+  `tools/validate_synth.py`, report `results/synth_v2/README.md`. `SetReader` refuses a set not seeded from the anchor
+  (`pre_anchor`) unless `allow_pre_anchor=True`.
+
 ## 2026-10-24
 
 - ATLAS-0 amendment 1 (ADR-0009), before any tuning trial: REAL `tint` and PyOcto `min_interevent_time` log-uniform

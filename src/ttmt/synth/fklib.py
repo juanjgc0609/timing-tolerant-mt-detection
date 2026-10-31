@@ -23,6 +23,7 @@ DEFAULT = {
     "medium": "crust_a", "medium_seed": 1, "v_sd": 0.03, "h_sd": 0.10, "vpvs_sd": 0.02,
     "fs": 100.0, "fmax": 25.0, "f_gauss": 15.0, "gf_len": 30.0, "L_factor": 1.5, "zr": 0.0,
     "depth_range": (2.0, 14.0), "depth_step": 0.5, "out_frac": 0.15, "out_factor": 1.5,
+    "cluster_frac": 0.5, "cluster_km": (0.2, 5.0),
     "families": {"dc": 0.4, "clvd": 0.1, "iso": 0.05, "generic": 0.1, "double": 0.2, "extended": 0.15},
     "mw_range": (0.5, 2.5), "stress_mpa": (1.0, 10.0),
     "split_frac": 0.3, "split_dt": (0.05, 0.2), "misorient_frac": 0.15, "misorient_deg": (10.0, 45.0),
@@ -79,13 +80,21 @@ def draw_events(STA, n, rng, c, prefix="fk"):
     out = []
     zgrid = np.arange(c["depth_range"][0], c["depth_range"][1] + 1e-9, c["depth_step"])
     for j in range(n):
-        if rng.random() < c["out_frac"]:
-            rr = ap * rng.uniform(1.0, c["out_factor"])
+        if out and rng.random() < c["cluster_frac"]:
+            # near a previous event (the 0-1 and 1-5 km pair bins of the spec need neighbours)
+            p0 = out[int(rng.integers(len(out)))].xyz
+            d = rng.normal(size=3)
+            d *= rng.uniform(*c["cluster_km"]) / np.linalg.norm(d)
+            xy = p0[:2] + d[:2]
+            z = float(zgrid[int(np.argmin(np.abs(zgrid - (p0[2] + d[2]))))])
         else:
-            rr = ap * np.sqrt(rng.random())
-        az = rng.uniform(0, 2 * np.pi)
-        xy = cen + rr * np.array([np.cos(az), np.sin(az)])
-        z = float(rng.choice(zgrid))
+            if rng.random() < c["out_frac"]:
+                rr = ap * rng.uniform(1.0, c["out_factor"])
+            else:
+                rr = ap * np.sqrt(rng.random())
+            az = rng.uniform(0, 2 * np.pi)
+            xy = cen + rr * np.array([np.cos(az), np.sin(az)])
+            z = float(rng.choice(zgrid))
         f = fam[int(rng.choice(len(fam), p=pw / pw.sum()))]
         mw = float(rng.uniform(*c["mw_range"]))
         sd = float(np.exp(rng.uniform(*np.log(c["stress_mpa"]))))

@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 
 from ttmt.partition import PartitionError
-from ttmt.synth import analytic, fk, inject, media, picklists, sets
+from ttmt.synth import analytic, fk, inject, media, picklists, realdata, sets
 from ttmt.synth import source as SRC
 
 SYNTH = Path(__file__).resolve().parents[1] / "src" / "ttmt" / "synth"
@@ -105,7 +105,7 @@ def test_truth_roundtrip_and_reader(tmp_path, monkeypatch):
     assert np.array_equal(t2.pair, t.pair) and np.isnan(t2.kmec[1]) and t2.arr_t.shape == (2, 3, 2)
     v = inject.truth_contaminated(t, [1], 10.0)
     assert np.allclose(v.snr[:, 1], 0.1) and np.allclose(v.snr[:, 0], 1.0)
-    man = {"realisations": [{"label": "L1", "partition": "tune"}], "files": {}}
+    man = {"realisations": [{"label": "L1", "partition": "tune"}], "files": {}, "pre_anchor": False}
     p = tmp_path / "m.json"
     p.write_text(json.dumps(man))
     r = sets.SetReader("x", "read", manifest=p)
@@ -114,6 +114,11 @@ def test_truth_roundtrip_and_reader(tmp_path, monkeypatch):
         r._real("L1")
     with pytest.raises(PartitionError):
         sets.SetReader("x", "eval", manifest=p)
+    q = tmp_path / "dev.json"                    # a set not seeded from the anchor serves no tuning or reading
+    q.write_text(json.dumps({**man, "pre_anchor": True}))
+    with pytest.raises(PartitionError):
+        sets.SetReader("x", "tune", manifest=q)
+    assert sets.SetReader("x", "tune", manifest=q, allow_pre_anchor=True).labels == ["L1"]
 
 
 def test_contamination_and_subsets():
@@ -133,3 +138,36 @@ def test_picklists():
     assert np.all(tr.arr_t[:, :, 1] > tr.arr_t[:, :, 0])
     err = (tr.arr_t_obs - tr.arr_t).ravel()
     assert 0.1 < err.std() < 0.35
+
+
+def test_partition_rule_adr0009():
+    """realdata.partition_blocks is the rule of ADR-0009 item 4, fallback both ways."""
+    import hashlib
+
+    def u(ds, a):
+        h = hashlib.sha256(f"{ds}|{a:.3f}|tune-read-v1".encode()).digest()[:8]
+        return int.from_bytes(h, "little") / 2 ** 64
+
+    starts = [300.0 * i for i in range(12)]
+    p = realdata.partition_blocks("ridgecrest_2019", starts)
+    raw = {a: ("tune" if u("ridgecrest_2019", a) < 0.3 else "read") for a in starts}
+    assert p == raw
+    lo = [a for a in starts if raw[a] == "read"]
+    p = realdata.partition_blocks("ridgecrest_2019", lo)
+    assert [a for a in lo if p[a] == "tune"] == [min(lo, key=lambda a: u("ridgecrest_2019", a))]
+    hi = [a for a in starts if raw[a] == "tune"]
+    p = realdata.partition_blocks("ridgecrest_2019", hi)
+    assert [a for a in hi if p[a] == "read"] == [max(hi, key=lambda a: u("ridgecrest_2019", a))]
+
+
+def test_tune_read_split_hinet_fallback():
+    """Hi-net: no noise block hashes below 0.3, so the noise block of smallest value goes to tuning (ADR-0009)."""
+    import types
+    rec = types.SimpleNamespace(dataset="hinet_2012", t0=0.0, t1=2000.0)
+    sp = realdata.tune_read_split(rec)
+    noise = [(bl, r) for bl, r in sp if r != "egf"]
+    assert len(sp) == 6 and noise
+    assert sum(r == "tune" for _bl, r in noise) >= 1 and sum(r == "read" for _bl, r in noise) >= 1
+    u = {bl[0]: realdata.block_hash("hinet_2012", bl[0], "tune-read-v1") for bl, _r in noise}
+    assert all(v >= 0.3 for v in u.values())
+    assert [bl[0] for bl, r in noise if r == "tune"] == [min(u, key=u.get)]
