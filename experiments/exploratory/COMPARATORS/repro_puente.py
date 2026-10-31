@@ -63,21 +63,55 @@ FIXED = {"gamma": dict(vel={"p": 6.2, "s": 3.4}, dbscan_eps=7.0, dbscan_min_samp
 TIME_BEFORE = 100.0
 
 
-def fetch_stations(out):
-    from obspy.clients.fdsn import Client
+QUERY = dict(service="SCEDC FDSN", network="CI", channel="HH?,BH?", date="2020-01-01", pad_km=PAD_KM)
+
+
+def query_box():
+    """(lon0, lat0, lon1, lat1) of the scenario box plus PAD_KM."""
     from pyproj import Transformer
     tr = Transformer.from_crs("EPSG:32611", "EPSG:4326", always_xy=True)
     lon0, lat0 = tr.transform((XLIM[0] - PAD_KM) * 1e3, (YLIM[0] - PAD_KM) * 1e3)
     lon1, lat1 = tr.transform((XLIM[1] + PAD_KM) * 1e3, (YLIM[1] + PAD_KM) * 1e3)
-    inv = Client("SCEDC").get_stations(network="CI", channel="HH?,BH?", level="station", minlatitude=lat0,
-                                       maxlatitude=lat1, minlongitude=lon0, maxlongitude=lon1,
-                                       starttime="2020-01-01", endtime="2020-01-02")
+    return lon0, lat0, lon1, lat1
+
+
+def is_scenario_query(src):
+    """True when a fetch-stations provenance record is the fixed query of the gate (QUERY and query_box)."""
+    if not src or any(src.get(k) != v for k, v in QUERY.items()):
+        return False
+    return np.allclose(src.get("box_lonlat", [np.nan] * 4), query_box(), atol=1e-6)
+
+
+def fetch_stations(out):
+    from obspy.clients.fdsn import Client
+    lon0, lat0, lon1, lat1 = query_box()
+    inv = Client("SCEDC").get_stations(network=QUERY["network"], channel=QUERY["channel"], level="station",
+                                       minlatitude=lat0, maxlatitude=lat1, minlongitude=lon0, maxlongitude=lon1,
+                                       starttime=QUERY["date"], endtime="2020-01-02")
     rows = sorted({(s.code, s.latitude, s.longitude, s.elevation) for n in inv for s in n})
     with open(out, "w") as fh:
         fh.write("code,latitude,longitude,elevation_m\n")
         for r in rows:
             fh.write("{},{:.5f},{:.5f},{:.1f}\n".format(*r))
+    src = dict(QUERY, box_lonlat=[lon0, lat0, lon1, lat1], n_stations=len(rows), sha256=file_sha256(out))
+    with open(out + ".source.json", "w") as fh:
+        json.dump(src, fh, indent=1)
     print(len(rows), "stations ->", out)
+
+
+def file_sha256(path):
+    import hashlib
+    return hashlib.sha256(open(path, "rb").read()).hexdigest()
+
+
+def station_source(path):
+    """the provenance written by fetch-stations next to a station file, None if absent or if the file changed since."""
+    import os
+    side = str(path) + ".source.json"
+    if not os.path.exists(side):
+        return None
+    src = json.load(open(side))
+    return src if src.get("sha256") == file_sha256(path) else None
 
 
 def load_stations(path):
@@ -164,7 +198,8 @@ def run(args):
     from ttmt.associate import pipeline as PL
     stations = load_stations(args.stations)
     vel = Velocity1D.hadley_kanamori()
-    out = {"stations": len(stations.code), "station_file": args.stations, "seed": args.seed, "runs": []}
+    out = {"stations": len(stations.code), "station_file": args.stations,
+           "station_source": station_source(args.stations), "seed": args.seed, "runs": []}
     for n in args.events:
         for noise in args.noise:
             rng = np.random.default_rng([args.seed, n, int(round(noise * 100))])
