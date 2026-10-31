@@ -304,3 +304,18 @@ PyOcto, tuning objective). Seeds stay those of registration 1.
    `realisation_rng(s, i, r, "subset")`; event library j (drawn whole: medium, event sequence, receiver effects;
    Ridgecrest j = 0, Hi-net j = 1) from `library_rng(j)` (stream "inject", key 1000000 + j). Seeds hashed from a
    commit or any other string are not used.
+
+## Amendment 2 (erratum; to be anchored as `reg/ATLAS-0/amendment-2`)
+Task ATLAS-0, amendment 2 (31 October 2026), written after registration 1 and amendment 1 and before any tuning trial
+on atlas data; no comparator has read atlas data. The registered text above is kept unchanged; this item replaces it
+where it differs.
+1. Gate (reproduction), target 1. Registration 1 says "against the recalls of their Tables S8-S9". In the
+   supplement of Puente et al. (2025), Tables S8-S9 report the subduction scenario; the event-level results of the
+   crustal scenario, which target 1 names, are in Table S10. The target becomes "against the event-level recalls of
+   their Table S10". The scenario, the methods, the 5 per cent relative tolerance and the two-of-three rule are
+   unchanged. Criterion: the scenario named in the registered sentence, not any recall; S8-S9 cannot serve a crustal
+   target. Disclosure: the comparator thread had already read Table S10 in a cloud dry run of 24 October 2026 on a
+   stand-in station layout (`experiments/exploratory/COMPARATORS/README.md`, "not the gate"), and the reviewer and the
+   comparator thread confirmed that S10 is the crustal table. The gate itself has not been run.
+Freeze: none needed; the item changes no code, data or environment (`repro_puente.py` and `gate.py` already read
+Table S10).
