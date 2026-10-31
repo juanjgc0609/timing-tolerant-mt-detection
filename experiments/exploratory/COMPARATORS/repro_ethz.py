@@ -51,7 +51,7 @@ def prepare(out, weights="ethz"):
     print(json.dumps(meta))
 
 
-def report(results, published, out):
+def report(results, published, out, verified_in="e5be9cf"):
     import pandas as pd
     res = pd.read_csv(results)
     row = res[(res["data"].str.lower() == "ethz") & (res["model"].str.lower() == "phasenet")]
@@ -61,7 +61,8 @@ def report(results, published, out):
     if not pub.get("verified"):
         raise SystemExit(f"{published}: published values not verified against the paper (see verification_note)")
     cond = [{"name": k, "value": float(row.iloc[0][k]), "published": float(v)} for k, v in pub["metrics"].items()]
-    ev = {"conditions": cond, "source": f"pick-benchmark on ETHZ vs {pub['source']}"}
+    ev = {"conditions": cond, "source": f"pick-benchmark on ETHZ vs {pub['source']}; published values verified in "
+          f"{verified_in}", "verified_in": verified_in}
     Path(out).write_text(json.dumps(ev, indent=1))
     for c in cond:
         print(f"{c['name']:20s} {c['value']:.4f}  published {c['published']:.4f}  "
@@ -78,11 +79,12 @@ def main(argv=None):
     r.add_argument("results")
     r.add_argument("published")
     r.add_argument("--out", required=True)
+    r.add_argument("--verified-in", default="e5be9cf", help="commit that verified published_ethz.json")
     a = ap.parse_args(argv)
     if a.cmd == "prepare":
         prepare(a.out, a.weights)
     else:
-        report(a.results, a.published, a.out)
+        report(a.results, a.published, a.out, a.verified_in)
 
 
 if __name__ == "__main__":
