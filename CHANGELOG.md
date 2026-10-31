@@ -3,6 +3,18 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-10-30
+
+- Atlas run harness: `ttmt.atlas.plan` (the run plan of a set manifest: station subsets k = 4, 6, 8, 12 by
+  `cells.station_subset`, contamination variants on the 4-station subset, CR-24) and `ttmt.atlas.run` (pools the
+  reading runs by realisation, reports regimes, H-ATLAS loss and the duplicator control per scope: all sets, each set,
+  correlation < 0.5 (CR-06) and each contamination variant). The run refuses the tuning partition and needs
+  `experiments/exploratory/ATLAS-0/gate.json` with at least two passed reproduction targets.
+- Atlas sensitivity to the bootstrap unit (review of PR #21): every scope also reports the number of distinct noise
+  blocks and a sensitivity row that resamples whole noise blocks (`froc.describe` / `pooled_loss` with `cluster`),
+  with H-ATLAS read against both; the registered unit stays the realisation. Noted in
+  `experiments/exploratory/ATLAS-0/run_log.md`.
+
 ## 2026-10-25
 
 - Generator v2 and semi-synthetic sets for ATLAS-0 (CR-05, CR-06, CR-09, CR-14, CR-24): `ttmt.synth` (full-wave

@@ -82,7 +82,8 @@ def regime_of(sep):
 class Pool:
     """every record of one evaluation, pooled. Events (E,): cell, regime ("T", "C", "iso" or "" for none), block,
     stratum (sequence or network, for the stratified bootstrap), weight (prevalence weight, ADR-0008 item 4).
-    block_hours (nb,). Per method: scores, labels into the pooled events (or FALSE / NEUTRAL), detection blocks."""
+    block_hours (nb,); block_cluster (nb,) optional, the unit of the sensitivity bootstrap (_resampler). Per method:
+    scores, labels into the pooled events (or FALSE / NEUTRAL), detection blocks."""
     block_hours: np.ndarray
     block_stratum: np.ndarray
     ev_cell: np.ndarray = field(default_factory=lambda: np.zeros(0, int))
@@ -90,6 +91,7 @@ class Pool:
     ev_block: np.ndarray = field(default_factory=lambda: np.zeros(0, int))
     ev_weight: np.ndarray = field(default_factory=lambda: np.zeros(0))
     runs: dict = field(default_factory=dict)
+    block_cluster: np.ndarray = None
 
     def __post_init__(self):
         self.block_hours = np.asarray(self.block_hours, float)
@@ -189,6 +191,36 @@ def _strata(pool):
     return [np.flatnonzero(pool.block_stratum == k) for k in np.unique(pool.block_stratum)]
 
 
+def _resampler(pool, cluster=None):
+    """draw() -> block multiplicities (nb,) of one stratified bootstrap replicate. cluster None: the registered unit,
+    blocks drawn with replacement within each stratum. cluster (nb,) ints: a sensitivity unit, clusters (e.g. the
+    noise block shared by several realisations) drawn with replacement within each stratum, each drawn cluster
+    bringing all its blocks."""
+    strata = _strata(pool)
+    if cluster is None:
+        return lambda rng: _multiplicity(pool, np.concatenate([s[rng.integers(0, s.size, s.size)] for s in strata]))
+    cluster = np.asarray(cluster, int)
+    if cluster.shape != (pool.n_blocks,):
+        raise ValueError(f"cluster must give one id per block ({pool.n_blocks}), got shape {cluster.shape}")
+    groups = []
+    for s in strata:
+        ids = np.unique(cluster[s])
+        groups.append((ids, [s[cluster[s] == c] for c in ids]))
+
+    def draw(rng):
+        mu = np.zeros(pool.n_blocks)
+        for ids, members in groups:
+            for j in rng.integers(0, ids.size, ids.size):
+                mu[members[j]] += 1.0
+        return mu
+    return draw
+
+
+def n_clusters(pool, cluster):
+    """number of distinct clusters (e.g. noise blocks) of the pool."""
+    return int(np.unique(np.asarray(cluster, int)).size)
+
+
 def recall(pool, got, mask, mult=None):
     """weighted recall of the events of mask (bool (E,)), with block multiplicities."""
     mult = np.ones(pool.n_blocks) if mult is None else mult
@@ -212,12 +244,12 @@ def _gen(seed, stream, index):
     return Z.rng(stream, index) if seed is None else np.random.default_rng(seed)
 
 
-def describe(pool, methods, budget=BUDGETS[0], n_boot=2000, seed=None):
+def describe(pool, methods, budget=BUDGETS[0], n_boot=2000, seed=None, cluster=None):
     """the descriptive tables of the atlas: per method, the recall of every cell and of the regimes T, C and iso
     with stratified block-bootstrap 95 % intervals (operating points re-derived per replicate). No test.
-    seed None: the anchored stream ("bootstrap", 0)."""
-    rng = _gen(seed, "bootstrap", 0)
-    strata = _strata(pool)
+    seed None: the anchored stream ("bootstrap", 0), or ("bootstrap", 2) with a sensitivity cluster (_resampler)."""
+    rng = _gen(seed, "bootstrap", 0 if cluster is None else 2)
+    draw = _resampler(pool, cluster)
     regmask = {r: pool.ev_regime == r for r in ("T", "C", "iso")}
     out = {}
     for m in methods:
@@ -226,8 +258,7 @@ def describe(pool, methods, budget=BUDGETS[0], n_boot=2000, seed=None):
         pt_r = {r: recall(pool, got, mk) for r, mk in regmask.items()}
         rc, rr = np.empty((n_boot, C.N_CELLS)), {r: np.empty(n_boot) for r in regmask}
         for b in range(n_boot):
-            idx = np.concatenate([s[rng.integers(0, s.size, s.size)] for s in strata])
-            mu = _multiplicity(pool, idx)
+            mu = draw(rng)
             g = hits(pool, m, budget, mu)
             rc[b] = cell_recalls(pool, g, mu)
             for r, mk in regmask.items():
@@ -295,11 +326,11 @@ def gate(pool, model, comparators, budget=BUDGETS[0], duplicator_of=None, signs=
     return res
 
 
-def pooled_loss(pool, method, budget=BUDGETS[0], n_boot=2000, seed=None, mask=None):
+def pooled_loss(pool, method, budget=BUDGETS[0], n_boot=2000, seed=None, mask=None, cluster=None):
     """the loss of the atlas hypothesis (card, H-ATLAS): recall of the isolated events (separation > 3 s),
     standardised to the (SNR, stations, distance) mix of the events of mask (default regime T), minus the recall of
     the events of mask; point and stratified block-bootstrap 95 % interval. seed None: the anchored stream
-    ("bootstrap", 1)."""
+    ("bootstrap", 1), or ("bootstrap", 3) with a sensitivity cluster (_resampler)."""
     mask = (pool.ev_regime == "T") if mask is None else mask
     iso = pool.ev_regime == "iso"
     key = np.array([C.cell_axes(c)[1:] if c >= 0 else (-1, -1, -1) for c in pool.ev_cell])
@@ -320,10 +351,9 @@ def pooled_loss(pool, method, budget=BUDGETS[0], n_boot=2000, seed=None, mask=No
         r_iso = acc / tot if tot > 0 else np.nan
         return r_iso - r_t
 
-    rng = _gen(seed, "bootstrap", 1)
-    strata = _strata(pool)
+    rng = _gen(seed, "bootstrap", 1 if cluster is None else 3)
+    draw = _resampler(pool, cluster)
     pt = stat(np.ones(pool.n_blocks))
-    reps = np.array([stat(_multiplicity(pool, np.concatenate([s[rng.integers(0, s.size, s.size)] for s in strata])))
-                     for _ in range(n_boot)])
+    reps = np.array([stat(draw(rng)) for _ in range(n_boot)])
     return dict(loss=float(pt), lo=float(np.nanquantile(reps, 0.025)), hi=float(np.nanquantile(reps, 0.975)),
                 indicative=pool.n_blocks < MIN_BLOCKS)

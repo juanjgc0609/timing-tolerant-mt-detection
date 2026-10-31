@@ -279,3 +279,89 @@ def test_realisation_and_library_seeds():
         Z.realisation_rng("rc-egf", 0, 0, "tuning")
     with pytest.raises(ValueError):
         Z.library_rng(-1)
+
+
+# ------------------------------------------------------------------------------------------------- plan and run
+def _manifest(n_real=36):
+    sta = ring()
+    reals = [dict(label=f"toy_{i:03d}", partition="read" if i % 4 else "tune", block_index=i // 3,
+                  r=i % 3,
+                  variants=[["x3_1sta", [0], 3.0]]) for i in range(n_real)]
+    return dict(set_id="toy", stations=[f"S{i}" for i in range(8)], xyz=sta.tolist(), realisations=reals,
+                catalogue_centroid=[0.0, 0.0])
+
+
+def test_run_plan_subsets_and_variants():
+    from ttmt.atlas import plan as P
+    m = _manifest(8)
+    rows = P.plan(m)
+    assert {r["k"] for r in rows} == {4, 6, 8}                       # 8 stations: no 12-station subset
+    k4 = [r for r in rows if r["k"] == 4]
+    assert len(k4) == 16 and sum(bool(r["variant"]) for r in k4) == 8
+    assert all(r["partition"] == "read" for r in P.plan(m, "read"))
+    m["realisations"][0]["variants"] = [["x3_1sta", [99], 3.0]]
+    with pytest.raises(ValueError):
+        P.plan(m)
+    assert P.catalogue_centroid(_manifest(1)) == (0.0, 0.0)
+    with pytest.raises(KeyError):
+        P.catalogue_centroid({"set_id": "x"})
+
+
+def test_noise_block_resampler():
+    pool = F.Pool(np.ones(6), np.array([0, 0, 0, 1, 1, 1]))
+    rng = np.random.default_rng(0)
+    one = F._resampler(pool, np.array([0, 0, 0, 1, 1, 1]))          # one cluster per stratum: every draw is all
+    assert all(np.array_equal(one(rng), np.ones(6)) for _ in range(5))
+    two = F._resampler(pool, np.array([0, 0, 1, 2, 2, 2]))
+    for _ in range(20):
+        mu = two(rng)
+        assert mu[0] == mu[1] and mu[0] + mu[2] == 2 and mu[3] == mu[4] == mu[5] == 1
+    assert F.n_clusters(pool, [0, 0, 1, 2, 2, 2]) == 3
+    with pytest.raises(ValueError):
+        F._resampler(pool, np.zeros(5))
+
+
+def test_atlas_report_on_toy_set(tmp_path):
+    from ttmt.atlas import plan as P
+    from ttmt.atlas import run as R
+    m = _manifest()
+    rows = [r for r in P.plan(m, "read") if r["k"] == 8 or r["variant"]]
+    rng = np.random.default_rng(11)
+    truths = {}
+    for r in rows:
+        if r["label"] not in truths:
+            tr = toy_record(rng, n_pairs=10, sep=0.4)
+            tr.meta["max_cc"] = rng.uniform(0, 1, tr.n_events).tolist()
+            truths[r["label"]] = tr
+    dets = {}
+
+    def dets_of(method, row):
+        key = (method, row["run"])
+        if key not in dets:
+            tr = truths[row["label"]]
+            dets[key] = perfect(tr, rng) if method == "perfect" else merging(tr, rng)
+        return dets[key]
+
+    with pytest.raises(R.GateError):
+        R.report(rows, lambda r: truths[r["label"]], dets_of, ["perfect", "merging"], lambda s: (0, 0),
+                 gate=tmp_path / "gate.json")
+    (tmp_path / "gate.json").write_text('{"targets": {"a": {"passed": true}, "b": {"passed": true}}}')
+    rep, cells = R.report(rows, lambda r: truths[r["label"]], dets_of, ["perfect", "merging"], lambda s: (0, 0),
+                          comparators=["merging"], n_boot=30, gate=tmp_path / "gate.json")
+    assert set(rep["scopes"]) == {"all", "toy", "cc<0.5", "contamination:x3_1sta"}
+    a = rep["scopes"]["all"]
+    assert a["blocks"] == 27 and a["targets"]["T"] > 0
+    assert a["regimes"]["perfect"]["T"]["recall"] > a["regimes"]["merging"]["T"]["recall"]
+    assert a["h_atlas"]["merging"]["loss"] > 0.2 and not a["control"]["merging"]["broken"]
+    sens = a["sensitivity_noise_block"]                              # 27 realisations on 12 noise blocks
+    assert a["noise_blocks"] == 12 and sens["blocks"] == 12 and sens["indicative"]
+    assert set(sens["regimes"]) == {"perfect", "merging", "dup:merging"} and "merging" in sens["h_atlas"]
+    assert a["h_atlas_reading"]["verdict"] in ("confirmed", "undecided") and not a["h_atlas_reading"]["refuted_by"]
+    assert R.h_atlas_reading({"x": dict(lo=0.0, hi=0.1)}) == {"verdict": "refuted", "refuted_by": ["x"]}
+    assert R.h_atlas_reading({"x": dict(lo=0.25, hi=0.4)})["verdict"] == "confirmed"
+    assert R.h_atlas_reading({"x": dict(lo=0.1, hi=0.4)})["verdict"] == "undecided"
+    assert rep["scopes"]["cc<0.5"]["targets"]["T"] < a["targets"]["T"]
+    assert '"gate"' in R.to_json(rep)
+    with pytest.raises(ValueError):
+        R.build_pool([dict(rows[0], partition="tune")], lambda r: truths[r["label"]], dets_of, ["perfect"],
+                     lambda s: (0, 0))
