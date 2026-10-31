@@ -448,3 +448,12 @@ def test_quakemigrate_target_counts(tmp_path):
             run / "locate" / "events" / f"e{i}.event", index=False)
     n, cat, filt = Q.counts(tmp_path)
     assert (n, len(cat), len(filt)) == (3, 3, 2)
+    ms = tmp_path / "mseed"
+    assert len(Q.missing_waveforms(ms, ["A", "B"])) == 2 * 3 * 4
+    for y, d in (("2009", "019"), ("2009", "020"), ("2009", "021"), ("2009", "022")):
+        (ms / y / d).mkdir(parents=True)
+        for n in "AB":
+            for c in "123":
+                (ms / y / d / f"{n}_{c}.m").write_bytes(b"")
+    (ms / "2009" / "021" / "B_3.m").unlink()
+    assert Q.missing_waveforms(ms, ["A", "B"]) == [str(ms / "2009" / "021" / "B_3.m")]

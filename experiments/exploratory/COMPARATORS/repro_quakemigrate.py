@@ -81,6 +81,18 @@ def fetch(work, published=PUBLISHED, download=True):
                          reject_channels_with_gaps=False)
         MassDownloader(providers=["IRIS"]).download(GlobalDomain(), r, threads_per_client=3, mseed_storage=storage,
                                                     stationxml_storage=str(w / "inputs" / "DATALESS"))
+    missing = missing_waveforms(p["mseed"], read_stations(str(p["stations"]))["Name"])
+    if missing:
+        raise SystemExit(f"{len(missing)} waveform files missing after download (rerun fetch): {missing[:5]}")
+
+
+def missing_waveforms(mseed, names):
+    """expected YEAR/JD/STATION_C.m files (each station, components 1-3, each day of BLOCKS) that are absent; the
+    mass downloader skips a channel on a server error without failing."""
+    from obspy import UTCDateTime
+    days = sorted({(UTCDateTime(a).year, UTCDateTime(a).julday) for a, _b in BLOCKS})
+    want = [Path(mseed) / f"{y}" / f"{d:03d}" / f"{n}_{c}.m" for y, d in days for n in names for c in "123"]
+    return [str(f) for f in want if not f.exists()]
 
 
 def lut(work):
@@ -129,6 +141,11 @@ def _scan(work, position, decimate, picker=False):
 
 def detect(work, threads=12):
     _single_thread()
+    from quakemigrate.io import read_stations
+    p = _paths(work)
+    missing = missing_waveforms(p["mseed"], read_stations(str(p["stations"]))["Name"])
+    if missing:
+        raise SystemExit(f"{len(missing)} waveform files missing; rerun fetch: {missing[:5]}")
     s = _scan(work, "classic", decimate=True)
     s.timestep = 30.0
     s.threads = threads
