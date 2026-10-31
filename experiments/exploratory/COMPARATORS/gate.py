@@ -7,8 +7,9 @@ targets passed. Targets (card): puente_pyocto and puente_gamma (Puente et al. 20
 parameters of Tables S3-S5, from repro_puente.py run), ethz_phasenet (SeisBench pick-benchmark, in-domain ETHZ) and
 quakemigrate_example (Winder et al. 2026, stated event counts). A target passes when every published condition it was
 run on is within 5 per cent (relative) of the published value. A Puente run passes only on a station list written by
-``repro_puente.py fetch-stations`` from the SCEDC service (provenance file next to the list, checksum unchanged): the
-paper gives no list, so the gate fixes the network by its source and filter, not by a count. Any other list, such as
+``repro_puente.py fetch-stations`` with the fixed query (``repro_puente.QUERY``: SCEDC, CI, HH?/BH?, 2020-01-01, the
+scenario box plus 50 km; provenance file next to the list, checksum unchanged): the paper gives no list, so the gate
+fixes the network by its source and filter, not by a count. Any other list, such as
 the 23-station cloud stand-in, never passes. ethz and quakemigrate evidence files are
 {"conditions": [{"name", "value", "published"}], "source": str}. A target without evidence is written as not passed.
 """
@@ -17,8 +18,6 @@ import json
 import sys
 from pathlib import Path
 
-import repro_puente
-
 GATE = Path(__file__).resolve().parents[1] / "ATLAS-0" / "gate.json"
 TOL = 0.05
 NAMES = ("puente_pyocto", "puente_gamma", "ethz_phasenet", "quakemigrate_example")
@@ -26,6 +25,7 @@ NAMES = ("puente_pyocto", "puente_gamma", "ethz_phasenet", "quakemigrate_example
 
 def puente(path, tol=TOL):
     """{target: (passed, evidence)} from a repro_puente.py run file."""
+    import repro_puente
     S10 = repro_puente.S10
     res = json.load(open(path))
     out = {}
@@ -36,11 +36,11 @@ def puente(path, tol=TOL):
                for r in rows]
         ok = sum(abs(x) <= tol for x in rel)
         src = res.get("station_source") or {}
-        stand_in = not str(src.get("service", "")).startswith("SCEDC")
+        stand_in = not repro_puente.is_scenario_query(src)
         passed = bool(rows) and ok == len(rows) and not stand_in
         ev = (f"{path}: {ok}/{len(rows)} conditions within {tol:.0%} of Table S10 recall on {res['stations']} stations"
               f" ({res['station_file']}, {src.get('service', 'no provenance')} {src.get('network', '')}"
-              f" {src.get('channel', '')})" + ("; not a fetch-stations SCEDC list, does not count" if stand_in else ""))
+              f" {src.get('channel', '')})" + ("; not the fixed fetch-stations query, not counted" if stand_in else ""))
         out[f"puente_{m}"] = (passed, ev)
     return out
 

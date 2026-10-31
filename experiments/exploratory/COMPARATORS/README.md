@@ -136,7 +136,11 @@ noise. On the same 100-event, 30 % record, `dbscan_min_samples = 5` gives recall
 run is within 5 %. A Puente run counts only on a list written by `fetch-stations` from SCEDC (CI, HH/BH, the
 scenario box plus 50 km, 2020-01-01; provenance in `<list>.source.json`, checked by SHA-256). The paper gives no
 station list, so the network is fixed by its source and filter, not by a count; any other list, such as the cloud
-stand-in, never passes. The committed file has
+stand-in, never passes. Order of events: `gate.py` first required 100 stations (PR #22, a number with no source); the first
+device fetch (31 October 2026) returned 54 stations, and the floor was replaced by the query check (PR #23) while the
+first 100-event run on that list was still running, with no result yet. The reference recalls are Table S10 of the
+supplement: it is the crustal scenario's event-level table, the quantity the card names; its Tables S8-S9 are the
+subduction scenario. The committed file has
 no target passed: the Puente targets wait on the device run, and targets 2 and 3 are not implemented yet.
 
 Targets 2 (PhaseNet on the SeisBench ETHZ benchmark with `pick-benchmark`) and 3 (QuakeMigrate on its published

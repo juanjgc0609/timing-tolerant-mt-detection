@@ -3,6 +3,14 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-10-31
+
+- Reproduction gate (G3a, Puente et al. 2025): the 100-station floor of `gate.py` (added in PR #22, unsourced, not in
+  the card) is replaced by the fixed station query of `repro_puente.py fetch-stations` (SCEDC, CI, HH?/BH?,
+  2020-01-01, scenario box plus 50 km), checked from the provenance file and checksum of the list. The query, the
+  5 % tolerance and the targets are unchanged; the SCEDC list has 54 stations. When the floor was changed, no
+  Puente run on that list had finished.
+
 ## 2026-10-30
 
 - Atlas run harness: `ttmt.atlas.plan` (the run plan of a set manifest: station subsets k = 4, 6, 8, 12 by

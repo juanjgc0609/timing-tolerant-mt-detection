@@ -402,7 +402,8 @@ def test_reproduction_gate(tmp_path):
     from repro_puente import S10
     runs = [dict(method=m, n_events=n, noise=z, recall=v[1] * 1.01, status="ok")
             for m in ("pyocto", "gamma") for (n, z), v in S10[m].items() if v is not None]
-    scedc = dict(service="SCEDC FDSN", network="CI", channel="HH?,BH?")
+    import repro_puente as RP
+    scedc = dict(RP.QUERY, box_lonlat=list(RP.query_box()))
     for src, want in ((None, False), (scedc, True)):
         (tmp_path / "p.json").write_text(json.dumps(dict(stations=54, station_file="s.csv", station_source=src,
                                                          runs=runs)))
@@ -418,7 +419,9 @@ def test_reproduction_gate(tmp_path):
     assert g["targets"]["ethz_phasenet"]["passed"] and g["targets"]["quakemigrate_example"]["evidence"] == "not run"
     sta = tmp_path / "s.csv"
     sta.write_text("code,latitude,longitude,elevation_m\nA,35,-117,0\n")
-    (tmp_path / "s.csv.source.json").write_text(json.dumps(dict(scedc, sha256=G.repro_puente.file_sha256(sta))))
-    assert G.repro_puente.station_source(sta)["network"] == "CI"
+    (tmp_path / "s.csv.source.json").write_text(json.dumps(dict(scedc, sha256=RP.file_sha256(sta))))
+    assert RP.station_source(sta)["network"] == "CI"
+    assert not RP.is_scenario_query(dict(scedc, channel="HH?,BH?,EH?"))
+    assert not RP.is_scenario_query(dict(scedc, pad_km=80))
     sta.write_text("code,latitude,longitude,elevation_m\nB,35,-117,0\n")
-    assert G.repro_puente.station_source(sta) is None
+    assert RP.station_source(sta) is None
