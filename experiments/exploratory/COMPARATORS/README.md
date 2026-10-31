@@ -178,8 +178,9 @@ PyOcto's lead comes from one trial: only trial 57 exceeds GaMMA's best. The best
 has median 0.2323 and reaches GaMMA's best with probability 0.38, so the difference between the two best values is not
 separable from the difference in budget.
 
-**Open decision.** Repair, either by removing GMM from the space through an amendment or by patching GaMMA, and repeat
-60 BGMM trials in a new ledger, before any claim that a method beats GaMMA.
+**Decision (owner, 31 October 2026).** These rows are kept as registered; the PyOcto-GaMMA comparison above stands
+as provisional. Still to decide, before any claim that a method beats GaMMA: repair (remove GMM from the space through
+an amendment, or patch GaMMA) and repeat 60 BGMM trials in a new ledger; the registered ledger is never edited.
 
 ## The fine-tuned picker (CR-03)
 
