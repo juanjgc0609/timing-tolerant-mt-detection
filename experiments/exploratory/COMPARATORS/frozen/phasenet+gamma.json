@@ -1,0 +1,23 @@
+{
+ "code": "fa8679cd45c0",
+ "env": "ttmt-gpu",
+ "frozen_utc": "2026-10-31T19:53:34Z",
+ "ledger_sha256": "759798e13279644ea7a00a85cf16ce06b9bc0eaab548f8f5ebf7639d108b15f0",
+ "method": "phasenet+gamma",
+ "objective": 0.233779,
+ "params": {
+  "as_max_sigma11": 0.5322574524148622,
+  "as_method": "BGMM",
+  "as_min_picks": 6,
+  "pk_peak_distance": 0.15447745962456938,
+  "pk_threshold": 0.06325096813964719,
+  "pk_weights": "original"
+ },
+ "partition": "b60d99b3d0bbbbfa",
+ "recall_C": 0.301639,
+ "recall_T": 0.165919,
+ "seed": 4080677320,
+ "trial": 28,
+ "trials_in_ledger": 60,
+ "trials_ok": 23
+}
