@@ -47,8 +47,8 @@ def load_probabilities(path, codes=None):
 
 def annotate_seisbench(stream, codes, model="PhaseNet", weights="original", device=None, t0=None):
     """probability traces (n_sta, n, 2) of a SeisBench model on an obspy Stream, one station per code, at the
-    model's sampling rate; returns (prob, dt, t0). t0: record time (s) of the first sample, relative to the
-    earliest start of the stream when None."""
+    model's sampling rate; returns (prob, dt, t0). t0: record time (s) of the first data sample (0 when None); the
+    returned t0 is that of the first probability sample."""
     import seisbench.models as sbm
     import torch
     net = getattr(sbm, model).from_pretrained(weights)
@@ -56,6 +56,7 @@ def annotate_seisbench(stream, codes, model="PhaseNet", weights="original", devi
         net.to(device or "cuda")
     ann = net.annotate(stream)
     start = min(tr.stats.starttime for tr in ann)
+    lag = float(start - min(tr.stats.starttime for tr in stream))       # annotation start after the data start
     dt = float(ann[0].stats.delta)
     n = max(int(round((tr.stats.endtime - start) / dt)) + 1 for tr in ann)
     prob = np.zeros((len(codes), n, 2), np.float32)
@@ -65,4 +66,4 @@ def annotate_seisbench(stream, codes, model="PhaseNet", weights="original", devi
             for tr in sel:
                 a = int(round((tr.stats.starttime - start) / dt))
                 prob[i, a:a + tr.stats.npts, k] = np.maximum(prob[i, a:a + tr.stats.npts, k], tr.data[:n - a])
-    return prob, dt, (0.0 if t0 is None else float(t0))
+    return prob, dt, (0.0 if t0 is None else float(t0)) + lag

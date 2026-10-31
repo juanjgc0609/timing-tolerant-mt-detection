@@ -130,6 +130,12 @@ noise. On the same 100-event, 30 % record, `dbscan_min_samples = 5` gives recall
 0.53, with everything else unchanged. The gate run uses the SCEDC station list on the GPU machine
 (`repro_puente.py fetch-stations`).
 
+`gate.py write [--puente run.json] [--ethz ethz.json] [--quakemigrate qm.json]` writes
+`experiments/exploratory/ATLAS-0/gate.json`, which the atlas reads before any data: one entry per target
+(`puente_pyocto`, `puente_gamma`, `ethz_phasenet`, `quakemigrate_example`), passed when every published condition
+run is within 5 %. A Puente run on fewer than 100 stations is the stand-in and never passes. The committed file has
+no target passed: the Puente targets wait on the device run, and targets 2 and 3 are not implemented yet.
+
 Targets 2 (PhaseNet on the SeisBench ETHZ benchmark with `pick-benchmark`) and 3 (QuakeMigrate on its published
 example) need the GPU machine and, for 3, an install; they are not done yet.
 
@@ -149,7 +155,15 @@ set TTMT_REAL_BIN=C:\Users\juanj\ttmt\bin\REAL.exe      (built from Dal-mzhang/R
 python experiments/exploratory/COMPARATORS/repro_puente.py fetch-stations C:\Users\juanj\ttmt\g3a\scsn.csv
 python experiments/exploratory/COMPARATORS/repro_puente.py run --stations C:\Users\juanj\ttmt\g3a\scsn.csv --out C:\Users\juanj\ttmt\g3a\puente.json
 python experiments/exploratory/COMPARATORS/repro_puente.py report C:\Users\juanj\ttmt\g3a\puente.json
-python experiments/exploratory/COMPARATORS/tune_cli.py run phasenet+pyocto <manifest of the tuning partition> --env ttmt-gpu
+python tools/build_semisynth.py --dataset ridgecrest_2019 --source egf --per-block 10      (generator v2, PR #20)
+python tools/build_semisynth.py --dataset hinet_2012 --source egf --per-block 10
+python experiments/exploratory/COMPARATORS/tune_cli.py records ss_ridgecrest_2019_egf_v1 ss_hinet_2012_egf_v1 --out C:\Users\juanj\ttmt\tune
+python experiments/exploratory/COMPARATORS/tune_cli.py run phasenet+pyocto C:\Users\juanj\ttmt\tune\ss_ridgecrest_2019_egf_v1\tune_phasenet.json C:\Users\juanj\ttmt\tune\ss_hinet_2012_egf_v1\tune_phasenet.json --env ttmt-gpu
 ```
-The tuning runs wait for the tuning partition (semi-synthetic records from the generator v2 thread with their
-probability files); the manifest format is `ttmt.associate.tune.load_manifest`.
+`records` (`ttmt.associate.records.write_manifest`) opens each set through `SetReader(set_id, "tune")` only, checks
+the rebuilt waveforms by fingerprint, runs PhaseNet with the `original` and `instance` weights on every realisation
+and writes one manifest per picker model in the `ttmt.associate.tune.load_manifest` format. Each realisation gives
+one record per station count of the card that the network has (Ridgecrest, 11 stations: k = 4, 6, 8; Hi-net, 7
+stations: k = 4, 6), named by the atlas run name `label__k<k>`, and is its own bootstrap block. Tuning uses the base
+runs only (the contamination variants are reading only). The partition label is the generator's. The distance axis
+uses the set manifest's `catalogue_centroid` (card item 4); a manifest without it is refused.

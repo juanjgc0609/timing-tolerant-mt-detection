@@ -3,6 +3,7 @@ tuning objective under LOC+T-V, the picker peak extraction, the 1-D model handed
 programs are installed) the GaMMA, PyOcto and REAL wrappers on a toy network."""
 import json
 import os
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -344,3 +345,71 @@ def test_amendment_1_spaces_and_objective_guard(tmp_path):
     with pytest.raises(ValueError):                 # refused before any trial is spent
         TU.run("eqnet", lambda c, r: None, [only_c], ledger=tmp_path / "l.csv", log=lambda *_: None)
     assert not (tmp_path / "l.csv").exists()
+
+
+def test_records_from_a_generator_set(tmp_path):
+    from ttmt.associate import records as R
+    from ttmt.atlas import cells as C
+    rng = np.random.default_rng(3)
+    sta = ring(7)
+    tr = toy_truth(rng, n_pairs=2, n_iso=3, span=300.0, sta=sta)
+
+    class Reader:                                       # the SetReader interface write_manifest uses
+        set_id, partition = "ss_toy_v1", "tune"
+        man = {"dataset": "hinet_2012", "fs": 100.0, "catalogue_centroid": [1.0, -2.0], "stations": [f"S{i}" for i in range(7)], "xyz": sta.tolist(),
+               "realisations": [{"label": "a", "partition": "tune", "block_index": 0, "r": 0},
+                                {"label": "b", "partition": "read", "block_index": 1, "r": 0}]}
+
+        def __iter__(self):
+            return iter(["a"])
+
+        def truth(self, label):
+            assert label == "a"
+            return tr
+
+        def data(self, label):
+            return np.zeros((7, 3, 3000))
+
+    def annotate(stream, codes, model, weights, t0):
+        assert len(stream) == 21 and stream[0].stats.sampling_rate == 100.0
+        return np.zeros((len(codes), 3000, 2), np.float32), 0.01, t0
+
+    paths = R.write_manifest(Reader(), str(tmp_path), annotate, log=lambda *_: None)
+    recs = TU.load_manifest(paths["PhaseNet"], "phasenet+pyocto")
+    assert [r.k for r in recs] == [4, 6] and all(r.partition == "tune" for r in recs)
+    assert [r.name for r in recs] == ["a__k4", "a__k6"] and recs[0].centroid == (1.0, -2.0)
+    full = {k: C.station_subset(sta, Reader.man["stations"], np.ones(7, bool), k).tolist() for k in (4, 6)}
+    assert all(len(r.subsets) == tr.n_events and all(list(s) == full[r.k] for s in r.subsets) for r in recs)
+    assert all(r.stratum == 0 for r in recs)
+    assert recs[0].data["frame"].velocity.name.startswith("JMA2001")
+    for w in ("original", "instance"):
+        assert str(recs[0].data["prob"](w)).endswith(f"prob_a_PhaseNet_{w}.npz")
+    nocen = Reader()
+    nocen.man = {k: v for k, v in Reader.man.items() if k != "catalogue_centroid"}
+    with pytest.raises(KeyError):
+        R.write_manifest(nocen, str(tmp_path), annotate)
+    bad = Reader()
+    bad.partition = "read"
+    with pytest.raises(ValueError):
+        R.write_manifest(bad, str(tmp_path), annotate)
+
+
+def test_reproduction_gate(tmp_path):
+    import importlib
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "experiments" / "exploratory" / "COMPARATORS"))
+    G = importlib.import_module("gate")
+    from repro_puente import S10
+    runs = [dict(method=m, n_events=n, noise=z, recall=v[1] * 1.01, status="ok")
+            for m in ("pyocto", "gamma") for (n, z), v in S10[m].items() if v is not None]
+    for stations, want in ((23, False), (400, True)):
+        (tmp_path / "p.json").write_text(json.dumps(dict(stations=stations, station_file="s.csv", runs=runs)))
+        g = G.build(str(tmp_path / "p.json"))
+        assert g["targets"]["puente_pyocto"]["passed"] is want and g["targets"]["puente_gamma"]["passed"] is want
+    runs[0]["recall"] *= 1.1
+    (tmp_path / "p.json").write_text(json.dumps(dict(stations=400, station_file="s.csv", runs=runs)))
+    g = G.build(str(tmp_path / "p.json"))
+    assert not g["targets"]["puente_pyocto"]["passed"] and g["passed"] == 1
+    (tmp_path / "e.json").write_text(json.dumps(dict(conditions=[dict(name="P F1", value=0.97, published=0.98)])))
+    g = G.build(ethz=str(tmp_path / "e.json"))
+    assert g["targets"]["ethz_phasenet"]["passed"] and g["targets"]["quakemigrate_example"]["evidence"] == "not run"
