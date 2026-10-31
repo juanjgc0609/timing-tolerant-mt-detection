@@ -139,6 +139,49 @@ no target passed: the Puente targets wait on the device run, and targets 2 and 3
 Targets 2 (PhaseNet on the SeisBench ETHZ benchmark with `pick-benchmark`) and 3 (QuakeMigrate on its published
 example) need the GPU machine and, for 3, an install; they are not done yet.
 
+## Registered tuning, 31 October 2026
+
+Ledger `experiments/exploratory/ATLAS-0/tuning_ledger.csv` (SHA-256 `759798e1...15f0`), code fa8679cd45c0, env
+`ttmt-gpu`, tuning partition b60d99b3d0bbbbfa (Ridgecrest and Hi-net EGF sets, 50 records, n_T = 223, n_C = 305, 4.17 h);
+frozen configurations in `frozen/`. Trial wall time is the sum of the ledger's `wall_s`. Both searches were interrupted
+and resumed from the ledger; no trial is repeated.
+
+| Method | Best trial | Objective | recall_T | recall_C | Valid trials | Trial wall time | Best parameters |
+|:--|:--|:--|:--|:--|:--|:--|:--|
+| phasenet+pyocto | 57 | 0.2589 | 0.2063 | 0.3115 | 60 of 60 | 9347 s | `original`, threshold 0.0638, peak distance 0.489 s, min picks 6, tolerance 0.647 s, pick match 0.661 s, min interevent 0.924 s |
+| phasenet+gamma | 28 | 0.2338 | 0.1659 | 0.3016 | 23 of 60 | 7351 s | `original`, threshold 0.0633, peak distance 0.154 s, min picks 6, `max_sigma11` 0.532 s, BGMM |
+
+`tune_cli.py flags`, the design check of H2 (development recall outside [0.2, 0.85]): GaMMA falls below 0.2 in T.
+
+```
+{"phasenet+gamma": {"recall_T": 0.165919}}
+```
+
+**The 37 GMM trials of GaMMA failed.** Every trial drawn with `as_method = GMM` stopped with `AttributeError:
+'GaussianMixture' object has no attribute 'covariance_prior'`, raised at `gamma/_base.py:140` (GaMMA 80394dd), which
+reads an attribute only the Bayesian mixture has; `tests/test_associate.py` covers BGMM only. By the protocol a failed
+trial spends its place, so the rows stand. GaMMA therefore had 23 effective configurations against 60 for PyOcto: a
+budget inequality (CR-07), declared and not corrected. GMM has never run here, so the search says nothing about it.
+GaMMA also failed gate G3a, 0 of 8 conditions (device run on 54 stations, not yet explained); the gate stands at 0 of
+the 2 targets required, so no atlas data are read.
+
+**The comparison is provisional.** Development objective only, one search per method, no intervals:
+
+| Subset | PyOcto best (trial) | GaMMA best (trial) |
+|:--|:--|:--|
+| all valid trials (60 and 23) | 0.2589 (57) | 0.2338 (28) |
+| the 23 trial numbers valid for GaMMA | 0.2323 (18) | 0.2338 (28) |
+| weights `original` (n = 34 and 7) | 0.2589 (57) | 0.2338 (28) |
+| weights `instance` (n = 26 and 16) | 0.1596 (0) | 0.1823 (13) |
+
+PyOcto's lead comes from one trial: only trial 57 exceeds GaMMA's best. The best of a random 23 of PyOcto's 60 trials
+has median 0.2323 and reaches GaMMA's best with probability 0.38, so the difference between the two best values is not
+separable from the difference in budget.
+
+**Decision (owner, 31 October 2026).** These rows are kept as registered; the PyOcto-GaMMA comparison above stands
+as provisional. Still to decide, before any claim that a method beats GaMMA: repair (remove GMM from the space through
+an amendment, or patch GaMMA) and repeat 60 BGMM trials in a new ledger; the registered ledger is never edited.
+
 ## The fine-tuned picker (CR-03)
 
 When the phase-4 picker fine-tuned on pairs exists, its probability traces are written in the same file layout under

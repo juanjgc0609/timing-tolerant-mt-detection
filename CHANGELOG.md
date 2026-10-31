@@ -3,6 +3,10 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-10-31
+
+- Registered ATLAS-0 tuning of phasenet+pyocto (best objective 0.2589, 60 of 60 trials valid) and phasenet+gamma (0.2338, 23 of 60 valid: the 37 GMM trials fail in GaMMA 80394dd, a declared budget inequality, CR-07), with the frozen configurations; the owner kept these rows as registered (31 October); the comparison is provisional, and repairing GaMMA and repeating 60 BGMM trials in a new ledger is to be decided before any claim that a method beats GaMMA (`experiments/exploratory/COMPARATORS/README.md`).
+
 ## 2026-10-30
 
 - Atlas run harness: `ttmt.atlas.plan` (the run plan of a set manifest: station subsets k = 4, 6, 8, 12 by
