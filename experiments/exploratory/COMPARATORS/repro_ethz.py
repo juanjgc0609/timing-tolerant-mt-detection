@@ -1,13 +1,13 @@
 """Reproduction gate G3a, target 2: PhaseNet in-domain on ETHZ with the SeisBench pick-benchmark code
 (Münchmeyer et al. 2022, JGR), against the published metrics. Runs on the GPU machine.
 
-    git clone https://github.com/seisbench/pick-benchmark %BENCH%            (record the commit)
+    git clone https://github.com/seisbench/pick-benchmark %BENCH% && git -C %BENCH% checkout d039fd8  (jgr_revision)
     python repro_ethz.py prepare --out %W%\\weights\\ethz_phasenet     (published ETHZ weights as a checkpoint)
     (download the paper's evaluation targets to %W%\\targets\\ethz, link in the benchmark README)
     cd %BENCH%\\benchmark
     python eval.py %W%\\weights\\ethz_phasenet %W%\\targets\\ethz --sets dev,test
     python collect_results.py %W%\\pred %W%\\results.csv
-    python repro_ethz.py report %W%\\results.csv published_ethz.json --out %W%\\ethz.json
+    python repro_ethz.py report %W%\\results.csv published_ethz.json --out %W%\\ethz.json  (refused until verified)
     python gate.py write --puente ... --ethz %W%\\ethz.json
 
 `prepare` wraps ``seisbench.models.PhaseNet.from_pretrained("ethz")`` (the weights the benchmark trained and exported)
@@ -58,6 +58,8 @@ def report(results, published, out):
     if len(row) != 1:
         raise SystemExit(f"{results}: expected one ETHZ PhaseNet row, found {len(row)}")
     pub = json.load(open(published))
+    if not pub.get("verified"):
+        raise SystemExit(f"{published}: published values not verified against the paper (see verification_note)")
     cond = [{"name": k, "value": float(row.iloc[0][k]), "published": float(v)} for k, v in pub["metrics"].items()]
     ev = {"conditions": cond, "source": f"pick-benchmark on ETHZ vs {pub['source']}"}
     Path(out).write_text(json.dumps(ev, indent=1))

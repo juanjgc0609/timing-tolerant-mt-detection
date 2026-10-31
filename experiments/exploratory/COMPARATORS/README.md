@@ -132,7 +132,10 @@ noise. On the same 100-event, 30 % record, `dbscan_min_samples = 5` gives recall
 
 Target 2 (`repro_ethz.py`): PhaseNet in-domain on ETHZ with the SeisBench `pick-benchmark` code. The published
 ETHZ weights (`PhaseNet.from_pretrained("ethz")`) are wrapped as a checkpoint so the benchmark's `eval.py` and
-`collect_results.py` run unchanged; the published metrics go in a JSON with their source in the paper. Not run yet.
+`collect_results.py` run unchanged; benchmark commit (d039fd8, tag `jgr_revision`) and the gated metrics are fixed before the run in
+`published_ethz.json`: the card's P-pick metrics, test split, Table S3 (MAE 0.12 s, sigma 0.42 s); phase MCC (Table 2)
+and detection AUC (Table S1) are reported only. The values were read from a text extraction whose rows are ambiguous,
+so `report` refuses the file until the PhaseNet column is confirmed against the PDF and `verified` is set. Not run yet.
 
 `gate.py write [--puente run.json] [--ethz ethz.json] [--quakemigrate qm.json]` writes
 `experiments/exploratory/ATLAS-0/gate.json`, which the atlas reads before any data: one entry per target
