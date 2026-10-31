@@ -130,6 +130,10 @@ noise. On the same 100-event, 30 % record, `dbscan_min_samples = 5` gives recall
 0.53, with everything else unchanged. The gate run uses the SCEDC station list on the GPU machine
 (`repro_puente.py fetch-stations`).
 
+Target 2 (`repro_ethz.py`): PhaseNet in-domain on ETHZ with the SeisBench `pick-benchmark` code. The published
+ETHZ weights (`PhaseNet.from_pretrained("ethz")`) are wrapped as a checkpoint so the benchmark's `eval.py` and
+`collect_results.py` run unchanged; the published metrics go in a JSON with their source in the paper. Not run yet.
+
 `gate.py write [--puente run.json] [--ethz ethz.json] [--quakemigrate qm.json]` writes
 `experiments/exploratory/ATLAS-0/gate.json`, which the atlas reads before any data: one entry per target
 (`puente_pyocto`, `puente_gamma`, `ethz_phasenet`, `quakemigrate_example`), passed when every published condition
