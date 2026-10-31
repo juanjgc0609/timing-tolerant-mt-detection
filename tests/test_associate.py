@@ -425,3 +425,26 @@ def test_reproduction_gate(tmp_path):
     assert not RP.is_scenario_query(dict(scedc, pad_km=80))
     sta.write_text("code,latitude,longitude,elevation_m\nB,35,-117,0\n")
     assert RP.station_source(sta) is None
+
+
+def test_quakemigrate_target_counts(tmp_path):
+    import importlib
+    import sys
+
+    import pandas as pd
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "experiments" / "exploratory" / "COMPARATORS"))
+    Q = importlib.import_module("repro_quakemigrate")
+    pub = json.load(open(Q.PUBLISHED))
+    assert pub["verified"] and pub["metrics"] == {"triggered": 49249, "located": 47354, "filtered": 20015}
+    assert Q.matched_fraction([0.0, 10.0, 20.0], [0.05, 10.3, 19.95]) == 2 / 3
+    run = tmp_path / "outputs" / "runs" / Q.RUN
+    (run / "trigger" / "events").mkdir(parents=True)
+    pd.DataFrame({"EventID": [1, 2, 3]}).to_csv(run / "trigger" / "events" / "r_2009_020_TriggeredEvents.csv")
+    with pytest.raises(SystemExit, match="locate"):
+        Q.counts(tmp_path)
+    (run / "locate" / "events").mkdir(parents=True)
+    for i, (err, coa) in enumerate(((0.1, 6.0), (0.15, 5.5), (0.2, 9.0))):
+        pd.DataFrame({"DT": [f"2009-01-20T00:00:0{i}Z"], "COV_Err_XYZ": [err], "COA": [coa]}).to_csv(
+            run / "locate" / "events" / f"e{i}.event", index=False)
+    n, cat, filt = Q.counts(tmp_path)
+    assert (n, len(cat), len(filt)) == (3, 3, 2)

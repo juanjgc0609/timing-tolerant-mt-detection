@@ -1,0 +1,16 @@
+{
+ "source": "Winder, Bacon, Smith, Hudson and White 2026, Seismica 5(1), doi 10.26443/seismica.v5i1.1854, Section 4.1 (Rutford Ice Stream icequakes, 2009-01-20 to 2009-01-21, network YG). Card target 3: stated event counts. 'In total, 49,249 candidate events were triggered in 48 hours'; 47,354 of them were located; after the Global Covariance (<= 150 m) and coalescence (5.5) filters '20,015 events remain in the catalogue'.",
+ "manuscript": {
+  "repo": "https://github.com/QuakeMigrate/manuscript",
+  "commit": "948dde37e3dc156e0ff174372f8b35a2675485f1",
+  "example": "figures/icequake_example/generate_results",
+  "quakemigrate": "1.2.2"
+ },
+ "metrics": {
+  "triggered": 49249,
+  "located": 47354,
+  "filtered": 20015
+ },
+ "verified": true,
+ "verification_note": "Checked 2026-10-31 against the article text (NERC Open Research Archive copy, eprint 542635): the three counts and the filter thresholds of Section 4.1. The located and filtered counts are also the row counts of rutford_icequakes.csv (47,354) and rutford_icequakes_gc150_coa55.csv (20,015) published in the manuscript repository at the commit above; the triggered count is in the text only (the repository keeps the trigger output of the first 5 minutes, 74 events, Figure 6). The filter of 5_collate_filter_catalogue.py is COV_Err_XYZ <= 0.15 and COA >= 5.5 (20,015 rows; COA > 5.5 as worded in the text gives 20,007); the runner uses the script's filter."
+}
