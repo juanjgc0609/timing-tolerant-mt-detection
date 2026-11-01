@@ -9,6 +9,9 @@ Dated record of changes to the project's process, code and documents. Results ar
   card states; R2 and R3 take the measured stratum shares (separation, station subset, distance) of the densest
   reviewed catalogues, with a block-bootstrap interval, reported as a lower bound with a Poisson reference. The
   measurement runs on the author's machine; the R2 and R3 drafts point their weight tables to the rule.
+- `ttmt.atlas.prevalence` and `experiments/exploratory/CR04-PREVALENCE/run.py` compute that table from a catalogue
+  and a station list (windowed `cells.separation`, 1-hour block bootstrap, Poisson reference, dead time);
+  `tests/test_prevalence.py` joins the CI test list.
 
 ## 2026-10-31
 

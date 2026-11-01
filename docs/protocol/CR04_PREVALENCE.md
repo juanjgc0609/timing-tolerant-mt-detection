@@ -1,6 +1,6 @@
 # CR-04: prevalence of the target regime in dense real sequences
 
-Status: rule fixed 2026-11-01, measurement not run. Owner of the measurement: the reference-catalogue thread.
+Status: rule and code fixed 2026-11-01, measurement not run. Owner of the measurement: the reference-catalogue thread.
 Sources: ADR-0008 items 1, 4 and 7; ATLAS-0 card, "Regime grid" and "Endpoint"; critique register CR-04.
 
 ## 1. Why this is needed
@@ -61,5 +61,10 @@ If the Poisson reference exceeds the catalogue Y by more than a factor of 2, the
 ## 6. Where it runs
 
 The catalogues and inventories come from SCEDC, NIED and INGV. The cloud container cannot reach them (proxy 403 on
-2026-11-01), so the measurement runs on the author's machine, only after the author asks for it. The script, its
-output table and the table's SHA-256 are committed together, before the first of R2 or R3 freezes.
+2026-11-01), so the measurement runs on the author's machine, only after the author asks for it. The functions are in
+`ttmt.atlas.prevalence` (tested in `tests/test_prevalence.py`); the command is
+`experiments/exploratory/CR04-PREVALENCE/run.py` (catalogue, stations and optional gap-free data intervals as CSV;
+velocity model `hk` for Ridgecrest, `jma2001` for Hi-net; Alto Tiberina has no layered model in the package yet, so
+it runs with `homogeneous:VP` and the table says so; seed 20261101). Each output table and its SHA-256 are committed
+together, before the first of R2 or R3 freezes. Separations are computed over events within 60 s of origin, which
+gives the same bins as all events for travel times below 57 s (`separation_windowed`).
