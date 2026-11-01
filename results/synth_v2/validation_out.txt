@@ -1,8 +1,8 @@
 1. Engine against the whole-space solution (vp 6, vs 3.5, rho 2.7; source 5 km deep; Gaussian moment rate, f_gauss 4 Hz)
-   L factor 1.5: max relative error per distance [0.00504, 0.00553, 0.00635] (worst component Myy), 7 s
-   L factor 3.0: max relative error per distance [0.0005, 0.0005, 0.00061] (worst component Mxy), 12 s
+   L factor 1.5: max relative error per distance [0.00504, 0.00553, 0.00635] (worst component Myy), 9 s
+   L factor 3.0: max relative error per distance [0.0005, 0.0005, 0.00061] (worst component Mxy), 18 s
    default L factor 3: worst relative error, 6 components x 3 distances      6.114e-04  (< 0.01)  ok
-   L factor 6.0: max relative error per distance [0.0005, 0.0005, 0.00061] (worst component Mxy), 23 s
+   L factor 6.0: max relative error per distance [0.0005, 0.0005, 0.00061] (worst component Mxy), 31 s
 2. Free surface: vertical-incidence P on a half-space (source Mzz below the receiver). The ratio tends to 2 as
    the near- and intermediate-field terms (relative size ~ wavelength / depth) vanish
    depth   10 km: surface / whole-space P pulse (L2 over +-0.3 s) = 1.9987
@@ -24,15 +24,44 @@
    at 60 km the direct P grazes the 4-12 km layer and is weaker than the head wave 0.04 s behind it and the
    wide-angle reflections, so the peak of the +-0.1 s window is not the first arrival (not an engine error)
    elastic model, X <= 45 km: max |engine P - ray P| (s)                     2.356e-03  (< 0.01)  ok
+5. Inverse-crime distance: fraction of the noise-free arrival energy inside the detector's 6-D subspace at the true source (C19, v1 generator: 0.81 mean, 0.70 10th percentile)
+   fk_ridgecrest_2019_0.pkl (crust_a, zr 0.0 km, 120 events):
+      clvd      n  15  mean 0.379  p10 0.199  p90 0.611
+      dc        n  38  mean 0.390  p10 0.125  p90 0.730
+      double    n  23  mean 0.413  p10 0.158  p90 0.656
+      extended  n  23  mean 0.447  p10 0.231  p90 0.752
+      generic   n  13  mean 0.430  p10 0.162  p90 0.725
+      iso       n   8  mean 0.361  p10 0.146  p90 0.639
+   mean fraction below the v1 generator's 0.81 (further from the detector)   4.065e-01  (< 0.81)  ok
+   fk_hinet_2012_1.pkl (crust_b, zr 0.1 km, 80 events):
+      clvd      n   8  mean 0.318  p10 0.148  p90 0.468
+      dc        n  25  mean 0.369  p10 0.145  p90 0.635
+      double    n  24  mean 0.457  p10 0.197  p90 0.703
+      extended  n  10  mean 0.504  p10 0.332  p90 0.722
+      generic   n   4  mean 0.283  p10 0.195  p90 0.361
+      iso       n   9  mean 0.305  p10 0.128  p90 0.436
+   mean fraction below the v1 generator's 0.81 (further from the detector)   3.957e-01  (< 0.81)  ok
 6. Semi-synthetic sets (data/manifests/synth)
    ss_hinet_2012_egf_v1: 40 realisations (10 tune, 30 read), source egf (n 8), 7 stations, anchor 'ATLAS-0'
       targets 432, pairs 197; network SNR quantiles 10/50/90 [0.0, 1.6, 9.3]; SNR bins <4/4-8/8-20/>=20: [309, 71, 40, 12]
       separation bins ('<0.1', '0.1-0.5', '0.5-1', '1-3', '>3'): [45, 71, 75, 92, 149]; regime T [0.1, 1) s: 146
       max CC to the atom library: median 0.645, p90 0.818, fraction < 0.5 0.000 (CR-06); injection scale median 1
       K_mec/E empirical (measured vectors) 10/50/90 [0.0002, 0.0242, 0.4379]
+   ss_hinet_2012_fk_v1: 40 realisations (10 tune, 30 read), source fk (n 80), 7 stations, anchor 'ATLAS-0'
+      targets 477, pairs 197; network SNR quantiles 10/50/90 [1.7, 8.1, 36.0]; SNR bins <4/4-8/8-20/>=20: [122, 113, 115, 127]
+      separation bins ('<0.1', '0.1-0.5', '0.5-1', '1-3', '>3'): [26, 89, 106, 167, 89]; regime T [0.1, 1) s: 195
+      max CC to the atom library: median 0.100, p90 0.191, fraction < 0.5 1.000 (CR-06); injection scale median 2.58e+06
+      K_mec/E (known tensors) quantiles 10/50/90 [0.0006, 0.0239, 0.1841]
+      K_mec/E empirical (measured vectors) 10/50/90 [0.0006, 0.0239, 0.1841]
    ss_ridgecrest_2019_egf_v1: 70 realisations (10 tune, 60 read), source egf (n 12), 11 stations, anchor 'ATLAS-0'
       targets 830, pairs 340; network SNR quantiles 10/50/90 [0.7, 4.5, 16.6]; SNR bins <4/4-8/8-20/>=20: [371, 216, 185, 58]
       separation bins ('<0.1', '0.1-0.5', '0.5-1', '1-3', '>3'): [42, 181, 198, 248, 161]; regime T [0.1, 1) s: 379
       max CC to the atom library: median 0.116, p90 0.709, fraction < 0.5 0.831 (CR-06); injection scale median 0.986
       K_mec/E empirical (measured vectors) 10/50/90 [0.0011, 0.0315, 0.1814]
+   ss_ridgecrest_2019_fk_v1: 70 realisations (10 tune, 60 read), source fk (n 120), 11 stations, anchor 'ATLAS-0'
+      targets 834, pairs 344; network SNR quantiles 10/50/90 [1.5, 8.7, 39.4]; SNR bins <4/4-8/8-20/>=20: [213, 186, 191, 244]
+      separation bins ('<0.1', '0.1-0.5', '0.5-1', '1-3', '>3'): [50, 108, 151, 322, 203]; regime T [0.1, 1) s: 259
+      max CC to the atom library: median 0.072, p90 0.111, fraction < 0.5 1.000 (CR-06); injection scale median 0.00992
+      K_mec/E (known tensors) quantiles 10/50/90 [0.0, 0.0132, 0.1986]
+      K_mec/E empirical (measured vectors) 10/50/90 [0.0, 0.0132, 0.1986]
 validation passed
