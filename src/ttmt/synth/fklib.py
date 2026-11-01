@@ -141,9 +141,11 @@ def _apply_receiver(u, fs, t_s, eff, i):
     return u
 
 
-def synthesise(events, STA, c, eff, pre=5.0, progress=None, workers=1):
+def synthesise(events, STA, c, eff, pre=5.0, progress=None, workers=1, cache=None):
     """fill wave and arr of every event: one engine call per source depth with every (event, station) receiver of
-    that depth; then the tensor combination, the source-time function, subevent delays and receiver effects."""
+    that depth; then the tensor combination, the source-time function, subevent delays and receiver effects.
+    cache: optional directory; the Green's functions of each depth are saved there and reused, so an interrupted
+    build resumes (the file name carries a digest of the medium, configuration and receivers)."""
     STA = np.asarray(STA, float)
     ns = len(STA)
     med = true_medium(c)
@@ -164,16 +166,37 @@ def synthesise(events, STA, c, eff, pre=5.0, progress=None, workers=1):
         z, ev, r, phi = job
         return fk.greens(med, z, r, phi, cfg, zr=c["zr"])
 
-    if workers > 1:
-        from concurrent.futures import ProcessPoolExecutor
-        with ProcessPoolExecutor(workers) as ex:
-            res = list(ex.map(_greens_job, [(med.to_dict(), j[0], j[2], j[3], cfg.as_dict(), c["zr"]) for j in jobs]))
+    args = [(med.to_dict(), j[0], j[2], j[3], cfg.as_dict(), c["zr"]) for j in jobs]
+    if cache is None:
+        if workers > 1:
+            from concurrent.futures import ProcessPoolExecutor
+            with ProcessPoolExecutor(workers) as ex:
+                res = list(ex.map(_greens_job, args))
+        else:
+            res = []
+            for jb in jobs:
+                res.append(run(jb))
+                if progress:
+                    progress(len(res), len(jobs))
     else:
-        res = []
-        for jb in jobs:
-            res.append(run(jb))
-            if progress:
-                progress(len(res), len(jobs))
+        from pathlib import Path
+        cache = Path(cache)
+        cache.mkdir(parents=True, exist_ok=True)
+        paths = [cache / f"greens_{_job_digest(a)}.npy" for a in args]
+        todo = [k for k, p in enumerate(paths) if not p.exists()]
+        if workers > 1 and todo:
+            from concurrent.futures import ProcessPoolExecutor
+            with ProcessPoolExecutor(workers) as ex:
+                for done, (k, G) in enumerate(zip(todo, ex.map(_greens_job, [args[k] for k in todo])), 1):
+                    _save_atomic(paths[k], G)
+                    if progress:
+                        progress(len(jobs) - len(todo) + done, len(jobs))
+        else:
+            for done, k in enumerate(todo, 1):
+                _save_atomic(paths[k], _greens_job(args[k]))
+                if progress:
+                    progress(len(jobs) - len(todo) + done, len(jobs))
+        res = [np.load(p) for p in paths]
     n_out = int(round((c["gf_len"] + pre) * c["fs"]))
     f = np.fft.rfftfreq(2 * n_out, 1 / c["fs"])
     for (z, ev, _r, _phi), G in zip(jobs, res):
@@ -198,6 +221,19 @@ def synthesise(events, STA, c, eff, pre=5.0, progress=None, workers=1):
             e.wave, e.pre = w, pre
             e.meta = {"medium": med.name, "medium_digest": med.digest()}
     return events
+
+
+def _job_digest(a):
+    md, z, r, phi, cd, zr = a
+    blob = json.dumps([md, float(z), np.round(r, 9).tolist(), np.round(phi, 12).tolist(), cd, float(zr)],
+                      sort_keys=True, default=list)
+    return hashlib.sha256(blob.encode()).hexdigest()[:20]
+
+
+def _save_atomic(path, G):
+    tmp = path.with_suffix(".tmp.npy")
+    np.save(tmp, G)
+    tmp.replace(path)
 
 
 def _greens_job(a):

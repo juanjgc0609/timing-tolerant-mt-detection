@@ -6,7 +6,9 @@ LIBRARY: library index j; every draw (medium perturbation, events, receiver effe
 ttmt.atlas.seeds.library_rng(j) (stream "inject", 1000000 + j; ADR-0009 item 5): Ridgecrest j = 0, Hi-net j = 1.
 
 Medium: crust_a perturbed for Ridgecrest, crust_b perturbed for Hi-net (none is a detector model). ZR_KM: receiver
-depth (Hi-net sensors are in boreholes; the depth is not in the registered SAC headers, 0.1 km is assumed).
+depth (Hi-net sensors are in boreholes; the depth is not in the registered SAC headers, 0.1 km is assumed). The
+Green's functions of each source depth are cached in $TTMT_WORK_ROOT/synth/greens_cache_<dataset>_<j>/, so an
+interrupted build resumes where it stopped.
 """
 from ttmt.runtime import pin_blas
 
@@ -32,7 +34,9 @@ def main():
     ev = F.draw_events(rec.xyz, n, rng, c, prefix=f"fk{lib}_")
     eff = F.network_effects(len(rec.xyz), rng, c)
     t0 = time.time()
-    F.synthesise(ev, rec.xyz, c, eff, workers=workers,
+    from ttmt import config as CFG
+    cache = f"{CFG.work_root()}/synth/greens_cache_{name}_{lib}"
+    F.synthesise(ev, rec.xyz, c, eff, workers=workers, cache=cache,
                  progress=lambda i, k: print(f"depth {i}/{k} {time.time() - t0:.0f} s", flush=True))
     print(name, len(ev), "events", f"{time.time() - t0:.0f} s", flush=True)
     pickle.dump({"events": ev, "eff": eff, "cfg": c, "seed": seed, "library": lib, "stream": ["inject", SEEDS.LIBRARY_OFFSET + lib],
