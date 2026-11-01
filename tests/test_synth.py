@@ -173,7 +173,7 @@ def test_tune_read_split_hinet_fallback():
     assert [bl[0] for bl, r in noise if r == "tune"] == [min(u, key=u.get)]
 
 
-def test_fklib_cache_resumes(tmp_path):
+def test_fklib_cache_resumes(tmp_path, monkeypatch):
     """the per-depth Green's function cache gives the same waveforms (to rounding: two direct runs already differ by
     ~1e-15 relative), and a second run computes nothing."""
     from ttmt.synth import fklib
@@ -190,3 +190,6 @@ def test_fklib_cache_resumes(tmp_path):
     calls = []
     d = [w.wave.copy() for w in fklib.synthesise(ev, STA, c, eff, cache=tmp_path, progress=lambda i, k: calls.append(i))]
     assert calls == [] and all(np.array_equal(x, y) for x, y in zip(b, d))
+    monkeypatch.setattr(fklib, "_engine_digest", lambda: "another engine")   # a changed engine reuses nothing
+    fklib.synthesise(ev, STA, c, eff, cache=tmp_path, progress=lambda i, k: calls.append(i))
+    assert len(calls) == n

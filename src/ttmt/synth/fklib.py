@@ -145,7 +145,7 @@ def synthesise(events, STA, c, eff, pre=5.0, progress=None, workers=1, cache=Non
     """fill wave and arr of every event: one engine call per source depth with every (event, station) receiver of
     that depth; then the tensor combination, the source-time function, subevent delays and receiver effects.
     cache: optional directory; the Green's functions of each depth are saved there and reused, so an interrupted
-    build resumes (the file name carries a digest of the medium, configuration and receivers)."""
+    build resumes (the file name carries a digest of the engine source, medium, configuration and receivers)."""
     STA = np.asarray(STA, float)
     ns = len(STA)
     med = true_medium(c)
@@ -223,10 +223,19 @@ def synthesise(events, STA, c, eff, pre=5.0, progress=None, workers=1, cache=Non
     return events
 
 
+def _engine_digest():
+    """hash of the engine's source (fk.py, media.py), so a cache is never reused across engine versions."""
+    from pathlib import Path
+    h = hashlib.sha256()
+    for name in ("fk.py", "media.py"):
+        h.update((Path(__file__).parent / name).read_bytes())
+    return h.hexdigest()[:16]
+
+
 def _job_digest(a):
     md, z, r, phi, cd, zr = a
-    blob = json.dumps([md, float(z), np.round(r, 9).tolist(), np.round(phi, 12).tolist(), cd, float(zr)],
-                      sort_keys=True, default=list)
+    blob = json.dumps([_engine_digest(), md, float(z), np.round(r, 9).tolist(), np.round(phi, 12).tolist(), cd,
+                       float(zr)], sort_keys=True, default=list)
     return hashlib.sha256(blob.encode()).hexdigest()[:20]
 
 
