@@ -189,6 +189,19 @@ def plan(rng, c, n_sources, xyz=None):
     return ev
 
 
+def _target_mag(s, sc, rec):
+    """magnitude recorded for an injected target. egf: the catalogue magnitude of the recorded event (its scale is
+    <= 1, median ~0.99, and is in meta). fk: the moment magnitude of the injected source, library Mw + (2/3) log10
+    scale, since scaling the waveform scales the moment (the source-time function, hence the corner frequency, stays
+    that of the library event); nan when the noise is not in physical units (Hi-net counts), where the scale also
+    carries the unknown counts-to-m/s factor."""
+    if s.kind != "fk":
+        return s.mag
+    if not (rec.meta or {}).get("physical_units", False):
+        return float("nan")
+    return s.mag + (2.0 / 3.0) * np.log10(sc)
+
+
 def realise(rec, block, sources, seed, c=None, atoms=None, atom_ids=None, label=""):
     """one realisation: (signal, noise, Truth). block: (start, end) record time of the noise block; sources: list of
     Source on the record's stations; seed: a numpy Generator (for ATLAS-0 the anchored stream
@@ -249,7 +262,7 @@ def realise(rec, block, sources, seed, c=None, atoms=None, atom_ids=None, label=
         ids.append(f"{label}#{k}")
         ts.append(e["t"])
         xyz.append(s.xyz)
-        mag.append(s.mag + (np.log10(sc) if s.kind == "fk" else 0.0))
+        mag.append(_target_mag(s, sc, rec))
         at = e["t"] + s.arr
         arr.append(at)
         obs = at + (tim + st_static)[:, None]
@@ -264,6 +277,7 @@ def realise(rec, block, sources, seed, c=None, atoms=None, atom_ids=None, label=
         part = [r_[1] for r_ in rows if r_[0]["pair"] == e["pair"] and r_[1] is not s] if e["pair"] >= 0 else []
         dxy = float(np.linalg.norm(part[0].xyz - s.xyz)) if part else (0.0 if e["pair"] >= 0 else None)
         tmeta.append({"source": s.id, "kind": s.kind, "family": s.family, "scale": float(sc), "pair_dist_km": dxy,
+                      "mw_library": float(s.mag) if s.kind == "fk" else None,
                       "log10_scale": float(np.log10(sc)), "max_cc": cc,
                       "max_cc_atom": (atom_ids[ia] if atom_ids and ia >= 0 else None),
                       "g": gvec[-1].tolist(), "tensor": None if s.tensor is None else np.asarray(s.tensor).tolist()})

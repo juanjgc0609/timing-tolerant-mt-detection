@@ -63,10 +63,13 @@ crust_b perturbed, borehole 0.1 km, 80 events), injected into the same noise blo
 - These sets give what the EGF sets lack: a CC < 0.5 stratum on both networks (CR-06), K_mec/E from known tensors
   (CR-14; computed on the noise-free radiated vectors, so `kmec` equals `meta.kmec_empirical`), and SNR up to ~40
   (half the targets above 8).
-- **Magnitude on Hi-net.** The Hi-net noise is in counts and the synthetics in m/s, so the injection scale (median
-  2.6e6) carries the unit conversion, and `mag` (library Mw + log10 scale) is about 6.4 units too high there. Use the
-  SNR and the scale, not `mag`, on `ss_hinet_2012_fk_v1`; on Ridgecrest (response-scaled velocity) `mag` is the
-  injected Mw.
+- **Magnitude (corrected after #26).** The first build of these sets wrote `mag` = library Mw + log10 scale, which
+  is wrong in two ways: scaling a waveform by s scales the moment by s, so Mw moves by (2/3) log10 s, not log10 s
+  (Ridgecrest came out about 0.7 units too low: scale median 0.0099); and on Hi-net the scale also carries the unknown
+  counts-to-m/s factor (median 2.6e6). Now `mag` = library Mw + (2/3) log10 scale on Ridgecrest (response-scaled
+  m/s), the moment magnitude of the injected source with the library event's source-time function; and nan on Hi-net
+  (counts). Every target keeps `mw_library` and `scale` in `meta.targets`. On Hi-net use the SNR. EGF targets keep
+  the catalogue magnitude of the recorded event (scale <= 1, median 0.99).
 
 ## Rebuilding the files
 
