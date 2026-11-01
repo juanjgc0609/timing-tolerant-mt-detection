@@ -8,10 +8,12 @@ since every run emits its own false detections. The bootstrap is stratified by s
 operating point of a method is set on the whole pooled evaluation at the budget.
 
 Sensitivity to the bootstrap unit (review of PR #21): realisations of one set on the same 300 s noise block share
-every noise sample, so the false detections driven by the noise are not independent across them. Next to the
-registered intervals, every scope reports the number of distinct noise blocks and a sensitivity row whose bootstrap
-draws noise blocks (all realisations of a noise block together, within the set strata), with H-ATLAS read against
-both. The registered unit stays the realisation; the sensitivity row is descriptive and is stated in the run log.
+every noise sample, so the false detections driven by the noise are not independent across them; so do the EGF
+and known-tensor sets of one network, injected into the same noise blocks (the noise block is keyed by dataset).
+Next to the registered intervals, every scope reports the number of distinct noise blocks and a sensitivity row whose
+bootstrap draws noise blocks (all realisations of a noise block together, strata sharing a noise block drawn
+together), with H-ATLAS read against both. The registered unit stays the realisation; the sensitivity row is
+descriptive and is stated in the run log.
 
 Scopes reported: every set pooled; each set alone; the stratum of injected events whose largest correlation to any
 template or deflation atom is below 0.5 (CR-06; truth.meta["max_cc"] per event); each contamination variant of the
@@ -65,7 +67,8 @@ def build_pool(rows, truth_of, dets_of, methods, centroid_of, target_filter=None
             sets.setdefault(r["set_id"], len(sets))
             hours.append(0.0)
             stratum.append(sets[r["set_id"]])
-            cluster.append(noise.setdefault((r["set_id"], int(r["block_index"])), len(noise)))
+            nkey = (r.get("dataset") or r["set_id"], int(r["block_index"]))   # sets on one noise share it
+            cluster.append(noise.setdefault(nkey, len(noise)))
         hours[blocks[key]] += tr.hours
     pool = F.Pool(np.array(hours), np.array(stratum, int), block_cluster=np.array(cluster, int))
     for r, tr in zip(rows, truths):

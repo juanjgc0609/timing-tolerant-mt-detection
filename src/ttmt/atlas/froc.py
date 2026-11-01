@@ -195,15 +195,24 @@ def _resampler(pool, cluster=None):
     """draw() -> block multiplicities (nb,) of one stratified bootstrap replicate. cluster None: the registered unit,
     blocks drawn with replacement within each stratum. cluster (nb,) ints: a sensitivity unit, clusters (e.g. the
     noise block shared by several realisations) drawn with replacement within each stratum, each drawn cluster
-    bringing all its blocks."""
+    bringing all its blocks. Strata that share a cluster (e.g. two sets injected into the same noise) are drawn
+    together, so a shared cluster is never split."""
     strata = _strata(pool)
     if cluster is None:
         return lambda rng: _multiplicity(pool, np.concatenate([s[rng.integers(0, s.size, s.size)] for s in strata]))
     cluster = np.asarray(cluster, int)
     if cluster.shape != (pool.n_blocks,):
         raise ValueError(f"cluster must give one id per block ({pool.n_blocks}), got shape {cluster.shape}")
+    lab = np.arange(len(strata))                                # merge strata linked by a shared cluster
+    owner = {}
+    for i, s in enumerate(strata):
+        for c in np.unique(cluster[s]):
+            j = owner.setdefault(int(c), i)
+            a, b = lab[i], lab[j]
+            lab[lab == max(a, b)] = min(a, b)
     groups = []
-    for s in strata:
+    for g in np.unique(lab):
+        s = np.concatenate([strata[i] for i in np.flatnonzero(lab == g)])
         ids = np.unique(cluster[s])
         groups.append((ids, [s[cluster[s] == c] for c in ids]))
 
