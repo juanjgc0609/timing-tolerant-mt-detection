@@ -182,6 +182,32 @@ separable from the difference in budget.
 as provisional. Still to decide, before any claim that a method beats GaMMA: repair (remove GMM from the space through
 an amendment, or patch GaMMA) and repeat 60 BGMM trials in a new ledger; the registered ledger is never edited.
 
+### Repair: ATLAS-0 amendment 3 (E63), to run
+
+Diagnosis, reproduced in the cloud with GaMMA 80394dd and scikit-learn 1.8.0 (`tests/test_associate.py`,
+`test_gamma_80394dd_gmm_still_broken`): `gamma.utils.association` builds `GaussianMixture` without a covariance
+prior, and both mixtures initialise with `init_params = "centers"`, whose branch in `BaseMixture._initialize_parameters`
+(`gamma/_base.py:140`) passes `np.sqrt(self.covariance_prior[0][0])` to `initialize_centers`. Only
+`BayesianGaussianMixture` has that attribute, so GMM fails before any fit, for any data and parameters. 80394dd is the
+head of AI4EPS/GaMMA (1 November 2026): there is no upstream fix to move to.
+
+Repair (amendment 3 of the card, not yet anchored): the method is pinned to BGMM with `space.Pinned`, which consumes
+the registered draw, so trial i keeps every other registered value (checked against all 60 registered rows by
+`test_gamma_amendment3_pins_bgmm_and_keeps_the_registered_draws`); the 23 registered BGMM trials become replicates
+whose objective must match the registered one. The wrapper refuses GMM with the E63 reason instead of calling GaMMA.
+`space.trials(method, reg1=True)` still redraws the registered ledger. GaMMA is not patched.
+
+Run on the device after the tag `reg/ATLAS-0/amendment-3` (about 5 h: 23 BGMM trials took 7351 s):
+
+```
+python experiments/exploratory/COMPARATORS/tune_cli.py run phasenet+gamma <out>/*/tune_phasenet.json --env ttmt-gpu --ledger experiments/exploratory/ATLAS-0/tuning_ledger_a3.csv
+python experiments/exploratory/COMPARATORS/tune_cli.py freeze phasenet+gamma experiments/exploratory/COMPARATORS/frozen/phasenet+gamma_a3.json --ledger experiments/exploratory/ATLAS-0/tuning_ledger_a3.csv
+python experiments/exploratory/COMPARATORS/tune_cli.py flags --ledger experiments/exploratory/ATLAS-0/tuning_ledger_a3.csv
+```
+
+The same manifests as the registered run (partition b60d99b3d0bbbbfa) are required; `--ledger` must be given, since
+the default ledger already holds the 60 registered GaMMA rows and the run would skip them all.
+
 ## The fine-tuned picker (CR-03)
 
 When the phase-4 picker fine-tuned on pairs exists, its probability traces are written in the same file layout under

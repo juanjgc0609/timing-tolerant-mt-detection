@@ -3,6 +3,10 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-01
+
+- E63: GaMMA 80394dd cannot run method GMM (`gamma/_base.py:140` reads `covariance_prior`, which only the Bayesian mixture has), the cause of the 37 failed GMM tuning trials. Repair prepared as ATLAS-0 amendment 3 (draft, not anchored): method pinned to BGMM keeping the registered draws, the GaMMA wrapper refuses GMM, tests; 60 BGMM trials to run on the device into `tuning_ledger_a3.csv`.
+
 ## 2026-10-31
 
 - Registered ATLAS-0 tuning of phasenet+pyocto (best objective 0.2589, 60 of 60 trials valid) and phasenet+gamma (0.2338, 23 of 60 valid: the 37 GMM trials fail in GaMMA 80394dd, a declared budget inequality, CR-07), with the frozen configurations; the owner kept these rows as registered (31 October); the comparison is provisional, and repairing GaMMA and repeating 60 BGMM trials in a new ledger is to be decided before any claim that a method beats GaMMA (`experiments/exploratory/COMPARATORS/README.md`).
