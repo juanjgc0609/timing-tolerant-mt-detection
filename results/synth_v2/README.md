@@ -47,18 +47,37 @@ Tuning blocks: Ridgecrest 2100 s; Hi-net 0 s (from the fallback, no Hi-net noise
    itself is run by the atlas thread.
 5. **Alto Tiberina** is not used: its registered copy is decimated to 25 Hz, below the 2-20 Hz band of the card.
 
-## Not yet in this batch
+## Known-tensor sets (sections 5 and 6, run 2026-11-01)
 
-The full-wave sets with known tensors (`ss_*_fk_v1`, libraries `library_rng(0)` Ridgecrest and `library_rng(1)`
-Hi-net). Their libraries were lost when the cloud container restarted and are being rebuilt; they will come with
-their manifests and section 5 of the validator (subspace fraction).
+Full-wave libraries from `library_rng(0)` (Ridgecrest, crust_a perturbed, 120 events) and `library_rng(1)` (Hi-net,
+crust_b perturbed, borehole 0.1 km, 80 events), injected into the same noise blocks and partitions as the EGF sets.
+
+| Set | Realisations (tune / read) | Targets | Pairs | In regime T | Network SNR 10/50/90 | Max CC to atoms: median, fraction < 0.5 | K_mec/E 10/50/90 |
+|---|---|---|---|---|---|---|---|
+| `ss_ridgecrest_2019_fk_v1` | 70 (10 / 60) | 834 | 344 | 259 | 1.5 / 8.7 / 39.4 | 0.072, 1.000 | 0.000 / 0.013 / 0.199 |
+| `ss_hinet_2012_fk_v1` | 40 (10 / 30) | 477 | 197 | 195 | 1.7 / 8.1 / 36.0 | 0.100, 1.000 | 0.001 / 0.024 / 0.184 |
+
+- Inverse-crime distance (section 5): the mean fraction of the noise-free arrival energy inside the detector's 6-D
+  subspace at the true source is 0.41 (Ridgecrest) and 0.40 (Hi-net), against 0.81 for the v1 generator (C19): the v2
+  waveforms are far from the detector's own forward model, for every mechanism family.
+- These sets give what the EGF sets lack: a CC < 0.5 stratum on both networks (CR-06), K_mec/E from known tensors
+  (CR-14; computed on the noise-free radiated vectors, so `kmec` equals `meta.kmec_empirical`), and SNR up to ~40
+  (half the targets above 8).
+- **Magnitude on Hi-net.** The Hi-net noise is in counts and the synthetics in m/s, so the injection scale (median
+  2.6e6) carries the unit conversion, and `mag` (library Mw + log10 scale) is about 6.4 units too high there. Use the
+  SNR and the scale, not `mag`, on `ss_hinet_2012_fk_v1`; on Ridgecrest (response-scaled velocity) `mag` is the
+  injected Mw.
 
 ## Rebuilding the files
 
-The waveform files (318 MB) are not in git. On a machine with the registered data:
+The waveform files are not in git. On a machine with the registered data:
 
     TTMT_DATA_ROOT=... TTMT_WORK_ROOT=... python tools/build_semisynth.py --dataset ridgecrest_2019 --source egf --per-block 10
     TTMT_DATA_ROOT=... TTMT_WORK_ROOT=... python tools/build_semisynth.py --dataset hinet_2012 --source egf --per-block 10
+    TTMT_DATA_ROOT=... python tools/build_fk_library.py ridgecrest_2019 120 0 0.0 fk_ridgecrest_2019_0.pkl 4
+    TTMT_DATA_ROOT=... python tools/build_fk_library.py hinet_2012 80 1 0.1 fk_hinet_2012_1.pkl 4
+    TTMT_DATA_ROOT=... TTMT_WORK_ROOT=... python tools/build_semisynth.py --dataset ridgecrest_2019 --source fk --fk-lib fk_ridgecrest_2019_0.pkl --per-block 10
+    TTMT_DATA_ROOT=... TTMT_WORK_ROOT=... python tools/build_semisynth.py --dataset hinet_2012 --source fk --fk-lib fk_hinet_2012_1.pkl --per-block 10
 
-then check against the manifests in git with `SetReader(set_id, partition, verify="fingerprint")` (the bytes can
+(the libraries take about 2 h on 4 cores and resume after an interruption), then check against the manifests in git with `SetReader(set_id, partition, verify="fingerprint")` (the bytes can
 differ across platforms, the float fingerprints to 1e-6).

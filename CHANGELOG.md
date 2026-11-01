@@ -6,6 +6,9 @@ Dated record of changes to the project's process, code and documents. Results ar
 ## 2026-11-01
 
 - E63: GaMMA 80394dd cannot run method GMM (`gamma/_base.py:140` reads `covariance_prior`, which only the Bayesian mixture has), the cause of the 37 failed GMM tuning trials. Repair prepared as ATLAS-0 amendment 3 (draft, not anchored): method pinned to BGMM keeping the registered draws, the GaMMA wrapper refuses GMM, tests; 60 BGMM trials to run on the device into `tuning_ledger_a3.csv`.
+- Atlas noise-block sensitivity: the plan carries the set's `dataset`, and the sensitivity bootstrap keys the noise
+  block by dataset and draws together the set strata that share one (the EGF and known-tensor sets of a network use
+  the same noise, PR #26). Noted in `experiments/exploratory/ATLAS-0/run_log.md`.
 
 ## 2026-10-31
 

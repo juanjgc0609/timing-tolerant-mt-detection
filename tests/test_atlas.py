@@ -299,6 +299,7 @@ def test_run_plan_subsets_and_variants():
     k4 = [r for r in rows if r["k"] == 4]
     assert len(k4) == 16 and sum(bool(r["variant"]) for r in k4) == 8
     assert all(r["partition"] == "read" for r in P.plan(m, "read"))
+    assert {r["dataset"] for r in rows} == {"toy"} and P.plan(dict(m, dataset="net"))[0]["dataset"] == "net"
     m["realisations"][0]["variants"] = [["x3_1sta", [99], 3.0]]
     with pytest.raises(ValueError):
         P.plan(m)
@@ -319,6 +320,10 @@ def test_noise_block_resampler():
     assert F.n_clusters(pool, [0, 0, 1, 2, 2, 2]) == 3
     with pytest.raises(ValueError):
         F._resampler(pool, np.zeros(5))
+    shared = F._resampler(pool, np.array([0, 1, 2, 0, 1, 2]))       # two sets on the same three noise blocks
+    for _ in range(20):
+        mu = shared(rng)
+        assert np.array_equal(mu[:3], mu[3:]) and mu[:3].sum() == 3
 
 
 def test_atlas_report_on_toy_set(tmp_path):

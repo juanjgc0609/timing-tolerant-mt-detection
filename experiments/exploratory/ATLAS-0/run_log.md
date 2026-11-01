@@ -13,3 +13,11 @@ reproduction gate passes (`gate.json`).
   draws whole noise blocks within the set strata (streams ("bootstrap", 2) and ("bootstrap", 3)). H-ATLAS is read
   against both rows (`h_atlas_reading`); a reading that holds only under the registered unit is reported as such.
 - With 3 noise blocks, Hi-net is effectively a single stratum: its own scope is descriptive only.
+
+## 2026-11-01: sets sharing noise
+
+- The known-tensor sets (PR #26) reuse the noise blocks and partitions of the EGF sets of the same network. The noise
+  block of the sensitivity row is therefore keyed by dataset, not by set, and set strata that share a noise block are
+  drawn together, so the "all" scope counts each noise block once. The registered strata (one per set) are unchanged.
+- On `ss_hinet_2012_fk_v1`, `mag` is not physical (counts; about 6.4 units too high, generator thread): the atlas
+  axes use the card SNR, not `mag`.
