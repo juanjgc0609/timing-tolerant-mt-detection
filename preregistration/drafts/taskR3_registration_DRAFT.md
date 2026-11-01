@@ -19,7 +19,7 @@ of SHA-256(<tag commit hash> || <Release created_at>). Number of blocks: <B>, fr
 <r>, icc <i>, f <f>, +0.05 in T (output <path>).
 Methods. As in R2 (core set, model's picker arm, 60-configuration budget, provenance table).
 Endpoint. Recall under LOC+T-V at 30 false detections per hour, operating point per method on the evaluated record,
-weights = real prevalence of each cell / its share in the design (<table>, ADR-0008 item 4); duplicator control.
+weights = real prevalence of each cell / its share in the design (<table, rule in docs/protocol/CR04_PREVALENCE.md>, ADR-0008 item 4); duplicator control.
 Rules. H1 superiority in T, then H2 non-inferiority by 0.05 in C, intersection-union of pairwise tests (H1 block
 sign-flip at one-sided 0.025; H2 clustered score test at the level <a2> of the design check `sample_size.py calibrate` over the range
 from `sample_size.py estimate` on development <path>,

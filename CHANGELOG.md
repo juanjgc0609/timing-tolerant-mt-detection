@@ -3,6 +3,13 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-01
+
+- CR-04 prevalence rule (`docs/protocol/CR04_PREVALENCE.md`): ATLAS-0, G4 and tuning keep weights 1, as the anchored
+  card states; R2 and R3 take the measured stratum shares (separation, station subset, distance) of the densest
+  reviewed catalogues, with a block-bootstrap interval, reported as a lower bound with a Poisson reference. The
+  measurement runs on the author's machine; the R2 and R3 drafts point their weight tables to the rule.
+
 ## 2026-10-31
 
 - Registered ATLAS-0 tuning of phasenet+pyocto (best objective 0.2589, 60 of 60 trials valid) and phasenet+gamma (0.2338, 23 of 60 valid: the 37 GMM trials fail in GaMMA 80394dd, a declared budget inequality, CR-07), with the frozen configurations; the owner kept these rows as registered (31 October); the comparison is provisional, and repairing GaMMA and repeating 60 BGMM trials in a new ledger is to be decided before any claim that a method beats GaMMA (`experiments/exploratory/COMPARATORS/README.md`).
