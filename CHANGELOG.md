@@ -5,6 +5,7 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-10-31
 
+- Registered ATLAS-0 tuning of phasenet+pyocto (best objective 0.2589, 60 of 60 trials valid) and phasenet+gamma (0.2338, 23 of 60 valid: the 37 GMM trials fail in GaMMA 80394dd, a declared budget inequality, CR-07), with the frozen configurations; the owner kept these rows as registered (31 October); the comparison is provisional, and repairing GaMMA and repeating 60 BGMM trials in a new ledger is to be decided before any claim that a method beats GaMMA (`experiments/exploratory/COMPARATORS/README.md`).
 - Reproduction gate (G3a, Puente et al. 2025): the 100-station floor of `gate.py` (added in PR #22, unsourced, not in
   the card) is replaced by the fixed station query of `repro_puente.py fetch-stations` (SCEDC, CI, HH?/BH?,
   2020-01-01, scenario box plus 50 km), checked from the provenance file and checksum of the list. The query, the
