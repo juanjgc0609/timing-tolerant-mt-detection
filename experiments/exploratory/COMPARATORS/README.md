@@ -205,8 +205,10 @@ python experiments/exploratory/COMPARATORS/tune_cli.py freeze phasenet+gamma exp
 python experiments/exploratory/COMPARATORS/tune_cli.py flags --ledger experiments/exploratory/ATLAS-0/tuning_ledger_a3.csv
 ```
 
-The same manifests as the registered run (partition b60d99b3d0bbbbfa) are required; `--ledger` must be given, since
-the default ledger already holds the 60 registered GaMMA rows and the run would skip them all.
+The same manifests as the registered run (partition b60d99b3d0bbbbfa) are required. `run` and `freeze` of a GaMMA
+method refuse any ledger other than `tuning_ledger_a3.csv` (`ledger.require_a3`): the default ledger already holds the
+60 registered GaMMA rows, so a run there would skip them all and a freeze would label the registered best as
+amendment 3.
 
 ## The fine-tuned picker (CR-03)
 

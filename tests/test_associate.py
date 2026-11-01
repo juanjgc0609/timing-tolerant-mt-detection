@@ -91,6 +91,18 @@ def test_gamma_amendment3_pins_bgmm_and_keeps_the_registered_draws():
     assert len(rows) == 60 and all(json.loads(r["params"]) == reg[int(r["trial"])][2] for r in rows)
 
 
+def test_gamma_runs_and_freezes_only_in_the_a3_ledger(tmp_path):
+    # E63 review: without --ledger tuning_ledger_a3.csv a run would skip the 60 registered rows silently and a freeze
+    # would label the registered best as amendment 3
+    for led in (L.LEDGER, tmp_path / "other.csv"):
+        with pytest.raises(ValueError, match="amendment 3"):
+            TU.run("phasenet+gamma", lambda c, r: None, [object()], ledger=led, log=lambda *_: None)
+        with pytest.raises(ValueError, match="amendment 3"):
+            L.freeze("phasenet+gamma", tmp_path / "f.json", led)
+    L.require_a3("phasenet+gamma", L.LEDGER_A3, "run")
+    L.require_a3("phasenet+pyocto", L.LEDGER, "run")
+
+
 def test_gamma_wrapper_refuses_gmm(tmp_path):
     from ttmt.associate import gamma_assoc as G
     with pytest.raises(ValueError, match="E63"):

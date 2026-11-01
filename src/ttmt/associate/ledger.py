@@ -12,12 +12,24 @@ import json
 import math
 import os
 import time
+from pathlib import Path
 
 from ..config import REPO_ROOT
 
 LEDGER = REPO_ROOT / "experiments" / "exploratory" / "ATLAS-0" / "tuning_ledger.csv"
 COLUMNS = ("method", "trial", "seed", "params", "objective", "recall_T", "recall_C", "n_T", "n_C", "hours",
            "status", "error", "wall_s", "time_utc", "code", "env", "partition")
+
+
+LEDGER_A3 = LEDGER.with_name("tuning_ledger_a3.csv")       # GaMMA under ATLAS-0 amendment 3 (E63)
+
+
+def require_a3(method, path, action):
+    """GaMMA after amendment 3 runs and freezes only in LEDGER_A3: the registered ledger already holds its 60 rows
+    (a run would skip them all) and its frozen best is the provisional one of registration 1."""
+    if method.endswith("+gamma") and Path(path).resolve() != LEDGER_A3.resolve():
+        raise ValueError(f"{action} {method}: GaMMA after ATLAS-0 amendment 3 (E63) uses only --ledger {LEDGER_A3}, "
+                         f"not {path}")
 
 
 def params_json(cfg):
@@ -78,6 +90,7 @@ def best(method, path=LEDGER):
 def freeze(method, out, path=LEDGER):
     """write the frozen configuration of method (its best trial) with the ledger hash and the budget actually spent;
     this file is what the atlas thread receives."""
+    require_a3(method, path, "freeze")
     rows = [r for r in read(path) if r["method"] == method]
     b = best(method, path)
     if b is None:
