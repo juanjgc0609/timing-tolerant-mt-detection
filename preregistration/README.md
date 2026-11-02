@@ -16,6 +16,7 @@ exist from 2D on. Table 3 of `docs/thesis/Thesis.md` gives, task by task, which 
 | `original_sealed_es/PREREGISTRO_hashes.txt` | The hash chain: UTC time and SHA-256 of the sealed log after each append. |
 | `drafts/taskR1_registration_DRAFT.txt` | Draft of Task R1, the registered real-data test on the unread Hi-net swarm that follows the gate met in exploration C18j; not registered, with four decisions left to the author. |
 | `drafts/task2M_registration_DRAFT.txt` | Draft of Task 2M (G1-R with real noise on independent days) as prepared before the author's three protocol decisions; the registered text is the entry "Tarea 2M" of the sealed log (16 October 2026), which resolves them. |
+| `osf/OSF_PHASE6_DRAFT.md` | Draft of the OSF Registries entries for the phase-6 tests R2 and R3 (template "OSF Preregistration", field by field), the optional registration of the analysis plan, and the steps the author follows on OSF; not submitted. |
 
 ## Verifying the chain
 
