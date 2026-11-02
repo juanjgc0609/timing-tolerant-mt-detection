@@ -101,7 +101,8 @@ def load_record(name):
             h = ds._sac(n, "U").stats.sac
             depth[i] = float(getattr(h, "stdp", 0.0) or 0.0) / 1000.0
     return Record(name, list(names), np.asarray(STA, float), raw, FS, 0.0, cat, centre, depth,
-                  {"t0_utc": ds.t0_utc, "units": "m/s (Ridgecrest, response-scaled) or counts (Hi-net)"})
+                  {"t0_utc": ds.t0_utc, "units": "m/s (response-scaled)" if name == "ridgecrest_2019" else "counts",
+                   "physical_units": name == "ridgecrest_2019"})
 
 
 def blocks(rec, block_s=BLOCK_S):

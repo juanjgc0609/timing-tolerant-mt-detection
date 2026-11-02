@@ -193,3 +193,14 @@ def test_fklib_cache_resumes(tmp_path, monkeypatch):
     monkeypatch.setattr(fklib, "_engine_digest", lambda: "another engine")   # a changed engine reuses nothing
     fklib.synthesise(ev, STA, c, eff, cache=tmp_path, progress=lambda i, k: calls.append(i))
     assert len(calls) == n
+
+
+def test_target_mag():
+    """fk magnitude: library Mw + (2/3) log10 scale in physical units, nan in counts; egf: catalogue magnitude."""
+    import types
+    fk_src = types.SimpleNamespace(kind="fk", mag=2.0)
+    vel = types.SimpleNamespace(meta={"physical_units": True})
+    cnt = types.SimpleNamespace(meta={"physical_units": False})
+    assert np.isclose(inject._target_mag(fk_src, 0.001, vel), 0.0)
+    assert np.isnan(inject._target_mag(fk_src, 0.001, cnt))
+    assert inject._target_mag(types.SimpleNamespace(kind="egf", mag=1.3), 0.9, cnt) == 1.3

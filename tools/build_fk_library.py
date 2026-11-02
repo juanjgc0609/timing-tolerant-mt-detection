@@ -40,7 +40,8 @@ def main():
                  progress=lambda i, k: print(f"depth {i}/{k} {time.time() - t0:.0f} s", flush=True))
     print(name, len(ev), "events", f"{time.time() - t0:.0f} s", flush=True)
     pickle.dump({"events": ev, "eff": eff, "cfg": c, "seed": seed, "library": lib, "stream": ["inject", SEEDS.LIBRARY_OFFSET + lib],
-                 "master_seed_hex": f"{SEEDS.master_seed():016x}", "codes": rec.codes, "xyz": rec.xyz},
+                 "master_seed_hex": f"{SEEDS.master_seed():016x}",
+                 "engine_digest": F._engine_digest(), "codes": rec.codes, "xyz": rec.xyz},
                 open(out, "wb"))
 
 
