@@ -171,3 +171,36 @@ def test_tune_read_split_hinet_fallback():
     u = {bl[0]: realdata.block_hash("hinet_2012", bl[0], "tune-read-v1") for bl, _r in noise}
     assert all(v >= 0.3 for v in u.values())
     assert [bl[0] for bl, r in noise if r == "tune"] == [min(u, key=u.get)]
+
+
+def test_fklib_cache_resumes(tmp_path, monkeypatch):
+    """the per-depth Green's function cache gives the same waveforms (to rounding: two direct runs already differ by
+    ~1e-15 relative), and a second run computes nothing."""
+    from ttmt.synth import fklib
+    c = fklib.config({"fs": 20.0, "fmax": 5.0, "f_gauss": 4.0, "gf_len": 8.0, "medium_seed": None,
+                      "depth_range": (4.0, 5.0), "depth_step": 1.0})
+    STA = np.array([[0.0, 0.0, 0.0], [6.0, 2.0, 0.0], [-3.0, 5.0, 0.0]])
+    rng = np.random.default_rng(3)
+    ev = fklib.draw_events(STA, 3, rng, c)
+    eff = fklib.network_effects(len(STA), rng, c)
+    a = [w.wave.copy() for w in fklib.synthesise(ev, STA, c, eff)]
+    b = [w.wave.copy() for w in fklib.synthesise(ev, STA, c, eff, cache=tmp_path)]
+    n = len(list(tmp_path.glob("greens_*.npy")))
+    assert n == len({float(e.xyz[2]) for e in ev}) and all(np.allclose(x, y, rtol=0, atol=1e-12 * abs(x).max()) for x, y in zip(a, b))
+    calls = []
+    d = [w.wave.copy() for w in fklib.synthesise(ev, STA, c, eff, cache=tmp_path, progress=lambda i, k: calls.append(i))]
+    assert calls == [] and all(np.array_equal(x, y) for x, y in zip(b, d))
+    monkeypatch.setattr(fklib, "_engine_digest", lambda: "another engine")   # a changed engine reuses nothing
+    fklib.synthesise(ev, STA, c, eff, cache=tmp_path, progress=lambda i, k: calls.append(i))
+    assert len(calls) == n
+
+
+def test_target_mag():
+    """fk magnitude: library Mw + (2/3) log10 scale in physical units, nan in counts; egf: catalogue magnitude."""
+    import types
+    fk_src = types.SimpleNamespace(kind="fk", mag=2.0)
+    vel = types.SimpleNamespace(meta={"physical_units": True})
+    cnt = types.SimpleNamespace(meta={"physical_units": False})
+    assert np.isclose(inject._target_mag(fk_src, 0.001, vel), 0.0)
+    assert np.isnan(inject._target_mag(fk_src, 0.001, cnt))
+    assert inject._target_mag(types.SimpleNamespace(kind="egf", mag=1.3), 0.9, cnt) == 1.3

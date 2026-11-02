@@ -8,12 +8,14 @@ tensors (tools/build_fk_library.py). Writes the files under $TTMT_WORK_ROOT/synt
 data/manifests/synth/<set id>.json. Seeds: ttmt.atlas.seeds.realisation_rng(set id, block, r) (ADR-0009 item 5).
 """
 import argparse
+import hashlib
 import pickle
 
 from ttmt.runtime import pin_blas
 
 pin_blas()
 
+from ttmt.synth import fklib  # noqa: E402
 from ttmt.synth import inject as INJ  # noqa: E402
 from ttmt.synth import realdata as RD  # noqa: E402
 from ttmt.synth import sets  # noqa: E402
@@ -39,10 +41,15 @@ def main():
                 "egf_kwargs": EGF_KW[a.dataset], "atoms": "realdata.template_candidates", "n_atoms": len(atoms)}
     else:
         d = pickle.load(open(a.fk_lib, "rb"))
+        lib_sha = hashlib.sha256(open(a.fk_lib, "rb").read()).hexdigest()
         assert d["codes"] == rec.codes, "fk library built for another station list"
         src = [INJ.Source.from_fk(e, rec.fs) for e in d["events"]]
         meta = {"kind": "fk", "n": len(src), "fk_config": d["cfg"], "fk_seed": d["seed"],
-                "library": d["library"], "library_stream": d["stream"],
+                "library": d["library"], "library_stream": d["stream"], "library_file_sha256": lib_sha,
+                # engine that computed the library (libraries built before it was stored: the engine at set build,
+                # unchanged since; engine_digest_source says which)
+                "engine_digest": d.get("engine_digest", fklib._engine_digest()),
+                "engine_digest_source": "library" if "engine_digest" in d else "code at set build",
                 "medium": d["events"][0].meta, "receiver_effects": {k: v.tolist() for k, v in d["eff"].items()},
                 "atoms": "realdata.template_candidates", "n_atoms": len(atoms)}
     set_id = a.set_id or f"ss_{a.dataset}_{a.source}_v1"

@@ -5,6 +5,10 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-01
 
+- E63: GaMMA 80394dd cannot run method GMM (`gamma/_base.py:140` reads `covariance_prior`, which only the Bayesian mixture has), the cause of the 37 failed GMM tuning trials. Repair prepared as ATLAS-0 amendment 3 (draft, not anchored): method pinned to BGMM keeping the registered draws, the GaMMA wrapper refuses GMM, tests; 60 BGMM trials to run on the device into `tuning_ledger_a3.csv`.
+- Atlas noise-block sensitivity: the plan carries the set's `dataset`, and the sensitivity bootstrap keys the noise
+  block by dataset and draws together the set strata that share one (the EGF and known-tensor sets of a network use
+  the same noise, PR #26). Noted in `experiments/exploratory/ATLAS-0/run_log.md`.
 - CR-04 prevalence rule (`docs/protocol/CR04_PREVALENCE.md`): ATLAS-0, G4 and tuning keep weights 1, as the anchored
   card states; R2 and R3 take the measured stratum shares (separation, station subset, distance) of the densest
   reviewed catalogues, with a block-bootstrap interval, reported as a lower bound with a Poisson reference. The
@@ -16,6 +20,17 @@ Dated record of changes to the project's process, code and documents. Results ar
 ## 2026-10-31
 
 - Registered ATLAS-0 tuning of phasenet+pyocto (best objective 0.2589, 60 of 60 trials valid) and phasenet+gamma (0.2338, 23 of 60 valid: the 37 GMM trials fail in GaMMA 80394dd, a declared budget inequality, CR-07), with the frozen configurations; the owner kept these rows as registered (31 October); the comparison is provisional, and repairing GaMMA and repeating 60 BGMM trials in a new ledger is to be decided before any claim that a method beats GaMMA (`experiments/exploratory/COMPARATORS/README.md`).
+- Reproduction gate (G3a, Puente et al. 2025): the 100-station floor of `gate.py` (added in PR #22, unsourced, not in
+  the card) is replaced by the fixed station query of `repro_puente.py fetch-stations` (SCEDC, CI, HH?/BH?,
+  2020-01-01, scenario box plus 50 km), checked from the provenance file and checksum of the list. The query, the
+  5 % tolerance and the targets are unchanged; the SCEDC list has 54 stations. When the floor was changed, no
+  Puente run on that list had finished.
+- Reproduction gate, target 2 (ETHZ): the device run gives every P-pick metric better than published (MAE 0.086 s
+  against 0.12, RMS 0.290 s against 0.42), outside the two-sided 5 % tolerance; not passed, tolerance unchanged. The
+  ETHZ report cites the commit that verified the published values (e5be9cf).
+- Reproduction gate, target 3: `repro_quakemigrate.py`, QuakeMigrate 1.2.2 on the Rutford icequake example of Winder
+  et al. (2026), against the counts of Section 4.1 (49,249 triggered, 47,354 located, 20,015 filtered), fixed in
+  `published_quakemigrate.json` before the run. Chosen by the owner as the second target after ETHZ failed.
 
 ## 2026-10-30
 

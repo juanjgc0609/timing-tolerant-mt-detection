@@ -327,3 +327,31 @@ comparator thread confirmed that S10 is the crustal table and that S6-S7 are Pha
 not been run.
 Freeze: none needed; the items change no code, data or environment (`repro_puente.py` and `gate.py` already read
 Tables S3-S5 and S10).
+
+## Amendment 3 (GaMMA method; draft, to be anchored as `reg/ATLAS-0/amendment-3`)
+Task ATLAS-0, amendment 3 (1 November 2026), written after the registered tuning of 31 October 2026
+(`tuning_ledger.csv`) and before any comparator has read atlas data. The registered text and the registered ledger
+are kept unchanged; this item replaces the text where they differ.
+1. GaMMA search space. Registration 1 says "method {BGMM, GMM}". In GaMMA 80394dd, the pinned version and the
+   current head of AI4EPS/GaMMA, method GMM cannot run: `BaseMixture._initialize_parameters` (`gamma/_base.py:140`,
+   initialisation "centers", the only one `gamma.utils.association` uses) reads `covariance_prior`, which only
+   `BayesianGaussianMixture` sets (E63). All 37 registered GMM trials failed with that error before fitting. The
+   method is pinned to BGMM: `space.GAMMA` holds `as_method = Pinned("BGMM", ("BGMM", "GMM"))`, which consumes the
+   registered draw, so trial i keeps its seed and its registered minimum picks, time sigma and picker values, and only
+   the method of the 37 GMM trials changes. The other ranges, the 60 seeds, the objective and the partition are
+   unchanged. Criterion: a method that cannot run is not a configuration; patching GaMMA would tune a program that
+   is not the published one.
+2. GaMMA is re-tuned with the 60 trials of item 1 in a new ledger, `tuning_ledger_a3.csv`; its best trial is frozen as
+   `frozen/phasenet+gamma_a3.json` and replaces `frozen/phasenet+gamma.json` as GaMMA's comparator. Check: the 23
+   trials that ran BGMM in the registered ledger have the same configuration, so each must reproduce its registered
+   objective to 1e-6 on the same partition and environment; a difference is reported, not corrected, and the trial
+   keeps the new value.
+3. Budget (CR-07): PyOcto keeps its 60 registered trials; GaMMA then has 60 effective configurations. The registered
+   GaMMA rows stay as the provisional result of 31 October and are not used for any comparison after item 2 runs.
+
+Disclosure: the registered GaMMA objectives (23 valid trials, best 0.2338, trial 28) and PyOcto's (best 0.2589) were
+read before this amendment. The pin is forced by a failure of the program, not chosen from results; the owner decided
+on 31 October, before any BGMM result on the 37 configurations existed, to repeat 60 BGMM trials. None of the 37 has
+run with BGMM at the time of writing.
+Freeze: code of this amendment (`ttmt.associate.space`, `ttmt.associate.gamma_assoc`, the E63 tests of
+`tests/test_associate.py`); environment `ttmt-gpu` unchanged.

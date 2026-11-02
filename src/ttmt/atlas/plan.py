@@ -18,8 +18,8 @@ import numpy as np
 
 from . import cells as C
 
-PLAN_FIELDS = ("run", "set_id", "label", "partition", "block_index", "r", "k", "variant", "stations", "station_idx",
-               "scaled", "factor")
+PLAN_FIELDS = ("run", "set_id", "dataset", "label", "partition", "block_index", "r", "k", "variant", "stations",
+               "station_idx", "scaled", "factor")
 
 
 def subsets(stations_xyz, codes):
@@ -46,7 +46,8 @@ def plan(manifest, partition=None):
         if partition is not None and r["partition"] != partition:
             continue
         for k, idx in subs.items():
-            base = dict(set_id=manifest["set_id"], label=r["label"], partition=r["partition"],
+            base = dict(set_id=manifest["set_id"], dataset=manifest.get("dataset", manifest["set_id"]),
+                        label=r["label"], partition=r["partition"],
                         block_index=int(r.get("block_index", -1)), r=int(r.get("r", -1)), k=k,
                         stations=" ".join(codes[i] for i in idx), station_idx=" ".join(map(str, idx)))
             rows.append(dict(base, run=run_name(r["label"], k), variant="", scaled="", factor=""))

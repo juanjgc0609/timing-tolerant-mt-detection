@@ -39,6 +39,9 @@
     the spec (§13) among the sources available in that bin, otherwise any other source;
   - `cluster_frac` = 0.5 (full-wave library only): fraction of events placed 0.2-5 km (`cluster_km`) from a previous
     event, so that the 0-1 and 1-5 km bins have candidates.
+- Magnitude (`mag`): EGF, the catalogue magnitude of the recorded event; fk, library Mw + (2/3) log10 scale where
+  the noise is in m/s (Ridgecrest) and nan where it is in counts (Hi-net); `meta.targets` keeps `mw_library` and
+  `scale`.
 - Truth per target: arr_t (true arrivals) and arr_t_obs (with the optional injected timing error, zero by default),
   per-station SNR as the ATLAS-0 card defines it (exact: signal and noise are stored apart), pair id, kmec when the
   tensors are known, and in `meta`: seed, configuration and its hash, source id and kind, injection scale, spatial
@@ -58,6 +61,9 @@
   a noise block goes to tuning when the first 8 bytes of sha256(f"{dataset}|{start:.3f}|tune-read-v1"), little-endian,
   over 2^64 are below 0.3; per dataset, an empty tuning partition takes the noise block of smallest value, an empty
   reading partition the one of largest value. EGF-role blocks are in neither partition.
+- Manifest of a known-tensor set: `source_meta.library_file_sha256` (the library pickle) and
+  `source_meta.engine_digest` (SHA-256 of `fk.py` and `media.py`, `fklib._engine_digest`), with
+  `engine_digest_source`.
 - Manifest: also `catalogue_centroid`, the (x, y) centroid in local km of the dataset's development catalogue
   (`ttmt.atlas.cells.centroid`), the origin of the card's distance axis.
 - Files: under `$TTMT_WORK_ROOT/synth/<set id>/` (not in git); manifests with SHA-256 and float fingerprints in

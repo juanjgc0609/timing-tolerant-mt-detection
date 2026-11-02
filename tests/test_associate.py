@@ -76,6 +76,58 @@ def test_seeds_and_draws_are_fixed_and_shared():
         SP.check(sp, {k: v for k, v in a[0][2].items() if k != "pk_threshold"})
 
 
+def test_gamma_amendment3_pins_bgmm_and_keeps_the_registered_draws():
+    # E63: trial i of amendment 3 is trial i of registration 1 with as_method = BGMM; the registered ledger rows are
+    # redrawn from the registration-1 space
+    reg, a3 = SP.trials("phasenet+gamma", reg1=True), SP.trials("phasenet+gamma")
+    assert sum(c["as_method"] == "GMM" for _i, _s, c in reg) == 37
+    assert {c["as_method"] for _i, _s, c in a3} == {"BGMM"}
+    for (i, s, r), (j, t, c) in zip(reg, a3):
+        assert (i, s) == (j, t) and {**r, "as_method": "BGMM"} == c
+        SP.check(SP.space_of("phasenet+gamma"), c)
+    with pytest.raises(ValueError):
+        SP.check(SP.space_of("phasenet+gamma"), dict(a3[0][2], as_method="GMM"))
+    rows = [r for r in L.read(L.LEDGER) if r["method"] == "phasenet+gamma"]
+    assert len(rows) == 60 and all(json.loads(r["params"]) == reg[int(r["trial"])][2] for r in rows)
+
+
+def test_gamma_runs_and_freezes_only_in_the_a3_ledger(tmp_path):
+    # E63 review: without --ledger tuning_ledger_a3.csv a run would skip the 60 registered rows silently and a freeze
+    # would label the registered best as amendment 3
+    for led in (L.LEDGER, tmp_path / "other.csv"):
+        with pytest.raises(ValueError, match="amendment 3"):
+            TU.run("phasenet+gamma", lambda c, r: None, [object()], ledger=led, log=lambda *_: None)
+        with pytest.raises(ValueError, match="amendment 3"):
+            L.freeze("phasenet+gamma", tmp_path / "f.json", led)
+    L.require_a3("phasenet+gamma", L.LEDGER_A3, "run")
+    L.require_a3("phasenet+pyocto", L.LEDGER, "run")
+
+
+def test_gamma_wrapper_refuses_gmm(tmp_path):
+    from ttmt.associate import gamma_assoc as G
+    with pytest.raises(ValueError, match="E63"):
+        G.associate(None, None, dict(as_min_picks=5, as_max_sigma11=1.0, as_method="GMM"))
+
+
+def test_gamma_80394dd_gmm_still_broken(tmp_path):
+    # documents E63 on the pinned GaMMA: if this starts to pass the call, the pin changed and amendment 3 is revisited
+    pytest.importorskip("gamma")
+    import pandas as pd
+    from gamma.utils import association
+
+    from ttmt.associate import gamma_assoc as G
+    rng = np.random.default_rng(3)
+    pk = toy_picks(toy_truth(rng, n_pairs=0, n_iso=4, span=100.0), rng)
+    fr = _frame(tmp_path)
+    df = pd.DataFrame({"id": [fr.codes[i] for i in pk.sta], "type": ["p" if p == 0 else "s" for p in pk.phase],
+                       "timestamp": pd.to_datetime(pk.t + 1.6e9, unit="s"), "prob": pk.p, "amp": 1.0})
+    st = pd.DataFrame({"id": fr.codes, "x(km)": fr.stations.xyz[:, 0], "y(km)": fr.stations.xyz[:, 1],
+                       "z(km)": fr.stations.xyz[:, 2]})
+    c = G.config_for(fr, dict(as_min_picks=5, as_max_sigma11=1.0, as_method="GMM"))
+    with pytest.raises(AttributeError, match="covariance_prior"):
+        association(df.sort_values("timestamp"), st, c, method="GMM")
+
+
 def test_log_uniform_covers_its_range():
     x = np.array([SP.draw({"x": SP.LogUniform(0.05, 0.5)}, s)["x"] for s in range(4000)])
     assert x.min() >= 0.05 and x.max() <= 0.5
@@ -402,14 +454,58 @@ def test_reproduction_gate(tmp_path):
     from repro_puente import S10
     runs = [dict(method=m, n_events=n, noise=z, recall=v[1] * 1.01, status="ok")
             for m in ("pyocto", "gamma") for (n, z), v in S10[m].items() if v is not None]
-    for stations, want in ((23, False), (400, True)):
-        (tmp_path / "p.json").write_text(json.dumps(dict(stations=stations, station_file="s.csv", runs=runs)))
+    import repro_puente as RP
+    scedc = dict(RP.QUERY, box_lonlat=list(RP.query_box()))
+    for src, want in ((None, False), (scedc, True)):
+        (tmp_path / "p.json").write_text(json.dumps(dict(stations=54, station_file="s.csv", station_source=src,
+                                                         runs=runs)))
         g = G.build(str(tmp_path / "p.json"))
         assert g["targets"]["puente_pyocto"]["passed"] is want and g["targets"]["puente_gamma"]["passed"] is want
     runs[0]["recall"] *= 1.1
-    (tmp_path / "p.json").write_text(json.dumps(dict(stations=400, station_file="s.csv", runs=runs)))
+    (tmp_path / "p.json").write_text(json.dumps(dict(stations=54, station_file="s.csv", station_source=scedc,
+                                                     runs=runs)))
     g = G.build(str(tmp_path / "p.json"))
     assert not g["targets"]["puente_pyocto"]["passed"] and g["passed"] == 1
     (tmp_path / "e.json").write_text(json.dumps(dict(conditions=[dict(name="P F1", value=0.97, published=0.98)])))
     g = G.build(ethz=str(tmp_path / "e.json"))
     assert g["targets"]["ethz_phasenet"]["passed"] and g["targets"]["quakemigrate_example"]["evidence"] == "not run"
+    sta = tmp_path / "s.csv"
+    sta.write_text("code,latitude,longitude,elevation_m\nA,35,-117,0\n")
+    (tmp_path / "s.csv.source.json").write_text(json.dumps(dict(scedc, sha256=RP.file_sha256(sta))))
+    assert RP.station_source(sta)["network"] == "CI"
+    assert not RP.is_scenario_query(dict(scedc, channel="HH?,BH?,EH?"))
+    assert not RP.is_scenario_query(dict(scedc, pad_km=80))
+    sta.write_text("code,latitude,longitude,elevation_m\nB,35,-117,0\n")
+    assert RP.station_source(sta) is None
+
+
+def test_quakemigrate_target_counts(tmp_path):
+    import importlib
+    import sys
+
+    import pandas as pd
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "experiments" / "exploratory" / "COMPARATORS"))
+    Q = importlib.import_module("repro_quakemigrate")
+    pub = json.load(open(Q.PUBLISHED))
+    assert pub["verified"] and pub["metrics"] == {"triggered": 49249, "located": 47354, "filtered": 20015}
+    assert Q.matched_fraction([0.0, 10.0, 20.0], [0.05, 10.3, 19.95]) == 2 / 3
+    run = tmp_path / "outputs" / "runs" / Q.RUN
+    (run / "trigger" / "events").mkdir(parents=True)
+    pd.DataFrame({"EventID": [1, 2, 3]}).to_csv(run / "trigger" / "events" / "r_2009_020_TriggeredEvents.csv")
+    with pytest.raises(SystemExit, match="locate"):
+        Q.counts(tmp_path)
+    (run / "locate" / "events").mkdir(parents=True)
+    for i, (err, coa) in enumerate(((0.1, 6.0), (0.15, 5.5), (0.2, 9.0))):
+        pd.DataFrame({"DT": [f"2009-01-20T00:00:0{i}Z"], "COV_Err_XYZ": [err], "COA": [coa]}).to_csv(
+            run / "locate" / "events" / f"e{i}.event", index=False)
+    n, cat, filt = Q.counts(tmp_path)
+    assert (n, len(cat), len(filt)) == (3, 3, 2)
+    ms = tmp_path / "mseed"
+    assert len(Q.missing_waveforms(ms, ["A", "B"])) == 2 * 3 * 4
+    for y, d in (("2009", "019"), ("2009", "020"), ("2009", "021"), ("2009", "022")):
+        (ms / y / d).mkdir(parents=True)
+        for n in "AB":
+            for c in "123":
+                (ms / y / d / f"{n}_{c}.m").write_bytes(b"")
+    (ms / "2009" / "021" / "B_3.m").unlink()
+    assert Q.missing_waveforms(ms, ["A", "B"]) == [str(ms / "2009" / "021" / "B_3.m")]
