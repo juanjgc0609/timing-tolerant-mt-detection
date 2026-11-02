@@ -169,7 +169,7 @@ to 2L, are also in `outputs/explore_contrib/`, with their scripts, reports and o
 
 ## 3. The design errors that inverted or nullified a result
 
-This is the central content of this manifest. The log contains 62 errors, E1 to E62. In the
+This is the central content of this manifest. The log contains 63 errors, E1 to E63. In the
 first six (E1 to E6) the resulting number looked valid, and in all six it was detected **only because
 it turned out to be implausible**, not because there was a visible fault in the code; the following ones were detected
 by controls, preregistered rules or audits, as indicated in each one.
@@ -1255,6 +1255,23 @@ registered.
 best explains the residual around the read sample (`Kernel.response(delta)`, exact for the analytic pulse), scaled so
 that its value at the read sample is the fitted vector; it removes an off-grid atom to within 1e-6 relative. Any run
 with `"fractional"` is post hoc and separately labelled.
+
+### E63. The GMM method of the pinned GaMMA cannot run, and 37 of its 60 tuning trials failed
+**Script:** `ttmt.associate.gamma_assoc` (wrapper of GaMMA 80394dd), `ttmt.associate.space.GAMMA` (ATLAS-0 search space).
+**Symptom:** in the registered ATLAS-0 tuning of phasenet+gamma (31 October 2026, `tuning_ledger.csv`) every trial drawn
+with `as_method = GMM` (37 of 60) stopped with `AttributeError: 'GaussianMixture' object has no attribute
+'covariance_prior'`; GaMMA had 23 effective configurations against 60 for PyOcto (CR-07).
+**Cause:** in GaMMA, `gamma.utils.association` builds `GaussianMixture` without a covariance prior, and both mixtures
+initialise with `init_params = "centers"`, whose branch in `BaseMixture._initialize_parameters` (`gamma/_base.py:140`)
+reads `self.covariance_prior`, an attribute only `BayesianGaussianMixture` sets. GMM fails before fitting for any input.
+80394dd is the upstream head, so no released version fixes it. The search space was written from the card's
+"method {BGMM, GMM}" and the wrapper's test covered BGMM only.
+**Detection:** the ledger of the registered tuning run; reproduced in the cloud with GaMMA 80394dd and scikit-learn 1.8.0.
+**Scope:** the GaMMA comparator of ATLAS-0 only (R0, R1 and the reproduction gate run BGMM). No registered number
+changes; the registered rows stay, and the GaMMA-PyOcto comparison of 31 October is provisional.
+**Correction:** ATLAS-0 amendment 3: method pinned to BGMM with the registered draws kept (`space.Pinned`), the wrapper
+refuses GMM with this reason, a test pins the upstream failure, and 60 BGMM trials go to a new ledger
+(`tuning_ledger_a3.csv`). GaMMA is not patched.
 
 ### On the order of the three errors of Task 0
 Three complete protocols, three different conclusions, and **in none of them was the cause the physics**. By

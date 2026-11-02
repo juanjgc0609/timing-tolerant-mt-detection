@@ -9,9 +9,14 @@ before each call, and hands GaMMA a fresh copy of its configuration, because GaM
 initialised solver in place (a reused dictionary would be initialised twice). ncpu cannot be overridden.
 
 Tuned (space.GAMMA): as_min_picks -> min_picks_per_eq, as_max_sigma11 -> max_sigma11 (time standard deviation, s),
-as_method -> BGMM or GMM. Fixed (Frame.fixed["gamma"] may override): the values of R0 and R1 (code/r0/r0_picks.py),
-so the untuned comparators of the thesis are one point of this space's neighbourhood. A fixed value None removes
-the entry (GaMMA then uses its own default, e.g. its data-driven covariance prior).
+as_method -> method. Only BGMM runs: in GaMMA 80394dd method "GMM" raises AttributeError before any fit, because
+BaseMixture._initialize_parameters (gamma/_base.py:140, init_params "centers", the only one gamma.utils.association
+uses) reads self.covariance_prior, which only BayesianGaussianMixture sets, and association() builds GaussianMixture
+without a covariance prior (E63). The wrapper refuses GMM with that reason instead of calling GaMMA, and ATLAS-0
+amendment 3 pins the tuned method to BGMM (space.GAMMA).
+Fixed (Frame.fixed["gamma"] may override): the values of R0 and R1 (code/r0/r0_picks.py), so the untuned comparators
+of the thesis are one point of this space's neighbourhood. A fixed value None removes the entry (GaMMA then uses its
+own default, e.g. its data-driven covariance prior).
 """
 import copy
 
@@ -41,7 +46,13 @@ def config_for(frame, cfg):
     return c
 
 
+GMM_BROKEN = ("GaMMA 80394dd cannot run method GMM: gamma/_base.py:140 reads covariance_prior, which only "
+              "BayesianGaussianMixture has (E63; ATLAS-0 amendment 3 pins BGMM)")
+
+
 def associate(frame, picks, cfg):
+    if cfg["as_method"] != "BGMM":
+        raise ValueError(GMM_BROKEN if cfg["as_method"] == "GMM" else f"unknown GaMMA method {cfg['as_method']!r}")
     import pandas as pd
     from gamma.utils import association
     if len(picks) < int(cfg["as_min_picks"]):

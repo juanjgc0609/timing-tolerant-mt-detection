@@ -72,6 +72,21 @@ class Choice:
         return v in self.options or (isinstance(v, list) and tuple(v) in self.options)
 
 
+@dataclass(frozen=True)
+class Pinned:
+    """a parameter held at one value that still consumes the draw of the registered Choice it replaces
+    (rng.integers(len(registered))), so every other parameter of a trial keeps the value of the registered draw."""
+    value: object
+    registered: tuple
+
+    def draw(self, rng):
+        rng.integers(len(self.registered))
+        return self.value
+
+    def contains(self, v):
+        return v == self.value
+
+
 # pickers (probability traces are computed once per weights; these act on the traces)
 PHASENET = {"pk_peak_distance": LogUniform(0.05, 0.5), "pk_threshold": LogUniform(0.03, 0.5),
             "pk_weights": Choice(("original", "instance"))}
@@ -80,7 +95,14 @@ EQTRANSFORMER = {"pk_peak_distance": LogUniform(0.05, 0.5), "pk_threshold": LogU
                  "pk_weights": Choice(("original", "instance"))}
 
 # associators
-GAMMA = {"as_min_picks": IntRange(3, 8), "as_max_sigma11": Uniform(0.3, 2.0), "as_method": Choice(("BGMM", "GMM"))}
+# GaMMA as registered (registration 1); its ledger rows (tuning_ledger.csv) are redrawn with this space
+GAMMA_REG1 = {"as_min_picks": IntRange(3, 8), "as_max_sigma11": Uniform(0.3, 2.0),
+              "as_method": Choice(("BGMM", "GMM"))}
+# ATLAS-0 amendment 3 (E63): GMM fails in GaMMA 80394dd before fitting (gamma/_base.py:140 reads covariance_prior,
+# which only BayesianGaussianMixture has), so the method is pinned to BGMM. Pinned consumes the registered draw, so
+# trial i keeps the registered as_min_picks, as_max_sigma11 and picker values; only the 37 GMM trials change method
+GAMMA = {"as_min_picks": IntRange(3, 8), "as_max_sigma11": Uniform(0.3, 2.0),
+         "as_method": Pinned("BGMM", ("BGMM", "GMM"))}
 # ATLAS-0 amendment 1 (ADR-0009 item 1): REAL tint and PyOcto min_interevent_time log-uniform in [0.1, 5] s, so neither
 # is kept from reporting two events inside regime T by construction
 PYOCTO = {"as_min_picks": IntRange(3, 8), "as_tolerance": Uniform(0.3, 2.0),
@@ -98,15 +120,17 @@ EQCORRSCAN = {"wf_mad": Uniform(8.0, 12.0), "wf_min_stations": IntRange(3, 6)}
 
 PICKERS = {"phasenet": PHASENET, "phaseno": PHASENO, "eqtransformer": EQTRANSFORMER}
 ASSOCIATORS = {"gamma": GAMMA, "pyocto": PYOCTO, "real": REAL}
+ASSOCIATORS_REG1 = {**ASSOCIATORS, "gamma": GAMMA_REG1}
 WAVEFORM = {"quakemigrate": QUAKEMIGRATE, "malmi": MALMI, "eqnet": EQNET, "eqcorrscan": EQCORRSCAN}
 
 
-def space_of(method):
+def space_of(method, reg1=False):
     """the search space of a method: "picker+associator" for a pick-based pipeline (the union of both spaces), or
-    the name of a waveform method."""
+    the name of a waveform method. reg1: the associator spaces of registration 1 (GaMMA with method {BGMM, GMM}),
+    which drew the rows of the registered ledger."""
     if "+" in method:
         pk, asc = method.split("+", 1)
-        sp = {**PICKERS[pk], **ASSOCIATORS[asc]}
+        sp = {**PICKERS[pk], **(ASSOCIATORS_REG1 if reg1 else ASSOCIATORS)[asc]}
     else:
         sp = dict(WAVEFORM[method])
     return sp
@@ -118,9 +142,9 @@ def draw(space, seed):
     return {k: space[k].draw(rng) for k in sorted(space)}
 
 
-def trials(method, n=N_TRIALS):
+def trials(method, n=N_TRIALS, reg1=False):
     """the n configurations of a method's budget: [(trial, seed, config)]."""
-    sp = space_of(method)
+    sp = space_of(method, reg1)
     return [(i, SEEDS[i], draw(sp, SEEDS[i])) for i in range(n)]
 
 

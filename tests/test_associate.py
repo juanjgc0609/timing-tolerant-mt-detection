@@ -76,6 +76,58 @@ def test_seeds_and_draws_are_fixed_and_shared():
         SP.check(sp, {k: v for k, v in a[0][2].items() if k != "pk_threshold"})
 
 
+def test_gamma_amendment3_pins_bgmm_and_keeps_the_registered_draws():
+    # E63: trial i of amendment 3 is trial i of registration 1 with as_method = BGMM; the registered ledger rows are
+    # redrawn from the registration-1 space
+    reg, a3 = SP.trials("phasenet+gamma", reg1=True), SP.trials("phasenet+gamma")
+    assert sum(c["as_method"] == "GMM" for _i, _s, c in reg) == 37
+    assert {c["as_method"] for _i, _s, c in a3} == {"BGMM"}
+    for (i, s, r), (j, t, c) in zip(reg, a3):
+        assert (i, s) == (j, t) and {**r, "as_method": "BGMM"} == c
+        SP.check(SP.space_of("phasenet+gamma"), c)
+    with pytest.raises(ValueError):
+        SP.check(SP.space_of("phasenet+gamma"), dict(a3[0][2], as_method="GMM"))
+    rows = [r for r in L.read(L.LEDGER) if r["method"] == "phasenet+gamma"]
+    assert len(rows) == 60 and all(json.loads(r["params"]) == reg[int(r["trial"])][2] for r in rows)
+
+
+def test_gamma_runs_and_freezes_only_in_the_a3_ledger(tmp_path):
+    # E63 review: without --ledger tuning_ledger_a3.csv a run would skip the 60 registered rows silently and a freeze
+    # would label the registered best as amendment 3
+    for led in (L.LEDGER, tmp_path / "other.csv"):
+        with pytest.raises(ValueError, match="amendment 3"):
+            TU.run("phasenet+gamma", lambda c, r: None, [object()], ledger=led, log=lambda *_: None)
+        with pytest.raises(ValueError, match="amendment 3"):
+            L.freeze("phasenet+gamma", tmp_path / "f.json", led)
+    L.require_a3("phasenet+gamma", L.LEDGER_A3, "run")
+    L.require_a3("phasenet+pyocto", L.LEDGER, "run")
+
+
+def test_gamma_wrapper_refuses_gmm(tmp_path):
+    from ttmt.associate import gamma_assoc as G
+    with pytest.raises(ValueError, match="E63"):
+        G.associate(None, None, dict(as_min_picks=5, as_max_sigma11=1.0, as_method="GMM"))
+
+
+def test_gamma_80394dd_gmm_still_broken(tmp_path):
+    # documents E63 on the pinned GaMMA: if this starts to pass the call, the pin changed and amendment 3 is revisited
+    pytest.importorskip("gamma")
+    import pandas as pd
+    from gamma.utils import association
+
+    from ttmt.associate import gamma_assoc as G
+    rng = np.random.default_rng(3)
+    pk = toy_picks(toy_truth(rng, n_pairs=0, n_iso=4, span=100.0), rng)
+    fr = _frame(tmp_path)
+    df = pd.DataFrame({"id": [fr.codes[i] for i in pk.sta], "type": ["p" if p == 0 else "s" for p in pk.phase],
+                       "timestamp": pd.to_datetime(pk.t + 1.6e9, unit="s"), "prob": pk.p, "amp": 1.0})
+    st = pd.DataFrame({"id": fr.codes, "x(km)": fr.stations.xyz[:, 0], "y(km)": fr.stations.xyz[:, 1],
+                       "z(km)": fr.stations.xyz[:, 2]})
+    c = G.config_for(fr, dict(as_min_picks=5, as_max_sigma11=1.0, as_method="GMM"))
+    with pytest.raises(AttributeError, match="covariance_prior"):
+        association(df.sort_values("timestamp"), st, c, method="GMM")
+
+
 def test_log_uniform_covers_its_range():
     x = np.array([SP.draw({"x": SP.LogUniform(0.05, 0.5)}, s)["x"] for s in range(4000)])
     assert x.min() >= 0.05 and x.max() <= 0.5
