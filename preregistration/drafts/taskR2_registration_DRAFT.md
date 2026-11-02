@@ -25,7 +25,7 @@ template matching where the truth is not its own, BOMP-PK and MT-FW) and the bes
 if fine-tuned (CR-03), each tuned with 60 configurations under ADR-0008 item 9 (ledger <path, SHA-256>); shared
 waveforms, station list, velocity model and typed station terms; pretrained-weight provenance table <path> (CR-22).
 Endpoint. Recall under LOC+T-V (ADR-0008 item 2) at 30 false detections per hour, exact FROC, operating point per
-method on the evaluated record, prevalence weights <table> (ADR-0008 item 4); duplicator negative control on the best
+method on the evaluated record, prevalence weights <table, rule in docs/protocol/CR04_PREVALENCE.md> (ADR-0008 item 4); duplicator negative control on the best
 comparator (item 3); deployable threshold fixed on development (secondary).
 Rules. H1 (only if T is testable) superiority in T, then H2 non-inferiority by 0.05 in C, each an intersection-union
 of pairwise tests over the comparators (H1 block sign-flip at one-sided 0.025; H2 clustered score test at the level
