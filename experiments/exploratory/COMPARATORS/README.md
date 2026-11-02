@@ -130,14 +130,41 @@ noise. On the same 100-event, 30 % record, `dbscan_min_samples = 5` gives recall
 0.53, with everything else unchanged. The gate run uses the SCEDC station list on the GPU machine
 (`repro_puente.py fetch-stations`).
 
+Target 2 (`repro_ethz.py`): PhaseNet in-domain on ETHZ with the SeisBench `pick-benchmark` code. The published
+ETHZ weights (`PhaseNet.from_pretrained("ethz")`) are wrapped as a checkpoint so the benchmark's `eval.py` and
+`collect_results.py` run unchanged; benchmark commit (d039fd8, tag `jgr_revision`) and the gated metrics are fixed before the run in
+`published_ethz.json`: the card's P-pick metrics, test split, Table S3 (MAE 0.12 s, sigma 0.42 s); phase MCC (Table 2)
+and detection AUC (Table S1) are reported only. The values were read from a text extraction whose rows are ambiguous,
+so `report` refuses the file until the PhaseNet column is confirmed against the PDF and `verified` is set; it was
+confirmed against the PDF tables in its own commit (e5be9cf) before the run, and `report` cites that commit.
+
+Device run (31 October 2026; seisbench 0.12.6, not the benchmark's 0.1.9; targets from hifis-storage.desy.de, SHA-256
+equal to the seisbench.gfz.de mirror): test P MAE 0.086 s (published 0.12), RMS 0.290 s (0.42), MCC 0.967 (0.91),
+AUC 0.991 (0.98). Every metric is better than published, outside the 5 % tolerance on the favourable side, so the
+target is not passed; the tolerance is two-sided and is not changed after the result. The only published `ethz`
+weights (v1 and v2 have the same SHA-256) are dated 2023 and describe a different learning rate, so they are probably
+not the weights of the paper; this is inferred, not confirmed. The owner chose target 3 as the second target.
+
 `gate.py write [--puente run.json] [--ethz ethz.json] [--quakemigrate qm.json]` writes
 `experiments/exploratory/ATLAS-0/gate.json`, which the atlas reads before any data: one entry per target
 (`puente_pyocto`, `puente_gamma`, `ethz_phasenet`, `quakemigrate_example`), passed when every published condition
-run is within 5 %. A Puente run on fewer than 100 stations is the stand-in and never passes. The committed file has
-no target passed: the Puente targets wait on the device run, and targets 2 and 3 are not implemented yet.
+run is within 5 %. A Puente run counts only on a list written by `fetch-stations` from SCEDC (CI, HH/BH, the
+scenario box plus 50 km, 2020-01-01; provenance in `<list>.source.json`, checked by SHA-256). The paper gives no
+station list, so the network is fixed by its source and filter, not by a count; any other list, such as the cloud
+stand-in, never passes. Order of events: `gate.py` first required 100 stations (PR #22, a number with no source); the first
+device fetch (31 October 2026) returned 54 stations, and the floor was replaced by the query check (PR #23) while the
+first 100-event run on that list was still running, with no result yet. The reference recalls are Table S10 of the
+supplement: it is the crustal scenario's event-level table, the quantity the card names; its Tables S8-S9 are the
+subduction scenario. The committed file has
+no target passed (stand-in evidence); the device results are written by `gate.py write`.
 
-Targets 2 (PhaseNet on the SeisBench ETHZ benchmark with `pick-benchmark`) and 3 (QuakeMigrate on its published
-example) need the GPU machine and, for 3, an install; they are not done yet.
+Target 3 (`repro_quakemigrate.py`): QuakeMigrate 1.2.2 on the Rutford Ice Stream icequake example of Winder et al.
+(2026, Seismica, Section 4.1; 48 hours, network YG), the only example of the paper with stated event counts (the Askja
+24-hour example gives none). Gated counts, fixed in `published_quakemigrate.json` before any run: 49,249 triggered,
+47,354 located, 20,015 after the catalogue filter (COV_Err_XYZ <= 0.15 km and COA >= 5.5); the last two are also
+the row counts of the catalogues in the manuscript repository (commit 948dde3). Every parameter is copied from the
+manuscript's `icequake_example/generate_results` scripts; their code is not run, only the station list and the
+published catalogues are read. The fraction of published located events matched within 0.1 s is reported, not gated.
 
 ## Registered tuning, 31 October 2026
 

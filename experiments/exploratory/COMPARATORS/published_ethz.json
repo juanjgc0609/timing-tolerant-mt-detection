@@ -1,0 +1,19 @@
+{
+ "source": "Münchmeyer et al. 2022, JGR, doi 10.1029/2021JB023499 (arXiv 2110.13671): PhaseNet, ETHZ in-domain, test split (Section 2.4: results are test-set values unless stated). Card target 2: P-pick metrics. Table S3 (Accuracy of P picks): mu 0.02 s, sigma 0.42 s, MAE 0.12 s. Reported only, not gated: Table 2 phase MCC 0.91, Table S1 detection AUC 0.98.",
+ "benchmark": {
+  "repo": "https://github.com/seisbench/pick-benchmark",
+  "tag": "jgr_revision",
+  "commit": "d039fd84f890cc8ce8768ed901dc7cdd0a4d330c"
+ },
+ "metrics": {
+  "test_P_mae_s": 0.12,
+  "test_P_std_s": 0.42
+ },
+ "reported_only": {
+  "test_P_mean_s": 0.02,
+  "test_phase_mcc": 0.91,
+  "test_det_auc": 0.98
+ },
+ "verified": true,
+ "verification_note": "Checked 2026-10-31 against the rendered tables of arXiv 2110.13671v1 (uploaded by the owner): Table S3, ETHZ row, PhaseNet columns mu 0.02, sigma 0.42, MAE 0.12 (the extra pair 0.70 0.27 is the row average); Table 2 ETHZ PhaseNet MCC 0.91; Table S1 ETHZ PhaseNet AUC 0.98 (Figure S1: 0.982). Source is the arXiv preprint v1, not the JGR version of record. sigma is matched to collect_results' test_P_std_s, the root mean square of the residual."
+}
