@@ -90,7 +90,7 @@ The contributions are the following, stated at the level the evidence supports.
    paired bootstrap intervals. Table 3 states, for each, whether its registration was hashed before the run, whether
    its code was frozen by a hash list, whether it was run once and whether it was verified; not all of them had every
    step. Positive and negative results are reported in the same way, and a register of the errors found during
-   the work (sixty-two so far, E1 to E62) is part of
+   the work (sixty-three so far, E1 to E63) is part of
    the record.
 2. **Bounded influence helps in noise with transients.** A per-station cap or a Huber fit adds detections in
    dense sequences on synthetic data and on one day of real noise with transients and injected events, against a
@@ -899,6 +899,24 @@ two-subevent sources, and a second real noise network for the bounded-influence 
 every future registration. These items, with the failure atlas and the new model, form the separate doctoral line of
 ADR-0006.
 
+**Status of the doctoral line (provisional, 2 November 2026).** None of the following is a result of this thesis or
+a claim that any method, ours or another, is better than GaMMA; the numbers are reported so that the text matches the
+repository, and every one of them may change. Before the failure atlas reads any data, its card
+(`experiments/exploratory/ATLAS-0/card.md`) requires gate G3a: two of the comparators must reproduce a published
+result within 5 per cent (`experiments/exploratory/COMPARATORS/README.md`). On the crustal synthetic scenario of
+Puente et al. (2025), run on the 54 SCSN stations of the fixed SCEDC query, PyOcto reproduced 9 of 9 conditions and
+GaMMA 0 of 8, a failure that repeats and is not yet explained. PhaseNet on ETHZ was not reproduced because it came
+out better than published (P-pick MAE 0.086 s against 0.12 s, outside the two-sided tolerance), probably because the
+public weights are not those of the paper (inferred). QuakeMigrate on the Rutford icequake example of Winder et al.
+(2026) is the second target and is still running; its trigger count equals the published 49,249. The gate file
+(`experiments/exploratory/ATLAS-0/gate.json`) has not yet been written from these runs, so the gate is not yet
+passed. In the registered tuning of 31 October 2026 on the development partition, PhaseNet with PyOcto reached an
+objective of 0.26 (0.2589, 60 of 60 valid trials), and its configuration is frozen. PhaseNet with GaMMA reached
+0.2338, but only 23 of its 60 trials ran (error E63): the GMM method of the pinned GaMMA cannot run, so the two
+searches had unequal budgets and their comparison is provisional. Amendment 3 of the card, anchored as
+`reg/ATLAS-0/amendment-3` (commit 83c66e4), pins GaMMA to BGMM with the registered draws kept and repeats 60 BGMM
+trials in a new ledger; until that run is done, the GaMMA configuration is provisional.
+
 ---
 
 ## 9. Reproducibility
@@ -916,12 +934,13 @@ one-to-one rescoring by the commands in `results/rescore_duplicates/README.md`. 
 results/taskR1/run docs/thesis/figures`. The data are public and `data/README.md` gives their sources and checksums. Paths in the scripts refer to the
 original working directory and must be adapted.
 
-The error register (`docs/artifact_manifest_and_error_log.md`) lists sixty-two errors found during the work (E1 to
-E62), from claims in the text to implementation defects, each with its cause, its scope and whether it affected a
+The error register (`docs/artifact_manifest_and_error_log.md`) lists sixty-three errors found during the work (E1 to
+E63), from claims in the text to implementation defects, each with its cause, its scope and whether it affected a
 registered result; five of them (E51 to E55) were found by an audit of the code made by a separate AI session before
 the last real test, one (E56) by the verification of that test, and six (E57 to E62) by the research audit of 18 October
 2026, among them C18j out of sample (E59), two defects of the R1 analysis (E60, E61) and the deflation on the sample
-grid (E62).
+grid (E62); E63, the GMM method of the pinned GaMMA that cannot run, was found in the tuning of
+the failure atlas (Section 8).
 
 ---
 
