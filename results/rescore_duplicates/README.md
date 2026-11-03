@@ -118,14 +118,29 @@ cell). Outputs: `2a_dedup_out.txt`, `2b_dedup_out.txt`.
 | Task | One-to-one applied | Origin time (LOC+T) | Verdict change |
 |---|---|---|---|
 | 2A, 2B | repeats as false only (no locations stored) | not possible | none (2A-e strict reading, thin, becomes met) |
-| 2C, 2D, 2E, 2L | **no**: their raw records are not stored and were not regenerated | no | open |
+| 2C, 2D | repeats as false only (regenerated parts store score and label, no locations) | not possible | none |
+| 2E | **no**: not regenerated (decision D10; registered verdict negative, G1-M refuted) | no | not evaluated |
+| 2L | yes (regenerated parts store every atom) | yes (registered primary) | none |
 | 2F | yes (regenerated parts) | yes | 2F-a strong and 2F-c fail under LOC+T |
 | 2I | yes (regenerated primary arm) | yes | 2I-a fails under LOC+T (seed 6262) |
 | 2M | yes (stored parts) | yes (registered secondary) | 2M-d (2718) becomes non-inferior; primaries hold |
 | R0 | yes | yes (registered primary) | none |
 | R1 | yes | yes (registered primary) | none |
 
-2C, 2D, 2E and 2L would need their runs regenerated from the frozen code, as was done for 2F and 2I.
+## 2C, 2D and 2L (regenerated, decision D10 of 3 November 2026)
+
+The parts were regenerated with the frozen code (2A minimal parts by `code/posthoc_e52/regen_2a_min.py`, then the
+registered queues with the kernel each part was frozen with; `task2l_code_hashes.txt` checked for 2L). The legacy
+rescoring reproduces every registered number of 2C, 2D and 2L (2L: all but the machine-dependent run times).
+
+- 2C, 2D (`code/rescore/rescore_2c2d.py`): the records hold (score, label) only, so, as for 2A and 2B, a repeated event
+  becomes false without reassignment and LOC+T cannot be applied. 590 numbers of 2C and 615 of 2D change; no verdict
+  does. Outputs: `2c_dedup_out.txt`, `2d_dedup_out.txt`.
+- 2L (`code/rescore/rescore_2l.py`, `froc_strict.relabel` on the stored atoms, both LOC+T and LOC): 2L-a +0.058 and
+  +0.060 (registered +0.057, +0.062), 2L-b +0.036 and +0.030 (+0.038, +0.030), 2L-c and 2L-d non-inferior in every
+  regime, secondary BOMP met. Every verdict stands and the G1-C claim holds under the one-to-one rule. Outputs:
+  `2l_legacy_out.txt`, `2l_strict_out.txt`.
+- 2E was not regenerated: its registered verdict is negative, and the rule change is not evaluated for it.
 
 ## Reproduce
 
