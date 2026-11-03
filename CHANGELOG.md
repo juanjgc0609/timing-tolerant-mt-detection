@@ -3,6 +3,19 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-03
+
+- Thesis (pending PR #33, decision D10): E52 nearest-sample re-run of 2C and 2D (no verdict changes; 2C-a and 2D-b
+  strong 2 of 3 cells on seed 7331, still met); 2C and 2D rescored with repeats as false and 2L one to one (LOC+T and
+  LOC), every verdict stands; 2E not regenerated; E64 (deployable R1 threshold, 41.8 false/h against 30) cited in
+  Sections 6.6 and 7.4; error count 64.
+
+## 2026-11-02
+
+- Thesis: Section 8 gains a provisional status paragraph of the doctoral line (gate G3a: PyOcto 9 of 9 and GaMMA 0 of
+  8 on Puente, ETHZ not reproduced, QuakeMigrate running; tuning: phasenet+pyocto 0.2589 frozen, phasenet+gamma
+  provisional by E63; amendment 3 anchored at 83c66e4), with no claim over GaMMA; error count 63.
+
 ## 2026-11-01
 
 - E63: GaMMA 80394dd cannot run method GMM (`gamma/_base.py:140` reads `covariance_prior`, which only the Bayesian mixture has), the cause of the 37 failed GMM tuning trials. Repair prepared as ATLAS-0 amendment 3 (draft, not anchored): method pinned to BGMM keeping the registered draws, the GaMMA wrapper refuses GMM, tests; 60 BGMM trials to run on the device into `tuning_ledger_a3.csv`.
