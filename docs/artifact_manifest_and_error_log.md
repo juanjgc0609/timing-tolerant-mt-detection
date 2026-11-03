@@ -1075,11 +1075,19 @@ error (worst case 0.42); the nearest sample gives 0.94 (worst 0.82).
 **Detection:** the independent code audit of 17 October 2026 (finding F2, `results/code_audit/floor_bias_bh.txt`).
 **Scope:** the comparators of Task 2C read at the exact sample (BOMP+SC, MTSTACK+SC, GL-FW+SC, the convex problem of
 2C-b) and the MT-FW-EX ablation of 2D are handicapped, which inflates the measured value of the peak search; the
-decisions are very probably unchanged (the timing error of the grid is already 0.1 to 0.3 s) but were not re-run.
+decisions were expected to be unchanged (the timing error of the grid is already 0.1 to 0.3 s). Re-run post hoc on
+3 November 2026 (decision D10, `code/posthoc_e52/`, `results/posthoc_e52/`): the 2A parts were regenerated with the frozen
+code, the floor runs of 2C and 2D reproduce the registered outputs exactly, and the same runs with the exact-time
+readers moved to the nearest sample change no verdict of 2C or 2D. Recall at 0.25 false events per window changes on
+average by -0.021 (BOMP+SC), -0.004 (MTSTACK+SC), -0.004 (GL-FW+SC) and -0.005 (MT-FW-EX+SC) in the main table, with
+cells moving between -0.253 and +0.133 (bootstrap noise of a different detection list, not a uniform gain). The gain
+expected from the energy capture does not appear in recall. 2C-a (strong) is met in 2 of 3 cells instead of 3 in seed
+7331, and 2D-b (strong) likewise, both still met. MT-FW+SC, QM-3C+SC and the peak-search methods are identical by
+construction.
 Comparisons in which every method has the same +-4-sample search (2D BOMP-PK against MT-FW, 2F, 2I, 2M, R0, R1) are
 not affected beyond a common shift of at most one sample.
 **Correction:** declared in Appendix Y.30 next to the 2C and 2D results; the engines are left unchanged so that the
-registered runs remain reproducible.
+registered runs remain reproducible, and the nearest-sample run is post hoc and labelled as such.
 
 ### E53. Station terms estimated on the events they are then used to detect
 **Script:** `r0/r0_run.py` (calibration windows), `explore_contrib/c18j_layered.py` and the C18d to C18j readings.
