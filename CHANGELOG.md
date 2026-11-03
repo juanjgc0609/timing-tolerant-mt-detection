@@ -3,6 +3,13 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-03
+
+- Thesis (pending PR #33, decision D10): E52 nearest-sample re-run of 2C and 2D (no verdict changes; 2C-a and 2D-b
+  strong 2 of 3 cells on seed 7331, still met); 2C and 2D rescored with repeats as false and 2L one to one (LOC+T and
+  LOC), every verdict stands; 2E not regenerated; E64 (deployable R1 threshold, 41.8 false/h against 30) cited in
+  Sections 6.6 and 7.4; error count 64.
+
 ## 2026-11-02
 
 - Thesis: Section 8 gains a provisional status paragraph of the doctoral line (gate G3a: PyOcto 9 of 9 and GaMMA 0 of
