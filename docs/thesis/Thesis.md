@@ -6,8 +6,6 @@ Universidad Icesi - Trabajo de grado - Juan Jose Gordillo Cordoba - October 2026
 
 Director: Uram Aníbal Sosa Aguirre
 
-*Draft note: passages marked **[pending #33]** report post hoc results of a pull request not yet merged; the marks are removed when it is.*
-
 ---
 
 ## Abstract
@@ -476,7 +474,7 @@ matching with LOC+T is the primary rule of every future test (`docs/decisions/AD
 tests R0 and R1 already required the origin time; they also counted repeat detections as neutral, and rescored one to
 one their results do not change (the primary R0 contrast stays at -0.383 and R1 is identical). Tasks 2A and 2B stored
 no detection locations, so their rescoring can only count repeats as false; no verdict changes, the 2A-b rule lines move by at most 0.06 and the 2A-e differences by at
-most 0.08. Tasks 2C, 2D and 2L were regenerated from the frozen code and rescored post hoc **[pending #33]**: 2C and 2D store no
+most 0.08. Tasks 2C, 2D and 2L were regenerated from the frozen code and rescored post hoc: 2C and 2D store no
 locations, so only repeats counted as false can be applied, and no verdict changes; 2L, rescored one to one under both
 LOC+T and LOC, keeps every verdict. Task 2E was not regenerated; its registered verdict was already negative, and the
 rule change is not evaluated for it. On synthetic data the budget is 0.1 or 0.25 false events per window; on continuous real data it
@@ -585,7 +583,7 @@ regime only the one-sided eight-station cell of one seed is significant in each 
 family, not to MT-FW. An independent code audit later found that "exact time" readers read the floor of the predicted
 sample rather than the nearest one, which keeps on average 0.78 instead of 0.94 of an arrival's energy (error E52); this
 handicaps the exact-time comparators of 2C and the ablation of 2D. Re-run post hoc with those readers moved to the
-nearest sample **[pending #33]** (`results/posthoc_e52/`), no verdict of 2C or 2D changes: recall at 0.25 moves on average by -0.021
+nearest sample (`results/posthoc_e52/`), no verdict of 2C or 2D changes: recall at 0.25 moves on average by -0.021
 (BOMP+SC), -0.004 (MTSTACK+SC), -0.004 (GL-FW+SC) and -0.005 (MT-FW-EX+SC), and rules 2C-a and 2D-b (strong) drop from
 3 to 2 of 3 cells in seed 7331 and are still met. The energy gain does not reach recall, since the grid timing error
 is already 0.1 to 0.3 s.
@@ -618,7 +616,7 @@ Non-inferiority to the cap (2I-b) and equivalence to BOMP-PK in standard windows
 from matched-filter energy peaks alone, instead of catalogue corrections, added +0.057 and +0.062 in standard windows
 and +0.038 and +0.030 in dense ones with the origin time required (E7). The verification bounded the scope: the
 pooled gain is essentially that of the one-sided eight-station cell, there is no demonstrated gain with four stations,
-and the terms were worse than the registered ones in about 22 per cent of the networks. Rescored post hoc one to one **[pending #33]**,
+and the terms were worse than the registered ones in about 22 per cent of the networks. Rescored post hoc one to one,
 2L-a gives +0.058 and +0.060, and 2L-a to 2L-d and the secondary BOMP rule are all still met.
 
 ### 6.3 Real noise with injected events (Task 2M; Appendix Y.31)
@@ -729,7 +727,7 @@ for the difference of proportions [Newcombe 1998] give +0.019 [-0.032, +0.069] f
 +0.031] for HYB minus BESTPICK (error E61). The pick-free detector alone recalled 1
 of 54 (E15) and 1 of the 10 JMA events, against 9 of 10 for HYB and BASE and all 10 for BESTPICK. With the threshold of the development
 operating point applied unchanged, HYB kept its recall but produced 41.8 false detections per hour, above the budget,
-and BASE 12.9; the register now declares this a failure of false-alarm calibration (error E64 **[pending #33]**). Part of the hybrid score is a percentile of the waveform score taken within the segment being scored, so
+and BASE 12.9; the register now declares this a failure of false-alarm calibration (error E64). Part of the hybrid score is a percentile of the waveform score taken within the segment being scored, so
 it is not fixed before the evaluation; scored by picks alone, or with that percentile referred to the development
 detections, the hybrid gives the same R1-a and R1-b counts and 35.4 or 38.6 false detections per hour with the
 development threshold, still above the budget (error E60). A homogeneous-medium PyOcto with uncorrected picks, run as a descriptive comparator, recalled 25 of 54,
@@ -851,7 +849,7 @@ with the flat score surface just outside the hit radius found in Appendix AB.B.
 PhaseNet, the strongest picker available, and won. *Operating points.* Every method's operating point was chosen on
 the evaluation data (in the same way for all methods); the deployable threshold of R1, fixed on development data,
 exceeded the false-detection budget for the hybrid (41.8 per hour against 30, a false-alarm calibration failure, error
-E64 **[pending #33]**). *Truth lists.* The Ridgecrest catalogue is an analyst catalogue;
+E64). *Truth lists.* The Ridgecrest catalogue is an analyst catalogue;
 the Hi-net truth list comes from template matching with the JMA events as templates and favours events similar to them. Only 29 of its 54 targets were detected by any method at any threshold, so the ceiling of the test was
 about 0.54.
 *Sample size.* R1 had 54 targets and the power analysis of Section 5.3 showed that only a gain of about 0.2 would
@@ -861,7 +859,7 @@ epicentre within 5 km, so R1 tests detection and origin time, not location. A se
 already hit counts as neutral, never as false, for every method. That convention favours the detectors that deflate
 imperfectly and so emit repeat detections (Proposition AB.B.6), because their repeats do not take the false-detection
 budget; in the dense windows of 2M 5 to 7 per cent of all detections were such repeats. 2F, 2I, 2L, 2M, R0 and R1
-have been rescored one to one, and 2A to 2D with repeats counted as false (Section 5.2) **[pending #33]**; the verdicts of R0, R1, 2A to
+have been rescored one to one, and 2A to 2D with repeats counted as false (Section 5.2); the verdicts of R0, R1, 2A to
 2D and 2L do not change. Task 2E was not regenerated, so its verdict, already negative, rests on the neutral convention
 alone (critique CR-21). The freeze list covered the project code, the data
 and the package versions but not the PhaseNet source code, the auxiliary packages or the PyOcto model file (rebuilt
@@ -950,7 +948,7 @@ the last real test, one (E56) by the verification of that test, and six (E57 to 
 2026, among them C18j out of sample (E59), two defects of the R1 analysis (E60, E61) and the deflation on the sample
 grid (E62); E63, the GMM method of the pinned GaMMA that cannot run, was found in the tuning of
 the failure atlas (Section 8), and E64, the false-alarm calibration failure of the deployable R1 threshold, was declared
-by the integrity checks of phase 2 **[pending #33]**.
+by the integrity checks of phase 2.
 
 ---
 

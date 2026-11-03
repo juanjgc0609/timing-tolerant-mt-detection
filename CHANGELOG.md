@@ -5,6 +5,7 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-03
 
+- Thesis: the [pending #33] marks and the draft note removed after PR #33 merged.
 - Thesis (pending PR #33, decision D10): E52 nearest-sample re-run of 2C and 2D (no verdict changes; 2C-a and 2D-b
   strong 2 of 3 cells on seed 7331, still met); 2C and 2D rescored with repeats as false and 2L one to one (LOC+T and
   LOC), every verdict stands; 2E not regenerated; E64 (deployable R1 threshold, 41.8 false/h against 30) cited in
