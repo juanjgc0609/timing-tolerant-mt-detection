@@ -166,6 +166,26 @@ the row counts of the catalogues in the manuscript repository (commit 948dde3). 
 manuscript's `icequake_example/generate_results` scripts; their code is not run, only the station list and the
 published catalogues are read. The fraction of published located events matched within 0.1 s is reported, not gated.
 
+Gate result (device runs 31 October to 3 November 2026; evidence in `g3a/`, gate file
+`experiments/exploratory/ATLAS-0/gate.json`): **2 of 2 required targets passed.**
+
+| Target | Result |
+|:--|:--|
+| `puente_pyocto` | passed, 9/9 conditions within 5 % of Table S10 (54 SCEDC stations, provenance checked; counts identical in two runs) |
+| `puente_gamma` | not passed, 0/8 (recall 0.00-0.35 against 0.96-1.00); cause open, Table S3 parameters unchanged |
+| `ethz_phasenet` | not passed, every metric better than published (above) |
+| `quakemigrate_example` | passed, 3/3 exact: 49,249 triggered, 47,354 located, 20,015 filtered; 99.996 % of published located events matched within 0.1 s (reported only) |
+
+Deviations of the QuakeMigrate run, none changing a parameter: (1) environment `ttmt-qm`, Python 3.11, QuakeMigrate
+1.2.2 from PyPI with newer dependencies than the manuscript's lock (numpy 2.4.6, obspy 1.5.1, pandas 3.1.0, scipy
+1.17.1); (2) the first `fetch` lost `2009/021/ST08_3.m` to an EarthScope 502 and was repeated before `detect` (the
+aborted start is kept apart on the device; `fetch` and `detect` now refuse missing files); (3) ST02 is all zeros from
+about 00:04:25 on 20 January in the public data, and QuakeMigrate excludes it, as it would for the paper's run on the
+same data; (4) `locate` stopped without an error at event 48,454 of 49,249 and was resumed on the remaining trigger
+events with `QuakeScan.locate(trigger_file=...)` and the same settings (`g3a/resume_locate.py`); events are located
+independently. Wall times: detect 15.6 h (including sleep), trigger 21 min, locate about 56 h. The Puente evidence
+names the device path of the station list; its SCEDC query and SHA-256 are in `g3a/puente_v2.json`.
+
 ## Registered tuning, 31 October 2026
 
 Ledger `experiments/exploratory/ATLAS-0/tuning_ledger.csv` (SHA-256 `759798e1...15f0`), code fa8679cd45c0, env
