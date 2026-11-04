@@ -3,6 +3,10 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-04
+
+- GaMMA's gate failure (target 1, 0/8) diagnosed: the DBSCAN pre-clustering of Table S3 (min_samples 20) against the station density, not E63 and not the travel-time grid depth (`experiments/exploratory/COMPARATORS/README.md`); `gamma_assoc` gains `eikonal_zmax` (default None, registered behaviour), `repro_puente.py` gains `fetch-stations --all-networks` and `run --post-hoc`, which gate.py never counts.
+
 ## 2026-11-03
 
 - Thesis: the [pending #33] marks and the draft note removed after PR #33 merged.

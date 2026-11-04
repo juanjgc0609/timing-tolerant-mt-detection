@@ -103,6 +103,16 @@ def test_gamma_runs_and_freezes_only_in_the_a3_ledger(tmp_path):
     L.require_a3("phasenet+pyocto", L.LEDGER, "run")
 
 
+def test_gamma_eikonal_zmax_deepens_only_the_travel_time_grid(tmp_path):
+    from ttmt.associate import gamma_assoc as G
+    cfg = dict(as_min_picks=5, as_max_sigma11=1.0, as_method="BGMM")
+    c0 = G.config_for(_frame(tmp_path), cfg)
+    assert c0["eikonal"]["zlim"] == [0.0, 20.0] and "eikonal_zmax" not in c0         # registered default
+    c1 = G.config_for(_frame(tmp_path, gamma={"eikonal_zmax": 60.0}), cfg)
+    assert c1["eikonal"]["zlim"] == [0.0, 60.0] and c1["z(km)"] == c0["z(km)"] and c1["bfgs_bounds"] == c0["bfgs_bounds"]
+    assert max(c1["eikonal"]["vel"]["z"]) > max(c0["eikonal"]["vel"]["z"])
+
+
 def test_gamma_wrapper_refuses_gmm(tmp_path):
     from ttmt.associate import gamma_assoc as G
     with pytest.raises(ValueError, match="E63"):
@@ -461,6 +471,11 @@ def test_reproduction_gate(tmp_path):
                                                          runs=runs)))
         g = G.build(str(tmp_path / "p.json"))
         assert g["targets"]["puente_pyocto"]["passed"] is want and g["targets"]["puente_gamma"]["passed"] is want
+    (tmp_path / "p.json").write_text(json.dumps(dict(stations=54, station_file="s.csv", station_source=scedc,
+                                                     post_hoc=True, runs=runs)))
+    g = G.build(str(tmp_path / "p.json"))                     # a post hoc run never passes
+    assert not g["targets"]["puente_gamma"]["passed"] and "post hoc" in g["targets"]["puente_gamma"]["evidence"]
+    assert not RP.is_scenario_query(dict(RP.QUERY_ALL, box_lonlat=list(RP.query_box())))
     runs[0]["recall"] *= 1.1
     (tmp_path / "p.json").write_text(json.dumps(dict(stations=54, station_file="s.csv", station_source=scedc,
                                                      runs=runs)))

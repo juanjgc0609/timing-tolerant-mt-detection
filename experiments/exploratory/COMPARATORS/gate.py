@@ -37,10 +37,12 @@ def puente(path, tol=TOL):
         ok = sum(abs(x) <= tol for x in rel)
         src = res.get("station_source") or {}
         stand_in = not repro_puente.is_scenario_query(src)
-        passed = bool(rows) and ok == len(rows) and not stand_in
+        post_hoc = bool(res.get("post_hoc"))
+        passed = bool(rows) and ok == len(rows) and not stand_in and not post_hoc
         ev = (f"{path}: {ok}/{len(rows)} conditions within {tol:.0%} of Table S10 recall on {res['stations']} stations"
               f" ({res['station_file']}, {src.get('service', 'no provenance')} {src.get('network', '')}"
-              f" {src.get('channel', '')})" + ("; not the fixed fetch-stations query, not counted" if stand_in else ""))
+              f" {src.get('channel', '')})" + ("; not the fixed fetch-stations query, not counted" if stand_in else "")
+              + ("; post hoc run (repro_puente.py run --post-hoc), not counted" if post_hoc else ""))
         out[f"puente_{m}"] = (passed, ev)
     return out
 
