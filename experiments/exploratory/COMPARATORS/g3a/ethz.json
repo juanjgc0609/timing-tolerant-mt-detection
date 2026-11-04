@@ -1,0 +1,16 @@
+{
+ "conditions": [
+  {
+   "name": "test_P_mae_s",
+   "value": 0.0854963137415522,
+   "published": 0.12
+  },
+  {
+   "name": "test_P_std_s",
+   "value": 0.2901510848230805,
+   "published": 0.42
+  }
+ ],
+ "source": "pick-benchmark on ETHZ vs M\u00fcnchmeyer et al. 2022, JGR, doi 10.1029/2021JB023499 (arXiv 2110.13671): PhaseNet, ETHZ in-domain, test split (Section 2.4: results are test-set values unless stated). Card target 2: P-pick metrics. Table S3 (Accuracy of P picks): mu 0.02 s, sigma 0.42 s, MAE 0.12 s. Reported only, not gated: Table 2 phase MCC 0.91, Table S1 detection AUC 0.98.; published values verified in e5be9cf",
+ "verified_in": "e5be9cf"
+}

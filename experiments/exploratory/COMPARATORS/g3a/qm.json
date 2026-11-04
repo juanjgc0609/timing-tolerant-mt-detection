@@ -1,0 +1,24 @@
+{
+ "conditions": [
+  {
+   "name": "triggered",
+   "value": 49249.0,
+   "published": 49249.0
+  },
+  {
+   "name": "located",
+   "value": 47354.0,
+   "published": 47354.0
+  },
+  {
+   "name": "filtered",
+   "value": 20015.0,
+   "published": 20015.0
+  }
+ ],
+ "source": "QuakeMigrate 1.2.2 on the Rutford example vs Winder et al. 2026, Section 4.1 (manuscript 948dde3)",
+ "reported_only": {
+  "published_located_matched_within_0.1s": 0.9999577649195421
+ },
+ "quakemigrate": "1.2.2"
+}
