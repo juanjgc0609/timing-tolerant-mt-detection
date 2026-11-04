@@ -31,6 +31,14 @@ Dated record of changes to the project's process, code and documents. Results ar
   and a station list (windowed `cells.separation`, 1-hour block bootstrap, Poisson reference, dead time);
   `tests/test_prevalence.py` joins the CI test list.
 
+## 2026-11-04
+
+- Reproduction gate G3a passes, 2 of 2 required targets: PyOcto on Puente et al. (2025), 9/9 conditions within 5 %
+  of Table S10, and QuakeMigrate 1.2.2 on the Rutford example of Winder et al. (2026), 49,249 / 47,354 / 20,015
+  events, equal to Section 4.1. Not passed: GaMMA on Puente (0/8) and PhaseNet on ETHZ (better than published).
+  Evidence in `experiments/exploratory/COMPARATORS/g3a/`; deviations of the QuakeMigrate run (newer dependencies,
+  one waveform file re-fetched, `locate` resumed at event 48,454 with the same settings) in the comparators README.
+
 ## 2026-10-31
 
 - Registered ATLAS-0 tuning of phasenet+pyocto (best objective 0.2589, 60 of 60 trials valid) and phasenet+gamma (0.2338, 23 of 60 valid: the 37 GMM trials fail in GaMMA 80394dd, a declared budget inequality, CR-07), with the frozen configurations; the owner kept these rows as registered (31 October); the comparison is provisional, and repairing GaMMA and repeating 60 BGMM trials in a new ledger is to be decided before any claim that a method beats GaMMA (`experiments/exploratory/COMPARATORS/README.md`).
