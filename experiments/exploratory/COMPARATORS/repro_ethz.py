@@ -31,8 +31,12 @@ def prepare(out, weights="ethz"):
     import torch
     import yaml
     net = sbm.PhaseNet.from_pretrained(weights)
-    ver = Path(out) / "version_0"
-    (ver / "checkpoints").mkdir(parents=True, exist_ok=True)
+    out = Path(out)
+    ver = out / "version_0"
+    ver.mkdir(parents=True, exist_ok=True)
+    # util.load_best_model reads <parent>/<name>_<name>/0_0/checkpoints/epoch=E-step=S.ckpt, E and S from metrics.csv
+    ckpt = out.parent / f"{out.name}_{out.name}" / "0_0" / "checkpoints"
+    ckpt.mkdir(parents=True, exist_ok=True)
     hp = dict(lr=1e-3, sigma=20, sample_boundaries=[None, None], phases=net.labels, norm=net.norm,
               in_channels=net.in_channels, classes=net.classes)
     try:
@@ -42,13 +46,27 @@ def prepare(out, weights="ethz"):
         import pytorch_lightning
         plv = pytorch_lightning.__version__
     torch.save({"state_dict": {"model." + k: v for k, v in net.state_dict().items()}, "hyper_parameters": hp,
-                "pytorch-lightning_version": plv, "epoch": 0, "global_step": 1},
-               ver / "checkpoints" / "epoch=0-step=1.ckpt")
+                "pytorch-lightning_version": plv, "epoch": 0, "global_step": 0},
+               ckpt / "epoch=0-step=0.ckpt")
     (ver / "hparams.yaml").write_text(yaml.safe_dump(CONFIG))
     (ver / "metrics.csv").write_text("epoch,step,val_loss\n0,0,0.0\n")
     meta = dict(weights=weights, seisbench=seisbench.__version__, phases=net.labels, norm=net.norm)
     (Path(out) / "provenance.json").write_text(json.dumps(meta, indent=1))
     print(json.dumps(meta))
+
+
+def evaluate(bench, weights, targets, sets, batchsize):
+    """the benchmark's eval.main, unchanged, on current pytorch-lightning: its pl.Trainer(gpus=1) (lightning 1.3) is
+    mapped to accelerator="gpu", devices=1, the only difference. Data loading in the main process (a Windows worker
+    would pickle the preloaded dataset)."""
+    import os
+    os.environ["BENCHMARK_DEFAULT_WORKERS"] = "0"
+    sys.path.insert(0, str(Path(bench) / "benchmark"))
+    import pytorch_lightning as pl
+    trainer = pl.Trainer
+    pl.Trainer = lambda gpus=1, **kw: trainer(accelerator="gpu", devices=gpus, logger=False, **kw)
+    import eval as bench_eval
+    bench_eval.main(weights, targets, sets, batchsize=batchsize, num_workers=0)
 
 
 def report(results, published, out, verified_in="e5be9cf"):
@@ -75,6 +93,12 @@ def main(argv=None):
     p = sub.add_parser("prepare")
     p.add_argument("--out", required=True)
     p.add_argument("--weights", default="ethz")
+    e = sub.add_parser("eval")
+    e.add_argument("bench")
+    e.add_argument("weights")
+    e.add_argument("targets")
+    e.add_argument("--sets", default="dev,test")
+    e.add_argument("--batchsize", type=int, default=1024)
     r = sub.add_parser("report")
     r.add_argument("results")
     r.add_argument("published")
@@ -83,6 +107,8 @@ def main(argv=None):
     a = ap.parse_args(argv)
     if a.cmd == "prepare":
         prepare(a.out, a.weights)
+    elif a.cmd == "eval":
+        evaluate(a.bench, a.weights, a.targets, a.sets, a.batchsize)
     else:
         report(a.results, a.published, a.out, a.verified_in)
 
