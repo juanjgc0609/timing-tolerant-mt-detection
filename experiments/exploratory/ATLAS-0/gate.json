@@ -1,22 +1,22 @@
 {
  "targets": {
   "puente_pyocto": {
-   "passed": false,
-   "evidence": "not run on the published network; cloud dry run on a 23-station stand-in only (COMPARATORS/README.md, G3a): 6/6 conditions within 5%, not counted. Needs repro_puente.py fetch-stations and run on the device."
+   "passed": true,
+   "evidence": "experiments/exploratory/COMPARATORS/g3a/puente_v2.json: 9/9 conditions within 5% of Table S10 recall on 54 stations (C:\\Users\\juanj\\ttmt\\g3a\\scsn_v2.csv, SCEDC FDSN CI HH?,BH?)"
   },
   "puente_gamma": {
    "passed": false,
-   "evidence": "not run on the published network; cloud dry run on a 23-station stand-in only: 0.43-0.63 recall, as Table S3 dbscan_min_samples=20 needs the full SCSN. Needs the device run."
+   "evidence": "experiments/exploratory/COMPARATORS/g3a/puente_v2.json: 0/8 conditions within 5% of Table S10 recall on 54 stations (C:\\Users\\juanj\\ttmt\\g3a\\scsn_v2.csv, SCEDC FDSN CI HH?,BH?)"
   },
   "ethz_phasenet": {
    "passed": false,
-   "evidence": "not run"
+   "evidence": "experiments/exploratory/COMPARATORS/g3a/ethz.json: 0/2 conditions within 5% (pick-benchmark on ETHZ vs M\u00fcnchmeyer et al. 2022, JGR, doi 10.1029/2021JB023499 (arXiv 2110.13671): PhaseNet, ETHZ in-domain, test split (Section 2.4: results are test-set values unless stated). Card target 2: P-pick metrics. Table S3 (Accuracy of P picks): mu 0.02 s, sigma 0.42 s, MAE 0.12 s. Reported only, not gated: Table 2 phase MCC 0.91, Table S1 detection AUC 0.98.; published values verified in e5be9cf)"
   },
   "quakemigrate_example": {
-   "passed": false,
-   "evidence": "not run"
+   "passed": true,
+   "evidence": "experiments/exploratory/COMPARATORS/g3a/qm.json: 3/3 conditions within 5% (QuakeMigrate 1.2.2 on the Rutford example vs Winder et al. 2026, Section 4.1 (manuscript 948dde3))"
   }
  },
- "passed": 0,
+ "passed": 2,
  "required": 2
 }
