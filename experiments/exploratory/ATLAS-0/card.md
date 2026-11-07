@@ -374,8 +374,10 @@ data. The registered text and every ledger are kept unchanged; this item replace
    not used. The registered GaMMA rows stay provisional as in amendment 3.
 3. Budget (CR-07): 60 trials for each of GaMMA and PyOcto, four associator parameters each.
 
-Disclosure: the registered GaMMA and PyOcto objectives, the gate results, the G3a DBSCAN diagnosis, and whatever
-amendment-3 rows were written before the stop were known when this was written; none has been read on atlas data.
+Disclosure: the registered GaMMA and PyOcto objectives, the gate results and the G3a DBSCAN diagnosis were known
+when this was written; none has been read on atlas data. The amendment-3 run was stopped at 01:56Z on 4 November 2026
+after 3 trials (0, 1, 2; objectives 0.1811, 0.1330, 0.2115, partition b60d99b3d0bbbbfa); its ledger, 3 rows,
+SHA-256 8c1133f2..., stays on the device, not frozen and not used.
 The change widens GaMMA's search and cannot be chosen to lower its result.
 Freeze: `ttmt.associate.space`, `ttmt.associate.gamma_assoc`, `ttmt.associate.ledger`, `ttmt.associate.tune` and their
 tests in `tests/test_associate.py`; environment `ttmt-gpu` unchanged.
