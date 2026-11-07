@@ -13,10 +13,15 @@ as_method -> method. Only BGMM runs: in GaMMA 80394dd method "GMM" raises Attrib
 BaseMixture._initialize_parameters (gamma/_base.py:140, init_params "centers", the only one gamma.utils.association
 uses) reads self.covariance_prior, which only BayesianGaussianMixture sets, and association() builds GaussianMixture
 without a covariance prior (E63). The wrapper refuses GMM with that reason instead of calling GaMMA, and ATLAS-0
-amendment 3 pins the tuned method to BGMM (space.GAMMA).
+amendment 3 pins the tuned method to BGMM (space.GAMMA). Amendment 4 adds as_dbscan_eps -> dbscan_eps (s) and
+as_dbscan_min_samples -> dbscan_min_samples; a configuration without them keeps the fixed values below.
 Fixed (Frame.fixed["gamma"] may override): the values of R0 and R1 (code/r0/r0_picks.py), so the untuned comparators
 of the thesis are one point of this space's neighbourhood. A fixed value None removes the entry (GaMMA then uses its
 own default, e.g. its data-driven covariance prior).
+eikonal_zmax (default None, the registered behaviour): GaMMA's 1-D travel-time grid ends at the event depth limit plus
+1 km, so a first arrival refracted below it (Pn, Sn) is missing: with Hadley-Kanamori and events limited to 30 km the
+grid error reaches 0.5-0.8 s at 150 km for 20 km deep events and 1.3-2.2 s for 29 km deep ones (it stays at or below
+0.2 s for events shallower than 20 km). A value deepens only the travel-time grid; the event search keeps frame.zlim.
 """
 import copy
 
@@ -26,7 +31,7 @@ from .base import detections, empty_result, from_timestamp, quiet, to_datetime
 
 FIXED = {"use_amplitude": False, "use_dbscan": True, "dbscan_eps": 10.0, "dbscan_min_samples": 3,
          "oversample_factor": 5, "max_sigma22": 1.0, "max_sigma12": 1.0, "covariance_prior": [5.0, 5.0],
-         "initial_points": [1, 1, 1], "eikonal_h": 0.5, "one_d": True}
+         "initial_points": [1, 1, 1], "eikonal_h": 0.5, "one_d": True, "eikonal_zmax": None}
 SEED = 42
 
 
@@ -38,10 +43,14 @@ def config_for(frame, cfg):
          "min_picks_per_eq": int(cfg["as_min_picks"]), "max_sigma11": float(cfg["as_max_sigma11"]),
          "bfgs_bounds": ((frame.xlim[0] - 1, frame.xlim[1] + 1), (frame.ylim[0] - 1, frame.ylim[1] + 1),
                          tuple(frame.zlim), (None, None)), "ncpu": 1}
-    c.update({k: copy.deepcopy(v) for k, v in fx.items() if k not in ("eikonal_h", "one_d")})
+    c.update({k: copy.deepcopy(v) for k, v in fx.items() if k not in ("eikonal_h", "one_d", "eikonal_zmax")})
+    for k in ("dbscan_eps", "dbscan_min_samples"):                # tuned since ATLAS-0 amendment 4
+        if "as_" + k in cfg:
+            c[k] = float(cfg["as_" + k]) if k == "dbscan_eps" else int(cfg["as_" + k])
     c = {k: v for k, v in c.items() if v is not None}           # a fixed value None removes GaMMA's entry
     if fx["one_d"]:
-        c["eikonal"] = frame.velocity.gamma_eikonal(frame.xlim, frame.ylim, frame.zlim, fx["eikonal_h"])
+        zl = frame.zlim if fx["eikonal_zmax"] is None else (frame.zlim[0], max(frame.zlim[1], fx["eikonal_zmax"]))
+        c["eikonal"] = frame.velocity.gamma_eikonal(frame.xlim, frame.ylim, zl, fx["eikonal_h"])
     c["ncpu"] = 1
     return c
 

@@ -3,6 +3,11 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-04
+
+- ATLAS-0 amendment 4 (draft): GaMMA's DBSCAN (`dbscan_eps` [3, 20] s, `dbscan_min_samples` {3..20}) joins its search space, four associator parameters as PyOcto; 60 trials into `tuning_ledger_a4.csv` (`ledger.require_a4`); the amendment-3 run was stopped on the owner's decision and is not used.
+- GaMMA's gate failure (target 1, 0/8) diagnosed: the DBSCAN pre-clustering of Table S3 (min_samples 20) against the station density, not E63 and not the travel-time grid depth (`experiments/exploratory/COMPARATORS/README.md`); `gamma_assoc` gains `eikonal_zmax` (default None, registered behaviour), `repro_puente.py` gains `fetch-stations --all-networks` and `run --post-hoc`, which gate.py never counts.
+
 ## 2026-11-03
 
 - Thesis: the [pending #33] marks and the draft note removed after PR #33 merged.
