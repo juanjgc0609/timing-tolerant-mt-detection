@@ -13,7 +13,8 @@ as_method -> method. Only BGMM runs: in GaMMA 80394dd method "GMM" raises Attrib
 BaseMixture._initialize_parameters (gamma/_base.py:140, init_params "centers", the only one gamma.utils.association
 uses) reads self.covariance_prior, which only BayesianGaussianMixture sets, and association() builds GaussianMixture
 without a covariance prior (E63). The wrapper refuses GMM with that reason instead of calling GaMMA, and ATLAS-0
-amendment 3 pins the tuned method to BGMM (space.GAMMA).
+amendment 3 pins the tuned method to BGMM (space.GAMMA). Amendment 4 adds as_dbscan_eps -> dbscan_eps (s) and
+as_dbscan_min_samples -> dbscan_min_samples; a configuration without them keeps the fixed values below.
 Fixed (Frame.fixed["gamma"] may override): the values of R0 and R1 (code/r0/r0_picks.py), so the untuned comparators
 of the thesis are one point of this space's neighbourhood. A fixed value None removes the entry (GaMMA then uses its
 own default, e.g. its data-driven covariance prior).
@@ -43,6 +44,9 @@ def config_for(frame, cfg):
          "bfgs_bounds": ((frame.xlim[0] - 1, frame.xlim[1] + 1), (frame.ylim[0] - 1, frame.ylim[1] + 1),
                          tuple(frame.zlim), (None, None)), "ncpu": 1}
     c.update({k: copy.deepcopy(v) for k, v in fx.items() if k not in ("eikonal_h", "one_d", "eikonal_zmax")})
+    for k in ("dbscan_eps", "dbscan_min_samples"):                # tuned since ATLAS-0 amendment 4
+        if "as_" + k in cfg:
+            c[k] = float(cfg["as_" + k]) if k == "dbscan_eps" else int(cfg["as_" + k])
     c = {k: v for k, v in c.items() if v is not None}           # a fixed value None removes GaMMA's entry
     if fx["one_d"]:
         zl = frame.zlim if fx["eikonal_zmax"] is None else (frame.zlim[0], max(frame.zlim[1], fx["eikonal_zmax"]))

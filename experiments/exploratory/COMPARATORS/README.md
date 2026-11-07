@@ -272,18 +272,34 @@ the registered draw, so trial i keeps every other registered value (checked agai
 whose objective must match the registered one. The wrapper refuses GMM with the E63 reason instead of calling GaMMA.
 `space.trials(method, reg1=True)` still redraws the registered ledger. GaMMA is not patched.
 
-Run on the device after the tag `reg/ATLAS-0/amendment-3` (about 5 h: 23 BGMM trials took 7351 s):
+The amendment-3 run (`tuning_ledger_a3.csv`) was started on 4 November 2026 and stopped the same day on the owner's
+decision; it is superseded by amendment 4. `space.trials(method, a3=True)` redraws it.
+
+### Amendment 4: GaMMA's DBSCAN tuned, to run
+
+GaMMA's space adds `as_dbscan_eps` (log-uniform [3, 20] s) and `as_dbscan_min_samples` ({3, ..., 20}) to minimum
+picks and time sigma, method BGMM: four associator parameters, as PyOcto (card, amendment 4). Every trial is a new
+draw. Run on the device after the tag `reg/ATLAS-0/amendment-4` (about 5 h):
 
 ```
-python experiments/exploratory/COMPARATORS/tune_cli.py run phasenet+gamma <out>/*/tune_phasenet.json --env ttmt-gpu --ledger experiments/exploratory/ATLAS-0/tuning_ledger_a3.csv
-python experiments/exploratory/COMPARATORS/tune_cli.py freeze phasenet+gamma experiments/exploratory/COMPARATORS/frozen/phasenet+gamma_a3.json --ledger experiments/exploratory/ATLAS-0/tuning_ledger_a3.csv
-python experiments/exploratory/COMPARATORS/tune_cli.py flags --ledger experiments/exploratory/ATLAS-0/tuning_ledger_a3.csv
+python experiments/exploratory/COMPARATORS/tune_cli.py run phasenet+gamma <out>/*/tune_phasenet.json --env ttmt-gpu --ledger experiments/exploratory/ATLAS-0/tuning_ledger_a4.csv
+python experiments/exploratory/COMPARATORS/tune_cli.py freeze phasenet+gamma experiments/exploratory/COMPARATORS/frozen/phasenet+gamma_a4.json --ledger experiments/exploratory/ATLAS-0/tuning_ledger_a4.csv
+python experiments/exploratory/COMPARATORS/tune_cli.py flags --ledger experiments/exploratory/ATLAS-0/tuning_ledger_a4.csv
 ```
 
 The same manifests as the registered run (partition b60d99b3d0bbbbfa) are required. `run` and `freeze` of a GaMMA
-method refuse any ledger other than `tuning_ledger_a3.csv` (`ledger.require_a3`): the default ledger already holds the
-60 registered GaMMA rows, so a run there would skip them all and a freeze would label the registered best as
-amendment 3.
+method refuse any ledger other than `tuning_ledger_a4.csv` (`ledger.require_a4`).
+
+### Conditions of a fair GaMMA comparison
+
+| Condition | State |
+|:--|:--|
+| Same picks, same 1-D model, same tuning partition, objective and seeds | yes (registration 1) |
+| Equal budget, 60 trials each | after amendment 4 runs (E63 removed the 37 failed trials) |
+| Same number of tuned associator parameters (4 and 4), ranges covering the published settings | amendment 4 |
+| Program as published, not patched | yes (80394dd; BGMM, the only mode that runs) |
+| Travel-time grid deep enough for the offsets | yes on the tuning sets (stations within 44 km); deeper grid needed only above about 100 km (`eikonal_zmax`) |
+| Published configuration reproduced (G3a) | no: declared with the diagnosis above |
 
 ## The fine-tuned picker (CR-03)
 
