@@ -79,28 +79,52 @@ def test_seeds_and_draws_are_fixed_and_shared():
 def test_gamma_amendment3_pins_bgmm_and_keeps_the_registered_draws():
     # E63: trial i of amendment 3 is trial i of registration 1 with as_method = BGMM; the registered ledger rows are
     # redrawn from the registration-1 space
-    reg, a3 = SP.trials("phasenet+gamma", reg1=True), SP.trials("phasenet+gamma")
+    reg, a3 = SP.trials("phasenet+gamma", reg1=True), SP.trials("phasenet+gamma", a3=True)
     assert sum(c["as_method"] == "GMM" for _i, _s, c in reg) == 37
     assert {c["as_method"] for _i, _s, c in a3} == {"BGMM"}
     for (i, s, r), (j, t, c) in zip(reg, a3):
         assert (i, s) == (j, t) and {**r, "as_method": "BGMM"} == c
-        SP.check(SP.space_of("phasenet+gamma"), c)
+        SP.check(SP.space_of("phasenet+gamma", a3=True), c)
     with pytest.raises(ValueError):
-        SP.check(SP.space_of("phasenet+gamma"), dict(a3[0][2], as_method="GMM"))
+        SP.check(SP.space_of("phasenet+gamma", a3=True), dict(a3[0][2], as_method="GMM"))
     rows = [r for r in L.read(L.LEDGER) if r["method"] == "phasenet+gamma"]
     assert len(rows) == 60 and all(json.loads(r["params"]) == reg[int(r["trial"])][2] for r in rows)
 
 
-def test_gamma_runs_and_freezes_only_in_the_a3_ledger(tmp_path):
-    # E63 review: without --ledger tuning_ledger_a3.csv a run would skip the 60 registered rows silently and a freeze
-    # would label the registered best as amendment 3
-    for led in (L.LEDGER, tmp_path / "other.csv"):
-        with pytest.raises(ValueError, match="amendment 3"):
+def test_gamma_amendment4_tunes_dbscan(tmp_path):
+    from ttmt.associate import gamma_assoc as G
+    tr = SP.trials("phasenet+gamma")
+    assert {"as_dbscan_eps", "as_dbscan_min_samples"} <= set(tr[0][2]) and len(SP.GAMMA) == 5
+    assert len([k for k in SP.GAMMA if k != "as_method"]) == len(SP.PYOCTO) == 4     # same number tuned
+    assert {c["as_method"] for _i, _s, c in tr} == {"BGMM"}
+    e = np.array([c["as_dbscan_eps"] for _i, _s, c in tr]); m = np.array([c["as_dbscan_min_samples"] for _i, _s, c in tr])
+    assert e.min() >= 3.0 and e.max() <= 20.0 and m.min() >= 3 and m.max() <= 20
+    c = G.config_for(_frame(tmp_path), dict(tr[0][2]))
+    assert c["dbscan_eps"] == tr[0][2]["as_dbscan_eps"] and c["dbscan_min_samples"] == tr[0][2]["as_dbscan_min_samples"]
+    c0 = G.config_for(_frame(tmp_path), dict(as_min_picks=5, as_max_sigma11=1.0, as_method="BGMM"))
+    assert (c0["dbscan_eps"], c0["dbscan_min_samples"]) == (10.0, 3)                  # fixed values without them
+
+
+def test_gamma_runs_and_freezes_only_in_the_a4_ledger(tmp_path):
+    # without --ledger tuning_ledger_a4.csv a run would skip the 60 registered rows (or mix the stopped amendment-3
+    # rows) silently and a freeze would label another space's best as amendment 4
+    for led in (L.LEDGER, L.LEDGER_A3, tmp_path / "other.csv"):
+        with pytest.raises(ValueError, match="amendment 4"):
             TU.run("phasenet+gamma", lambda c, r: None, [object()], ledger=led, log=lambda *_: None)
-        with pytest.raises(ValueError, match="amendment 3"):
+        with pytest.raises(ValueError, match="amendment 4"):
             L.freeze("phasenet+gamma", tmp_path / "f.json", led)
-    L.require_a3("phasenet+gamma", L.LEDGER_A3, "run")
-    L.require_a3("phasenet+pyocto", L.LEDGER, "run")
+    L.require_a4("phasenet+gamma", L.LEDGER_A4, "run")
+    L.require_a4("phasenet+pyocto", L.LEDGER, "run")
+
+
+def test_gamma_eikonal_zmax_deepens_only_the_travel_time_grid(tmp_path):
+    from ttmt.associate import gamma_assoc as G
+    cfg = dict(as_min_picks=5, as_max_sigma11=1.0, as_method="BGMM")
+    c0 = G.config_for(_frame(tmp_path), cfg)
+    assert c0["eikonal"]["zlim"] == [0.0, 20.0] and "eikonal_zmax" not in c0         # registered default
+    c1 = G.config_for(_frame(tmp_path, gamma={"eikonal_zmax": 60.0}), cfg)
+    assert c1["eikonal"]["zlim"] == [0.0, 60.0] and c1["z(km)"] == c0["z(km)"] and c1["bfgs_bounds"] == c0["bfgs_bounds"]
+    assert max(c1["eikonal"]["vel"]["z"]) > max(c0["eikonal"]["vel"]["z"])
 
 
 def test_gamma_wrapper_refuses_gmm(tmp_path):
@@ -461,6 +485,11 @@ def test_reproduction_gate(tmp_path):
                                                          runs=runs)))
         g = G.build(str(tmp_path / "p.json"))
         assert g["targets"]["puente_pyocto"]["passed"] is want and g["targets"]["puente_gamma"]["passed"] is want
+    (tmp_path / "p.json").write_text(json.dumps(dict(stations=54, station_file="s.csv", station_source=scedc,
+                                                     post_hoc=True, runs=runs)))
+    g = G.build(str(tmp_path / "p.json"))                     # a post hoc run never passes
+    assert not g["targets"]["puente_gamma"]["passed"] and "post hoc" in g["targets"]["puente_gamma"]["evidence"]
+    assert not RP.is_scenario_query(dict(RP.QUERY_ALL, box_lonlat=list(RP.query_box())))
     runs[0]["recall"] *= 1.1
     (tmp_path / "p.json").write_text(json.dumps(dict(stations=54, station_file="s.csv", station_source=scedc,
                                                      runs=runs)))
