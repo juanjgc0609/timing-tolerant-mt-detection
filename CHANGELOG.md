@@ -15,6 +15,10 @@ Dated record of changes to the project's process, code and documents. Results ar
 - Exploration M6C-SUBSAMPLE (gate G-M6c): passes for isolated events (median peak residual 0.035 v2, 0.043 E62
   fractional, 0.197 grid), fails with two overlapping sources (0.06-0.12) for every deflation that keeps the other
   event; the fix is the joint refit of M6. Exploration M1A-ONSET (gate G-M1a) prepared, to run with the raw data.
+
+- GaMMA re-tuned under ATLAS-0 amendment 4 (DBSCAN in the search space): 60 of 60 trials valid, best objective
+  0.2356 (trial 53), frozen in `frozen/phasenet+gamma_a4.json`; it replaces the registered and amendment-3 GaMMA
+  configurations. The stopped amendment-3 ledger (3 trials) is kept and not used.
 - Thesis: Section 8 status paragraph updated for gate G3a passed (2 of 2: PyOcto on Puente 9/9, QuakeMigrate on
   Rutford exact; GaMMA 0/8 and ETHZ not passed; four declared deviations of the QuakeMigrate run) and amendment 4
   (449d39b); GaMMA stays provisional until the a4 run ends; no claim over GaMMA.

@@ -1,0 +1,208 @@
+{
+ "method": "phasenet+gamma",
+ "frozen": "/tmp/claude-0/gamma_a4.json",
+ "partition": "b60d99b3d0bbbbfa",
+ "frozen_objective": 0.235588,
+ "frozen_recall_T": 0.179372,
+ "frozen_recall_C": 0.291803,
+ "match_s": 0.5,
+ "conditions": {
+  "PN": {
+   "recall_T": 0.1794,
+   "recall_C": 0.2918,
+   "objective": 0.2356,
+   "n_T": 223,
+   "n_C": 305,
+   "recall_iso": 0.3953,
+   "n_iso": 129,
+   "threshold": 16.0,
+   "stages_T": {
+    "hit": 40,
+    "picker": 123,
+    "association": 15,
+    "resolution": 41,
+    "budget": 4
+   },
+   "stages_C": {
+    "hit": 89,
+    "picker": 148,
+    "association": 41,
+    "resolution": 13,
+    "budget": 14
+   },
+   "stages_iso": {
+    "hit": 51,
+    "picker": 53,
+    "association": 13,
+    "resolution": 1,
+    "budget": 11
+   },
+   "wall_s": 300.8
+  },
+  "PN-clean": {
+   "recall_T": 0.1614,
+   "recall_C": 0.2689,
+   "objective": 0.2151,
+   "n_T": 223,
+   "n_C": 305,
+   "recall_iso": 0.3333,
+   "n_iso": 129,
+   "threshold": 12.0,
+   "stages_T": {
+    "hit": 36,
+    "picker": 124,
+    "association": 25,
+    "resolution": 38,
+    "budget": 0
+   },
+   "stages_C": {
+    "hit": 82,
+    "picker": 147,
+    "association": 68,
+    "resolution": 8,
+    "budget": 0
+   },
+   "stages_iso": {
+    "hit": 43,
+    "picker": 53,
+    "association": 32,
+    "resolution": 1,
+    "budget": 0
+   },
+   "wall_s": 11.6
+  },
+  "OR": {
+   "recall_T": 0.1435,
+   "recall_C": 0.6098,
+   "objective": 0.3767,
+   "n_T": 223,
+   "n_C": 305,
+   "recall_iso": 0.8217,
+   "n_iso": 129,
+   "threshold": 11.0,
+   "stages_T": {
+    "hit": 32,
+    "picker": 0,
+    "association": 40,
+    "resolution": 151,
+    "budget": 0
+   },
+   "stages_C": {
+    "hit": 186,
+    "picker": 0,
+    "association": 57,
+    "resolution": 52,
+    "budget": 10
+   },
+   "stages_iso": {
+    "hit": 106,
+    "picker": 0,
+    "association": 10,
+    "resolution": 9,
+    "budget": 4
+   },
+   "wall_s": 49.0
+  },
+  "OR-snr1": {
+   "recall_T": 0.1659,
+   "recall_C": 0.518,
+   "objective": 0.342,
+   "n_T": 223,
+   "n_C": 305,
+   "recall_iso": 0.6667,
+   "n_iso": 129,
+   "threshold": 8.0,
+   "stages_T": {
+    "hit": 37,
+    "picker": 51,
+    "association": 29,
+    "resolution": 106,
+    "budget": 0
+   },
+   "stages_C": {
+    "hit": 158,
+    "picker": 59,
+    "association": 52,
+    "resolution": 36,
+    "budget": 0
+   },
+   "stages_iso": {
+    "hit": 86,
+    "picker": 30,
+    "association": 6,
+    "resolution": 7,
+    "budget": 0
+   },
+   "wall_s": 34.0
+  },
+  "OR-snr2": {
+   "recall_T": 0.2018,
+   "recall_C": 0.4197,
+   "objective": 0.3107,
+   "n_T": 223,
+   "n_C": 305,
+   "recall_iso": 0.5969,
+   "n_iso": 129,
+   "threshold": 8.0,
+   "stages_T": {
+    "hit": 45,
+    "picker": 85,
+    "association": 16,
+    "resolution": 77,
+    "budget": 0
+   },
+   "stages_C": {
+    "hit": 128,
+    "picker": 69,
+    "association": 67,
+    "resolution": 41,
+    "budget": 0
+   },
+   "stages_iso": {
+    "hit": 77,
+    "picker": 36,
+    "association": 11,
+    "resolution": 5,
+    "budget": 0
+   },
+   "wall_s": 28.6
+  }
+ },
+ "pick_recall_by_snr": {
+  "snr_bins": [
+   "0-0.5",
+   "0.5-1",
+   "1-2",
+   "2-4",
+   "4-8",
+   "8-inf"
+  ],
+  "arrivals": [
+   188,
+   165,
+   344,
+   526,
+   592,
+   962
+  ],
+  "picked_fraction": [
+   0.053,
+   0.145,
+   0.212,
+   0.394,
+   0.551,
+   0.659
+  ]
+ },
+ "a7": {
+  "T_resolvable_fraction": 0.9283,
+  "dtau_min_median_s": 0.0852,
+  "snr_tot_median_T": 16.39,
+  "snr_median_station_T": 5.128,
+  "sep_T_quartiles_s": [
+   0.295,
+   0.461,
+   0.673
+  ]
+ }
+}
