@@ -22,6 +22,12 @@ from .m1 import OnsetReader, peak_basin, read_vectors
 from .m4 import joint_read
 
 RANK_DEFAULT = ACAP(3.0)
+SIGMA_ONSET_S = (0.089, 0.058)   # s, robust sd of P and S onset readings on the R1 CAL events (M1A-ONSET step 2)
+
+
+def default_reader(dt=LEGACY_KERNEL.dt):
+    """the v2 default onset reader: prior reading with the R1 CAL sigma, half width 4 samples."""
+    return OnsetReader(4, sigma=np.asarray(SIGMA_ONSET_S) / dt)
 REFINE_HALF = 4            # samples (0.25 s): about the main lobe of the 2 Hz matched-filter response
 
 
@@ -73,7 +79,7 @@ def v2_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, joint=Non
             min_sep=5.0, kernel=LEGACY_KERNEL, refine=True, suppress=False, return_residual=False):
     """E: OnsetEngine; MFn (ns, 3, NT) normalised matched filter (whitened or not; E.G and E.Q must match);
     q (ns, 2, NT) onset evidence; lag (ns, 2) onset-to-peak lag (samples); statistic: ranking BlockStatistic;
-    reader: OnsetReader (default half width 4 samples); joint: None or a dict of joint_read keyword arguments
+    reader: OnsetReader (default: ``default_reader``, prior reading); joint: None or a dict of joint_read keyword arguments
     (enables M4 on the n_joint best hypotheses; sig (2, ns) samples is then required, the tolerance of M2, or a
     constant); refine: refine the deflation times and amplitudes on the waveform (``refine_times``) and refit the
     tensor on them; False: deflate the ranking fit at onset + lag, whose error is the picker's. Atoms: dicts x, tau, s (ranking score), obj (joint objective or None), onsets
@@ -81,7 +87,7 @@ def v2_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, joint=Non
     atom used (off by default: two sources whose onsets merge into one maximum at a station would lose that block
     for the second source; the 5 km exclusion already prevents a repeat, and a deflated onset reads a near-zero
     vector)."""
-    reader = reader or OnsetReader()
+    reader = reader or default_reader(kernel.dt)
     ns = E.ns
     R = np.array(MFn, float, copy=True)
     qr = np.array(q, float, copy=True)

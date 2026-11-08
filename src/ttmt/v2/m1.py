@@ -111,12 +111,16 @@ class OnsetEngine(Engine):
 
 # ============================================================================================ reading
 class OnsetReader:
-    """M1 reader: in every block, the local maximum of q within +-half_width samples of the predicted onset with the
-    largest q (ties: the nearest to the prediction), refined to sub-sample by a parabola; a block with no maximum in
-    its window is unread (NaN). Returns float onset samples, shape of the prediction."""
+    """M1 reader: in every block, among the local maxima of q within +-half_width samples of the predicted onset,
+    the one with the largest q (sigma None; ties: the nearest to the prediction) or, with sigma (2,) per phase in
+    samples, the largest log q - (s - mu)^2 / (2 sigma^2), the per-block local term of M4 ("prior" reading; on the
+    R1 EVAL events P 0.97 within 0.25 s against 0.92 for the largest q, M1A-ONSET step 2). Refined to sub-sample by
+    a parabola; a block with no maximum in its window is unread (NaN). Returns float onset samples, shape of the
+    prediction."""
 
-    def __init__(self, half_width=4, floor=FLOOR):
+    def __init__(self, half_width=4, floor=FLOOR, sigma=None):
         self.half_width, self.floor = int(half_width), float(floor)
+        self.sigma = None if sigma is None else np.asarray(sigma, float).reshape(2)
 
     def read(self, q, tpred):
         q = np.asarray(q, float)
@@ -130,8 +134,12 @@ class OnsetReader:
         b = np.arange(2).reshape((1,) * (c.ndim - 2) + (2, 1, 1))
         st = np.arange(ns).reshape((1,) * (c.ndim - 2) + (1, ns, 1))
         val = qq[st, b, ii]
-        # largest q, ties broken towards the prediction
-        key = val - 1e-9 * np.abs(ii - np.asarray(tpred)[..., None])
+        dist = ii - np.asarray(tpred)[..., None]
+        if self.sigma is None:                                           # largest q, ties towards the prediction
+            key = val - 1e-9 * np.abs(dist)
+        else:
+            sg = self.sigma.reshape((1,) * (c.ndim - 2) + (2, 1, 1))
+            key = np.where(val >= self.floor, np.log(np.maximum(val, 1e-12)) - dist ** 2 / (2 * sg ** 2), -np.inf)
         a = key.argmax(-1)
         k = np.take_along_axis(ii, a[..., None], -1)[..., 0]
         ok = np.take_along_axis(val, a[..., None], -1)[..., 0] >= self.floor

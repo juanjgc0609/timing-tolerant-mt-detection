@@ -14,10 +14,14 @@ Dated record of changes to the project's process, code and documents. Results ar
   registered numbers unchanged. Tests `tests/test_v2.py` (in CI).
 - Exploration M6C-SUBSAMPLE (gate G-M6c): passes for isolated events (median peak residual 0.035 v2, 0.043 E62
   fractional, 0.197 grid), fails with two overlapping sources (0.06-0.12) for every deflation that keeps the other
-  event; the fix is the joint refit of M6. Exploration M1A-ONSET (gate G-M1a, read on the blocks with an onset
-  maximum): fails on CAL as first declared (P 0.87 within 0.25 s, threshold 0.90); the declared second step passes on
-  held-out EVAL (P 0.92, n 61; "prior" variant 0.97), against 0.52 for the energy-peak reading on the 103 gated blocks;
-  42 of those 103 have no onset maximum and stay unread. The "prior" reader is the decided default, not yet in `ttmt.v2`.
+  event; the fix is the joint refit of M6.
+- Exploration M1A-ONSET (gate G-M1a, owner's laptop, CPU): the first step FAILED on CAL (onset reading, P 0.87
+  within 0.25 s < 0.90; energy peak 0.55). A second step declared in the card before running (diagnosis, one fixed
+  "prior" variant, confirmation on the held-out EVAL events) PASSED on EVAL: P 0.92 for the reader as registered,
+  0.97 for the prior variant, energy peak 0.52 on the same gated blocks. The 0.92 is over the 61 of 103 gated P
+  blocks that have an onset maximum; counting the 42 unread blocks as misses it is 0.54 against 0.52: the gain is
+  in precision, not in coverage (coverage is the C-regime picker loss, step G-M1b). The prior reading is now the
+  default reader of the v2 loops (`ttmt.v2.loop.default_reader`, `OnsetReader(sigma=)`).
 - GaMMA re-tuned under ATLAS-0 amendment 4 (DBSCAN in the search space): 60 of 60 trials valid, best objective
   0.2356 (trial 53), frozen in `frozen/phasenet+gamma_a4.json`; it replaces the registered and amendment-3 GaMMA
   configurations. The stopped amendment-3 ledger (3 trials) is kept and not used.
