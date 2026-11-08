@@ -1,6 +1,6 @@
 # Experiment card: M5-EVALUE. Gate G-M5c (calibration) of the mixture e-value S_mix
 
-Stage: S1 (design declared, 8 November 2026, before any S_mix on real noise). Plan: M5 pivot of ADR-0010 (keep the cap
+Stage: S3 (done, 8 November 2026). G-M5c FAILS on both seeds; design declared before the run (below). Plan: M5 pivot of ADR-0010 (keep the cap
 6 for ranking, retire ACAP, move transient robustness to the decision step). Specification
 `especificacion-modelo-v2.md` M5 "Decidir"; theory `teoria-fase5.md` D.1 and D.2. Exploratory, real noise; no
 registered number changes.
@@ -77,5 +77,46 @@ backgrounds sharing the model term: a few minutes on 4 processes. Small run firs
     python experiments/exploratory/M5-EVALUE/run_c.py run 3141 NOISE_100210,NOISE_100211 PARTS_C_3141
     python experiments/exploratory/M5-EVALUE/run_c.py analyze PARTS_C_2718,PARTS_C_3141 2000 > run_c_out.txt
 
-## Results
-Pending (laptop run).
+## Results (commit 44db66c; `measure_2718_out.txt`, `run_c_small_out.txt`, `run_c_out.txt`)
+Laptop, CPU, conda env ttmt: numpy 1.26.4, scipy 1.17.1. Parameters as declared. Wall time: measure 12 s, small run
+46 s, full run 4 min 14 s (both seeds, 8 processes), analyze 4 s. Seed 3141 has 49 parts: ladder_4 2909 and 2911
+exhaust the catalogue pool, as registered.
+
+**Analysis bug, found in the run.** `RadialBackground` has no support below its kernel grid, so a TEST read with a
+smaller norm gets log f = -inf, l_k = +inf, and the log-mean-exp computed inf - inf = NaN. A NaN compares False with
+the threshold, so `analyze` counted these hypotheses as non-rejections (46 in 2718, 15 in 3141; the printed "PASS" of
+3141 is this artefact). Fixed after the run in `evalue_mix` (S = +inf) and in `analyze` (NaN read as +inf), with a
+test. The rates below count them as rejections; the method is unchanged.
+
+| background, pi | 2718 (80 640 hyp.) p 1e-2 | p 1e-3 | 3141 (53 280 hyp.) p 1e-2 | p 1e-3 |
+|:--|--:|--:|--:|--:|
+| **R, CAL** (gate) | 9.08e-3 | **5.80e-3** | 3.12e-3 | **1.22e-3** |
+| **R, LOW** (gate) | 9.37e-3 | **6.01e-3** | 3.04e-3 | **1.11e-3** |
+| T, CAL (spec. t) | 1.38e-2 | 1.06e-2 | 1.45e-3 | 6.8e-4 |
+| T, LOW | 1.42e-2 | 1.06e-2 | 1.46e-3 | 7.3e-4 |
+| G, CAL (gaussian) | 1.9e-1 | 1.2e-1 | 4.0e-3 | 2.5e-3 |
+| G, LOW | 1.7e-1 | 1.0e-1 | 4.1e-3 | 2.5e-3 |
+
+- **G-M5c FAILS on both seeds** at p = 1e-3 (2718 by a factor of about 6, 3141 by 1.1-1.2). It holds at p = 1e-2.
+- The gaussian background fails by two orders of magnitude on the transient day, as Proposition D.1(a) predicted.
+- The t is worse than R on the transient day and better on the quiet days (its tail is heavier; its bulk is wrong).
+- Signature: the rate barely falls from p = 1e-2 to 1e-3 (9.1e-3 to 5.8e-3). The exceedances are not a shifted bulk
+  but a few hypotheses with huge S, i.e. single blocks far beyond the fitted tail.
+- Step 0 agrees: R's tail index often sits at the cap 10 (quantiles 5/50/95: 1.79 / 7.21 / 10 in 2718), and the
+  TEST/model tail ratio reaches 9.6 at 1e-2 and 61 at 1e-3 at ATPI, ATVO and MURB (ladder_6 2800). The worst cell is
+  unilateral_c40 (8 stations, 16 blocks). eps sits at the 0.5 clip in most of 2718 (median r_s < 0.5).
+
+## Diagnosis (hypotheses, not yet tested)
+1. **Tail underfit (main suspect).** A Hill index from the top 1 % of about 50 minutes of FIT reads cannot see the
+   rare transients of a TEST slot; a too-light tail makes log(1/f) of a transient read grow like (3 + alpha) log r.
+2. **Support hole at 0.** Explains the NaN cases (S = +inf from one tiny read), not the bulk of the excess.
+3. **Dependence between blocks.** Theorem D.2 multiplies over blocks; a transient seen by several stations at once
+   breaks the product. unilateral_c40 being worst is compatible with it.
+
+## Proposed second step (owner decides; not run)
+- Measure first (seconds, 2718, development): for every exceeding hypothesis, the largest single-block l_k, whether
+  that read is above r0 (tail) or below the grid (hole), and how many blocks exceed together (dependence).
+- Then one variant fixed before running, chosen by that measurement (for example a heavier pooled tail per day with
+  alpha capped at 2-3, and a power-law left tail), confirmed on a noise day that no M5 step has used.
+- If the dependence term dominates, a per-block e-value cannot be calibrated by a marginal background; the decision
+  then rests on M7 (time slides calibrate the joint null, D.3), and S_mix is kept only as a ranking-free evidence.

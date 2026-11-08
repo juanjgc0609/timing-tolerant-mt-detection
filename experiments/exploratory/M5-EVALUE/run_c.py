@@ -211,10 +211,12 @@ def analyze(pdirs, B):
         verdict = {}
         for name in [f"{k}_{pk}" for k in BGS for pk in ("CAL", "LOW")]:
             S = np.concatenate([p[name].reshape(-1) for p in P])
+            n_nan = int(np.isnan(S).sum())
+            S = np.where(np.isnan(S), np.inf, S)       # NaN came from inf - inf with f_k(v_k) = 0: it is S = +inf
             cl = np.concatenate([np.repeat([kid[(int(p["j"]), int(s))] for s in p["slots"]], p[name].shape[1])
                                  for p in P])
             e = np.exp(np.minimum(S, 700))
-            line = f"   {name}: mean exp(S) {e.mean():.3g}  median S {np.median(S):.2f}  max S {S.max():.2f}"
+            line = f"   {name}: non-finite S {int((~np.isfinite(S)).sum())} (NaN read as +inf {n_nan})  mean exp(S) {e.mean():.3g}  median S {np.median(S):.2f}"
             rng = np.random.default_rng(0)
             for p_ in PS:
                 x = (S >= math.log(1 / p_)).astype(float)
@@ -228,6 +230,7 @@ def analyze(pdirs, B):
                 if not any(str(p["cell"]) == cell for p in P):
                     continue
                 Sc = np.concatenate([p[name].reshape(-1) for p in P if str(p["cell"]) == cell])
+                Sc = np.where(np.isnan(Sc), np.inf, Sc)
                 print(f"      {cell:15s} " + "  ".join(f"p {p_:g}: {(Sc >= math.log(1 / p_)).mean():.2e}" for p_ in PS))
         nu = np.concatenate([p["alpha"] for p in P])
         eps = np.concatenate([p["eps"] for p in P])

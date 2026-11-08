@@ -213,5 +213,7 @@ def evalue_mix(v, A, logf, eps, draws, s0, gamma=0.3, chunk=None):
         for lf, out in zip(logfs, outs):
             tot = np.logaddexp(le[sl], logN - lf[sl][..., None]).sum(1)                # (h, J)
             mx = tot.max(axis=1, keepdims=True)
-            out[sl] = mx[:, 0] + np.log(np.mean(np.exp(tot - mx), axis=1))
+            with np.errstate(invalid="ignore"):
+                val = mx[:, 0] + np.log(np.mean(np.exp(tot - mx), axis=1))
+            out[sl] = np.where(np.isposinf(mx[:, 0]), np.inf, val)               # f_k(v_k) = 0: S = +inf, not NaN
     return outs if many else outs[0]

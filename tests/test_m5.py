@@ -117,3 +117,14 @@ def test_evalue_calibrated_with_radial_background_on_peak_reads():
     S = evalue_mix(v, A, rb.logpdf(v), 0.05, draws, s0=1.0)
     for p in (1e-1, 1e-2):
         assert (S >= math.log(1 / p)).mean() <= p
+
+
+def test_zero_background_density_gives_infinite_evidence_not_nan():
+    """a block with f_k(v_k) = 0 (outside the fitted support) has l_k = +inf; S_mix must be +inf, never NaN (a NaN
+    compares False with every threshold and would be counted as a non-rejection)."""
+    rng = np.random.default_rng(7)
+    v, A = _scene(rng, 3, 4, 1.0, 3.0)
+    lf = TBackground(1.0, 3.0).logpdf(v)
+    lf[1, 2] = -np.inf
+    S = evalue_mix(v, A, lf, 0.05, prior_draws(rng.normal(size=(4, 6)), 50, rng), 1.0)
+    assert np.isposinf(S[1]) and np.all(np.isfinite(S[[0, 2]]))
