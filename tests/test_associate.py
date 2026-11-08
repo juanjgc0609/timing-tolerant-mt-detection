@@ -538,3 +538,23 @@ def test_quakemigrate_target_counts(tmp_path):
                 (ms / y / d / f"{n}_{c}.m").write_bytes(b"")
     (ms / "2009" / "021" / "B_3.m").unlink()
     assert Q.missing_waveforms(ms, ["A", "B"]) == [str(ms / "2009" / "021" / "B_3.m")]
+
+
+def test_stage_loss_oracle_and_match():
+    """experiments/exploratory/STAGE-LOSS: oracle picks hold every finite arrival, each matches its own event once,
+    and the SNR gate drops the weak ones."""
+    import importlib.util
+    import os
+    from ttmt.atlas.schema import Truth
+    p = os.path.join(os.path.dirname(__file__), "..", "experiments", "exploratory", "STAGE-LOSS", "stage_loss.py")
+    spec = importlib.util.spec_from_file_location("stage_loss", p)
+    SL = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(SL)
+    arr = np.array([[[1.0, 2.0], [1.5, np.nan]], [[1.3, 2.4], [1.8, 3.0]]])
+    tr = Truth(np.array(["a", "b"]), np.array([0.0, 0.3]), np.zeros((2, 3)), np.ones(2), arr,
+               np.array([[3.0, 0.5], [3.0, 3.0]]), 0.0, 10.0)
+    pk = SL.oracle_picks(tr)
+    assert len(pk) == 7
+    ev, n = SL.match(pk, tr)
+    assert (ev >= 0).all() and n.tolist() == [3, 4]
+    assert len(SL.oracle_picks(tr, snr_min=1.0)) == 6
