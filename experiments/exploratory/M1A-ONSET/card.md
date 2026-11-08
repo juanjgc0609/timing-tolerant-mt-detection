@@ -1,6 +1,7 @@
 # Experiment card: M1A-ONSET. Gate G-M1a, reading at the onset
 
-Stage: S1 (first step run 8 November 2026 on the owner's laptop: G-M1a FAILS, 0.87 < 0.90; second step declared)
+Stage: S1 (8 November 2026, owner's laptop: first step FAILED on CAL, 0.87 < 0.90; second step, declared before
+running, PASSED on the held-out EVAL events, 0.92 registered reader, 0.97 prior variant, read blocks only)
 Plan: T4.13 (step 2 of the build order of `especificacion-modelo-v2.md` §8). Exploratory and post hoc; no registered
 number changes.
 
@@ -66,9 +67,12 @@ Same laptop and environment, PhaseNet clone checked at 62005c6, CPU, about 16 s 
   stations, another arrival inside the +-2 s window; in several failures the nearest maximum is within 0.07 s of the
   reference. One event (712.2 s) shows a uniform -0.3 s shift on five high-q single-maximum readings: a reference
   (catalogue origin or location) problem, not a reading error.
-- Caveat, coverage: 42 of the 103 gated EVAL P blocks (and 9 of 47 on CAL) have no onset maximum >= 0.02 in the
-  window; the gate is measured on the read blocks. Those blocks stay "unread" in M4/M6 (prediction + lag), and
+- **Caveat, coverage**: 42 of the 103 gated EVAL P blocks (and 9 of 47 on CAL) have no onset maximum >= 0.02 in
+  the window; the gate is measured on the read blocks only (61 of 103). Counting the unread blocks as misses, P
+  within 0.25 s is 56/103 = 0.54 for the onset reader against 0.52 for the energy peak (which reads every gated
+  block): the gain of M1 is in precision, not in coverage. Those blocks stay "unread" in M4/M6 (prediction + lag), and
   PhaseNet's misses on low-SNR P are the C-regime loss of the stage diagnosis (PR #38), the target of the fine-tuning
   step (G-M1b).
 - Decision for the v2 loop: the "prior" reading (largest log q - (s - mu)^2 / (2 sigma^2)) becomes the default
-  onset reader, with sigma P 0.089 s, S 0.058 s from CAL.
+  onset reader, with sigma P 0.089 s, S 0.058 s from CAL: implemented as `OnsetReader(sigma=)` and
+  `ttmt.v2.loop.default_reader` (test `test_prior_reader_prefers_the_maximum_near_the_prediction`).

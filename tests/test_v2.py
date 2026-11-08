@@ -280,3 +280,12 @@ def test_refit_deflation_removes_an_offgrid_atom_even_with_a_wrong_amplitude():
     pred = np.ones((2, 3, 3))                                        # wrong amplitude: only marks the blocks
     R = deflate(MF.copy(), pred, tp, K, "refit")
     assert np.linalg.norm(R) < 1e-3 * np.linalg.norm(MF)
+
+
+def test_prior_reader_prefers_the_maximum_near_the_prediction():
+    q = np.zeros((1, 2, 100))
+    t = np.arange(100)
+    q[0, 0] = 0.9 * np.exp(-0.5 * ((t - 46.0) / 0.8) ** 2) + 0.5 * np.exp(-0.5 * ((t - 40.2) / 0.8) ** 2)
+    tp = np.array([[[40.0], [80.0]]])
+    assert abs(m1.OnsetReader(8).read(q, tp)[0, 0, 0] - 46.0) < 0.1                  # largest q: the far one
+    assert abs(m1.OnsetReader(8, sigma=(1.5, 1.0)).read(q, tp)[0, 0, 0] - 40.2) < 0.1  # prior: the near one
