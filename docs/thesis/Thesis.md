@@ -931,7 +931,7 @@ that it tunes four associator parameters as PyOcto does, and repeats 60 trials i
 0.179 in T and 0.292 in C), against 0.2589 for PyOcto; its configuration is frozen
 (`experiments/exploratory/COMPARATORS/frozen/phasenet+gamma_a4.json`) and replaces the earlier GaMMA ones. With the
 same budget and the same number of tuned parameters, but one search per method and no intervals, these numbers order
-neither method above the other; the comparison of the atlas will be made on its own reading data.
+neither method above the other.
 
 ---
 
