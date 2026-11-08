@@ -120,7 +120,11 @@ Fuente: `preregistration/drafts/taskR2_registration_DRAFT.md` y `docs/protocol/P
 > commit 449d39b): PhaseNet and PhaseNO pickers with GaMMA and PyOcto associators, EQNet, template matching where the
 > truth is not its own product, BOMP-PK and MT-FW; plus the best comparator re-run with the model's picker if that
 > picker is fine-tuned. Each method gets the same tuning budget: 60 configurations by the same random search, seed
-> list and development objective, every trial in a tuning ledger (ledger ⟨ruta, SHA-256⟩). All methods receive the
+> list and development objective, every trial in a tuning ledger: experiments/exploratory/ATLAS-0/tuning_ledger.csv (SHA-256
+> 759798e13279644ea7a00a85cf16ce06b9bc0eaab548f8f5ebf7639d108b15f0) and, for PhaseNet+GaMMA under ATLAS-0
+> amendment 4, tuning_ledger_a4.csv (SHA-256 25647b2aee9b8293df0c2076d25f989528b7856d144607b7bbc8ae3a0ce93359;
+> 60 trials, best trial 53); frozen configurations in experiments/exploratory/COMPARATORS/frozen/; ledgers of the
+> other comparators and of the model ⟨ruta, SHA-256⟩. All methods receive the
 > same waveforms, station list, velocity model and typed station terms. Evaluation on station subsets of 4 to 12
 > stations of the dense or nodal network ⟨nombre⟩, excluding the stations used to build the truth (network
 > decimation), subsets drawn by ⟨regla⟩ before the run. Replication unit: consecutive 1-hour time blocks within each
@@ -322,7 +326,7 @@ confirmatory tests (before development results)`. Campo único:
 
 > This registration fixes, before any phase-4 development result, the rule by which the confirmatory tests R2 and R3
 > will decide whether the model beats the comparators: docs/decisions/ADR-0008-single-beat-rule.md (accepted
-> 24 October 2026) and docs/protocol/PHASE6_SAP.md v0.1 (23 October 2026), attached, at commit 449d39b (main on 8 November 2026; use the main commit of the day of submission if it moved) of
+> 24 October 2026) and docs/protocol/PHASE6_SAP.md v0.1 (23 October 2026), attached, at commit 7d3f931 (main on 8 November 2026, after amendment 4's ledger; use the main commit of the day of submission if it moved) of
 > https://github.com/juanjgc0609/timing-tolerant-mt-detection. In short: target regime T = arrival separation
 > [0.1, 1) s at the median station; hit rule LOC+T-V; endpoint recall at 30 false detections per hour, weighted to
 > real prevalence; H1 superiority in T (block sign-flip), then H2 non-inferiority by 0.05 in the complement (clustered
@@ -345,11 +349,11 @@ Adjuntar ADR-0008, PHASE6_SAP.md, CR04_PREVALENCE.md y `experiments/exploratory/
 ## 7. Estado de los huecos (8 de noviembre de 2026)
 
 Llenos en esta rama: versión del SAP (0.1, en la descripción y en "Other" de R2) y commit de main del registro
-opcional (449d39b, que es también `reg/ATLAS-0/amendment-4`). Ningún otro hueco se puede llenar hoy sin inventar.
+opcional (7d3f931, main con el ledger a4; amendment-4 sigue en 449d39b). Ningún otro hueco se puede llenar hoy sin inventar.
 
 | Grupo | Huecos | De qué dependen |
 |:--|:--|:--|
-| A. De la corrida a4 de GaMMA | ledger de ajuste de todos los comparadores con su SHA-256 (R2 Study design, R3 por copia); por arrastre, la predicción y los insumos de `sample_size.py estimate` | GaMMA debe cerrar sus 60 configuraciones (`tuning_ledger_a4.csv`) para que el conjunto núcleo esté ajustado; sin eso G4 no se puede medir |
+| A. De la corrida a4 de GaMMA | **Lleno el 8 nov** (PR #40 fusionado): ledgers de ATLAS-0 y a4 con su SHA-256 y la carpeta de configuraciones congeladas (R2 Study design; R3 por copia). Siguen abiertos los ledgers de los demás comparadores (PhaseNO, EQNet, plantillas, BOMP-PK, MT-FW) y del modelo. Ojo: esos ledgers se ajustaron en la partición de desarrollo de ATLAS-0; si R2/R3 reajustan en el desarrollo de las redes reservadas (SAP 3.2), se reemplazan por los nuevos. La predicción y `sample_size.py estimate` pasan al grupo B | GaMMA debe cerrar sus 60 configuraciones (`tuning_ledger_a4.csv`) para que el conjunto núcleo esté ajustado; sin eso G4 no se puede medir |
 | B. De G4 (fase 4, necesita el modelo y A) | informe G4 y predicción; p0, rho, icc, m, k, f; rangos y nivel a2 del chequeo de diseño; B, n_T, n_C, h; potencia p y tamaño s; salidas de `sample_size.py` | Modelo congelado corrido en desarrollo |
 | C. De los datos reservados (T3.R4, T3.V, CR-04) | redes, secuencias, periodos, centros de datos, límites UTC, script de descarga; tarjeta de datos y su tag; red densa y catálogo; regla y semilla de subconjuntos; catálogo mejorado; sigma_t y pares que califican; tabla de prevalencia medida y Y %; bibliotecas de ruido y eventos de R3 (horas, M, km, n, c); script de inyección; límites declarados | Selección y sellado de los datos de fase 6; medición CR-04 en el portátil |
 | D. Del congelamiento y anclaje | tag y versión del modelo; tabla de procedencia de pesos (CR-22); scripts de elegibilidad y de análisis con SHA-256; archivo de registro, SHA-256, commit, Release `created_at`, `.ots`; semillas de R3 | Se llenan el día del anclaje, en ese orden (ADR-0004) |
