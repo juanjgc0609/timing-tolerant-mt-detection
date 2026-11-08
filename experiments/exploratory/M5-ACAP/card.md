@@ -126,3 +126,7 @@ numpy 1.26.4.
   - Move the transient robustness to the decision step: the e-value S_mix with a Student-t background (G-M5c), which
     bounds a transient's evidence by design (spec. M5, Theorem D.1(a)) instead of by a cap.
   - Not chosen: retuning c again. EVAL is now spent, so any new c would have no held-out data left to confirm it.
+
+## Decision (owner, 8 November 2026)
+The owner chose the pivot: keep the cap 6 for ranking, retire ACAP as M5's ranking statistic (declared with these
+numbers), and move to the e-value S_mix (G-M5c). The ADR number comes from the planner's ledger.
