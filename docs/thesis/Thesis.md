@@ -906,23 +906,28 @@ two-subevent sources, and a second real noise network for the bounded-influence 
 every future registration. These items, with the failure atlas and the new model, form the separate doctoral line of
 ADR-0006.
 
-**Status of the doctoral line (provisional, 2 November 2026).** None of the following is a result of this thesis or
+**Status of the doctoral line (provisional, 8 November 2026).** None of the following is a result of this thesis or
 a claim that any method, ours or another, is better than GaMMA; the numbers are reported so that the text matches the
 repository, and every one of them may change. Before the failure atlas reads any data, its card
 (`experiments/exploratory/ATLAS-0/card.md`) requires gate G3a: two of the comparators must reproduce a published
-result within 5 per cent (`experiments/exploratory/COMPARATORS/README.md`). On the crustal synthetic scenario of
-Puente et al. (2025), run on the 54 SCSN stations of the fixed SCEDC query, PyOcto reproduced 9 of 9 conditions and
-GaMMA 0 of 8, a failure that repeats and is not yet explained. PhaseNet on ETHZ was not reproduced because it came
-out better than published (P-pick MAE 0.086 s against 0.12 s, outside the two-sided tolerance), probably because the
-public weights are not those of the paper (inferred). QuakeMigrate on the Rutford icequake example of Winder et al.
-(2026) is the second target and is still running; its trigger count equals the published 49,249. The gate file
-(`experiments/exploratory/ATLAS-0/gate.json`) has not yet been written from these runs, so the gate is not yet
-passed. In the registered tuning of 31 October 2026 on the development partition, PhaseNet with PyOcto reached an
-objective of 0.26 (0.2589, 60 of 60 valid trials), and its configuration is frozen. PhaseNet with GaMMA reached
-0.2338, but only 23 of its 60 trials ran (error E63): the GMM method of the pinned GaMMA cannot run, so the two
-searches had unequal budgets and their comparison is provisional. Amendment 3 of the card, anchored as
-`reg/ATLAS-0/amendment-3` (commit 83c66e4), pins GaMMA to BGMM with the registered draws kept and repeats 60 BGMM
-trials in a new ledger; until that run is done, the GaMMA configuration is provisional.
+result within 5 per cent (`experiments/exploratory/COMPARATORS/README.md`). The gate passed with two of the two
+targets required (`experiments/exploratory/ATLAS-0/gate.json`, evidence in `experiments/exploratory/COMPARATORS/g3a/`).
+PyOcto reproduced 9 of 9 conditions of the crustal synthetic scenario of Puente et al. (2025) on the 54 SCSN stations
+of the fixed SCEDC query, and QuakeMigrate 1.2.2 reproduced the Rutford icequake example of Winder et al. (2026)
+exactly (49,249 events triggered, 47,354 located and 20,015 after the catalogue filter). The QuakeMigrate run has four
+declared deviations, none of which changes a parameter: newer dependencies, one waveform file fetched again, a station
+that is all zeros in the public data, and `locate` resumed at event 48,454 with the same settings. Two targets did not
+pass. GaMMA reproduced 0 of 8 Puente conditions: on this sparse list its DBSCAN pre-clustering with the published
+setting (20 samples) splits and drops events, and its recall rises from 0.00 to 0.93 as that setting goes from 20 to
+3 (diagnosis, not counted by the gate). PhaseNet on ETHZ came out better than published (P-pick MAE 0.086 s against
+0.12 s, outside the two-sided tolerance), probably because the public weights are not those of the paper (inferred).
+In the registered tuning of 31 October 2026 on the development partition, PhaseNet with PyOcto reached an objective of
+0.26 (0.2589, 60 of 60 valid trials), and its configuration is frozen. PhaseNet with GaMMA reached 0.2338 with only
+23 of its 60 trials run (error E63: the GMM method of the pinned GaMMA cannot run), so the two searches had unequal
+budgets. Amendment 3 (`reg/ATLAS-0/amendment-3`, commit 83c66e4) pinned GaMMA to BGMM; its run was stopped and is not
+used. Amendment 4 (`reg/ATLAS-0/amendment-4`, commit 449d39b) adds GaMMA's two DBSCAN parameters to its search, so
+that it tunes four associator parameters as PyOcto does, and repeats 60 trials in a new ledger. That run is in
+progress, and until it ends the GaMMA configuration and any comparison with it are provisional.
 
 ---
 
