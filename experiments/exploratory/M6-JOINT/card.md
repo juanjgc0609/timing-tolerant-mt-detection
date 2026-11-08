@@ -20,22 +20,27 @@ single events? G-M6a asks for +0.10 of pair recall at 0.1-1 s.
 Simulation as M6C-SUBSAMPLE (8-station ring, 1.5 km lattice, homogeneous medium, synthetic picker) with raw-trace
 Gaussian noise; SNR 12 (median strong-block peak / noise sd). Two sources at dtau 0.1, 0.25, 0.5, 1 s, epicentres
 6-14 km apart ("far") or 1.5-5 km ("near", inside the exclusion). 20 scenes per cell, 40 + 40 single-source controls,
-seed 20261108. 6.7 min on 4 cloud cores, after an 8-control / 3-scene smoke run.
+seed 20261108. 10 min on 4 cloud cores (with the control column), after smoke runs of 1-3 scenes.
 
-## Result (`run_out.txt`)
-| stratum | dtau | greedy | M6, no test | M6 |
-|:--|--:|--:|--:|--:|
-| near | 0.10 | 0.45 | 0.95 | **0.95** |
-| near | 0.25 | 0.35 | 1.00 | **1.00** |
-| near | 0.50 | 0.50 | 0.75 | **0.75** |
-| near | 1.00 | 0.85 | 1.00 | **1.00** |
-| far | 0.10-1.00 | 0.95-1.00 | same | same |
+## Result (`run_out.txt`, with the review's control column)
+| stratum | dtau | greedy (5 km) | greedy, no exclusion | M6, no test | M6 |
+|:--|--:|--:|--:|--:|--:|
+| near | 0.10 | 0.45 | 0.95 | 0.95 | **0.95** |
+| near | 0.25 | 0.35 | 1.00 | 1.00 | **1.00** |
+| near | 0.50 | 0.50 | 0.70 | 0.75 | **0.75** |
+| near | 1.00 | 0.85 | 1.00 | 1.00 | **1.00** |
+| far | 0.10-1.00 | 0.95-1.00 | same | same | same |
 
-Pair recall (both sources hit, LOC+T). Controls: 0 false splits of 40 single events at thr 10.8.
-- **The G-M6a proxy passes in the near stratum** (+0.15 to +0.65 of pair recall), where the 5 km exclusion of the
-  greedy loop suppresses the second event. In the far stratum the greedy loop already finds both (0.95-1.00) and M6
-  neither helps nor hurts.
-- The resolvability test never rejected a true pair here and removed every spurious split in the controls.
+Pair recall (both sources hit, LOC+T). False splits of 40 single events (fresh control): greedy without exclusion
+**40 of 40**, M6 at thr 10.8 **0 of 40** (the greedy loop with the exclusion cannot split by construction).
+- **The recall gain on near pairs comes from removing the 5 km exclusion, not from the joint refit**: the greedy
+  loop without the exclusion recovers the same pairs (0.70-1.00 against 0.75-1.00 for M6).
+- **What M6 adds is that removing the exclusion becomes admissible**: without it the greedy loop splits every single
+  event into two atoms; the resolvability test removes all of those splits and keeps every true pair here. The
+  joint refit adds the deflation quality (G-M6c with pairs, measured in the noise-free runs) and +0.05 at 0.5 s.
+- So the contribution to claim is the resolvability test with the joint refit as a pair, against "exclusion" and
+  "no exclusion": same recall as no exclusion, the false-split rate of the exclusion.
+- The resolvability test never rejected a true pair here.
 - Diagnosis found while building it: the free one-event fit first used a bounded local search, whose cost oscillates
   with the response lobes; it ended on side lobes and was worse than the tensor fit, so the test accepted every
   split (gains around +1700). A grid over whole samples before the local search fixed it (median gain of a spurious

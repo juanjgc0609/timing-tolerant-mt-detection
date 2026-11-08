@@ -9,6 +9,8 @@ synthetic picker as M6C-SUBSAMPLE (onset bumps of 0.04 s, onset error N(0, 0.02 
 
 Methods (kmax 2 each):
   greedy   ttmt.v2.loop.v2_loop (onset prior reading, ACAP, waveform-refined deflation, 5 km exclusion);
+  greedy0  the same greedy loop without the 5 km exclusion (min_sep 0: only the selected node is excluded), the
+           control asked by the review: how much of M6's gain on near pairs is only the removed exclusion;
   m6-none  adcg_loop with no resolvability test (thr None: every candidate kept);
   m6       adcg_loop with the test, thr = z_e^2 (3.29^2, Corollary A.1) + max(0, 95th percentile of the RSS gain of
            a spurious second atom near the first on a noise-only control: one source + noise, separate seeds).
@@ -113,21 +115,23 @@ def main():
     thr = Z_E2 + max(0.0, float(np.quantile(gains, 0.95)) if gains else 0.0)
     print(f"control: {NCTRL} single sources, {len(gains)} spurious near atoms, RSS gain median / thr / max "
           f"{np.median(gains) if gains else float('nan'):.1f} / {thr:.1f} / {max(gains) if gains else float('nan'):.1f}")
-    splits = 0
+    splits = {"greedy0": 0, "m6": 0}
     for c in range(NCTRL):
         r = np.random.default_rng([SEED, 2, c])
         srcs = [source(r)]
         Y, q, _F = scene(r, STA, srcs, zsd)
-        a = adcg_loop(E, Y, q, 2, lag, thr=thr)
-        splits += sum(1 for x in a[1:] if np.linalg.norm(x["x"][:2] - a[0]["x"][:2]) <= 5.0
-                      and abs(x["tau"] - a[0]["tau"]) <= 1.5)
-    print(f"fresh control: false splits at thr {thr:.1f}: {splits} of {NCTRL}\n")
+        for k, a in (("greedy0", v2_loop(E, Y, q, 2, lag, min_sep=0.0)), ("m6", adcg_loop(E, Y, q, 2, lag, thr=thr))):
+            splits[k] += sum(1 for x in a[1:] if np.linalg.norm(x["x"][:2] - a[0]["x"][:2]) <= 5.0
+                             and abs(x["tau"] - a[0]["tau"]) <= 1.5)
+    print(f"fresh control: false splits of {NCTRL} single events: greedy0 {splits['greedy0']}, "
+          f"m6 (thr {thr:.1f}) {splits['m6']}\n")
 
-    print(f"{'stratum':7s} {'dtau':>5s} | {'pair recall':^26s} | {'source recall':^26s}")
-    print(f"{'':7s} {'':>5s} | {'greedy':>8s} {'m6-none':>8s} {'m6':>8s} | {'greedy':>8s} {'m6-none':>8s} {'m6':>8s}")
+    names = ("greedy", "greedy0", "m6-none", "m6")
+    print(f"{'stratum':7s} {'dtau':>5s} | {'pair recall':^35s} | {'source recall':^35s}")
+    print(f"{'':7s} {'':>5s} | " + " ".join(f"{k:>8s}" for k in names) + " | " + " ".join(f"{k:>8s}" for k in names))
     for sname, sep in STRATA.items():
         for dtau in DTAUS:
-            pr = {k: 0 for k in ("greedy", "m6-none", "m6")}
+            pr = {k: 0 for k in names}
             sr = dict(pr)
             for rep in range(NREP):
                 r = np.random.default_rng([SEED, 3, int(100 * dtau), len(sname), rep])
@@ -136,6 +140,7 @@ def main():
                 srcs = [s1, s2]
                 Y, q, _F = scene(r, STA, srcs, zsd)
                 res = {"greedy": v2_loop(E, Y, q, 2, lag),
+                       "greedy0": v2_loop(E, Y, q, 2, lag, min_sep=0.0),
                        "m6-none": adcg_loop(E, Y, q, 2, lag, thr=None),
                        "m6": adcg_loop(E, Y, q, 2, lag, thr=thr)}
                 for k, a in res.items():
