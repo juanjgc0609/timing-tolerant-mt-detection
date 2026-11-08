@@ -1,0 +1,214 @@
+# Tarea 2C - comparadores cercanos, metodo convexo y replicacion por red (analyze_2c.py)
+
+Recall de eventos a eventos falsos realizados por ventana <= 0.1 / <= 0.25 (curva FROC exacta, punto de operacion elegido sobre la propia evaluacion). Diferencias: punto [IC 95%]. W = bootstrap pareado por ventanas; N = bootstrap por red; H = bootstrap jerarquico (redes, luego ventanas). 2000 replicas; punto de operacion y maximo re-elegidos en cada replica.
+
+## Controles
+
+- thin 2024 4 st.: parte (i) 5 redes, control de red y MT-FW+SC exacto (ventanas 0-1) correcto; ventanas 2A emparejadas 100 (distintas 0); parte (ii) 25 redes, MT-FW+SC certificado = denso en 50 ventanas; nucleos [(('Katmai', 'libscipy_openblas-6cdc3b4a.so'), ('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'))]
+- thin 2024 6 st.: parte (i) 5 redes, control de red y MT-FW+SC exacto (ventanas 0-1) correcto; ventanas 2A emparejadas 100 (distintas 0); parte (ii) 25 redes, MT-FW+SC certificado = denso en 50 ventanas; nucleos [(('Katmai', 'libscipy_openblas-6cdc3b4a.so'), ('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'))]
+- thin 2024 one-sided 8: parte (i) 5 redes, control de red y MT-FW+SC exacto (ventanas 0-1) correcto; ventanas 2A emparejadas 100 (distintas 0); parte (ii) 25 redes, MT-FW+SC certificado = denso en 50 ventanas; nucleos [(('Katmai', 'libscipy_openblas-6cdc3b4a.so'), ('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'))]
+- thin 7331 4 st.: parte (i) 5 redes, control de red y MT-FW+SC exacto (ventanas 0-1) correcto; ventanas 2A emparejadas 100 (distintas 0); parte (ii) 25 redes, MT-FW+SC certificado = denso en 50 ventanas; nucleos [(('Katmai', 'libscipy_openblas-6cdc3b4a.so'), ('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so')), (('SkylakeX', 'libscipy_openblas-6cdc3b4a.so'), ('SkylakeX', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'))]
+- thin 7331 6 st.: parte (i) 5 redes, control de red y MT-FW+SC exacto (ventanas 0-1) correcto; ventanas 2A emparejadas 100 (distintas 0); parte (ii) 25 redes, MT-FW+SC certificado = denso en 50 ventanas; nucleos [(('Katmai', 'libscipy_openblas-6cdc3b4a.so'), ('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so')), (('SkylakeX', 'libscipy_openblas-6cdc3b4a.so'), ('SkylakeX', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'))]
+- thin 7331 one-sided 8: parte (i) 5 redes, control de red y MT-FW+SC exacto (ventanas 0-1) correcto; ventanas 2A emparejadas 100 (distintas 0); parte (ii) 25 redes, MT-FW+SC certificado = denso en 50 ventanas; nucleos [(('Katmai', 'libscipy_openblas-6cdc3b4a.so'), ('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'))]
+- strong 2024 4 st.: parte (i) 5 redes, control de red y MT-FW+SC exacto (ventanas 0-1) correcto; ventanas 2A emparejadas 100 (distintas 0); parte (ii) 25 redes, MT-FW+SC certificado = denso en 50 ventanas; nucleos [(('Katmai', 'libscipy_openblas-6cdc3b4a.so'), ('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'))]
+- strong 2024 6 st.: parte (i) 5 redes, control de red y MT-FW+SC exacto (ventanas 0-1) correcto; ventanas 2A emparejadas 100 (distintas 0); parte (ii) 25 redes, MT-FW+SC certificado = denso en 50 ventanas; nucleos [(('Katmai', 'libscipy_openblas-6cdc3b4a.so'), ('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'))]
+- strong 2024 one-sided 8: parte (i) 5 redes, control de red y MT-FW+SC exacto (ventanas 0-1) correcto; ventanas 2A emparejadas 100 (distintas 0); parte (ii) 25 redes, MT-FW+SC certificado = denso en 50 ventanas; nucleos [(('Katmai', 'libscipy_openblas-6cdc3b4a.so'), ('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'))]
+- strong 7331 4 st.: parte (i) 5 redes, control de red y MT-FW+SC exacto (ventanas 0-1) correcto; ventanas 2A emparejadas 100 (distintas 0); parte (ii) 25 redes, MT-FW+SC certificado = denso en 50 ventanas; nucleos [(('Katmai', 'libscipy_openblas-6cdc3b4a.so'), ('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so')), (('SkylakeX', 'libscipy_openblas-6cdc3b4a.so'), ('SkylakeX', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'))]
+- strong 7331 6 st.: parte (i) 5 redes, control de red y MT-FW+SC exacto (ventanas 0-1) correcto; ventanas 2A emparejadas 100 (distintas 0); parte (ii) 25 redes, MT-FW+SC certificado = denso en 50 ventanas; nucleos [(('Katmai', 'libscipy_openblas-6cdc3b4a.so'), ('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so')), (('SkylakeX', 'libscipy_openblas-6cdc3b4a.so'), ('SkylakeX', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'))]
+- strong 7331 one-sided 8: parte (i) 5 redes, control de red y MT-FW+SC exacto (ventanas 0-1) correcto; ventanas 2A emparejadas 100 (distintas 0); parte (ii) 25 redes, MT-FW+SC certificado = denso en 50 ventanas; nucleos [(('Katmai', 'libscipy_openblas-6cdc3b4a.so'), ('Prescott', 'libopenblas64_p-r0-0cf96a72.3.23.dev.so'))]
+
+## Regimen thin: parte (i), redes 0-4 de 2A (100 ventanas por celda)
+
+### Tabla 1 (thin). Recall a <= 0.1 / <= 0.25
+
+| Celda (semilla) | eventos | MT-FW+SC | BOMP+SC | MTSTACK+SC | GL-FW+SC | QM-3C+SC | GL-FW+SC-TB (expl.) |
+|:--|--:|:-:|:-:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | 87 | 0.322/0.517 | 0.149/0.230 | 0.092/0.161 | 0.057/0.161 | 0.184/0.253 | 0.057/0.161 |
+| 6 st. (2024) | 72 | 0.431/0.542 | 0.083/0.222 | 0.069/0.139 | 0.069/0.111 | 0.278/0.306 | 0.083/0.111 |
+| one-sided 8 (2024) | 71 | 0.549/0.648 | 0.169/0.282 | 0.070/0.225 | 0.070/0.169 | 0.352/0.380 | 0.085/0.183 |
+| 4 st. (7331) | 78 | 0.321/0.513 | 0.154/0.256 | 0.077/0.154 | 0.077/0.218 | 0.154/0.167 | 0.077/0.218 |
+| 6 st. (7331) | 68 | 0.691/0.794 | 0.176/0.294 | 0.118/0.265 | 0.118/0.206 | 0.235/0.338 | 0.132/0.206 |
+| one-sided 8 (7331) | 81 | 0.642/0.765 | 0.160/0.185 | 0.123/0.173 | 0.086/0.160 | 0.469/0.481 | 0.086/0.160 |
+
+### Tabla 2 (thin). 2C-a: MT-FW+SC - max(BOMP+SC, MTSTACK+SC) (mejor comparador por celda y tope), y contra cada uno (W)
+
+| Celda (semilla) | a 0.1 | a 0.25 | 2C-a (>= 0.05 a 0.25) | - BOMP+SC (0.1 / 0.25) | - MTSTACK+SC (0.1 / 0.25) |
+|:--|:-:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | BOMP+SC: +0.172 W[+0.056, +0.329] N[+0.045, +0.270] | BOMP+SC: +0.287 W[+0.099, +0.416] N[+0.137, +0.441] | si | +0.172 [+0.056, +0.329] / +0.287 [+0.099, +0.416] | +0.230 [+0.101, +0.391] / +0.356 [+0.172, +0.491] |
+| 6 st. (2024) | BOMP+SC: +0.347 W[+0.186, +0.471] N[+0.147, +0.449] | BOMP+SC: +0.319 W[+0.145, +0.462] N[+0.014, +0.493] | si | +0.347 [+0.194, +0.473] / +0.319 [+0.145, +0.463] | +0.361 [+0.218, +0.506] / +0.403 [+0.253, +0.544] |
+| one-sided 8 (2024) | BOMP+SC: +0.380 W[+0.206, +0.538] N[+0.278, +0.468] | BOMP+SC: +0.366 W[+0.132, +0.473] N[+0.157, +0.465] | si | +0.380 [+0.206, +0.538] / +0.366 [+0.132, +0.473] | +0.479 [+0.282, +0.620] / +0.423 [+0.271, +0.580] |
+| 4 st. (7331) | BOMP+SC: +0.167 W[-0.013, +0.373] N[+0.047, +0.380] | BOMP+SC: +0.256 W[+0.012, +0.422] N[+0.071, +0.356] | si | +0.167 [-0.013, +0.373] / +0.256 [+0.012, +0.425] | +0.244 [+0.077, +0.418] / +0.359 [+0.132, +0.493] |
+| 6 st. (7331) | BOMP+SC: +0.515 W[+0.333, +0.667] N[+0.397, +0.590] | BOMP+SC: +0.500 W[+0.214, +0.621] N[+0.164, +0.608] | si | +0.515 [+0.337, +0.667] / +0.500 [+0.214, +0.633] | +0.574 [+0.400, +0.729] / +0.529 [+0.354, +0.688] |
+| one-sided 8 (7331) | BOMP+SC: +0.481 W[+0.301, +0.630] N[+0.250, +0.636] | BOMP+SC: +0.580 W[+0.372, +0.679] N[+0.363, +0.724] | si | +0.481 [+0.301, +0.630] / +0.580 [+0.372, +0.679] | +0.519 [+0.347, +0.659] / +0.593 [+0.427, +0.711] |
+
+- Regla 2C-a (thin): semilla 2024: 3/3 celdas (4 st. si +0.287, 6 st. si +0.319, one-sided 8 si +0.366); semilla 7331: 3/3 celdas (4 st. si +0.256, 6 st. si +0.500, one-sided 8 si +0.580) -> SE CUMPLE (exploratorio: se cumple en 100% de las replicas W)
+
+### Tabla 3 (thin). 2C-b: GL-FW+SC - MT-FW+SC (descriptiva; iguala si |dif| < 0.05)
+
+| Celda (semilla) | a 0.1 | a 0.25 |
+|:--|:-:|:-:|
+| 4 st. (2024) | -0.264 W[-0.411, -0.141] N[-0.338, -0.118] por debajo (TB -0.264; GL - BOMP -0.092) | -0.356 W[-0.507, -0.186] N[-0.530, -0.194] por debajo (TB -0.356; GL - BOMP -0.069) |
+| 6 st. (2024) | -0.361 W[-0.516, -0.229] N[-0.472, -0.257] por debajo (TB -0.347; GL - BOMP -0.014) | -0.431 W[-0.568, -0.280] N[-0.588, -0.200] por debajo (TB -0.431; GL - BOMP -0.111) |
+| one-sided 8 (2024) | -0.479 W[-0.634, -0.324] N[-0.560, -0.353] por debajo (TB -0.465; GL - BOMP -0.099) | -0.479 W[-0.613, -0.339] N[-0.667, -0.333] por debajo (TB -0.465; GL - BOMP -0.113) |
+| 4 st. (7331) | -0.244 W[-0.423, -0.072] N[-0.405, -0.122] por debajo (TB -0.244; GL - BOMP -0.077) | -0.295 W[-0.447, -0.110] N[-0.425, -0.163] por debajo (TB -0.295; GL - BOMP -0.038) |
+| 6 st. (7331) | -0.574 W[-0.731, -0.430] N[-0.701, -0.468] por debajo (TB -0.559; GL - BOMP -0.059) | -0.588 W[-0.686, -0.423] N[-0.714, -0.436] por debajo (TB -0.588; GL - BOMP -0.088) |
+| one-sided 8 (7331) | -0.556 W[-0.697, -0.389] N[-0.769, -0.306] por debajo (TB -0.556; GL - BOMP -0.074) | -0.605 W[-0.720, -0.435] N[-0.770, -0.438] por debajo (TB -0.605; GL - BOMP -0.025) |
+
+Diagnosticos de GL-FW+SC (thin, 600 ventanas, 2250 lambdas resueltos): lambdas resueltos por ventana 2-14 (mediana 3); parada: registro completo en 600, trayectoria agotada en 0; brecha relativa max 1.4e-08 (en el ultimo lambda: mediana 2.7e-14, max 1.4e-08); brecha / (lambda Omega) max 9.0e-10; KKT fuera del soporte max 1.000000000; max |c/lambda - 1| en el soporte 8.7e-10; re-solves 0; soporte final mediana 12, max 47; ventanas con < 5 eventos en el registro 0; eventos con puntaje empatado dentro de la ventana: 1694 de 3000 (ventanas con algun empate 587).
+
+## Regimen strong: parte (i), redes 0-4 de 2A (100 ventanas por celda)
+
+### Tabla 1 (strong). Recall a <= 0.1 / <= 0.25
+
+| Celda (semilla) | eventos | MT-FW+SC | BOMP+SC | MTSTACK+SC | GL-FW+SC | QM-3C+SC | GL-FW+SC-TB (expl.) |
+|:--|--:|:-:|:-:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | 77 | 0.312/0.390 | 0.195/0.260 | 0.078/0.182 | 0.039/0.182 | 0.117/0.130 | 0.052/0.182 |
+| 6 st. (2024) | 74 | 0.378/0.486 | 0.095/0.162 | 0.081/0.135 | 0.081/0.135 | 0.122/0.162 | 0.095/0.135 |
+| one-sided 8 (2024) | 83 | 0.313/0.422 | 0.108/0.205 | 0.096/0.157 | 0.084/0.145 | 0.157/0.193 | 0.084/0.145 |
+| 4 st. (7331) | 78 | 0.128/0.218 | 0.103/0.141 | 0.103/0.115 | 0.077/0.141 | 0.038/0.051 | 0.077/0.154 |
+| 6 st. (7331) | 84 | 0.333/0.417 | 0.071/0.214 | 0.036/0.119 | 0.024/0.107 | 0.179/0.250 | 0.024/0.107 |
+| one-sided 8 (7331) | 75 | 0.613/0.707 | 0.067/0.253 | 0.080/0.173 | 0.080/0.133 | 0.253/0.293 | 0.080/0.133 |
+
+### Tabla 2 (strong). 2C-a: MT-FW+SC - max(BOMP+SC, MTSTACK+SC) (mejor comparador por celda y tope), y contra cada uno (W)
+
+| Celda (semilla) | a 0.1 | a 0.25 | 2C-a (>= 0.05 a 0.25) | - BOMP+SC (0.1 / 0.25) | - MTSTACK+SC (0.1 / 0.25) |
+|:--|:-:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | BOMP+SC: +0.117 W[-0.044, +0.237] N[-0.024, +0.181] | BOMP+SC: +0.130 W[+0.000, +0.247] N[+0.069, +0.240] | si | +0.117 [-0.044, +0.237] / +0.130 [+0.000, +0.250] | +0.234 [+0.051, +0.349] / +0.208 [+0.066, +0.323] |
+| 6 st. (2024) | BOMP+SC: +0.284 W[+0.120, +0.447] N[+0.155, +0.451] | BOMP+SC: +0.324 W[+0.169, +0.471] N[+0.183, +0.493] | si | +0.284 [+0.120, +0.447] / +0.324 [+0.169, +0.473] | +0.297 [+0.150, +0.463] / +0.351 [+0.239, +0.500] |
+| one-sided 8 (2024) | BOMP+SC: +0.205 W[+0.065, +0.330] N[+0.059, +0.367] | BOMP+SC: +0.217 W[+0.072, +0.370] N[+0.105, +0.354] | si | +0.205 [+0.065, +0.330] / +0.217 [+0.072, +0.370] | +0.217 [+0.092, +0.359] / +0.265 [+0.133, +0.411] |
+| 4 st. (7331) | BOMP+SC: +0.026 W[-0.074, +0.156] N[-0.064, +0.155] | BOMP+SC: +0.077 W[-0.038, +0.194] N[-0.051, +0.198] | si | +0.026 [-0.063, +0.161] / +0.077 [-0.036, +0.197] | +0.026 [-0.064, +0.169] / +0.103 [-0.015, +0.225] |
+| 6 st. (7331) | BOMP+SC: +0.262 W[+0.091, +0.410] N[+0.152, +0.373] | BOMP+SC: +0.202 W[+0.051, +0.377] N[+0.043, +0.345] | si | +0.262 [+0.091, +0.410] / +0.202 [+0.051, +0.378] | +0.298 [+0.149, +0.432] / +0.298 [+0.162, +0.459] |
+| one-sided 8 (7331) | MTSTACK+SC: +0.533 W[+0.365, +0.688] N[+0.361, +0.633] | BOMP+SC: +0.453 W[+0.290, +0.596] N[+0.270, +0.589] | si | +0.547 [+0.377, +0.695] / +0.453 [+0.291, +0.607] | +0.533 [+0.368, +0.694] / +0.533 [+0.375, +0.667] |
+
+- Regla 2C-a (strong): semilla 2024: 3/3 celdas (4 st. si +0.130, 6 st. si +0.324, one-sided 8 si +0.217); semilla 7331: 3/3 celdas (4 st. si +0.077, 6 st. si +0.202, one-sided 8 si +0.453) -> SE CUMPLE (exploratorio: se cumple en 99% de las replicas W)
+
+### Tabla 3 (strong). 2C-b: GL-FW+SC - MT-FW+SC (descriptiva; iguala si |dif| < 0.05)
+
+| Celda (semilla) | a 0.1 | a 0.25 |
+|:--|:-:|:-:|
+| 4 st. (2024) | -0.273 W[-0.366, -0.072] N[-0.329, -0.148] por debajo (TB -0.260; GL - BOMP -0.156) | -0.208 W[-0.343, -0.074] N[-0.373, -0.136] por debajo (TB -0.208; GL - BOMP -0.078) |
+| 6 st. (2024) | -0.297 W[-0.453, -0.137] N[-0.446, -0.183] por debajo (TB -0.284; GL - BOMP -0.014) | -0.351 W[-0.472, -0.215] N[-0.494, -0.234] por debajo (TB -0.351; GL - BOMP -0.027) |
+| one-sided 8 (2024) | -0.229 W[-0.373, -0.114] N[-0.402, -0.114] por debajo (TB -0.229; GL - BOMP -0.024) | -0.277 W[-0.424, -0.157] N[-0.493, -0.168] por debajo (TB -0.277; GL - BOMP -0.060) |
+| 4 st. (7331) | -0.051 W[-0.167, +0.049] N[-0.175, +0.038] por debajo (TB -0.051; GL - BOMP -0.026) | -0.077 W[-0.195, +0.051] N[-0.190, +0.060] por debajo (TB -0.064; GL - BOMP +0.000) |
+| 6 st. (7331) | -0.310 W[-0.436, -0.165] N[-0.429, -0.210] por debajo (TB -0.310; GL - BOMP -0.048) | -0.310 W[-0.486, -0.172] N[-0.518, -0.219] por debajo (TB -0.310; GL - BOMP -0.107) |
+| one-sided 8 (7331) | -0.533 W[-0.685, -0.400] N[-0.661, -0.446] por debajo (TB -0.533; GL - BOMP +0.013) | -0.573 W[-0.683, -0.417] N[-0.667, -0.436] por debajo (TB -0.573; GL - BOMP -0.120) |
+
+Diagnosticos de GL-FW+SC (strong, 600 ventanas, 2203 lambdas resueltos): lambdas resueltos por ventana 2-13 (mediana 3); parada: registro completo en 600, trayectoria agotada en 0; brecha relativa max 1.1e-08 (en el ultimo lambda: mediana 3.7e-14, max 1.1e-08); brecha / (lambda Omega) max 7.8e-10; KKT fuera del soporte max 1.000000000; max |c/lambda - 1| en el soporte 8.2e-10; re-solves 0; soporte final mediana 11, max 40; ventanas con < 5 eventos en el registro 0; eventos con puntaje empatado dentro de la ventana: 1654 de 3000 (ventanas con algun empate 585).
+
+## Regimen thin: 2C-c, 30 redes por celda (redes 0-4 de 2A con 20 ventanas + 25 nuevas con 12)
+
+### Tabla 4 (thin). Recall a <= 0.1 / <= 0.25 (todas las ventanas de las 30 redes)
+
+| Celda (semilla) | redes | ventanas | eventos | MT-FW+SC | QM-3C+SC | BOMP+SC | MTSTACK+SC |
+|:--|--:|--:|--:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | 30 | 400 | 308 | 0.442/0.542 | 0.156/0.214 | 0.123/0.250 | 0.071/0.146 |
+| 6 st. (2024) | 30 | 400 | 313 | 0.463/0.617 | 0.256/0.300 | 0.099/0.275 | 0.061/0.144 |
+| one-sided 8 (2024) | 30 | 400 | 314 | 0.548/0.646 | 0.341/0.373 | 0.137/0.277 | 0.073/0.194 |
+| 4 st. (7331) | 30 | 400 | 307 | 0.319/0.463 | 0.121/0.160 | 0.169/0.264 | 0.072/0.166 |
+| 6 st. (7331) | 30 | 400 | 308 | 0.562/0.672 | 0.279/0.338 | 0.133/0.295 | 0.091/0.208 |
+| one-sided 8 (7331) | 30 | 400 | 326 | 0.525/0.632 | 0.371/0.414 | 0.150/0.285 | 0.101/0.190 |
+
+### Tabla 5 (thin). MT-FW+SC menos cada comparador: punto [IC 95% H]; p unilateral bootstrap; p de Holm (familia de 36 comparaciones del regimen, nivel 0.025)
+
+| Celda (semilla) | comparador | a 0.1 | a 0.25 |
+|:--|:--|:-:|:-:|
+| 4 st. (2024) | QM-3C+SC | +0.286 [+0.136, +0.409] p=0.0005 pHolm=0.0180 * | +0.328 [+0.237, +0.442] p=0.0005 pHolm=0.0180 * |
+| 4 st. (2024) | BOMP+SC | +0.318 [+0.175, +0.432] p=0.0005 pHolm=0.0180 * | +0.292 [+0.186, +0.408] p=0.0005 pHolm=0.0180 * |
+| 4 st. (2024) | MTSTACK+SC | +0.370 [+0.222, +0.482] p=0.0005 pHolm=0.0180 * | +0.396 [+0.283, +0.515] p=0.0005 pHolm=0.0180 * |
+| 6 st. (2024) | QM-3C+SC | +0.208 [+0.040, +0.332] p=0.0070 pHolm=0.0210 * | +0.316 [+0.219, +0.407] p=0.0005 pHolm=0.0180 * |
+| 6 st. (2024) | BOMP+SC | +0.364 [+0.190, +0.466] p=0.0005 pHolm=0.0180 * | +0.342 [+0.216, +0.455] p=0.0005 pHolm=0.0180 * |
+| 6 st. (2024) | MTSTACK+SC | +0.403 [+0.225, +0.511] p=0.0005 pHolm=0.0180 * | +0.473 [+0.343, +0.576] p=0.0005 pHolm=0.0180 * |
+| one-sided 8 (2024) | QM-3C+SC | +0.207 [+0.089, +0.358] p=0.0005 pHolm=0.0180 * | +0.274 [+0.183, +0.370] p=0.0005 pHolm=0.0180 * |
+| one-sided 8 (2024) | BOMP+SC | +0.411 [+0.293, +0.501] p=0.0005 pHolm=0.0180 * | +0.369 [+0.280, +0.470] p=0.0005 pHolm=0.0180 * |
+| one-sided 8 (2024) | MTSTACK+SC | +0.475 [+0.350, +0.566] p=0.0005 pHolm=0.0180 * | +0.452 [+0.343, +0.542] p=0.0005 pHolm=0.0180 * |
+| 4 st. (7331) | QM-3C+SC | +0.199 [+0.093, +0.282] p=0.0005 pHolm=0.0180 * | +0.303 [+0.180, +0.393] p=0.0005 pHolm=0.0180 * |
+| 4 st. (7331) | BOMP+SC | +0.150 [+0.032, +0.249] p=0.0090 pHolm=0.0210 * | +0.199 [+0.071, +0.302] p=0.0015 pHolm=0.0180 * |
+| 4 st. (7331) | MTSTACK+SC | +0.248 [+0.135, +0.330] p=0.0005 pHolm=0.0180 * | +0.296 [+0.164, +0.376] p=0.0005 pHolm=0.0180 * |
+| 6 st. (7331) | QM-3C+SC | +0.282 [+0.159, +0.412] p=0.0005 pHolm=0.0180 * | +0.334 [+0.230, +0.429] p=0.0005 pHolm=0.0180 * |
+| 6 st. (7331) | BOMP+SC | +0.429 [+0.266, +0.530] p=0.0005 pHolm=0.0180 * | +0.377 [+0.263, +0.475] p=0.0005 pHolm=0.0180 * |
+| 6 st. (7331) | MTSTACK+SC | +0.471 [+0.328, +0.583] p=0.0005 pHolm=0.0180 * | +0.464 [+0.342, +0.573] p=0.0005 pHolm=0.0180 * |
+| one-sided 8 (7331) | QM-3C+SC | +0.153 [+0.042, +0.286] p=0.0070 pHolm=0.0210 * | +0.218 [+0.114, +0.322] p=0.0005 pHolm=0.0180 * |
+| one-sided 8 (7331) | BOMP+SC | +0.374 [+0.269, +0.506] p=0.0005 pHolm=0.0180 * | +0.347 [+0.229, +0.448] p=0.0005 pHolm=0.0180 * |
+| one-sided 8 (7331) | MTSTACK+SC | +0.423 [+0.307, +0.529] p=0.0005 pHolm=0.0180 * | +0.442 [+0.313, +0.528] p=0.0005 pHolm=0.0180 * |
+
+(* = rechazo de Holm, MT-FW+SC mayor que el comparador)
+
+- Regla 2C-c (thin), lectura literal (cota inferior del IC 95 H > 0 y punto >= 0.05, MT-FW+SC - QM-3C+SC a 0.25): semilla 2024: 3/3 (4 st. si +0.328, cota +0.237, 6 st. si +0.316, cota +0.219, one-sided 8 si +0.274, cota +0.183); semilla 7331: 3/3 (4 st. si +0.303, cota +0.180, 6 st. si +0.334, cota +0.230, one-sided 8 si +0.218, cota +0.114) -> SE CUMPLE
+- Regla 2C-c (thin) con Holm (rechazo de Holm y punto >= 0.05): semilla 2024: 3/3; semilla 7331: 3/3 -> SE CUMPLE
+- Exploratorio: la lectura literal se cumple en 100% de las replicas H (d* > 0 y punto >= 0.05, >= 2 de 3 celdas en ambas semillas).
+
+### Tabla 6 (thin, exploratoria). Solo las 25 redes nuevas (12 ventanas cada una): recall a 0.1 / 0.25 y MT-FW+SC - QM-3C+SC
+
+| Celda (semilla) | redes | ventanas | MT-FW+SC | QM-3C+SC | BOMP+SC | MTSTACK+SC | MT-FW+SC - QM-3C+SC |
+|:--|--:|--:|:-:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | 25 | 300 | 0.462/0.584 | 0.145/0.208 | 0.109/0.285 | 0.081/0.172 | +0.317 / +0.376 |
+| 6 st. (2024) | 25 | 300 | 0.473/0.635 | 0.261/0.299 | 0.104/0.303 | 0.058/0.158 | +0.212 / +0.336 |
+| one-sided 8 (2024) | 25 | 300 | 0.547/0.630 | 0.333/0.370 | 0.132/0.276 | 0.082/0.189 | +0.214 / +0.259 |
+| 4 st. (7331) | 25 | 300 | 0.319/0.445 | 0.114/0.157 | 0.175/0.258 | 0.070/0.175 | +0.205 / +0.288 |
+| 6 st. (7331) | 25 | 300 | 0.512/0.637 | 0.287/0.338 | 0.129/0.304 | 0.079/0.200 | +0.225 / +0.300 |
+| one-sided 8 (7331) | 25 | 300 | 0.498/0.584 | 0.331/0.392 | 0.147/0.318 | 0.106/0.229 | +0.167 / +0.192 |
+
+## Regimen strong: 2C-c, 30 redes por celda (redes 0-4 de 2A con 20 ventanas + 25 nuevas con 12)
+
+### Tabla 4 (strong). Recall a <= 0.1 / <= 0.25 (todas las ventanas de las 30 redes)
+
+| Celda (semilla) | redes | ventanas | eventos | MT-FW+SC | QM-3C+SC | BOMP+SC | MTSTACK+SC |
+|:--|--:|--:|--:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | 30 | 400 | 325 | 0.175/0.249 | 0.055/0.074 | 0.111/0.166 | 0.068/0.117 |
+| 6 st. (2024) | 30 | 400 | 304 | 0.312/0.421 | 0.125/0.184 | 0.118/0.197 | 0.076/0.138 |
+| one-sided 8 (2024) | 30 | 400 | 305 | 0.367/0.485 | 0.223/0.252 | 0.115/0.236 | 0.115/0.203 |
+| 4 st. (7331) | 30 | 400 | 313 | 0.131/0.208 | 0.064/0.109 | 0.096/0.150 | 0.083/0.134 |
+| 6 st. (7331) | 30 | 400 | 329 | 0.340/0.459 | 0.164/0.228 | 0.088/0.191 | 0.055/0.119 |
+| one-sided 8 (7331) | 30 | 400 | 329 | 0.438/0.556 | 0.222/0.261 | 0.128/0.234 | 0.088/0.164 |
+
+### Tabla 5 (strong). MT-FW+SC menos cada comparador: punto [IC 95% H]; p unilateral bootstrap; p de Holm (familia de 36 comparaciones del regimen, nivel 0.025)
+
+| Celda (semilla) | comparador | a 0.1 | a 0.25 |
+|:--|:--|:-:|:-:|
+| 4 st. (2024) | QM-3C+SC | +0.120 [+0.063, +0.192] p=0.0010 pHolm=0.0180 * | +0.175 [+0.103, +0.250] p=0.0005 pHolm=0.0180 * |
+| 4 st. (2024) | BOMP+SC | +0.065 [+0.003, +0.141] p=0.0255 pHolm=0.1149 | +0.083 [+0.007, +0.162] p=0.0170 pHolm=0.1019 |
+| 4 st. (2024) | MTSTACK+SC | +0.108 [+0.037, +0.193] p=0.0005 pHolm=0.0180 * | +0.132 [+0.059, +0.198] p=0.0005 pHolm=0.0180 * |
+| 6 st. (2024) | QM-3C+SC | +0.188 [+0.069, +0.286] p=0.0015 pHolm=0.0180 * | +0.237 [+0.138, +0.326] p=0.0005 pHolm=0.0180 * |
+| 6 st. (2024) | BOMP+SC | +0.194 [+0.096, +0.309] p=0.0005 pHolm=0.0180 * | +0.224 [+0.106, +0.324] p=0.0005 pHolm=0.0180 * |
+| 6 st. (2024) | MTSTACK+SC | +0.237 [+0.134, +0.333] p=0.0005 pHolm=0.0180 * | +0.283 [+0.178, +0.368] p=0.0005 pHolm=0.0180 * |
+| one-sided 8 (2024) | QM-3C+SC | +0.144 [+0.059, +0.253] p=0.0010 pHolm=0.0180 * | +0.233 [+0.131, +0.327] p=0.0005 pHolm=0.0180 * |
+| one-sided 8 (2024) | BOMP+SC | +0.252 [+0.147, +0.349] p=0.0005 pHolm=0.0180 * | +0.249 [+0.147, +0.344] p=0.0005 pHolm=0.0180 * |
+| one-sided 8 (2024) | MTSTACK+SC | +0.252 [+0.170, +0.360] p=0.0005 pHolm=0.0180 * | +0.282 [+0.184, +0.385] p=0.0005 pHolm=0.0180 * |
+| 4 st. (7331) | QM-3C+SC | +0.067 [+0.012, +0.147] p=0.0140 pHolm=0.0980 | +0.099 [+0.029, +0.181] p=0.0055 pHolm=0.0440 |
+| 4 st. (7331) | BOMP+SC | +0.035 [-0.022, +0.124] p=0.0995 pHolm=0.1989 | +0.058 [-0.027, +0.136] p=0.1009 pHolm=0.1989 |
+| 4 st. (7331) | MTSTACK+SC | +0.048 [-0.003, +0.142] p=0.0365 pHolm=0.1149 | +0.073 [+0.006, +0.155] p=0.0230 pHolm=0.1149 |
+| 6 st. (7331) | QM-3C+SC | +0.176 [+0.078, +0.312] p=0.0010 pHolm=0.0180 * | +0.231 [+0.122, +0.337] p=0.0005 pHolm=0.0180 * |
+| 6 st. (7331) | BOMP+SC | +0.252 [+0.147, +0.375] p=0.0005 pHolm=0.0180 * | +0.267 [+0.168, +0.361] p=0.0005 pHolm=0.0180 * |
+| 6 st. (7331) | MTSTACK+SC | +0.286 [+0.190, +0.398] p=0.0005 pHolm=0.0180 * | +0.340 [+0.235, +0.424] p=0.0005 pHolm=0.0180 * |
+| one-sided 8 (7331) | QM-3C+SC | +0.216 [+0.112, +0.332] p=0.0005 pHolm=0.0180 * | +0.295 [+0.208, +0.379] p=0.0005 pHolm=0.0180 * |
+| one-sided 8 (7331) | BOMP+SC | +0.310 [+0.204, +0.435] p=0.0005 pHolm=0.0180 * | +0.322 [+0.219, +0.410] p=0.0005 pHolm=0.0180 * |
+| one-sided 8 (7331) | MTSTACK+SC | +0.350 [+0.245, +0.458] p=0.0005 pHolm=0.0180 * | +0.392 [+0.299, +0.474] p=0.0005 pHolm=0.0180 * |
+
+(* = rechazo de Holm, MT-FW+SC mayor que el comparador)
+
+- Regla 2C-c (strong), lectura literal (cota inferior del IC 95 H > 0 y punto >= 0.05, MT-FW+SC - QM-3C+SC a 0.25): semilla 2024: 3/3 (4 st. si +0.175, cota +0.103, 6 st. si +0.237, cota +0.138, one-sided 8 si +0.233, cota +0.131); semilla 7331: 3/3 (4 st. si +0.099, cota +0.029, 6 st. si +0.231, cota +0.122, one-sided 8 si +0.295, cota +0.208) -> SE CUMPLE
+- Regla 2C-c (strong) con Holm (rechazo de Holm y punto >= 0.05): semilla 2024: 3/3; semilla 7331: 2/3 -> SE CUMPLE
+- Exploratorio: la lectura literal se cumple en 100% de las replicas H (d* > 0 y punto >= 0.05, >= 2 de 3 celdas en ambas semillas).
+
+### Tabla 6 (strong, exploratoria). Solo las 25 redes nuevas (12 ventanas cada una): recall a 0.1 / 0.25 y MT-FW+SC - QM-3C+SC
+
+| Celda (semilla) | redes | ventanas | MT-FW+SC | QM-3C+SC | BOMP+SC | MTSTACK+SC | MT-FW+SC - QM-3C+SC |
+|:--|--:|--:|:-:|:-:|:-:|:-:|:-:|
+| 4 st. (2024) | 25 | 300 | 0.157/0.202 | 0.032/0.052 | 0.085/0.137 | 0.052/0.101 | +0.125 / +0.149 |
+| 6 st. (2024) | 25 | 300 | 0.287/0.391 | 0.139/0.191 | 0.117/0.209 | 0.091/0.152 | +0.148 / +0.200 |
+| one-sided 8 (2024) | 25 | 300 | 0.401/0.514 | 0.243/0.275 | 0.117/0.248 | 0.122/0.225 | +0.158 / +0.239 |
+| 4 st. (7331) | 25 | 300 | 0.145/0.204 | 0.072/0.123 | 0.081/0.157 | 0.072/0.140 | +0.072 / +0.081 |
+| 6 st. (7331) | 25 | 300 | 0.384/0.453 | 0.155/0.216 | 0.098/0.171 | 0.065/0.127 | +0.229 / +0.237 |
+| one-sided 8 (7331) | 25 | 300 | 0.406/0.516 | 0.217/0.260 | 0.138/0.232 | 0.098/0.173 | +0.189 / +0.256 |
+
+## Veredictos
+
+| Regla | thin | strong |
+|:--|:-:|:-:|
+| 2C-a | se cumple | se cumple |
+| 2C-c (literal) | se cumple | se cumple |
+| 2C-c (Holm) | se cumple | se cumple |
+- 2C-b thin: 2024 4 st. a 0.1: por debajo (-0.264); 2024 4 st. a 0.25: por debajo (-0.356); 2024 6 st. a 0.1: por debajo (-0.361); 2024 6 st. a 0.25: por debajo (-0.431); 2024 one-sided 8 a 0.1: por debajo (-0.479); 2024 one-sided 8 a 0.25: por debajo (-0.479); 7331 4 st. a 0.1: por debajo (-0.244); 7331 4 st. a 0.25: por debajo (-0.295); 7331 6 st. a 0.1: por debajo (-0.574); 7331 6 st. a 0.25: por debajo (-0.588); 7331 one-sided 8 a 0.1: por debajo (-0.556); 7331 one-sided 8 a 0.25: por debajo (-0.605)
+- 2C-b strong: 2024 4 st. a 0.1: por debajo (-0.273); 2024 4 st. a 0.25: por debajo (-0.208); 2024 6 st. a 0.1: por debajo (-0.297); 2024 6 st. a 0.25: por debajo (-0.351); 2024 one-sided 8 a 0.1: por debajo (-0.229); 2024 one-sided 8 a 0.25: por debajo (-0.277); 7331 4 st. a 0.1: por debajo (-0.051); 7331 4 st. a 0.25: por debajo (-0.077); 7331 6 st. a 0.1: por debajo (-0.310); 7331 6 st. a 0.25: por debajo (-0.310); 7331 one-sided 8 a 0.1: por debajo (-0.533); 7331 one-sided 8 a 0.25: por debajo (-0.573)
+
+Casos a menos de 0.005 del umbral 0.05: ninguno

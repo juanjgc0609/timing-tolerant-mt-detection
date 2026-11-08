@@ -166,6 +166,54 @@ the row counts of the catalogues in the manuscript repository (commit 948dde3). 
 manuscript's `icequake_example/generate_results` scripts; their code is not run, only the station list and the
 published catalogues are read. The fraction of published located events matched within 0.1 s is reported, not gated.
 
+Gate result (device runs 31 October to 3 November 2026; evidence in `g3a/`, gate file
+`experiments/exploratory/ATLAS-0/gate.json`): **2 of 2 required targets passed.**
+
+| Target | Result |
+|:--|:--|
+| `puente_pyocto` | passed, 9/9 conditions within 5 % of Table S10 (54 SCEDC stations, provenance checked; counts identical in two runs) |
+| `puente_gamma` | not passed, 0/8 (recall 0.00-0.35 against 0.96-1.00); cause open, Table S3 parameters unchanged |
+| `ethz_phasenet` | not passed, every metric better than published (above) |
+| `quakemigrate_example` | passed, 3/3 exact: 49,249 triggered, 47,354 located, 20,015 filtered; 99.996 % of published located events matched within 0.1 s (reported only) |
+
+Deviations of the QuakeMigrate run, none changing a parameter: (1) environment `ttmt-qm`, Python 3.11, QuakeMigrate
+1.2.2 from PyPI with newer dependencies than the manuscript's lock (numpy 2.4.6, obspy 1.5.1, pandas 3.1.0, scipy
+1.17.1); (2) the first `fetch` lost `2009/021/ST08_3.m` to an EarthScope 502 and was repeated before `detect` (the
+aborted start is kept apart on the device; `fetch` and `detect` now refuse missing files); (3) ST02 is all zeros from
+about 00:04:25 on 20 January in the public data, and QuakeMigrate excludes it, as it would for the paper's run on the
+same data; (4) `locate` stopped without an error at event 48,454 of 49,249 and was resumed on the remaining trigger
+events with `QuakeScan.locate(trigger_file=...)` and the same settings (`g3a/resume_locate.py`); events are located
+independently. Wall times: detect 15.6 h (including sleep), trigger 21 min, locate about 56 h. The Puente evidence
+names the device path of the station list; its SCEDC query and SHA-256 are in `g3a/puente_v2.json`.
+
+### Why GaMMA fails target 1 (diagnosis, 2 and 4 November 2026)
+
+Not E63: `repro_puente.py` runs BGMM. The failure follows the DBSCAN pre-clustering of Table S3 (`dbscan_eps` 7 s,
+`dbscan_min_samples` 20, on time and position divided by the P velocity) relative to the station density. GaMMA's
+event recall, 100 events, from the device diagnosis (`C:\Users\juanj\ttmt\g3a\diag_gamma.json`, read-only) and
+cloud reruns on the same lists:
+
+| Station list | min_samples 20 (Table S3) | 10 | 5 | 3 |
+|:--|:--|:--|:--|:--|
+| gate list, 54 CI HH/BH | 0.00-0.01 | 0.41-0.43 | 0.84 | 0.93 |
+| every SCEDC network and channel, 181 | 0.70-0.74 | | 0.99-1.00 | |
+| 181, travel-time grid to 60 km (`--post-hoc`) | 0.70-0.74 (30, 100, 300 % false picks) | | | |
+
+On the sparse list DBSCAN splits each event (far stations fall outside eps) and drops the fragments below
+min_samples; PyOcto has no such step and passes 9/9. The paper's SCSN layout is denser than both lists (it gives none).
+GaMMA's travel-time grid stops at the event depth limit plus 1 km (PyOcto's at plus 6 km), which misses Pn and Sn
+beyond about 120 km for deep events (up to 1.3-2.2 s at 150 km for 29 km depth); deepening it to 60 km changes no
+recall above, so it is not the cause. `gamma_assoc` takes `eikonal_zmax` (default None, the registered behaviour), and
+`repro_puente.py fetch-stations --all-networks` and `run --post-hoc` reproduce the last two rows; gate.py never counts
+either. The 54-station gate result stands: puente_gamma failed, and the gate passes through puente_pyocto and
+quakemigrate_example (`gate_v2.json`).
+
+What this means for the atlas comparator: the tuned GaMMA uses `dbscan_eps` 10 s and `dbscan_min_samples` 3
+(`gamma_assoc.FIXED`, the R0 and R1 values), the setting under which GaMMA reached 0.93 on the 54-station list. The
+tuning sets have stations within 44 km of the catalogue centroid (Ridgecrest) and 30 km (Hi-net), far below the Pn
+crossover, so the travel-time grid is the same as PyOcto's there. A claim that a method beats GaMMA states that
+GaMMA's published configuration was not reproduced on the gate list, and why.
+
 ## Registered tuning, 31 October 2026
 
 Ledger `experiments/exploratory/ATLAS-0/tuning_ledger.csv` (SHA-256 `759798e1...15f0`), code fa8679cd45c0, env
@@ -224,18 +272,34 @@ the registered draw, so trial i keeps every other registered value (checked agai
 whose objective must match the registered one. The wrapper refuses GMM with the E63 reason instead of calling GaMMA.
 `space.trials(method, reg1=True)` still redraws the registered ledger. GaMMA is not patched.
 
-Run on the device after the tag `reg/ATLAS-0/amendment-3` (about 5 h: 23 BGMM trials took 7351 s):
+The amendment-3 run (`tuning_ledger_a3.csv`) was started on 4 November 2026 and stopped the same day on the owner's
+decision; it is superseded by amendment 4. `space.trials(method, a3=True)` redraws it.
+
+### Amendment 4: GaMMA's DBSCAN tuned, to run
+
+GaMMA's space adds `as_dbscan_eps` (log-uniform [3, 20] s) and `as_dbscan_min_samples` ({3, ..., 20}) to minimum
+picks and time sigma, method BGMM: four associator parameters, as PyOcto (card, amendment 4). Every trial is a new
+draw. Run on the device after the tag `reg/ATLAS-0/amendment-4` (about 5 h):
 
 ```
-python experiments/exploratory/COMPARATORS/tune_cli.py run phasenet+gamma <out>/*/tune_phasenet.json --env ttmt-gpu --ledger experiments/exploratory/ATLAS-0/tuning_ledger_a3.csv
-python experiments/exploratory/COMPARATORS/tune_cli.py freeze phasenet+gamma experiments/exploratory/COMPARATORS/frozen/phasenet+gamma_a3.json --ledger experiments/exploratory/ATLAS-0/tuning_ledger_a3.csv
-python experiments/exploratory/COMPARATORS/tune_cli.py flags --ledger experiments/exploratory/ATLAS-0/tuning_ledger_a3.csv
+python experiments/exploratory/COMPARATORS/tune_cli.py run phasenet+gamma <out>/*/tune_phasenet.json --env ttmt-gpu --ledger experiments/exploratory/ATLAS-0/tuning_ledger_a4.csv
+python experiments/exploratory/COMPARATORS/tune_cli.py freeze phasenet+gamma experiments/exploratory/COMPARATORS/frozen/phasenet+gamma_a4.json --ledger experiments/exploratory/ATLAS-0/tuning_ledger_a4.csv
+python experiments/exploratory/COMPARATORS/tune_cli.py flags --ledger experiments/exploratory/ATLAS-0/tuning_ledger_a4.csv
 ```
 
 The same manifests as the registered run (partition b60d99b3d0bbbbfa) are required. `run` and `freeze` of a GaMMA
-method refuse any ledger other than `tuning_ledger_a3.csv` (`ledger.require_a3`): the default ledger already holds the
-60 registered GaMMA rows, so a run there would skip them all and a freeze would label the registered best as
-amendment 3.
+method refuse any ledger other than `tuning_ledger_a4.csv` (`ledger.require_a4`).
+
+### Conditions of a fair GaMMA comparison
+
+| Condition | State |
+|:--|:--|
+| Same picks, same 1-D model, same tuning partition, objective and seeds | yes (registration 1) |
+| Equal budget, 60 trials each | after amendment 4 runs (E63 removed the 37 failed trials) |
+| Same number of tuned associator parameters (4 and 4), ranges covering the published settings | amendment 4 |
+| Program as published, not patched | yes (80394dd; BGMM, the only mode that runs) |
+| Travel-time grid deep enough for the offsets | yes on the tuning sets (stations within 44 km); deeper grid needed only above about 100 km (`eikonal_zmax`) |
+| Published configuration reproduced (G3a) | no: declared with the diagnosis above |
 
 ## The fine-tuned picker (CR-03)
 

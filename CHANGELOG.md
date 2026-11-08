@@ -3,6 +3,25 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-04
+
+- ATLAS-0 amendment 4 (draft): GaMMA's DBSCAN (`dbscan_eps` [3, 20] s, `dbscan_min_samples` {3..20}) joins its search space, four associator parameters as PyOcto; 60 trials into `tuning_ledger_a4.csv` (`ledger.require_a4`); the amendment-3 run was stopped on the owner's decision and is not used.
+- GaMMA's gate failure (target 1, 0/8) diagnosed: the DBSCAN pre-clustering of Table S3 (min_samples 20) against the station density, not E63 and not the travel-time grid depth (`experiments/exploratory/COMPARATORS/README.md`); `gamma_assoc` gains `eikonal_zmax` (default None, registered behaviour), `repro_puente.py` gains `fetch-stations --all-networks` and `run --post-hoc`, which gate.py never counts.
+
+## 2026-11-03
+
+- Thesis: the [pending #33] marks and the draft note removed after PR #33 merged.
+- Thesis (pending PR #33, decision D10): E52 nearest-sample re-run of 2C and 2D (no verdict changes; 2C-a and 2D-b
+  strong 2 of 3 cells on seed 7331, still met); 2C and 2D rescored with repeats as false and 2L one to one (LOC+T and
+  LOC), every verdict stands; 2E not regenerated; E64 (deployable R1 threshold, 41.8 false/h against 30) cited in
+  Sections 6.6 and 7.4; error count 64.
+
+## 2026-11-02
+
+- Thesis: Section 8 gains a provisional status paragraph of the doctoral line (gate G3a: PyOcto 9 of 9 and GaMMA 0 of
+  8 on Puente, ETHZ not reproduced, QuakeMigrate running; tuning: phasenet+pyocto 0.2589 frozen, phasenet+gamma
+  provisional by E63; amendment 3 anchored at 83c66e4), with no claim over GaMMA; error count 63.
+
 ## 2026-11-01
 
 - E63: GaMMA 80394dd cannot run method GMM (`gamma/_base.py:140` reads `covariance_prior`, which only the Bayesian mixture has), the cause of the 37 failed GMM tuning trials. Repair prepared as ATLAS-0 amendment 3 (draft, not anchored): method pinned to BGMM keeping the registered draws, the GaMMA wrapper refuses GMM, tests; 60 BGMM trials to run on the device into `tuning_ledger_a3.csv`.
@@ -16,6 +35,14 @@ Dated record of changes to the project's process, code and documents. Results ar
 - `ttmt.atlas.prevalence` and `experiments/exploratory/CR04-PREVALENCE/run.py` compute that table from a catalogue
   and a station list (windowed `cells.separation`, 1-hour block bootstrap, Poisson reference, dead time);
   `tests/test_prevalence.py` joins the CI test list.
+
+## 2026-11-04
+
+- Reproduction gate G3a passes, 2 of 2 required targets: PyOcto on Puente et al. (2025), 9/9 conditions within 5 %
+  of Table S10, and QuakeMigrate 1.2.2 on the Rutford example of Winder et al. (2026), 49,249 / 47,354 / 20,015
+  events, equal to Section 4.1. Not passed: GaMMA on Puente (0/8) and PhaseNet on ETHZ (better than published).
+  Evidence in `experiments/exploratory/COMPARATORS/g3a/`; deviations of the QuakeMigrate run (newer dependencies,
+  one waveform file re-fetched, `locate` resumed at event 48,454 with the same settings) in the comparators README.
 
 ## 2026-10-31
 

@@ -101,8 +101,13 @@ GAMMA_REG1 = {"as_min_picks": IntRange(3, 8), "as_max_sigma11": Uniform(0.3, 2.0
 # ATLAS-0 amendment 3 (E63): GMM fails in GaMMA 80394dd before fitting (gamma/_base.py:140 reads covariance_prior,
 # which only BayesianGaussianMixture has), so the method is pinned to BGMM. Pinned consumes the registered draw, so
 # trial i keeps the registered as_min_picks, as_max_sigma11 and picker values; only the 37 GMM trials change method
-GAMMA = {"as_min_picks": IntRange(3, 8), "as_max_sigma11": Uniform(0.3, 2.0),
-         "as_method": Pinned("BGMM", ("BGMM", "GMM"))}
+GAMMA_A3 = {"as_min_picks": IntRange(3, 8), "as_max_sigma11": Uniform(0.3, 2.0),
+            "as_method": Pinned("BGMM", ("BGMM", "GMM"))}
+# ATLAS-0 amendment 4: GaMMA's DBSCAN pre-clustering is tuned too, so GaMMA tunes four associator parameters like
+# PyOcto. Its recall depends on them more than on any other setting (G3a diagnosis, COMPARATORS README: 0.00 to 0.93
+# on one list as min_samples goes from 20 to 3). The ranges hold Table S3 of Puente et al. (7 s, 20) and the R0/R1
+# values (10 s, 3). New draws for every trial (new names sort first); ledger tuning_ledger_a4.csv
+GAMMA = {**GAMMA_A3, "as_dbscan_eps": LogUniform(3.0, 20.0), "as_dbscan_min_samples": IntRange(3, 20)}
 # ATLAS-0 amendment 1 (ADR-0009 item 1): REAL tint and PyOcto min_interevent_time log-uniform in [0.1, 5] s, so neither
 # is kept from reporting two events inside regime T by construction
 PYOCTO = {"as_min_picks": IntRange(3, 8), "as_tolerance": Uniform(0.3, 2.0),
@@ -121,16 +126,18 @@ EQCORRSCAN = {"wf_mad": Uniform(8.0, 12.0), "wf_min_stations": IntRange(3, 6)}
 PICKERS = {"phasenet": PHASENET, "phaseno": PHASENO, "eqtransformer": EQTRANSFORMER}
 ASSOCIATORS = {"gamma": GAMMA, "pyocto": PYOCTO, "real": REAL}
 ASSOCIATORS_REG1 = {**ASSOCIATORS, "gamma": GAMMA_REG1}
+ASSOCIATORS_A3 = {**ASSOCIATORS, "gamma": GAMMA_A3}
 WAVEFORM = {"quakemigrate": QUAKEMIGRATE, "malmi": MALMI, "eqnet": EQNET, "eqcorrscan": EQCORRSCAN}
 
 
-def space_of(method, reg1=False):
+def space_of(method, reg1=False, a3=False):
     """the search space of a method: "picker+associator" for a pick-based pipeline (the union of both spaces), or
     the name of a waveform method. reg1: the associator spaces of registration 1 (GaMMA with method {BGMM, GMM}),
-    which drew the rows of the registered ledger."""
+    which drew the rows of the registered ledger; a3: those of amendment 3 (GaMMA BGMM, DBSCAN fixed), which drew
+    the rows of tuning_ledger_a3.csv (stopped, not used)."""
     if "+" in method:
         pk, asc = method.split("+", 1)
-        sp = {**PICKERS[pk], **(ASSOCIATORS_REG1 if reg1 else ASSOCIATORS)[asc]}
+        sp = {**PICKERS[pk], **(ASSOCIATORS_REG1 if reg1 else ASSOCIATORS_A3 if a3 else ASSOCIATORS)[asc]}
     else:
         sp = dict(WAVEFORM[method])
     return sp
@@ -142,9 +149,9 @@ def draw(space, seed):
     return {k: space[k].draw(rng) for k in sorted(space)}
 
 
-def trials(method, n=N_TRIALS, reg1=False):
+def trials(method, n=N_TRIALS, reg1=False, a3=False):
     """the n configurations of a method's budget: [(trial, seed, config)]."""
-    sp = space_of(method, reg1)
+    sp = space_of(method, reg1, a3)
     return [(i, SEEDS[i], draw(sp, SEEDS[i])) for i in range(n)]
 
 

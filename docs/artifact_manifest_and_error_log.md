@@ -169,7 +169,7 @@ to 2L, are also in `outputs/explore_contrib/`, with their scripts, reports and o
 
 ## 3. The design errors that inverted or nullified a result
 
-This is the central content of this manifest. The log contains 63 errors, E1 to E63. In the
+This is the central content of this manifest. The log contains 64 errors, E1 to E64. In the
 first six (E1 to E6) the resulting number looked valid, and in all six it was detected **only because
 it turned out to be implausible**, not because there was a visible fault in the code; the following ones were detected
 by controls, preregistered rules or audits, as indicated in each one.
@@ -1075,11 +1075,19 @@ error (worst case 0.42); the nearest sample gives 0.94 (worst 0.82).
 **Detection:** the independent code audit of 17 October 2026 (finding F2, `results/code_audit/floor_bias_bh.txt`).
 **Scope:** the comparators of Task 2C read at the exact sample (BOMP+SC, MTSTACK+SC, GL-FW+SC, the convex problem of
 2C-b) and the MT-FW-EX ablation of 2D are handicapped, which inflates the measured value of the peak search; the
-decisions are very probably unchanged (the timing error of the grid is already 0.1 to 0.3 s) but were not re-run.
+decisions were expected to be unchanged (the timing error of the grid is already 0.1 to 0.3 s). Re-run post hoc on
+3 November 2026 (decision D10, `code/posthoc_e52/`, `results/posthoc_e52/`): the 2A parts were regenerated with the frozen
+code, the floor runs of 2C and 2D reproduce the registered outputs exactly, and the same runs with the exact-time
+readers moved to the nearest sample change no verdict of 2C or 2D. Recall at 0.25 false events per window changes on
+average by -0.021 (BOMP+SC), -0.004 (MTSTACK+SC), -0.004 (GL-FW+SC) and -0.005 (MT-FW-EX+SC) in the main table, with
+cells moving between -0.253 and +0.133 (bootstrap noise of a different detection list, not a uniform gain). The gain
+expected from the energy capture does not appear in recall. 2C-a (strong) is met in 2 of 3 cells instead of 3 in seed
+7331, and 2D-b (strong) likewise, both still met. MT-FW+SC, QM-3C+SC and the peak-search methods are identical by
+construction.
 Comparisons in which every method has the same +-4-sample search (2D BOMP-PK against MT-FW, 2F, 2I, 2M, R0, R1) are
 not affected beyond a common shift of at most one sample.
 **Correction:** declared in Appendix Y.30 next to the 2C and 2D results; the engines are left unchanged so that the
-registered runs remain reproducible.
+registered runs remain reproducible, and the nearest-sample run is post hoc and labelled as such.
 
 ### E53. Station terms estimated on the events they are then used to detect
 **Script:** `r0/r0_run.py` (calibration windows), `explore_contrib/c18j_layered.py` and the C18d to C18j readings.
@@ -1272,6 +1280,27 @@ changes; the registered rows stay, and the GaMMA-PyOcto comparison of 31 October
 **Correction:** ATLAS-0 amendment 3: method pinned to BGMM with the registered draws kept (`space.Pinned`), the wrapper
 refuses GMM with this reason, a test pins the upstream failure, and 60 BGMM trials go to a new ledger
 (`tuning_ledger_a3.csv`). GaMMA is not patched.
+
+### E64. The deployable threshold of the R1 hybrid fails its false-alarm budget on the evaluation segment
+**Script:** `code/r1/r1_analyze.py` (deployable threshold), Task R1 (`results/taskR1/run/analysis_eval.txt`, lines 36 to 39).
+**Symptom:** the registered endpoint reads every method at its own operating point chosen on EVAL. The only threshold
+fixed before EVAL, the HYB operating point at 30 false detections per hour on CAL (1.261), gives on EVAL the same 23
+targets but 13 false detections, 41.8 per hour, 39 per cent above the budget. BASE (threshold -inf, every event kept)
+stays at 12.9 per hour and P1 at 12.9 per hour. The hybrid's recall at 30 per hour is therefore not the recall of a
+detector that could have been deployed with that budget.
+**Cause:** the false-alarm rate of a threshold set on one short segment does not transfer to another. The CAL operating
+point rests on few false detections, and the score scale moves between segments. The within-segment percentile (E60)
+accounts for at most two of the 13 false detections: with picks only, or with the percentile referred to CAL, the same
+threshold gives 35.4 and 38.6 per hour, still above 30 (`results/taskR1/posthoc/defects_e60_e61_out.txt`). The rest of
+the cause is not isolated.
+**Detection:** the research audit of 18 October 2026 (Phase 2, item 5 of `docs/ROADMAP.md`; T2.5 of the master plan).
+**Scope:** R1 only; the deployable threshold was a registered secondary reading. R1-a and R1-b are NOT MET at the
+registered operating points, so the failure removes no claim; it qualifies the recall figures of HYB as optimistic
+(operating point chosen on the evaluation data, the same for all methods). No registered number changes.
+**Correction:** declared here; the thesis already reports the 41.8 per hour (results of R1 and limits on operating points) and cites this entry. Rule for future tests: report every
+method also at a threshold fixed on development data, with its realised false-alarm rate and an interval for it; a
+method whose deployable threshold exceeds the budget fails false-alarm calibration, whatever its recall at an
+operating point chosen on the evaluation data.
 
 ### On the order of the three errors of Task 0
 Three complete protocols, three different conclusions, and **in none of them was the cause the physics**. By

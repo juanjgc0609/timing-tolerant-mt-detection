@@ -19,6 +19,9 @@ picks are not generated (no associator can report them at the paper's threshold 
     python repro_puente.py run --stations stations.csv --out out.json [--events 100 500 2000] [--noise .3 1 3]
                                 [--methods gamma pyocto real] [--seed 0]
     python repro_puente.py report out.json                         # recall against Table S10, pass within 5 %
+
+Post hoc (after the gate, never counted by gate.py): fetch-stations --all-networks (every SCEDC network and channel,
+181 stations on 31 October 2026) and run --post-hoc (GaMMA travel-time grid to 60 km, gamma_assoc.eikonal_zmax).
 """
 import argparse
 import json
@@ -82,10 +85,16 @@ def is_scenario_query(src):
     return np.allclose(src.get("box_lonlat", [np.nan] * 4), query_box(), atol=1e-6)
 
 
-def fetch_stations(out):
+# post hoc only (never the gate): every SCEDC network and channel in the same box and date, the closest available
+# stand-in for the "SCSN station layout" of the paper, which gives no list
+QUERY_ALL = dict(QUERY, network="*", channel="*")
+POST_HOC_GAMMA = dict(eikonal_zmax=60.0)          # travel-time grid below the Moho (gamma_assoc docstring)
+
+
+def fetch_stations(out, query=QUERY):
     from obspy.clients.fdsn import Client
     lon0, lat0, lon1, lat1 = query_box()
-    inv = Client("SCEDC").get_stations(network=QUERY["network"], channel=QUERY["channel"], level="station",
+    inv = Client("SCEDC").get_stations(network=query["network"], channel=query["channel"], level="station",
                                        minlatitude=lat0, maxlatitude=lat1, minlongitude=lon0, maxlongitude=lon1,
                                        starttime=QUERY["date"], endtime="2020-01-02")
     rows = sorted({(s.code, s.latitude, s.longitude, s.elevation) for n in inv for s in n})
@@ -93,7 +102,7 @@ def fetch_stations(out):
         fh.write("code,latitude,longitude,elevation_m\n")
         for r in rows:
             fh.write("{},{:.5f},{:.5f},{:.1f}\n".format(*r))
-    src = dict(QUERY, box_lonlat=[lon0, lat0, lon1, lat1], n_stations=len(rows), sha256=file_sha256(out))
+    src = dict(query, box_lonlat=[lon0, lat0, lon1, lat1], n_stations=len(rows), sha256=file_sha256(out))
     with open(out + ".source.json", "w") as fh:
         json.dump(src, fh, indent=1)
     print(len(rows), "stations ->", out)
@@ -199,14 +208,16 @@ def run(args):
     stations = load_stations(args.stations)
     vel = Velocity1D.hadley_kanamori()
     out = {"stations": len(stations.code), "station_file": args.stations,
-           "station_source": station_source(args.stations), "seed": args.seed, "runs": []}
+           "station_source": station_source(args.stations), "seed": args.seed, "post_hoc": bool(args.post_hoc),
+           "runs": []}
+    fixed = {m: dict(FIXED[m], **(POST_HOC_GAMMA if args.post_hoc and m == "gamma" else {})) for m in FIXED}
     for n in args.events:
         for noise in args.noise:
             rng = np.random.default_rng([args.seed, n, int(round(noise * 100))])
             pk, owner, ev = generate(stations, n, noise, rng, vel)
             for m in args.methods:
                 fr = Frame(stations, XLIM, YLIM, ZLIM, vel, time_before=TIME_BEFORE, workdir=args.workdir,
-                           fixed={m: FIXED[m]})
+                           fixed={m: fixed[m]})
                 t0 = time.time()
                 try:
                     det, picks = PL.associator(m).associate(fr, pk, CFG[m])
@@ -246,6 +257,7 @@ def main(argv=None):
     sub = ap.add_subparsers(dest="cmd", required=True)
     f = sub.add_parser("fetch-stations")
     f.add_argument("out")
+    f.add_argument("--all-networks", action="store_true", help="post hoc list: every network and channel")
     r = sub.add_parser("run")
     r.add_argument("--stations", required=True)
     r.add_argument("--out", required=True)
@@ -254,11 +266,13 @@ def main(argv=None):
     r.add_argument("--methods", nargs="+", default=["gamma", "pyocto", "real"])
     r.add_argument("--seed", type=int, default=0)
     r.add_argument("--workdir", default=None)
+    r.add_argument("--post-hoc", action="store_true",
+                   help="GaMMA with its travel-time grid to 60 km; the run file is marked and never passes the gate")
     p = sub.add_parser("report")
     p.add_argument("path")
     a = ap.parse_args(argv)
     if a.cmd == "fetch-stations":
-        fetch_stations(a.out)
+        fetch_stations(a.out, QUERY_ALL if a.all_networks else QUERY)
     elif a.cmd == "run":
         run(a)
     else:
