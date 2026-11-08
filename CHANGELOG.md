@@ -5,6 +5,8 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-08
 
+- Thesis: Section 8 reports the amendment-4 GaMMA tuning (60 of 60 valid, best 0.2356 against PyOcto 0.2589); with one
+  search per method and no intervals neither is ordered above the other.
 - M6, first version (plan T4.19, exploratory): `ttmt.v2.m6.adcg_loop`, joint refit of all accepted atoms (closed-form
   tensors, bounded block times, re-assignment among onset maxima) with the one-against-two resolvability test in
   place of the 5 km exclusion; tests `tests/test_m6.py` (in CI). Exploration M6-JOINT (simulation, SNR 12): pair
