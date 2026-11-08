@@ -113,10 +113,24 @@ test. The rates below count them as rejections; the method is unchanged.
 3. **Dependence between blocks.** Theorem D.2 multiplies over blocks; a transient seen by several stations at once
    breaks the product. unilateral_c40 being worst is compatible with it.
 
-## Proposed second step (owner decides; not run)
-- Measure first (seconds, 2718, development): for every exceeding hypothesis, the largest single-block l_k, whether
-  that read is above r0 (tail) or below the grid (hole), and how many blocks exceed together (dependence).
-- Then one variant fixed before running, chosen by that measurement (for example a heavier pooled tail per day with
-  alpha capped at 2-3, and a power-law left tail), confirmed on a noise day that no M5 step has used.
-- If the dependence term dominates, a per-block e-value cannot be calibrated by a marginal background; the decision
-  then rests on M7 (time slides calibrate the joint null, D.3), and S_mix is kept only as a ranking-free evidence.
+## Second step (owner chose "diagnose and a second attempt", 8 November 2026). Declared before running
+**2a. Diagnosis on 2718 (development; `run_c.py diag`, then `diagan`).** Same networks, slots, reading, pi and
+hypotheses as the first step. For each R exceedance at 1e-3: the S left after neutralising each block (eps = 1), the
+block that drops it most, whether that read is above r0 (tail) or below the kernel grid (hole), how many blocks are
+above r0, and whether P and S of one station read the same peak (a duplicated block, a dependence by construction).
+Over all hypotheses: observed P(>= 2 tail blocks) against the independent expectation. What-if rates of four
+variants, all with a flat left tail (`RadialBackground.fit(left="flat")`: constant density near v = 0, full support):
+- RL: tail cap 10 (R plus the left fix only).
+- RLP: the Hill index pooled over the stations of the network (excesses r / r0_i), cap 10.
+- RL3, RL2: tail cap 3 and 2 (heavier than estimated, conservative; cost: evidence grows as alpha log a).
+
+**Selection rule (fixed now).** Pivot to M7 without a confirmation run if fewer than half of the R exceedances are
+driven by one block (dependence, not the marginal, would be the cause), or if no variant passes both p for CAL and
+LOW on 2718. Otherwise take the first variant that passes on 2718 in the order RL, RLP, RL3, RL2 (most power first).
+
+**2b. Confirmation on a held-out noise day (gate G-M5c-2).** The chosen variant, all else unchanged, on a day that no
+M5 step has used. Priority: a pympa37 Alto Tiberina day never used by the project, built with `code/t2m_data.py` (QC
+qc1, station set by the rule of `t2m_stations.py`, at least 8 stations); if none exists, day 100723 with qc1 (the
+noise of C16, never used for M5). Config by `run_c.py mkcfg 5772 ...` (blocks of 76 slots, at most 24), seed 5772.
+Gate: the pooled TEST rate of S_mix >= log(1/p) is <= p for p = 1e-2 and 1e-3, for pi CAL and LOW. If it fails, M5's
+decision step is closed as a negative result and the decision rests on M7.

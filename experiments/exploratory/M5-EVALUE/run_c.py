@@ -34,6 +34,9 @@ to exceed p on the transient day), and the out-of-sample fit of the t (PIT decil
     python run_c.py measure SEED NOISE_DIR[,NOISE_DIR] [j,j,...|all] [cell,...]     (step 0: the fit, seconds)
     python run_c.py run SEED NOISE_DIR[,NOISE_DIR] PARTSDIR [j,j,...|all] [cell,...]
     python run_c.py analyze PARTSDIR[,PARTSDIR] [B]
+    python run_c.py diag SEED NOISE_DIR DIAGDIR [nets] [cells]      (second step, development: anatomy + what-ifs)
+    python run_c.py diagan DIAGDIR
+    python run_c.py mkcfg SEED NOISE_DIR[,..] OUT.json       (confirmation day; then pass OUT.json as SEED)
 """
 import json
 import math
@@ -59,14 +62,36 @@ TAG_FIT, TAG_PI, TAG_HYP = 7301, 7302, 7303
 N_FIT_READS, H_TEST, J_DRAWS = 400, 40, 2000
 GAMMA, EPS_LO, EPS_HI, LOW_LEVEL = 0.3, 0.05, 0.5, 2.0
 PS = (1e-2, 1e-3)
+
+
+def SEEDI(seed):
+    return int(L2.CFG["seed"])
 BGS = ("R", "T", "G")
 
 
 def configure(seed, ndirs):
-    with open(os.path.join(T2M, f"cfg_{seed}.json")) as fh:
+    """seed: a registered Task 2M seed (results/task2M/cfg_SEED.json) or the path of a cfg written by mkcfg."""
+    fn = str(seed) if str(seed).endswith(".json") else os.path.join(T2M, f"cfg_{seed}.json")
+    with open(fn) as fh:
         c = json.load(fh)
     L2.configure(c["seed"], ndirs, c["j0"], c["nblocks"], c["nwin"], ["MT@S0"])
     return c
+
+
+def mkcfg(seed, ndirs, out, slots_per_block=76, max_blocks=24):
+    """cfg of a confirmation day in the Task 2M format: blocks of about 50 min (76 slots, as 2718), at most 24."""
+    nb = []
+    for d in ndirs:
+        with open(os.path.join(d, "meta.json")) as fh:
+            nb.append(len(json.load(fh)["eligible"]) // slots_per_block)
+    tot = sum(nb)
+    if tot > max_blocks:
+        nb = L2.apportion(max_blocks, nb)
+    c = {"name": f"M5-EVALUE confirmation, seed {seed}", "seed": int(seed), "noise_dirs": list(ndirs), "j0": 5000,
+         "nblocks": [int(x) for x in nb], "nwin": {"STD": 6, "DENSE": 16, "NOISE": 4}, "methods": ["MT@S0"]}
+    with open(out, "w") as fh:
+        json.dump(c, fh, indent=1)
+    print(json.dumps(c))
 
 
 def mfn(net, slot):
@@ -106,11 +131,35 @@ def catalogue_terms(net):
     return r, np.array(mc)
 
 
-def setup(cell, j, seed):
+def pooled_alpha(V, q0=0.99, cap=10.0):
+    """Hill index from the tail excesses r / r0_i of all stations of the network pooled (more data than one station)."""
+    ex = []
+    for x in V:
+        r = np.linalg.norm(x, axis=-1)
+        r0 = np.quantile(r, q0)
+        ex.append(np.log(r[r > r0] / r0))
+    ex = np.concatenate(ex)
+    return min(cap, 1.0 / float(np.mean(ex))) if len(ex) >= 10 else cap
+
+
+def variant_backgrounds(V):
+    """development what-if backgrounds of the second step (diagnosis only; chosen by the rule in card.md)."""
+    out = {"RL": [RadialBackground.fit(x, left="flat") for x in V],
+           "RL3": [RadialBackground.fit(x, left="flat", alpha_max=3.0) for x in V],
+           "RL2": [RadialBackground.fit(x, left="flat", alpha_max=2.0) for x in V]}
+    ap = pooled_alpha(V)
+    out["RLP"] = []
+    for f in out["RL"]:
+        g = RadialBackground(f.y, f.lfy, f.r0, ap, f.q0, left_slope=f.left_slope)
+        out["RLP"].append(g)
+    return out
+
+
+def setup(cell, j, seed, variants=False):
     net = L2.Net2M(cell, j, "REAL")
     E = C.Eng(R.GARR, net.STA, net.corr, R.TAUS, C.H_COARSE)
     fit, test = split_slots(net)
-    rng = np.random.default_rng([seed, TAG_FIT, net.ci, j])
+    rng = np.random.default_rng([SEEDI(seed), TAG_FIT, net.ci, j])
     V = [[] for _ in range(net.ns)]
     for s in fit:
         g, t = rng.integers(E.N, size=N_FIT_READS), rng.integers(E.T, size=N_FIT_READS)
@@ -122,10 +171,12 @@ def setup(cell, j, seed):
     bg = {"R": [RadialBackground.fit(V[i]) for i in range(net.ns)],
           "T": [TBackground.fit(V[i]) for i in range(net.ns)],
           "G": [GaussBackground.fit(V[i]) for i in range(net.ns)]}
+    if variants:
+        bg.update(variant_backgrounds(V))
     s0 = np.array([np.median(np.linalg.norm(x, axis=-1)) for x in V]) / math.sqrt(3.0)
     r, mc = catalogue_terms(net)
     eps = np.clip(1.0 - r, EPS_LO, EPS_HI)
-    rp = np.random.default_rng([seed, TAG_PI, net.ci, j])
+    rp = np.random.default_rng([SEEDI(seed), TAG_PI, net.ci, j])
     gsel = rp.integers(E.N, size=200)
     Gs = E.G[gsel].reshape(200, 2 * net.ns, 3, 6)
     med = np.array([np.median(np.linalg.norm(np.einsum("nkcl,l->nkc", Gs, m), axis=-1)) for m in mc])
@@ -141,7 +192,7 @@ def measure(seed, ndirs, nets, cells):
     for j in nets:
         for cell in cells:
             net, E, fit, test, bg, s0, eps, r, pis, med = setup(cell, j, seed)
-            rng = np.random.default_rng([seed, TAG_HYP, net.ci, j, 0])
+            rng = np.random.default_rng([SEEDI(seed), TAG_HYP, net.ci, j, 0])
             Vt = []
             for s in test[:10]:
                 g, t = rng.integers(E.N, size=N_FIT_READS), rng.integers(E.T, size=N_FIT_READS)
@@ -173,7 +224,7 @@ def run_part(cell, j, seed, pdir):
     st = np.tile(np.arange(ns), 2)                                               # block order (b, i)
     out = {f"{k}_{pk}": [] for k in BGS for pk in pis}
     for s in test:
-        rng = np.random.default_rng([seed, TAG_HYP, net.ci, j, s])
+        rng = np.random.default_rng([SEEDI(seed), TAG_HYP, net.ci, j, s])
         g, t = rng.integers(E.N, size=H_TEST), rng.integers(E.T, size=H_TEST)
         v = read(mfn(net, s), E.IDX[g, t]).reshape(H_TEST, 2 * ns, 3)
         A = E.G[g].reshape(H_TEST, 2 * ns, 3, 6)
@@ -181,7 +232,7 @@ def run_part(cell, j, seed, pdir):
         for pk, dr in pis.items():
             for k, S in zip(BGS, evalue_mix(v, A, lf, eps[st], dr, s0[st], GAMMA)):
                 out[f"{k}_{pk}"].append(S)
-    np.savez(fn, slots=np.array(test), cell=cell, j=j, seed=seed, eps=eps, r=r, med=med, s0=s0,
+    np.savez(fn, slots=np.array(test), cell=cell, j=j, seed=SEEDI(seed), eps=eps, r=r, med=med, s0=s0,
              alpha=np.array([f.alpha for f in bg["R"]]), nu=np.array([f.nu for f in bg["T"]]),
              **{k: np.array(v) for k, v in out.items()})
     print(f"{cell} {j}: {len(test)} TEST slots, R alpha median {np.median([f.alpha for f in bg['R']]):.2f}, "
@@ -195,6 +246,95 @@ def run(seed, ndirs, pdir, nets, cells):
     for j in nets:
         for cell in cells:
             run_part(cell, j, seed, pdir)
+
+
+DIAG_BGS = ("R", "RL", "RL3", "RL2", "RLP", "T")
+
+
+def diag_part(cell, j, seed, ddir):
+    """second step, development (2718): per-block anatomy of the R exceedances and the what-if backgrounds."""
+    fn = os.path.join(ddir, f"{cell}_{j}.npz")
+    if os.path.exists(fn):
+        return
+    net, E, fit, test, bg, s0, eps, r, pis, med = setup(cell, j, seed, variants=True)
+    ns = net.ns
+    st = np.tile(np.arange(ns), 2)
+    thr = math.log(1e3)
+    S = {f"{k}_{pk}": [] for k in DIAG_BGS for pk in pis}
+    ntail, anat, dup = [], [], []
+    for s in test:
+        rng = np.random.default_rng([SEEDI(seed), TAG_HYP, net.ci, j, s])
+        g, t = rng.integers(E.N, size=H_TEST), rng.integers(E.T, size=H_TEST)
+        M = mfn(net, s)
+        v = read(M, E.IDX[g, t]).reshape(H_TEST, 2 * ns, 3)
+        tp = xc.peak_table_w(M, C.SH)[np.arange(ns)[None, None], E.IDX[g, t]]      # (H, 2, ns)
+        dup.append((tp[:, 0] == tp[:, 1]).sum(1))                                # stations whose P and S read one peak
+        A = E.G[g].reshape(H_TEST, 2 * ns, 3, 6)
+        rn = np.linalg.norm(v, axis=-1)                                          # (H, K)
+        r0 = np.array([bg["R"][i].r0 for i in st])
+        ylo = np.array([math.exp(bg["R"][i].y[0]) for i in st])
+        ntail.append((rn > r0).sum(1))
+        lf = [np.stack([bg[k][i].logpdf(v[:, q]) for q, i in enumerate(st)], axis=1) for k in DIAG_BGS]
+        for pk, dr in pis.items():
+            res = evalue_mix(v, A, lf, eps[st], dr, s0[st], GAMMA)
+            for k, x in zip(DIAG_BGS, res):
+                S[f"{k}_{pk}"].append(np.where(np.isnan(x), np.inf, x))
+            for h in np.where(S[f"R_{pk}"][-1] >= thr)[0]:
+                loo = []
+                for q in range(2 * ns):                                          # block q made neutral (eps = 1)
+                    e2 = eps[st].copy()
+                    e2[q] = 1.0
+                    loo.append(evalue_mix(v[h:h + 1], A[h:h + 1], lf[0][h:h + 1], e2, dr, s0[st], GAMMA)[0])
+                loo = np.where(np.isnan(loo), np.inf, loo)
+                q = int(np.argmin(loo))
+                anat.append([pk == "LOW", s, h, float(S[f"R_{pk}"][-1][h]), float(loo[q]), q, int(st[q]),
+                             float(rn[h, q]), float(r0[q]), float(ylo[q]), int((rn[h] > r0).sum()),
+                             int((rn[h] < ylo).sum()), int(dup[-1][h])])
+    np.savez(fn, cell=cell, j=j, seed=SEEDI(seed), slots=np.array(test), ntail=np.array(ntail), dup=np.array(dup),
+             anat=np.array(anat, float).reshape(-1, 13), stations=np.array(net.stations),
+             alpha_pooled=bg["RLP"][0].alpha, **{k: np.array(x) for k, x in S.items()})
+    print(f"diag {cell} {j}: {len(anat)} R exceedances at 1e-3, pooled alpha {bg['RLP'][0].alpha:.2f}", flush=True)
+
+
+def diag(seed, ndirs, ddir, nets, cells):
+    configure(seed, ndirs)
+    nets = L2.CFG["nets"] if nets == "all" else [int(x) for x in nets.split(",")]
+    os.makedirs(ddir, exist_ok=True)
+    for j in nets:
+        for cell in cells:
+            diag_part(cell, j, seed, ddir)
+
+
+def diag_analyze(ddir):
+    P = [dict(np.load(os.path.join(ddir, f), allow_pickle=False)) for f in sorted(os.listdir(ddir)) if f.endswith(".npz")]
+    print(f"== diagnosis, {len(P)} parts (development data; nothing here is a gate)")
+    print("what-if null rates (NaN read as +inf):")
+    for k in DIAG_BGS:
+        line = f"   {k:4s}"
+        for pk in ("CAL", "LOW"):
+            S = np.concatenate([p[f"{k}_{pk}"].reshape(-1) for p in P])
+            line += f"  {pk}: " + " ".join(f"p {q:g} {(S >= math.log(1 / q)).mean():.2e}" for q in PS)
+        print(line)
+    A = np.concatenate([p["anat"] for p in P])
+    print(f"anatomy of the R exceedances at 1e-3 ({len(A)}, CAL and LOW):")
+    if len(A):
+        single = A[:, 4] < math.log(1e3)
+        print(f"   driven by ONE block (neutralising it drops S below log 1e3): {single.mean():.2f}")
+        print(f"   that block above r0 (tail): {(A[:, 7] > A[:, 8]).mean():.2f}; below the grid (hole): "
+              f"{(A[:, 7] < A[:, 9]).mean():.2f}; read norm / r0 quantiles 50/90: "
+              f"{np.round(np.quantile(A[:, 7] / A[:, 8], [.5, .9]), 2).tolist()}")
+        print(f"   blocks above r0 per exceeding hypothesis: mean {A[:, 10].mean():.2f}; with >= 2: {(A[:, 10] >= 2).mean():.2f}")
+        print(f"   exceeding hypotheses with a station whose P and S read the same peak: {(A[:, 12] > 0).mean():.2f}")
+    du = np.concatenate([p["dup"].reshape(-1) for p in P])
+    print(f"P and S read the same peak at >= 1 station: {(du > 0).mean():.3f} of all TEST hypotheses")
+    nt = np.concatenate([p["ntail"].reshape(-1) for p in P])
+    K = np.concatenate([np.full(p["ntail"].size, 2 * len(p["stations"])) for p in P])
+    pt = nt.sum() / K.sum()
+    exp2 = float(np.mean(1 - (1 - pt) ** K - K * pt * (1 - pt) ** (K - 1)))
+    print(f"dependence: per-block tail rate {pt:.4f}; P(>= 2 tail blocks in a hypothesis) observed {(nt >= 2).mean():.4f}"
+          f" vs independent {exp2:.4f}")
+    ap = [float(p["alpha_pooled"]) for p in P]
+    print(f"pooled alpha quantiles 5/50/95: {np.round(np.quantile(ap, [.05, .5, .95]), 2).tolist()}")
 
 
 def analyze(pdirs, B):
@@ -242,12 +382,19 @@ def analyze(pdirs, B):
 
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else ""
-    if cmd == "measure":
-        measure(int(sys.argv[2]), sys.argv[3].split(","), sys.argv[4] if len(sys.argv) > 4 else "all",
+    if cmd == "mkcfg":
+        mkcfg(int(sys.argv[2]), sys.argv[3].split(","), sys.argv[4])
+    elif cmd == "measure":
+        measure(sys.argv[2], sys.argv[3].split(","), sys.argv[4] if len(sys.argv) > 4 else "all",
                 sys.argv[5].split(",") if len(sys.argv) > 5 else list(L2.CELLS))
     elif cmd == "run":
-        run(int(sys.argv[2]), sys.argv[3].split(","), sys.argv[4], sys.argv[5] if len(sys.argv) > 5 else "all",
+        run(sys.argv[2], sys.argv[3].split(","), sys.argv[4], sys.argv[5] if len(sys.argv) > 5 else "all",
             sys.argv[6].split(",") if len(sys.argv) > 6 else list(L2.CELLS))
+    elif cmd == "diag":
+        diag(sys.argv[2], sys.argv[3].split(","), sys.argv[4], sys.argv[5] if len(sys.argv) > 5 else "all",
+             sys.argv[6].split(",") if len(sys.argv) > 6 else list(L2.CELLS))
+    elif cmd == "diagan":
+        diag_analyze(sys.argv[2])
     elif cmd == "analyze":
         analyze(sys.argv[2].split(","), int(sys.argv[3]) if len(sys.argv) > 3 else 2000)
     else:

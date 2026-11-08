@@ -96,13 +96,14 @@ class RadialBackground:
 
     NGRID = 4096
 
-    def __init__(self, y_grid, logfy_grid, r0, alpha, q0):
+    def __init__(self, y_grid, logfy_grid, r0, alpha, q0, left_slope=None):
         self.y, self.lfy = np.asarray(y_grid, float), np.asarray(logfy_grid, float)
         self.r0, self.alpha, self.q0 = float(r0), float(alpha), float(q0)
+        self.left_slope = left_slope
         self.nu = self.alpha
 
     @classmethod
-    def fit(cls, V, q0=0.99, alpha_max=10.0):
+    def fit(cls, V, q0=0.99, alpha_max=10.0, left=None):
         from scipy.special import ndtr
         r = np.linalg.norm(np.asarray(V, float), axis=-1)
         r = np.sort(r[np.isfinite(r) & (r > 0)])
@@ -123,12 +124,24 @@ class RadialBackground:
         mass = float(np.mean(ndtr((y0 - ys) / h)))                            # kernel mass below y0
         with np.errstate(divide="ignore"):
             lfy = np.log(dens * q0 / mass)
+        if left == "flat":
+            # below the 0.001 quantile of log|v|, f(v) is held constant (f_r ~ r^2: a finite density at v = 0, full
+            # support); the bulk is renormalised to mass q0 (the analytic remainder below the grid is exp(lfy0) / 3)
+            ylo = float(np.quantile(y, 1e-3))
+            klo = int(np.searchsorted(grid, ylo))
+            lfy = np.where(grid < grid[klo], lfy[klo] + 3.0 * (grid - grid[klo]), lfy)
+            fy = np.exp(lfy)
+            m = float(np.sum(0.5 * (fy[1:] + fy[:-1]) * np.diff(grid))) + fy[0] / 3.0
+            lfy = lfy + math.log(q0 / m)
+            return cls(grid, lfy, r0, alpha, q0, left_slope=3.0)
         return cls(grid, lfy, r0, alpha, q0)
 
     def _logfr(self, r):
         r = np.maximum(np.asarray(r, float), 1e-300)
         y = np.log(r)
         bulk = np.interp(y, self.y, self.lfy, left=-np.inf) - y
+        if self.left_slope is not None:
+            bulk = np.where(y < self.y[0], self.lfy[0] + self.left_slope * (y - self.y[0]) - y, bulk)
         tail = math.log((1 - self.q0) * self.alpha) + self.alpha * math.log(self.r0) - (self.alpha + 1) * y
         return np.where(r <= self.r0, bulk, tail)
 
@@ -143,7 +156,12 @@ class RadialBackground:
         cy = np.concatenate([[0.0], np.cumsum(0.5 * (fy[1:] + fy[:-1]) * np.diff(self.y))])
         with np.errstate(divide="ignore"):
             yb = np.log(np.maximum(r, 1e-300))
+        if self.left_slope is not None:
+            cy = cy + np.exp(self.lfy[0]) / self.left_slope
         bulk = np.interp(yb, self.y, cy, left=0.0)
+        if self.left_slope is not None:
+            bulk = np.where(yb < self.y[0], np.exp(self.lfy[0] + self.left_slope * (yb - self.y[0])) / self.left_slope,
+                            bulk)
         tail = 1 - (1 - self.q0) * (np.maximum(r, self.r0) / self.r0) ** -self.alpha
         return np.where(r <= self.r0, bulk, tail)
 

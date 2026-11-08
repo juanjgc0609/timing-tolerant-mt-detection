@@ -128,3 +128,18 @@ def test_zero_background_density_gives_infinite_evidence_not_nan():
     lf[1, 2] = -np.inf
     S = evalue_mix(v, A, lf, 0.05, prior_draws(rng.normal(size=(4, 6)), 50, rng), 1.0)
     assert np.isposinf(S[1]) and np.all(np.isfinite(S[[0, 2]]))
+
+
+def test_radial_background_flat_left_tail_has_full_support():
+    from ttmt.v2.m5 import RadialBackground
+    rng = np.random.default_rng(8)
+    X = rng.normal(size=(20000, 9, 3))
+    R = X[np.arange(len(X)), np.argmax((X ** 2).sum(-1), axis=1)]
+    rb = RadialBackground.fit(R, left="flat")
+    tiny = np.array([[1e-6, 0, 0], [1e-3, 0, 0]])
+    assert np.all(np.isfinite(rb.logpdf(tiny)))
+    assert abs(rb.logpdf(tiny)[0] - rb.logpdf(tiny)[1]) < 1e-6                 # constant density near v = 0
+    r = np.exp(np.linspace(-14, 8, 400001))
+    dens = 4 * np.pi * r ** 3 * np.exp(rb.logpdf(np.stack([r, 0 * r, 0 * r], -1)))
+    assert abs(np.trapezoid(dens, np.log(r)) - 1) < 5e-3
+    assert abs(rb.cdf_norm(np.array([1e6]))[0] - 1) < 1e-3
