@@ -78,7 +78,7 @@ quartiles 0.30 / 0.46 / 0.67 s; 93 % of the T targets are above the limit.
    fail with fewer than 6 picked arrivals. A better detector at station SNR 1-4 (waveform-domain stacking rather than
    per-station picks) is the second lever, and the one that protects H2.
 3. **PyOcto's min_interevent_time is not the cause** (OR-mit and PN-mit change nothing in T).
-4. GaMMA here is the registered configuration (provisional, E63); the a4 configuration replaces it when it is frozen.
+4. GaMMA in the tables above is the registered configuration (provisional, E63); the a4 configuration, below, gives the same reading.
 
 ## Isolated events (oracle check)
 
@@ -98,6 +98,23 @@ Hadley-Kanamori +0.11 and +0.15 s). So the isolated-event limit is travel-time m
 locator absorbs it, not the picks: GaMMA, with the same model and picks, reaches 0.93. For our model this argues for
 station terms (or a model-error term in the likelihood) before any claim on C. Script: `stage_loss.py` reports
 `recall_iso` and `stages_iso`; GaMMA's OR row is `results/stage_loss/phasenet+gamma_registered_provisional_OR_iso.json`.
+
+## GaMMA amendment 4 (trial 53, `frozen/phasenet+gamma_a4.json`, PR #40)
+
+PN reproduces the a4 frozen objective exactly (T 0.1794, C 0.2918). `results/stage_loss/phasenet+gamma_a4.json`.
+
+| Condition | T | C | iso |
+|:--|--:|--:|--:|
+| PN | 0.179 | 0.292 | 0.395 |
+| PN-clean | 0.161 | 0.269 | 0.333 |
+| OR (perfect picks) | 0.143 | 0.610 | 0.822 |
+| OR-snr1 | 0.166 | 0.518 | 0.667 |
+| OR-snr2 | 0.202 | 0.420 | 0.597 |
+
+T stages with perfect picks: 32 hit, 40 association, 151 resolution (the same merge as the registered configuration
+and PyOcto). The reading above stands for the a4 configuration: T is lost in association, C mainly in the picker.
+One difference: removing the false picks lowers C (0.29 -> 0.27; association misses 41 -> 68), because with
+dbscan_min_samples 9 a sparser pick set leaves more true clusters below the DBSCAN density threshold.
 
 ## Limits
 
