@@ -7,6 +7,30 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 - Thesis: Section 8 reports the amendment-4 GaMMA tuning (60 of 60 valid, best 0.2356 against PyOcto 0.2589); with one
   search per method and no intervals neither is ordered above the other.
+- M6, first version (plan T4.19, exploratory): `ttmt.v2.m6.adcg_loop`, joint refit of all accepted atoms (closed-form
+  tensors, bounded block times, re-assignment among onset maxima) with the one-against-two resolvability test in
+  place of the 5 km exclusion; tests `tests/test_m6.py` (in CI). Exploration M6-JOINT (simulation, SNR 12): pair
+  recall of near pairs (1.5-5 km) at 0.1-1 s rises from 0.35-0.85 (greedy, 5 km exclusion) to 0.75-1.00; the greedy
+  loop without the exclusion recovers the same pairs (0.70-1.00) but splits 40 of 40 single events, M6 0 of 40: the
+  gain is the exclusion removed, made admissible by the resolvability test. Far pairs unchanged. Real G-M6a
+  (semi-synthetic, real noise) not measured yet.
+- Model v2, first components (exploratory, plan T4.1, T4.13, T4.15): subpackage `ttmt.v2` with M0 (`m0`: Tyler noise
+  covariance per station, whitening of traces and of radiation operators, orientation audit), M1 (`m1`: onset
+  evidence, isotonic calibration, `OnsetEngine` on OnsetDelay terms, `OnsetReader`, sub-sample vector reading,
+  onset-to-peak lag), M4 (`m4.joint_read`) and the v2 loop (`loop.v2_loop`: onset or joint reading, ACAP ranking,
+  deflation at the waveform-refined time with the tensor refitted). `ttmt.detector`: `Engine.terms_type` and
+  `tpred`, `greedy_loop(return_residual=)`, `subsample_delay(half=)`, deflation convention `"refit"`; defaults and
+  registered numbers unchanged. Tests `tests/test_v2.py` (in CI).
+- Exploration M6C-SUBSAMPLE (gate G-M6c): passes for isolated events (median peak residual 0.035 v2, 0.043 E62
+  fractional, 0.197 grid), fails with two overlapping sources (0.06-0.12) for every deflation that keeps the other
+  event; the fix is the joint refit of M6.
+- Exploration M1A-ONSET (gate G-M1a, owner's laptop, CPU): the first step FAILED on CAL (onset reading, P 0.87
+  within 0.25 s < 0.90; energy peak 0.55). A second step declared in the card before running (diagnosis, one fixed
+  "prior" variant, confirmation on the held-out EVAL events) PASSED on EVAL: P 0.92 for the reader as registered,
+  0.97 for the prior variant, energy peak 0.52 on the same gated blocks. The 0.92 is over the 61 of 103 gated P
+  blocks that have an onset maximum; counting the 42 unread blocks as misses it is 0.54 against 0.52: the gain is
+  in precision, not in coverage (coverage is the C-regime picker loss, step G-M1b). The prior reading is now the
+  default reader of the v2 loops (`ttmt.v2.loop.default_reader`, `OnsetReader(sigma=)`).
 - GaMMA re-tuned under ATLAS-0 amendment 4 (DBSCAN in the search space): 60 of 60 trials valid, best objective
   0.2356 (trial 53), frozen in `frozen/phasenet+gamma_a4.json`; it replaces the registered and amendment-3 GaMMA
   configurations. The stopped amendment-3 ledger (3 trials) is kept and not used.
