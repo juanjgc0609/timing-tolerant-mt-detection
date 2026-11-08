@@ -11,16 +11,19 @@ block statistic of the MT loop (station terms S0, hard reading, W = 4, no refine
   ACAP@S0    relative cap, c = 3 (ttmt.detector.ACAP's map, applied to the read vectors of c10_lib.mt_loop)
   NOCAP@S0   unbounded (the control that the transients hurt)
   ACAP5@S0   c = 5, sensitivity (added after the small run, outside the gate)
+  ACAPF@S0   cap max(6, 3 x median): never tighter than the cap 6 (added after the full run, see the card: a new
+             variant, tested on this day as development and on seed 3141 as a replicate)
 Endpoint: DENSE windows, LOC+T (5 km, 0.5 s), recall at <= 0.25 realised false events per window (the operating point
 of 2M, re-chosen in every bootstrap replicate), hierarchical bootstrap of t2m_analyze (strata = cell, networks then
 windows), B = 2000. Gate (declared before the run): ACAP@S0 - MT@S0 has its 2.5th percentile > -0.03 (the
 non-inferiority reading of 2M-d). Also reported: LOC, STD, and per cell.
 
-    python run_a.py run NOISE_DIR PARTSDIR [j,j,...|all] [cell,cell,...]
+    python run_a.py run SEED NOISE_DIR[,NOISE_DIR] PARTSDIR [j,j,...|all] [cell,cell,...]
     python run_a.py analyze PARTSDIR [B] > run_a_out.txt
-NOISE_DIR: the 101231 noise directory written by code/t2m_data.py (code/t2m_prep.sh, step "new"); its noise.npy is
-checked against results/task2M/noise_arrays.sha256 (a mismatch is reported, not fatal: last-bit differences of a
-different NumPy/OpenBLAS). Small first run: nets 2800 (one network per cell, 78 windows).
+SEED 2718 (primary: noise day 101231) or 3141 (replicate: days 100210,100211, in that order), configuration
+results/task2M/cfg_SEED.json. NOISE_DIR: directories written by code/t2m_data.py (code/t2m_prep.sh, step "new"); each
+noise.npy is checked against results/task2M/noise_arrays.sha256 (a mismatch is reported, not fatal: last-bit
+differences of a different NumPy/OpenBLAS; the MT@S0 check against the registered parts is the decisive one).
 """
 import hashlib
 import json
@@ -34,18 +37,19 @@ import numpy as np  # noqa: E402
 import t2m_lib as L2  # noqa: E402
 import c10_lib as C  # noqa: E402
 
-CFG = os.path.join(ROOT, "results", "task2M", "cfg_2718.json")
-SHA = os.path.join(ROOT, "results", "task2M", "noise_arrays.sha256")
-METHODS = ["MT@S0", "ACAP@S0", "NOCAP@S0", "ACAP5@S0"]
-ACAP_C = {"ACAP@S0": 3.0, "ACAP5@S0": 5.0}         # ACAP5: sensitivity of c (declared after the small run, not gated)
-REG_PARTS = os.path.join(ROOT, "results", "task2M", "parts_2718")
+T2M = os.path.join(ROOT, "results", "task2M")
+SHA = os.path.join(T2M, "noise_arrays.sha256")
+METHODS = ["MT@S0", "ACAP@S0", "NOCAP@S0", "ACAP5@S0", "ACAPF@S0"]
+ACAP_C = {"ACAP@S0": (3.0, None), "ACAP5@S0": (5.0, None),   # ACAP5: sensitivity of c (after the small run)
+          "ACAPF@S0": (3.0, 6.0)}                             # ACAPF: cap max(6, 3 median), after the full run
 
 
 class AcapSpec(float):
     """marker passed as capv to c10_lib.mt_loop: value inf (no absolute cap), map = relative cap c x median."""
-    def __new__(cls, c):
+    def __new__(cls, c, floor=None):
         o = float.__new__(cls, np.inf)
         o.c = float(c)
+        o.floor = floor
         return o
 
 
@@ -58,7 +62,8 @@ def _vectors(R, tpk, capv):
     v = _vectors0(R, tpk, None)                                   # (..., 2, ns, 3)
     r = np.linalg.norm(v, axis=-1)                                # (..., 2, ns)
     med = np.median(r.reshape(r.shape[:-2] + (-1,)), axis=-1)[..., None, None]
-    return v * np.minimum(1.0, capv.c * med / np.maximum(r, 1e-12))[..., None]
+    cap = capv.c * med if capv.floor is None else np.maximum(capv.c * med, capv.floor)
+    return v * np.minimum(1.0, cap / np.maximum(r, 1e-12))[..., None]
 
 
 C._vectors = _vectors
@@ -66,9 +71,9 @@ _run0 = L2.Net2M.run
 
 
 def _run(self, name, MFn, kmax):
-    if name in ("ACAP@S0", "ACAP5@S0", "NOCAP@S0"):
+    if name in ("NOCAP@S0",) + tuple(ACAP_C):
         E, pr, _EF, prF = self.eng["S0"]
-        capv = AcapSpec(ACAP_C[name]) if name in ACAP_C else None
+        capv = AcapSpec(*ACAP_C[name]) if name in ACAP_C else None
         return C.mt_loop(E, MFn, kmax, mode="hard", pr=pr, W=4, EF=None, prF=prF, capv=capv)
     return _run0(self, name, MFn, kmax)
 
@@ -78,19 +83,24 @@ L2.ALL_METHODS.extend(m for m in METHODS if m not in L2.ALL_METHODS)
 
 
 def check_noise(ndir):
-    ref = {ln.split()[1]: ln.split()[0] for ln in open(SHA) if ln.strip()}
-    h = hashlib.sha256(open(os.path.join(ndir, "noise.npy"), "rb").read()).hexdigest()
-    ok = h == ref["t2m_out/noise/101231/noise.npy"]
+    with open(SHA) as fh:
+        ref = {ln.split()[1]: ln.split()[0] for ln in fh if ln.strip()}
+    with open(os.path.join(ndir, "noise.npy"), "rb") as fh:
+        h = hashlib.sha256(fh.read()).hexdigest()
+    key = f"t2m_out/noise/{os.path.basename(os.path.normpath(ndir))}/noise.npy"
+    ok = ref.get(key) == h
     print(f"noise {ndir}: sha256 {h[:16]}... {'matches the registered array' if ok else 'DIFFERS from the registered array'}",
           flush=True)
     return ok
 
 
-def run(ndir, pdir, nets, cells):
+def run(seed, ndirs, pdir, nets, cells):
     import t2m_run
-    c = json.load(open(CFG))
-    check_noise(ndir)
-    L2.configure(c["seed"], [ndir], c["j0"], c["nblocks"], c["nwin"], METHODS)
+    with open(os.path.join(T2M, f"cfg_{seed}.json")) as fh:
+        c = json.load(fh)
+    for d in ndirs:
+        check_noise(d)
+    L2.configure(c["seed"], ndirs, c["j0"], c["nblocks"], c["nwin"], METHODS)
     nets = L2.CFG["nets"] if nets == "all" else [int(x) for x in nets.split(",")]
     os.makedirs(pdir, exist_ok=True)
     for j in nets:
@@ -102,7 +112,7 @@ def check_registered(nets):
     """MT@S0 of every part against the registered Task 2M part of the same (cell, network): same packed atoms."""
     n_same = n_cmp = 0
     for n in nets:
-        fn = os.path.join(REG_PARTS, f"REAL_{n['cell']}_{n['net']}.json")
+        fn = os.path.join(T2M, f"parts_{n['seed']}", f"REAL_{n['cell']}_{n['net']}.json")
         if not os.path.exists(fn):
             continue
         with open(fn) as fh:
@@ -122,11 +132,12 @@ def analyze(pdir, B):
     import c16_analyze as Z
     import t2m_analyze as T
     nets, rows = Z.load(pdir, "REAL")
-    print(f"M5-ACAP G-M5a  Task 2M seed 2718 REAL arm  {len(nets)} parts  B {B}  numpy {np.__version__}")
-    print("gate: ACAP@S0 - MT@S0, DENSE LOC+T @0.25, 2.5th percentile > -0.03\n")
+    seeds = sorted({n["seed"] for n in nets})
+    print(f"M5-ACAP G-M5a  Task 2M seed {seeds} REAL arm  {len(nets)} parts  B {B}  numpy {np.__version__}")
+    print("gate: X - MT@S0, DENSE LOC+T @0.25, 2.5th percentile > -0.03 (X = ACAP@S0 registered; ACAPF@S0 new)\n")
     check_registered(nets)
     names = [m for m in METHODS if m in rows[0]["atoms"]]
-    verdict = None
+    verdict = {}
     for des, rule, tol in (("DENSE", "LOC+T", 0.5), ("DENSE", "LOC", None), ("STD", "LOC+T", 0.5)):
         sub = [r for r in rows if r["design"] == des]
         recs = Z.records(sub, names, tol)
@@ -138,19 +149,20 @@ def analyze(pdir, B):
                 ci = bt.ci(m)
                 print(f"   {m:9s} @0.1 {bt.pt[m][0]:.3f} [{ci[0][0]:.3f},{ci[0][1]:.3f}]  "
                       f"@0.25 {bt.pt[m][1]:.3f} [{ci[1][0]:.3f},{ci[1][1]:.3f}]")
-            for a in ("ACAP@S0", "ACAP5@S0", "NOCAP@S0"):
+            for a in ("ACAP@S0", "ACAPF@S0", "ACAP5@S0", "NOCAP@S0"):
                 if a in names:
                     print(f"   {a} - MT@S0 @0.25 {T.f3(T.contrast(bt, a, 'MT@S0', 1))}")
             if (des, rule, grp) == ("DENSE", "LOC+T", "all"):
-                verdict = T.contrast(bt, "ACAP@S0", "MT@S0", 1)["lo"] > -0.03
+                verdict = {a: T.contrast(bt, a, "MT@S0", 1)["lo"] > -0.03 for a in ("ACAP@S0", "ACAPF@S0")
+                           if a in names}
         print()
-    print("G-M5a:", "PASS" if verdict else "FAIL", "(partial run)" if len(nets) < 72 else "")
+    print("G-M5a:", {a: "PASS" if v else "FAIL" for a, v in verdict.items()})
 
 
 if __name__ == "__main__":
     if sys.argv[1] == "run":
-        run(sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else "2800",
-            sys.argv[5].split(",") if len(sys.argv) > 5 else list(L2.CELLS))
+        run(sys.argv[2], sys.argv[3].split(","), sys.argv[4], sys.argv[5] if len(sys.argv) > 5 else "all",
+            sys.argv[6].split(",") if len(sys.argv) > 6 else list(L2.CELLS))
     elif sys.argv[1] == "analyze":
         analyze(sys.argv[2], int(sys.argv[3]) if len(sys.argv) > 3 else 2000)
     else:

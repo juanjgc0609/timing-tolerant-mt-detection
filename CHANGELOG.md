@@ -7,6 +7,11 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 - Thesis: Section 8 reports the amendment-4 GaMMA tuning (60 of 60 valid, best 0.2356 against PyOcto 0.2589); with one
   search per method and no intervals neither is ordered above the other.
+- M5-ACAP full run (laptop, CPU): G-M5b passes (ACAP3 AUC 0.663-0.700 on N4/N6/N8/U8, cap 6 0.39-0.49; CAP6 and NOCAP
+  reproduce c18c). G-M5a fails (ACAP@S0 - MT@S0 = -0.020 [-0.041, +0.009], margin -0.03; MT@S0 identical to the
+  registered 2M parts in 72/72). Diagnosis: in quiet records 3 x median is about 4.6 < 6, tighter than the cap.
+  New variant `ACAP(c, floor)` (cap max(floor, c median), default unchanged) with a unit test; ACAPF = ACAP(3, 6) is
+  tested on seed 2718 and 3141 (G-M5a) and on Ridgecrest CAL and EVAL (G-M5b), the conditions fixed in the card.
 - M5-ACAP scripts for gates G-M5a and G-M5b (plan T4.13, exploratory, not run yet):
   `experiments/exploratory/M5-ACAP/run_a.py` runs the registered Task 2M pipeline (seed 2718, transient day) with cap
   6, ACAP and no cap, and tests ACAP@S0 - MT@S0 at DENSE LOC+T @0.25 (lower bound > -0.03). `run_b.py` runs the C18c

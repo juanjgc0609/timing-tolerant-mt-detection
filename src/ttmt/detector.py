@@ -278,16 +278,26 @@ class ACAP(BlockStatistic):
     c x the median block norm of that hypothesis, phi(r) = min(r, c median_b(r)), then the projected energy
     ||Q^T phi(v)||^2 / 2 as ProjectedEnergy. An absolute cap bounds the influence of one block but saturates when the
     whole record grows (every block reaches the cap); the relative cap is invariant to a common scale of the blocks.
-    Deflation: least-squares moment tensor of the mapped vector."""
+    Deflation: least-squares moment tensor of the mapped vector.
+    floor (optional, noise-sd units): the cap becomes max(floor, c median_b(r)). With floor = 6 the map is never
+    tighter than the registered absolute cap 6 (in a quiet record it IS the cap 6) and still rises with the record when
+    the median grows (no saturation); scale equivariance then holds only where c median >= floor (M5-ACAP, G-M5a)."""
     name = "acap"
 
-    def __init__(self, c=3.0):
+    def __init__(self, c=3.0, floor=None):
         self.c = float(c)
+        self.floor = None if floor is None else float(floor)
+        if self.floor is not None:
+            self.name = f"acap{self.c:g}-floor{self.floor:g}"
+
+    def _cap(self, med):
+        cap = self.c * med
+        return cap if self.floor is None else np.maximum(cap, self.floor)
 
     def caps(self, vf):
         nb = vf.shape[-1] // 3
         r = np.linalg.norm(vf.reshape(vf.shape[:-1] + (nb, 3)), axis=-1)
-        return self.c * np.median(r, axis=-1, keepdims=True), r
+        return self._cap(np.median(r, axis=-1, keepdims=True)), r
 
     def score(self, vf, Q):
         cap, r = self.caps(vf)
@@ -305,7 +315,7 @@ class ACAP(BlockStatistic):
         """the mapped norm min(r, c med), med = median of r (the blocks of one hypothesis) unless given."""
         r = np.asarray(r, float)
         med = np.median(r) if med is None else med
-        return np.minimum(r, self.c * med)
+        return np.minimum(r, self._cap(med))
 
     def rho(self, r, med=None):
         """contribution of a block of norm r to the score: phi(r)^2 / 2."""
@@ -315,7 +325,7 @@ class ACAP(BlockStatistic):
         """d rho / d r with the median held fixed: r below c med, 0 above."""
         r = np.asarray(r, float)
         med = np.median(r) if med is None else med
-        return np.where(r < self.c * med, r, 0.0)
+        return np.where(r < self._cap(med), r, 0.0)
 
 
 class Huber(BlockStatistic):

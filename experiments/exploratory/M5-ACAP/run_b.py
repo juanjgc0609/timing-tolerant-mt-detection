@@ -14,6 +14,8 @@ null) + 0.5 P(tie). Statistics:
   NOCAP   unbounded (must reproduce c18c NOCAP exactly)
   ACAP3   the gate statistic (c = 3)
   ACAP2, ACAP5   sensitivity of c (declared, not part of the gate)
+  ACAP3F6 cap max(6, 3 x median), never tighter than the cap 6 (added after G-M5a failed for ACAP3; see the card)
+--eval: the EVAL segment (origins 900-3560 s) as held-out confirmation; no stored reference there.
 Gate (declared before the run): ACAP3 AUC >= 0.65 on each of the four registered subnets N4, N6, N8, U8. Reported with
 a bootstrap 95 % interval (events and null maxima resampled independently, B = 2000, seed 20261108), since there are
 only 16 events.
@@ -42,18 +44,18 @@ R.DATA = str(dataset_dir("ridgecrest_2019"))
 SEED = 20261108
 B = 2000
 GATE = 0.65
-VARIANTS = ("CAP6", "NOCAP", "ACAP3", "ACAP2", "ACAP5")
+VARIANTS = ("CAP6", "NOCAP", "ACAP3", "ACAP2", "ACAP5", "ACAP3F6")
 STORED = os.path.join(ROOT, "results", "explorations", "c18")
 
 
-def score_map(E, MFn, kind, c):
+def score_map(E, MFn, kind, c, floor=None):
     tpk, _ = C.choose(E, None, "hard", None, C.SH, R=MFn)
     if kind == "cap":
         vf = C._vectors(MFn, tpk, c).reshape(E.N, E.T, -1)
     else:
         vf = C._vectors(MFn, tpk, None).reshape(E.N, E.T, -1)
     if kind == "acap":
-        return ACAP(c).score(vf, E.Q)[0]
+        return ACAP(c, floor).score(vf, E.Q)[0]
     y = np.einsum("gtr,grk->gtk", vf, E.Q)
     return (y * y).sum(-1) / 2.0
 
@@ -67,17 +69,18 @@ def auc_ci(st, nul, rng):
     return np.percentile(bs, [2.5, 97.5])
 
 
-def run(sub):
+def run(sub, seg):
     t0 = time.time()
-    net = RR.Net(sub, 940.0)
+    net = RR.Net(sub, 940.0 if seg == "cal" else 3600.0)
     E = net.eng["SC"][0]
-    tg = [e for e in net.cat if R.T_CAL[0] <= e["t"] < R.T_CAL[1] and e["M"] >= R.M_TARGET]
+    lo_, hi_ = R.T_CAL if seg == "cal" else R.T_EVAL
+    tg = [e for e in net.cat if lo_ <= e["t"] < hi_ and e["M"] >= R.M_TARGET]
     allt = np.array([e["t"] for e in net.cat])
     kinds = {"CAP6": ("cap", 6.0), "NOCAP": ("none", None), "ACAP3": ("acap", 3.0), "ACAP2": ("acap", 2.0),
-             "ACAP5": ("acap", 5.0)}
+             "ACAP5": ("acap", 5.0), "ACAP3F6": ("acap", 3.0, 6.0)}
     out = {v: {"null": [], "ev": []} for v in VARIANTS}
     ownt = (E.taus >= R.OWN[0] - 1e-9) & (E.taus < R.OWN[1] - 1e-9)
-    for ts in RR.starts("cal"):
+    for ts in RR.starts(seg):
         MF, sd = xc.matched(R.window(net.d16, ts))
         MFn = MF / sd
         lo, hi = ts + R.OWN[0], ts + R.OWN[1]
@@ -94,16 +97,19 @@ def run(sub):
     return out, time.time() - t0
 
 
-def main(subs):
+def main(subs, seg="cal"):
     import json
-    print(f"M5-ACAP G-M5b  Ridgecrest CAL oracle (C18c design)  seed {SEED}  B {B}  numpy {np.__version__}")
+    print(f"M5-ACAP G-M5b  Ridgecrest {seg.upper()} oracle (C18c design)  seed {SEED}  B {B}  numpy {np.__version__}")
     print(f"gate: ACAP3 AUC >= {GATE} on every subnet; CAP6 and NOCAP must reproduce c18c exactly\n")
     print(f"{'subnet':6s} {'statistic':9s} {'events':>6s} {'null':>5s} {'AUC':>6s} {'95% CI':>15s} {'c18c':>6s} "
           f"{'>q90':>5s} {'>q99':>5s}")
     verdict = {}
     for sub in subs:
-        out, sec = run(sub)
-        ref = json.load(open(os.path.join(STORED, f"c18c_{sub}.json")))["summary"]
+        out, sec = run(sub, seg)
+        ref = {}
+        if seg == "cal":
+            with open(os.path.join(STORED, f"c18c_{sub}.json")) as fh:
+                ref = json.load(fh)["summary"]
         rng = np.random.default_rng([SEED, sum(map(ord, sub))])
         for v in VARIANTS:
             st, nul = np.array(out[v]["ev"]), np.array(out[v]["null"])
@@ -117,12 +123,15 @@ def main(subs):
                   f"{np.mean(st > q90):5.2f} {np.mean(st > q99):5.2f}")
             if r is not None and abs(a - r) > 1e-9:
                 print(f"   WARNING: {v} does not reproduce c18c ({a:.6f} vs {r:.6f})")
-            if v == "ACAP3":
-                verdict[sub] = a >= GATE
+            if v in ("ACAP3", "ACAP3F6"):
+                verdict.setdefault(v, {})[sub] = a >= GATE
         print(f"   {sub}: {sec:.0f} s", flush=True)
-    print("\nG-M5b:", "PASS" if all(verdict.values()) else "FAIL", verdict,
-          "" if len(verdict) == 4 else "(partial: not all four subnets run)")
+    for v, d in verdict.items():
+        print(f"G-M5b {v}:", "PASS" if all(d.values()) else "FAIL", d,
+              "" if len(d) == 4 else "(partial: not all four subnets run)")
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:] or ["N4"])
+    args = sys.argv[1:]
+    seg = "eval" if "--eval" in args else "cal"
+    main([a for a in args if a != "--eval"] or ["N4"], seg)
