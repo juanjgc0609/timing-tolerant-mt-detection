@@ -1,0 +1,13 @@
+M1A-ONSET  R1 CAL, 17 calibration events (truth M >= 1.0), 7 stations, PhaseNet original model,
+onset = largest local maximum of q >= 0.02 in +-min(2 s, S-P / 2); leave-one-event-out terms.
+blocks above the energy gate: P 47, S 105
+
+   (a) energy peak (registered rule)  P: n  47, robust sd 0.222 s, within 0.25 s 0.55, within 0.5 s 0.64
+   (a) energy peak (registered rule)  S: n 105, robust sd 0.169 s, within 0.25 s 0.76, within 0.5 s 0.80
+   (a) onset, same blocks             P: n  38, robust sd 0.111 s, within 0.25 s 0.87, within 0.5 s 0.92
+   (a) onset, same blocks             S: n  86, robust sd 0.071 s, within 0.25 s 0.87, within 0.5 s 0.94
+   (b) onset, every block with a maximum P: n  86, robust sd 0.083 s, within 0.25 s 0.87, within 0.5 s 0.92
+   (b) onset, every block with a maximum S: n  90, robust sd 0.075 s, within 0.25 s 0.88, within 0.5 s 0.94
+
+onset-to-peak lag (median energy-peak reading - onset reading, gated blocks): P +0.326 s, S +0.290 s
+G-M1a passes if line '(a) onset, same blocks' P shows within 0.25 s >= 0.90.
