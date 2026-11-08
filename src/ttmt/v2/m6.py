@@ -22,7 +22,8 @@ Resolvability (replaces the 5 km exclusion of the registered loop). When a new a
 `near_s` of an accepted one, the two-event fit is compared with the best ONE-event fit whose arrivals are free (free
 time within +-free_samples and free 3-vector per block, Theorem A.3(a)). The pair is accepted only if the residual
 sum of squares drops by more than `thr`. Matched-filter samples are correlated, so `thr` is calibrated on a
-noise-only control (one event + noise), not taken from chi2 tables; ``calibrate_thr`` does that.
+noise-only control (one event + noise), not taken from chi2 tables (done in experiments/exploratory/M6-JOINT/run.py:
+z_e^2 plus the 95th percentile of the gain on the control).
 
 Not yet: EGF / coda dictionary (Ricker + MT only), pruning by S_mix, the a-posteriori gap of AA.4(d).
 """
