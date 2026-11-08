@@ -279,9 +279,9 @@ class ACAP(BlockStatistic):
     ||Q^T phi(v)||^2 / 2 as ProjectedEnergy. An absolute cap bounds the influence of one block but saturates when the
     whole record grows (every block reaches the cap); the relative cap is invariant to a common scale of the blocks.
     Deflation: least-squares moment tensor of the mapped vector.
-    floor (optional, noise-sd units): the cap becomes max(floor, c median_b(r)). With floor = 6 the map is never
-    tighter than the registered absolute cap 6 (in a quiet record it IS the cap 6) and still rises with the record when
-    the median grows (no saturation); scale equivariance then holds only where c median >= floor (M5-ACAP, G-M5a)."""
+    floor (optional, noise-sd units): the cap becomes max(floor, c median_b(r)); scale equivariance then holds only
+    where c median >= floor. M5-ACAP found that floor = 6 with c = 3 never binds on the peak-read vectors of real
+    records (their median norm in noise is already above 2), so ACAP(3, 6) equals ACAP(3) there."""
     name = "acap"
 
     def __init__(self, c=3.0, floor=None):

@@ -1,6 +1,7 @@
 # Experiment card: M5-ACAP. Gates G-M5a (robustness) and G-M5b (no saturation) of the ACAP ranking
 
-Stage: S2 (full run done, 8 November 2026: G-M5b passes, G-M5a fails; the variant ACAPF is being tested). Plan: T4.13, step 3 of the build order of
+Stage: S3 (done, 8 November 2026). ACAP fails G-M5a on both 2M seeds and G-M5b on the held-out EVAL segment; the
+variant ACAPF is identical to ACAP. Pivot of plan §8.1 (M5): proposed to the owner, see the end. Plan: T4.13, step 3 of the build order of
 `especificacion-modelo-v2.md` §8. Exploratory, real data; no registered number changes (the registered runs keep the
 cap 6).
 
@@ -78,24 +79,50 @@ Laptop, CPU, numpy 1.26.4. G-M5a: 72 parts in 380 s on 4 processes. G-M5b: 541 s
 
   - The lower bound -0.041 is below the -0.03 margin.
   - The loss is in ladder_4: -0.046 [-0.079, -0.007]. unilateral_c40 gives +0.020; STD LOC+T gives +0.013.
-- **Diagnosis.**
-  - In a quiet record, after the normalisation by the noise sd, the median block norm is about 1.5: chi with 3
-    degrees of freedom, since few blocks hold signal. ACAP3's cap is then about 4.6, which is tighter than the
-    cap 6 and removes real evidence. This is worst with 8 blocks (ladder_4).
-  - A looser cap lets the transients in: ACAP5 loses more, and NOCAP the most.
-  - So on this day the absolute cap near 6 is close to the best bound. The saturation that ACAP corrects happens in
-    loud records only (Ridgecrest), where the median grows.
-- **Variant ACAPF**, cap = max(6, 3 x median) (`ttmt.detector.ACAP(3, floor=6)`).
-  - In a quiet record it is the cap 6, exactly when 3 x median < 6. In a loud one it is ACAP3, so in principle it
-    keeps both properties.
-  - It was declared after seeing G-M5a, so it is post hoc. It is tested as follows, fixed before its run:
-    - G-M5a on seed 2718: development. It is close to MT@S0 by construction, so this tests that it does not break.
-    - G-M5a on seed 3141 (February days): replicate. These days have little transient noise; this checks that
-      nothing is lost.
-    - G-M5b on Ridgecrest CAL: development.
-    - G-M5b on Ridgecrest EVAL (origins 900-3560 s), which was not used to choose the variant: held-out
-      confirmation, same >= 0.65 threshold on every subnet.
-  - ACAPF replaces ACAP3 as the M5 ranking statistic only if it passes all four. Otherwise the cap 6 stays, and M5
-    keeps only the e-value for deciding.
+- **First diagnosis (wrong, see below).** It assumed that in a quiet record the median block norm is about 1.5,
+  the median of a chi with 3 degrees of freedom. On that basis ACAP3's cap would be about 4.6, tighter than the
+  cap 6, and would remove real evidence. A variant was built from this diagnosis:
+  - ACAPF, cap = max(6, 3 x median) (`ttmt.detector.ACAP(3, floor=6)`).
+  - Declared post hoc, with four tests fixed before its run: G-M5a on seeds 2718 and 3141, and G-M5b on CAL and on
+    the EVAL segment, which was never used to choose it.
 - Ablation of note: NOCAP has the best Ridgecrest AUC (0.69-0.74), but loses 0.084 on the transient day. The two
   gates pull in opposite directions; only a bound that adapts to the record level satisfies both.
+
+## Result of the ACAPF run (commit 3306bf5)
+Files: `run_a2_2718_out.txt`, `run_a2_3141_out.txt`, `run_b2_cal_out.txt`, `run_b2_eval_out.txt`. Laptop, CPU,
+numpy 1.26.4.
+- **Pipeline:** MT@S0 is identical to the registered parts in 72 of 72 (seed 2718) and 49 of 49 (seed 3141) parts.
+  - Seed 3141 has 49 parts, not 51. ladder_4 networks 2909 and 2911 raise `catalogue slot pool exhausted`, exactly
+    as in the registered `run_3141_REAL.log`.
+  - The noise sha256 differs in the last bits on all three days. The eligible slots and the detector output are
+    identical.
+- **ACAPF is identical to ACAP in every row** (G-M5a) and within +-0.002 of AUC (G-M5b). The floor of 6 never binds.
+- **Corrected diagnosis.** The read vectors are the maximum of the energy within +-4 samples of the predicted time,
+  not single samples. Their norm in noise is therefore well above 1.5, and 3 x median is already above 6 in quiet
+  records. ACAP3 is LOOSER than the cap 6 there, not tighter.
+  - That explains the whole ordering on the transient day: cap 6 > ACAP3 > ACAP5 > no cap, from tightest to loosest.
+  - The rows of seed 3141 (February, little transient noise) are consistent with it: the same ordering, with smaller
+    losses. ACAP@S0 - MT@S0 = -0.013 [-0.053, +0.028], which also fails the margin.
+- **G-M5b on EVAL fails.** ACAP3 AUC: N4 0.616, N6 0.653, N8 0.695, U8 0.721 (45 events, 735 null windows). The cap 6
+  gives 0.39-0.42, and no cap 0.74-0.75.
+
+| gate | ACAP3 | ACAPF |
+|:--|:--|:--|
+| G-M5a, seed 2718 (transients) | FAIL, -0.020 [-0.041, +0.009] | FAIL, identical |
+| G-M5a, seed 3141 (replicate) | FAIL, -0.013 [-0.053, +0.028] | FAIL, identical |
+| G-M5b, Ridgecrest CAL | PASS, 0.663-0.700 | PASS, 0.663-0.700 |
+| G-M5b, Ridgecrest EVAL (held out) | FAIL, N4 0.616 | FAIL, N4 0.618 |
+
+## Conclusion
+- There is a real trade-off, and one relative cap does not resolve it. Transients reward the tightest bound (cap 6),
+  and loud records reward the loosest (no cap: AUC 0.74 on EVAL).
+- Two sound findings for the thesis:
+  1. The registered cap's saturation is confirmed on held-out data: 0.39-0.42 on EVAL.
+  2. In both gates, the order of the statistics follows how tight their bound is.
+- Plan §8.1, row "M5/M4 does not beat the prototype": the pivot is to ablate and retire the component that does not
+  help, and declare it. Proposed:
+  - Keep the cap 6 for ranking.
+  - Retire ACAP as M5's ranking statistic, declared with its numbers.
+  - Move the transient robustness to the decision step: the e-value S_mix with a Student-t background (G-M5c), which
+    bounds a transient's evidence by design (spec. M5, Theorem D.1(a)) instead of by a cap.
+  - Not chosen: retuning c again. EVAL is now spent, so any new c would have no held-out data left to confirm it.
