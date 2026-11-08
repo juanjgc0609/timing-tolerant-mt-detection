@@ -1,0 +1,16 @@
+﻿== diagnosis, 72 parts (development data; nothing here is a gate)
+what-if null rates (NaN read as +inf):
+   R     CAL: p 0.01 9.08e-03 p 0.001 5.80e-03  LOW: p 0.01 9.37e-03 p 0.001 6.01e-03
+   RL    CAL: p 0.01 8.25e-03 p 0.001 5.12e-03  LOW: p 0.01 8.59e-03 p 0.001 5.28e-03
+   RL3   CAL: p 0.01 6.45e-03 p 0.001 3.76e-03  LOW: p 0.01 6.65e-03 p 0.001 3.89e-03
+   RL2   CAL: p 0.01 7.01e-03 p 0.001 3.84e-03  LOW: p 0.01 7.22e-03 p 0.001 3.97e-03
+   RLP   CAL: p 0.01 6.93e-03 p 0.001 4.13e-03  LOW: p 0.01 7.03e-03 p 0.001 4.29e-03
+   T     CAL: p 0.01 1.38e-02 p 0.001 1.06e-02  LOW: p 0.01 1.42e-02 p 0.001 1.06e-02
+anatomy of the R exceedances at 1e-3 (953, CAL and LOW):
+   driven by ONE block (neutralising it drops S below log 1e3): 0.45
+   that block above r0 (tail): 0.82; below the grid (hole): 0.00; read norm / r0 quantiles 50/90: [1.62, 3.49]
+   blocks above r0 per exceeding hypothesis: mean 3.43; with >= 2: 0.82
+   exceeding hypotheses with a station whose P and S read the same peak: 0.01
+P and S read the same peak at >= 1 station: 0.008 of all TEST hypotheses
+dependence: per-block tail rate 0.0163; P(>= 2 tail blocks in a hypothesis) observed 0.0289 vs independent 0.0167
+pooled alpha quantiles 5/50/95: [2.53, 5.14, 9.25]
