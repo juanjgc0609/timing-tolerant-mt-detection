@@ -95,13 +95,21 @@ class Engine:
 
     def set_times(self, tt, terms):
         """(re)build IDX and frac from travel times and terms (r1_run.engine and c18j_layered.layered_engine replace
-        the tables of an existing engine the same way). tpred (N, T, 2, ns): the float sample times before rounding."""
+        the tables of an existing engine the same way)."""
         self._check_terms(terms)
         self.terms = terms
         x = (np.asarray(tt)[:, None] + self.taus[None, :, None, None] + terms.values.T[None, None]) / self.dt
-        self.tpred = x
+        self._tpred = None
         self.IDX, self.frac = sample_index_clipped(x, self.nt, self.rounding)
         return self
+
+    @property
+    def tpred(self):
+        """(N, T, 2, ns) float sample times before rounding, IDX + frac; built on first use and cached until set_times,
+        so the energy-peak engines of the registered runs do not hold a third table of that size."""
+        if getattr(self, "_tpred", None) is None:
+            self._tpred = self.IDX + self.frac
+        return self._tpred
 
     def _check_terms(self, terms):
         if not isinstance(terms, self.terms_type):
