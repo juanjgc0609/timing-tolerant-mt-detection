@@ -1,6 +1,7 @@
 # Experiment card: M5-EVALUE. Gate G-M5c (calibration) of the mixture e-value S_mix
 
-Stage: S3 (done, 8 November 2026). G-M5c FAILS on both seeds; design declared before the run (below). Plan: M5 pivot of ADR-0010 (keep the cap
+Stage: S3 (closed, 8 November 2026). G-M5c FAILS on both seeds; the declared second step pivots to M7 by its own rule
+(G-M5c-2 not run). Negative result: S_mix with independent per-station backgrounds is not calibrated on real noise. Plan: M5 pivot of ADR-0010 (keep the cap
 6 for ranking, retire ACAP, move transient robustness to the decision step). Specification
 `especificacion-modelo-v2.md` M5 "Decidir"; theory `teoria-fase5.md` D.1 and D.2. Exploratory, real noise; no
 registered number changes.
@@ -134,3 +135,39 @@ qc1, station set by the rule of `t2m_stations.py`, at least 8 stations); if none
 noise of C16, never used for M5). Config by `run_c.py mkcfg 5772 ...` (blocks of 76 slots, at most 24), seed 5772.
 Gate: the pooled TEST rate of S_mix >= log(1/p) is <= p for p = 1e-2 and 1e-3, for pi CAL and LOW. If it fails, M5's
 decision step is closed as a negative result and the decision rests on M7.
+
+## Result of the second step (commit dccc5ee; `diag_2718_out.txt`)
+Laptop, CPU, 4 min 19 s. Both pivot conditions of the rule hold, so **G-M5c-2 was not run** (no day built, no cfg).
+- Only 0.45 of the 953 R exceedances at 1e-3 (CAL and LOW) are driven by one block (< 0.5).
+- No variant passes p = 1e-3 on 2718:
+
+| variant | CAL 1e-2 | CAL 1e-3 | LOW 1e-2 | LOW 1e-3 |
+|:--|--:|--:|--:|--:|
+| R (first step) | 9.08e-3 | 5.80e-3 | 9.37e-3 | 6.01e-3 |
+| RL (left fix) | 8.25e-3 | 5.12e-3 | 8.59e-3 | 5.28e-3 |
+| RLP (pooled tail) | 6.93e-3 | 4.13e-3 | 7.03e-3 | 4.29e-3 |
+| RL3 (cap 3) | 6.45e-3 | 3.76e-3 | 6.65e-3 | 3.89e-3 |
+| RL2 (cap 2) | 7.01e-3 | 3.84e-3 | 7.22e-3 | 3.97e-3 |
+| T | 1.38e-2 | 1.06e-2 | 1.42e-2 | 1.06e-2 |
+
+- Anatomy: the dominant block is in the tail (above r0) in 0.82 of the exceedances and in the hole in 0.00; median
+  |v| / r0 = 1.62. An exceeding hypothesis has 3.43 tail blocks on average, and 0.82 have at least two.
+- P and S of one station reading the same peak: 0.01 of the exceedances, 0.008 of all hypotheses. Not the cause.
+- Dependence: per-block tail rate 0.0163; P(>= 2 tail blocks) observed 0.0289 against 0.0167 if independent
+  (1.7x). Tails coincide across stations within a hypothesis. Pooled tail index 5/50/95: 2.53 / 5.14 / 9.25.
+
+## Conclusion
+- The excess comes from dependence between blocks (simultaneous tails across stations on the transient day), not
+  from the marginal background. A heavier tail (RL3, RL2) or a pooled index (RLP) reduces it by at most 1.5x and
+  leaves it about 4x above p = 1e-3. Theorem D.2's premise "independent blocks" is what fails on real noise.
+- Recorded as a negative result: **the mixture e-value with independent per-station backgrounds is not a valid
+  e-value on real Alto Tiberina noise at p = 1e-3** (valid at 1e-2). The decision step of M5 is closed; the decision
+  rests on M7, by the declared rule.
+- Kept from this work: the gaussian background fails by two orders of magnitude on the transient day, as D.1(a)
+  predicted; the specification's t cannot fit the peak reader (smoke test and both seeds); `ttmt.v2.m5` stays as
+  exploratory code with its tests.
+- Risk this hands to M7: coherent transients across stations are what independent per-station time slides also
+  scramble, so M7's time-slide null (D.3) must be checked on the same 2718 day before it is trusted there.
+- Not tried, proposed (owner decides): a dependence-robust combination. The average of e-values is an e-value under
+  any dependence, so per-station e-values (P and S of one station multiplied, stations averaged) keep validity by
+  construction, at a cost in power that would have to be measured.
