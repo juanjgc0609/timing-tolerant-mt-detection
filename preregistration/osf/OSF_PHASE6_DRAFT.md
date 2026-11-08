@@ -116,8 +116,8 @@ Fuente: `preregistration/drafts/taskR2_registration_DRAFT.md` y `docs/protocol/P
 **Study design**
 
 > Paired comparison of detection methods on the same records. Methods: the model ⟨tag, versión⟩ and the core
-> comparator set of ATLAS-0 (registration reg/ATLAS-0/registration-1, commit 7bafb7a, amendments 1 to 3, the last at
-> commit 83c66e4): PhaseNet and PhaseNO pickers with GaMMA and PyOcto associators, EQNet, template matching where the
+> comparator set of ATLAS-0 (registration reg/ATLAS-0/registration-1, commit 7bafb7a, amendments 1 to 4, the last at
+> commit 449d39b): PhaseNet and PhaseNO pickers with GaMMA and PyOcto associators, EQNet, template matching where the
 > truth is not its own product, BOMP-PK and MT-FW; plus the best comparator re-run with the model's picker if that
 > picker is fine-tuned. Each method gets the same tuning budget: 60 configurations by the same random search, seed
 > list and development objective, every trial in a tuning ledger (ledger ⟨ruta, SHA-256⟩). All methods receive the
@@ -329,7 +329,7 @@ confirmatory tests (before development results)`. Campo único:
 > score test at the level fixed by a design check), each an intersection-union over every comparator, one-sided
 > 0.025; mandatory duplicator negative control; equal tuning budget of 60 configurations per method. The exploratory
 > failure atlas that motivates the tests is anchored separately (tag reg/ATLAS-0/registration-1, commit 7bafb7a;
-> amendments 1 to 3, the last at 83c66e4). This is not the registration of R2 or R3: each will be registered with its
+> amendments 1 to 4, the last at 449d39b). This is not the registration of R2 or R3: each will be registered with its
 > data, sample size and level before its run, and any change to the rule will be an amendment that cites this one.
 
 Adjuntar ADR-0008, PHASE6_SAP.md, CR04_PREVALENCE.md y `experiments/exploratory/P6-SAP/sample_size_out.txt`.
