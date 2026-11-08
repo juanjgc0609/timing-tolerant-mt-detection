@@ -5,6 +5,16 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-08
 
+- Model v2, first components (exploratory, plan T4.1, T4.13, T4.15): subpackage `ttmt.v2` with M0 (`m0`: Tyler noise
+  covariance per station, whitening of traces and of radiation operators, orientation audit), M1 (`m1`: onset
+  evidence, isotonic calibration, `OnsetEngine` on OnsetDelay terms, `OnsetReader`, sub-sample vector reading,
+  onset-to-peak lag), M4 (`m4.joint_read`) and the v2 loop (`loop.v2_loop`: onset or joint reading, ACAP ranking,
+  deflation at the waveform-refined time with the tensor refitted). `ttmt.detector`: `Engine.terms_type` and
+  `tpred`, `greedy_loop(return_residual=)`, `subsample_delay(half=)`, deflation convention `"refit"`; defaults and
+  registered numbers unchanged. Tests `tests/test_v2.py` (in CI).
+- Exploration M6C-SUBSAMPLE (gate G-M6c): passes for isolated events (median peak residual 0.035 v2, 0.043 E62
+  fractional, 0.197 grid), fails with two overlapping sources (0.06-0.12) for every deflation that keeps the other
+  event; the fix is the joint refit of M6. Exploration M1A-ONSET (gate G-M1a) prepared, to run with the raw data.
 - Thesis: Section 8 status paragraph updated for gate G3a passed (2 of 2: PyOcto on Puente 9/9, QuakeMigrate on
   Rutford exact; GaMMA 0/8 and ETHZ not passed; four declared deviations of the QuakeMigrate run) and amendment 4
   (449d39b); GaMMA stays provisional until the a4 run ends; no claim over GaMMA.

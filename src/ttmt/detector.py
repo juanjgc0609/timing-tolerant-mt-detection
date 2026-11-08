@@ -73,9 +73,10 @@ class Engine:
     terms: PeakDelay (energy-peak station terms, E54) added to the predicted times; rounding: sample-index convention
     (E52); G, Q: radiation operators and bases (N, 6 ns, 6)."""
 
+    terms_type = PeakDelay                 # the station terms this engine's tables point at (E54)
+
     def __init__(self, XN, STA, tt, taus, terms, G, Q, dt=1.0 / 16, nt=NT_LEGACY, rounding=LEGACY_ROUNDING, bomp=False):
-        if not isinstance(terms, PeakDelay):
-            raise TypeError(f"an energy-peak engine needs PeakDelay terms, got {type(terms).__name__} (E54)")
+        self._check_terms(terms)
         self.XN = np.asarray(XN, float)
         self.STA = np.asarray(STA, float)
         self.ns = len(self.STA)
@@ -94,13 +95,18 @@ class Engine:
 
     def set_times(self, tt, terms):
         """(re)build IDX and frac from travel times and terms (r1_run.engine and c18j_layered.layered_engine replace
-        the tables of an existing engine the same way)."""
-        if not isinstance(terms, PeakDelay):
-            raise TypeError(f"an energy-peak engine needs PeakDelay terms, got {type(terms).__name__} (E54)")
+        the tables of an existing engine the same way). tpred (N, T, 2, ns): the float sample times before rounding."""
+        self._check_terms(terms)
         self.terms = terms
         x = (np.asarray(tt)[:, None] + self.taus[None, :, None, None] + terms.values.T[None, None]) / self.dt
+        self.tpred = x
         self.IDX, self.frac = sample_index_clipped(x, self.nt, self.rounding)
         return self
+
+    def _check_terms(self, terms):
+        if not isinstance(terms, self.terms_type):
+            kind = "an energy-peak" if self.terms_type is PeakDelay else "an onset"
+            raise TypeError(f"{kind} engine needs {self.terms_type.__name__} terms, got {type(terms).__name__} (E54)")
 
 
 def pinv_sym(K):
@@ -136,16 +142,18 @@ def vectors(R, tpk, radial=NOCAP):
     return radial(v) if radial.kind != "none" else v
 
 
-DEFLATION = ("grid", "fractional")
+DEFLATION = ("grid", "fractional", "refit")
 LEGACY_DEFLATION = "grid"
 
 
-def subsample_delay(R_i, t0, kernel, bound=1.0):
+def subsample_delay(R_i, t0, kernel, bound=1.0, half=None):
     """delay (samples, |delta| <= bound) of the deflation response that best explains the residual of one station
-    around sample t0 (least squares over the three components, amplitude free per component)."""
+    around sample t0 (least squares over the three components, amplitude free per component). half: half width of
+    the fitting window in samples (default: the whole response support, kernel.ac_half, as E62's convention)."""
     from scipy.optimize import minimize_scalar
     nt, H = R_i.shape[-1], kernel.ac_half
-    lo, hi = max(0, t0 - H), min(nt, t0 + H + 1)
+    w = H if half is None else int(half)
+    lo, hi = max(0, t0 - w), min(nt, t0 + w + 1)
     seg = R_i[:, lo:hi]
 
     def cost(d):
@@ -163,7 +171,11 @@ def deflate(R, pred, tp, kernel=LEGACY_KERNEL, deflation=LEGACY_DEFLATION):
     deflation (E62): ``"grid"`` (legacy, c10_lib._deflate): the response centred on the read (integer) sample, so an
     arrival between samples leaves part of its energy in the residual (mean 5.6 %, 16.3 % at half a sample, for the
     registered 2 Hz filter). ``"fractional"``: the response delayed by the sub-sample delay that best explains the
-    residual around the read sample (``subsample_delay``), scaled so that its value at the read sample is pred."""
+    residual around the read sample (``subsample_delay``), scaled so that its value at the read sample is pred.
+    ``"refit"`` (v2 specification M6.3, exploratory): the same delayed response with the amplitude re-fitted per
+    block, the least-squares 3-vector a = seg r / (r r) over the response support, in place of pred; pred only
+    decides which blocks are deflated (blocks with pred = 0 are left alone). It removes what the fitted tensor
+    misses, and can also remove part of another arrival that falls under the response (measured in M6C-SUBSAMPLE)."""
     if deflation not in DEFLATION:
         raise ValueError(f"deflation must be one of {DEFLATION}, got {deflation!r}")
     ns, nt = R.shape[0], R.shape[-1]
@@ -174,9 +186,15 @@ def deflate(R, pred, tp, kernel=LEGACY_KERNEL, deflation=LEGACY_DEFLATION):
             lo, hi = max(0, t0 - H), min(nt, t0 + H + 1)
             if deflation == "grid":
                 R[i, :, lo:hi] -= np.outer(pred[b, i], AC[H - (t0 - lo):H + (hi - t0)])
-            else:
+            elif deflation == "fractional":
                 r = kernel.response(subsample_delay(R[i], t0, kernel))
                 R[i, :, lo:hi] -= np.outer(pred[b, i] / r[H], r[H - (t0 - lo):H + (hi - t0)])
+            else:
+                if not np.any(pred[b, i]):
+                    continue
+                r = kernel.response(subsample_delay(R[i], t0, kernel))[H - (t0 - lo):H + (hi - t0)]
+                a = R[i, :, lo:hi] @ r / float(r @ r)
+                R[i, :, lo:hi] -= np.outer(a, r)
     return R
 
 
@@ -340,11 +358,12 @@ ENERGY_ARGMAX = EnergyArgmax()
 
 # ============================================================================================ MT-FW family
 def greedy_loop(E, MFn, kmax, statistic, reader=ENERGY_ARGMAX, min_sep=5.0, kernel=LEGACY_KERNEL,
-                deflation=LEGACY_DEFLATION):
+                deflation=LEGACY_DEFLATION, return_residual=False):
     """MT-FW family greedy loop (c10_lib.mt_loop in mode "hard" with W = SH and no refinement; c8_lib.mtfw_general
     for HUBER-N): read every block, score every (node, origin), take the best not excluded (lowest node, then first
     origin, among ties), exclude the nodes within min_sep km of its epicentre, deflate its fitted atom.
-    Atoms: dicts x (3,), tau, s (statistic at its step), run (running minimum of s)."""
+    Atoms: dicts x (3,), tau, s (statistic at its step), run (running minimum of s). return_residual: also return
+    the residual traces after the last deflation (atoms, R); the atoms are the same either way."""
     ns = E.ns
     R = MFn.copy()
     excluded = np.zeros(E.N, bool)
@@ -366,7 +385,7 @@ def greedy_loop(E, MFn, kmax, statistic, reader=ENERGY_ARGMAX, min_sep=5.0, kern
         atoms.append({"s": s, "run": float(run), "x": src, "tau": float(E.taus[tj])})
         excluded = excluded | (np.linalg.norm(E.XN[:, :2] - src[None, :2], axis=1) <= min_sep)
         deflate(R, statistic.deflation(E, gi, tj, vf, aux), tpk[gi, tj].copy(), kernel, deflation)
-    return atoms
+    return (atoms, R) if return_residual else atoms
 
 
 def mt_loop(E, MFn, kmax, capv=6.0, min_sep=5.0, kernel=LEGACY_KERNEL, reader=ENERGY_ARGMAX, deflation=LEGACY_DEFLATION):
