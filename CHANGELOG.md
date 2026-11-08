@@ -7,6 +7,11 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 - Thesis: Section 8 reports the amendment-4 GaMMA tuning (60 of 60 valid, best 0.2356 against PyOcto 0.2589); with one
   search per method and no intervals neither is ordered above the other.
+- M5-ACAP scripts for gates G-M5a and G-M5b (plan T4.13, exploratory, not run yet):
+  `experiments/exploratory/M5-ACAP/run_a.py` runs the registered Task 2M pipeline (seed 2718, transient day) with cap
+  6, ACAP and no cap, and tests ACAP@S0 - MT@S0 at DENSE LOC+T @0.25 (lower bound > -0.03). `run_b.py` runs the C18c
+  Ridgecrest oracle with ACAP (c = 2, 3, 5); its CAP6 and NOCAP rows must reproduce `c18c_*.json` exactly; the gate
+  is AUC >= 0.65 on N4, N6, N8 and U8. Gates and costs are fixed in the card before the run.
 - M6, first version (plan T4.19, exploratory): `ttmt.v2.m6.adcg_loop`, joint refit of all accepted atoms (closed-form
   tensors, bounded block times, re-assignment among onset maxima) with the one-against-two resolvability test in
   place of the 5 km exclusion; tests `tests/test_m6.py` (in CI). Exploration M6-JOINT (simulation, SNR 12): pair
