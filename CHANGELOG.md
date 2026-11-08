@@ -3,6 +3,12 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-08
+
+- Thesis: Section 8 status paragraph updated for gate G3a passed (2 of 2: PyOcto on Puente 9/9, QuakeMigrate on
+  Rutford exact; GaMMA 0/8 and ETHZ not passed; four declared deviations of the QuakeMigrate run) and amendment 4
+  (449d39b); GaMMA stays provisional until the a4 run ends; no claim over GaMMA.
+
 ## 2026-11-04
 
 - ATLAS-0 amendment 4 (draft): GaMMA's DBSCAN (`dbscan_eps` [3, 20] s, `dbscan_min_samples` {3..20}) joins its search space, four associator parameters as PyOcto; 60 trials into `tuning_ledger_a4.csv` (`ledger.require_a4`); the amendment-3 run was stopped on the owner's decision and is not used.
