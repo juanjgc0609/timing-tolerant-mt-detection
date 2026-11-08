@@ -5,6 +5,13 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-08
 
+- M5 decision step (exploratory, ADR-0010 pivot): `ttmt.v2.m5` with the mixture e-value S_mix (theory D.2) and
+  Student t, gaussian and radial (kernel bulk + Pareto tail) backgrounds; tests `tests/test_m5.py` (in CI).
+  Exploration M5-EVALUE, gate G-M5c, on Task 2M real noise (owner's laptop, CPU): FAILS on both seeds at p = 1e-3
+  (radial background 5.8e-3 on 101231, 1.2e-3 on 100210-11; passes at 1e-2); the gaussian background fails by two
+  orders of magnitude on the transient day, as D.1(a) predicts. The declared second step found the cause in
+  dependence between blocks (simultaneous tails across stations, 1.7x the independent rate), not in the marginal,
+  and pivoted to M7 by its rule; the held-out confirmation day stays unused. Negative result recorded.
 - Thesis: Section 8 reports the amendment-4 GaMMA tuning (60 of 60 valid, best 0.2356 against PyOcto 0.2589); with one
   search per method and no intervals neither is ordered above the other.
 - M6, first version (plan T4.19, exploratory): `ttmt.v2.m6.adcg_loop`, joint refit of all accepted atoms (closed-form
