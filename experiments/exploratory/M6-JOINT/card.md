@@ -37,7 +37,9 @@ Pair recall (both sources hit, LOC+T). False splits of 40 single events (fresh c
   loop without the exclusion recovers the same pairs (0.70-1.00 against 0.75-1.00 for M6).
 - **What M6 adds is that removing the exclusion becomes admissible**: without it the greedy loop splits every single
   event into two atoms; the resolvability test removes all of those splits and keeps every true pair here. The
-  joint refit adds the deflation quality (G-M6c with pairs, measured in the noise-free runs) and +0.05 at 0.5 s.
+  joint refit adds +0.05 at 0.5 s and the deflation quality with pairs (a noise-free check of 4 pairs per
+  separation, not stored: median peak residual 0.03-0.05 against 0.09-0.13 for the greedy v2 loop; to be measured
+  properly as G-M6c with M6).
 - So the contribution to claim is the resolvability test with the joint refit as a pair, against "exclusion" and
   "no exclusion": same recall as no exclusion, the false-split rate of the exclusion.
 - The resolvability test never rejected a true pair here.
