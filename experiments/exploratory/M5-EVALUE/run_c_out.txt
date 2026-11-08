@@ -1,0 +1,56 @@
+﻿== seed 2718: 72 parts, 80640 TEST hypotheses, numpy 1.26.4
+   R_CAL: mean exp(S) nan  median S nan  max S nan  | p 0.01: rate 8.51e-03 (95 % ub 1.27e-02) <= p  | p 0.001: rate 5.23e-03 (95 % ub 8.81e-03) > p
+      ladder_4        p 0.01: 7.22e-03  p 0.001: 4.13e-03
+      ladder_6        p 0.01: 8.11e-03  p 0.001: 5.02e-03
+      unilateral_c40  p 0.01: 1.02e-02  p 0.001: 6.55e-03
+   R_LOW: mean exp(S) nan  median S nan  max S nan  | p 0.01: rate 8.80e-03 (95 % ub 1.30e-02) <= p  | p 0.001: rate 5.44e-03 (95 % ub 9.07e-03) > p
+      ladder_4        p 0.01: 7.78e-03  p 0.001: 4.35e-03
+      ladder_6        p 0.01: 8.00e-03  p 0.001: 5.28e-03
+      unilateral_c40  p 0.01: 1.06e-02  p 0.001: 6.70e-03
+   T_CAL: mean exp(S) 1.38e+154  median S -1.88  max S 366.22  | p 0.01: rate 1.38e-02 (95 % ub 1.87e-02) > p  | p 0.001: rate 1.06e-02 (95 % ub 1.49e-02) > p
+      ladder_4        p 0.01: 1.02e-02  p 0.001: 7.81e-03
+      ladder_6        p 0.01: 1.46e-02  p 0.001: 1.13e-02
+      unilateral_c40  p 0.01: 1.67e-02  p 0.001: 1.25e-02
+   T_LOW: mean exp(S) 8.71e+143  median S -2.13  max S 342.73  | p 0.01: rate 1.42e-02 (95 % ub 1.92e-02) > p  | p 0.001: rate 1.06e-02 (95 % ub 1.50e-02) > p
+      ladder_4        p 0.01: 1.03e-02  p 0.001: 7.59e-03
+      ladder_6        p 0.01: 1.52e-02  p 0.001: 1.14e-02
+      unilateral_c40  p 0.01: 1.72e-02  p 0.001: 1.29e-02
+   G_CAL: mean exp(S) 1.28e+301  median S -1.35  max S 20759.03  | p 0.01: rate 1.91e-01 (95 % ub 2.07e-01) > p  | p 0.001: rate 1.19e-01 (95 % ub 1.32e-01) > p
+      ladder_4        p 0.01: 9.58e-02  p 0.001: 4.14e-02
+      ladder_6        p 0.01: 1.43e-01  p 0.001: 7.62e-02
+      unilateral_c40  p 0.01: 3.34e-01  p 0.001: 2.39e-01
+   G_LOW: mean exp(S) 1.22e+301  median S -1.47  max S 18717.11  | p 0.01: rate 1.67e-01 (95 % ub 1.82e-01) > p  | p 0.001: rate 1.04e-01 (95 % ub 1.16e-01) > p
+      ladder_4        p 0.01: 8.85e-02  p 0.001: 3.40e-02
+      ladder_6        p 0.01: 1.22e-01  p 0.001: 7.22e-02
+      unilateral_c40  p 0.01: 2.89e-01  p 0.001: 2.06e-01
+   R tail index quantiles 5/50/95: [1.79, 7.21, 10.0]; eps 5/50/95: [0.26, 0.5, 0.5]
+   G-M5c seed 2718: FAIL (R background, pi CAL and LOW, p 1e-2 and 1e-3)
+
+== seed 3141: 49 parts, 53280 TEST hypotheses, numpy 1.26.4
+   R_CAL: mean exp(S) nan  median S nan  max S nan  | p 0.01: rate 2.83e-03 (95 % ub 4.38e-03) <= p  | p 0.001: rate 9.38e-04 (95 % ub 1.68e-03) <= p
+      ladder_4        p 0.01: 1.16e-03  p 0.001: 5.51e-04
+      ladder_6        p 0.01: 2.54e-03  p 0.001: 7.58e-04
+      unilateral_c40  p 0.01: 4.60e-03  p 0.001: 1.46e-03
+   R_LOW: mean exp(S) nan  median S nan  max S nan  | p 0.01: rate 2.76e-03 (95 % ub 4.37e-03) <= p  | p 0.001: rate 8.26e-04 (95 % ub 1.59e-03) <= p
+      ladder_4        p 0.01: 1.35e-03  p 0.001: 6.13e-04
+      ladder_6        p 0.01: 2.38e-03  p 0.001: 7.58e-04
+      unilateral_c40  p 0.01: 4.38e-03  p 0.001: 1.08e-03
+   T_CAL: mean exp(S) 2.74e+22  median S -2.25  max S 62.55  | p 0.01: rate 1.45e-03 (95 % ub 2.57e-03) <= p  | p 0.001: rate 6.76e-04 (95 % ub 1.38e-03) <= p
+      ladder_4        p 0.01: 1.35e-03  p 0.001: 6.74e-04
+      ladder_6        p 0.01: 6.49e-04  p 0.001: 2.71e-04
+      unilateral_c40  p 0.01: 2.33e-03  p 0.001: 1.08e-03
+   T_LOW: mean exp(S) 7.25e+21  median S -2.54  max S 61.22  | p 0.01: rate 1.46e-03 (95 % ub 2.59e-03) <= p  | p 0.001: rate 7.32e-04 (95 % ub 1.49e-03) <= p
+      ladder_4        p 0.01: 1.29e-03  p 0.001: 7.35e-04
+      ladder_6        p 0.01: 7.03e-04  p 0.001: 3.79e-04
+      unilateral_c40  p 0.01: 2.38e-03  p 0.001: 1.08e-03
+   G_CAL: mean exp(S) 1.98e+124  median S -2.27  max S 297.09  | p 0.01: rate 4.00e-03 (95 % ub 6.53e-03) <= p  | p 0.001: rate 2.48e-03 (95 % ub 4.63e-03) > p
+      ladder_4        p 0.01: 2.02e-03  p 0.001: 1.16e-03
+      ladder_6        p 0.01: 3.46e-03  p 0.001: 2.11e-03
+      unilateral_c40  p 0.01: 6.28e-03  p 0.001: 4.00e-03
+   G_LOW: mean exp(S) 5.55e+122  median S -2.55  max S 293.51  | p 0.01: rate 4.13e-03 (95 % ub 6.71e-03) <= p  | p 0.001: rate 2.52e-03 (95 % ub 4.65e-03) > p
+      ladder_4        p 0.01: 2.02e-03  p 0.001: 1.23e-03
+      ladder_6        p 0.01: 3.46e-03  p 0.001: 2.06e-03
+      unilateral_c40  p 0.01: 6.66e-03  p 0.001: 4.11e-03
+   R tail index quantiles 5/50/95: [5.08, 10.0, 10.0]; eps 5/50/95: [0.27, 0.5, 0.5]
+   G-M5c seed 3141: PASS (R background, pi CAL and LOW, p 1e-2 and 1e-3)
+
