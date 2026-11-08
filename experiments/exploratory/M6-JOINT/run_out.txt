@@ -1,0 +1,18 @@
+M6-JOINT  seed 20261108  20 scenes per cell, 40 controls  numpy 2.5.3
+SNR 12.0 (median strong-block peak / noise sd), kmax 2, LOC+T hit (5 km, 0.5 s)
+
+control: 40 single sources, 40 spurious near atoms, RSS gain median / thr / max -101.8 / 10.8 / 4.0
+fresh control: false splits at thr 10.8: 0 of 40
+
+stratum  dtau |        pair recall         |       source recall       
+              |   greedy  m6-none       m6 |   greedy  m6-none       m6
+far      0.10 |     0.95     0.95     0.95 |     0.97     0.97     0.97
+far      0.25 |     0.95     0.95     0.95 |     0.97     0.97     0.97
+far      0.50 |     1.00     1.00     1.00 |     1.00     1.00     1.00
+far      1.00 |     1.00     1.00     1.00 |     1.00     1.00     1.00
+near     0.10 |     0.45     0.95     0.95 |     0.72     0.97     0.97
+near     0.25 |     0.35     1.00     1.00 |     0.68     1.00     1.00
+near     0.50 |     0.50     0.75     0.75 |     0.75     0.88     0.88
+near     1.00 |     0.85     1.00     1.00 |     0.93     1.00     1.00
+
+400 s
