@@ -1,6 +1,6 @@
 # Experiment card: M1A-ONSET. Gate G-M1a, reading at the onset
 
-Stage: S0 (prepared 8 November 2026; not run: needs the Hi-net raw data and the picks environment)
+Stage: S1 (first step run 8 November 2026 on the owner's laptop: G-M1a FAILS, 0.87 < 0.90; second step declared)
 Plan: T4.13 (step 2 of the build order of `especificacion-modelo-v2.md` §8). Exploratory and post hoc; no registered
 number changes.
 
@@ -36,3 +36,23 @@ One PhaseNet pass over the CAL hour of 7 stations on CPU (minutes); the probabil
 (not committed) so later steps reuse them. No GPU.
 
     python experiments/exploratory/M1A-ONSET/run.py > experiments/exploratory/M1A-ONSET/run_out.txt
+
+## Result of the first step (`run_out.txt`, 8 November 2026)
+Laptop, conda env `ttmt-picks` (Python 3.11.17, NumPy 1.26.4, TensorFlow 2.15.1), CPU, 14 s. PhaseNet clone at the
+pinned commit 62005c6 (cloned during the run; `real_picker` clones HEAD, so step 2 checks the commit first).
+- **G-M1a fails narrowly**: onset reading, same gated blocks, P 0.87 within 0.25 s (n 38), threshold 0.90; S 0.87.
+  The registered energy-peak reading: P 0.55, S 0.76. Robust sd falls from 0.222 to 0.111 s (P).
+- 9 of the 47 gated P blocks have no onset maximum >= 0.02 in the window; on every block with a maximum (n 86) P is
+  also 0.87, so the misses are not small P lost by PhaseNet. The robust sd is low and 8 % of P are beyond 0.5 s:
+  tails, which points at the window catching another arrival rather than at the terms.
+- Onset-to-peak lag: P +0.326 s, S +0.290 s (R1 had measured 0.24-0.27 s with the anchored terms).
+
+## Second step (declared before running; `run2.py`)
+1. List every CAL failure (residual, q, number of maxima, nearest maximum) to confirm or refute the "other arrival in
+   the window" diagnosis.
+2. One variant fixed in advance, nothing tuned on these events: "prior" reads the maximum of
+   log q - (s - mu)^2 / (2 sigma^2) (the per-block local term of M4), mu = prediction + term, sigma = robust sd of
+   the phase, both leave-one-event-out on CAL.
+3. Confirmation on EVAL (840-1960 s), never used to build anything: truth events M >= 1.0, terms and sigma from all
+   CAL events. G-M1a is read on EVAL for the registered reader ("largest") and for "prior"; the CAL figures of the
+   variant are post hoc. The energy-peak reading is reported on the same EVAL blocks.
