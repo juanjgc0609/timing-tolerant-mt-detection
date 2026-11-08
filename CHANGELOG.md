@@ -5,6 +5,8 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-08
 
+- Thesis: Section 8 reports the amendment-4 GaMMA tuning (60 of 60 valid, best 0.2356 against PyOcto 0.2589); with one
+  search per method and no intervals neither is ordered above the other.
 - GaMMA re-tuned under ATLAS-0 amendment 4 (DBSCAN in the search space): 60 of 60 trials valid, best objective
   0.2356 (trial 53), frozen in `frozen/phasenet+gamma_a4.json`; it replaces the registered and amendment-3 GaMMA
   configurations. The stopped amendment-3 ledger (3 trials) is kept and not used.

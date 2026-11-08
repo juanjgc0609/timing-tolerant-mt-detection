@@ -906,7 +906,7 @@ two-subevent sources, and a second real noise network for the bounded-influence 
 every future registration. These items, with the failure atlas and the new model, form the separate doctoral line of
 ADR-0006.
 
-**Status of the doctoral line (provisional, 8 November 2026).** None of the following is a result of this thesis or
+**Status of the doctoral line (provisional, 8 November 2026, updated after the GaMMA re-tuning).** None of the following is a result of this thesis or
 a claim that any method, ours or another, is better than GaMMA; the numbers are reported so that the text matches the
 repository, and every one of them may change. Before the failure atlas reads any data, its card
 (`experiments/exploratory/ATLAS-0/card.md`) requires gate G3a: two of the comparators must reproduce a published
@@ -926,8 +926,12 @@ In the registered tuning of 31 October 2026 on the development partition, PhaseN
 23 of its 60 trials run (error E63: the GMM method of the pinned GaMMA cannot run), so the two searches had unequal
 budgets. Amendment 3 (`reg/ATLAS-0/amendment-3`, commit 83c66e4) pinned GaMMA to BGMM; its run was stopped and is not
 used. Amendment 4 (`reg/ATLAS-0/amendment-4`, commit 449d39b) adds GaMMA's two DBSCAN parameters to its search, so
-that it tunes four associator parameters as PyOcto does, and repeats 60 trials in a new ledger. That run is in
-progress, and until it ends the GaMMA configuration and any comparison with it are provisional.
+that it tunes four associator parameters as PyOcto does, and repeats 60 trials in a new ledger
+(`tuning_ledger_a4.csv`). In that run all 60 trials were valid, and the best reached an objective of 0.2356 (recall
+0.179 in T and 0.292 in C), against 0.2589 for PyOcto; its configuration is frozen
+(`experiments/exploratory/COMPARATORS/frozen/phasenet+gamma_a4.json`) and replaces the earlier GaMMA ones. With the
+same budget and the same number of tuned parameters, but one search per method and no intervals, these numbers order
+neither method above the other; the comparison of the atlas will be made on its own reading data.
 
 ---
 
