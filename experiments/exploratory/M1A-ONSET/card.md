@@ -56,3 +56,19 @@ pinned commit 62005c6 (cloned during the run; `real_picker` clones HEAD, so step
 3. Confirmation on EVAL (840-1960 s), never used to build anything: truth events M >= 1.0, terms and sigma from all
    CAL events. G-M1a is read on EVAL for the registered reader ("largest") and for "prior"; the CAL figures of the
    variant are post hoc. The energy-peak reading is reported on the same EVAL blocks.
+
+## Result of the second step (`run2_out.txt`, 8 November 2026)
+Same laptop and environment, PhaseNet clone checked at 62005c6, CPU, about 16 s including the PhaseNet pass over EVAL.
+- **G-M1a passes on EVAL** (held out): the reader as registered gives P 0.92 within 0.25 s (gated, n 61), S 0.99;
+  the declared "prior" variant P 0.97, S 0.99. The registered energy-peak reading on the gated EVAL blocks: P 0.52,
+  S 0.78. On CAL the variant raises P from 0.87 to 0.95 (post hoc there).
+- Diagnosis confirmed: 5 of the 16 CAL failures belong to one event (532.6 s) with readings 1.1-1.6 s early at four
+  stations, another arrival inside the +-2 s window; in several failures the nearest maximum is within 0.07 s of the
+  reference. One event (712.2 s) shows a uniform -0.3 s shift on five high-q single-maximum readings: a reference
+  (catalogue origin or location) problem, not a reading error.
+- Caveat, coverage: 42 of the 103 gated EVAL P blocks (and 9 of 47 on CAL) have no onset maximum >= 0.02 in the
+  window; the gate is measured on the read blocks. Those blocks stay "unread" in M4/M6 (prediction + lag), and
+  PhaseNet's misses on low-SNR P are the C-regime loss of the stage diagnosis (PR #38), the target of the fine-tuning
+  step (G-M1b).
+- Decision for the v2 loop: the "prior" reading (largest log q - (s - mu)^2 / (2 sigma^2)) becomes the default
+  onset reader, with sigma P 0.089 s, S 0.058 s from CAL.
