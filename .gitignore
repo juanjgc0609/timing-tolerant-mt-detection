@@ -22,3 +22,7 @@ code/log2i.txt
 
 # built on first use by hyb_comp.pyocto_1d (Task R1); ttmt.legacy runners redirect it outside the checkout
 code/r1/pyocto_jma2001.model
+
+# cached PhaseNet probabilities of the v2 experiments (regenerable)
+experiments/exploratory/M1A-ONSET/q_cal.npz
+experiments/exploratory/M1A-ONSET/q_*.npz
