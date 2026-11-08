@@ -6,7 +6,8 @@ detections per hour, LOC+T-V):
 
   PN        PhaseNet picks of the frozen picker parameters (reproduces the frozen objective)
   PN-clean  the same picks with every pick that matches no true arrival removed (false picks off)
-  OR        oracle picks: every finite injected arrival (arr_t_obs) of every catalogued event, p = 1
+  OR        oracle picks: every finite injected arrival (arr_t_obs) of every catalogued event, p = 1; its recall on
+            isolated events (regime "iso", reported apart as recall_iso) is the check that the oracle is near 1
   OR-snrX   oracle picks restricted to arrivals with per-station SNR >= X
   OR-mit    oracle picks with the associator's min_interevent_time set to 0.1 s (PyOcto only)
   OR-tight  oracle picks, min_interevent_time, tolerance and pick_match_tolerance all 0.1 s (PyOcto only)
@@ -100,8 +101,10 @@ def evaluate(records, dets):
     thr = F.operating_point(s, lab, np.ones(len(s)), float(hours.sum()), TU.BUDGET)
     T = pool.ev_regime == "T"
     Cm = (pool.ev_regime == "C") | (pool.ev_regime == "iso")
-    return dict(recall_T=F.recall(pool, got, T), recall_C=F.recall(pool, got, Cm), got=got, T=T, Cm=Cm, thr=thr,
-                meta=meta, pool=pool)
+    iso = pool.ev_regime == "iso"
+    return dict(recall_T=F.recall(pool, got, T), recall_C=F.recall(pool, got, Cm),
+                recall_iso=F.recall(pool, got, iso) if iso.any() else float("nan"), got=got, T=T, Cm=Cm, iso=iso,
+                thr=thr, meta=meta, pool=pool)
 
 
 def attribute(ev, records, dets, picks_of, min_picks):
@@ -132,9 +135,10 @@ def attribute(ev, records, dets, picks_of, min_picks):
 def summarise(ev, stage=None):
     out = {"recall_T": round(ev["recall_T"], 4), "recall_C": round(ev["recall_C"], 4),
            "objective": round((ev["recall_T"] + ev["recall_C"]) / 2, 4), "n_T": int(ev["T"].sum()),
-           "n_C": int(ev["Cm"].sum()), "threshold": float(ev["thr"])}
+           "n_C": int(ev["Cm"].sum()), "recall_iso": round(ev["recall_iso"], 4), "n_iso": int(ev["iso"].sum()),
+           "threshold": float(ev["thr"])}
     if stage is not None:
-        for name, m in (("T", ev["T"]), ("C", ev["Cm"])):
+        for name, m in (("T", ev["T"]), ("C", ev["Cm"]), ("iso", ev["iso"])):
             out["stages_" + name] = {k: int((stage[m] == k).sum())
                                      for k in ("hit", "picker", "association", "resolution", "budget")}
     return out
