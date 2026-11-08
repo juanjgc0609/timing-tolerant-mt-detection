@@ -5,6 +5,11 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-08
 
+- M6, first version (plan T4.19, exploratory): `ttmt.v2.m6.adcg_loop`, joint refit of all accepted atoms (closed-form
+  tensors, bounded block times, re-assignment among onset maxima) with the one-against-two resolvability test in
+  place of the 5 km exclusion; tests `tests/test_m6.py` (in CI). Exploration M6-JOINT (simulation, SNR 12): pair
+  recall of near pairs (1.5-5 km) at 0.1-1 s rises from 0.35-0.85 (greedy) to 0.75-1.00; far pairs unchanged; 0 of 40
+  false splits of single events. Real G-M6a (semi-synthetic, real noise) not measured yet.
 - Model v2, first components (exploratory, plan T4.1, T4.13, T4.15): subpackage `ttmt.v2` with M0 (`m0`: Tyler noise
   covariance per station, whitening of traces and of radiation operators, orientation audit), M1 (`m1`: onset
   evidence, isotonic calibration, `OnsetEngine` on OnsetDelay terms, `OnsetReader`, sub-sample vector reading,
