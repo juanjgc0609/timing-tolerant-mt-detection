@@ -326,7 +326,7 @@ confirmatory tests (before development results)`. Campo único:
 
 > This registration fixes, before any phase-4 development result, the rule by which the confirmatory tests R2 and R3
 > will decide whether the model beats the comparators: docs/decisions/ADR-0008-single-beat-rule.md (accepted
-> 24 October 2026) and docs/protocol/PHASE6_SAP.md v0.1 (23 October 2026), attached, at commit 7d3f931 (main on 8 November 2026, after amendment 4's ledger; use the main commit of the day of submission if it moved) of
+> 24 October 2026) and docs/protocol/PHASE6_SAP.md v0.1 (23 October 2026), attached, at commit 76f6d7b (main on 8 November 2026, after amendment 4's ledger; use the main commit of the day of submission if it moved) of
 > https://github.com/juanjgc0609/timing-tolerant-mt-detection. In short: target regime T = arrival separation
 > [0.1, 1) s at the median station; hit rule LOC+T-V; endpoint recall at 30 false detections per hour, weighted to
 > real prevalence; H1 superiority in T (block sign-flip), then H2 non-inferiority by 0.05 in the complement (clustered
@@ -349,7 +349,7 @@ Adjuntar ADR-0008, PHASE6_SAP.md, CR04_PREVALENCE.md y `experiments/exploratory/
 ## 7. Estado de los huecos (8 de noviembre de 2026)
 
 Llenos en esta rama: versión del SAP (0.1, en la descripción y en "Other" de R2) y commit de main del registro
-opcional (7d3f931, main con el ledger a4; amendment-4 sigue en 449d39b). Ningún otro hueco se puede llenar hoy sin inventar.
+opcional (76f6d7b, main con el ledger a4; amendment-4 sigue en 449d39b). Ningún otro hueco se puede llenar hoy sin inventar.
 
 | Grupo | Huecos | De qué dependen |
 |:--|:--|:--|
