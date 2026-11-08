@@ -80,6 +80,25 @@ quartiles 0.30 / 0.46 / 0.67 s; 93 % of the T targets are above the limit.
 3. **PyOcto's min_interevent_time is not the cause** (OR-mit and PN-mit change nothing in T).
 4. GaMMA here is the registered configuration (provisional, E63); the a4 configuration replaces it when it is frozen.
 
+## Isolated events (oracle check)
+
+Isolated targets (separation > 3 s, n = 129, part of C) test whether the oracle reaches 1 when no pair can merge.
+
+| Condition | PyOcto iso | GaMMA (registered) iso |
+|:--|--:|--:|
+| PN | 0.450 | |
+| OR (perfect picks) | 0.767 (Ridgecrest 0.96, Hi-net 0.50) | 0.930 |
+
+With perfect picks GaMMA is near 1 (9 of 129 missed, all resolution), and so is PyOcto on Ridgecrest. PyOcto's 30
+misses are Hi-net events: none is outside the search box, every nearest detection is within 2 km in epicentre (median
+1.5 km), and half are more than 0.5 s off in origin time; on Hi-net its origin times are early by 0.31 s (median,
+quartiles -0.40 / -0.27 s). The injected arrivals do not follow the associators' 1-D model there (residuals of
+arr_t_obs against JMA2001, median P -0.15 s and S -0.35 s, interquartile ranges 0.39 and 0.56 s; Ridgecrest against
+Hadley-Kanamori +0.11 and +0.15 s). So the isolated-event limit is travel-time mismatch with the 1-D model as PyOcto's
+locator absorbs it, not the picks: GaMMA, with the same model and picks, reaches 0.93. For our model this argues for
+station terms (or a model-error term in the likelihood) before any claim on C. Script: `stage_loss.py` reports
+`recall_iso` and `stages_iso`; GaMMA's OR row is `results/stage_loss/phasenet+gamma_registered_provisional_OR_iso.json`.
+
 ## Limits
 
 Tuning partition only (50 records, 20 realisations, one development objective, no intervals). The oracle uses the
