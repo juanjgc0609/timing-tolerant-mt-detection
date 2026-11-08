@@ -21,14 +21,16 @@ COLUMNS = ("method", "trial", "seed", "params", "objective", "recall_T", "recall
            "status", "error", "wall_s", "time_utc", "code", "env", "partition")
 
 
-LEDGER_A3 = LEDGER.with_name("tuning_ledger_a3.csv")       # GaMMA under ATLAS-0 amendment 3 (E63)
+LEDGER_A3 = LEDGER.with_name("tuning_ledger_a3.csv")       # GaMMA under ATLAS-0 amendment 3 (E63); stopped
+LEDGER_A4 = LEDGER.with_name("tuning_ledger_a4.csv")       # GaMMA under ATLAS-0 amendment 4 (DBSCAN tuned)
 
 
-def require_a3(method, path, action):
-    """GaMMA after amendment 3 runs and freezes only in LEDGER_A3: the registered ledger already holds its 60 rows
-    (a run would skip them all) and its frozen best is the provisional one of registration 1."""
-    if method.endswith("+gamma") and Path(path).resolve() != LEDGER_A3.resolve():
-        raise ValueError(f"{action} {method}: GaMMA after ATLAS-0 amendment 3 (E63) uses only --ledger {LEDGER_A3}, "
+def require_a4(method, path, action):
+    """GaMMA runs and freezes only in LEDGER_A4: the registered ledger holds the 60 rows of registration 1 (a run
+    would skip them all, and its frozen best is the provisional one) and LEDGER_A3 the stopped run of amendment 3,
+    drawn from another space."""
+    if method.endswith("+gamma") and Path(path).resolve() != LEDGER_A4.resolve():
+        raise ValueError(f"{action} {method}: GaMMA after ATLAS-0 amendment 4 uses only --ledger {LEDGER_A4}, "
                          f"not {path}")
 
 
@@ -90,7 +92,7 @@ def best(method, path=LEDGER):
 def freeze(method, out, path=LEDGER):
     """write the frozen configuration of method (its best trial) with the ledger hash and the budget actually spent;
     this file is what the atlas thread receives."""
-    require_a3(method, path, "freeze")
+    require_a4(method, path, "freeze")
     rows = [r for r in read(path) if r["method"] == method]
     b = best(method, path)
     if b is None:

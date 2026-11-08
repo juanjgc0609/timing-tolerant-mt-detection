@@ -355,3 +355,29 @@ on 31 October, before any BGMM result on the 37 configurations existed, to repea
 run with BGMM at the time of writing.
 Freeze: code of this amendment (`ttmt.associate.space`, `ttmt.associate.gamma_assoc`, the E63 tests of
 `tests/test_associate.py`); environment `ttmt-gpu` unchanged.
+
+## Amendment 4 (GaMMA DBSCAN; draft, to be anchored as `reg/ATLAS-0/amendment-4`)
+Task ATLAS-0, amendment 4 (4 November 2026), written after the gate run (`gate_v2.json`, puente_gamma failed) and
+after the amendment-3 GaMMA run started, and before any GaMMA configuration of amendment 3 was frozen or read on atlas
+data. The registered text and every ledger are kept unchanged; this item replaces the text where they differ.
+1. GaMMA search space. Registration 1 tunes three GaMMA parameters (minimum picks, time sigma, method) and leaves its
+   DBSCAN pre-clustering at the R0/R1 values (`dbscan_eps` 10 s, `dbscan_min_samples` 3); after amendment 3 two of
+   them vary, against four for PyOcto. The G3a diagnosis (`experiments/exploratory/COMPARATORS/README.md`) shows
+   DBSCAN sets GaMMA's recall more than any tuned parameter (0.00 to 0.93 on one station list as `min_samples` goes
+   from 20 to 3). The space adds `dbscan_eps` log-uniform in [3, 20] s and `dbscan_min_samples` in {3, ..., 20}
+   (ranges holding Table S3 of Puente et al., 7 s and 20, and the R0/R1 values), so GaMMA tunes four associator
+   parameters, as PyOcto does. The method stays BGMM (amendment 3); seeds, objective and partition are unchanged.
+   Criterion: an equal number of tuned associator parameters, each covering the published settings, not any result.
+2. GaMMA is tuned with the 60 trials of item 1 in a new ledger, `tuning_ledger_a4.csv` (`ledger.require_a4` refuses
+   any other); its best is frozen as `frozen/phasenet+gamma_a4.json` and is GaMMA's comparator. The amendment-3 run
+   (`tuning_ledger_a3.csv`) was stopped on the owner's decision of 4 November 2026; its rows are kept, not frozen and
+   not used. The registered GaMMA rows stay provisional as in amendment 3.
+3. Budget (CR-07): 60 trials for each of GaMMA and PyOcto, four associator parameters each.
+
+Disclosure: the registered GaMMA and PyOcto objectives, the gate results and the G3a DBSCAN diagnosis were known
+when this was written; none has been read on atlas data. The amendment-3 run was stopped at 01:56Z on 4 November 2026
+after 3 trials (0, 1, 2; objectives 0.1811, 0.1330, 0.2115, partition b60d99b3d0bbbbfa); its ledger, 3 rows,
+SHA-256 8c1133f2..., stays on the device, not frozen and not used.
+The change widens GaMMA's search and cannot be chosen to lower its result.
+Freeze: `ttmt.associate.space`, `ttmt.associate.gamma_assoc`, `ttmt.associate.ledger`, `ttmt.associate.tune` and their
+tests in `tests/test_associate.py`; environment `ttmt-gpu` unchanged.

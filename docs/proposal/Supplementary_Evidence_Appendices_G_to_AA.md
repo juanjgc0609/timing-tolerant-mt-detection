@@ -3557,8 +3557,11 @@ of [112], real noise and real data remain untested. An independent code audit fo
 floor of the predicted sample, not the nearest one (error E52): with no timing error a reader at the floor sample keeps
 on average 0.78 of the energy of a 2 Hz arrival (worst case 0.42), against 0.94 at the nearest sample. The exact-time
 comparators of this task, the convex problem of rule 2C-b and the MT-FW-EX ablation of Task 2D are handicapped by that
-detail, which inflates the measured value of the peak search; the decisions very probably stand, since the timing
-error of the 3 km grid is already 0.1 to 0.3 s, but the cells were not re-run with rounding.
+detail, which could inflate the measured value of the peak search. Re-run post hoc with rounding for those readers
+only (decision D10, `results/posthoc_e52/`), no verdict of 2C or 2D changes: recall at 0.25 moves on average by -0.021
+(BOMP+SC), -0.004 (MTSTACK+SC), -0.004 (GL-FW+SC) and -0.005 (MT-FW-EX+SC), and 2C-a and 2D-b (strong) drop from 3 to
+2 of 3 cells in seed 7331 and are still met. The energy gain does not reach recall, since the timing error of the 3 km
+grid is already 0.1 to 0.3 s.
 
 ### Y.20a What Task 2C changes
 
