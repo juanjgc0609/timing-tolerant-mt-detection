@@ -1,0 +1,163 @@
+{
+ "method": "phasenet+gamma",
+ "frozen": "experiments/exploratory/COMPARATORS/frozen/phasenet+gamma.json",
+ "partition": "b60d99b3d0bbbbfa",
+ "frozen_objective": 0.233779,
+ "frozen_recall_T": 0.165919,
+ "frozen_recall_C": 0.301639,
+ "match_s": 0.5,
+ "conditions": {
+  "PN": {
+   "recall_T": 0.1659,
+   "recall_C": 0.3016,
+   "objective": 0.2338,
+   "n_T": 223,
+   "n_C": 305,
+   "threshold": 12.0,
+   "stages_T": {
+    "hit": 37,
+    "picker": 112,
+    "association": 27,
+    "resolution": 47,
+    "budget": 0
+   },
+   "stages_C": {
+    "hit": 92,
+    "picker": 148,
+    "association": 30,
+    "resolution": 22,
+    "budget": 13
+   },
+   "wall_s": 404.1
+  },
+  "PN-clean": {
+   "recall_T": 0.2108,
+   "recall_C": 0.4262,
+   "objective": 0.3185,
+   "n_T": 223,
+   "n_C": 305,
+   "threshold": 6.0,
+   "stages_T": {
+    "hit": 47,
+    "picker": 110,
+    "association": 8,
+    "resolution": 58,
+    "budget": 0
+   },
+   "stages_C": {
+    "hit": 130,
+    "picker": 147,
+    "association": 11,
+    "resolution": 17,
+    "budget": 0
+   },
+   "wall_s": 16.2
+  },
+  "OR": {
+   "recall_T": 0.1435,
+   "recall_C": 0.6754,
+   "objective": 0.4095,
+   "n_T": 223,
+   "n_C": 305,
+   "threshold": 6.0,
+   "stages_T": {
+    "hit": 32,
+    "picker": 0,
+    "association": 40,
+    "resolution": 151,
+    "budget": 0
+   },
+   "stages_C": {
+    "hit": 206,
+    "picker": 0,
+    "association": 47,
+    "resolution": 52,
+    "budget": 0
+   },
+   "wall_s": 46.3
+  },
+  "OR-snr1": {
+   "recall_T": 0.1525,
+   "recall_C": 0.5279,
+   "objective": 0.3402,
+   "n_T": 223,
+   "n_C": 305,
+   "threshold": 6.0,
+   "stages_T": {
+    "hit": 34,
+    "picker": 43,
+    "association": 33,
+    "resolution": 113,
+    "budget": 0
+   },
+   "stages_C": {
+    "hit": 161,
+    "picker": 35,
+    "association": 69,
+    "resolution": 40,
+    "budget": 0
+   },
+   "wall_s": 30.5
+  },
+  "OR-snr2": {
+   "recall_T": 0.2018,
+   "recall_C": 0.4656,
+   "objective": 0.3337,
+   "n_T": 223,
+   "n_C": 305,
+   "threshold": 6.0,
+   "stages_T": {
+    "hit": 45,
+    "picker": 60,
+    "association": 22,
+    "resolution": 96,
+    "budget": 0
+   },
+   "stages_C": {
+    "hit": 142,
+    "picker": 59,
+    "association": 58,
+    "resolution": 46,
+    "budget": 0
+   },
+   "wall_s": 26.5
+  }
+ },
+ "pick_recall_by_snr": {
+  "snr_bins": [
+   "0-0.5",
+   "0.5-1",
+   "1-2",
+   "2-4",
+   "4-8",
+   "8-inf"
+  ],
+  "arrivals": [
+   188,
+   165,
+   344,
+   526,
+   592,
+   962
+  ],
+  "picked_fraction": [
+   0.053,
+   0.152,
+   0.212,
+   0.394,
+   0.541,
+   0.658
+  ]
+ },
+ "a7": {
+  "T_resolvable_fraction": 0.9283,
+  "dtau_min_median_s": 0.0852,
+  "snr_tot_median_T": 16.39,
+  "snr_median_station_T": 5.128,
+  "sep_T_quartiles_s": [
+   0.295,
+   0.461,
+   0.673
+  ]
+ }
+}

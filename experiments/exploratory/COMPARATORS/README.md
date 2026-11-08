@@ -290,6 +290,13 @@ python experiments/exploratory/COMPARATORS/tune_cli.py flags --ledger experiment
 The same manifests as the registered run (partition b60d99b3d0bbbbfa) are required. `run` and `freeze` of a GaMMA
 method refuse any ledger other than `tuning_ledger_a4.csv` (`ledger.require_a4`).
 
+Result (device, 7 November 2026, 19:22-22:43 local; code 449d39b, partition b60d99b3d0bbbbfa in all rows): 60 of 60
+trials valid. Best trial 53 (objective 0.235588, recall_T 0.179372, recall_C 0.291803; weights `original`,
+dbscan_eps 8.80 s, dbscan_min_samples 9), frozen in `frozen/phasenet+gamma_a4.json` with the ledger's SHA-256;
+`flags` reports recall_T below 0.2. PyOcto's registered best is 0.2589 with the same budget and the same number of
+associator parameters; one tuning per method, without intervals, so no ordering is claimed from these numbers. The
+amendment-3 run was stopped after 3 trials (`tuning_ledger_a3.csv`, kept, not used) when amendment 4 was decided.
+
 ### Conditions of a fair GaMMA comparison
 
 | Condition | State |

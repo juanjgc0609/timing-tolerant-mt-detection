@@ -1,0 +1,304 @@
+{
+ "method": "phasenet+pyocto",
+ "frozen": "experiments/exploratory/COMPARATORS/frozen/phasenet+pyocto.json",
+ "partition": "b60d99b3d0bbbbfa",
+ "frozen_objective": 0.258877,
+ "frozen_recall_T": 0.206278,
+ "frozen_recall_C": 0.311475,
+ "match_s": 0.5,
+ "conditions": {
+  "PN": {
+   "recall_T": 0.2063,
+   "recall_C": 0.3115,
+   "objective": 0.2589,
+   "n_T": 223,
+   "n_C": 305,
+   "recall_iso": 0.4496,
+   "n_iso": 129,
+   "threshold": 13.0,
+   "stages_T": {
+    "hit": 46,
+    "picker": 120,
+    "association": 32,
+    "resolution": 25,
+    "budget": 0
+   },
+   "stages_C": {
+    "hit": 95,
+    "picker": 148,
+    "association": 27,
+    "resolution": 22,
+    "budget": 13
+   },
+   "stages_iso": {
+    "hit": 58,
+    "picker": 53,
+    "association": 6,
+    "resolution": 1,
+    "budget": 11
+   },
+   "wall_s": 21.2
+  },
+  "PN-clean": {
+   "recall_T": 0.1659,
+   "recall_C": 0.423,
+   "objective": 0.2944,
+   "n_T": 223,
+   "n_C": 305,
+   "recall_iso": 0.5581,
+   "n_iso": 129,
+   "threshold": 6.0,
+   "stages_T": {
+    "hit": 37,
+    "picker": 115,
+    "association": 9,
+    "resolution": 62,
+    "budget": 0
+   },
+   "stages_C": {
+    "hit": 129,
+    "picker": 145,
+    "association": 12,
+    "resolution": 19,
+    "budget": 0
+   },
+   "stages_iso": {
+    "hit": 72,
+    "picker": 53,
+    "association": 3,
+    "resolution": 1,
+    "budget": 0
+   },
+   "wall_s": 1.2
+  },
+  "OR": {
+   "recall_T": 0.1704,
+   "recall_C": 0.5377,
+   "objective": 0.3541,
+   "n_T": 223,
+   "n_C": 305,
+   "recall_iso": 0.7674,
+   "n_iso": 129,
+   "threshold": 11.0,
+   "stages_T": {
+    "hit": 38,
+    "picker": 0,
+    "association": 39,
+    "resolution": 139,
+    "budget": 7
+   },
+   "stages_C": {
+    "hit": 164,
+    "picker": 0,
+    "association": 62,
+    "resolution": 57,
+    "budget": 22
+   },
+   "stages_iso": {
+    "hit": 99,
+    "picker": 0,
+    "association": 15,
+    "resolution": 13,
+    "budget": 2
+   },
+   "wall_s": 14.7
+  },
+  "OR-snr1": {
+   "recall_T": 0.2332,
+   "recall_C": 0.5016,
+   "objective": 0.3674,
+   "n_T": 223,
+   "n_C": 305,
+   "recall_iso": 0.6744,
+   "n_iso": 129,
+   "threshold": 7.0,
+   "stages_T": {
+    "hit": 52,
+    "picker": 43,
+    "association": 22,
+    "resolution": 104,
+    "budget": 2
+   },
+   "stages_C": {
+    "hit": 153,
+    "picker": 35,
+    "association": 67,
+    "resolution": 45,
+    "budget": 5
+   },
+   "stages_iso": {
+    "hit": 87,
+    "picker": 27,
+    "association": 6,
+    "resolution": 9,
+    "budget": 0
+   },
+   "wall_s": 9.0
+  },
+  "OR-snr2": {
+   "recall_T": 0.2287,
+   "recall_C": 0.5016,
+   "objective": 0.3652,
+   "n_T": 223,
+   "n_C": 305,
+   "recall_iso": 0.6279,
+   "n_iso": 129,
+   "threshold": 6.0,
+   "stages_T": {
+    "hit": 51,
+    "picker": 60,
+    "association": 25,
+    "resolution": 87,
+    "budget": 0
+   },
+   "stages_C": {
+    "hit": 153,
+    "picker": 59,
+    "association": 46,
+    "resolution": 47,
+    "budget": 0
+   },
+   "stages_iso": {
+    "hit": 81,
+    "picker": 34,
+    "association": 5,
+    "resolution": 9,
+    "budget": 0
+   },
+   "wall_s": 5.2
+  },
+  "OR-mit": {
+   "recall_T": 0.1614,
+   "recall_C": 0.4918,
+   "objective": 0.3266,
+   "n_T": 223,
+   "n_C": 305,
+   "recall_iso": 0.6899,
+   "n_iso": 129,
+   "threshold": 12.0,
+   "stages_T": {
+    "hit": 36,
+    "picker": 0,
+    "association": 34,
+    "resolution": 141,
+    "budget": 12
+   },
+   "stages_C": {
+    "hit": 150,
+    "picker": 0,
+    "association": 56,
+    "resolution": 57,
+    "budget": 42
+   },
+   "stages_iso": {
+    "hit": 89,
+    "picker": 0,
+    "association": 15,
+    "resolution": 13,
+    "budget": 12
+   },
+   "wall_s": 14.9
+  },
+  "OR-tight": {
+   "recall_T": 0.2197,
+   "recall_C": 0.4984,
+   "objective": 0.359,
+   "n_T": 223,
+   "n_C": 305,
+   "recall_iso": 0.5891,
+   "n_iso": 129,
+   "threshold": 8.0,
+   "stages_T": {
+    "hit": 49,
+    "picker": 0,
+    "association": 36,
+    "resolution": 112,
+    "budget": 26
+   },
+   "stages_C": {
+    "hit": 152,
+    "picker": 0,
+    "association": 71,
+    "resolution": 42,
+    "budget": 40
+   },
+   "stages_iso": {
+    "hit": 76,
+    "picker": 0,
+    "association": 34,
+    "resolution": 5,
+    "budget": 14
+   },
+   "wall_s": 28.0
+  },
+  "PN-mit": {
+   "recall_T": 0.2063,
+   "recall_C": 0.3115,
+   "objective": 0.2589,
+   "n_T": 223,
+   "n_C": 305,
+   "recall_iso": 0.4496,
+   "n_iso": 129,
+   "threshold": 13.0,
+   "stages_T": {
+    "hit": 46,
+    "picker": 120,
+    "association": 32,
+    "resolution": 25,
+    "budget": 0
+   },
+   "stages_C": {
+    "hit": 95,
+    "picker": 148,
+    "association": 24,
+    "resolution": 22,
+    "budget": 16
+   },
+   "stages_iso": {
+    "hit": 58,
+    "picker": 53,
+    "association": 6,
+    "resolution": 1,
+    "budget": 11
+   },
+   "wall_s": 13.7
+  }
+ },
+ "pick_recall_by_snr": {
+  "snr_bins": [
+   "0-0.5",
+   "0.5-1",
+   "1-2",
+   "2-4",
+   "4-8",
+   "8-inf"
+  ],
+  "arrivals": [
+   188,
+   165,
+   344,
+   526,
+   592,
+   962
+  ],
+  "picked_fraction": [
+   0.037,
+   0.109,
+   0.192,
+   0.382,
+   0.525,
+   0.653
+  ]
+ },
+ "a7": {
+  "T_resolvable_fraction": 0.9283,
+  "dtau_min_median_s": 0.0852,
+  "snr_tot_median_T": 16.39,
+  "snr_median_station_T": 5.128,
+  "sep_T_quartiles_s": [
+   0.295,
+   0.461,
+   0.673
+  ]
+ }
+}
