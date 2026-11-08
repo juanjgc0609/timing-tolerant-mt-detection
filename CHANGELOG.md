@@ -5,6 +5,9 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-08
 
+- GaMMA re-tuned under ATLAS-0 amendment 4 (DBSCAN in the search space): 60 of 60 trials valid, best objective
+  0.2356 (trial 53), frozen in `frozen/phasenet+gamma_a4.json`; it replaces the registered and amendment-3 GaMMA
+  configurations. The stopped amendment-3 ledger (3 trials) is kept and not used.
 - Thesis: Section 8 status paragraph updated for gate G3a passed (2 of 2: PyOcto on Puente 9/9, QuakeMigrate on
   Rutford exact; GaMMA 0/8 and ETHZ not passed; four declared deviations of the QuakeMigrate run) and amendment 4
   (449d39b); GaMMA stays provisional until the a4 run ends; no claim over GaMMA.
