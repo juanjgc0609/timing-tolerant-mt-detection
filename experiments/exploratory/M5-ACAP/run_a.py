@@ -10,6 +10,7 @@ block statistic of the MT loop (station terms S0, hard reading, W = 4, no refine
   MT@S0      registered cap 6 (identical to the 2M method of that name: a check of the pipeline)
   ACAP@S0    relative cap, c = 3 (ttmt.detector.ACAP's map, applied to the read vectors of c10_lib.mt_loop)
   NOCAP@S0   unbounded (the control that the transients hurt)
+  ACAP5@S0   c = 5, sensitivity (added after the small run, outside the gate)
 Endpoint: DENSE windows, LOC+T (5 km, 0.5 s), recall at <= 0.25 realised false events per window (the operating point
 of 2M, re-chosen in every bootstrap replicate), hierarchical bootstrap of t2m_analyze (strata = cell, networks then
 windows), B = 2000. Gate (declared before the run): ACAP@S0 - MT@S0 has its 2.5th percentile > -0.03 (the
@@ -35,8 +36,9 @@ import c10_lib as C  # noqa: E402
 
 CFG = os.path.join(ROOT, "results", "task2M", "cfg_2718.json")
 SHA = os.path.join(ROOT, "results", "task2M", "noise_arrays.sha256")
-METHODS = ["MT@S0", "ACAP@S0", "NOCAP@S0"]
-ACAP_C = 3.0
+METHODS = ["MT@S0", "ACAP@S0", "NOCAP@S0", "ACAP5@S0"]
+ACAP_C = {"ACAP@S0": 3.0, "ACAP5@S0": 5.0}         # ACAP5: sensitivity of c (declared after the small run, not gated)
+REG_PARTS = os.path.join(ROOT, "results", "task2M", "parts_2718")
 
 
 class AcapSpec(float):
@@ -64,9 +66,9 @@ _run0 = L2.Net2M.run
 
 
 def _run(self, name, MFn, kmax):
-    if name in ("ACAP@S0", "NOCAP@S0"):
+    if name in ("ACAP@S0", "ACAP5@S0", "NOCAP@S0"):
         E, pr, _EF, prF = self.eng["S0"]
-        capv = AcapSpec(ACAP_C) if name == "ACAP@S0" else None
+        capv = AcapSpec(ACAP_C[name]) if name in ACAP_C else None
         return C.mt_loop(E, MFn, kmax, mode="hard", pr=pr, W=4, EF=None, prF=prF, capv=capv)
     return _run0(self, name, MFn, kmax)
 
@@ -96,6 +98,25 @@ def run(ndir, pdir, nets, cells):
             t2m_run.run_net("REAL", cell, j, pdir)
 
 
+def check_registered(nets):
+    """MT@S0 of every part against the registered Task 2M part of the same (cell, network): same packed atoms."""
+    n_same = n_cmp = 0
+    for n in nets:
+        fn = os.path.join(REG_PARTS, f"REAL_{n['cell']}_{n['net']}.json")
+        if not os.path.exists(fn):
+            continue
+        with open(fn) as fh:
+            ref = json.load(fh)
+        n_cmp += 1
+        same = len(ref["rows"]) == len(n["rows"])
+        for r0, r1 in zip(ref["rows"], n["rows"]):
+            a0, a1 = r0["atoms"]["MT@S0"], r1["atoms"]["MT@S0"]
+            same &= len(a0) == len(a1) and all(np.allclose(np.asarray(u, float), np.asarray(v, float), rtol=1e-6,
+                                                           atol=1e-6, equal_nan=True) for u, v in zip(a0, a1))
+        n_same += bool(same)
+    print(f"pipeline check: MT@S0 identical to the registered part in {n_same} of {n_cmp} parts compared")
+
+
 def analyze(pdir, B):
     import c10_analyze as A
     import c16_analyze as Z
@@ -103,6 +124,7 @@ def analyze(pdir, B):
     nets, rows = Z.load(pdir, "REAL")
     print(f"M5-ACAP G-M5a  Task 2M seed 2718 REAL arm  {len(nets)} parts  B {B}  numpy {np.__version__}")
     print("gate: ACAP@S0 - MT@S0, DENSE LOC+T @0.25, 2.5th percentile > -0.03\n")
+    check_registered(nets)
     names = [m for m in METHODS if m in rows[0]["atoms"]]
     verdict = None
     for des, rule, tol in (("DENSE", "LOC+T", 0.5), ("DENSE", "LOC", None), ("STD", "LOC+T", 0.5)):
@@ -116,7 +138,7 @@ def analyze(pdir, B):
                 ci = bt.ci(m)
                 print(f"   {m:9s} @0.1 {bt.pt[m][0]:.3f} [{ci[0][0]:.3f},{ci[0][1]:.3f}]  "
                       f"@0.25 {bt.pt[m][1]:.3f} [{ci[1][0]:.3f},{ci[1][1]:.3f}]")
-            for a in ("ACAP@S0", "NOCAP@S0"):
+            for a in ("ACAP@S0", "ACAP5@S0", "NOCAP@S0"):
                 if a in names:
                     print(f"   {a} - MT@S0 @0.25 {T.f3(T.contrast(bt, a, 'MT@S0', 1))}")
             if (des, rule, grp) == ("DENSE", "LOC+T", "all"):

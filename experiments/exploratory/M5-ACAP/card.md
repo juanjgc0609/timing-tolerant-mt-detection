@@ -1,6 +1,6 @@
 # Experiment card: M5-ACAP. Gates G-M5a (robustness) and G-M5b (no saturation) of the ACAP ranking
 
-Stage: S0 (scripts written, 8 November 2026; not run yet). Plan: T4.13, step 3 of the build order of
+Stage: S1 (small run done, 8 November 2026; full run next). Plan: T4.13, step 3 of the build order of
 `especificacion-modelo-v2.md` §8. Exploratory, real data; no registered number changes (the registered runs keep the
 cap 6).
 
@@ -43,5 +43,23 @@ Can the relative cap ACAP (each block norm limited to c = 3 x the median block n
     python experiments/exploratory/M5-ACAP/run_a.py run NOISE_DIR work/m5a_parts 2800
     python experiments/exploratory/M5-ACAP/run_a.py analyze work/m5a_parts > experiments/exploratory/M5-ACAP/run_a_out.txt
 
+## Small run (8 November 2026, laptop, CPU, numpy 1.26.4)
+- **G-M5b on N4** (87 s): CAP6 0.426 and NOCAP 0.740, both identical to c18c.
+  - ACAP3 0.663 [0.500, 0.807], so it passes on N4, but the lower end of the interval reaches 0.5.
+  - ACAP2 0.575, ACAP5 0.726.
+- **G-M5a on network 2800** (3 parts, 48 DENSE windows, 43 s).
+  - Pipeline check: MT@S0 0.042 / 0.182 (LOC+T @0.1 / @0.25) is identical to the registered parts of network 2800.
+  - The noise sha256 differs from the registered one (a77cd786... against 6d90338b...). The preparation log is the
+    same line for line (1826 eligible slots, 5 events, the same level quantiles), and the detector output is
+    identical, so the difference is in the last bits.
+  - ACAP@S0 - MT@S0 = -0.062 [-0.159, +0.038]; NOCAP@S0 - MT@S0 = -0.109 [-0.196, +0.000].
+    ACAP recovers half of what removing the cap loses, but not all of it, at the point estimate.
+  - With 3 networks the interval cannot meet the gate either way, so the small run decides nothing. It does point
+    to a risk: ladder_6 gives -0.22, against +0.09 for unilateral_c40.
+- Decision (Ockham): the full run costs about 20 min of CPU, which is cheaper than a diagnosis on 3 networks.
+  ACAP5@S0 is added as a declared sensitivity. It was chosen because c = 5 was the best ACAP on Ridgecrest, and it
+  stays outside the gate, so the gate keeps c = 3 as registered in the specification.
+- `run_a.py analyze` now checks MT@S0 against the registered parts (`results/task2M/parts_2718`) part by part.
+
 ## Result
-Pending.
+Pending (full run).
