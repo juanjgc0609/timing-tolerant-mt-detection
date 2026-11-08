@@ -67,7 +67,7 @@ este borrador se actualiza a partir de él, no al revés.
 | Title (R2) | Confirmatory test R2: overlapping-event detection on decimated real networks |
 | Title (R3) | Confirmatory test R3: overlapping-event detection with recorded events injected into unseen networks' noise |
 | Description (proyecto) | Doctoral research project (Universidad Icesi, director Uram Aníbal Sosa Aguirre) on detecting and locating earthquakes whose arrivals overlap within 0.1 to 1 s, where pick-and-associate methods lose events. Code, protocol, decision records and the sealed registration log are in the linked GitHub repository; confirmatory tests of phase 6 are preregistered here (ADR-0004). |
-| Description (R2/R3) | One paragraph: the "Question" of the registration (sección 3/4, campo Hypotheses, primera frase) plus "Analysis rule: ADR-0008; analysis plan: PHASE6_SAP v⟨versión⟩; anchored by tag and Release reg/R⟨2/3⟩/registration-1 (commit ⟨hash⟩, SHA-256 ⟨hash⟩)." |
+| Description (R2/R3) | One paragraph: the "Question" of the registration (sección 3/4, campo Hypotheses, primera frase) plus "Analysis rule: ADR-0008; analysis plan: PHASE6_SAP v0.1; anchored by tag and Release reg/R⟨2/3⟩/registration-1 (commit ⟨hash⟩, SHA-256 ⟨hash⟩)." |
 | Contributors | Juan José Gordillo Córdoba (ORCID 0009-0005-4252-1263); Uram Aníbal Sosa Aguirre (director) si acepta figurar |
 | Affiliated institutions | Universidad Icesi (si OSF la lista; si no, en la descripción) |
 | License | CC BY 4.0 (texto y documentos). El código del repositorio enlazado es MIT; decirlo en la descripción. |
@@ -248,7 +248,7 @@ run.
 
 ### Other
 
-> Analysis rule: docs/decisions/ADR-0008-single-beat-rule.md. Analysis plan: docs/protocol/PHASE6_SAP.md v⟨versión⟩,
+> Analysis rule: docs/decisions/ADR-0008-single-beat-rule.md. Analysis plan: docs/protocol/PHASE6_SAP.md v0.1 (subir la versión si el SAP cambia antes del anclaje),
 > Sections 3 to 10 part of this registration. Registration file ⟨ruta⟩, SHA-256 ⟨hash⟩, commit ⟨hash⟩, tag and GitHub
 > Release reg/R2/registration-1 (created_at ⟨UTC⟩), OpenTimestamps proof ⟨ruta .ots⟩. Freeze: reg/R2/freeze-1.
 > Deviations known before the result are logged before it is read. Verification: reimplementation by a separate AI
@@ -322,7 +322,7 @@ confirmatory tests (before development results)`. Campo único:
 
 > This registration fixes, before any phase-4 development result, the rule by which the confirmatory tests R2 and R3
 > will decide whether the model beats the comparators: docs/decisions/ADR-0008-single-beat-rule.md (accepted
-> 24 October 2026) and docs/protocol/PHASE6_SAP.md v0.1 (23 October 2026), attached, at commit ⟨hash de main⟩ of
+> 24 October 2026) and docs/protocol/PHASE6_SAP.md v0.1 (23 October 2026), attached, at commit 449d39b (main on 8 November 2026; use the main commit of the day of submission if it moved) of
 > https://github.com/juanjgc0609/timing-tolerant-mt-detection. In short: target regime T = arrival separation
 > [0.1, 1) s at the median station; hit rule LOC+T-V; endpoint recall at 30 false detections per hour, weighted to
 > real prevalence; H1 superiority in T (block sign-flip), then H2 non-inferiority by 0.05 in the complement (clustered
@@ -341,3 +341,15 @@ Adjuntar ADR-0008, PHASE6_SAP.md, CR04_PREVALENCE.md y `experiments/exploratory/
 | Plan de análisis (opcional) | Open-Ended Registration | — (commit de main) | — | | |
 | R2 | OSF Preregistration | reg/R2/registration-1 | | | |
 | R3 | OSF Preregistration | reg/R3/registration-1 | | | |
+
+## 7. Estado de los huecos (8 de noviembre de 2026)
+
+Llenos en esta rama: versión del SAP (0.1, en la descripción y en "Other" de R2) y commit de main del registro
+opcional (449d39b, que es también `reg/ATLAS-0/amendment-4`). Ningún otro hueco se puede llenar hoy sin inventar.
+
+| Grupo | Huecos | De qué dependen |
+|:--|:--|:--|
+| A. De la corrida a4 de GaMMA | ledger de ajuste de todos los comparadores con su SHA-256 (R2 Study design, R3 por copia); por arrastre, la predicción y los insumos de `sample_size.py estimate` | GaMMA debe cerrar sus 60 configuraciones (`tuning_ledger_a4.csv`) para que el conjunto núcleo esté ajustado; sin eso G4 no se puede medir |
+| B. De G4 (fase 4, necesita el modelo y A) | informe G4 y predicción; p0, rho, icc, m, k, f; rangos y nivel a2 del chequeo de diseño; B, n_T, n_C, h; potencia p y tamaño s; salidas de `sample_size.py` | Modelo congelado corrido en desarrollo |
+| C. De los datos reservados (T3.R4, T3.V, CR-04) | redes, secuencias, periodos, centros de datos, límites UTC, script de descarga; tarjeta de datos y su tag; red densa y catálogo; regla y semilla de subconjuntos; catálogo mejorado; sigma_t y pares que califican; tabla de prevalencia medida y Y %; bibliotecas de ruido y eventos de R3 (horas, M, km, n, c); script de inyección; límites declarados | Selección y sellado de los datos de fase 6; medición CR-04 en el portátil |
+| D. Del congelamiento y anclaje | tag y versión del modelo; tabla de procedencia de pesos (CR-22); scripts de elegibilidad y de análisis con SHA-256; archivo de registro, SHA-256, commit, Release `created_at`, `.ots`; semillas de R3 | Se llenan el día del anclaje, en ese orden (ADR-0004) |
