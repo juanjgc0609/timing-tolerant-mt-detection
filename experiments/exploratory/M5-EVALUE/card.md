@@ -187,7 +187,8 @@ data. Commands `run_c.py avg` / `avgan`, background RL, all else as in the first
 - With the weighted fit, 72 parts, 28 800 hypotheses: S_avg 1.4e-3 at p = 1e-3 for both pi (95 % ub 2.4e-3), 4-5e-3
   at 1e-2. The product: 1.0e-4 and 3.8e-4 at 1e-3. Power at the true catalogue hypotheses (pi leave-one-out): 1.00
   for both, median S_avg 40, product 126.
-- Per-station normalisation of each window (`--local`) did not change it.
+- Per-station normalisation of each window (`--local`), tried with the distinct-peak fit only, changed little
+  (LOW 2.9e-3 at 1e-3 on the same 2 400 hypotheses).
 - Reading: a two-block e-value lets one tensor fit the two vectors closely, so its level depends on the background
   density at exactly those reads; the remaining error of the fitted background (about 1.4x there) is enough to break
   the level, even on a null without dependence. The product needs all blocks at once and is far less sensitive to it.

@@ -11,7 +11,9 @@ Dated record of changes to the project's process, code and documents. Results ar
   (radial background 5.8e-3 on 101231, 1.2e-3 on 100210-11; passes at 1e-2); the gaussian background fails by two
   orders of magnitude on the transient day, as D.1(a) predicts. The declared second step found the cause in
   dependence between blocks (simultaneous tails across stations, 1.7x the independent rate), not in the marginal,
-  and pivoted to M7 by its rule; the held-out confirmation day stays unused. Negative result recorded.
+  and pivoted to M7 by its rule; the held-out confirmation day stays unused. A third attempt, the average of
+  per-station e-values (valid under any dependence across stations), already misses the level on a fake i.i.d. null
+  (1.4e-3 at 1e-3), so it was not run on real data. Negative result recorded; the decision rests on M7.
 - Thesis: Section 8 reports the amendment-4 GaMMA tuning (60 of 60 valid, best 0.2356 against PyOcto 0.2589); with one
   search per method and no intervals neither is ordered above the other.
 - M6, first version (plan T4.19, exploratory): `ttmt.v2.m6.adcg_loop`, joint refit of all accepted atoms (closed-form
