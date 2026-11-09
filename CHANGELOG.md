@@ -3,6 +3,15 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-09
+
+- T4.20 / T4.24 / T4.25 (exploratory, tuning partition, card `experiments/exploratory/T420-CEILING/README.md` written
+  before the run): `ttmt.detectability` (detection probability of the ideal network subspace detector, p = 1, 6, K,
+  union-bound threshold at the objective's 30 false detections per hour, energy bounded below by the card SNR) and
+  `ttmt.associate.station_terms` (static per-station, per-phase terms from the injected sources, cross-fitted by
+  realisation, applied to picks before association). Script `ceiling_c.py`; decision rule of T4.22 fixed in the card.
+  Tests `tests/test_detectability.py` (in CI). Results pending the run on the owner's machine.
+
 ## 2026-11-08
 
 - Thesis: Section 8 reports the amendment-4 GaMMA tuning (60 of 60 valid, best 0.2356 against PyOcto 0.2589); with one
