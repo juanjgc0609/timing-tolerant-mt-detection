@@ -1,4 +1,7 @@
-﻿== seed 2718: 72 parts, 80640 TEST hypotheses, numpy 1.26.4
+# PRE-FIX OUTPUT (commit 44db66c): NaN S_mix (= +inf) were counted as non-rejections here, so the 3141 'PASS' is an
+# artefact. Corrected R rates (NaN read as +inf; analyze since 6dedf5d does this): 2718 CAL 9.08e-3 / 5.80e-3,
+# LOW 9.37e-3 / 6.01e-3; 3141 CAL 3.12e-3 / 1.22e-3, LOW 3.04e-3 / 1.11e-3 (p 1e-2 / 1e-3). G-M5c FAILS on both.
+== seed 2718: 72 parts, 80640 TEST hypotheses, numpy 1.26.4
    R_CAL: mean exp(S) nan  median S nan  max S nan  | p 0.01: rate 8.51e-03 (95 % ub 1.27e-02) <= p  | p 0.001: rate 5.23e-03 (95 % ub 8.81e-03) > p
       ladder_4        p 0.01: 7.22e-03  p 0.001: 4.13e-03
       ladder_6        p 0.01: 8.11e-03  p 0.001: 5.02e-03

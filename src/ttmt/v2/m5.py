@@ -241,9 +241,7 @@ def evalue_mix(v, A, logf, eps, draws, s0, gamma=0.3, chunk=None, groups=None):
             if groups is None:
                 out[sl] = _logmeanexp(ell.sum(1), axis=1)
             else:
-                with np.errstate(invalid="ignore"):
-                    tg = np.einsum("gk,hkj->hgj", Gm, ell)                              # (h, G, J)
-                tg = np.where(np.isnan(tg), np.inf, tg)
+                tg = np.stack([ell[:, Gm[g] > 0].sum(1) for g in range(len(Gm))], axis=1)  # (h, G, J), no 0 x inf
                 out[sl] = _logmeanexp(_logmeanexp(tg, axis=2), axis=1)
     return outs if many else outs[0]
 
