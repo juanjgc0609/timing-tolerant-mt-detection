@@ -66,6 +66,7 @@ NTEST = int(sys.argv[2]) if len(sys.argv) > 2 else 200
 NPAIR = int(sys.argv[3]) if len(sys.argv) > 3 else 20
 PROCS = int(sys.argv[4]) if len(sys.argv) > 4 else 4
 OP = len(sys.argv) > 5 and sys.argv[5] == "op"
+NEAR_KM = float(sys.argv[6]) if len(sys.argv) > 6 else 5.0      # radius of the resolvability test (step 3: 10)
 KMAX = 4
 DTAUS = (0.1, 0.25, 0.5, 1.0)
 _RIC0 = S.ricker
@@ -108,7 +109,7 @@ def _scene(key, kind, mismatch, dtau=None, sep=None):
 def job_gain(args):
     key, kind, mismatch = args
     srcs, Y, q = _scene(key, kind, mismatch)
-    a = m6.adcg_loop(E, Y, q, KMAX, LAG, thr=-np.inf, free="joint")
+    a = m6.adcg_loop(E, Y, q, KMAX, LAG, thr=-np.inf, free="joint", near_km=NEAR_KM)
     g = [x["pair_gain"] for x in MB.spurious(a, srcs) if x["pair_gain"] is not None]
     return [max(g)] if g else []              # level per window (T5.2 d): the largest spurious gain of the scene
 
@@ -116,7 +117,7 @@ def job_gain(args):
 def job_split(args):
     key, kind, mismatch, thr = args
     srcs, Y, q = _scene(key, kind, mismatch)
-    return (len(MB.spurious(m6.adcg_loop(E, Y, q, KMAX, LAG, thr=thr, free="joint"), srcs)),
+    return (len(MB.spurious(m6.adcg_loop(E, Y, q, KMAX, LAG, thr=thr, free="joint", near_km=NEAR_KM), srcs)),
             len(MB.spurious(v2_loop(E, Y, q, KMAX, LAG, min_sep=0.0), srcs)))
 
 
@@ -125,7 +126,7 @@ def job_pair(args):
     srcs, Y, q = _scene(key, "pair", True, dtau, sep)
     g = v2_loop(E, Y, q, KMAX, LAG)
     res = {"greedy": g, "greedy0": v2_loop(E, Y, q, KMAX, LAG, min_sep=0.0),
-           "m6": m6.adcg_loop(E, Y, q, KMAX, LAG, thr=thr, free="joint"),
+           "m6": m6.adcg_loop(E, Y, q, KMAX, LAG, thr=thr, free="joint", near_km=NEAR_KM),
            "dup(greedy)": m6.duplicate_atoms(g, dtau / 2.0)}
     return {k: len(m6.hits_loctv(a, srcs)) == 2 for k, a in res.items()}
 
@@ -138,6 +139,7 @@ def cp(k, n):
 
 def main():
     t0 = time.time()
+    print(f"near_km {NEAR_KM}")
     print(f"M6-CAL  seed {SEED}  NCAL {NCAL}  NTEST {NTEST}  NPAIR {NPAIR}  kmax {KMAX}  numpy {np.__version__}")
     print("8-station ring, homogeneous medium, synthetic picker, Gaussian noise, SNR 12; LOC+T-V scoring\n")
     with mp.get_context("fork").Pool(PROCS) as pool:

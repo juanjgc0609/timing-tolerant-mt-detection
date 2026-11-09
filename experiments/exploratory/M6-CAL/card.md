@@ -48,9 +48,41 @@ Reading:
   `ttmt.stats.duplicator` gives them equal ones, and the near pairs have 1.5-5 km of epicentral separation, outside
   the same-epicentre case of `tests/test_stats.py`. Sent to the review and critique roles; until settled, recall
   differences of about 0.15 or less in near cells are not read as gains.
+  Diagnosis by the review role (9 November 2026): `label_voronoi` follows ADR-0008; the flaw is in the control. A
+  merged atom midway between the two events, copied at +-dtau/2 with the cell's TRUE dtau (oracle information), lands
+  on both true origins whenever dtau >= s/10, which matches the failing cells. Proposed fix (registered metric
+  untouched): draw the copy offset from a fixed distribution independent of the cell, e.g. U[0.05, 0.5] s. Pending
+  the owner's approval; the control is not changed here until then.
 
 ## Step 2 (declared 9 November 2026, before running)
 Calibrate the threshold on the operating loop: on the same 200 + 200 calibration scenes, find by bisection on thr the
 smallest value at which the loop as run (`adcg_loop`, kmax 4, joint) splits at most 5 % of the scenes in BOTH
 controls (one source, with neighbours; mismatched). Then the fresh controls and the pairs of step 1, unchanged, at
 that threshold. Pass for the threshold: the with-neighbours CI upper bound <= 0.10.
+
+## Result, step 2 (`run_op_out.txt`, 3824 s)
+Bisection on the operating loop: thr = 48.5 (C1 0.005, C3 0.050 of the calibration scenes split). The C3 rate stays
+at 0.040 even at thr = 400.
+
+| fresh control | scenes split | 95 % CI |
+|:--|--:|:--|
+| one source, mismatched | 1 / 200 | [0.000, 0.028] |
+| with neighbours, mismatched | **21 / 200** | **[0.066, 0.156]** |
+| one source, exact | 0 / 100 | [0.000, 0.036] |
+| with neighbours, exact | 6 / 100 | [0.022, 0.126] |
+
+Pair recall is identical to step 1 (the threshold does not change which true pairs are kept). **Step 2 fails its
+pass rule** (with-neighbour upper bound 0.156 > 0.10).
+
+Diagnosis (`diag_untested.py`, the 21 fresh scenes): about half of the false splits are atoms that the test never
+sees. They lie 4-5 km from a true source (the false-split rule counts atoms within 5 km of a source), but 5.4-8.7 km
+from the nearest accepted atom, outside the test's `near_km` = 5. An atom 5 km from the source can be 10 km from the
+source's own atom. The plateau at thr = 400 is these atoms. The rest are tested atoms with large gains (50-3700), at
+the overlapping neighbour.
+
+## Step 3 (declared 9 November 2026, before running; the last attempt on this line by rule 1)
+The same operating-loop calibration and fresh controls with `near_km` = 10 (twice the LOC+T radius: every atom that
+can be a false split of a source is tested against that source's atom). Pass rule unchanged (with-neighbour upper
+bound <= 0.10). If it fails, the resolvability test with an RSS threshold is recorded as not calibratable in scenes
+with neighbours in this form, and the next route is the owner's decision (a per-scene statistic, or the e-value route
+of M7).
