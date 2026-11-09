@@ -171,3 +171,29 @@ Laptop, CPU, 4 min 19 s. Both pivot conditions of the rule hold, so **G-M5c-2 wa
 - Not tried, proposed (owner decides): a dependence-robust combination. The average of e-values is an e-value under
   any dependence, so per-station e-values (P and S of one station multiplied, stations averaged) keep validity by
   construction, at a cost in power that would have to be measured.
+
+## Third step: average of per-station e-values, S_avg (owner approved, 8 November 2026)
+Idea: an average of e-values is an e-value under any dependence (Vovk and Wang, 2021). Each station's e-value is the
+pi mixture of the product of its P and S blocks; S_avg = log of the average over stations
+(`evalue_mix(..., groups=station)`). It only needs P and S of one station to be independent. Test
+`test_station_average_is_valid_under_cross_station_dependence`: with one shared heavy scale across stations, the
+product over-rejects (5.1e-3 at p = 1e-3, the 2718 pattern) and S_avg has no exceedance.
+
+Started small, on the container's fake i.i.d. noise (a null with no dependence across stations), before any real
+data. Commands `run_c.py avg` / `avgan`, background RL, all else as in the first step:
+- With the fit on distinct peaks, S_avg exceeded p (LOW 3.8e-3 at 1e-3, 2 400 hypotheses). Cause found: a hypothesis
+  reads the larger peaks more often (a large peak owns a wider +-4 sample basin), so the TEST reads are size-biased
+  relative to distinct peaks. Fit on every read instead (`--weighted`, tail cap 10 handles the duplicates).
+- With the weighted fit, 72 parts, 28 800 hypotheses: S_avg 1.4e-3 at p = 1e-3 for both pi (95 % ub 2.4e-3), 4-5e-3
+  at 1e-2. The product: 1.0e-4 and 3.8e-4 at 1e-3. Power at the true catalogue hypotheses (pi leave-one-out): 1.00
+  for both, median S_avg 40, product 126.
+- Per-station normalisation of each window (`--local`) did not change it.
+- Reading: a two-block e-value lets one tensor fit the two vectors closely, so its level depends on the background
+  density at exactly those reads; the remaining error of the fitted background (about 1.4x there) is enough to break
+  the level, even on a null without dependence. The product needs all blocks at once and is far less sensitive to it.
+
+**Decision (Ockham).** S_avg fails on a known null without dependence, and real noise adds both dependence and a
+harder marginal. A real-data run is not justified and was not made; the held-out confirmation day stays unused. With
+three attempts (product, product with heavier tails, station average) the mixture e-value is closed as a negative
+result for this reader and these data, and the decision rests on M7 (time slides calibrate the joint null
+empirically, D.3). The `--weighted` fit is a correction worth keeping for any background estimated from peak reads.

@@ -36,6 +36,8 @@ to exceed p on the transient day), and the out-of-sample fit of the t (PIT decil
     python run_c.py analyze PARTSDIR[,PARTSDIR] [B]
     python run_c.py diag SEED NOISE_DIR DIAGDIR [nets] [cells]      (second step, development: anatomy + what-ifs)
     python run_c.py diagan DIAGDIR
+    python run_c.py avg SEED NOISE_DIR ADIR [nets] [cells]           (third step: S_avg null and power)
+    python run_c.py avgan ADIR[,ADIR] [B]
     python run_c.py mkcfg SEED NOISE_DIR[,..] OUT.json       (confirmation day; then pass OUT.json as SEED)
 """
 import json
@@ -94,8 +96,15 @@ def mkcfg(seed, ndirs, out, slots_per_block=76, max_blocks=24):
     print(json.dumps(c))
 
 
+WEIGHTED_FIT = False    # --weighted: fit on all reads (a peak counted once per hypothesis that reads it; third step)
+LOCAL_SCALE = False     # --local: each station divided by its own robust level in the window (third step)
+
+
 def mfn(net, slot):
     MF, sd = matched(L2.real_segment(net.di, net.sub, slot))
+    if LOCAL_SCALE:
+        lev = np.median(np.abs(MF), axis=(1, 2)) / 0.6745                     # (ns,) robust level of each station
+        return MF / np.maximum(lev, 1e-12)[:, None, None]
     return MF / sd
 
 
@@ -166,7 +175,10 @@ def setup(cell, j, seed, variants=False):
         M = mfn(net, s)
         tp = xc.peak_table_w(M, C.SH)[np.arange(net.ns)[None, None], E.IDX[g, t]]   # (n, 2, ns) peak samples
         for i in range(net.ns):
-            V[i].append(M[i][:, np.unique(tp[:, :, i])].T)                    # distinct peaks only (no duplicates)
+            if WEIGHTED_FIT:                                                     # every read, as a hypothesis reads it
+                V[i].append(M[i][:, tp[:, :, i].ravel()].T)
+            else:
+                V[i].append(M[i][:, np.unique(tp[:, :, i])].T)                # distinct peaks only (no duplicates)
     V = [np.concatenate(x) for x in V]
     bg = {"R": [RadialBackground.fit(V[i]) for i in range(net.ns)],
           "T": [TBackground.fit(V[i]) for i in range(net.ns)],
@@ -337,6 +349,85 @@ def diag_analyze(ddir):
     print(f"pooled alpha quantiles 5/50/95: {np.round(np.quantile(ap, [.05, .5, .95]), 2).tolist()}")
 
 
+def avg_part(cell, j, seed, adir):
+    """third step: S_avg (per-station e-values averaged, valid under dependence across stations) with background RL.
+    Null on TEST slots; power at the TRUE hypotheses of the network's catalogue events (pi leave-one-out)."""
+    fn = os.path.join(adir, f"{cell}_{j}.npz")
+    if os.path.exists(fn):
+        return
+    net, E, fit, test, bg, s0, eps, r, pis, med = setup(cell, j, seed, variants=True)
+    ns = net.ns
+    st = np.tile(np.arange(ns), 2)
+    rl = bg["RL"]
+    out = {k: [] for k in ("avg_CAL", "avg_LOW", "prod_CAL", "prod_LOW")}
+    for s in test:
+        rng = np.random.default_rng([SEEDI(seed), TAG_HYP, net.ci, j, s])
+        g, t = rng.integers(E.N, size=H_TEST), rng.integers(E.T, size=H_TEST)
+        v = read(mfn(net, s), E.IDX[g, t]).reshape(H_TEST, 2 * ns, 3)
+        A = E.G[g].reshape(H_TEST, 2 * ns, 3, 6)
+        lf = np.stack([rl[i].logpdf(v[:, q]) for q, i in enumerate(st)], axis=1)
+        for pk, dr in pis.items():
+            out[f"avg_{pk}"].append(evalue_mix(v, A, lf, eps[st], dr, s0[st], GAMMA, groups=st))
+            out[f"prod_{pk}"].append(evalue_mix(v, A, lf, eps[st], dr, s0[st], GAMMA))
+    _r, mc = catalogue_terms(net)
+    pw = []
+    rp = np.random.default_rng([SEEDI(seed), TAG_PI + 10, net.ci, j])
+    for c, ((D, _sc, _tc), (src, tau)) in enumerate(zip(net.cat, net.cat_truth)):
+        MF, sd = matched(D)
+        E1 = C.Eng(np.asarray(src, float)[None], net.STA, net.corr, np.array([tau]), C.H_COARSE)
+        v = read(MF / sd, E1.IDX[0, 0]).reshape(1, 2 * ns, 3)
+        A = E1.G[0].reshape(1, 2 * ns, 3, 6)
+        lf = np.stack([rl[i].logpdf(v[:, q]) for q, i in enumerate(st)], axis=1)
+        dr = prior_draws(np.delete(mc, c, axis=0), J_DRAWS, rp)                # pi without this event
+        pw.append([evalue_mix(v, A, lf, eps[st], dr, s0[st], GAMMA, groups=st)[0],
+                   evalue_mix(v, A, lf, eps[st], dr, s0[st], GAMMA)[0]])
+    np.savez(fn, slots=np.array(test), cell=cell, j=j, seed=SEEDI(seed), power=np.array(pw),
+             **{k: np.array(x) for k, x in out.items()})
+    print(f"avg {cell} {j}: max S_avg LOW {np.max(out['avg_LOW']):.2f}, catalogue S_avg median "
+          f"{np.median(np.array(pw)[:, 0]):.1f}", flush=True)
+
+
+def avg(seed, ndirs, adir, nets, cells):
+    configure(seed, ndirs)
+    nets = L2.CFG["nets"] if nets == "all" else [int(x) for x in nets.split(",")]
+    os.makedirs(adir, exist_ok=True)
+    for j in nets:
+        for cell in cells:
+            avg_part(cell, j, seed, adir)
+
+
+def avg_analyze(adirs, B):
+    parts = []
+    for d in adirs:
+        parts += [dict(np.load(os.path.join(d, f))) for f in sorted(os.listdir(d)) if f.endswith(".npz")]
+    for seed in sorted({int(p["seed"]) for p in parts}):
+        P = [p for p in parts if int(p["seed"]) == seed]
+        keys = sorted({(int(p["j"]), int(s)) for p in P for s in p["slots"]})
+        kid = {k: i for i, k in enumerate(keys)}
+        print(f"== seed {seed}: {len(P)} parts, {sum(p['avg_CAL'].size for p in P)} TEST hypotheses (background RL)")
+        ok = True
+        for name in ("avg_CAL", "avg_LOW", "prod_CAL", "prod_LOW"):
+            S = np.concatenate([p[name].reshape(-1) for p in P])
+            S = np.where(np.isnan(S), np.inf, S)
+            cl = np.concatenate([np.repeat([kid[(int(p["j"]), int(s))] for s in p["slots"]], p[name].shape[1]) for p in P])
+            rng = np.random.default_rng(0)
+            line = f"   {name:8s} non-finite {int((~np.isfinite(S)).sum())}"
+            for q in PS:
+                x = (S >= math.log(1 / q)).astype(float)
+                ks, n_ = np.bincount(cl, x, len(keys)), np.bincount(cl, None, len(keys))
+                bt = [ks[i].sum() / n_[i].sum() for i in (rng.integers(len(keys), size=len(keys)) for _ in range(B))]
+                line += f"  | p {q:g}: rate {x.mean():.2e} (95 % ub {np.quantile(bt, .975):.2e})"
+                if name.startswith("avg"):
+                    ok &= x.mean() <= q
+            print(line)
+        pw = np.concatenate([p["power"] for p in P])
+        fa, fp = (pw[:, 0] >= math.log(1e3)).mean(), (pw[:, 1] >= math.log(1e3)).mean()
+        print(f"   power at the true hypotheses of {len(pw)} catalogue events (pi leave-one-out), S >= log 1e3: "
+              f"S_avg {fa:.2f}, product {fp:.2f}; median S_avg {np.median(pw[:, 0]):.1f}, product {np.median(pw[:, 1]):.1f}")
+        print(f"   calibration (S_avg <= p at 1e-2 and 1e-3, CAL and LOW): {'PASS' if ok else 'FAIL'}; "
+              f"power (S_avg fraction >= 0.5): {'PASS' if fa >= 0.5 else 'FAIL'}\n")
+
+
 def analyze(pdirs, B):
     parts = []
     for d in pdirs:
@@ -381,6 +472,12 @@ def analyze(pdirs, B):
 
 
 if __name__ == "__main__":
+    if "--weighted" in sys.argv:
+        sys.argv.remove("--weighted")
+        WEIGHTED_FIT = True
+    if "--local" in sys.argv:
+        sys.argv.remove("--local")
+        LOCAL_SCALE = True
     cmd = sys.argv[1] if len(sys.argv) > 1 else ""
     if cmd == "mkcfg":
         mkcfg(int(sys.argv[2]), sys.argv[3].split(","), sys.argv[4])
@@ -393,6 +490,11 @@ if __name__ == "__main__":
     elif cmd == "diag":
         diag(sys.argv[2], sys.argv[3].split(","), sys.argv[4], sys.argv[5] if len(sys.argv) > 5 else "all",
              sys.argv[6].split(",") if len(sys.argv) > 6 else list(L2.CELLS))
+    elif cmd == "avg":
+        avg(sys.argv[2], sys.argv[3].split(","), sys.argv[4], sys.argv[5] if len(sys.argv) > 5 else "all",
+            sys.argv[6].split(",") if len(sys.argv) > 6 else list(L2.CELLS))
+    elif cmd == "avgan":
+        avg_analyze(sys.argv[2].split(","), int(sys.argv[3]) if len(sys.argv) > 3 else 2000)
     elif cmd == "diagan":
         diag_analyze(sys.argv[2])
     elif cmd == "analyze":

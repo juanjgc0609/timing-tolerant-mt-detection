@@ -200,13 +200,18 @@ def prior_draws(m_cal, J, rng, amp_sd=0.5, jitter=0.25, scale=None):
     return m * np.exp(amp_sd * rng.normal(size=(J, 1)))
 
 
-def evalue_mix(v, A, logf, eps, draws, s0, gamma=0.3, chunk=None):
+def evalue_mix(v, A, logf, eps, draws, s0, gamma=0.3, chunk=None, groups=None):
     """S_mix (log e-value) for H hypotheses.
 
     v (H, K, 3) read vectors; A (H, K, 3, 6) operators; logf (H, K) log f_k(v_k) of the background, or a list of such
     arrays (one S_mix per background, sharing the model term); eps (K,) or (H, K) contamination rate in (0, 1];
     draws (J, 6) tensors m_j ~ pi (independent of v); s0 (K,) or (H, K) model error at zero amplitude; gamma
-    proportional model error. Returns (H,) S_mix, or a list of them if logf is a list."""
+    proportional model error. Returns (H,) S_mix, or a list of them if logf is a list.
+
+    groups (K,) integer labels (e.g. the station of each block): if given, the e-value of each group is the pi mixture
+    of the product over ITS blocks, and the result is the log of the AVERAGE over groups, S_avg. An average of
+    e-values is an e-value under any dependence between them (Vovk and Wang, 2021), so S_avg needs independence only
+    inside a group (P and S of one station), not across stations; the price is power."""
     v = np.asarray(v, float)
     A = np.asarray(A, float)
     H, K = v.shape[:2]
@@ -221,6 +226,9 @@ def evalue_mix(v, A, logf, eps, draws, s0, gamma=0.3, chunk=None):
     J = len(draws)
     step = chunk or max(1, int(4e6 // max(1, J * K * 3)))
     outs = [np.empty(H) for _ in logfs]
+    if groups is not None:
+        groups = np.asarray(groups, int)
+        Gm = (groups[None, :] == np.unique(groups)[:, None]).astype(float)             # (G, K)
     for h0 in range(0, H, step):
         sl = slice(h0, min(H, h0 + step))
         h = sl.stop - sl.start
@@ -229,9 +237,20 @@ def evalue_mix(v, A, logf, eps, draws, s0, gamma=0.3, chunk=None):
         d2 = np.sum((v[sl][..., None] - P) ** 2, axis=2)
         logN = -1.5 * (LOG2PI + 2.0 * np.log(s)) - d2 / (2.0 * s * s) + l1[sl]
         for lf, out in zip(logfs, outs):
-            tot = np.logaddexp(le[sl], logN - lf[sl][..., None]).sum(1)                # (h, J)
-            mx = tot.max(axis=1, keepdims=True)
-            with np.errstate(invalid="ignore"):
-                val = mx[:, 0] + np.log(np.mean(np.exp(tot - mx), axis=1))
-            out[sl] = np.where(np.isposinf(mx[:, 0]), np.inf, val)               # f_k(v_k) = 0: S = +inf, not NaN
+            ell = np.logaddexp(le[sl], logN - lf[sl][..., None])                       # (h, K, J)
+            if groups is None:
+                out[sl] = _logmeanexp(ell.sum(1), axis=1)
+            else:
+                with np.errstate(invalid="ignore"):
+                    tg = np.einsum("gk,hkj->hgj", Gm, ell)                              # (h, G, J)
+                tg = np.where(np.isnan(tg), np.inf, tg)
+                out[sl] = _logmeanexp(_logmeanexp(tg, axis=2), axis=1)
     return outs if many else outs[0]
+
+
+def _logmeanexp(x, axis):
+    """log mean exp along axis; +inf if any entry is +inf (f_k(v_k) = 0 gives l_k = +inf), never NaN."""
+    mx = np.max(x, axis=axis, keepdims=True)
+    with np.errstate(invalid="ignore"):
+        val = np.squeeze(mx, axis) + np.log(np.mean(np.exp(x - mx), axis=axis))
+    return np.where(np.isposinf(np.squeeze(mx, axis)), np.inf, val)

@@ -143,3 +143,25 @@ def test_radial_background_flat_left_tail_has_full_support():
     dens = 4 * np.pi * r ** 3 * np.exp(rb.logpdf(np.stack([r, 0 * r, 0 * r], -1)))
     assert abs(np.trapezoid(dens, np.log(r)) - 1) < 5e-3
     assert abs(rb.cdf_norm(np.array([1e6]))[0] - 1) < 1e-3
+
+
+def test_station_average_is_valid_under_cross_station_dependence():
+    """S_avg (average over stations of the per-station mixture e-values) keeps its level when a common factor makes
+    the stations' reads dependent (shared heavy scale), where the product S_mix over-rejects."""
+    rng = np.random.default_rng(9)
+    H, ns, nu = 20000, 8, 3.0
+    z = rng.normal(size=(H, 2 * ns, 3))
+    w = np.sqrt(rng.chisquare(nu, size=(H, 1, 1)) / nu)                       # ONE scale per hypothesis: dependent
+    v = z / w                                                                 # marginally exact isotropic t_3
+    A = rng.normal(size=(H, 2 * ns, 3, 6)) * 0.3
+    f = TBackground(1.0, nu)
+    draws = prior_draws(rng.normal(size=(8, 6)), 200, rng)
+    st = np.tile(np.arange(ns), 2)
+    lf = f.logpdf(v)
+    Sp = evalue_mix(v, A, lf, 0.05, draws, 1.0)
+    Sa = evalue_mix(v, A, lf, 0.05, draws, 1.0, groups=st)
+    q = math.log(100)
+    assert (Sa >= q).mean() <= 0.01
+    assert (Sp >= q).mean() > (Sa >= q).mean()
+    one = evalue_mix(v[:5], A[:5], lf[:5], 0.05, draws, 1.0, groups=np.zeros(2 * ns, int))
+    assert np.allclose(one, Sp[:5])                                            # one group = the product
