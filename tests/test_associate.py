@@ -286,6 +286,18 @@ def test_real_table_matches_first_arrival(tmp_path):
     assert abs(row[2] + 2.0 * row[6] - deeper[2]) < 0.05
 
 
+def test_tables_avoid_layer_tops_e65(tmp_path):
+    # E65: first_arrival with the source exactly on a layer top (Hadley-Kanamori 16 km) misses the head wave along it
+    from ttmt.associate.velocity import table_depth
+    m, x = list(V.layers), np.array([100.0])
+    assert TT.first_arrival(m, 16.0, x)[0] - TT.first_arrival(m, 16.013, x)[0] > 0.3      # the defect, kept visible
+    assert table_depth(m, 16.0) == pytest.approx(16.01) and table_depth(m, 15.0) == 15.0 and table_depth(m, 0.0) == 0.01
+    a = np.loadtxt(V.real_ttdb(tmp_path / "ttdb.txt", 1.0, 16.0, dx_deg=0.1, dz=1.0), usecols=range(8))
+    on, ok = a[np.isclose(a[:, 0], 0.9) & (a[:, 1] == 16.0)][0], a[np.isclose(a[:, 0], 0.9) & (a[:, 1] == 15.0)][0]
+    assert abs(on[2] - TT.first_arrival(m, 16.013, [0.9 * 111.19])[0]) < 0.005
+    assert abs(on[2] - (ok[2] + ok[6])) < 0.05                                             # continuous in depth
+
+
 # ------------------------------------------------------------------------------------------------- provenance
 def test_provenance_declares_known_overlaps():
     ov = PV.overlaps()
@@ -558,3 +570,53 @@ def test_stage_loss_oracle_and_match():
     ev, n = SL.match(pk, tr)
     assert (ev >= 0).all() and n.tolist() == [3, 4]
     assert len(SL.oracle_picks(tr, snr_min=1.0)) == 6
+
+
+def test_harpa_space_and_ledger_rule(tmp_path):
+    # HARPA was added after registration 1: three associator parameters on ranges the card already uses, and only
+    # the ledger of the proposed amendment 5
+    sp = SP.space_of("phasenet+harpa")
+    assert set(sp) == set(SP.PHASENET) | set(SP.HARPA) and len(SP.HARPA) == 3
+    for _i, _s, c in SP.trials("phasenet+harpa"):
+        SP.check(sp, c)
+    for led in (L.LEDGER, L.LEDGER_A4, tmp_path / "other.csv"):
+        with pytest.raises(ValueError, match="amendment 5"):
+            TU.run("phasenet+harpa", lambda c, r: None, [object()], ledger=led, log=lambda *_: None)
+    L.require_a4("phasenet+harpa", L.LEDGER_A5, "run")
+    L.require_a4("eqnet2", L.LEDGER_A5, "run")
+
+
+def test_harpa_travel_time_table_matches_first_arrival():
+    torch = pytest.importorskip("torch")
+    from ttmt.associate import harpa_assoc as HA
+    tab = HA.TravelTimeTable(V, 60.0, 25.0, h=0.5)
+    rng = np.random.default_rng(8)
+    r, z = rng.uniform(1, 55, 200), rng.uniform(0.5, 22, 200)
+    for k, ratio in ((0, 1.0), (1, V.vpvs)):
+        ref = np.array([TT.first_arrival(list(V.layers), zz, [rr], ratio)[0] for rr, zz in zip(r, z)])
+        got = tab(torch.tensor(r), torch.tensor(z), k).numpy()
+        assert np.max(np.abs(got - ref)) < 0.05                              # bilinear on a 0.5 km grid
+    z5 = torch.tensor([5.5])                                                 # a layer top of Hadley-Kanamori (E65)
+    below = TT.first_arrival(list(V.layers), 5.51, [55.0])[0]
+    assert abs(float(tab(torch.tensor([55.0]), z5, 0)) - below) < 0.01
+    x = torch.tensor([20.0], requires_grad=True)
+    tab(x, torch.tensor([8.0]), 0).sum().backward()
+    assert 0.1 < float(x.grad) < 0.3                                         # s/km, a crustal slowness
+
+
+@pytest.mark.slow
+def test_harpa_wrapper_serial_and_deterministic(tmp_path):
+    pytest.importorskip("harpa")
+    from ttmt.associate import harpa_assoc as HA
+    rng = np.random.default_rng(4)
+    tr = toy_truth(rng, n_pairs=0, n_iso=12, span=400.0)
+    pk = toy_picks(tr, rng)
+    fr = _frame(tmp_path, harpa={"ncpu": 8})
+    c, _fx = HA.config_for(fr, dict(as_min_picks=6, as_max_time_residual=0.5, as_dbscan_eps=10.0))
+    assert c["ncpu"] == 1 and c["S_phase"] and c["P_phase"]
+    cfg = dict(as_min_picks=6, as_max_time_residual=0.5, as_dbscan_eps=10.0)
+    d1, p1 = HA.associate(fr, pk, cfg)
+    d2, p2 = HA.associate(fr, pk, cfg)
+    assert np.array_equal(d1.t, d2.t) and np.array_equal(p1.det, p2.det)
+    assert _recall(d1, tr) >= 0.9 and (p1.det >= 0).mean() > 0.8
+    assert np.allclose(d1.s, np.bincount(p1.det[p1.det >= 0], minlength=len(d1)))

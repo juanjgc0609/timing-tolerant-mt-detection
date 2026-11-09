@@ -169,7 +169,7 @@ to 2L, are also in `outputs/explore_contrib/`, with their scripts, reports and o
 
 ## 3. The design errors that inverted or nullified a result
 
-This is the central content of this manifest. The log contains 64 errors, E1 to E64. In the
+This is the central content of this manifest. The log contains 65 errors, E1 to E65. In the
 first six (E1 to E6) the resulting number looked valid, and in all six it was detected **only because
 it turned out to be implausible**, not because there was a visible fault in the code; the following ones were detected
 by controls, preregistered rules or audits, as indicated in each one.
@@ -1301,6 +1301,28 @@ registered operating points, so the failure removes no claim; it qualifies the r
 method also at a threshold fixed on development data, with its realised false-alarm rate and an interval for it; a
 method whose deployable threshold exceeds the budget fails false-alarm calibration, whatever its recall at an
 operating point chosen on the evaluation data.
+
+### E65. A source exactly on a layer top loses the head wave along it in `ttmt.traveltime.first_arrival`
+**Script:** `src/ttmt/traveltime.py` (`_split`, `first_arrival`), found while building HARPA's travel-time table
+(thread "Sumar EQNet2 y HARPA como comparadores", 2026-11-09).
+**Symptom:** travel times jump when the source depth equals a layer top. Hadley-Kanamori, P, source at 16 km: 0.39 s
+late at 100 km; at 32 km: 1.55 s at 150 km and 2.55 s at 200 km; at 5.5 km: 0.94 s at 60 km (S about 1.7 times
+more). 0.013 km below or above the interface the times are continuous. A source within about 1e-6 km below a layer
+top gives meaningless times (a constant 2.16 s at every distance at 5.5 + 1e-6 km), from the near-zero layer
+thickness.
+**Cause:** `_split` puts a layer whose top equals the source depth below the source, and the head-wave sum skips the
+interface at the source depth, so the refraction along it is missing.
+**Detection:** a unit test of the bilinear table against `first_arrival` at random depths failed at the table nodes
+on 5.5 and 16 km.
+**Scope:** only tables whose depth nodes fall on a layer top. REAL's `ttdb` (`Velocity1D.real_ttdb`, 1 km steps)
+had wrong rows at 16 and 32 km for Hadley-Kanamori; REAL has no tuning trial and no reported result, so no
+registered number changes. JMA2001 (layer tops every 0.25 km, small velocity steps) showed no error at 3 to 20 km
+depth up to 150 km. The generator uses `ttmt.synth.media.first_arrival`, which is continuous at its interfaces
+(checked on the three presets). Not yet checked: every other caller of `ttmt.traveltime` with depths on a layer top
+(R1, M6 and CR-04 scripts use JMA2001 or continuous depths).
+**Correction:** the comparator tables (`real_ttdb`, HARPA) evaluate a node within 0.01 km of a layer top 0.01 km below
+it (`velocity.table_depth`; test `test_tables_avoid_layer_tops_e65`). The fix of `first_arrival` itself is proposed,
+not applied: it changes a core module used by registered regressions and needs its own review.
 
 ### On the order of the three errors of Task 0
 Three complete protocols, three different conclusions, and **in none of them was the cause the physics**. By

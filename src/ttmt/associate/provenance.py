@@ -36,6 +36,13 @@ WEIGHTS = {
         verify=""),
     "eqnet/none": dict(dataset="no released weights for the 2022 EQNet model (environments/DEVIATIONS.md)",
                        region="", period=None, source="AI4EPS/EQNet at 7dd24ed", verify=""),
+    "eqnet2/EQNet2-v0": dict(
+        dataset="CEED, NCEDC subset through 2022 (~325,000 events, 1.1M records); NCEDC 2023 held out "
+                "(Wang and Zhu, 2026, arXiv 2610.17404, Section 2.4)",
+        region="northern California", period=(None, 2022), source="Wang and Zhu (2026), Section 2.4",
+        verify="start year not stated; the introduction says 'California Earthquake Event Dataset' without the "
+               "subset, so the absence of SCEDC (and Ridgecrest 2019) from training rests on Section 2.4 only. "
+               "Ridgecrest 4-10 July 2019 is the paper's own continuous test case (Section 3.2)"),
 }
 
 # atlas data (ttmt.config.DATASETS keys): region and year of the records
@@ -63,7 +70,7 @@ def overlaps():
         for d, a in ATLAS_DATA.items():
             if not e["region"] or not _same_region(e["region"], a["region"]):
                 row[d] = ""
-            elif e["period"] is None or e["period"][0] <= a["year"] <= e["period"][1]:
+            elif e["period"] is None or (e["period"][0] or -10 ** 9) <= a["year"] <= e["period"][1]:
                 row[d] = "period"
             else:
                 row[d] = "region"

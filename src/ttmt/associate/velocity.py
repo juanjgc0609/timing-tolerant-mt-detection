@@ -14,6 +14,17 @@ import numpy as np
 from .. import traveltime as TT
 
 KM_PER_DEG = 111.19            # REAL's conversion (station.dat in degrees)
+OFF_TOP = 0.01                 # km
+
+
+def table_depth(layers, z):
+    """the depth at which a travel-time table node z is evaluated: 0.01 km for the surface, and 0.01 km below a layer
+    top when z lies within 0.01 km of one. ttmt.traveltime.first_arrival drops the head wave along the interface at
+    the source depth, so a source exactly on a layer top gets late first arrivals (E65: with Hadley-Kanamori at
+    16 km, P 0.39 s late at 100 km; at 32 km, 2.55 s at 200 km); 0.01 km shifts a time by 1-2 ms."""
+    z = max(float(z), OFF_TOP)
+    tops = np.array([t for t, _ in layers])
+    return z + OFF_TOP if np.min(np.abs(tops - z)) < OFF_TOP else z
 
 
 @dataclass(frozen=True)
@@ -90,7 +101,7 @@ class Velocity1D:
         e = 1e-3
         with open(path, "w") as fh:
             for zs in np.arange(0.0, zmax + 1e-9, dz):
-                zq = max(zs, 0.01)          # first_arrival has no direct ray from a source exactly at the surface
+                zq = table_depth(model, zs)     # no direct ray from the surface; no node on a layer top (E65)
                 cols = []
                 for r in (1.0, self.vpvs):
                     t = TT.first_arrival(model, zq, X, r)
