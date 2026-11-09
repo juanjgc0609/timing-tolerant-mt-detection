@@ -146,6 +146,15 @@ octree and keeps the cells consistent with enough picks; REAL [88] counts picks 
 PhaseLink [5] and graph neural networks [6] exist but need training data from the region. All of them inherit the
 errors of the picks: a missed pick cannot be recovered, and in dense sequences the assignment of picks to events is
 ambiguous.
+HARPA [Shi et al. 2026] associates picks with travel-time neural fields and unbalanced optimal transport, and VORA
+[Song et al. 2026] clusters picks on a Voronoi graph with an expectation-maximisation step that splits merged events;
+its stress tests separate events down to about 5 s, well above the sub-second separations of the dense windows of
+Section 6. EQNet2 [Wang and Zhu 2026] is a multi-station transformer that predicts phases, events, magnitudes and
+association from the waveforms, with a per-station polarity head, and was tested on Ridgecrest 2019 with 16 stations.
+Its polarities are used after detection, to compute focal mechanisms with SKHASH, not to detect or separate events;
+its event hit rule tolerates 3 s in origin time, and its threshold is fixed without control of the false-detection
+rate. Per-station polarity is therefore not specific to this thesis; what is specific is that the detector imposes a
+common moment tensor on the readings of all stations while it detects and deflates events.
 
 **Waveform migration and stacking.** QuakeMigrate [109] stacks onset functions of the waveforms along predicted
 moveouts on a grid; back-projection stacking of P and S waves can include focal mechanism corrections [112], [122]. Such
@@ -1073,6 +1082,10 @@ Numbered references follow the numbering of the bibliography of `docs/proposal/D
   anytime-valid inference," Statist. Sci., vol. 38, no. 4, pp. 576-601, 2023.
 - [Shahram and Milanfar 2004] M. Shahram and P. Milanfar, "Imaging below the diffraction limit: a statistical
   analysis," IEEE Trans. Image Process., vol. 13, no. 5, pp. 677-689, 2004.
+- [Shi et al. 2026] C. Shi, G. Poggiali, C. Marone, M. V. de Hoop, I. Dokmanić et al., "High-rate phase association
+  with travel time neural fields (HARPA)," Nat. Commun., vol. 17, 8140, 2026, doi:10.1038/s41467-026-74092-y.
+- [Song et al. 2026] J. Song, W. Zhu, H. Wang, U. Kumar, T. Taira, and R. M. Allen, "VORA," preprint,
+  arXiv:2607.10450, 2026.
 - [Smith 2005] S. T. Smith, "Statistical resolution limits and the complexified Cramér-Rao bound," IEEE Trans.
   Signal Process., vol. 53, no. 5, pp. 1597-1609, 2005.
 - [Ueno et al. 2002] H. Ueno, S. Hatakeyama, T. Aketagawa, J. Funasaki, and N. Hamada, "Improvement of hypocenter
@@ -1080,6 +1093,8 @@ Numbered references follow the numbering of the bibliography of `docs/proposal/D
   Japanese).
 - [Vovk and Wang 2021] V. Vovk and R. Wang, "E-values: calibration, combination and applications," Ann. Statist.,
   vol. 49, no. 3, pp. 1736-1754, 2021.
+- [Wang and Zhu 2026] H. Wang and W. Zhu, "Event-centric earthquake monitoring with a multi-station transformer
+  (EQNet2)," preprint, arXiv:2610.17404, 2026.
 - [Was et al. 2010] M. Was et al., "On the background estimation by time slides in a network of gravitational wave
   detectors," Class. Quantum Grav., vol. 27, 015005, 2010 (arXiv:0906.2120).
 - [Zhang and Wen 2015] M. Zhang and L. Wen, "An effective method for small event detection: match and locate (M&L),"

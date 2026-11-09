@@ -3,6 +3,12 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-09
+
+- Thesis, Section 2: HARPA (Nat. Commun. 17:8140, 2026), VORA (arXiv 2607.10450) and EQNet2 (arXiv 2610.17404) cited;
+  the novelty is stated as a common moment tensor imposed across stations during detection and deflation, not the use
+  of polarity, which EQNet2 also predicts per station.
+
 ## 2026-11-08
 
 - Thesis (pending PR #43): the ACAP result in Table 2 (row "new") and future-work item 3: G-M5a fails on both 2M seeds,
