@@ -3,6 +3,12 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-09
+
+- Thesis, Section 2: HARPA (Nat. Commun. 17:8140, 2026), VORA (arXiv 2607.10450) and EQNet2 (arXiv 2610.17404) cited;
+  the novelty is stated as a common moment tensor imposed across stations during detection and deflation, not the use
+  of polarity, which EQNet2 also predicts per station.
+
 ## 2026-11-08
 
 - M5 decision step (exploratory, ADR-0010 pivot): `ttmt.v2.m5` with the mixture e-value S_mix (theory D.2) and
@@ -14,8 +20,26 @@ Dated record of changes to the project's process, code and documents. Results ar
   and pivoted to M7 by its rule; the held-out confirmation day stays unused. A third attempt, the average of
   per-station e-values (valid under any dependence across stations), already misses the level on a fake i.i.d. null
   (1.4e-3 at 1e-3), so it was not run on real data. Negative result recorded; the decision rests on M7.
+- Thesis (pending PR #43): the ACAP result in Table 2 (row "new") and future-work item 3: G-M5a fails on both 2M seeds,
+  G-M5b passes on CAL and fails on the held-out Ridgecrest EVAL (N4 0.616); cap-6 saturation confirmed (0.39-0.42);
+  ACAP retired, cap 6 kept.
 - Thesis: Section 8 reports the amendment-4 GaMMA tuning (60 of 60 valid, best 0.2356 against PyOcto 0.2589); with one
   search per method and no intervals neither is ordered above the other.
+- M5-ACAP closed: ACAPF = ACAP(3, floor 6) is identical to ACAP3 (the floor never binds; the read-vector median in
+  noise is above 2, so the earlier diagnosis of a cap tighter than 6 was wrong). ACAP fails G-M5a on seed 2718
+  (-0.020 [-0.041, +0.009]) and seed 3141 (-0.013 [-0.053, +0.028]) and G-M5b on the held-out Ridgecrest EVAL segment
+  (N4 0.616); it passes G-M5b on CAL. The cap 6's saturation is confirmed on EVAL (0.39-0.42). Plan §8.1 pivot
+  proposed to the owner: keep the cap 6 for ranking, retire ACAP, move robustness to the e-value (G-M5c).
+- M5-ACAP full run (laptop, CPU): G-M5b passes (ACAP3 AUC 0.663-0.700 on N4/N6/N8/U8, cap 6 0.39-0.49; CAP6 and NOCAP
+  reproduce c18c). G-M5a fails (ACAP@S0 - MT@S0 = -0.020 [-0.041, +0.009], margin -0.03; MT@S0 identical to the
+  registered 2M parts in 72/72). Diagnosis: in quiet records 3 x median is about 4.6 < 6, tighter than the cap.
+  New variant `ACAP(c, floor)` (cap max(floor, c median), default unchanged) with a unit test; ACAPF = ACAP(3, 6) is
+  tested on seed 2718 and 3141 (G-M5a) and on Ridgecrest CAL and EVAL (G-M5b), the conditions fixed in the card.
+- M5-ACAP scripts for gates G-M5a and G-M5b (plan T4.13, exploratory, not run yet):
+  `experiments/exploratory/M5-ACAP/run_a.py` runs the registered Task 2M pipeline (seed 2718, transient day) with cap
+  6, ACAP and no cap, and tests ACAP@S0 - MT@S0 at DENSE LOC+T @0.25 (lower bound > -0.03). `run_b.py` runs the C18c
+  Ridgecrest oracle with ACAP (c = 2, 3, 5); its CAP6 and NOCAP rows must reproduce `c18c_*.json` exactly; the gate
+  is AUC >= 0.65 on N4, N6, N8 and U8. Gates and costs are fixed in the card before the run.
 - M6, first version (plan T4.19, exploratory): `ttmt.v2.m6.adcg_loop`, joint refit of all accepted atoms (closed-form
   tensors, bounded block times, re-assignment among onset maxima) with the one-against-two resolvability test in
   place of the 5 km exclusion; tests `tests/test_m6.py` (in CI). Exploration M6-JOINT (simulation, SNR 12): pair
