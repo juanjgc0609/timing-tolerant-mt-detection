@@ -3,6 +3,10 @@
 Stage: S0 (declared 9 November 2026, before any real-noise run). Plan: T4.23 (M6 before M2, owner's approval of
 8 November 2026). Exploratory; no registered number changes.
 
+**Provisional (9 November 2026).** The threshold of the resolvability test rests on Corollary A.1 (z_e^2) and
+Theorem A.3(a) of Appendix AB, whose independent review (plan T5.2) is not done, and the theory of the M6 test itself
+(T5.6) is not written. Whatever this gate gives is not cited as a result until both are closed.
+
 ## Question
 With real continuous noise, and the resolvability threshold calibrated on that noise, does the M6 loop
 (`ttmt.v2.m6.adcg_loop`: joint refit + "one against two" test) beat the greedy v2 loop with the 5 km exclusion by
