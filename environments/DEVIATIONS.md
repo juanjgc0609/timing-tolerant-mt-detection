@@ -55,7 +55,11 @@ relative 1e-12 elsewhere.
 - EQNet at 7dd24ed (editable). The current repository serves PhaseNet, PhaseNet+ and PhaseNet-DAS. The 2022 EQNet
   model (shift-and-stack of learned features) has no released weights. An `EQNet2-v0` weight release (AI4EPS/models,
   11 Oct 2026) has no public inference code. So EQNet cannot run in the atlas core set until weights or inference
-  code for it are public.
+  code for it are public. Update 2026-11-09: the EQNet2 inference code is public on branch `develop` of AI4EPS/EQNet
+  (40a48ed, 14 Oct 2026); EQNet2 is added as a comparator (T4.17) from that commit with the `EQNet2-v0` weights. Its
+  import also needs `datasets`, `geographiclib` and `lmdb` (not in `ttmt-gpu`).
+- HARPA (DaDaCheng/phase_association at 7adf666, Nat. Commun. 17:8140, 2026), added 2026-11-09 (T4.17): installed
+  without dependencies, plus `POT` and `pyproj`. HARPA states support for macOS and Linux only; Windows is untested.
 
 numpy is 2.5.2 here, against 1.26.4 in the core env. The comparators are not part of the frozen pipeline.
 

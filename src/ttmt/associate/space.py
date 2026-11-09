@@ -113,6 +113,12 @@ GAMMA = {**GAMMA_A3, "as_dbscan_eps": LogUniform(3.0, 20.0), "as_dbscan_min_samp
 PYOCTO = {"as_min_picks": IntRange(3, 8), "as_tolerance": Uniform(0.3, 2.0),
           "as_pick_match_tolerance": Uniform(0.5, 2.0),        # card: "association cutoff in [0.5, 2] s"
           "as_min_interevent_time": LogUniform(0.1, 5.0)}
+# added after registration 1 (owner 2026-11-09, T4.17; proposed ATLAS-0 amendment 5, ledger tuning_ledger_a5.csv).
+# HARPA tunes three associator parameters on the ranges the card already uses: the minimum picks per event (as every
+# associator), the time-residual cutoff of its pick assignment (PyOcto's tolerance range) and the time scale of its
+# DBSCAN slicing (GaMMA's range after amendment 4)
+HARPA = {"as_min_picks": IntRange(3, 8), "as_max_time_residual": Uniform(0.3, 2.0),
+         "as_dbscan_eps": LogUniform(3.0, 20.0)}
 REAL = {"as_np0": IntRange(3, 6), "as_nps0": IntRange(5, 12), "as_tint": LogUniform(0.1, 5.0)}
 
 # waveform methods
@@ -124,7 +130,7 @@ EQNET = {"wf_threshold": Uniform(0.05, 0.7)}
 EQCORRSCAN = {"wf_mad": Uniform(8.0, 12.0), "wf_min_stations": IntRange(3, 6)}
 
 PICKERS = {"phasenet": PHASENET, "phaseno": PHASENO, "eqtransformer": EQTRANSFORMER}
-ASSOCIATORS = {"gamma": GAMMA, "pyocto": PYOCTO, "real": REAL}
+ASSOCIATORS = {"gamma": GAMMA, "pyocto": PYOCTO, "real": REAL, "harpa": HARPA}
 ASSOCIATORS_REG1 = {**ASSOCIATORS, "gamma": GAMMA_REG1}
 ASSOCIATORS_A3 = {**ASSOCIATORS, "gamma": GAMMA_A3}
 WAVEFORM = {"quakemigrate": QUAKEMIGRATE, "malmi": MALMI, "eqnet": EQNET, "eqcorrscan": EQCORRSCAN}
