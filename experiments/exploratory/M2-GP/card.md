@@ -1,7 +1,7 @@
 # Experiment card: M2-GP. Gate G-M2, station terms in a Gaussian process
 
-Stage: S1 (9 November 2026, cloud: first step FAILS, MSE drop 0.150 < 0.30, coverage 0.938 passes; second step
-declared below before running). Plan: T4.8 (M2; build order after M6, owner's approval of
+Stage: S2 (9 November 2026, cloud). FAILED: first step 0.150, confirmation of the declared second step on days
+never used 0.191 (gate 0.30); coverage passes everywhere (0.94). Negative result for analyst picks. Plan: T4.8 (M2; build order after M6, owner's approval of
 8 November 2026). Exploratory; no registered number changes.
 
 ## Question
@@ -53,7 +53,8 @@ CPU, cloud (4 cores), minutes.
     python tools/fetch_scedc_phases.py DATA_DIR 190 196
     python experiments/exploratory/M2-GP/run.py DATA_DIR > experiments/exploratory/M2-GP/run_out.txt
 
-## Result, first step (`run_out.txt`, days 190-196, plain GP)
+## Result, first step (`run_step1_out.txt`, days 190-196, plain GP; rerun with the per-station table in
+`run_plain_out.txt`, identical numbers)
 107 004 held-out readings (34 stations, 359 gross residuals removed, 0.33 %). **G-M2 FAILS on the MSE drop.**
 
 | | rmse 1-D | rmse const | rmse gp | MSE drop | MAD const | MAD gp | cov +-2 sigma gp |
@@ -90,3 +91,30 @@ concluding, as the "drop bound" of the second step.
    our own detector (M1 onsets) is then the data on which G-M2 should be measured. If the bound is above 0.30 and the
    GP still fails, the residual is not smooth and the spec's scaling gate (3-D eikonal or neural travel times) is the
    owner's decision.
+
+## Result, second step (9 November 2026)
+Confirmation days 197-203: 4617 phase files, 1238 events, 28 stations by the same rule, SHA-256 `events.csv`
+eaebabe5..., `picks.csv` 880250ec... (`run_conf_het_out.txt`).
+
+| run | readings | MSE drop | cov +-2 sigma | MAD const -> gp | drop bound | weight 1.0 drop |
+|:--|--:|--:|--:|--:|--:|--:|
+| 1. development, plain (`run_plain_out.txt`) | 107 004 | 0.150 | 0.938 | 0.168 -> 0.121 | 0.316 | 0.235 |
+| 1. development, het (`run_het_out.txt`) | 107 004 | 0.143 | 0.936 | 0.168 -> 0.117 | 0.311 | 0.247 |
+| **3. confirmation, het** (`run_conf_het_out.txt`) | 43 371 | **0.191** | **0.942** | 0.160 -> 0.102 | 0.330 | 0.303 |
+
+**G-M2 FAILS on the confirmation days** (0.191 < 0.30); coverage passes (0.942).
+
+Reading, by the declared pivot rule:
+- The drop bound is above 0.30 but only just (0.31-0.33): if the white part of the GP is irreducible pick noise, no
+  term can lower the MSE by much more than 30 % on these picks. The gate is at the edge of what this reading noise
+  allows, so this failure does not show that the residual is non-smooth.
+- The GP does help the bulk a lot: the robust spread falls 28-36 % (about half of the variance), and on the best picks
+  (weight 1.0) the MSE drop is 0.25 (development) and 0.30 (confirmation). The mean square is held by the heavy tail of
+  the lower-weight picks (weight 0.5 and 0.8: 0.06-0.12).
+- The heteroscedastic variant did not raise the pooled drop (0.143 against 0.150 on development); it re-sizes the
+  tolerances (median sigma of P 0.13 s against 0.18 s) and keeps the coverage. The reading noise, not the fit, holds
+  the MSE.
+- Consequence for the plan (owner's decision, not taken here): (a) measure G-M2 on our own readings (M1 onsets on
+  R1 or the fk sets), whose noise is the one M4 sees; (b) or restate the gate with a robust error (MAD) or on
+  high-quality readings, declared before a new run on new data; (c) the 3-D scaling gate is NOT indicated by this
+  result. Days 190-203 are now spent for M2 choices.

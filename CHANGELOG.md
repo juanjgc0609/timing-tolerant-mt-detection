@@ -8,6 +8,15 @@ Dated record of changes to the project's process, code and documents. Results ar
 - Thesis, Section 2: HARPA (Nat. Commun. 17:8140, 2026), VORA (arXiv 2607.10450) and EQNet2 (arXiv 2610.17404) cited;
   the novelty is stated as a common moment tensor imposed across stations during detection and deflation, not the use
   of polarity, which EQNet2 also predicts per station.
+- M2, first version (plan T4.8, exploratory): `ttmt.v2.m2`, per-(station, phase) Gaussian-process term (Matern 3/2,
+  GLS mean, marginal likelihood, optional white level per reading-quality group) on a 1-D medium, `TravelTimeModel`,
+  `fit_station_gp`, `time_blocks`; tests `tests/test_m2.py`. `tools/fetch_scedc_phases.py` fetches SCSN analyst picks
+  of the Ridgecrest 2019 sequence from the public SCEDC bucket. Exploration M2-GP (gate G-M2): FAILS. Held-out MSE
+  drop against the constant term 0.150 (days 190-196) and 0.191 on the confirmation days 197-203 of the declared
+  second step (gate 0.30); coverage of +-2 sigma 0.94 passes. The robust spread falls 28-36 % and the best picks reach
+  0.25-0.30: the mean square is held by the heavy-tailed pick noise (drop bound 0.31-0.33).
+- M6A-REALNOISE (gate G-M6a with real noise, provisional until the review of A.1/A.3, T5.2, and the M6 test theory,
+  T5.6): card and script declared before the run.
 
 ## 2026-11-08
 

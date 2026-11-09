@@ -21,6 +21,10 @@ own SHA-256 printed and recorded in the card.
 """
 import hashlib
 import os
+
+os.environ.setdefault("OMP_NUM_THREADS", "1")          # one BLAS thread per worker process
+os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
+import multiprocessing as mp  # noqa: E402
 import sys
 import time
 
@@ -41,6 +45,31 @@ K = 5
 
 def local(lat, lon):
     return (np.asarray(lon) - LON0) * KM_LAT * np.cos(np.radians(LAT0)), (np.asarray(lat) - LAT0) * KM_LAT
+
+
+def one_term(job):
+    """all folds of one (station, phase); cached as csv."""
+    code, ph, X, y, f, wt, variant, path = job
+    if os.path.exists(path):
+        return pd.read_csv(path)
+    out = []
+    for k in range(K):
+        tr, te = f != k, f == k
+        if te.sum() == 0 or tr.sum() < 30:
+            continue
+        w = wt if variant == "het" else None
+        c = Const1().fit(X[tr], y[tr])
+        gp = GP1(seed=k).fit(X[tr], y[tr], None if w is None else w[tr])
+        mc, sc = c.predict(X[te])
+        mg, sg = gp.predict(X[te], None if w is None else w[te])
+        nz = gp._noise(gp.theta, gp._gi(None if w is None else w[te], int(te.sum())))
+        out.append(pd.DataFrame({"code": code, "phase": ph, "fold": k, "w": wt[te], "res": y[te],
+                                 "ec": y[te] - mc, "sc": sc, "eg": y[te] - mg, "sg": sg,
+                                 "ell": gp.ell, "sf": gp.sf, "sn": gp.sn, "white": nz}))
+    D = pd.concat(out, ignore_index=True)
+    D.to_csv(path + ".tmp", index=False)
+    os.replace(path + ".tmp", path)
+    return D
 
 
 def main(d, variant="plain", check=True):
@@ -77,22 +106,12 @@ def main(d, variant="plain", check=True):
     pk = pk[~gross]
     print(f"folds (time blocks): {np.bincount(fold).tolist()} events; 1-D medium Hadley-Kanamori, VP/VS {R_VPVS}\n")
 
-    out = []
-    for (code, ph), g in pk.groupby(["code", "phase"]):
-        X, y, f = EX[g.e.values], g.res.values, g.fold.values
-        for k in range(K):
-            tr, te = f != k, f == k
-            if te.sum() == 0 or tr.sum() < 30:
-                continue
-            w = g.weight.values if variant == "het" else None
-            c = Const1().fit(X[tr], y[tr])
-            gp = GP1(seed=k).fit(X[tr], y[tr], None if w is None else w[tr])
-            mc, sc = c.predict(X[te])
-            mg, sg = gp.predict(X[te], None if w is None else w[te])
-            nz = gp._noise(gp.theta, gp._gi(None if w is None else w[te], int(te.sum())))
-            out.append(pd.DataFrame({"code": code, "phase": ph, "fold": k, "w": g.weight.values[te], "res": y[te],
-                                     "ec": y[te] - mc, "sc": sc, "eg": y[te] - mg, "sg": sg,
-                                     "ell": gp.ell, "sf": gp.sf, "sn": gp.sn, "white": nz}))
+    cache = os.path.join(d, f"cache_{variant}")                  # one file per (station, phase): reruns resume
+    os.makedirs(cache, exist_ok=True)
+    jobs = [(code, ph, EX[g.e.values], g.res.values, g.fold.values, g.weight.values, variant,
+             os.path.join(cache, f"{code}_{ph}.csv")) for (code, ph), g in pk.groupby(["code", "phase"])]
+    with mp.get_context("fork").Pool(int(os.environ.get("M2_PROCS", "4"))) as pool:
+        out = pool.map(one_term, jobs, chunksize=1)
     R = pd.concat(out, ignore_index=True)
 
     def summ(D):
