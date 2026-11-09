@@ -133,7 +133,7 @@
   "Searles Valley / Ridgecrest 2019 (CI): development network",
   "Geysers 2023 and 2025 windows (BG): not used, so that BG stays a network never used for development"
  ],
- "sealed_sha256": "3587171c55647f23b6ac5ce7535fe41502ec8f5ee692312329a99e1e053cf347",
  "unseal": {},
- "amendments": []
+ "amendments": [],
+ "sealed_sha256": "996f70ada0a0b027f51b30048347354146c348b214f283dba2498b4ea55fdd2b"
 }

@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
-from ttmt.registry import RESERVATION, canonical_sha256  # noqa: E402
+from ttmt.registry import RESERVATION, sealed_sha256  # noqa: E402
 
 RULE = {
     "selection": "catalogue fields only: tools/data/scan_catalogue.py --days 30 on the network's reviewed catalogue "
@@ -109,9 +109,10 @@ EXCLUDED = [
 
 
 def document():
-    return {"title": "Reserved confirmatory sequences (plan T3.R4)", "sealed_on": "2026-11-09",
-            "rule": RULE, "sequences": SEQUENCES, "excluded": EXCLUDED,
-            "sealed_sha256": canonical_sha256(SEQUENCES), "unseal": {}, "amendments": []}
+    doc = {"title": "Reserved confirmatory sequences (plan T3.R4)", "sealed_on": "2026-11-09",
+           "rule": RULE, "sequences": SEQUENCES, "excluded": EXCLUDED, "unseal": {}, "amendments": []}
+    doc["sealed_sha256"] = sealed_sha256(doc)
+    return doc
 
 
 def main():

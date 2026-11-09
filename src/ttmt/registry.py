@@ -6,9 +6,11 @@ listed in ``data/reserved/reservation.json``; their windows are sealed until the
 
 The seal is enforced in code, not by convention:
 
-- :func:`check_read` is called by every reader of real waveforms or catalogues with the network, the station
-  coordinates and the time span it is about to read. A read that touches a sealed window raises :class:`SealedError`,
-  whatever dataset or path the read comes from.
+- :func:`check_read` takes the network, the station coordinates and the time span a reader is about to read, and
+  raises :class:`SealedError` if the read touches a sealed window. It is called before decoding by
+  ``ttmt.datasets.Dataset.load_waveforms`` (every registered real dataset, and so ``ttmt.synth.realdata``), by
+  ``ttmt.qc.waveform_qc`` with ``samples=True`` and by ``tools/data/seal_listing.py``. A new reader of real data must
+  call it too (``tests/test_registry.py`` checks the readers above).
 - Two purposes pass a sealed window: ``"fetch"`` (bytes are stored and hashed, never decoded) and ``"qc-metadata"``
   (headers, StationXML and catalogue aggregates only, ``ttmt.qc`` without ``samples``).
 - Opening a window for a confirmatory run needs ``TTMT_UNSEAL=<sequence id>:<registration id>``, a registration id
@@ -22,6 +24,7 @@ module adds the cross-dataset seal and the manifest checks.
 import hashlib
 import json
 import math
+import re
 import os
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -59,8 +62,17 @@ def sha256_file(path, chunk=1 << 20):
 
 
 def canonical_sha256(obj):
-    """SHA-256 of the canonical JSON of obj (sorted keys, no spaces): the hash that seals the reservation."""
+    """SHA-256 of the canonical JSON of obj (sorted keys, no spaces)."""
     return hashlib.sha256(json.dumps(obj, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+
+
+SEALED_KEYS = ("rule", "sequences", "excluded")
+
+
+def sealed_sha256(doc):
+    """the hash that seals a reservation: rule, sequences and exclusions. ``unseal`` and ``amendments`` stay outside,
+    so a later amendment that opens a sequence for its registration does not change it."""
+    return canonical_sha256({k: doc.get(k) for k in SEALED_KEYS})
 
 
 # ================================================================================================= reservation
@@ -86,13 +98,13 @@ class Reserved:
         return d <= self.radius_km
 
 
-def load_reservation(path=RESERVATION):
-    """(document, [Reserved]); the document's ``sealed_sha256`` must equal the canonical hash of its ``sequences``."""
-    path = Path(path)
+def load_reservation(path=None):
+    """(document, [Reserved]); the document's ``sealed_sha256`` must equal :func:`sealed_sha256` of the document."""
+    path = Path(path or RESERVATION)
     if not path.exists():
         return None, []
     doc = json.loads(path.read_text())
-    got = canonical_sha256(doc["sequences"])
+    got = sealed_sha256(doc)
     if got != doc.get("sealed_sha256"):
         raise SealedError(f"reservation {path} was changed after sealing: sha256 {got} != {doc.get('sealed_sha256')}")
     out = []
@@ -104,18 +116,18 @@ def load_reservation(path=RESERVATION):
     return doc, out
 
 
-def _unsealed(seq, prereg_log=PREREG_LOG):
+def _unsealed(seq, prereg_log=None):
     tok = os.environ.get("TTMT_UNSEAL", "")
     for part in filter(None, tok.split(",")):
         sid, _, reg = part.partition(":")
         if sid == seq.id and reg and reg in seq.registrations:
-            log = Path(prereg_log)
-            if log.exists() and reg in log.read_text(errors="replace"):
+            log = Path(prereg_log or PREREG_LOG)
+            if log.exists() and re.search(rf"(?<![\w.-]){re.escape(reg)}(?![\w.-])", log.read_text(errors="replace")):
                 return reg
     return None
 
 
-def check_read(network, lat, lon, t0, t1, purpose="analysis", reservation=RESERVATION, prereg_log=PREREG_LOG):
+def check_read(network, lat, lon, t0, t1, purpose="analysis", reservation=None, prereg_log=None):
     """raise SealedError if reading [t0, t1) (epoch s or ISO) of a station at (lat, lon) of ``network`` touches a
     sealed window. lat/lon None (unknown station) is treated as inside every reserved area."""
     t0, t1 = utc(t0), utc(t1)

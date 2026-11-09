@@ -8,13 +8,15 @@ development, tuning or atlas step has seen.
 
 | File | What it is |
 |:--|:--|
-| `reservation.json` | The sealed list: selection rule, criteria, sequences (window in UTC, disc of radius `radius_km`), exclusions. `sealed_sha256` is the canonical SHA-256 of `sequences`. Written by `tools/data/seal_reservation.py`, which `tests/test_registry.py` re-runs with `--check`. |
+| `reservation.json` | The sealed list: selection rule, criteria, sequences (window in UTC, disc of radius `radius_km`), exclusions. `sealed_sha256` is the canonical SHA-256 of `rule`, `sequences` and `excluded` (`ttmt.registry.sealed_sha256`); `unseal` and `amendments` are outside it. Written by `tools/data/seal_reservation.py`, which `tests/test_registry.py` re-runs with `--check`. |
 | `<id>.listing.tsv` | Archive listing of every continuous-waveform file of the sequence inside the disc and the window: S3 key, size, ETag (content hash). Pins the bytes without downloading them. Written by `tools/data/seal_listing.py`. |
 
 ## How the seal is enforced
 
-`ttmt.registry.check_read(network, lat, lon, t0, t1, purpose)` raises `SealedError` for any read that touches a
-sealed window, whatever dataset or path it comes from; every station of every network in the disc is sealed, and a
+`ttmt.registry.check_read(network, lat, lon, t0, t1, purpose)` raises `SealedError` for a read that touches a
+sealed window. It is called before samples are decoded by `ttmt.datasets.Dataset.load_waveforms` (and so by
+`ttmt.synth.realdata`), by `ttmt.qc.waveform_qc(samples=True)` and by `tools/data/seal_listing.py`; a new reader of
+real data must call it too. Every station of every network in the disc is sealed, and a
 station of unknown position counts as inside. The purposes `fetch` (store and hash bytes) and `qc-metadata` (headers,
 StationXML, catalogue aggregates; `ttmt.qc` without `samples`) pass. A confirmatory run opens a sequence only with
 `TTMT_UNSEAL=<id>:<registration id>`, where the registration id is listed under `unseal` for that sequence by an
@@ -52,8 +54,8 @@ station counts from `tools/data/s3_availability.py`; both read catalogue fields,
 ## External anchor
 
 The hash of `reservation.json` and of each listing is in the commit that adds them. The author pushes the tag
-`reserve/T3.R4-1` on that commit (the cloud cannot push tags):
+`reserve/T3.R4-1` on the last commit of the PR that changes `reservation.json` (the cloud cannot push tags):
 
 ```bash
-git tag -a reserve/T3.R4-1 -m "T3.R4 reservation, sealed_sha256 <hash>" <commit> && git push origin reserve/T3.R4-1
+git tag -a reserve/T3.R4-1 -m "T3.R4 reservation, sealed_sha256 996f70ada0a0b027f51b30048347354146c348b214f283dba2498b4ea55fdd2b" <commit> && git push origin reserve/T3.R4-1
 ```

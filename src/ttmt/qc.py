@@ -3,8 +3,8 @@
 Every check here reads headers, metadata or catalogue fields only, unless ``samples=True`` is passed, so the checks
 are allowed on sealed evaluation partitions (``ttmt.registry``: an evaluation partition may be inspected for QC
 metadata and nothing else). With ``samples=True`` the waveform check also reads the samples to find flat lines
-(dead or clipped channels); that is allowed on development partitions only and on sealed ones only through
-``registry.qc_dataset``, which reports the flat-line fraction and no amplitude.
+(dead or clipped channels); that decodes samples, so it calls ``ttmt.registry.check_read`` first and is refused on
+a sealed window.
 
 The checks and their thresholds (``LIMITS``) are the ones the data cards report:
 
@@ -208,10 +208,18 @@ def _flat_fraction(tr, run_s):
     return float(flat / x.size)
 
 
-def waveform_qc(paths, t0, t1, samples=False, limits=LIMITS, metadata_rate=None):
+def waveform_qc(paths, t0, t1, samples=False, limits=LIMITS, metadata_rate=None, coords=None):
     """QC of the channels in the miniSEED files ``paths`` over [t0, t1) (obspy UTCDateTime). One ChannelQC per
-    NSLC. Without ``samples`` only headers are read (allowed on sealed partitions)."""
+    NSLC. Without ``samples`` only headers are read (allowed on sealed partitions). With ``samples`` every channel
+    passes ``registry.check_read`` before its samples are decoded; ``coords`` {"NET.STA": (lat, lon)} places the
+    stations (a station without coordinates counts as inside every sealed area)."""
     from obspy import Stream, read
+    from .registry import check_read
+    if samples:
+        for p in paths:
+            for tr in read(str(p), headonly=True, starttime=t0, endtime=t1, nearest_sample=False):
+                lat, lon = (coords or {}).get(f"{tr.stats.network}.{tr.stats.station}", (None, None))
+                check_read(tr.stats.network, lat, lon, float(t0.timestamp), float(t1.timestamp), purpose="qc-samples")
     st = Stream()
     flags = defaultdict(list)
     for p in paths:
