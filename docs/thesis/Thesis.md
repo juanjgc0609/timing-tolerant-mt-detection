@@ -147,7 +147,7 @@ PhaseLink [5] and graph neural networks [6] exist but need training data from th
 errors of the picks: a missed pick cannot be recovered, and in dense sequences the assignment of picks to events is
 ambiguous.
 HARPA [Shi et al. 2026] associates picks with travel-time neural fields and unbalanced optimal transport, and VORA
-[Song et al. 2026] clusters picks on a Voronoi graph with an expectation-maximisation step that splits merged events;
+[Song et al. 2026] clusters picks on a Voronoi graph with an optional expectation-maximisation step that splits merged events;
 its stress tests separate events down to about 5 s, well above the sub-second separations of the dense windows of
 Section 6. EQNet2 [Wang and Zhu 2026] is a multi-station transformer that predicts phases, events, magnitudes and
 association from the waveforms, with a per-station polarity head, and was tested on Ridgecrest 2019 with 16 stations.
@@ -1084,10 +1084,10 @@ Numbered references follow the numbering of the bibliography of `docs/proposal/D
   analysis," IEEE Trans. Image Process., vol. 13, no. 5, pp. 677-689, 2004.
 - [Shi et al. 2026] C. Shi, G. Poggiali, C. Marone, M. V. de Hoop, I. Dokmanić et al., "High-rate phase association
   with travel time neural fields (HARPA)," Nat. Commun., vol. 17, 8140, 2026, doi:10.1038/s41467-026-74092-y.
-- [Song et al. 2026] J. Song, W. Zhu, H. Wang, U. Kumar, T. Taira, and R. M. Allen, "VORA," preprint,
-  arXiv:2607.10450, 2026.
 - [Smith 2005] S. T. Smith, "Statistical resolution limits and the complexified Cramér-Rao bound," IEEE Trans.
   Signal Process., vol. 53, no. 5, pp. 1597-1609, 2005.
+- [Song et al. 2026] J. Song, W. Zhu, H. Wang, U. Kumar, T. Taira, and R. M. Allen, "VORA," preprint,
+  arXiv:2607.10450, 2026.
 - [Ueno et al. 2002] H. Ueno, S. Hatakeyama, T. Aketagawa, J. Funasaki, and N. Hamada, "Improvement of hypocenter
   determination procedures in the Japan Meteorological Agency," Q. J. Seismol., vol. 65, pp. 123-134, 2002 (in
   Japanese).
