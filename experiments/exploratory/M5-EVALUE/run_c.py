@@ -38,6 +38,7 @@ to exceed p on the transient day), and the out-of-sample fit of the t (PIT decil
     python run_c.py diagan DIAGDIR
     python run_c.py avg SEED NOISE_DIR ADIR [nets] [cells]           (third step: S_avg null and power)
     python run_c.py avgan ADIR[,ADIR] [B]
+    python run_c.py run ... --slide                                  (CR-33: TEST windows slid per station)
     python run_c.py mkcfg SEED NOISE_DIR[,..] OUT.json       (confirmation day; then pass OUT.json as SEED)
 """
 import json
@@ -58,6 +59,7 @@ import xc  # noqa: E402
 from task1o_consistent import matched  # noqa: E402
 from ttmt.v2.m0 import orientation_audit  # noqa: E402
 from ttmt.v2.m5 import GaussBackground, RadialBackground, TBackground, evalue_mix, prior_draws  # noqa: E402
+from ttmt.v2.m7 import slide  # noqa: E402
 
 T2M = os.path.join(ROOT, "results", "task2M")
 TAG_FIT, TAG_PI, TAG_HYP = 7301, 7302, 7303
@@ -97,6 +99,8 @@ def mkcfg(seed, ndirs, out, slots_per_block=76, max_blocks=24):
 
 
 WEIGHTED_FIT = False    # --weighted: fit on all reads (a peak counted once per hypothesis that reads it; third step)
+SLIDE_TEST = False      # --slide: each station's TEST window rolled by an independent offset (CR-33 control)
+TAG_SLIDE = 7311
 LOCAL_SCALE = False     # --local: each station divided by its own robust level in the window (third step)
 
 
@@ -238,7 +242,10 @@ def run_part(cell, j, seed, pdir):
     for s in test:
         rng = np.random.default_rng([SEEDI(seed), TAG_HYP, net.ci, j, s])
         g, t = rng.integers(E.N, size=H_TEST), rng.integers(E.T, size=H_TEST)
-        v = read(mfn(net, s), E.IDX[g, t]).reshape(H_TEST, 2 * ns, 3)
+        M = mfn(net, s)
+        if SLIDE_TEST:                                   # CR-33: break cross-station alignment, keep each marginal
+            M = slide(M, np.random.default_rng([SEEDI(seed), TAG_SLIDE, net.ci, j, s]))[0]
+        v = read(M, E.IDX[g, t]).reshape(H_TEST, 2 * ns, 3)
         A = E.G[g].reshape(H_TEST, 2 * ns, 3, 6)
         lf = [np.stack([bg[k][i].logpdf(v[:, q]) for q, i in enumerate(st)], axis=1) for k in BGS]
         for pk, dr in pis.items():
@@ -475,6 +482,9 @@ if __name__ == "__main__":
     if "--weighted" in sys.argv:
         sys.argv.remove("--weighted")
         WEIGHTED_FIT = True
+    if "--slide" in sys.argv:
+        sys.argv.remove("--slide")
+        SLIDE_TEST = True
     if "--local" in sys.argv:
         sys.argv.remove("--local")
         LOCAL_SCALE = True

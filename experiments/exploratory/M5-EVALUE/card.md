@@ -198,3 +198,17 @@ harder marginal. A real-data run is not justified and was not made; the held-out
 three attempts (product, product with heavier tails, station average) the mixture e-value is closed as a negative
 result for this reader and these data, and the decision rests on M7 (time slides calibrate the joint null
 empirically, D.3). The `--weighted` fit is a correction worth keeping for any background estimated from peak reads.
+
+## CR-33 control: the product on slid TEST windows (declared 9 November 2026, before the run)
+Adversarial critique CR-33: the second step did not isolate dependence as the cause (joint tails 1.7x, but the level
+is exceeded about 6x, and tail ratios of 61 at ATPI, ATVO, MURB point at the marginal). Test that decides it: rerun
+the first step on 2718 unchanged (same FIT, backgrounds, eps, pi, hypotheses), except that each station's TEST
+window (MFn, three channels) is rolled by an independent uniform offset (`run_c.py run ... --slide`, seed tag 7311,
+`ttmt.v2.m7.slide`). Each station's marginal is kept; the alignment across stations is broken.
+- **Dependence is the cause** if the slid R rate at p = 1e-3 is <= 1.5e-3 for CAL and LOW (most of the 5.8e-3 gone).
+- **The marginal is the main cause** (CR-33 upheld) if it stays >= 3e-3 for CAL or LOW (more than half remains).
+- In between: both, reported with the split. Either way the M5 negative stands; only its attribution changes.
+It also serves as a control for M7 (CR-16): the same slides give M7's null. Cost about 4 min on the laptop.
+
+    python experiments/exploratory/M5-EVALUE/run_c.py run 2718 NOISE_101231 PARTS_C_2718_SLID all --slide
+    python experiments/exploratory/M5-EVALUE/run_c.py analyze PARTS_C_2718_SLID 2000 > run_c_slid_out.txt
