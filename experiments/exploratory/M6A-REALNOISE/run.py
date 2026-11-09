@@ -15,13 +15,15 @@ robust sd of THIS scene's noise through the filter. Sources come from one random
 two arms see identical sources.
 
 Methods (kmax 2): greedy (v2_loop, 5 km exclusion), greedy0 (no exclusion: the control column of the review), m6-none
-(adcg_loop, no test), m6 (adcg_loop, thr = z_e^2 + max(0, 95th percentile of the spurious-split gain on a
-single-source control of the same arm, separate slots)). LOC+T hit (5 km, 0.5 s), one atom per source.
+(adcg_loop, no test), m6 (adcg_loop, one-event alternative "joint", thr = 95th percentile of the spurious-split
+gain on a control WITH NEIGHBOURS of the same arm: target + overlapping neighbour + isolated source, separate slots;
+no floor, review T5.2 of 9 November 2026 and M6-BIAS). LOC+T hit (5 km, 0.5 s), one atom per source.
 
 Gate (declared before the run, card.md): pairs at dtau in {0.1, 0.25, 0.5, 1.0} s, both separation strata pooled,
 K_mec/E (ttmt.synth.inject.kmec_over_e on the scaled block vectors) in the upper tercile of all pairs of the run;
 REAL arm: pair recall(m6) - pair recall(greedy) >= 0.10 and the 2.5th percentile of its paired bootstrap > 0
-(B = 2000, resampling pairs). Secondary: false splits of a fresh single-source control (m6 must stay <= 2 of NCTRL),
+(B = 2000, resampling pairs). Also in the gate: false splits on a fresh control with neighbours <= 4 of NCTRL = 40 (M6-BIAS:
+2 of 30 in simulation). Secondary:
 the same numbers on GEN, per stratum, per tercile.
 
     python run.py NOISE_DIR [NREP] [NCTRL] > run_out.txt
@@ -48,6 +50,7 @@ def _load(name, path):
 
 _argv, sys.argv = sys.argv, sys.argv[:1]     # the loaded scripts read sys.argv at import: give them their defaults
 J = _load("m6joint_run", HERE.parent / "M6-JOINT" / "run.py")   # loaded by path (several experiments use run.py)
+MB = _load("m6bias_run", HERE.parent / "M6-BIAS" / "run.py")      # null scenes' false-split rule
 sys.argv = _argv
 S = J.S                                                          # M6C-SUBSAMPLE scene helpers
 
@@ -68,7 +71,6 @@ NSTA = 8
 DTAUS = J.DTAUS
 STRATA = J.STRATA
 SNR = J.SNR
-Z_E2 = J.Z_E2
 NAMES = ("greedy", "greedy0", "m6-none", "m6")
 B = 2000
 
@@ -123,29 +125,36 @@ def noise_for(arm, rn, real):
     return s, mf(D)
 
 
+def null_scene(rs):
+    """calibration / false-split control with neighbours (review T5.2): the target, a neighbour 6-14 km away and
+    0.5-1.5 s later (overlapping arrivals) and an isolated source 6-14 km away and 3 s later."""
+    s1 = J.source(rs)
+    return [s1, J.source(rs, s1[0], (6.0, 14.0), 6.0 + rs.uniform(0.5, 1.5)), J.source(rs, s1[0], (6.0, 14.0), 9.0)]
+
+
 def run_arm(arm, real, E, lag):
     out = {"arm": arm}
     gains = []
     for c in range(NCTRL):
         rs, rn = np.random.default_rng([SEED, 1, c]), np.random.default_rng([SEED, 11, c])
-        srcs = [J.source(rs)]
+        srcs = null_scene(rs)
         _s, nmf = noise_for(arm, rn, real)
         Y, F = scene(srcs, nmf)
-        a = adcg_loop(E, Y, picker(F, rs), 2, lag, thr=-np.inf)
-        gains += [x["pair_gain"] for x in a if x["pair_gain"] is not None]
-    thr = Z_E2 + max(0.0, float(np.quantile(gains, 0.95)) if gains else 0.0)
+        a = adcg_loop(E, Y, picker(F, rs), len(srcs) + 1, lag, thr=-np.inf)
+        gains += [x["pair_gain"] for x in MB.spurious(a, srcs) if x["pair_gain"] is not None]
+    thr = float(np.quantile(gains, 0.95)) if gains else 0.0        # the level is set by the control only (no floor)
     out.update(thr=thr, n_gain=len(gains), gain_med=float(np.median(gains)) if gains else np.nan,
                gain_max=float(max(gains)) if gains else np.nan)
     splits = {"greedy0": 0, "m6": 0}
     for c in range(NCTRL):
         rs, rn = np.random.default_rng([SEED, 2, c]), np.random.default_rng([SEED, 12, c])
-        srcs = [J.source(rs)]
+        srcs = null_scene(rs)
         _s, nmf = noise_for(arm, rn, real)
         Y, F = scene(srcs, nmf)
         q = picker(F, rs)
-        for k, a in (("greedy0", v2_loop(E, Y, q, 2, lag, min_sep=0.0)), ("m6", adcg_loop(E, Y, q, 2, lag, thr=thr))):
-            splits[k] += sum(1 for x in a[1:] if np.linalg.norm(x["x"][:2] - a[0]["x"][:2]) <= 5.0
-                             and abs(x["tau"] - a[0]["tau"]) <= 1.5)
+        k3 = len(srcs) + 1
+        for k, a in (("greedy0", v2_loop(E, Y, q, k3, lag, min_sep=0.0)), ("m6", adcg_loop(E, Y, q, k3, lag, thr=thr))):
+            splits[k] += len(MB.spurious(a, srcs))
     out["splits"] = splits
     rows = []
     for sname, sep in STRATA.items():
@@ -172,9 +181,9 @@ def run_arm(arm, real, E, lag):
 
 def report(o, cut):
     rows = o["rows"]
-    print(f"== arm {o['arm']}: control {NCTRL} single sources, {o['n_gain']} spurious near atoms, RSS gain median / "
+    print(f"== arm {o['arm']}: control {NCTRL} scenes with neighbours (3 sources), {o['n_gain']} spurious near atoms, RSS gain median / "
           f"thr / max {o['gain_med']:.1f} / {o['thr']:.1f} / {o['gain_max']:.1f}")
-    print(f"   fresh control: false splits of {NCTRL} single events: greedy0 {o['splits']['greedy0']}, "
+    print(f"   fresh control: false splits in {NCTRL} scenes with neighbours: greedy0 {o['splits']['greedy0']}, "
           f"m6 {o['splits']['m6']}")
     print(f"   {'stratum':7s} {'dtau':>5s} | pair recall " + " ".join(f"{k:>8s}" for k in NAMES)
           + " | upper tercile (n) " + " ".join(f"{k:>8s}" for k in NAMES))
@@ -226,7 +235,7 @@ def main():
     d = np.array([(r["m6"] == 2) - (r["greedy"] == 2) for r in gate], float)
     lo = np.quantile(d[np.random.default_rng([SEED, 7, len("upper tercile")]).integers(0, len(d), (B, len(d)))]
                      .mean(1), .025)
-    ok = d.mean() >= 0.10 and lo > 0 and res["REAL"]["splits"]["m6"] <= 2
+    ok = d.mean() >= 0.10 and lo > 0 and res["REAL"]["splits"]["m6"] <= 4
     print(f"G-M6a (REAL, upper tercile): m6 - greedy {d.mean():+.3f}, 2.5th pct {lo:+.3f}, m6 false splits "
           f"{res['REAL']['splits']['m6']} -> {'PASS' if ok else 'FAIL'}")
     print(f"\n{time.time() - t0:.0f} s")

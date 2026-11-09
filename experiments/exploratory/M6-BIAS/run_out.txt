@@ -1,0 +1,23 @@
+M6-BIAS  seed 20261109  NCAL 30  NTEST 30  NPAIR 20  numpy 2.5.3
+
+C1 legacy:  30 spurious near atoms, gain median    -121.1 p95     -52.4 max     -25.5
+C1 joint :  30 spurious near atoms, gain median    -126.7 p95     -54.5 max     -25.5
+C3 legacy:  24 spurious near atoms, gain median     -90.2 p95     161.5 max     297.9
+C3 joint :  24 spurious near atoms, gain median    -114.9 p95     -23.4 max       1.8
+
+(the legacy and joint runs share the candidate stream only until the first rejection; the bias is read on the distributions)
+bias C1: median legacy - joint +5.6, p95 +2.1
+bias C3: median legacy - joint +24.7, p95 +184.9
+
+thr (joint, C3 p95) -23.4; the first version's thr (z_e^2 + C1 legacy p95) 10.8
+
+fresh C1: false splits in 30 scenes: legacy at old thr 0, joint at new thr 0
+fresh C3: false splits in 30 scenes: legacy at old thr 4, joint at new thr 2
+
+stratum  dtau  pair recall: greedy  m6 legacy@old  m6 joint@new
+far      0.25    1.00    1.00    1.00
+far      0.50    1.00    1.00    1.00
+near     0.25    0.60    0.95    0.95
+near     0.50    0.55    0.85    0.85
+
+658 s
