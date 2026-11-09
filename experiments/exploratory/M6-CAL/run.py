@@ -19,7 +19,9 @@ Read-outs: false splits per scene on fresh controls (one source; with neighbours
 Clopper-Pearson interval; pair recall (LOC+T-V) of near / far pairs at dtau 0.1, 0.25, 0.5, 1 s for greedy (5 km
 exclusion), greedy0 (no exclusion), m6, and the duplicator of greedy.
 
-    python run.py [NCAL] [NTEST] [NPAIR] [PROCS] > run_out.txt
+    python run.py [NCAL] [NTEST] [NPAIR] [PROCS] [op] > run_out.txt        (op: step 2 of card.md, the threshold
+    calibrated on the operating loop by bisection: the smallest thr with <= 5 % of the calibration scenes split in
+    both controls)
 """
 import os
 
@@ -63,6 +65,7 @@ NCAL = int(sys.argv[1]) if len(sys.argv) > 1 else 200
 NTEST = int(sys.argv[2]) if len(sys.argv) > 2 else 200
 NPAIR = int(sys.argv[3]) if len(sys.argv) > 3 else 20
 PROCS = int(sys.argv[4]) if len(sys.argv) > 4 else 4
+OP = len(sys.argv) > 5 and sys.argv[5] == "op"
 KMAX = 4
 DTAUS = (0.1, 0.25, 0.5, 1.0)
 _RIC0 = S.ricker
@@ -138,15 +141,34 @@ def main():
     print(f"M6-CAL  seed {SEED}  NCAL {NCAL}  NTEST {NTEST}  NPAIR {NPAIR}  kmax {KMAX}  numpy {np.__version__}")
     print("8-station ring, homogeneous medium, synthetic picker, Gaussian noise, SNR 12; LOC+T-V scoring\n")
     with mp.get_context("fork").Pool(PROCS) as pool:
-        thr, parts = -np.inf, []
-        for kind in ("C1", "C3"):
-            g = np.array([x for xs in pool.map(job_gain, [((SEED, 1, len(kind), c), kind, True) for c in range(NCAL)],
-                                               chunksize=1) for x in xs])
-            p95 = float(np.quantile(g, 0.95)) if g.size else -np.inf
-            thr = max(thr, p95)
-            print(f"calibration {kind}: {NCAL} scenes, mismatched pulses: {g.size} scenes with a spurious near atom, max gain median "
-                  f"{np.median(g) if g.size else np.nan:.1f} p95 {p95:.1f} max {g.max() if g.size else np.nan:.1f}")
-        print(f"thr = max of the two p95 = {thr:.1f}\n")
+        if OP:
+            def rate(th):
+                r = []
+                for kind in ("C1", "C3"):
+                    o = pool.map(job_split, [((SEED, 1, len(kind), c), kind, True, th) for c in range(NCAL)],
+                                 chunksize=1)
+                    r.append(np.mean([x[0] > 0 for x in o]))
+                print(f"  thr {th:8.1f}: scenes split C1 {r[0]:.3f}  C3 {r[1]:.3f}", flush=True)
+                return max(r)
+            lo, hi = 5.3, 400.0
+            if rate(hi) > 0.05:
+                raise SystemExit("even thr 400 splits more than 5 %")
+            for _ in range(6):
+                mid = 0.5 * (lo + hi)
+                lo, hi = (lo, mid) if rate(mid) <= 0.05 else (mid, hi)
+            thr = hi
+            print(f"thr (operating-loop calibration, step 2) = {thr:.1f}\n")
+        else:
+            thr, parts = -np.inf, []
+            for kind in ("C1", "C3"):
+                g = np.array([x for xs in pool.map(job_gain, [((SEED, 1, len(kind), c), kind, True)
+                                                              for c in range(NCAL)], chunksize=1) for x in xs])
+                p95 = float(np.quantile(g, 0.95)) if g.size else -np.inf
+                thr = max(thr, p95)
+                print(f"calibration {kind}: {NCAL} scenes, mismatched pulses: {g.size} scenes with a spurious near "
+                      f"atom, max gain median {np.median(g) if g.size else np.nan:.1f} p95 {p95:.1f} max "
+                      f"{g.max() if g.size else np.nan:.1f}")
+            print(f"thr = max of the two p95 = {thr:.1f}\n")
         print(f"{'fresh control':34s} {'scenes':>6s} {'m6 splits':>9s} {'scenes with >=1':>15s} {'95 % CI':>15s} "
               f"{'greedy0 splits':>14s}")
         for kind, mis, n in (("C1", True, NTEST), ("C3", True, NTEST), ("C1", False, NTEST // 2),
