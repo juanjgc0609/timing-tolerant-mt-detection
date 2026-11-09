@@ -6,6 +6,11 @@ Dated record of changes to the project's process, code and documents. Results ar
 ## 2026-11-09
 
 - Thesis: the [pending #43] marks and the draft note removed after PR #43 merged.
+- Thesis, critique pass 2: CR-32, "ACAP with c in {3, 5} failed" instead of "retired", and the cap of 6 kept although
+  it ranks below chance on held-out Ridgecrest (Table 2 row "new", future-work item 3); CR-33, Appendix AB.D summary
+  says the e-value was not calibrated on real noise (pending PR #45), so no universal threshold or guaranteed
+  false-detection control is claimed; CR-34, EQNet2 sentence corrected (temporal event stacking, polarity to SKHASH,
+  no MT consistency in its loss) and false-detection control not used as a difference from it.
 - Thesis, Section 2: HARPA (Nat. Commun. 17:8140, 2026), VORA (arXiv 2607.10450) and EQNet2 (arXiv 2610.17404) cited;
   the novelty is stated as a common moment tensor imposed across stations during detection and deflation, not the use
   of polarity, which EQNet2 also predicts per station.
