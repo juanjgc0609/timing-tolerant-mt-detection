@@ -3,8 +3,17 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-09
+
+- Thesis, Section 2: HARPA (Nat. Commun. 17:8140, 2026), VORA (arXiv 2607.10450) and EQNet2 (arXiv 2610.17404) cited;
+  the novelty is stated as a common moment tensor imposed across stations during detection and deflation, not the use
+  of polarity, which EQNet2 also predicts per station.
+
 ## 2026-11-08
 
+- Thesis (pending PR #43): the ACAP result in Table 2 (row "new") and future-work item 3: G-M5a fails on both 2M seeds,
+  G-M5b passes on CAL and fails on the held-out Ridgecrest EVAL (N4 0.616); cap-6 saturation confirmed (0.39-0.42);
+  ACAP retired, cap 6 kept.
 - Thesis: Section 8 reports the amendment-4 GaMMA tuning (60 of 60 valid, best 0.2356 against PyOcto 0.2589); with one
   search per method and no intervals neither is ordered above the other.
 - M5-ACAP closed: ACAPF = ACAP(3, floor 6) is identical to ACAP3 (the floor never binds; the read-vector median in
