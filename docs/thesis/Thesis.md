@@ -6,8 +6,6 @@ Universidad Icesi - Trabajo de grado - Juan Jose Gordillo Cordoba - October 2026
 
 Director: Uram Aníbal Sosa Aguirre
 
-*Draft note: passages marked **[pending #43]** report results of a pull request not yet merged; the marks are removed when it is.*
-
 ---
 
 ## Abstract
@@ -772,7 +770,7 @@ produced the truth list.
 | G1-M | An off-grid group BLASSO with per-station time shifts adds detections over BOMP-PK | Refuted on synthetic data (2E) |
 | G1-R | Bounding the influence of each station (cap or Huber) adds detections over an unbounded pursuit in dense sequences | Confirmed twice on synthetic data (2F, 2I) and once on real noise with transients (2M) under the registered epicentre rule; the effect belongs to the per-station bound, which BOMP-PK can also use (descriptive arm of 2F, C18f); consistent with Propositions 1 and 4, written after the results. Rescored post hoc with one-to-one matching and the origin time required, the 2M contrasts keep lower bounds above zero, while 2F meets its rule with weak clutter only (+0.023 and +0.027 with strong clutter against a point criterion of 0.03) and its equivalence rule 2F-c fails on the upper side; with the origin time required 2I-a is met for one seed of two (+0.019 against 0.03 for seed 6262, E6b, already so in the registered secondary reading; one-to-one matching changes it by at most 0.001), while 2I-b and 2I-c are met |
 | G1-C | Pick-free station terms add detections when the origin time is required | Partially confirmed, in one geometry: the pooled gain of 2L is essentially that of the one-sided eight-station network, there is no demonstrated gain with four stations, and the terms were worse than the catalogue ones in about 22 per cent of the networks |
-| new | The cap trades robustness to transients for saturation in continuous seismicity | Proposed after the experiments as an explanation; its parts are proved in a simplified model (Gaussian noise, fixed readings; Propositions 1, 2, 4), and the saturation was measured at true hypocentres of real events (C18). Appendix AB proves that the trade-off is unavoidable for any score whose station influence is bounded uniformly, and that a bound relative to the background (ACAP) avoids it. Tested on real data in the doctoral line (gates G-M5a and G-M5b, exploratory **[pending #43]**), ACAP failed: it lost recall to the cap on the 2M transient day (-0.020 [-0.041, +0.009] and -0.013 [-0.053, +0.028], against a tolerance of 0.03), and it avoided saturation on the Ridgecrest development segment but not on the held-out one (AUC 0.616 on N4, against 0.65); the saturation of the cap was confirmed on the held-out segment (AUC 0.39 to 0.42). ACAP is retired and the cap of 6 is kept |
+| new | The cap trades robustness to transients for saturation in continuous seismicity | Proposed after the experiments as an explanation; its parts are proved in a simplified model (Gaussian noise, fixed readings; Propositions 1, 2, 4), and the saturation was measured at true hypocentres of real events (C18). Appendix AB proves that the trade-off is unavoidable for any score whose station influence is bounded uniformly, and that a bound relative to the background (ACAP) avoids it. Tested on real data in the doctoral line (gates G-M5a and G-M5b, exploratory), ACAP failed: it lost recall to the cap on the 2M transient day (-0.020 [-0.041, +0.009] and -0.013 [-0.053, +0.028], against a tolerance of 0.03), and it avoided saturation on the Ridgecrest development segment but not on the held-out one (AUC 0.616 on N4, against 0.65); the saturation of the cap was confirmed on the held-out segment (AUC 0.39 to 0.42). ACAP is retired and the cap of 6 is kept |
 
 ### 7.2 Why the pick-free detector fails on real seismicity
 
@@ -913,7 +911,7 @@ waveforms (the stacked residual of accepted events, or templates) instead of a p
 does not leave ghosts, and subtract at the sub-sample arrival time, which removes the residual of Proposition AB.B.6.
 (3) A test of a background-relative bound and of the logarithmic compression on real noise and real seismicity, with
 the conditional threshold of Theorem AB.C.2. The simplest such bound, ACAP (Appendix AB.C), has since been tested and
-retired **[pending #43]**: it failed its robustness gate on the 2M transient day and its saturation gate on the held-out
+retired: it failed its robustness gate on the 2M transient day and its saturation gate on the held-out
 Ridgecrest segment (Table 2, row "new"; `experiments/exploratory/M5-ACAP/card.md`), so the trade-off that Appendix AB
 says a background-relative bound avoids is not avoided by this one on real data. (4) A second synthetic generator, with
 two-subevent sources, and a second real noise network for the bounded-influence result. (5) External timestamping of

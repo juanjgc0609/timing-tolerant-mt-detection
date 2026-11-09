@@ -5,6 +5,7 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-09
 
+- Thesis: the [pending #43] marks and the draft note removed after PR #43 merged.
 - Thesis, Section 2: HARPA (Nat. Commun. 17:8140, 2026), VORA (arXiv 2607.10450) and EQNet2 (arXiv 2610.17404) cited;
   the novelty is stated as a common moment tensor imposed across stations during detection and deflation, not the use
   of polarity, which EQNet2 also predicts per station.
