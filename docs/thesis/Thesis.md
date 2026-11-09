@@ -1086,7 +1086,8 @@ Numbered references follow the numbering of the bibliography of `docs/proposal/D
   with travel time neural fields (HARPA)," Nat. Commun., vol. 17, 8140, 2026, doi:10.1038/s41467-026-74092-y.
 - [Smith 2005] S. T. Smith, "Statistical resolution limits and the complexified Cramér-Rao bound," IEEE Trans.
   Signal Process., vol. 53, no. 5, pp. 1597-1609, 2005.
-- [Song et al. 2026] J. Song, W. Zhu, H. Wang, U. Kumar, T. Taira, and R. M. Allen, "VORA," preprint,
+- [Song et al. 2026] J. Song, W. Zhu, H. Wang, U. Kumar, T. Taira, and R. M. Allen, "VORA: Rapid association of earthquake phases from
+  local to global," preprint,
   arXiv:2607.10450, 2026.
 - [Ueno et al. 2002] H. Ueno, S. Hatakeyama, T. Aketagawa, J. Funasaki, and N. Hamada, "Improvement of hypocenter
   determination procedures in the Japan Meteorological Agency," Q. J. Seismol., vol. 65, pp. 123-134, 2002 (in
