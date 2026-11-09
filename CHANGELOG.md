@@ -3,6 +3,13 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-09
+
+- M7 step 0 (exploratory): `ttmt.v2.m7` with the time-slide null (theory D.3; `time_slide_pvalue`), tests
+  `tests/test_m7.py`. Experiment M7-TIMESLIDE measures whether independent per-station slides keep the level on the
+  101231 noise (coherent transients), with the decision rule fixed in its card. Container smoke on a fake i.i.d. day:
+  the level holds (0.103 at 0.1) and the positive control rejects (0.975). Real-data run pending.
+
 ## 2026-11-08
 
 - M5 decision step (exploratory, ADR-0010 pivot): `ttmt.v2.m5` with the mixture e-value S_mix (theory D.2) and

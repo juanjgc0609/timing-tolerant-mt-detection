@@ -7,5 +7,6 @@ registered detector (``ttmt.detector``) unchanged.
   m1     onset evidence q (picker probability on the detector grid), isotonic calibration, onset reader,
          onset-to-peak lag, sub-sample amplitude reading
   m4     joint reading of one hypothesis (all blocks chosen together by consistency with the moment-tensor subspace)
+  m7     time-slide null (M7.1, theory D.3)
   loop   the v2 greedy loop: onset (or joint) reading, ACAP ranking (M5), deflation at the sub-sample read time
 """
