@@ -86,3 +86,34 @@ can be a false split of a source is tested against that source's atom). Pass rul
 bound <= 0.10). If it fails, the resolvability test with an RSS threshold is recorded as not calibratable in scenes
 with neighbours in this form, and the next route is the owner's decision (a per-scene statistic, or the e-value route
 of M7).
+
+## Result, step 3 (`run_op10_out.txt`, near_km = 10, 4215 s). PASSES the pass rule of the threshold
+Operating-loop calibration: thr = 23.8 (C1 0.010, C3 0.040 of the calibration scenes split).
+
+| fresh control | scenes split | 95 % CI |
+|:--|--:|:--|
+| one source, mismatched | 6 / 200 | [0.011, 0.064] |
+| with neighbours, mismatched | **10 / 200** | **[0.024, 0.090]** |
+| one source, exact | 0 / 100 | [0.000, 0.036] |
+| with neighbours, exact | 1 / 100 | [0.000, 0.054] |
+
+| stratum | dtau | greedy (5 km) | greedy0 | M6 (near_km 10, thr 23.8) |
+|:--|--:|--:|--:|--:|
+| near | 0.10 | 0.20 | 0.80 | 0.65 |
+| near | 0.25 | 0.50 | 0.95 | 0.80 |
+| near | 0.50 | 0.50 | 1.00 | 1.00 |
+| near | 1.00 | 0.65 | 1.00 | 1.00 |
+| far | 0.10-1.00 | 0.85-1.00 | 0.85-1.00 | 0.85-1.00 |
+
+Reading:
+- With the test radius at twice the LOC+T radius and the threshold calibrated on the loop that is run, the false-split
+  rate with neighbours is 5 % (upper bound 9 %), and with one source 3 %. The radius was the cause of the excess
+  (step 2's diagnosis), not the threshold.
+- M6 keeps its near-pair gain over the greedy loop with the exclusion (+0.45, +0.30, +0.50, +0.35, 20 pairs per cell,
+  LOC+T-V). The duplicator caveat of step 1 still applies to differences of about 0.15 or less until the control is
+  fixed (pending the owner); these gains are larger.
+- Far pairs: 0.85 at 0.25 s against 0.90 in step 2 (one pair of 20); not read as a change.
+- Still simulation: ring, homogeneous medium, Gaussian noise, synthetic picker. Before G-M6a is read, CR-30 also asks
+  for calibration on isolated events of the generator v2 and on real isolated M2-3 events, and the theory items of
+  T5.2 (c, d) and T5.6 stay open. Settings carried forward: `near_km` = 10, joint alternative, per-window level,
+  operating-loop calibration, kmax 4, LOC+T-V.

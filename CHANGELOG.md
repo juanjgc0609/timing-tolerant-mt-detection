@@ -15,6 +15,15 @@ Dated record of changes to the project's process, code and documents. Results ar
   drop against the constant term 0.150 (days 190-196) and 0.191 on the confirmation days 197-203 of the declared
   second step (gate 0.30); coverage of +-2 sigma 0.94 passes. The robust spread falls 28-36 % and the best picks reach
   0.25-0.30: the mean square is held by the heavy-tailed pick noise (drop bound 0.31-0.33).
+- M6 after the theory review T5.2 and the adversarial pass 2 (CR-29, CR-30, CR-37): the one-event alternative of the
+  resolvability test is now fitted jointly (P and S together, +-1 s, neighbours refitted; `free="joint"`, default),
+  z_e^2 no longer justifies the threshold, `hits_loctv` and `duplicate_atoms` score M6 with LOC+T-V and the duplicator.
+  M6-BIAS: with neighbours the old alternative inflated the false-split gain (p95 161 against -23). M6-CAL
+  (simulation, kmax 4, mismatched pulses): a threshold calibrated on controls split 15 % of the scenes with
+  neighbours; calibrated on the operating loop, 10.5 %, half from atoms outside the test radius; with the radius at
+  10 km and thr 23.8, 5 % [2.4 %, 9.0 %]. Near-pair recall (LOC+T-V) +0.30 to +0.50 over the greedy loop with the
+  5 km exclusion. The duplicator control fails in 4 cells because it uses the true dtau (diagnosed by the review;
+  fix pending the owner).
 - M6A-REALNOISE (gate G-M6a with real noise, provisional until the review of A.1/A.3, T5.2, and the M6 test theory,
   T5.6): card and script declared before the run.
 
