@@ -93,6 +93,14 @@ class Dataset:
         d16[:, 2] *= -1.0
         return raw, d16
 
+    def check_seal(self, network, coords, t_end):
+        """ttmt.registry.check_read for every station before its samples are decoded (T3.R4 seal).
+        coords: {station: (lat, lon)}; the read spans [t0_utc, t0_utc + t_end)."""
+        from .registry import check_read, utc
+        t0 = utc(self.t0_utc)
+        for name, (lat, lon) in coords.items():
+            check_read(network, lat, lon, t0, t0 + float(t_end))
+
     def station_scale(self, d16):
         a, b = int(self.cal[0] / DT), int(self.cal[1] / DT)
         seg = d16[:, :, a:b]
@@ -134,7 +142,11 @@ class Ridgecrest(Dataset):
         return np.array(STA), np.array(sens)
 
     def load_waveforms(self, names, sens, t_end):
+        import csv
         from obspy import UTCDateTime, read
+        coords = {r["station"]: (float(r["latitude"]), float(r["longitude"]))
+                  for r in csv.DictReader(open(os.path.join(self.data, "stations.csv"))) if r["station"] in names}
+        self.check_seal("CI", {n: coords.get(n, (None, None)) for n in names}, t_end)
         t0 = UTCDateTime(self.t0_utc)
         st = read(os.path.join(self.data, "wave.mseed"))
         n100 = int(round(t_end * 100))
@@ -202,7 +214,10 @@ class HiNet(Dataset):
         return np.array(STA), np.array(sens)
 
     def load_waveforms(self, names, sens, t_end):
-        from obspy import UTCDateTime
+        from obspy import UTCDateTime, read
+        hdr = {n: read(os.path.join(self.data, "Trace", "20120902", f"N.{n}.U"), headonly=True)[0].stats.sac
+               for n in names}
+        self.check_seal("N", {n: (float(h.stla), float(h.stlo)) for n, h in hdr.items()}, t_end)
         t0 = UTCDateTime(self.t0_utc)
         n100 = int(round(t_end * 100))
         raw = np.zeros((len(names), 3, n100))
