@@ -84,3 +84,25 @@ def fill_missing(delta):
         if have.any():
             d[~have, b] = np.median(d[have, b])
     return d
+
+
+def from_catalogue(codes, velocity, picks, depth_km, min_weight=0.5, max_dist_km=60.0, gross_s=3.0, min_picks=30):
+    """(ns, 2) terms and (ns, 2) pick counts from catalogue picks of events that are independent of every target:
+    median over picks of the observed travel time minus the 1-D time of ``velocity`` at the catalogue depth and
+    epicentral distance, per station code and phase. ``picks`` is an iterable of dicts with evid, sta, phase ("P" or
+    "S"), weight, dist_km and tt_s (the columns of tools/fetch_scedc_phases.py); ``depth_km`` maps evid to depth. A
+    term with fewer than min_picks readings is 0 (use fill_missing before applying)."""
+    idx = {str(c): i for i, c in enumerate(codes)}
+    res = [[[] for _ in range(2)] for _ in codes]
+    for r in picks:
+        s, ph = idx.get(str(r["sta"])), "PS".find(str(r["phase"]))
+        if s is None or ph < 0 or float(r["weight"]) < min_weight or float(r["dist_km"]) > max_dist_km:
+            continue
+        z = max(float(depth_km[str(r["evid"])]), 0.01)
+        tt = np.asarray(velocity.times(np.array([0.0, 0.0, z]), np.array([[float(r["dist_km"]), 0.0, 0.0]])))[ph, 0]
+        x = float(r["tt_s"]) - tt
+        if abs(x) < gross_s:
+            res[s][ph].append(x)
+    n = np.array([[len(v) for v in row] for row in res])
+    d = np.array([[np.median(v) if len(v) >= min_picks else 0.0 for v in row] for row in res])
+    return d, n

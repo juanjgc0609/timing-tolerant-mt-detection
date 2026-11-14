@@ -15,6 +15,13 @@ Dated record of changes to the project's process, code and documents. Results ar
   no tolerance tried raises PyOcto above its frozen T of 0.206, and GaMMA falls; with oracle picks PyOcto gains
   (T 0.17 to 0.30-0.33). New `station_terms.fill_missing` (tested) and `T420-CEILING/terms_variants.py`. Results in
   the card and in `results/t420_ceiling/`.
+- ST-RETUNE (design and pilot, no retuning run): card `experiments/exploratory/ST-RETUNE/README.md` with the
+  hypothesis, reading rule, risks, pivot criterion and a draft of ATLAS-0 amendment 6 (not anchored). New
+  `station_terms.from_catalogue` (tested) and `catalogue_terms.py`. Pilot on Ridgecrest with SCSN analyst picks of
+  9 July 2019 (720 events, independent of every target): terms for 11 of 11 stations, correlation 0.91 with the
+  injected ones, median residual of the injected arrivals 0.172 to 0.093 s; frozen PyOcto with PhaseNet picks
+  unchanged (T 0.202 against 0.206, C 0.328 against 0.311), with oracle picks T 0.17 to 0.31. Hi-net has no
+  independent set.
 - Supervision review of the open work (exploratory; no registered number changes). M6-CAL rerun on fresh seeds with
   the step-3 settings frozen: 25 of 300 scenes with neighbours split ([0.055, 0.121]), so the 5 % of step 3 does not
   hold out of sample (7 % over both runs); card updated, `M6-CAL/run_fresh.py`. The duplicator column of pair-only
