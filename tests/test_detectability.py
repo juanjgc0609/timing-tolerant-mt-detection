@@ -86,3 +86,11 @@ def test_station_terms_zero_without_misfit_and_origin_variant():
     assert np.abs(ST.terms(sres)).max() < 1e-9
     ks, sres = ST.per_source(ST.residuals(tr, sta, vel), ST.source_keys(tr.xyz))
     assert np.allclose(ST.terms(sres), 0.3)
+
+
+def test_fill_missing_gives_the_common_shift_to_stations_without_a_term():
+    d = np.array([[0.2, 0.5], [0.0, 0.3], [0.4, 0.0], [0.3, 0.4]])
+    f = ST.fill_missing(d)
+    assert f[1, 0] == 0.3 and f[2, 1] == 0.4                 # median of the estimated terms of the phase
+    assert np.array_equal(f[d != 0], d[d != 0])              # estimated terms untouched
+    assert np.array_equal(ST.fill_missing(np.zeros((3, 2))), np.zeros((3, 2)))   # nothing estimated: nothing to fill

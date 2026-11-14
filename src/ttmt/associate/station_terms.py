@@ -72,3 +72,15 @@ def record_terms(src_res, ks, keys_in_record, min_sources=3):
     record: one term set per record, as an operator would apply it, and no target informs its own correction)."""
     excl = np.isin(ks, np.unique(keys_in_record))
     return terms(src_res, exclude=np.where(excl)[0], min_sources=min_sources)
+
+
+def fill_missing(delta):
+    """terms with the stations and phases that have no estimate (0) set to the median of the estimated ones of the
+    same phase: a network-wide shift trades off with the origin time, but a shift applied to some stations only is a
+    relative error between stations, so a missing term must take the common shift and not zero."""
+    d = np.array(delta, float)
+    for b in range(d.shape[1]):
+        have = d[:, b] != 0
+        if have.any():
+            d[~have, b] = np.median(d[have, b])
+    return d
