@@ -82,3 +82,31 @@ Cloud smoke run of the changed script with fake noise (1 pair per cell, 6 contro
 
 ## Result
 Pending (laptop run).
+
+## Gate on false splits, derived (14 November 2026; decision delegated by the owner on 14 November 2026)
+Declared before any real run. It replaces both "<= 2 of 40" and "<= 4 of 40".
+
+What was wrong. The change from "<= 2" to "<= 4 of 40" in the update above was a relaxation of a declared gate, made
+knowing the simulated rate (7 % of scenes); it was not approved and is withdrawn. Also, the script added up spurious
+atoms, not scenes. And n = 40 cannot support the claim: with any limit that a true rate of 0.05 passes with
+probability >= 0.80 (<= 3 of 40: 0.86), a true rate of 0.10 passes with probability 0.42, and only 0.20 is excluded
+(0.028).
+
+Target, declared: the false-split rate per control scene with neighbours is below 0.10 (the bound of M6-CAL step 2
+onwards), tested one-sided at level 0.05, with power >= 0.80 when the true rate is the calibration target 0.05.
+
+| n fresh scenes | limit c (largest with P(X <= c | 0.10) <= 0.05) | level at 0.10 | power at 0.05 | power at 0.035 |
+|--:|--:|--:|--:|--:|
+| 40 | 0 | 0.015 | 0.13 | 0.24 |
+| 100 | 4 | 0.024 | 0.44 | 0.73 |
+| 200 | 12 | 0.032 | 0.80 | 0.975 |
+| 300 | 21 | 0.046 | 0.95 | 0.999 |
+
+Decision: **n = 200 fresh control scenes with neighbours, gate "at most 12 scenes with a false split"**, the smallest
+of the sizes examined that reaches the declared power. The pair-recall part of the gate is unchanged. The script
+takes NFRESH (default 200) apart from the NCTRL calibration scenes, counts scenes, and prints FAIL if NFRESH is
+not 200. It needs 240 + 40 + 200 = 480 eligible noise slots; if the day has fewer, the run stops, and any smaller n
+is declared here with its row of the table before running.
+Evidence level: the table is an exact binomial computation (scipy, reproducible from the formula in the header); the
+choice of 0.10 and 0.05 as the rates is a design decision, not a measurement. Pending the owner's approval, as any
+change of a declared gate (project rule 14); nothing has been run with it.
