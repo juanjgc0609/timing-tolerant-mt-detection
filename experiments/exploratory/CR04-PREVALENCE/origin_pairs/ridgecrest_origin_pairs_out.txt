@@ -1,0 +1,6 @@
+events 28060
+next event within 0.1 s and 10 km: 49 (0.17 %)
+next event within 0.5 s and 10 km: 82 (0.29 %)
+next event within 1.0 s and 10 km: 96 (0.34 %)
+next event within 2.0 s and 10 km: 149 (0.53 %)
+share with another event within 1 s, any distance: observed 1.89 %, Poisson at the local 10-min rate 3.7 %
