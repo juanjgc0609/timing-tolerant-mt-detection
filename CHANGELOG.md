@@ -11,6 +11,15 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-08
 
+- M5 decision step (exploratory, ADR-0010 pivot): `ttmt.v2.m5` with the mixture e-value S_mix (theory D.2) and
+  Student t, gaussian and radial (kernel bulk + Pareto tail) backgrounds; tests `tests/test_m5.py` (in CI).
+  Exploration M5-EVALUE, gate G-M5c, on Task 2M real noise (owner's laptop, CPU): FAILS on both seeds at p = 1e-3
+  (radial background 5.8e-3 on 101231, 1.2e-3 on 100210-11; passes at 1e-2); the gaussian background fails by two
+  orders of magnitude on the transient day, as D.1(a) predicts. The declared second step found the cause in
+  dependence between blocks (simultaneous tails across stations, 1.7x the independent rate), not in the marginal,
+  and pivoted to M7 by its rule; the held-out confirmation day stays unused. A third attempt, the average of
+  per-station e-values (valid under any dependence across stations), already misses the level on a fake i.i.d. null
+  (1.4e-3 at 1e-3), so it was not run on real data. Negative result recorded; the decision rests on M7.
 - Thesis (pending PR #43): the ACAP result in Table 2 (row "new") and future-work item 3: G-M5a fails on both 2M seeds,
   G-M5b passes on CAL and fails on the held-out Ridgecrest EVAL (N4 0.616); cap-6 saturation confirmed (0.39-0.42);
   ACAP retired, cap 6 kept.
