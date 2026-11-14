@@ -15,6 +15,15 @@ Dated record of changes to the project's process, code and documents. Results ar
   no tolerance tried raises PyOcto above its frozen T of 0.206, and GaMMA falls; with oracle picks PyOcto gains
   (T 0.17 to 0.30-0.33). New `station_terms.fill_missing` (tested) and `T420-CEILING/terms_variants.py`. Results in
   the card and in `results/t420_ceiling/`.
+- Supervision review of the open work (exploratory; no registered number changes). M6-CAL rerun on fresh seeds with
+  the step-3 settings frozen: 25 of 300 scenes with neighbours split ([0.055, 0.121]), so the 5 % of step 3 does not
+  hold out of sample (7 % over both runs); card updated, `M6-CAL/run_fresh.py`. The duplicator column of pair-only
+  cells is declared descriptive: the control of ADR-0008 item 3 holds at the registered operating point (duplicator
+  of frozen PyOcto on the tuning partition: T 0.07-0.12 against 0.206) and stays as written.
+- `M6A-REALNOISE/run.py` brought to the M6-CAL settings before any real run (kmax 4, `near_km` 10, operating-loop
+  threshold, LOC+T-V through `hits_loctv`); it still scored with the plain LOC+T `hits()` of M6-JOINT (CR-29). Card
+  updated; G-M6a is not read until split S is handled and the threshold is calibrated on real isolated events.
+- M2-GP card: note that the 30 % gate sat at the measured noise floor (reducible share 0.31-0.33).
 
 ## 2026-11-09
 
@@ -33,6 +42,24 @@ Dated record of changes to the project's process, code and documents. Results ar
 - Thesis, Section 2: HARPA (Nat. Commun. 17:8140, 2026), VORA (arXiv 2607.10450) and EQNet2 (arXiv 2610.17404) cited;
   the novelty is stated as a common moment tensor imposed across stations during detection and deflation, not the use
   of polarity, which EQNet2 also predicts per station.
+- M2, first version (plan T4.8, exploratory): `ttmt.v2.m2`, per-(station, phase) Gaussian-process term (Matern 3/2,
+  GLS mean, marginal likelihood, optional white level per reading-quality group) on a 1-D medium, `TravelTimeModel`,
+  `fit_station_gp`, `time_blocks`; tests `tests/test_m2.py`. `tools/fetch_scedc_phases.py` fetches SCSN analyst picks
+  of the Ridgecrest 2019 sequence from the public SCEDC bucket. Exploration M2-GP (gate G-M2): FAILS. Held-out MSE
+  drop against the constant term 0.150 (days 190-196) and 0.191 on the confirmation days 197-203 of the declared
+  second step (gate 0.30); coverage of +-2 sigma 0.94 passes. The robust spread falls 28-36 % and the best picks reach
+  0.25-0.30: the mean square is held by the heavy-tailed pick noise (drop bound 0.31-0.33).
+- M6 after the theory review T5.2 and the adversarial pass 2 (CR-29, CR-30, CR-37): the one-event alternative of the
+  resolvability test is now fitted jointly (P and S together, +-1 s, neighbours refitted; `free="joint"`, default),
+  z_e^2 no longer justifies the threshold, `hits_loctv` and `duplicate_atoms` score M6 with LOC+T-V and the duplicator.
+  M6-BIAS: with neighbours the old alternative inflated the false-split gain (p95 161 against -23). M6-CAL
+  (simulation, kmax 4, mismatched pulses): a threshold calibrated on controls split 15 % of the scenes with
+  neighbours; calibrated on the operating loop, 10.5 %, half from atoms outside the test radius; with the radius at
+  10 km and thr 23.8, 5 % [2.4 %, 9.0 %]. Near-pair recall (LOC+T-V) +0.30 to +0.50 over the greedy loop with the
+  5 km exclusion. The duplicator control fails in 4 cells because it uses the true dtau (diagnosed by the review;
+  fix pending the owner).
+- M6A-REALNOISE (gate G-M6a with real noise, provisional until the review of A.1/A.3, T5.2, and the M6 test theory,
+  T5.6): card and script declared before the run.
 
 ## 2026-11-08
 

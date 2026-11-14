@@ -52,3 +52,19 @@ def test_resolvability_rejects_a_spurious_split_of_one_event():
     near = [a for a in kept[1:] if np.linalg.norm(a["x"][:2] - kept[0]["x"][:2]) <= 5.0
             and abs(a["tau"] - kept[0]["tau"]) <= 1.5]
     assert near == []
+
+
+def test_joint_free_fit_is_at_least_as_good_as_the_legacy_one():
+    """review T5.2 (b1-b3): the one-event alternative with joint P/S, wider times and the neighbour refitted is a
+    larger class than the legacy one (bounded, sequential, neighbour fixed), so its RSS is not larger."""
+    STA, srcs, F = _scene(2, 0.5, 13)
+    E = _engine(STA)
+    Y = F[0][0] + F[1][0]
+    q = _q([F[0][2] - LAG_S, F[1][2] - LAG_S], 8)
+    lag = np.full((8, 2), LAG_S / K.dt)
+    atoms = m6.adcg_loop(E, Y, q, 2, lag, thr=None)
+    assert len(atoms) == 2
+    resp = m6._Resp(K)
+    legacy = m6.free_one_event_rss(Y, [atoms[1]], atoms[0], E.G, resp)
+    joint = m6.free_one_event_joint(Y, [atoms[1]], atoms[0], E.G, resp)
+    assert joint <= legacy * (1 + 1e-6)
