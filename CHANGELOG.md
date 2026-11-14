@@ -5,6 +5,23 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-14
 
+- T4.20 / T4.22 / T4.24 / T4.25 run (cloud, CPU, read-only copy of the tuning partition; both frozen objectives
+  reproduced exactly). Ceiling in C: the ideal moment-tensor detector would recover 0.75 of the C targets PyOcto
+  misses (0.77 Hi-net, 0.73 Ridgecrest; 0.76 for GaMMA a4) and no comparator hit lies below detection probability
+  0.5, so by the rule fixed before the run C is recommended as a secondary superiority hypothesis (power computation
+  and amendment still to do). Station terms: the acceptance criterion fails (Hi-net isolated recall with oracle picks
+  0.54, needed 0.85). The registered cross-fitting leaves Hi-net with no term (7 sources, 5-7 per realisation), and
+  in-sample terms reach only 0.65: the Hi-net misfit is not static. With PhaseNet picks no estimate of the terms and
+  no tolerance tried raises PyOcto above its frozen T of 0.206, and GaMMA falls; with oracle picks PyOcto gains
+  (T 0.17 to 0.30-0.33). New `station_terms.fill_missing` (tested) and `T420-CEILING/terms_variants.py`. Results in
+  the card and in `results/t420_ceiling/`.
+- ST-RETUNE (design and pilot, no retuning run): card `experiments/exploratory/ST-RETUNE/README.md` with the
+  hypothesis, reading rule, risks, pivot criterion and a draft of ATLAS-0 amendment 6 (not anchored). New
+  `station_terms.from_catalogue` (tested) and `catalogue_terms.py`. Pilot on Ridgecrest with SCSN analyst picks of
+  9 July 2019 (720 events, independent of every target): terms for 11 of 11 stations, correlation 0.91 with the
+  injected ones, median residual of the injected arrivals 0.172 to 0.093 s; frozen PyOcto with PhaseNet picks
+  unchanged (T 0.202 against 0.206, C 0.328 against 0.311), with oracle picks T 0.17 to 0.31. Hi-net has no
+  independent set.
 - Supervision review of the open work (exploratory; no registered number changes). M6-CAL rerun on fresh seeds with
   the step-3 settings frozen: 25 of 300 scenes with neighbours split ([0.055, 0.121]), so the 5 % of step 3 does not
   hold out of sample (7 % over both runs); card updated, `M6-CAL/run_fresh.py`. The duplicator column of pair-only
@@ -17,6 +34,12 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-09
 
+- T4.20 / T4.24 / T4.25 (exploratory, tuning partition, card `experiments/exploratory/T420-CEILING/README.md` written
+  before the run): `ttmt.detectability` (detection probability of the ideal network subspace detector, p = 1, 6, K,
+  union-bound threshold at the objective's 30 false detections per hour, energy bounded below by the card SNR) and
+  `ttmt.associate.station_terms` (static per-station, per-phase terms from the injected sources, cross-fitted by
+  realisation, applied to picks before association). Script `ceiling_c.py`; decision rule of T4.22 fixed in the card.
+  Tests `tests/test_detectability.py` (in CI). Run on 14 Nov, see above.
 - Thesis: the [pending #43] marks and the draft note removed after PR #43 merged.
 - Thesis, critique pass 2: CR-32, "ACAP with c in {3, 5} failed" instead of "retired", and the cap of 6 kept although
   it ranks below chance on held-out Ridgecrest (Table 2 row "new", future-work item 3); CR-33, Appendix AB.D summary
