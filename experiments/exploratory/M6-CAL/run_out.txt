@@ -1,0 +1,25 @@
+M6-CAL  seed 20261110  NCAL 200  NTEST 200  NPAIR 20  kmax 4  numpy 2.5.3
+8-station ring, homogeneous medium, synthetic picker, Gaussian noise, SNR 12; LOC+T-V scoring
+
+calibration C1: 200 scenes, mismatched pulses: 200 scenes with a spurious near atom, max gain median -108.2 p95 -15.1 max 133.7
+calibration C3: 200 scenes, mismatched pulses: 185 scenes with a spurious near atom, max gain median -179.0 p95 5.3 max 42.4
+thr = max of the two p95 = 5.3
+
+fresh control                      scenes m6 splits scenes with >=1         95 % CI greedy0 splits
+one source, mismatched                200         8               8  [0.017, 0.077]            600
+with neighbours, mismatched           200        30              30  [0.104, 0.207]            202
+one source, exact                     100         1               1  [0.000, 0.054]            300
+with neighbours, exact                100         7               6  [0.022, 0.126]            105
+
+pair recall (LOC+T-V), mismatched pulses, 20 pairs per cell
+stratum  dtau      greedy     greedy0          m6 dup(greedy)
+far      0.10        1.00        1.00        1.00        1.00
+far      0.25        0.85        0.85        0.90        0.90
+far      0.50        0.95        0.95        0.95        0.95
+far      1.00        0.95        0.95        0.95        0.70
+near     0.10        0.20        0.80        0.65        0.20
+near     0.25        0.50        0.95        0.80        0.55
+near     0.50        0.50        1.00        1.00        0.65
+near     1.00        0.65        1.00        1.00        0.55
+
+1063 s
