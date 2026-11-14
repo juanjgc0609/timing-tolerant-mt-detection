@@ -1,0 +1,11 @@
+# Step 3 (S_avg), container smoke on FAKE i.i.d. t4 noise (not real data): run_c.py avg 2718 <fake 101231> --weighted, all 24 networks x 3 cells; avgan B 500. Python 3.11 container, numpy 2.x.
+== seed 2718: 72 parts, 28800 TEST hypotheses (background RL)
+   avg_CAL  non-finite 0  | p 0.01: rate 4.03e-03 (95 % ub 6.34e-03)  | p 0.001: rate 1.42e-03 (95 % ub 2.43e-03)
+   avg_LOW  non-finite 0  | p 0.01: rate 5.14e-03 (95 % ub 7.12e-03)  | p 0.001: rate 1.39e-03 (95 % ub 2.50e-03)
+   prod_CAL non-finite 0  | p 0.01: rate 2.08e-04 (95 % ub 4.86e-04)  | p 0.001: rate 1.04e-04 (95 % ub 2.78e-04)
+   prod_LOW non-finite 0  | p 0.01: rate 1.49e-03 (95 % ub 2.10e-03)  | p 0.001: rate 3.82e-04 (95 % ub 6.78e-04)
+   power at the true hypotheses of 1440 catalogue events (pi leave-one-out), S >= log 1e3: S_avg 1.00, product 1.00; median S_avg 40.3, product 125.5
+   calibration (S_avg <= p at 1e-2 and 1e-3, CAL and LOW): FAIL; power (S_avg fraction >= 0.5): PASS
+
+
+[exited with code 0]

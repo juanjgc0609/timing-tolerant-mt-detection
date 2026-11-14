@@ -1,0 +1,28 @@
+﻿== seed 2718: 6 parts, 6720 TEST hypotheses, numpy 1.26.4
+   R_CAL: mean exp(S) 1.54e+15  median S -3.30  max S 43.78  | p 0.01: rate 3.44e-02 (95 % ub 7.27e-02) > p  | p 0.001: rate 2.62e-02 (95 % ub 6.06e-02) > p
+      ladder_4        p 0.01: 3.57e-02  p 0.001: 2.54e-02
+      ladder_6        p 0.01: 3.97e-02  p 0.001: 3.44e-02
+      unilateral_c40  p 0.01: 2.77e-02  p 0.001: 1.87e-02
+   R_LOW: mean exp(S) 1.02e+15  median S -3.26  max S 43.36  | p 0.01: rate 3.54e-02 (95 % ub 7.40e-02) > p  | p 0.001: rate 2.75e-02 (95 % ub 6.29e-02) > p
+      ladder_4        p 0.01: 3.66e-02  p 0.001: 2.77e-02
+      ladder_6        p 0.01: 4.11e-02  p 0.001: 3.48e-02
+      unilateral_c40  p 0.01: 2.86e-02  p 0.001: 2.01e-02
+   T_CAL: mean exp(S) 2.52e+30  median S -2.45  max S 78.81  | p 0.01: rate 3.79e-02 (95 % ub 7.78e-02) > p  | p 0.001: rate 3.41e-02 (95 % ub 7.08e-02) > p
+      ladder_4        p 0.01: 4.82e-02  p 0.001: 3.97e-02
+      ladder_6        p 0.01: 4.64e-02  p 0.001: 4.42e-02
+      unilateral_c40  p 0.01: 1.92e-02  p 0.001: 1.83e-02
+   T_LOW: mean exp(S) 1.39e+30  median S -2.48  max S 78.22  | p 0.01: rate 3.79e-02 (95 % ub 7.77e-02) > p  | p 0.001: rate 3.42e-02 (95 % ub 7.11e-02) > p
+      ladder_4        p 0.01: 4.87e-02  p 0.001: 4.02e-02
+      ladder_6        p 0.01: 4.60e-02  p 0.001: 4.42e-02
+      unilateral_c40  p 0.01: 1.92e-02  p 0.001: 1.83e-02
+   G_CAL: mean exp(S) 7.42e+51  median S -2.56  max S 128.25  | p 0.01: rate 4.37e-02 (95 % ub 8.71e-02) > p  | p 0.001: rate 3.94e-02 (95 % ub 7.81e-02) > p
+      ladder_4        p 0.01: 5.49e-02  p 0.001: 4.64e-02
+      ladder_6        p 0.01: 5.09e-02  p 0.001: 4.91e-02
+      unilateral_c40  p 0.01: 2.54e-02  p 0.001: 2.28e-02
+   G_LOW: mean exp(S) 4.14e+50  median S -2.58  max S 125.36  | p 0.01: rate 4.48e-02 (95 % ub 8.86e-02) > p  | p 0.001: rate 4.02e-02 (95 % ub 7.86e-02) > p
+      ladder_4        p 0.01: 5.71e-02  p 0.001: 4.73e-02
+      ladder_6        p 0.01: 5.13e-02  p 0.001: 5.00e-02
+      unilateral_c40  p 0.01: 2.59e-02  p 0.001: 2.32e-02
+   R tail index quantiles 5/50/95: [3.65, 7.86, 10.0]; eps 5/50/95: [0.2, 0.46, 0.5]
+   G-M5c seed 2718: FAIL (R background, pi CAL and LOW, p 1e-2 and 1e-3)
+
