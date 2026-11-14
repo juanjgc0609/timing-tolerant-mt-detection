@@ -5,6 +5,10 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-14
 
+- CR-04, catalogue bound (exploratory, `experiments/exploratory/CR04-PREVALENCE/origin_pairs/`): in the SCSN
+  catalogue of Ridgecrest (30 days, 28,060 events) 1.89 % of events have another origin within 1 s, against 3.7 % for
+  a Poisson process at the local rate; the reading "the catalogue misses about half" is a hypothesis. The registered
+  CR-04 measurement is unchanged.
 - Supervision review of the open work (exploratory; no registered number changes). M6-CAL rerun on fresh seeds with
   the step-3 settings frozen: 25 of 300 scenes with neighbours split ([0.055, 0.121]), so the 5 % of step 3 does not
   hold out of sample (7 % over both runs); card updated, `M6-CAL/run_fresh.py`. The duplicator column of pair-only
