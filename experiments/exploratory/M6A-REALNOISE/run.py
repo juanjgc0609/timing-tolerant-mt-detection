@@ -25,11 +25,12 @@ T5.2 and M6-BIAS). Hit rule: LOC+T-V, `ttmt.v2.m6.hits_loctv` (the registered ru
 Gate (declared before the run, card.md): pairs at dtau in {0.1, 0.25, 0.5, 1.0} s, both separation strata pooled,
 K_mec/E (ttmt.synth.inject.kmec_over_e on the scaled block vectors) in the upper tercile of all pairs of the run;
 REAL arm: pair recall(m6) - pair recall(greedy) >= 0.10 and the 2.5th percentile of its paired bootstrap > 0
-(B = 2000, resampling pairs). Also in the gate: false splits on a fresh control with neighbours <= 4 of NCTRL = 40 (M6-BIAS:
-2 of 30 in simulation). Secondary:
+(B = 2000, resampling pairs). Also in the gate (card.md, "Gate on false splits, derived"): at most SPLIT_MAX = 12 of
+NFRESH = 200 fresh control SCENES with neighbours have a false split (one-sided test of rate >= 0.10 at level 0.032;
+power 0.80 at a true rate of 0.05, 0.975 at 0.035). Scenes are counted, not atoms. Secondary:
 the same numbers on GEN, per stratum, per tercile.
 
-    python run.py NOISE_DIR [NREP] [NCTRL] > run_out.txt
+    python run.py NOISE_DIR [NREP] [NCTRL] [NFRESH] > run_out.txt
 NOISE_DIR: a directory written by code/t2m_data.py (noise.npy, meta.json with "eligible"), e.g. day 101231.
 """
 import importlib.util
@@ -69,7 +70,9 @@ from ttmt.v2.m6 import adcg_loop, hits_loctv  # noqa: E402
 SEED = 20261109
 NOISE_DIR = sys.argv[1] if len(sys.argv) > 1 else None
 NREP = int(sys.argv[2]) if len(sys.argv) > 2 else 30
-NCTRL = int(sys.argv[3]) if len(sys.argv) > 3 else 40
+NCTRL = int(sys.argv[3]) if len(sys.argv) > 3 else 40     # calibration scenes
+NFRESH = int(sys.argv[4]) if len(sys.argv) > 4 else 200   # fresh control scenes of the gate
+SPLIT_MAX = 12           # gate: scenes with a false split among NFRESH = 200 (binomial design in card.md)
 NSTA = 8
 KMAX = 4                 # M6-CAL (CR-37)
 NEAR_KM = 10.0           # radius of the resolvability test, twice the LOC+T radius (M6-CAL step 3)
@@ -101,6 +104,8 @@ class Noise:
         assert self.arr.shape[2] >= (el.max() + 1) * S.NT, "slot length does not match NT"
 
     def take(self):
+        if self.k >= len(self.slots):
+            raise SystemExit(f"not enough eligible noise slots ({len(self.slots)}); lower NFRESH and declare it")
         s = int(self.slots[self.k])
         self.k += 1
         return s, np.asarray(self.arr[self.sub, :, s * S.NT:(s + 1) * S.NT], float)
@@ -166,8 +171,8 @@ def run_arm(arm, real, E, lag):
     thr = hi
     out.update(thr=thr, n_gain=len(gains), gain_med=float(np.median(gains)) if gains else np.nan,
                gain_max=float(max(gains)) if gains else np.nan, cal_rate=float(rate(thr)))
-    splits = {"greedy0": 0, "m6": 0}
-    for c in range(NCTRL):
+    splits = {"greedy0": 0, "m6": 0}          # SCENES with at least one false split
+    for c in range(NFRESH):
         rs, rn = np.random.default_rng([SEED, 2, c]), np.random.default_rng([SEED, 12, c])
         srcs = null_scene(rs)
         _s, nmf = noise_for(arm, rn, real)
@@ -175,7 +180,7 @@ def run_arm(arm, real, E, lag):
         q = picker(F, rs)
         for k, a in (("greedy0", v2_loop(E, Y, q, KMAX, lag, min_sep=0.0)),
                      ("m6", adcg_loop(E, Y, q, KMAX, lag, thr=thr, near_km=NEAR_KM))):
-            splits[k] += len(MB.spurious(a, srcs))
+            splits[k] += len(MB.spurious(a, srcs)) > 0
     out["splits"] = splits
     rows = []
     for sname, sep in STRATA.items():
@@ -206,7 +211,7 @@ def report(o, cut):
     print(f"== arm {o['arm']}: control {NCTRL} scenes with neighbours (3 sources), {o['n_gain']} scenes with a spurious near atom, largest RSS gain "
           f"median / max {o['gain_med']:.1f} / {o['gain_max']:.1f}; operating-loop thr {o['thr']:.1f} "
           f"(calibration scenes split {o['cal_rate']:.3f})")
-    print(f"   fresh control: false splits in {NCTRL} scenes with neighbours: greedy0 {o['splits']['greedy0']}, "
+    print(f"   fresh control: scenes with a false split, of {NFRESH} with neighbours: greedy0 {o['splits']['greedy0']}, "
           f"m6 {o['splits']['m6']}")
     print(f"   {'stratum':7s} {'dtau':>5s} | pair recall " + " ".join(f"{k:>8s}" for k in NAMES)
           + " | upper tercile (n) " + " ".join(f"{k:>8s}" for k in NAMES))
@@ -234,7 +239,7 @@ def main():
     real = Noise(NOISE_DIR) if NOISE_DIR else None
     STA = real.STA if real else None
     if STA is None:
-        raise SystemExit("usage: run.py NOISE_DIR [NREP] [NCTRL]")
+        raise SystemExit("usage: run.py NOISE_DIR [NREP] [NCTRL] [NFRESH]")
     XN = S.nodes()
     taus = np.round(np.arange(4.0, 12.0 + 1e-9, 0.1), 10)
     tt, _ = homogeneous(XN, STA, S.VP, S.VS)
@@ -253,14 +258,14 @@ def main():
         report(res[arm], cut)
         print()
     used = sorted(r["slot"] for r in res["REAL"]["rows"])
-    print(f"REAL slots used by pairs: {len(used)} (+ {2 * NCTRL} control), unique {len(set(used))}")
+    print(f"REAL slots used by pairs: {len(used)} (+ {NCTRL + NFRESH} control), unique {len(set(used))}")
     gate = [r for r in res["REAL"]["rows"] if r["kmec"] >= cut]
     d = np.array([(r["m6"] == 2) - (r["greedy"] == 2) for r in gate], float)
     lo = np.quantile(d[np.random.default_rng([SEED, 7, len("upper tercile")]).integers(0, len(d), (B, len(d)))]
                      .mean(1), .025)
-    ok = d.mean() >= 0.10 and lo > 0 and res["REAL"]["splits"]["m6"] <= 4
-    print(f"G-M6a (REAL, upper tercile): m6 - greedy {d.mean():+.3f}, 2.5th pct {lo:+.3f}, m6 false splits "
-          f"{res['REAL']['splits']['m6']} -> {'PASS' if ok else 'FAIL'}")
+    ok = d.mean() >= 0.10 and lo > 0 and res["REAL"]["splits"]["m6"] <= SPLIT_MAX and NFRESH == 200
+    print(f"G-M6a (REAL, upper tercile): m6 - greedy {d.mean():+.3f}, 2.5th pct {lo:+.3f}, m6 scenes with a false split "
+          f"{res['REAL']['splits']['m6']} of {NFRESH} (limit {SPLIT_MAX} of 200) -> {'PASS' if ok else 'FAIL'}")
     print(f"\n{time.time() - t0:.0f} s")
 
 

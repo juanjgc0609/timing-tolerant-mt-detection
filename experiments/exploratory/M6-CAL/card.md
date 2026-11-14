@@ -87,7 +87,11 @@ bound <= 0.10). If it fails, the resolvability test with an RSS threshold is rec
 with neighbours in this form, and the next route is the owner's decision (a per-scene statistic, or the e-value route
 of M7).
 
-## Result, step 3 (`run_op10_out.txt`, near_km = 10, 4215 s). PASSES the pass rule of the threshold
+## Result, step 3 (`run_op10_out.txt`, near_km = 10, 4215 s). ~~PASSES the pass rule of the threshold~~ DOES NOT HOLD: fails the same rule on fresh seeds (see the rerun below)
+Correction of 14 November 2026 (independent review of PR #46): the pass below was read on controls that had been used
+to choose `near_km`. On fresh seeds the upper bound is 0.121 > 0.10. By the rule declared for step 3, the
+resolvability test with a fixed RSS threshold is **not calibratable in scenes with neighbours in this form**. The
+next route is decided in step 4 (the owner delegated the decision on 14 November 2026).
 Operating-loop calibration: thr = 23.8 (C1 0.010, C3 0.040 of the calibration scenes split).
 
 | fresh control | scenes split | 95 % CI |
@@ -141,4 +145,31 @@ seed 20261114, 300 scenes per control, nothing calibrated (656 s on 4 cores).
   against 0.31, for h from 0.05 to 0.5 s; baseline reproduced exactly). ADR-0008 item 3 stays as written and is run
   only at the registered operating point. The step-1 caveat on differences of 0.15 or less no longer rests on a
   suspected metric flaw; it stays as a sample-size caveat (20 pairs per cell).
+
+## Step 4 (declared 14 November 2026, before running; decision delegated by the owner on 14 November 2026)
+Question: after the failure of step 3 on fresh seeds, which route does M6 take? Two alternatives, compared on
+simulation only, with seeds never used to choose any setting. Nothing of G-M6a and no reserved window is read.
+
+- **Route A, fixed level with margin.** The step-3 threshold was calibrated to 5 % on 200 scenes, with no margin for
+  the sampling error of the calibration itself. Recalibrate on a larger set with a margin: calibration set A (seed
+  20261115, 300 scenes with neighbours, mismatched pulses, `near_km` 10, operating loop), thresholds on the fixed
+  grid 23.8, 34, 48, 68, 96 (ratio about 1.41); thr* = the smallest with at most 0.035 of the scenes split (with a
+  true rate of 0.035 the confirmation below passes with probability 0.998; with 0.05, 0.92).
+- **Route B, ranking only.** No fixed level: the pair gain is the score of the second atom and the registered FROC
+  decides (ADR-0008 item 4). Supported if the gain separates true second atoms from spurious ones: AUC between the
+  gains of the tested atoms matched to a true source in near pairs and the largest spurious gain of the control
+  scenes with neighbours of set A, every candidate kept (thr = -inf).
+
+Confirmation, read once: set B (seed 20261116), 300 scenes with neighbours and 300 with one source at thr*; pairs on
+seed 20261117, 40 per cell (near and far, dtau 0.1, 0.25, 0.5, 1 s), M6 at 23.8 and at thr*, LOC+T-V.
+
+Decision rule:
+1. Route A is adopted if, on set B, the upper 95 % bound of the split rate is <= 0.10 with neighbours AND with one
+   source (at most 19 of 300 each), AND the near-pair recall pooled over the four separations at thr* is within 0.05
+   of the recall at 23.8. Then thr* is the development level, and the gain is still passed as a score.
+2. If route A fails any of the three, the fixed level stays "not calibratable"; route B is adopted if AUC >= 0.90.
+3. If neither holds, no route is supported in this form: the result is recorded as negative and the pivot is the
+   calibrated split-S / own-template pulse of the supervision design before any further threshold work.
+If no grid value reaches 0.035 on set A, route A fails at calibration and rule 2 applies.
+Cost: about 50 min on 4 cloud cores. Script: `run_step4.py`.
 

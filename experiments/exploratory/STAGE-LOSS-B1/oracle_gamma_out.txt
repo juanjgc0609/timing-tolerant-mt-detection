@@ -1,0 +1,15 @@
+ss_ridgecrest_2019_egf_v1 records 30
+  PN              T 0.230 (38/165)  C 0.434  iso 0.640  n_det 219
+  OR              T 0.127 (21/165)  C 0.810  iso 1.000  n_det 83
+  ORS             T 0.109 (18/165)  C 0.492  iso 0.800  n_det 83  median |model - injected| 0.06 s
+  ORS-sig0.3      T 0.109 (18/165)  C 0.778  iso 1.000  n_det 77  median |model - injected| 0.06 s
+  ORM             T 0.036 (6/165)  C 0.286  iso 0.360  n_det 84  median |model - injected| 0.17 s
+  ORM-sig0.3      T 0.018 (3/165)  C 0.810  iso 1.000  n_det 78  median |model - injected| 0.17 s
+ss_hinet_2012_egf_v1 records 20
+  PN              T 0.069 (4/58)  C 0.121  iso 0.204  n_det 41
+  OR              T 0.190 (11/58)  C 0.336  iso 0.574  n_det 57
+  ORS             T 0.052 (3/58)  C 0.284  iso 0.426  n_det 58  median |model - injected| 0.05 s
+  ORS-sig0.3      T 0.086 (5/58)  C 0.388  iso 0.648  n_det 43  median |model - injected| 0.05 s
+  ORM             T 0.293 (17/58)  C 0.457  iso 0.648  n_det 58  median |model - injected| 0.34 s
+  ORM-sig0.3      T 0.293 (17/58)  C 0.422  iso 0.611  n_det 46  median |model - injected| 0.34 s
+done

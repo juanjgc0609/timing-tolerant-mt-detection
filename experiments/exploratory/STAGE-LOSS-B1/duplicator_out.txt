@@ -1,0 +1,11 @@
+partition b60d99b3d0bbbbfa frozen b60d99b3d0bbbbfa records 50
+<class 'ttmt.atlas.schema.Detections'> ['t', 'xyz', 's', 'meta']
+comparator      T 0.2063  C 0.3115   (frozen 0.206278, 0.311475)
+duplicator h=0.05       T 0.1031  C 0.1115  hits T 23 of 223
+duplicator h=0.1        T 0.1166  C 0.1115  hits T 26 of 223
+duplicator h=0.15       T 0.1031  C 0.1115  hits T 23 of 223
+duplicator h=0.2        T 0.1031  C 0.1115  hits T 23 of 223
+duplicator h=0.25       T 0.0807  C 0.1082  hits T 18 of 223
+duplicator h=0.35       T 0.1076  C 0.1082  hits T 24 of 223
+duplicator h=0.5        T 0.0717  C 0.1148  hits T 16 of 223
+duplicator U[0.05,0.5]  T 0.1031  C 0.1115  hits T 23 of 223

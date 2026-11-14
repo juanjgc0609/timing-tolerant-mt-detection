@@ -54,3 +54,8 @@ real gate G-M6a is on injected pairs with real noise (semi-synthetic sets of the
 here. The near 0.5 s cell stays at 0.75 for both M6 variants (not yet diagnosed).
 
     python experiments/exploratory/M6-JOINT/run.py [NREP] [NCTRL] > experiments/exploratory/M6-JOINT/run_out.txt
+
+## Note on "SNR 12" (14 November 2026)
+In this card and in M6-BIAS, M6-CAL, M6-THEORY and M6A-REALNOISE, "SNR 12" is the median peak of a source's strong
+blocks over the robust sd of the filtered noise (per block). It is not the network SNR sqrt(E) of Appendix AB, which
+for these scenes is about 2.7 times larger. Figures of the two kinds are not compared without converting.
