@@ -118,3 +118,12 @@ Reading, by the declared pivot rule:
   R1 or the fk sets), whose noise is the one M4 sees; (b) or restate the gate with a robust error (MAD) or on
   high-quality readings, declared before a new run on new data; (c) the 3-D scaling gate is NOT indicated by this
   result. Days 190-203 are now spent for M2 choices.
+
+## Note on the gate (14 November 2026, supervision review)
+G-M2 fails as declared and stays failed. Read with the noise floor measured above: the GP itself puts the reducible
+share of the MSE at 0.31-0.33, so the 30 % drop asked by the gate was at the edge of what the pick noise allows, and
+the 0.191 obtained is about 60 % of the reducible part. The failure says that the gate was set at the noise floor,
+not that the residual has no smooth structure; it is not a pass either. A new gate (share of the reducible MSE, and
+the comparison against static station terms, which are kept if the GP does not beat them) has to be declared before
+new data are read.
+

@@ -14,10 +14,13 @@ those of M6-JOINT / M6C-SUBSAMPLE. Each source is scaled so that its median stro
 robust sd of THIS scene's noise through the filter. Sources come from one random stream, noise from another, so the
 two arms see identical sources.
 
-Methods (kmax 2): greedy (v2_loop, 5 km exclusion), greedy0 (no exclusion: the control column of the review), m6-none
-(adcg_loop, no test), m6 (adcg_loop, one-event alternative "joint", thr = 95th percentile of the spurious-split
-gain on a control WITH NEIGHBOURS of the same arm: target + overlapping neighbour + isolated source, separate slots;
-no floor, review T5.2 of 9 November 2026 and M6-BIAS). LOC+T hit (5 km, 0.5 s), one atom per source.
+Methods, with the settings carried forward from M6-CAL (14 November 2026, supervision review X5; before this change
+the script still had kmax 2, near_km 5 and the plain LOC+T `hits()` of M6-JOINT, the defect of CR-29): kmax 4;
+greedy (v2_loop, 5 km exclusion), greedy0 (no exclusion: the control column of the review), m6-none (adcg_loop, no
+test), m6 (adcg_loop, one-event alternative "joint", near_km 10). Threshold: calibrated on the OPERATING loop of the
+same arm, by bisection, as M6-CAL step 2: the smallest thr at which adcg_loop as run splits at most 5 % of the
+control scenes WITH NEIGHBOURS (target + overlapping neighbour + isolated source, separate slots); no floor (review
+T5.2 and M6-BIAS). Hit rule: LOC+T-V, `ttmt.v2.m6.hits_loctv` (the registered rule, ADR-0008 item 2).
 
 Gate (declared before the run, card.md): pairs at dtau in {0.1, 0.25, 0.5, 1.0} s, both separation strata pooled,
 K_mec/E (ttmt.synth.inject.kmec_over_e on the scaled block vectors) in the upper tercile of all pairs of the run;
@@ -61,13 +64,16 @@ from ttmt.synth.inject import kmec_over_e  # noqa: E402
 from ttmt.traveltime import homogeneous  # noqa: E402
 from ttmt.v2.loop import v2_loop  # noqa: E402
 from ttmt.v2.m1 import OnsetEngine  # noqa: E402
-from ttmt.v2.m6 import adcg_loop  # noqa: E402
+from ttmt.v2.m6 import adcg_loop, hits_loctv  # noqa: E402
 
 SEED = 20261109
 NOISE_DIR = sys.argv[1] if len(sys.argv) > 1 else None
 NREP = int(sys.argv[2]) if len(sys.argv) > 2 else 30
 NCTRL = int(sys.argv[3]) if len(sys.argv) > 3 else 40
 NSTA = 8
+KMAX = 4                 # M6-CAL (CR-37)
+NEAR_KM = 10.0           # radius of the resolvability test, twice the LOC+T radius (M6-CAL step 3)
+SPLIT_TARGET = 0.05      # share of control scenes split at the calibrated threshold
 DTAUS = J.DTAUS
 STRATA = J.STRATA
 SNR = J.SNR
@@ -134,17 +140,32 @@ def null_scene(rs):
 
 def run_arm(arm, real, E, lag):
     out = {"arm": arm}
-    gains = []
+    cal = []
     for c in range(NCTRL):
         rs, rn = np.random.default_rng([SEED, 1, c]), np.random.default_rng([SEED, 11, c])
         srcs = null_scene(rs)
         _s, nmf = noise_for(arm, rn, real)
         Y, F = scene(srcs, nmf)
-        a = adcg_loop(E, Y, picker(F, rs), len(srcs) + 1, lag, thr=-np.inf)
-        gains += [x["pair_gain"] for x in MB.spurious(a, srcs) if x["pair_gain"] is not None]
-    thr = float(np.quantile(gains, 0.95)) if gains else 0.0        # the level is set by the control only (no floor)
+        cal.append((srcs, Y, picker(F, rs)))
+    gains = []
+    for srcs, Y, q in cal:                  # largest spurious gain of each scene with every candidate kept (reported)
+        a = adcg_loop(E, Y, q, KMAX, lag, thr=-np.inf, near_km=NEAR_KM)
+        g = [x["pair_gain"] for x in MB.spurious(a, srcs) if x["pair_gain"] is not None]
+        gains += [max(g)] if g else []
+
+    def rate(th):
+        return np.mean([len(MB.spurious(adcg_loop(E, Y, q, KMAX, lag, thr=th, near_km=NEAR_KM), srcs)) > 0
+                        for srcs, Y, q in cal])
+    lo, hi = 1.0, 400.0                     # bisection in log thr on the loop as run (M6-CAL step 2)
+    if rate(lo) <= SPLIT_TARGET:
+        hi = lo
+    else:
+        for _ in range(6):
+            mid = float(np.sqrt(lo * hi))
+            lo, hi = (lo, mid) if rate(mid) <= SPLIT_TARGET else (mid, hi)
+    thr = hi
     out.update(thr=thr, n_gain=len(gains), gain_med=float(np.median(gains)) if gains else np.nan,
-               gain_max=float(max(gains)) if gains else np.nan)
+               gain_max=float(max(gains)) if gains else np.nan, cal_rate=float(rate(thr)))
     splits = {"greedy0": 0, "m6": 0}
     for c in range(NCTRL):
         rs, rn = np.random.default_rng([SEED, 2, c]), np.random.default_rng([SEED, 12, c])
@@ -152,8 +173,8 @@ def run_arm(arm, real, E, lag):
         _s, nmf = noise_for(arm, rn, real)
         Y, F = scene(srcs, nmf)
         q = picker(F, rs)
-        k3 = len(srcs) + 1
-        for k, a in (("greedy0", v2_loop(E, Y, q, k3, lag, min_sep=0.0)), ("m6", adcg_loop(E, Y, q, k3, lag, thr=thr))):
+        for k, a in (("greedy0", v2_loop(E, Y, q, KMAX, lag, min_sep=0.0)),
+                     ("m6", adcg_loop(E, Y, q, KMAX, lag, thr=thr, near_km=NEAR_KM))):
             splits[k] += len(MB.spurious(a, srcs))
     out["splits"] = splits
     rows = []
@@ -169,11 +190,12 @@ def run_arm(arm, real, E, lag):
                 Y, F = scene(srcs, nmf)
                 q = picker(F, rs)
                 ke = kmec_over_e(F[0][1], F[1][1])
-                res = {"greedy": v2_loop(E, Y, q, 2, lag), "greedy0": v2_loop(E, Y, q, 2, lag, min_sep=0.0),
-                       "m6-none": adcg_loop(E, Y, q, 2, lag, thr=None), "m6": adcg_loop(E, Y, q, 2, lag, thr=thr)}
+                res = {"greedy": v2_loop(E, Y, q, KMAX, lag), "greedy0": v2_loop(E, Y, q, KMAX, lag, min_sep=0.0),
+                       "m6-none": adcg_loop(E, Y, q, KMAX, lag, thr=None, near_km=NEAR_KM),
+                       "m6": adcg_loop(E, Y, q, KMAX, lag, thr=thr, near_km=NEAR_KM)}
                 row = {"stratum": sname, "dtau": dtau, "rep": rep, "slot": slot, "kmec": ke}
                 for k, a in res.items():
-                    row[k] = len(J.hits(a, srcs))
+                    row[k] = len(hits_loctv(a, srcs))
                 rows.append(row)
     out["rows"] = rows
     return out
@@ -181,8 +203,9 @@ def run_arm(arm, real, E, lag):
 
 def report(o, cut):
     rows = o["rows"]
-    print(f"== arm {o['arm']}: control {NCTRL} scenes with neighbours (3 sources), {o['n_gain']} spurious near atoms, RSS gain median / "
-          f"thr / max {o['gain_med']:.1f} / {o['thr']:.1f} / {o['gain_max']:.1f}")
+    print(f"== arm {o['arm']}: control {NCTRL} scenes with neighbours (3 sources), {o['n_gain']} scenes with a spurious near atom, largest RSS gain "
+          f"median / max {o['gain_med']:.1f} / {o['gain_max']:.1f}; operating-loop thr {o['thr']:.1f} "
+          f"(calibration scenes split {o['cal_rate']:.3f})")
     print(f"   fresh control: false splits in {NCTRL} scenes with neighbours: greedy0 {o['splits']['greedy0']}, "
           f"m6 {o['splits']['m6']}")
     print(f"   {'stratum':7s} {'dtau':>5s} | pair recall " + " ".join(f"{k:>8s}" for k in NAMES)
@@ -221,7 +244,7 @@ def main():
     print(f"M6A-REALNOISE  seed {SEED}  {NREP} pairs per cell, {NCTRL} controls  numpy {np.__version__}")
     print(f"noise day {real.meta.get('day')} ({NOISE_DIR}), stations {','.join(real.stations)}, "
           f"{len(real.slots)} eligible slots")
-    print(f"SNR {SNR} (median strong-block peak / robust sd of the scene's filtered noise), kmax 2, LOC+T (5 km, 0.5 s)")
+    print(f"SNR {SNR} (median strong-block peak / robust sd of the scene's filtered noise), kmax {KMAX}, near_km {NEAR_KM}, LOC+T-V")
     res = {arm: run_arm(arm, real, E, lag) for arm in ("REAL", "GEN")}
     ke = np.array([r["kmec"] for r in res["REAL"]["rows"]])
     cut = float(np.nanquantile(ke, 2 / 3))

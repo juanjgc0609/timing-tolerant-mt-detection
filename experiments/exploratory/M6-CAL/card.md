@@ -117,3 +117,28 @@ Reading:
   for calibration on isolated events of the generator v2 and on real isolated M2-3 events, and the theory items of
   T5.2 (c, d) and T5.6 stay open. Settings carried forward: `near_km` = 10, joint alternative, per-window level,
   operating-loop calibration, kmax 4, LOC+T-V.
+
+## Rerun on fresh seeds, settings frozen (14 November 2026, supervision review; `run_fresh.py`, `run_fresh_out.txt`)
+Reason: the "fresh" controls above were read in the three steps, and `near_km` 10 was chosen by looking at their 21
+failures, so the 5 % of step 3 is not a held-out figure. Same loop, `near_km` 10, thr 23.8, mismatched pulses, new
+seed 20261114, 300 scenes per control, nothing calibrated (656 s on 4 cores).
+
+| fresh-seed control | scenes split | 95 % CI | step 3 |
+|:--|--:|:--|:--|
+| one source, mismatched | 4 / 300 | [0.004, 0.034] | 6 / 200 |
+| with neighbours, mismatched | **25 / 300** | **[0.055, 0.121]** | 10 / 200, [0.024, 0.090] |
+
+- **With neighbours the pass rule of step 3 (upper bound <= 0.10) is not met on fresh seeds.** Both runs together:
+  35 of 500, 7 %. The figure to quote is "7 % of scenes with neighbours, between 5 and 10 %", not "5 %, at most 9 %".
+- This does not decide the registered endpoint, which is recall at 30 false detections per hour on the exact FROC
+  (ADR-0008 item 4), not a fixed false-split level: what matters there is that spurious atoms rank below true ones.
+  The pair gain should enter the FROC as the score of the second atom; a fixed level is a development aid.
+- **The duplicator column of the pair tables is descriptive only.** In cells made only of pairs and with no false
+  budget, a merged detection copied at +-h is credited with both events whenever h is between dtau/6 and 1.5 dtau
+  (64 % of the draws of U[0.05, 0.5] s at dtau 0.25 s, 89 % at 0.5 s), for any offset rule, so the control cannot pass
+  there and the proposed fixed-offset fix would not change that. At the registered operating point the metric holds:
+  the duplicator of frozen PyOcto on the tuning partition loses (recall in T 0.07-0.12 against 0.206, in C 0.11
+  against 0.31, for h from 0.05 to 0.5 s; baseline reproduced exactly). ADR-0008 item 3 stays as written and is run
+  only at the registered operating point. The step-1 caveat on differences of 0.15 or less no longer rests on a
+  suspected metric flaw; it stays as a sample-size caveat (20 pairs per cell).
+

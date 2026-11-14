@@ -66,5 +66,19 @@ CPU only. Cloud smoke run with fake t3 noise (1 pair per cell, 3 controls): 49 s
     python experiments/exploratory/M6A-REALNOISE/run.py NOISE_DIR 5 10 > experiments/exploratory/M6A-REALNOISE/run_small_out.txt
     python experiments/exploratory/M6A-REALNOISE/run.py NOISE_DIR > experiments/exploratory/M6A-REALNOISE/run_out.txt
 
+## Update before any run (14 November 2026, supervision review X5; still no real run)
+The script had not followed M6-CAL: it still scored with the plain LOC+T `hits()` of M6-JOINT (the defect of CR-29),
+with kmax 2, `near_km` 5 and a per-test threshold. `run.py` now uses the settings M6-CAL carried forward: kmax 4,
+`near_km` 10, the joint one-event alternative, the threshold calibrated on the operating loop by bisection (at most
+5 % of the control scenes with neighbours split; search range 1 to 400), and LOC+T-V through
+`ttmt.v2.m6.hits_loctv`. Where this card says "kmax 2" or "LOC+T", read the settings above.
+Two declared points that differ between the card and the script, written here before any run:
+- The false-split limit of the gate is **<= 4 false splits in the 40 fresh control scenes with neighbours** (the
+  script since d9e6563). The "<= 2 of 40" above was written for one-source controls. In simulation the rate with
+  neighbours is 7 % of scenes (35 of 500, M6-CAL step 3 and its fresh-seed rerun), so about 3 of 40 are expected.
+- The gate is not read until the one-event class handles split S (M6-THEORY addendum: calibrated per station) and the
+  threshold is calibrated on real isolated events (CR-30). Until then a run of this script is a diagnostic.
+Cloud smoke run of the changed script with fake noise (1 pair per cell, 6 controls): 320 s, both arms, runs to the end.
+
 ## Result
 Pending (laptop run).

@@ -1,0 +1,3 @@
+C1 mismatched 300 scenes split 4 [0.004, 0.034] greedy0 splits 900
+C3 mismatched 300 scenes split 25 [0.055, 0.121] greedy0 splits 315
+656 s

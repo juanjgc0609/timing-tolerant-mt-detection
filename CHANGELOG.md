@@ -3,6 +3,18 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-14
+
+- Supervision review of the open work (exploratory; no registered number changes). M6-CAL rerun on fresh seeds with
+  the step-3 settings frozen: 25 of 300 scenes with neighbours split ([0.055, 0.121]), so the 5 % of step 3 does not
+  hold out of sample (7 % over both runs); card updated, `M6-CAL/run_fresh.py`. The duplicator column of pair-only
+  cells is declared descriptive: the control of ADR-0008 item 3 holds at the registered operating point (duplicator
+  of frozen PyOcto on the tuning partition: T 0.07-0.12 against 0.206) and stays as written.
+- `M6A-REALNOISE/run.py` brought to the M6-CAL settings before any real run (kmax 4, `near_km` 10, operating-loop
+  threshold, LOC+T-V through `hits_loctv`); it still scored with the plain LOC+T `hits()` of M6-JOINT (CR-29). Card
+  updated; G-M6a is not read until split S is handled and the threshold is calibrated on real isolated events.
+- M2-GP card: note that the 30 % gate sat at the measured noise floor (reducible share 0.31-0.33).
+
 ## 2026-11-09
 
 - Thesis, Section 2: HARPA (Nat. Commun. 17:8140, 2026), VORA (arXiv 2607.10450) and EQNet2 (arXiv 2610.17404) cited;
