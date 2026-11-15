@@ -241,3 +241,6 @@ on this line:
   below SNR 8 is not measured.
 - Limits: simulation (homogeneous medium, Ricker pulses, Gaussian noise); AUC and the share above the 95th
   percentile are not the endpoint, which only the end-to-end pilot measures.
+- On the counts: the output's "n" is the number of tested true atoms, not of pairs. A pair gives none, one or two
+  (with kmax 4 both members can be tested against a neighbour), hence 164 gains from the 160 pairs at SNR 8 and,
+  by coincidence of the total, 160 from 160 at SNR 12. The AUC is over atoms.
