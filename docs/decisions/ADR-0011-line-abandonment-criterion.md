@@ -50,14 +50,15 @@ written before any P1 number exists.
    the false-detection budget (30 per hour), the non-inferiority margin in C (ADR-0008), held-out data read once, the
    criterion written before the run, and the fair comparison (amendment 6). If one of them fails, nothing is claimed.
    Reading, in three zones:
-   - **Meets the target** (Δ_T ≥ 0.05): the line continues (item 5).
+   - **Meets the target** (Δ_T ≥ 0.05, whatever the interval, since item 3 makes the point estimate decide): the line
+     continues (item 5).
    - **Real but smaller effect** (0 < Δ_T < 0.05 and the 95 per cent interval excludes zero): the report says "does not
      meet the registered target of ADR-0011". It gives Δ_T, n_T, the paired counts and the interval, says what the gain
-     is made of (which pairs, which strata), and says what contribution it still supports (for example, the minimal
-     claim: in pairs at 0.1-1 s the method recovers more than the best comparator in its best configuration, under the
+     is made of (which pairs, which strata), and says which claim it would still support as the hypothesis for the
+     confirmatory test of ADR-0008 (for example, the minimal claim: in pairs at 0.1-1 s the method recovers more than the best comparator in its best configuration, under the
      same false-detection budget). This does not abandon the line by itself. The owner decides with the numbers in
      view: continue, restate the claim at the size measured, or change the target by a declared amendment.
-   - **Clear failure** (the interval includes zero, or Δ_T ≤ 0): the report says so with the same numbers. The owner
+   - **Clear failure** (Δ_T < 0.05 and either the interval includes zero or Δ_T ≤ 0): the report says so with the same numbers. The owner
      decides whether to reformulate G1-v2 and the thesis to "failure atlas + identifiability theory + documented
      negatives", which the thesis thread then writes.
    In every zone the target, the number and the choice are written down together in one record. A target that is
