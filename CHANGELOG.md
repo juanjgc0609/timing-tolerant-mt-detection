@@ -3,6 +3,16 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-15
+
+- Comparators added after registration 1 (T4.17, PR #51; no registered number changes). HARPA (Nat. Commun.
+  17:8140, 2026; phase_association 7adf666) wrapped as an associator (`harpa_assoc.py`: common 1-D model as a
+  differentiable table, P and S, serial and seeded; space of three associator parameters on ranges the card already
+  uses; own ledger `tuning_ledger_a5.csv`, proposed amendment 5, no trial before it is anchored). EQNet2 status and
+  provenance only: code AI4EPS/EQNet develop 40a48ed1, weights EQNet2-v0 with sha256 (`gpu_weights.sha256`),
+  training data CEED NCEDC subset through 2022 (`provenance.py`). E65: `traveltime.first_arrival` fixed for sources
+  on a layer top; the registered R1 path keeps the pre-fix times (`traveltime.frozen`, bit-identical), declared in E65.
+
 ## 2026-11-14
 
 - Supervision review of the open work (exploratory; no registered number changes). M6-CAL rerun on fresh seeds with
