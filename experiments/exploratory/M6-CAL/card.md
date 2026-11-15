@@ -209,3 +209,19 @@ Consequences, proposed and pending the owner's approval (they change declared cr
   descriptive check at thr 23.8; the criterion that matters becomes recall at the registered budget with the gain
   as score.
 - The 5 % and 8.3 % figures of steps 3 and its rerun are rates at one threshold, not properties of the method.
+
+## Step 5 (declared 15 November 2026, before running; asked by the independent review of PR #54)
+The AUC of step 4 put true gains at SNR 12 against the spurious gains of set A only. One confirmation, then no more
+on this line:
+- **Confirmation.** Largest spurious gain per scene on set B (seed 20261116, 300 scenes with neighbours, unread until
+  now) against the true gains of the near pairs of step 4 (seed 20261117, 160 pairs), SNR 12. Route B is confirmed if
+  AUC >= 0.90, the level of step 4. Set B is spent after this.
+- **Scope at a lower SNR.** The same at SNR 8 (per-block peak) on new seeds: 300 control scenes with neighbours
+  (20261118) and 160 near pairs (20261119). AUC >= 0.90: route B holds down to SNR 8. Below 0.90: route B is stated
+  for SNR 12 only, and the score needs a normalisation by the noise level before the pilot uses it.
+- Reported, outside the rule: the share of true gains above the 95th percentile of the spurious gains, and the
+  maximum spurious gain (the tail that step 4 left as a hypothesis).
+- A smoke run of the script (4 scenes, 1 pair per cell, 14 s) read the first 4 scenes of set B and of the new seeds.
+  It was a functional check; nothing was chosen from it.
+
+    python experiments/exploratory/M6-CAL/run_step5.py > experiments/exploratory/M6-CAL/run_step5_out.txt

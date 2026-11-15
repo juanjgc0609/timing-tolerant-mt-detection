@@ -42,22 +42,31 @@ own model (zero residual). Suffixes: mit, min_interevent_time 0.1 s; tight, all 
 |:--|--:|--:|
 | PhaseNet picks, frozen (PN) | 0.236 | 0.069 |
 | OR, frozen | 0.139 | 0.328 |
-| ORS-tight | 0.461 | 0.517 |
+| ORS-tight (optimistic: terms estimated on realisations that share the sources) | 0.461 | 0.517 |
 | ORM-tight | 0.667 | 0.603 |
 
 Median |model - injected| is 0.17 s (Ridgecrest) and 0.34 s (Hi-net); with static terms 0.06 and 0.05 s.
 Reading: when the picks are consistent with its travel-time model, PyOcto separates about two of three pairs.
 Reading 1 of `STAGE-LOSS/README.md` ("the merge is structural") is retracted for PyOcto. What remains is the picker:
 with PhaseNet picks on overlapping waveforms T is 0.24 / 0.07.
-Limits: ORM is an upper bound no real picker reaches (zero residual and every arrival picked); the "tight" settings
+Limits: the ORS terms are estimated on the other realisations, which contain the same 12 and 7 sources (the
+scheme PR #47 labels optimistic); ORM is an upper bound no real picker reaches (zero residual and every arrival picked); the "tight" settings
 were chosen on this same partition, so 0.46-0.67 are optimistic for PyOcto and are not a comparator number; n = 58
 on Hi-net gives a 95 % interval of about +-0.13.
 
-## X8. GaMMA a4 with the same oracle picks (measured)
+## X8. GaMMA a4 with oracle picks (measured; reading limited)
 
-T recall stays at or below 0.29 in every condition (Ridgecrest 0.02 to 0.23, Hi-net 0.05 to 0.29), with about 83
-detections for 165 Ridgecrest targets: GaMMA a4 keeps merging pairs whatever the picks. For GaMMA the merge may be
-structural (hypothesis: the mixture's time covariance floor; not tested here).
+With picks at the injected times (OR) and with static terms (ORS), GaMMA a4 stays at T 0.11 to 0.13 on Ridgecrest
+(about 83 detections for 165 targets) and 0.05 to 0.19 on Hi-net, below its own PhaseNet run on Ridgecrest (0.23).
+What this does not show:
+- ORM is not a zero-residual input for GaMMA. The script builds the ORM picks with the frame's ray times
+  (`frame.velocity.times`), while GaMMA associates with its own eikonal grid (0.5 km nodes, depth limit of the grid).
+- The ORM rows have an unexplained anomaly: on Ridgecrest the isolated events drop to 0.36 (C 0.29) against 1.00 with
+  the injected times. An associator given model-consistent picks should not lose isolated events, so these rows are
+  not read.
+So the measured statement is only: oracle picks at the injected times do not make GaMMA a4 separate the pairs.
+Whether its merge is structural is an untested hypothesis. Test that closes it: ORM picks built with GaMMA's own
+eikonal times, checking first that the isolated events are recovered.
 
 ## What follows (design, not result)
 

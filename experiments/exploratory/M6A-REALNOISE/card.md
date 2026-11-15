@@ -99,14 +99,15 @@ onwards), tested one-sided at level 0.05, with power >= 0.80 when the true rate 
 |--:|--:|--:|--:|--:|
 | 40 | 0 | 0.015 | 0.13 | 0.24 |
 | 100 | 4 | 0.024 | 0.44 | 0.73 |
-| 200 | 12 | 0.032 | 0.80 | 0.975 |
+| 200 | 12 | 0.032 | 0.796 | 0.975 |
+| 210 | 13 | 0.036 | 0.831 | 0.983 |
 | 300 | 21 | 0.046 | 0.95 | 0.999 |
 
-Decision: **n = 200 fresh control scenes with neighbours, gate "at most 12 scenes with a false split"**, the smallest
-of the sizes examined that reaches the declared power. The pair-recall part of the gate is unchanged. The script
-takes NFRESH (default 200) apart from the NCTRL calibration scenes, counts scenes, and prints FAIL if NFRESH is
-not 200. It needs 240 + 40 + 200 = 480 eligible noise slots; if the day has fewer, the run stops, and any smaller n
-is declared here with its row of the table before running.
+Decision: **n = 210 fresh control scenes with neighbours, gate "at most 13 scenes with a false split"**. n = 200
+with 12 misses the declared power by 0.004 (0.796), so the next size that meets it is taken. The pair-recall part of
+the gate is unchanged. The script takes NFRESH (default 210) apart from the NCTRL calibration scenes, counts scenes,
+and prints FAIL if NFRESH is not 210. It needs 240 + 40 + 210 = 490 eligible noise slots; if the day has fewer, the
+run stops, and any smaller n is declared here with its row of the table before running.
 Evidence level: the table is an exact binomial computation (scipy, reproducible from the formula in the header); the
 choice of 0.10 and 0.05 as the rates is a design decision, not a measurement. Pending the owner's approval, as any
 change of a declared gate (project rule 14); nothing has been run with it.
