@@ -173,3 +173,39 @@ Decision rule:
 If no grid value reaches 0.035 on set A, route A fails at calibration and rule 2 applies.
 Cost: about 50 min on 4 cloud cores. Script: `run_step4.py`.
 
+
+## Result, step 4 (`run_step4_out.txt`, 3352 s on 4 cores; run once, after the declaration was pushed in 85014ec)
+
+| thr | 23.8 | 34 | 48 | 68 | 96 |
+|:--|--:|--:|--:|--:|--:|
+| set A, scenes with neighbours split (of 300) | 19 | 17 | 16 | 15 | 14 |
+| rate | 0.063 | 0.057 | 0.053 | 0.050 | 0.047 |
+
+- **Route A fails.** No threshold of the declared grid reaches the selection target of 0.035, so there is no thr* and
+  set B was not read (it stays unused). Quadrupling the threshold removes 5 of 19 split scenes: the false splits
+  that remain are not fluctuations near the threshold.
+- **Route B is supported by the declared rule (AUC 0.977 >= 0.90).** Gains of the tested true atoms of near pairs
+  (n = 160, pairs seed 20261117): median 1697, 10th percentile 522. Largest spurious gain per control scene
+  (270 of the 300 scenes of set A have a spurious near atom): median -162, 90th percentile -51.
+- Near pairs pooled (n = 160) at thr 23.8: m6 0.925 against greedy 0.537; far pairs unchanged (0.95 to 0.975).
+
+**Decision (delegated by the owner on 14 November 2026; rule written in step 4 before the run): route B.** The gain
+of the "one against two" test is not cut at a fixed level; it becomes the score of the second atom, and the
+false-detection budget of the registered endpoint (30 per hour on the exact FROC, ADR-0008) sets the operating point.
+
+Evidence level and limits:
+- Measured: the table, the recalls and the AUC, in simulation (homogeneous medium, Ricker pulses, Gaussian noise).
+- The AUC compares true gains from the pairs seed with spurious gains from set A; it has not been confirmed on a
+  second control set (set B is still unread and can serve for that, once).
+- An AUC is not the endpoint. Whether the ranking holds at 30 false detections per hour is measured only by the
+  end-to-end pilot (arm S), on the tuning partition.
+- Hypothesis, not tested: about 5 % of control scenes carry a spurious atom with a gain above 96 (the 14 scenes that
+  survive the largest threshold), in the range of true pairs. If so, they are a model-mismatch structure (neighbour
+  interference or pulse mismatch), not noise. Test that closes it: list gain, distance to the neighbour and pulse
+  mismatch of the split scenes on a new seed.
+
+Consequences, proposed and pending the owner's approval (they change declared criteria):
+- G-M6a: its false-split part at a fixed threshold (`M6A-REALNOISE/card.md`, at most 12 of 200 scenes) stays as a
+  descriptive check at thr 23.8; the criterion that matters becomes recall at the registered budget with the gain
+  as score.
+- The 5 % and 8.3 % figures of steps 3 and its rerun are rates at one threshold, not properties of the method.

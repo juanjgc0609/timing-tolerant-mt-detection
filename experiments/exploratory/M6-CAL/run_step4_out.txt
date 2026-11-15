@@ -1,0 +1,26 @@
+M6-CAL step 4  near_km 10.0  kmax 4  sets A 20261115, B 20261116, pairs 20261117  numpy 2.5.3
+set A, with neighbours, thr  23.8: scenes split 0.0633 (19/300)
+set A, with neighbours, thr  34.0: scenes split 0.0567 (17/300)
+set A, with neighbours, thr  48.0: scenes split 0.0533 (16/300)
+set A, with neighbours, thr  68.0: scenes split 0.0500 (15/300)
+set A, with neighbours, thr  96.0: scenes split 0.0467 (14/300)
+thr* = None
+
+
+pair recall (LOC+T-V), mismatched pulses, 40 pairs per cell
+stratum  dtau   greedy   m6@23.8
+far      0.10    0.975     0.975
+far      0.25    0.900     0.925
+far      0.50    0.950     0.950
+far      1.00    0.975     0.950
+near     0.10    0.575     0.875
+near     0.25    0.400     0.875
+near     0.50    0.525     0.975
+near     1.00    0.650     0.975
+
+near pairs pooled (n 160): greedy 0.537, 23.8 0.925
+
+route B: gains of tested true atoms in near pairs n 160, median 1696.6, q10 521.9; largest spurious gain per control scene n 270 of 300, median -161.8, q90 -51.0; AUC 0.977
+
+DECISION (rule of card.md): route A fails; route B supported (AUC 0.977)
+3352 s
