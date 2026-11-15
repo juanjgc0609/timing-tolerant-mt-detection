@@ -5,6 +5,10 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-15
 
+- `N2-REPICK` (exploratory, approved by the owner on 15 November): card and script of the ideal "pick, subtract,
+  pick again" test on the tuning partition, declared before the subtraction is run. The baseline stage shows that
+  40 of the 120 T targets lost at the picker reach 6 picks once the partner's arrivals leave the truth (assignment
+  effect, no subtraction). Target on the net count in three zones (>= 40, 15-39, < 15).
 - Thesis: the [pending #45] mark and the draft note removed after PR #45 merged. The G-M5c sentence now says it
   failed on the noise of both 2M seeds (three days: 101231; 100210-11), not on one day.
 
