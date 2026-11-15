@@ -1,6 +1,6 @@
 # Statistical analysis plan, phase 6 (and the phase-4 gate)
 
-Version 0.1, 23 October 2026, statistical design thread. Draft: it becomes binding for a test when the text is copied
+Version 0.2, 14 November 2026 (v0.1, 23 October 2026, statistical design thread; v0.2 drops the e-value guarantee of 7.6 after G-M5c). Draft: it becomes binding for a test when the text is copied
 into that test's registration and anchored (ADR-0004). It applies the single beat rule of ADR-0008 to the two
 confirmatory tests of phase 6 (registrations R2 and R3, drafts in `preregistration/drafts/`) and to the phase-4 gate
 G4. Code: `src/ttmt/stats.py` (every decision rule) and `experiments/exploratory/P6-SAP/sample_size.py` (sample size).
@@ -127,9 +127,10 @@ passes when the quasi-Poisson score test rejects "rate at least 1.2 x budget" at
 the Wald bound under-covers for overdispersed counts, measured in `tests/test_stats.py`). The deployable secondary
 hypothesis is claimed only for a method that passes. The check is stratified (CR-01): blocks without catalogued
 events within 15 km and 4 s before the window, and windows with a parent event (M >= 2 within 3 to 15 km and 1 to
-4 s), reported separately; for the model's e-value rule, R3 also reports the rate of S_mix >= log(1/p) on hypotheses
-placed at 3 to 15 km and 1 to 4 s from injected events, and the guarantee of M7 is declared refuted on those
-hypotheses when that rate exceeds 2p.
+4 s), reported separately; for the model's detection statistic S_mix, R3 also reports the rate of S_mix >= log(1/p)
+on hypotheses placed at 3 to 15 km and 1 to 4 s from injected events as a measured false-detection rate. No
+calibration guarantee is claimed (v0.2): S_mix was found not calibrated on development (G-M5c, PR #45) and the cause,
+marginal or dependence, has not been separated (T4.27); false detections are reported as FROC and measured rate only.
 
 7.7 **Software.** The analysis is one script, frozen with the code, that reads the archived detection lists and
 writes every registered number with its source line.
