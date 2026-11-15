@@ -82,3 +82,44 @@ Cloud smoke run of the changed script with fake noise (1 pair per cell, 6 contro
 
 ## Result
 Pending (laptop run).
+
+## Gate on false splits, derived (14 November 2026; decision delegated by the owner on 14 November 2026)
+Declared before any real run. It replaces both "<= 2 of 40" and "<= 4 of 40".
+
+What was wrong. The change from "<= 2" to "<= 4 of 40" in the update above was a relaxation of a declared gate, made
+knowing the simulated rate (7 % of scenes); it was not approved and is withdrawn. Also, the script added up spurious
+atoms, not scenes. And n = 40 cannot support the claim: with any limit that a true rate of 0.05 passes with
+probability >= 0.80 (<= 3 of 40: 0.86), a true rate of 0.10 passes with probability 0.42, and only 0.20 is excluded
+(0.028).
+
+Target, declared: the false-split rate per control scene with neighbours is below 0.10 (the bound of M6-CAL step 2
+onwards), tested one-sided at level 0.05, with power >= 0.80 when the true rate is the calibration target 0.05.
+
+| n fresh scenes | limit c (largest with P(X <= c | 0.10) <= 0.05) | level at 0.10 | power at 0.05 | power at 0.035 |
+|--:|--:|--:|--:|--:|
+| 40 | 0 | 0.015 | 0.13 | 0.24 |
+| 100 | 4 | 0.024 | 0.44 | 0.73 |
+| 200 | 12 | 0.032 | 0.796 | 0.975 |
+| 210 | 13 | 0.036 | 0.831 | 0.983 |
+| 300 | 21 | 0.046 | 0.95 | 0.999 |
+
+Decision: **n = 200 fresh control scenes with neighbours, gate "at most 12 scenes with a false split"**. Its power
+at 0.05 is 0.796, that is 0.004 short of the declared 0.80 (n = 210 with 13 would give 0.831); 200 with 12 is the
+gate the owner approved, so it is kept and the shortfall is stated. The pair-recall part of the gate is unchanged.
+The script takes NFRESH (default 200) apart from the NCTRL calibration scenes, counts scenes, and prints FAIL if
+NFRESH is not 200. It needs 240 + 40 + 200 = 480 eligible noise slots; if the day has fewer, the run stops, and any
+smaller n is declared here with its row of the table before running.
+Evidence level: the table is an exact binomial computation (scipy, reproducible from the formula in the header); the
+choice of 0.10 and 0.05 as the rates is a design decision, not a measurement. Nothing has been run with it.
+
+## Declared change of criteria, approved by the owner (15 November 2026, 01:20 UTC)
+Two changes of the declared gate G-M6a, proposed in PR #54 and approved by the owner in the project chat, in his
+words: "te doy la aprobación para aprobar las dos cosas, lo de las falsas particiones y el criterio principal".
+1. False splits: at most 12 of 200 fresh control scenes with neighbours (section above), in place of "<= 2 of 40".
+2. Main criterion: recall at the registered false-detection budget (30 per hour on the exact FROC, LOC+T-V), with
+   the gain of the "one against two" test as the score of the second atom (route B of `M6-CAL/card.md`, steps 4
+   and 5), in place of pair recall at a fixed threshold. With a score there is no fixed threshold, so the
+   false-split count of point 1 is read at the reference threshold 23.8 and is descriptive.
+Both were declared before any real-noise run of this card. The comparison arm (greedy v2 loop), the upper K_mec/E
+tercile, the 0.10 margin and the bootstrap rule stay as declared. `run.py` still computes pair recall at a
+calibrated threshold: it has to be brought to criterion 2 before the gate is read (not done in this PR).
