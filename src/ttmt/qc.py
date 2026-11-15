@@ -391,3 +391,43 @@ def report_dict(obj):
     if isinstance(obj, (ChannelQC, StationQC)):
         return asdict(obj) | {"usable": obj.usable}
     return obj
+
+
+# --- CR-16: windows with catalogued teleseismic arrivals (rule fixed 2026-11-15, before any flag was computed) ---
+TELE_MMIN = 5.5           # global ComCat events at or above this magnitude
+TELE_PRE_S = 30.0         # window opens this long before the predicted first P arrival
+TELE_VMIN_KMS = 2.5       # ... and closes when a 2.5 km/s surface-wave group has passed,
+TELE_POST_S = 600.0       # ... plus this coda allowance
+
+
+def teleseism_windows(events, lat, lon, t0, t1, mmin=TELE_MMIN, model=None):
+    """CR-16: time windows (s, UTC epoch) in [t0, t1) that contain the arrivals of catalogued large events at a site.
+
+    events: iterable of (origin epoch s, lat, lon, depth km, magnitude). For each event with magnitude >= mmin the
+    window is [origin + first P - TELE_PRE_S, origin + distance_km / TELE_VMIN_KMS + TELE_POST_S], with the first P from
+    TauP iasp91 (obspy) and the great-circle distance. Windows that overlap [t0, t1) are returned, merged and sorted,
+    as a list of (start, end, n_events). Time-slide nulls exclude these windows (or report them separately)."""
+    from obspy.geodetics import locations2degrees
+    if model is None:
+        from obspy.taup import TauPyModel
+        model = TauPyModel("iasp91")
+    iv = []
+    for t, la, lo, dep, mag in events:
+        if mag is None or not np.isfinite(mag) or mag < mmin:
+            continue
+        deg = float(locations2degrees(la, lo, lat, lon))
+        arr = model.get_travel_times(source_depth_in_km=max(float(dep), 0.0), distance_in_degree=deg,
+                                     phase_list=["ttp"])
+        tp = min(a.time for a in arr) if arr else deg * 111.19 / 8.0
+        a, b = t + tp - TELE_PRE_S, t + deg * 111.19 / TELE_VMIN_KMS + TELE_POST_S
+        if b > t0 and a < t1:
+            iv.append([max(a, t0), min(b, t1), 1])
+    iv.sort()
+    out = []
+    for a, b, n in iv:
+        if out and a <= out[-1][1]:
+            out[-1][1] = max(out[-1][1], b)
+            out[-1][2] += n
+        else:
+            out.append([a, b, n])
+    return [tuple(w) for w in out]
