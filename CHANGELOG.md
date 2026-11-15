@@ -66,6 +66,11 @@ Dated record of changes to the project's process, code and documents. Results ar
   14:05 UTC (gain alone printed as secondary). Bootstrap by scene, stratified, with operating points re-chosen in
   each replicate (ADR-0008 item 5; found by the independent review of PR #58). False splits at thr 23.8 descriptive.
 
+- Reservation amendment (sealed SHA-256 996f70ad... -> 23911872...): Antelope Valley 2021 and Bodie 2020 fail
+  criterion 4 (6 and 6 three-component stations within 50 km on the sampled day; GM.AE01-06 have no archived data)
+  and are withdrawn but kept sealed. By the replacement rule written before the search (same criteria, ComCat
+  regional catalogues 2020-2026), `conf_kilauea_2024` (HV, 36 stations) is confirmatory and `conf_magna_2020` (UU) the
+  spare. New `tools/data/criterion4_stations.py`; `scan_catalogue.py --types`.
 - CR-04 measured on Ridgecrest 2019 with the QTM catalogue (`experiments/exploratory/CR04-PREVALENCE/ridgecrest_qtm/`,
   laptop run, pre-run decisions written first): Y = 1.50 %, 1.67 % and 1.42 % for k = 4, 6 and 8 (95 % intervals of
   about +-0.1 points; 111,918 events, 21 days; epochs only), against a Poisson reference of 17-19 %, so the claim
