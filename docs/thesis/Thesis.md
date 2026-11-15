@@ -417,8 +417,8 @@ tensor is an e-value with a universal threshold, as any likelihood ratio against
 alternative is [Vovk and Wang 2021; Ramdas et al. 2023], time slides calibrate exactly the global null of no coherent
 source but not the false detections caused by real events, as in gravitational-wave background estimation [Was et al.
 2010; Capano et al. 2016], and no coherence certificate can guarantee the separation of
-overlapping events near the information limit. These are theorems under an exact null. On one day of real noise the
-e-value was not calibrated (gate G-M5c, `experiments/exploratory/M5-EVALUE/card.md`), and whether
+overlapping events near the information limit. These are theorems under an exact null. On the real noise of both Task 2M
+seeds (three days) the e-value was not calibrated (gate G-M5c, `experiments/exploratory/M5-EVALUE/card.md`), and whether
 the cause is the marginal law of some stations or the dependence between them was not separated. Until a valid
 e-value or another null is shown on real data, neither a universal threshold nor a guaranteed control of false
 detections is claimed.

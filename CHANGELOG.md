@@ -5,7 +5,8 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-15
 
-- Thesis: the [pending #45] mark and the draft note removed after PR #45 merged.
+- Thesis: the [pending #45] mark and the draft note removed after PR #45 merged. The G-M5c sentence now says it
+  failed on the noise of both 2M seeds (three days: 101231; 100210-11), not on one day.
 
 ## 2026-11-14
 
