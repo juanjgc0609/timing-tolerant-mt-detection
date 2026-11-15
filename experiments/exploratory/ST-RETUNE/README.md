@@ -74,8 +74,8 @@ NIED account. The draft below takes (i).
 
 ## Reading rule (fixed now)
 
-- For each method the configuration used against our model is the better of {frozen without terms, retuned with
-  terms} by the tuning objective. The read partition is not touched by this experiment.
+- For each method the configuration used against our model is the one of {frozen without terms, retuned with
+  terms} with the higher tuning objective (plain maximum; the 0.01 below is only for reading H and for the pivot). The read partition is not touched by this experiment.
 - H holds for a method if the retuned objective exceeds the frozen one. With one search per method there is no
   interval; a difference below 0.01 (about 3 targets) is reported as "no change".
 

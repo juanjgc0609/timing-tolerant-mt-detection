@@ -30,8 +30,8 @@ ledger and every frozen configuration are kept unchanged; these items add to the
    ledger for a trial with terms and refuses a trial without terms in that one (`ledger.require_ledger`). A smoke run
    of the first 3 trials of each method comes first; its rows stay in the ledger and count in the 60. The best trial
    of each method is frozen as `frozen/<method>_a6.json`, next to the existing frozen files, which stay.
-3. Use against the model. Each comparator runs with the better of its two frozen configurations (without terms, and
-   with terms under this amendment) by the tuning objective; a difference below 0.01 keeps the configuration without
+3. Use against the model. Each comparator runs with whichever of its two frozen configurations (without terms, and
+   with terms under this amendment) has the higher tuning objective; an exact tie keeps the configuration without
    terms. The choice for each comparator is fixed and recorded in the card before any read-partition run. This can
    only raise the bar of ADR-0008. The model has a single configuration: terms on wherever an independent set exists
    (item 1), off elsewhere. It is not chosen among options.
