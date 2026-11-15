@@ -65,6 +65,16 @@ Dated record of changes to the project's process, code and documents. Results ar
   origin times per scene). Gate score of a tested atom min(s, pair gain), chosen by the owner on 15 November 2026,
   14:05 UTC (gain alone printed as secondary). Bootstrap by scene, stratified, with operating points re-chosen in
   each replicate (ADR-0008 item 5; found by the independent review of PR #58). False splits at thr 23.8 descriptive.
+
+- CR-04 measured on Ridgecrest 2019 with the QTM catalogue (`experiments/exploratory/CR04-PREVALENCE/ridgecrest_qtm/`,
+  laptop run, pre-run decisions written first): Y = 1.50 %, 1.67 % and 1.42 % for k = 4, 6 and 8 (95 % intervals of
+  about +-0.1 points; 111,918 events, 21 days; epochs only), against a Poisson reference of 17-19 %, so the claim
+  states both values; Y is a lower bound. Fix: `traveltime.first_arrival` gave infinite times for sources at or above
+  the surface (217 QTM events), now the surface direct wave (test in `tests/test_prevalence.py`); `run.py` writes LF
+  so the recorded SHA-256 matches the file on Windows. First run kept in `run1_before_fix/`.
+- Real data: checksums of the laptop downloads (NN StationXML for the Antelope Valley and Bodie discs, ComCat
+  M >= 5.5 2010-2026, QTM Ridgecrest) in `data/manifests/laptop_meta_2026-11-15.tsv`; download scripts
+  `tools/data/laptop_fetch.py` and `tools/data/hinet_jma_fetch.py` (JMA phase readings, waits for the NIED account).
 - Thesis: the [pending #45] mark and the draft note removed after PR #45 merged. The G-M5c sentence now says it
   failed on the noise of both 2M seeds (three days: 101231; 100210-11), not on one day.
 - Comparators added after registration 1 (T4.17, PR #51; no registered number changes). HARPA (Nat. Commun.

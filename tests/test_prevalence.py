@@ -51,3 +51,17 @@ def test_table_counts_the_pair_and_shares_sum_to_one():
     assert lo <= k4["Y"] <= hi
     assert 0.0 <= k4["Y_poisson"] <= 1.0
     assert np.isclose(out["dead_time_s"][0], np.diff(np.sort(t)).min())
+
+
+def test_surface_source_has_finite_times():
+    """a source whose depth rounds to 0 km or above the surface (QTM lists depths down to -0.74 km) gets the surface
+    direct wave, not infinity, and matches a 0.1 km source within 0.05 s (CR-04 QTM run, 2026-11-15)."""
+    import numpy as np
+    from ttmt import traveltime as TT
+    st = TT.SourceTimes(TT.HK)
+    sta = np.array([[1.0, 0, 0], [5.0, 0, 0], [10.0, 0, 0], [20.0, 0, 0], [50.0, 0, 0]])
+    ref = st(np.array([0.0, 0.0, 0.1]), sta)
+    for z in (-0.74, 0.0, 0.04):
+        t = st(np.array([0.0, 0.0, z]), sta)
+        assert np.isfinite(t).all()
+        assert np.abs(t - ref).max() < 0.05
