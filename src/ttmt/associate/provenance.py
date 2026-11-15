@@ -36,6 +36,7 @@ WEIGHTS = {
         verify=""),
     "eqnet/none": dict(dataset="no released weights for the 2022 EQNet model (environments/DEVIATIONS.md)",
                        region="", period=None, source="AI4EPS/EQNet at 7dd24ed", verify=""),
+    # eqnet_base_noprompt_v0.pth, sha256 1547df1b...d255a1 (environments/gpu_weights.sha256)
     "eqnet2/EQNet2-v0": dict(
         dataset="CEED, NCEDC subset through 2022 (~325,000 events, 1.1M records); NCEDC 2023 held out "
                 "(Wang and Zhu, 2026, arXiv 2610.17404, Section 2.4)",

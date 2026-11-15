@@ -56,7 +56,11 @@ relative 1e-12 elsewhere.
   model (shift-and-stack of learned features) has no released weights. An `EQNet2-v0` weight release (AI4EPS/models,
   11 Oct 2026) has no public inference code. So EQNet cannot run in the atlas core set until weights or inference
   code for it are public. Update 2026-11-09: the EQNet2 inference code is public on branch `develop` of AI4EPS/EQNet
-  (40a48ed, 14 Oct 2026); EQNet2 is added as a comparator (T4.17) from that commit with the `EQNet2-v0` weights. Its
+  (40a48ed1d9e8bc53fe7283c9c96bb8be535c3395, 14 Oct 2026); EQNet2 is added as a comparator (T4.17) from that commit
+  with the `EQNet2-v0` weights (4 checkpoints, sha256 in `gpu_weights.sha256`; the comparator uses
+  `eqnet_base_noprompt_v0.pth`, swin2 + upernet2, epoch 32, strict load, 15,967,129 parameters). Installed on the GPU
+  machine 15 Nov 2026 as a clone on `sys.path` (not `pip install -e`) under `C:\Users\juanj\ttmt\eqnet2`; smoke
+  forward on synthetic noise, 16 stations x 4096 samples: 0.064 s on the RTX 4060, 222 MB. Its
   import also needs `datasets`, `geographiclib` and `lmdb` (not in `ttmt-gpu`).
 - HARPA (DaDaCheng/phase_association at 7adf666, Nat. Commun. 17:8140, 2026), added 2026-11-09 (T4.17): installed
   without dependencies, plus `POT` and `pyproj`. HARPA states support for macOS and Linux only; Windows is untested.
