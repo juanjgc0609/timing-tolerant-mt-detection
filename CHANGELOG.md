@@ -5,6 +5,8 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-15
 
+- Thesis: the [pending #45] mark and the draft note removed after PR #45 merged. The G-M5c sentence now says it
+  failed on the noise of both 2M seeds (three days: 101231; 100210-11), not on one day.
 - Comparators added after registration 1 (T4.17, PR #51; no registered number changes). HARPA (Nat. Commun.
   17:8140, 2026; phase_association 7adf666) wrapped as an associator (`harpa_assoc.py`: common 1-D model as a
   differentiable table, P and S, serial and seeded; space of three associator parameters on ranges the card already
@@ -15,6 +17,38 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-14
 
+- Follow-up of the independent review of PR #46 (exploratory; no registered number changes). M6-CAL card: step 3 no
+  longer reads "PASSES" (fresh seeds: 25 of 300, above the 0.10 bound); step 4 declared before running (fixed level
+  with margin against the gain used as a ranking score; sets and seeds new), `M6-CAL/run_step4.py`.
+- G-M6a false-split gate derived from a declared rate and its power: at most 12 of 200 fresh control scenes
+  (one-sided test of rate >= 0.10 at level 0.032, power 0.796 at 0.05). The earlier change from "<= 2" to "<= 4 of 40" was an
+  undeclared relaxation and is withdrawn; `M6A-REALNOISE/run.py` now counts scenes, not atoms. Nothing run.
+- M6-CAL steps 4 and 5: a fixed threshold does not bring false splits to the target (14 to 19 of 300 across the
+  grid); the gain as a ranking score is adopted by the rule declared beforehand (AUC 0.977, confirmed on the unread
+  set B at 0.980, 0.967 at SNR 8). G-M6a: the two changes of declared criteria (false splits at most 12 of 200
+  scenes; main criterion recall at the registered budget with the gain as score) approved by the owner on
+  15 November 2026 and recorded in `M6A-REALNOISE/card.md`.
+- `STAGE-LOSS-B1`: scripts and outputs of the duplicator control at the registered operating point and of the oracle
+  runs of PyOcto and GaMMA on the tuning partition. Reading 1 of `STAGE-LOSS/README.md` (the pair merge is
+  structural) retracted for PyOcto: it is travel-time misfit (T 0.60-0.67 with picks at its own model times).
+- M6 cards: "SNR 12" in the M6 simulations is the per-block peak over the robust noise sd, not the network
+  sqrt(E) of Appendix AB (a factor of about 2.7 apart).
+- Phase-6 analysis plan v0.2 and OSF draft (plan v2.11, points 1 to 3, approved by the owner on 14 November): the
+  e-value guarantee is dropped after G-M5c (PR #45) from `PHASE6_SAP.md` 7.6, the R3 registration draft and the OSF
+  draft; false detections near events are a measured rate with no guarantee, cause pending T4.27. The OSF draft also
+  fixes the model's order-statistic arm (cap 6 or NOCAP) through T4.26 before the freeze and lists the stopped
+  amendment-3 ledger as kept and not used. Point 4 (duplicator at U[0.05, 0.5] s) is withdrawn; ADR-0008 item 3 is
+  unchanged. Nothing was submitted to OSF.
+- T4.20 / T4.22 / T4.24 / T4.25 run (cloud, CPU, read-only copy of the tuning partition; both frozen objectives
+  reproduced exactly). Ceiling in C: the ideal moment-tensor detector would recover 0.75 of the C targets PyOcto
+  misses (0.77 Hi-net, 0.73 Ridgecrest; 0.76 for GaMMA a4) and no comparator hit lies below detection probability
+  0.5, so by the rule fixed before the run C is recommended as a secondary superiority hypothesis (power computation
+  and amendment still to do). Station terms: the acceptance criterion fails (Hi-net isolated recall with oracle picks
+  0.54, needed 0.85). The registered cross-fitting leaves Hi-net with no term (7 sources, 5-7 per realisation), and
+  in-sample terms reach only 0.65: the Hi-net misfit is not static. With PhaseNet picks no estimate of the terms and
+  no tolerance tried raises PyOcto above its frozen T of 0.206, and GaMMA falls; with oracle picks PyOcto gains
+  (T 0.17 to 0.30-0.33). New `station_terms.fill_missing` (tested) and `T420-CEILING/terms_variants.py`. Results in
+  the card and in `results/t420_ceiling/`.
 - Supervision review of the open work (exploratory; no registered number changes). M6-CAL rerun on fresh seeds with
   the step-3 settings frozen: 25 of 300 scenes with neighbours split ([0.055, 0.121]), so the 5 % of step 3 does not
   hold out of sample (7 % over both runs); card updated, `M6-CAL/run_fresh.py`. The duplicator column of pair-only
@@ -27,6 +61,12 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-09
 
+- T4.20 / T4.24 / T4.25 (exploratory, tuning partition, card `experiments/exploratory/T420-CEILING/README.md` written
+  before the run): `ttmt.detectability` (detection probability of the ideal network subspace detector, p = 1, 6, K,
+  union-bound threshold at the objective's 30 false detections per hour, energy bounded below by the card SNR) and
+  `ttmt.associate.station_terms` (static per-station, per-phase terms from the injected sources, cross-fitted by
+  realisation, applied to picks before association). Script `ceiling_c.py`; decision rule of T4.22 fixed in the card.
+  Tests `tests/test_detectability.py` (in CI). Run on 14 Nov, see above.
 - Thesis: the [pending #43] marks and the draft note removed after PR #43 merged.
 - Thesis, critique pass 2: CR-32, "ACAP with c in {3, 5} failed" instead of "retired", and the cap of 6 kept although
   it ranks below chance on held-out Ridgecrest (Table 2 row "new", future-work item 3); CR-33, Appendix AB.D summary

@@ -1,0 +1,803 @@
+{
+ "method": "phasenet+pyocto",
+ "frozen": "experiments/exploratory/COMPARATORS/frozen/phasenet+pyocto.json",
+ "partition": "b60d99b3d0bbbbfa",
+ "frozen_recall_T": 0.206278,
+ "frozen_recall_C": 0.311475,
+ "conditions": {
+  "PN": {
+   "recall_T": 0.2063,
+   "recall_C": 0.3115,
+   "objective": 0.2589,
+   "n_T": 223,
+   "n_C": 305,
+   "recall_iso": 0.4496,
+   "n_iso": 129,
+   "threshold": 13.0,
+   "stages_T": {
+    "hit": 46,
+    "picker": 120,
+    "association": 32,
+    "resolution": 25,
+    "budget": 0
+   },
+   "stages_C": {
+    "hit": 95,
+    "picker": 148,
+    "association": 27,
+    "resolution": 22,
+    "budget": 13
+   },
+   "stages_iso": {
+    "hit": 58,
+    "picker": 53,
+    "association": 6,
+    "resolution": 1,
+    "budget": 11
+   },
+   "by_network": {
+    "hinet": {
+     "recall_T": 0.069,
+     "n_T": 58,
+     "recall_C": 0.069,
+     "n_C": 116,
+     "recall_iso": 0.1296,
+     "n_iso": 54
+    },
+    "ridgecrest": {
+     "recall_T": 0.2545,
+     "n_T": 165,
+     "recall_C": 0.4603,
+     "n_C": 189,
+     "recall_iso": 0.68,
+     "n_iso": 75
+    }
+   },
+   "wall_s": 12.1
+  },
+  "OR": {
+   "recall_T": 0.1704,
+   "recall_C": 0.5377,
+   "objective": 0.3541,
+   "n_T": 223,
+   "n_C": 305,
+   "recall_iso": 0.7674,
+   "n_iso": 129,
+   "threshold": 11.0,
+   "stages_T": {
+    "hit": 38,
+    "picker": 0,
+    "association": 39,
+    "resolution": 139,
+    "budget": 7
+   },
+   "stages_C": {
+    "hit": 164,
+    "picker": 0,
+    "association": 62,
+    "resolution": 57,
+    "budget": 22
+   },
+   "stages_iso": {
+    "hit": 99,
+    "picker": 0,
+    "association": 15,
+    "resolution": 13,
+    "budget": 2
+   },
+   "by_network": {
+    "hinet": {
+     "recall_T": 0.2586,
+     "n_T": 58,
+     "recall_C": 0.319,
+     "n_C": 116,
+     "recall_iso": 0.5,
+     "n_iso": 54
+    },
+    "ridgecrest": {
+     "recall_T": 0.1394,
+     "n_T": 165,
+     "recall_C": 0.672,
+     "n_C": 189,
+     "recall_iso": 0.96,
+     "n_iso": 75
+    }
+   },
+   "wall_s": 12.0
+  },
+  "PN+ST": {
+   "recall_T": 0.1256,
+   "recall_C": 0.2393,
+   "objective": 0.1825,
+   "n_T": 223,
+   "n_C": 305,
+   "recall_iso": 0.3023,
+   "n_iso": 129,
+   "threshold": 14.0,
+   "stages_T": {
+    "hit": 28,
+    "picker": 121,
+    "association": 36,
+    "resolution": 36,
+    "budget": 2
+   },
+   "stages_C": {
+    "hit": 73,
+    "picker": 141,
+    "association": 35,
+    "resolution": 29,
+    "budget": 27
+   },
+   "stages_iso": {
+    "hit": 39,
+    "picker": 53,
+    "association": 15,
+    "resolution": 1,
+    "budget": 21
+   },
+   "by_network": {
+    "hinet": {
+     "recall_T": 0.0345,
+     "n_T": 58,
+     "recall_C": 0.0,
+     "n_C": 116,
+     "recall_iso": 0.0,
+     "n_iso": 54
+    },
+    "ridgecrest": {
+     "recall_T": 0.1576,
+     "n_T": 165,
+     "recall_C": 0.3862,
+     "n_C": 189,
+     "recall_iso": 0.52,
+     "n_iso": 75
+    }
+   },
+   "wall_s": 12.3
+  },
+  "OR+ST": {
+   "recall_T": 0.296,
+   "recall_C": 0.6197,
+   "objective": 0.4578,
+   "n_T": 223,
+   "n_C": 305,
+   "recall_iso": 0.7829,
+   "n_iso": 129,
+   "threshold": 7.0,
+   "stages_T": {
+    "hit": 66,
+    "picker": 0,
+    "association": 51,
+    "resolution": 106,
+    "budget": 0
+   },
+   "stages_C": {
+    "hit": 189,
+    "picker": 3,
+    "association": 62,
+    "resolution": 51,
+    "budget": 0
+   },
+   "stages_iso": {
+    "hit": 101,
+    "picker": 0,
+    "association": 15,
+    "resolution": 13,
+    "budget": 0
+   },
+   "by_network": {
+    "hinet": {
+     "recall_T": 0.3276,
+     "n_T": 58,
+     "recall_C": 0.4052,
+     "n_C": 116,
+     "recall_iso": 0.537,
+     "n_iso": 54
+    },
+    "ridgecrest": {
+     "recall_T": 0.2848,
+     "n_T": 165,
+     "recall_C": 0.7513,
+     "n_C": 189,
+     "recall_iso": 0.96,
+     "n_iso": 75
+    }
+   },
+   "wall_s": 11.4
+  },
+  "OR+ST-origin": {
+   "recall_T": 0.3139,
+   "recall_C": 0.5869,
+   "objective": 0.4504,
+   "n_T": 223,
+   "n_C": 305,
+   "recall_iso": 0.8062,
+   "n_iso": 129,
+   "threshold": 7.0,
+   "stages_T": {
+    "hit": 70,
+    "picker": 0,
+    "association": 48,
+    "resolution": 105,
+    "budget": 0
+   },
+   "stages_C": {
+    "hit": 179,
+    "picker": 0,
+    "association": 71,
+    "resolution": 55,
+    "budget": 0
+   },
+   "stages_iso": {
+    "hit": 104,
+    "picker": 0,
+    "association": 12,
+    "resolution": 13,
+    "budget": 0
+   },
+   "by_network": {
+    "hinet": {
+     "recall_T": 0.3276,
+     "n_T": 58,
+     "recall_C": 0.4052,
+     "n_C": 116,
+     "recall_iso": 0.537,
+     "n_iso": 54
+    },
+    "ridgecrest": {
+     "recall_T": 0.3091,
+     "n_T": 165,
+     "recall_C": 0.6984,
+     "n_C": 189,
+     "recall_iso": 1.0,
+     "n_iso": 75
+    }
+   },
+   "wall_s": 11.5
+  }
+ },
+ "ceiling": {
+  "budget_per_hour": 30.0,
+  "f_trial_hz": 100.0,
+  "snr_tot_C_quartiles": [
+   10.6,
+   18.97,
+   38.62
+  ],
+  "k_C_counts": {
+   "2": 28,
+   "3": 20,
+   "4": 115,
+   "5": 24,
+   "6": 73,
+   "7": 8,
+   "8": 37
+  },
+  "comparator_recall_C": 0.3115,
+  "n": {
+   "all": 305,
+   "loss": 210,
+   "loss_picker": 148,
+   "hinet": 116,
+   "hinet_loss": 108,
+   "ridgecrest": 189,
+   "ridgecrest_loss": 102
+  },
+  "ceilings": {
+   "kappa=1,n_loc=1e+02": {
+    "alpha": 8.333333333333333e-07,
+    "snr_tot_at_pd_half": {
+     "p=1": 4.927,
+     "p=6": 5.8
+    },
+    "p=1": {
+     "all": 0.8843,
+     "loss": 0.8319,
+     "loss_picker": 0.7751,
+     "hinet": 0.8582,
+     "hinet_loss": 0.8477,
+     "ridgecrest": 0.9003,
+     "ridgecrest_loss": 0.8152,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=6": {
+     "all": 0.8556,
+     "loss": 0.7903,
+     "loss_picker": 0.727,
+     "hinet": 0.8222,
+     "hinet_loss": 0.8091,
+     "ridgecrest": 0.8761,
+     "ridgecrest_loss": 0.7704,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=K": {
+     "all": 0.8651,
+     "loss": 0.804,
+     "loss_picker": 0.7449,
+     "hinet": 0.843,
+     "hinet_loss": 0.8314,
+     "ridgecrest": 0.8786,
+     "ridgecrest_loss": 0.7751,
+     "hits_with_pd_below_half": 0.0
+    }
+   },
+   "kappa=1,n_loc=1e+04": {
+    "alpha": 8.333333333333334e-09,
+    "snr_tot_at_pd_half": {
+     "p=1": 5.762,
+     "p=6": 6.614
+    },
+    "p=1": {
+     "all": 0.8569,
+     "loss": 0.7921,
+     "loss_picker": 0.7292,
+     "hinet": 0.8241,
+     "hinet_loss": 0.811,
+     "ridgecrest": 0.877,
+     "ridgecrest_loss": 0.7721,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=6": {
+     "all": 0.8277,
+     "loss": 0.7498,
+     "loss_picker": 0.6796,
+     "hinet": 0.7849,
+     "hinet_loss": 0.769,
+     "ridgecrest": 0.854,
+     "ridgecrest_loss": 0.7294,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=K": {
+     "all": 0.8369,
+     "loss": 0.7631,
+     "loss_picker": 0.6978,
+     "hinet": 0.806,
+     "hinet_loss": 0.7917,
+     "ridgecrest": 0.8559,
+     "ridgecrest_loss": 0.7329,
+     "hits_with_pd_below_half": 0.0
+    }
+   },
+   "kappa=1,n_loc=1e+06": {
+    "alpha": 8.333333333333333e-11,
+    "snr_tot_at_pd_half": {
+     "p=1": 6.494,
+     "p=6": 7.326
+    },
+    "p=1": {
+     "all": 0.8315,
+     "loss": 0.7553,
+     "loss_picker": 0.6862,
+     "hinet": 0.7901,
+     "hinet_loss": 0.7746,
+     "ridgecrest": 0.8569,
+     "ridgecrest_loss": 0.7349,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=6": {
+     "all": 0.8052,
+     "loss": 0.7171,
+     "loss_picker": 0.6404,
+     "hinet": 0.7548,
+     "hinet_loss": 0.7366,
+     "ridgecrest": 0.8362,
+     "ridgecrest_loss": 0.6965,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=K": {
+     "all": 0.8128,
+     "loss": 0.7281,
+     "loss_picker": 0.6557,
+     "hinet": 0.7719,
+     "hinet_loss": 0.755,
+     "ridgecrest": 0.8379,
+     "ridgecrest_loss": 0.6997,
+     "hits_with_pd_below_half": 0.0
+    }
+   },
+   "kappa=2,n_loc=1e+02": {
+    "alpha": 8.333333333333333e-07,
+    "snr_tot_at_pd_half": {
+     "p=1": 4.927,
+     "p=6": 5.8
+    },
+    "p=1": {
+     "all": 0.9493,
+     "loss": 0.9264,
+     "loss_picker": 0.8956,
+     "hinet": 0.9231,
+     "hinet_loss": 0.9174,
+     "ridgecrest": 0.9655,
+     "ridgecrest_loss": 0.936,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=6": {
+     "all": 0.9389,
+     "loss": 0.9113,
+     "loss_picker": 0.8741,
+     "hinet": 0.9159,
+     "hinet_loss": 0.9097,
+     "ridgecrest": 0.9531,
+     "ridgecrest_loss": 0.913,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=K": {
+     "all": 0.941,
+     "loss": 0.9144,
+     "loss_picker": 0.8785,
+     "hinet": 0.9176,
+     "hinet_loss": 0.9115,
+     "ridgecrest": 0.9554,
+     "ridgecrest_loss": 0.9174,
+     "hits_with_pd_below_half": 0.0
+    }
+   },
+   "kappa=2,n_loc=1e+04": {
+    "alpha": 8.333333333333334e-09,
+    "snr_tot_at_pd_half": {
+     "p=1": 5.762,
+     "p=6": 6.614
+    },
+    "p=1": {
+     "all": 0.9393,
+     "loss": 0.9118,
+     "loss_picker": 0.8749,
+     "hinet": 0.9161,
+     "hinet_loss": 0.9099,
+     "ridgecrest": 0.9535,
+     "ridgecrest_loss": 0.9139,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=6": {
+     "all": 0.9292,
+     "loss": 0.8972,
+     "loss_picker": 0.8542,
+     "hinet": 0.909,
+     "hinet_loss": 0.9022,
+     "ridgecrest": 0.9416,
+     "ridgecrest_loss": 0.8918,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=K": {
+     "all": 0.9321,
+     "loss": 0.9014,
+     "loss_picker": 0.8602,
+     "hinet": 0.9126,
+     "hinet_loss": 0.9061,
+     "ridgecrest": 0.9441,
+     "ridgecrest_loss": 0.8965,
+     "hits_with_pd_below_half": 0.0
+    }
+   },
+   "kappa=2,n_loc=1e+06": {
+    "alpha": 8.333333333333333e-11,
+    "snr_tot_at_pd_half": {
+     "p=1": 6.494,
+     "p=6": 7.326
+    },
+    "p=1": {
+     "all": 0.9306,
+     "loss": 0.8992,
+     "loss_picker": 0.8571,
+     "hinet": 0.9102,
+     "hinet_loss": 0.9035,
+     "ridgecrest": 0.9432,
+     "ridgecrest_loss": 0.8947,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=6": {
+     "all": 0.9203,
+     "loss": 0.8842,
+     "loss_picker": 0.8364,
+     "hinet": 0.9007,
+     "hinet_loss": 0.8934,
+     "ridgecrest": 0.9323,
+     "ridgecrest_loss": 0.8746,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=K": {
+     "all": 0.924,
+     "loss": 0.8897,
+     "loss_picker": 0.8437,
+     "hinet": 0.9067,
+     "hinet_loss": 0.8997,
+     "ridgecrest": 0.9347,
+     "ridgecrest_loss": 0.879,
+     "hits_with_pd_below_half": 0.0
+    }
+   }
+  }
+ },
+ "terms": {
+  "hinet": {
+   "n_sources": 7,
+   "median_residual_P_S_s": [
+    -0.178,
+    -0.351
+   ],
+   "iqr_term_P_S_s": [
+    0.284,
+    0.562
+   ],
+   "rms_residual_after_terms_in_sample_P_S_s": [
+    0.197,
+    0.14
+   ],
+   "rms_residual_before_P_S_s": [
+    0.256,
+    0.435
+   ]
+  },
+  "ridgecrest": {
+   "n_sources": 12,
+   "median_residual_P_S_s": [
+    0.11,
+    0.152
+   ],
+   "iqr_term_P_S_s": [
+    0.343,
+    0.233
+   ],
+   "rms_residual_after_terms_in_sample_P_S_s": [
+    0.111,
+    0.191
+   ],
+   "rms_residual_before_P_S_s": [
+    0.254,
+    0.324
+   ]
+  }
+ },
+ "ceiling_vs_PN+ST": {
+  "budget_per_hour": 30.0,
+  "f_trial_hz": 100.0,
+  "snr_tot_C_quartiles": [
+   10.6,
+   18.97,
+   38.62
+  ],
+  "k_C_counts": {
+   "2": 28,
+   "3": 20,
+   "4": 115,
+   "5": 24,
+   "6": 73,
+   "7": 8,
+   "8": 37
+  },
+  "comparator_recall_C": 0.2393,
+  "n": {
+   "all": 305,
+   "loss": 232,
+   "loss_picker": 141,
+   "hinet": 116,
+   "hinet_loss": 116,
+   "ridgecrest": 189,
+   "ridgecrest_loss": 116
+  },
+  "ceilings": {
+   "kappa=1,n_loc=1e+02": {
+    "alpha": 8.333333333333333e-07,
+    "snr_tot_at_pd_half": {
+     "p=1": 4.927,
+     "p=6": 5.8
+    },
+    "p=1": {
+     "all": 0.8843,
+     "loss": 0.8479,
+     "loss_picker": 0.7681,
+     "hinet": 0.8582,
+     "hinet_loss": 0.8582,
+     "ridgecrest": 0.9003,
+     "ridgecrest_loss": 0.8375,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=6": {
+     "all": 0.8556,
+     "loss": 0.8102,
+     "loss_picker": 0.7238,
+     "hinet": 0.8222,
+     "hinet_loss": 0.8222,
+     "ridgecrest": 0.8761,
+     "ridgecrest_loss": 0.7981,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=K": {
+     "all": 0.8651,
+     "loss": 0.8226,
+     "loss_picker": 0.7425,
+     "hinet": 0.843,
+     "hinet_loss": 0.843,
+     "ridgecrest": 0.8786,
+     "ridgecrest_loss": 0.8022,
+     "hits_with_pd_below_half": 0.0
+    }
+   },
+   "kappa=1,n_loc=1e+04": {
+    "alpha": 8.333333333333334e-09,
+    "snr_tot_at_pd_half": {
+     "p=1": 5.762,
+     "p=6": 6.614
+    },
+    "p=1": {
+     "all": 0.8569,
+     "loss": 0.8118,
+     "loss_picker": 0.7258,
+     "hinet": 0.8241,
+     "hinet_loss": 0.8241,
+     "ridgecrest": 0.877,
+     "ridgecrest_loss": 0.7996,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=6": {
+     "all": 0.8277,
+     "loss": 0.7735,
+     "loss_picker": 0.6799,
+     "hinet": 0.7849,
+     "hinet_loss": 0.7849,
+     "ridgecrest": 0.854,
+     "ridgecrest_loss": 0.7621,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=K": {
+     "all": 0.8369,
+     "loss": 0.7856,
+     "loss_picker": 0.6991,
+     "hinet": 0.806,
+     "hinet_loss": 0.806,
+     "ridgecrest": 0.8559,
+     "ridgecrest_loss": 0.7651,
+     "hits_with_pd_below_half": 0.0
+    }
+   },
+   "kappa=1,n_loc=1e+06": {
+    "alpha": 8.333333333333333e-11,
+    "snr_tot_at_pd_half": {
+     "p=1": 6.494,
+     "p=6": 7.326
+    },
+    "p=1": {
+     "all": 0.8315,
+     "loss": 0.7785,
+     "loss_picker": 0.6862,
+     "hinet": 0.7901,
+     "hinet_loss": 0.7901,
+     "ridgecrest": 0.8569,
+     "ridgecrest_loss": 0.7669,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=6": {
+     "all": 0.8052,
+     "loss": 0.7439,
+     "loss_picker": 0.642,
+     "hinet": 0.7548,
+     "hinet_loss": 0.7548,
+     "ridgecrest": 0.8362,
+     "ridgecrest_loss": 0.7331,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=K": {
+     "all": 0.8128,
+     "loss": 0.7539,
+     "loss_picker": 0.6582,
+     "hinet": 0.7719,
+     "hinet_loss": 0.7719,
+     "ridgecrest": 0.8379,
+     "ridgecrest_loss": 0.736,
+     "hits_with_pd_below_half": 0.0
+    }
+   },
+   "kappa=2,n_loc=1e+02": {
+    "alpha": 8.333333333333333e-07,
+    "snr_tot_at_pd_half": {
+     "p=1": 4.927,
+     "p=6": 5.8
+    },
+    "p=1": {
+     "all": 0.9493,
+     "loss": 0.9334,
+     "loss_picker": 0.8904,
+     "hinet": 0.9231,
+     "hinet_loss": 0.9231,
+     "ridgecrest": 0.9655,
+     "ridgecrest_loss": 0.9437,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=6": {
+     "all": 0.9389,
+     "loss": 0.9197,
+     "loss_picker": 0.8679,
+     "hinet": 0.9159,
+     "hinet_loss": 0.9159,
+     "ridgecrest": 0.9531,
+     "ridgecrest_loss": 0.9235,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=K": {
+     "all": 0.941,
+     "loss": 0.9225,
+     "loss_picker": 0.8725,
+     "hinet": 0.9176,
+     "hinet_loss": 0.9176,
+     "ridgecrest": 0.9554,
+     "ridgecrest_loss": 0.9274,
+     "hits_with_pd_below_half": 0.0
+    }
+   },
+   "kappa=2,n_loc=1e+04": {
+    "alpha": 8.333333333333334e-09,
+    "snr_tot_at_pd_half": {
+     "p=1": 5.762,
+     "p=6": 6.614
+    },
+    "p=1": {
+     "all": 0.9393,
+     "loss": 0.9202,
+     "loss_picker": 0.8687,
+     "hinet": 0.9161,
+     "hinet_loss": 0.9161,
+     "ridgecrest": 0.9535,
+     "ridgecrest_loss": 0.9243,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=6": {
+     "all": 0.9292,
+     "loss": 0.9069,
+     "loss_picker": 0.847,
+     "hinet": 0.909,
+     "hinet_loss": 0.909,
+     "ridgecrest": 0.9416,
+     "ridgecrest_loss": 0.9049,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=K": {
+     "all": 0.9321,
+     "loss": 0.9108,
+     "loss_picker": 0.8532,
+     "hinet": 0.9126,
+     "hinet_loss": 0.9126,
+     "ridgecrest": 0.9441,
+     "ridgecrest_loss": 0.909,
+     "hits_with_pd_below_half": 0.0
+    }
+   },
+   "kappa=2,n_loc=1e+06": {
+    "alpha": 8.333333333333333e-11,
+    "snr_tot_at_pd_half": {
+     "p=1": 6.494,
+     "p=6": 7.326
+    },
+    "p=1": {
+     "all": 0.9306,
+     "loss": 0.9088,
+     "loss_picker": 0.85,
+     "hinet": 0.9102,
+     "hinet_loss": 0.9102,
+     "ridgecrest": 0.9432,
+     "ridgecrest_loss": 0.9074,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=6": {
+     "all": 0.9203,
+     "loss": 0.8952,
+     "loss_picker": 0.8283,
+     "hinet": 0.9007,
+     "hinet_loss": 0.9007,
+     "ridgecrest": 0.9323,
+     "ridgecrest_loss": 0.8897,
+     "hits_with_pd_below_half": 0.0
+    },
+    "p=K": {
+     "all": 0.924,
+     "loss": 0.9001,
+     "loss_picker": 0.836,
+     "hinet": 0.9067,
+     "hinet_loss": 0.9067,
+     "ridgecrest": 0.9347,
+     "ridgecrest_loss": 0.8936,
+     "hits_with_pd_below_half": 0.0
+    }
+   }
+  }
+ }
+}

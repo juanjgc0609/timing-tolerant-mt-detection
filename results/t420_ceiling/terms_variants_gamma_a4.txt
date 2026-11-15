@@ -1,0 +1,7 @@
+phasenet+gamma tol None mit None {"hinet": {"sources": 7, "terms_possible": 14, "terms_estimated_per_realisation": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "median_abs_residual_before_s": 0.338, "median_abs_residual_after_cf_s": 0.338}, "ridgecrest": {"sources": 12, "terms_possible": 22, "terms_estimated_per_realisation": [19, 19, 18, 18, 19, 17, 18, 19, 17, 19], "median_abs_residual_before_s": 0.172, "median_abs_residual_after_cf_s": 0.093}}
+PN+none      T 0.179 C 0.292 iso 0.395 | hinet T 0.000 C 0.000 iso 0.000 | ridgecrest T 0.242 C 0.471 iso 0.680
+PN+cf-fill   T 0.130 C 0.298 iso 0.395 | hinet T 0.000 C 0.000 iso 0.000 | ridgecrest T 0.176 C 0.481 iso 0.680
+PN+all       T 0.103 C 0.289 iso 0.395 | hinet T 0.000 C 0.000 iso 0.000 | ridgecrest T 0.139 C 0.466 iso 0.680
+OR+none      T 0.143 C 0.610 iso 0.822 | hinet T 0.190 C 0.336 iso 0.574 | ridgecrest T 0.127 C 0.778 iso 1.000
+OR+cf-fill   T 0.139 C 0.525 iso 0.729 | hinet T 0.121 C 0.215 iso 0.352 | ridgecrest T 0.145 C 0.714 iso 1.000
+OR+all       T 0.135 C 0.561 iso 0.760 | hinet T 0.052 C 0.284 iso 0.426 | ridgecrest T 0.164 C 0.730 iso 1.000

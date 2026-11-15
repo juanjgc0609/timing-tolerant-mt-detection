@@ -66,6 +66,14 @@ quartiles 0.30 / 0.46 / 0.67 s; 93 % of the T targets are above the limit.
 
 ## Reading
 
+**Correction (14 November 2026, `STAGE-LOSS-B1/card.md`, X7 and X8).** Reading 1 below is retracted for PyOcto. The
+oracle picks used here sit at the injected arrival times, which differ from PyOcto's 1-D model times by a median of
+0.17 s (Ridgecrest) and 0.34 s (Hi-net). With oracle picks at the associator's own model times and 0.1 s tolerances
+PyOcto reaches T 0.67 / 0.60, and with static station terms 0.46 / 0.52 (optimistic: the terms share sources with
+the scored records): its merge is travel-time misfit, not structure. For GaMMA a4 the same test is not conclusive
+(its ORM input was not built with its own eikonal times); with oracle picks at the injected times it still merges. The binding stage in T is the picker on overlapping
+waveforms. The text below is kept as written for the record.
+
 1. **T is lost in the associator, not in the picker.** A perfect picker does not raise T recall for either program
    (PyOcto 0.21 -> 0.17, GaMMA 0.17 -> 0.14): both emit one event for the two members of a pair. Tightening PyOcto's
    time tolerances to 0.1 s with perfect picks gives 0.22, so the merge is structural (one event per pick cluster), not
