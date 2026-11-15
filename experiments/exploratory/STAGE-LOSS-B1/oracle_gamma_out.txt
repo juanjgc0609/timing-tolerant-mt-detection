@@ -12,4 +12,3 @@ ss_hinet_2012_egf_v1 records 20
   ORS-sig0.3      T 0.086 (5/58)  C 0.388  iso 0.648  n_det 43  median |model - injected| 0.05 s
   ORM             T 0.293 (17/58)  C 0.457  iso 0.648  n_det 58  median |model - injected| 0.34 s
   ORM-sig0.3      T 0.293 (17/58)  C 0.422  iso 0.611  n_det 46  median |model - injected| 0.34 s
-done
