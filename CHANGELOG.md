@@ -8,10 +8,14 @@ Dated record of changes to the project's process, code and documents. Results ar
 - Follow-up of the independent review of PR #46 (exploratory; no registered number changes). M6-CAL card: step 3 no
   longer reads "PASSES" (fresh seeds: 25 of 300, above the 0.10 bound); step 4 declared before running (fixed level
   with margin against the gain used as a ranking score; sets and seeds new), `M6-CAL/run_step4.py`.
-- G-M6a false-split gate derived from a declared rate and its power: at most 13 of 210 fresh control scenes
-  (one-sided test of rate >= 0.10 at level 0.036, power 0.83 at 0.05). The earlier change from "<= 2" to "<= 4 of 40" was an
-  undeclared relaxation and is withdrawn; `M6A-REALNOISE/run.py` now counts scenes, not atoms. Pending the owner's
-  approval; nothing run.
+- G-M6a false-split gate derived from a declared rate and its power: at most 12 of 200 fresh control scenes
+  (one-sided test of rate >= 0.10 at level 0.032, power 0.796 at 0.05). The earlier change from "<= 2" to "<= 4 of 40" was an
+  undeclared relaxation and is withdrawn; `M6A-REALNOISE/run.py` now counts scenes, not atoms. Nothing run.
+- M6-CAL steps 4 and 5: a fixed threshold does not bring false splits to the target (14 to 19 of 300 across the
+  grid); the gain as a ranking score is adopted by the rule declared beforehand (AUC 0.977, confirmed on the unread
+  set B at 0.980, 0.967 at SNR 8). G-M6a: the two changes of declared criteria (false splits at most 12 of 200
+  scenes; main criterion recall at the registered budget with the gain as score) approved by the owner on
+  15 November 2026 and recorded in `M6A-REALNOISE/card.md`.
 - `STAGE-LOSS-B1`: scripts and outputs of the duplicator control at the registered operating point and of the oracle
   runs of PyOcto and GaMMA on the tuning partition. Reading 1 of `STAGE-LOSS/README.md` (the pair merge is
   structural) retracted for PyOcto: it is travel-time misfit (T 0.60-0.67 with picks at its own model times).

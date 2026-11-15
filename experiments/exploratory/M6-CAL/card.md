@@ -204,11 +204,11 @@ Evidence level and limits:
   interference or pulse mismatch), not noise. Test that closes it: list gain, distance to the neighbour and pulse
   mismatch of the split scenes on a new seed.
 
-Consequences, proposed and pending the owner's approval (they change declared criteria):
-- G-M6a: its false-split part at a fixed threshold (`M6A-REALNOISE/card.md`, at most 13 of 210 scenes) stays as a
-  descriptive check at thr 23.8; the criterion that matters becomes recall at the registered budget with the gain
-  as score.
-- The 5 % and 8.3 % figures of steps 3 and its rerun are rates at one threshold, not properties of the method.
+Consequences for G-M6a (two changes of declared criteria, approved by the owner on 15 November 2026; recorded in
+`M6A-REALNOISE/card.md`):
+- its false-split part (at most 12 of 200 scenes) is read at thr 23.8 and is descriptive; the criterion that matters
+  becomes recall at the registered budget with the gain as score.
+- The 5 % and 8.3 % figures of step 3 and its rerun are rates at one threshold, not properties of the method.
 
 ## Step 5 (declared 15 November 2026, before running; asked by the independent review of PR #54)
 The AUC of step 4 put true gains at SNR 12 against the spurious gains of set A only. One confirmation, then no more
@@ -225,3 +225,19 @@ on this line:
   It was a functional check; nothing was chosen from it.
 
     python experiments/exploratory/M6-CAL/run_step5.py > experiments/exploratory/M6-CAL/run_step5_out.txt
+
+## Result, step 5 (`run_step5_out.txt`, 553 s; run once, after the declaration was pushed in 2243a28)
+
+| | true gains of near pairs (median, 10th pct) | largest spurious gain per scene (median, 90th, 95th pct, max) | AUC | true gains above the spurious 95th pct |
+|:--|:--|:--|--:|--:|
+| SNR 12, set B (272 of 300 scenes with a spurious near atom; 160 pairs) | 1697, 522 | -182, -37, 8, 395 | 0.980 | 0.956 |
+| SNR 8, new seeds (275 of 300; 160 pairs) | 567, -7 | -168, -84, -51, 372 | 0.967 | 0.909 |
+
+- **Route B is confirmed on set B (0.980 >= 0.90) and holds at SNR 8 (0.967).** Set B is spent.
+- The tail left as a hypothesis in step 4 is measured: about 5 % of control scenes have a positive spurious gain,
+  up to about 400, below the median of true gains but above their 10th percentile at SNR 8. A fixed threshold
+  cannot remove it without losing weak pairs, which is why route A failed. Its cause is still not identified.
+- At SNR 8 one true gain in ten is negative: those pairs are not recovered by any threshold. The scope of route B
+  below SNR 8 is not measured.
+- Limits: simulation (homogeneous medium, Ricker pulses, Gaussian noise); AUC and the share above the 95th
+  percentile are not the endpoint, which only the end-to-end pilot measures.

@@ -25,9 +25,9 @@ T5.2 and M6-BIAS). Hit rule: LOC+T-V, `ttmt.v2.m6.hits_loctv` (the registered ru
 Gate (declared before the run, card.md): pairs at dtau in {0.1, 0.25, 0.5, 1.0} s, both separation strata pooled,
 K_mec/E (ttmt.synth.inject.kmec_over_e on the scaled block vectors) in the upper tercile of all pairs of the run;
 REAL arm: pair recall(m6) - pair recall(greedy) >= 0.10 and the 2.5th percentile of its paired bootstrap > 0
-(B = 2000, resampling pairs). Also in the gate (card.md, "Gate on false splits, derived"): at most SPLIT_MAX = 13 of
-NFRESH = 210 fresh control SCENES with neighbours have a false split (one-sided test of rate >= 0.10 at level 0.036;
-power 0.83 at a true rate of 0.05, 0.98 at 0.035). Scenes are counted, not atoms. Secondary:
+(B = 2000, resampling pairs). Also in the gate (card.md, "Gate on false splits, derived"): at most SPLIT_MAX = 12 of
+NFRESH = 200 fresh control SCENES with neighbours have a false split (one-sided test of rate >= 0.10 at level 0.032;
+power 0.796 at a true rate of 0.05, 0.975 at 0.035). Scenes are counted, not atoms. Secondary:
 the same numbers on GEN, per stratum, per tercile.
 
     python run.py NOISE_DIR [NREP] [NCTRL] [NFRESH] > run_out.txt
@@ -71,8 +71,8 @@ SEED = 20261109
 NOISE_DIR = sys.argv[1] if len(sys.argv) > 1 else None
 NREP = int(sys.argv[2]) if len(sys.argv) > 2 else 30
 NCTRL = int(sys.argv[3]) if len(sys.argv) > 3 else 40     # calibration scenes
-NFRESH = int(sys.argv[4]) if len(sys.argv) > 4 else 210   # fresh control scenes of the gate
-SPLIT_MAX = 13           # gate: scenes with a false split among NFRESH = 210 (binomial design in card.md)
+NFRESH = int(sys.argv[4]) if len(sys.argv) > 4 else 200   # fresh control scenes of the gate
+SPLIT_MAX = 12           # gate: scenes with a false split among NFRESH = 200 (binomial design in card.md)
 NSTA = 8
 KMAX = 4                 # M6-CAL (CR-37)
 NEAR_KM = 10.0           # radius of the resolvability test, twice the LOC+T radius (M6-CAL step 3)
@@ -263,9 +263,9 @@ def main():
     d = np.array([(r["m6"] == 2) - (r["greedy"] == 2) for r in gate], float)
     lo = np.quantile(d[np.random.default_rng([SEED, 7, len("upper tercile")]).integers(0, len(d), (B, len(d)))]
                      .mean(1), .025)
-    ok = d.mean() >= 0.10 and lo > 0 and res["REAL"]["splits"]["m6"] <= SPLIT_MAX and NFRESH == 210
+    ok = d.mean() >= 0.10 and lo > 0 and res["REAL"]["splits"]["m6"] <= SPLIT_MAX and NFRESH == 200
     print(f"G-M6a (REAL, upper tercile): m6 - greedy {d.mean():+.3f}, 2.5th pct {lo:+.3f}, m6 scenes with a false split "
-          f"{res['REAL']['splits']['m6']} of {NFRESH} (limit {SPLIT_MAX} of 210) -> {'PASS' if ok else 'FAIL'}")
+          f"{res['REAL']['splits']['m6']} of {NFRESH} (limit {SPLIT_MAX} of 200) -> {'PASS' if ok else 'FAIL'}")
     print(f"\n{time.time() - t0:.0f} s")
 
 
