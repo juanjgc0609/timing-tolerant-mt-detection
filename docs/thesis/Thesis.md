@@ -6,8 +6,6 @@ Universidad Icesi - Trabajo de grado - Juan Jose Gordillo Cordoba - October 2026
 
 Director: Uram Aníbal Sosa Aguirre
 
-*Draft note: passages marked **[pending #45]** report results of a pull request not yet merged; the marks are removed when it is.*
-
 ---
 
 ## Abstract
@@ -420,7 +418,7 @@ alternative is [Vovk and Wang 2021; Ramdas et al. 2023], time slides calibrate e
 source but not the false detections caused by real events, as in gravitational-wave background estimation [Was et al.
 2010; Capano et al. 2016], and no coherence certificate can guarantee the separation of
 overlapping events near the information limit. These are theorems under an exact null. On one day of real noise the
-e-value was not calibrated (gate G-M5c, `experiments/exploratory/M5-EVALUE/card.md`) **[pending #45]**, and whether
+e-value was not calibrated (gate G-M5c, `experiments/exploratory/M5-EVALUE/card.md`), and whether
 the cause is the marginal law of some stations or the dependence between them was not separated. Until a valid
 e-value or another null is shown on real data, neither a universal threshold nor a guaranteed control of false
 detections is claimed.

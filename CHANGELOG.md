@@ -3,6 +3,10 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-15
+
+- Thesis: the [pending #45] mark and the draft note removed after PR #45 merged.
+
 ## 2026-11-14
 
 - T4.20 / T4.22 / T4.24 / T4.25 run (cloud, CPU, read-only copy of the tuning partition; both frozen objectives
