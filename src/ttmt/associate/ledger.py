@@ -34,6 +34,23 @@ def require_a4(method, path, action):
                          f"not {path}")
 
 
+LEDGER_A6 = LEDGER.with_name("tuning_ledger_a6.csv")       # every method with station terms (ATLAS-0 amendment 6)
+
+
+def require_ledger(method, path, action, terms=None):
+    """trials with station terms go to LEDGER_A6 and nowhere else, and LEDGER_A6 takes no trial without them
+    (ATLAS-0 amendment 6); terms=None reads the mode from the path (freeze). Without terms the rule of amendment 4
+    applies."""
+    a6 = Path(path).resolve() == LEDGER_A6.resolve()
+    if terms is None:
+        terms = a6
+    if bool(terms) != a6:
+        raise ValueError(f"{action} {method}: trials with station terms use only --ledger {LEDGER_A6}, and that "
+                         f"ledger takes no trial without them (got {path}, terms {'on' if terms else 'off'})")
+    if not a6:
+        require_a4(method, path, action)
+
+
 def params_json(cfg):
     return json.dumps(cfg, sort_keys=True, separators=(",", ":"))
 
@@ -92,7 +109,7 @@ def best(method, path=LEDGER):
 def freeze(method, out, path=LEDGER):
     """write the frozen configuration of method (its best trial) with the ledger hash and the budget actually spent;
     this file is what the atlas thread receives."""
-    require_a4(method, path, "freeze")
+    require_ledger(method, path, "freeze")
     rows = [r for r in read(path) if r["method"] == method]
     b = best(method, path)
     if b is None:

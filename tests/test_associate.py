@@ -117,6 +117,46 @@ def test_gamma_runs_and_freezes_only_in_the_a4_ledger(tmp_path):
     L.require_a4("phasenet+pyocto", L.LEDGER, "run")
 
 
+def test_trials_with_station_terms_use_only_the_a6_ledger(tmp_path):
+    # ATLAS-0 amendment 6: a trial with terms must not land in a registered ledger, nor one without in the new one
+    for m in ("phasenet+pyocto", "phasenet+gamma"):
+        for led in (L.LEDGER, L.LEDGER_A4, tmp_path / "other.csv"):
+            with pytest.raises(ValueError, match="station terms"):
+                TU.run(m, lambda c, r: None, [object()], ledger=led, log=lambda *_: None, terms=True)
+        with pytest.raises(ValueError, match="station terms"):
+            TU.run(m, lambda c, r: None, [object()], ledger=L.LEDGER_A6, log=lambda *_: None)
+        L.require_ledger(m, L.LEDGER_A6, "run", True)
+        L.require_ledger(m, L.LEDGER_A6, "freeze")                       # freeze reads the mode from the path
+    L.require_ledger("phasenet+pyocto", L.LEDGER, "run", False)
+    with pytest.raises(ValueError, match="amendment 4"):
+        L.require_ledger("phasenet+gamma", L.LEDGER, "run", False)
+
+
+def test_pipeline_subtracts_station_terms_from_the_picks(monkeypatch):
+    from ttmt.associate import pipeline as PL2
+    from ttmt.atlas.schema import Picks
+    seen = {}
+
+    class Fake:
+        @staticmethod
+        def associate(frame, picks, a):
+            seen["t"] = picks.t.copy()
+            return None, picks
+
+    class Frame:
+        codes = ["A", "B"]
+
+    pk = Picks(np.array([0, 1, 1]), np.array([0, 0, 1]), np.array([10.0, 11.0, 12.0]), np.ones(3))
+    monkeypatch.setattr(PL2.pickers, "load_probabilities", lambda path, codes: (None, 0.01, 0.0, {}))
+    monkeypatch.setattr(PL2.pickers, "picks_from_probabilities", lambda *a: pk)
+    monkeypatch.setattr(PL2, "associator", lambda name: Fake)
+    cfg = {"pk_threshold": 0.1, "pk_peak_distance": 0.5, "as_min_picks": 6}
+    PL2.run_pipeline("phasenet+pyocto", cfg, Frame(), "x")
+    assert np.array_equal(seen["t"], [10.0, 11.0, 12.0])
+    PL2.run_pipeline("phasenet+pyocto", cfg, Frame(), "x", terms=np.array([[0.1, 0.0], [0.2, -0.3]]))
+    assert np.allclose(seen["t"], [9.9, 10.8, 12.3])
+
+
 def test_gamma_eikonal_zmax_deepens_only_the_travel_time_grid(tmp_path):
     from ttmt.associate import gamma_assoc as G
     cfg = dict(as_min_picks=5, as_max_sigma11=1.0, as_method="BGMM")

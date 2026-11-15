@@ -86,28 +86,44 @@ NIED account. The draft below takes (i).
 | The gain needs a better picker, not better times | retuned objective within 0.01 of the frozen one for PyOcto | Record as negative; the fair bar stays the frozen configurations; stop spending on terms for the comparators and keep them only for our model (M6 needs them, X7) |
 | Terms tuned on the same days as something else | overlap of calibration days with any partition | Checked: days 190-196 are outside the R0 hour; recheck against the atlas manifests before anchoring |
 | Analyst picks and picker onsets differ by a phase-dependent lag (E54) | median difference above 0.1 s at registration | Estimate the lag on the calibration events with PhaseNet picks (needs waveforms: owner's machine) |
-| Hi-net stays without terms | no independent catalogue | Option (i) above, flagged in every table; our model gets no terms there either |
+| Hi-net stays without terms | no independent catalogue | Option (i) above, flagged in every table; our model gets no terms there either; leaving it uncorrected favours our model, so results go per network and a Hi-net-only advantage is not claimed without that caveat (amendment, item 4) |
 
 Pivot: if neither PyOcto nor GaMMA gains at least 0.01 in the objective, the line "station terms for the
 comparators" closes as a negative result after this one run; no second search space and no further estimates.
 
-## Draft of amendment 6 of ATLAS-0 (not anchored; number 6 assumes amendment 5 is anchored first)
+## Registered estimate and review (added 14 Nov 2026, after the independent review)
 
-Task ATLAS-0, amendment 6 (date), written after the exploratory runs of T420-CEILING and the pilot above, and before
-any tuning trial with station terms. The registered text, amendments 1 to 5 and every ledger are kept unchanged.
+Terms from days 190-196 (3133 events, 135 102 picks): `terms_ridgecrest_2019.json`, 22 of 22 terms with 677 to 2627
+picks. They differ from the one-day terms by at most 0.028 s; correlation with the injected in-sample terms 0.915,
+median difference +0.017 s; median residual of the injected arrivals 0.172 to 0.086 s. Frozen PyOcto, pooled
+(`results/st_retune/check_ridgecrest_days190_196.json`): PhaseNet picks T 0.215 and C 0.348 (0.206 and 0.311 without
+terms); oracle picks T 0.296 and C 0.600 (0.170 and 0.538). These are checks at the frozen configuration, not tuning
+trials.
 
-1. Station terms as a fixed preprocessing step. For a network with an independent calibration set, static
-   per-station, per-phase terms are subtracted from the picks before association, for every method of the comparator
-   set and for the model. Ridgecrest: SCSN analyst picks of 9 to 15 July 2019 (days 190-196), selection of
-   `tools/fetch_scedc_phases.py`, estimator `ttmt.associate.station_terms.from_catalogue` (weight >= 0.5, distance
-   <= 60 km, |residual| < 3 s, at least 30 picks, median, missing terms filled); file SHA-256 (to fill). Hi-net: no
-   independent set, no terms, flagged. Alto Tiberina: (to fill after the check).
-2. Ledger and budget. 60 trials per method from `seeds.tuning_seeds(60)` over the registered spaces, on the tuning
-   partition and objective of amendment 1, in `tuning_ledger_a6.csv`; the best trial is frozen next to the existing
-   frozen files, which stay.
-3. Use. Against the model, each comparator runs with the better of its two frozen configurations by the tuning
-   objective. This can only raise the bar of ADR-0008; it is not chosen on any read-partition result.
+TOW2, flagged by the review (P +0.39 s, S -0.33 s): the S residuals fall in two groups, about -0.54 s (439 picks,
+median distance 11.6 km) and +0.77 s (238 picks, 16.6 km), so the median is not a static delay. The interquartile
+range of the S residuals is 0.99 s at TOW2 and 0.67 s at CCC, against 0.27 to 0.45 s at the other nine stations. The
+cause was not found (hypotheses, not tested: two source clusters with different paths, or S picks on a converted
+phase). The term is kept as the rule gives it, because changing the rule after seeing the terms would add a choice;
+this is declared in the amendment.
 
-Disclosure: the frozen objectives (PyOcto 0.2589, GaMMA 0.2356), the exploratory results of T420-CEILING (terms from
-the injected sources, three tolerance points) and the pilot above were known when this was written. Those runs used
-the tuning partition only.
+Selection values: weight >= 0.5, distance <= 60 km and at least 30 picks were set when the one-day check was written
+and no other values were tried; |residual| < 3 s comes from the M2-GP card.
+
+Runner: `run_pipeline(..., terms=)` subtracts the terms for every method; `tune_cli.py run --terms ridgecrest=<file>
+--ledger .../tuning_ledger_a6.csv`; `ledger.require_ledger` refuses any other combination (tests in
+`tests/test_associate.py`). No trial has been run.
+
+## Amendment 6 of ATLAS-0
+
+Draft in `amendment-6-draft.md` (not anchored). Steps to anchor, after amendment 5 is anchored and this PR is
+reviewed: the text is appended to `experiments/exploratory/ATLAS-0/card.md` with the date, the PR is merged, and the
+owner tags the merge commit:
+
+    git checkout main && git pull
+    git tag -a reg/ATLAS-0/amendment-6 -m "ATLAS-0 amendment 6: station terms as fixed preprocessing, retuning in tuning_ledger_a6.csv"
+    git push origin reg/ATLAS-0/amendment-6
+
+Then the retuning:
+
+    python experiments/exploratory/COMPARATORS/tune_cli.py run phasenet+pyocto <tune>/ss_ridgecrest_2019_egf_v1/tune_phasenet.json <tune>/ss_hinet_2012_egf_v1/tune_phasenet.json --terms ridgecrest=experiments/exploratory/ST-RETUNE/terms_ridgecrest_2019.json --ledger experiments/exploratory/ATLAS-0/tuning_ledger_a6.csv --trials 3

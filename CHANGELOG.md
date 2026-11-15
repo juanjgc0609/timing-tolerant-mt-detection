@@ -22,6 +22,11 @@ Dated record of changes to the project's process, code and documents. Results ar
   injected ones, median residual of the injected arrivals 0.172 to 0.093 s; frozen PyOcto with PhaseNet picks
   unchanged (T 0.202 against 0.206, C 0.328 against 0.311), with oracle picks T 0.17 to 0.31. Hi-net has no
   independent set.
+- ST-RETUNE after the independent review: registered terms from days 190-196 (`terms_ridgecrest_2019.json`, 3133
+  events; within 0.028 s of the one-day terms), amendment 6 rewritten (`amendment-6-draft.md`: single configuration
+  for the model, Hi-net without terms for every method and the fairness caveat, pivot inside the text, fuller
+  disclosure, TOW2 S flagged as not static). Runner hook `run_pipeline(terms=)`, `tune_cli.py run --terms` and
+  `ledger.require_ledger` with `tuning_ledger_a6.csv` (tests). No tuning trial run.
 - Supervision review of the open work (exploratory; no registered number changes). M6-CAL rerun on fresh seeds with
   the step-3 settings frozen: 25 of 300 scenes with neighbours split ([0.055, 0.121]), so the 5 % of step 3 does not
   hold out of sample (7 % over both runs); card updated, `M6-CAL/run_fresh.py`. The duplicator column of pair-only

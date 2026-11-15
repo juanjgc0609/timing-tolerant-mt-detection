@@ -43,6 +43,7 @@ def main(argv=None):
     ap.add_argument("manifests", nargs="+")
     ap.add_argument("--out")
     ap.add_argument("--assoc", action="store_true")
+    ap.add_argument("--terms-file", help="write the terms alone (the file whose SHA-256 enters the amendment)")
     a = ap.parse_args(argv)
     warnings.simplefilter("ignore", RuntimeWarning)
     fz = json.load(open(a.frozen))
@@ -65,6 +66,21 @@ def main(argv=None):
     with open(os.path.join(a.scedc_dir, "picks.csv")) as f:
         cat, n = ST.from_catalogue(codes, frame.velocity, csv.DictReader(f), depth)
     catf = ST.fill_missing(cat)
+    if a.terms_file:
+        sha = {}
+        for line in open(os.path.join(a.scedc_dir, "SHA256SUMS")):
+            h, name = line.split()[:2]
+            if os.path.basename(name) in ("events.csv", "picks.csv"):
+                sha[os.path.basename(name)] = h
+        with open(a.terms_file, "w") as f:
+            json.dump({"network": a.network, "kind": "onset", "model": frame.velocity.name, "codes": codes,
+                       "terms_P_S_s": np.round(catf, 4).tolist(), "n_picks_P_S": n.tolist(),
+                       "filled": (cat == 0).tolist(), "events": len(events),
+                       "origin_range": [min(e["origin"] for e in events), max(e["origin"] for e in events)],
+                       "selection": {"min_weight": 0.5, "max_dist_km": 60.0, "gross_s": 3.0, "min_picks": 30,
+                                     "statistic": "median", "missing": "median of the phase"},
+                       "source_sha256": sha}, f, indent=1, sort_keys=True)
+            f.write("\n")
     R, _K, _ks, sres, _own = TV.residual_tables(labels)[a.network]
     ins = ST.terms(sres)
     both = (cat != 0) & (ins != 0)
