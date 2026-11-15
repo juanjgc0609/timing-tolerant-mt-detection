@@ -45,17 +45,25 @@ written before any P1 number exists.
    continue only about 1 time in 4 and the 0.10 method about 4 in 5. This is a development stop rule, not a claim,
    so it errs toward not killing a real gain. Choosing the better of two arms on the
    same partition favours us and is declared with the number.
-4. **If it fires** (Δ_T < 0.05): the result is reported as "below the 0.05 threshold of ADR-0011", with Δ_T, n_T,
-   the paired counts and the 95 per cent interval, and with what the gain is made of (which pairs, which strata).
-   Falling short does not abandon the line by itself. It triggers a written decision by the owner, who has the
-   effect size and the interval in view. The owner chooses between: (a) reformulate G1-v2 and the thesis to "failure
-   atlas + identifiability theory + documented negatives", which the thesis thread then writes; or (b) carry the
-   result forward as it is, if it is still good and new as a contribution (for example, a smaller gain confined to
-   pairs no picks-based method separates). Option (b) must state the claim at the size measured, with no wording
-   that implies the 0.05 was met. Either way, the threshold, the number and the choice are written down together in
-   one record, and the threshold is not changed after the fact (rules 14 and 15). No further model variant is tried
-   to lift Δ_T before that decision. The atlas (ATLAS-0), the theory and the negative results stay as they are.
-5. **If it does not fire** (Δ_T ≥ 0.05): nothing is claimed from it. The confirmatory claim still needs ADR-0008
+4. **What kind of threshold it is (owner rule 36, 15 November 2026).** The + 0.05 in T is an ambition target. It is
+   not a validity threshold. The validity thresholds are unchanged and are not negotiated after the data are seen:
+   the false-detection budget (30 per hour), the non-inferiority margin in C (ADR-0008), held-out data read once, the
+   criterion written before the run, and the fair comparison (amendment 6). If one of them fails, nothing is claimed.
+   Reading, in three zones:
+   - **Meets the target** (Δ_T ≥ 0.05): the line continues (item 5).
+   - **Real but smaller effect** (0 < Δ_T < 0.05 and the 95 per cent interval excludes zero): the report says "does not
+     meet the registered target of ADR-0011". It gives Δ_T, n_T, the paired counts and the interval, says what the gain
+     is made of (which pairs, which strata), and says what contribution it still supports (for example, the minimal
+     claim: in pairs at 0.1-1 s the method recovers more than the best comparator in its best configuration, under the
+     same false-detection budget). This does not abandon the line by itself. The owner decides with the numbers in
+     view: continue, restate the claim at the size measured, or change the target by a declared amendment.
+   - **Clear failure** (the interval includes zero, or Δ_T ≤ 0): the report says so with the same numbers. The owner
+     decides whether to reformulate G1-v2 and the thesis to "failure atlas + identifiability theory + documented
+     negatives", which the thesis thread then writes.
+   In every zone the target, the number and the choice are written down together in one record. A target that is
+   not met is written as not met, and is never relaxed in silence (rules 14 and 15). No further model variant is
+   tried to lift Δ_T before that decision. The atlas (ATLAS-0), the theory and the negative results stay as they are.
+5. **If the target is met** (Δ_T ≥ 0.05): nothing is claimed from it. The confirmatory claim still needs ADR-0008
    (H1 in T, then H2 in C with margin 0.05) on data not used for tuning, after block F.
 6. **Relation to other stop rules.** The decision rule of the model v2 specification §12 (three or more of P-PN1,
    P-GM1, P-RE1, P-QM2, P-MA1 refuted ⇒ reformulate before M6) stays. Whichever fires first applies.
@@ -75,7 +83,9 @@ discard a result that misses it but is still good and new: "imagina que uno por 
 valores rechace todo incluyendo resultados buenos que no llegan a ese valor, pero que si uno reduce la exigencia
 igual siguen siendo igual de buenos y novedosos en la contribución. Así que cuidado con eso." Item 4 was rewritten
 after that message: missing the threshold triggers his decision with the effect size in view, not an automatic
-abandonment. The threshold itself and item 3 are unchanged.
+abandonment. The threshold itself and item 3 are unchanged. Later the same day the owner approved rule 36 (validity thresholds against ambition targets;
+text in the supervision calendar of 15 November, section "Cómo se lee un umbral"), and item 4 was written in its
+three-zone form.
 
 ## Consequences
 
