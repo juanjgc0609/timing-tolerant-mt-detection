@@ -34,7 +34,8 @@ written before any P1 number exists.
    rule 27): Δ_T = recall in T of the better of our two arms minus recall in T of the best comparator. "Best
    comparator" is the highest recall in T among PyOcto, GaMMA (amendment 4) and HARPA (amendment 5, once anchored),
    each in the configuration fixed by ATLAS-0 amendment 6, item 3 (with or without station terms, whichever has the
-   higher tuning objective). Our arms use the configuration of amendment 6, item 1 (station terms where an
+   higher tuning objective). If amendment 5 is not anchored when the rule is read, HARPA is left out and
+   the best comparator is the better of PyOcto and GaMMA, stated with the number. Our arms use the configuration of amendment 6, item 1 (station terms where an
    independent set exists).
 3. **The threshold.** The line continues if the point estimate Δ_T ≥ 0.05. It is reported with n_T, the paired
    counts and the stratified block-bootstrap 95 per cent interval (ADR-0008 item 5), but the interval does not
@@ -61,8 +62,9 @@ The owner approved on 15 November 2026, 9:17 (Bogotá), in the project chat, eve
 which the plan v2.12 listed as this abandonment criterion and the ATLAS-0 amendment for station terms (B2):
 "Así que verifica y apruebo todo lo que haya que hacer. Ya." The operational details of items 1 to 4 (when it is
 read, which comparators, point estimate) were written by the planning thread from the supervision proposal and are
-put to the owner for confirmation on the point-estimate choice of item 3; if he picks the interval instead, item 3
-is amended before any P1 run.
+put to the owner for confirmation on the one real choice, item 3. On 15 November 2026, 9:21 (Bogotá), the owner
+chose "Estimación puntual ≥ 0.05" on a decision card in the project thread, over the alternative "lower bound of the
+interval > 0". Item 3 stands as written.
 
 ## Consequences
 
