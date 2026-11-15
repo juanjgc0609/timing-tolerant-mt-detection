@@ -46,7 +46,7 @@ session (CR-19).
     both; no hypothesis added, dropped or reordered.
 20. Intervals: stratified block bootstrap with the registered replicates and seed, operating points recomputed per
     replicate; indicative flag applied (fewer than 30 blocks, atom above 5 %).
-21. Budget check reproduced with the quasi-Poisson score rule; stratified by parent event; e-value check (R3).
+21. Budget check reproduced with the quasi-Poisson score rule; stratified by parent event; measured rate of S_mix >= log(1/p) near injected events, reported with no calibration guarantee (R3, SAP v0.2).
 22. Futility look (R2 only) taken at the registered point, if at all, and reported as non-binding.
 23. Every registered number in the result entry is traced to a file and line of the frozen analysis output.
 24. Number re-derived by a person (R2: ten discordant targets chosen by the seed): which, and the result.

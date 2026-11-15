@@ -3,13 +3,34 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-15
+
+- Thesis: the [pending #45] mark and the draft note removed after PR #45 merged. The G-M5c sentence now says it
+  failed on the noise of both 2M seeds (three days: 101231; 100210-11), not on one day.
+
 ## 2026-11-14
 
 - CR-04, catalogue bound (exploratory, `experiments/exploratory/CR04-PREVALENCE/origin_pairs/`): in the SCSN
   catalogue of Ridgecrest (30 days, 28,060 events) 1.89 % of events have another origin within 1 s, against 3.7 % for
   a Poisson process at the local rate (ratio 0.41-0.70 across rate windows, magnitude cuts and start days,
-`sensitivity.py`); the reading "the catalogue misses between about a third and a half" is a hypothesis. The registered
+  `sensitivity.py`); the reading "the catalogue misses between about a third and a half" is a hypothesis. The registered
   CR-04 measurement is unchanged.
+- Phase-6 analysis plan v0.2 and OSF draft (plan v2.11, points 1 to 3, approved by the owner on 14 November): the
+  e-value guarantee is dropped after G-M5c (PR #45) from `PHASE6_SAP.md` 7.6, the R3 registration draft and the OSF
+  draft; false detections near events are a measured rate with no guarantee, cause pending T4.27. The OSF draft also
+  fixes the model's order-statistic arm (cap 6 or NOCAP) through T4.26 before the freeze and lists the stopped
+  amendment-3 ledger as kept and not used. Point 4 (duplicator at U[0.05, 0.5] s) is withdrawn; ADR-0008 item 3 is
+  unchanged. Nothing was submitted to OSF.
+- T4.20 / T4.22 / T4.24 / T4.25 run (cloud, CPU, read-only copy of the tuning partition; both frozen objectives
+  reproduced exactly). Ceiling in C: the ideal moment-tensor detector would recover 0.75 of the C targets PyOcto
+  misses (0.77 Hi-net, 0.73 Ridgecrest; 0.76 for GaMMA a4) and no comparator hit lies below detection probability
+  0.5, so by the rule fixed before the run C is recommended as a secondary superiority hypothesis (power computation
+  and amendment still to do). Station terms: the acceptance criterion fails (Hi-net isolated recall with oracle picks
+  0.54, needed 0.85). The registered cross-fitting leaves Hi-net with no term (7 sources, 5-7 per realisation), and
+  in-sample terms reach only 0.65: the Hi-net misfit is not static. With PhaseNet picks no estimate of the terms and
+  no tolerance tried raises PyOcto above its frozen T of 0.206, and GaMMA falls; with oracle picks PyOcto gains
+  (T 0.17 to 0.30-0.33). New `station_terms.fill_missing` (tested) and `T420-CEILING/terms_variants.py`. Results in
+  the card and in `results/t420_ceiling/`.
 - Supervision review of the open work (exploratory; no registered number changes). M6-CAL rerun on fresh seeds with
   the step-3 settings frozen: 25 of 300 scenes with neighbours split ([0.055, 0.121]), so the 5 % of step 3 does not
   hold out of sample (7 % over both runs); card updated, `M6-CAL/run_fresh.py`. The duplicator column of pair-only
@@ -22,6 +43,12 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-09
 
+- T4.20 / T4.24 / T4.25 (exploratory, tuning partition, card `experiments/exploratory/T420-CEILING/README.md` written
+  before the run): `ttmt.detectability` (detection probability of the ideal network subspace detector, p = 1, 6, K,
+  union-bound threshold at the objective's 30 false detections per hour, energy bounded below by the card SNR) and
+  `ttmt.associate.station_terms` (static per-station, per-phase terms from the injected sources, cross-fitted by
+  realisation, applied to picks before association). Script `ceiling_c.py`; decision rule of T4.22 fixed in the card.
+  Tests `tests/test_detectability.py` (in CI). Run on 14 Nov, see above.
 - Thesis: the [pending #43] marks and the draft note removed after PR #43 merged.
 - Thesis, critique pass 2: CR-32, "ACAP with c in {3, 5} failed" instead of "retired", and the cap of 6 kept although
   it ranks below chance on held-out Ridgecrest (Table 2 row "new", future-work item 3); CR-33, Appendix AB.D summary

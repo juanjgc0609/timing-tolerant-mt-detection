@@ -917,6 +917,10 @@ The integration was carried out as follows:
    false detections in windows with events separately (Proposition AB.D.3); in the joint decomposition, subtract with
    sub-sample time (Proposition AB.B.6) and do not expect coherence certificates in the overlapping regime
    (Proposition AB.D.4).
+   *Note (14 November 2026):* the theorem is conditional on its hypotheses. On development data the mixture statistic
+   was found not calibrated (gate G-M5c, PR #45), and the cause, marginal or dependence, has not been separated (T4.27).
+   So the e-value with e-BH is not used as the false-detection control; false detections are reported as FROC and
+   measured rate (PHASE6_SAP v0.2, 7.6).
 
 ## References
 
