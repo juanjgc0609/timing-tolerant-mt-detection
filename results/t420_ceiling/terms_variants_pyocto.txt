@@ -1,0 +1,21 @@
+phasenet+pyocto tol None mit None {"hinet": {"sources": 7, "terms_possible": 14, "terms_estimated_per_realisation": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "median_abs_residual_before_s": 0.338, "median_abs_residual_after_cf_s": 0.338}, "ridgecrest": {"sources": 12, "terms_possible": 22, "terms_estimated_per_realisation": [19, 19, 18, 18, 19, 17, 18, 19, 17, 19], "median_abs_residual_before_s": 0.172, "median_abs_residual_after_cf_s": 0.093}}
+PN+none      T 0.206 C 0.311 iso 0.450 | hinet T 0.069 C 0.069 iso 0.130 | ridgecrest T 0.255 C 0.460 iso 0.680
+PN+cf        T 0.126 C 0.239 iso 0.302 | hinet T 0.035 C 0.000 iso 0.000 | ridgecrest T 0.158 C 0.386 iso 0.520
+PN+cf-fill   T 0.152 C 0.279 iso 0.349 | hinet T 0.035 C 0.000 iso 0.000 | ridgecrest T 0.194 C 0.450 iso 0.600
+PN+cf1-fill  T 0.157 C 0.279 iso 0.349 | hinet T 0.000 C 0.000 iso 0.000 | ridgecrest T 0.212 C 0.450 iso 0.600
+PN+all       T 0.143 C 0.315 iso 0.426 | hinet T 0.069 C 0.086 iso 0.130 | ridgecrest T 0.170 C 0.455 iso 0.640
+PN+loro      T 0.143 C 0.354 iso 0.496 | hinet T 0.069 C 0.086 iso 0.130 | ridgecrest T 0.170 C 0.518 iso 0.760
+OR+none      T 0.170 C 0.538 iso 0.767 | hinet T 0.259 C 0.319 iso 0.500 | ridgecrest T 0.139 C 0.672 iso 0.960
+OR+cf        T 0.296 C 0.620 iso 0.783 | hinet T 0.328 C 0.405 iso 0.537 | ridgecrest T 0.285 C 0.751 iso 0.960
+OR+cf-fill   T 0.296 C 0.593 iso 0.783 | hinet T 0.328 C 0.388 iso 0.537 | ridgecrest T 0.285 C 0.720 iso 0.960
+OR+cf1-fill  T 0.305 C 0.620 iso 0.814 | hinet T 0.310 C 0.431 iso 0.611 | ridgecrest T 0.303 C 0.735 iso 0.960
+OR+all       T 0.327 C 0.646 iso 0.829 | hinet T 0.397 C 0.526 iso 0.648 | ridgecrest T 0.303 C 0.720 iso 0.960
+OR+loro      T 0.327 C 0.636 iso 0.829 | hinet T 0.397 C 0.526 iso 0.648 | ridgecrest T 0.303 C 0.704 iso 0.960
+phasenet+pyocto tol 0.3 mit 0.1 {"hinet": {"sources": 7, "terms_possible": 14, "terms_estimated_per_realisation": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "median_abs_residual_before_s": 0.338, "median_abs_residual_after_cf_s": 0.338}, "ridgecrest": {"sources": 12, "terms_possible": 22, "terms_estimated_per_realisation": [19, 19, 18, 18, 19, 17, 18, 19, 17, 19], "median_abs_residual_before_s": 0.172, "median_abs_residual_after_cf_s": 0.093}}
+PN+none      T 0.175 C 0.226 iso 0.349 | hinet T 0.000 C 0.000 iso 0.000 | ridgecrest T 0.236 C 0.365 iso 0.600
+PN+cf-fill   T 0.090 C 0.230 iso 0.302 | hinet T 0.000 C 0.000 iso 0.000 | ridgecrest T 0.121 C 0.370 iso 0.520
+PN+all       T 0.126 C 0.315 iso 0.388 | hinet T 0.069 C 0.155 iso 0.204 | ridgecrest T 0.145 C 0.413 iso 0.520
+phasenet+pyocto tol 0.1 mit 0.1 {"hinet": {"sources": 7, "terms_possible": 14, "terms_estimated_per_realisation": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "median_abs_residual_before_s": 0.338, "median_abs_residual_after_cf_s": 0.338}, "ridgecrest": {"sources": 12, "terms_possible": 22, "terms_estimated_per_realisation": [19, 19, 18, 18, 19, 17, 18, 19, 17, 19], "median_abs_residual_before_s": 0.172, "median_abs_residual_after_cf_s": 0.093}}
+PN+none      T 0.126 C 0.230 iso 0.271 | hinet T 0.000 C 0.017 iso 0.037 | ridgecrest T 0.170 C 0.360 iso 0.440
+PN+cf-fill   T 0.170 C 0.226 iso 0.341 | hinet T 0.000 C 0.017 iso 0.037 | ridgecrest T 0.230 C 0.354 iso 0.560
+PN+all       T 0.202 C 0.331 iso 0.419 | hinet T 0.069 C 0.241 iso 0.278 | ridgecrest T 0.248 C 0.386 iso 0.520
