@@ -68,7 +68,7 @@ NIED account. The draft below takes (i).
    does for GaMMA after amendment 4. The registered ledgers and frozen files are not changed.
 4. Trials: 60 per method from `seeds.tuning_seeds(60)`, the spaces of amendments 1 and 4 unchanged, the tuning
    partition b60d99b3 and the objective of amendment 1. A smoke run of 3 trials per method first (rule of E63).
-5. Cost: PyOcto about 10 s per trial (10 min); GaMMA 3 to 6 min per trial (3 to 6 h, one process per core, BLAS
+5. Cost (estimate of 14 Nov; corrected with the ledger times in the last section): PyOcto about 10 s per trial (10 min); GaMMA 3 to 6 min per trial (3 to 6 h, one process per core, BLAS
    pinned). CPU only, cloud or the owner's machine; no GPU (PhaseNet probabilities are cached).
 6. HARPA joins when amendment 5 is anchored (PR #51), with the same terms.
 
@@ -124,6 +124,47 @@ owner tags the merge commit:
     git tag -a reg/ATLAS-0/amendment-6 -m "ATLAS-0 amendment 6: station terms as fixed preprocessing, retuning in tuning_ledger_a6.csv"
     git push origin reg/ATLAS-0/amendment-6
 
-Then the retuning:
+Before the tag, the text enters the card with `python append_amendment.py "<date>" --write` (it refuses while
+amendment 5 is not in the card), and that diff is reviewed.
 
-    python experiments/exploratory/COMPARATORS/tune_cli.py run phasenet+pyocto <tune>/ss_ridgecrest_2019_egf_v1/tune_phasenet.json <tune>/ss_hinet_2012_egf_v1/tune_phasenet.json --terms ridgecrest=experiments/exploratory/ST-RETUNE/terms_ridgecrest_2019.json --ledger experiments/exploratory/ATLAS-0/tuning_ledger_a6.csv --trials 3
+Then the retuning, with `run_retune.py` (it refuses any trial unless the tag exists and is an ancestor of HEAD):
+
+    python experiments/exploratory/ST-RETUNE/run_retune.py check <tune>     # no trial, writes nothing
+    python experiments/exploratory/ST-RETUNE/run_retune.py smoke <tune>     # first 3 trials of each method
+    python experiments/exploratory/ST-RETUNE/run_retune.py full <tune>      # resumes to 60 per method
+    python experiments/exploratory/ST-RETUNE/run_retune.py read             # freeze, reading rule, pivot
+
+## What the run can and cannot show (added 15 Nov 2026, before the run)
+
+Dry run, cloud, 15 Nov 2026 (`run_retune.py check`, no association run, nothing written): both methods load 50
+records, 30 of them (Ridgecrest) with terms, partition b60d99b3d0bbbbfa, terms file hash as item 1, a6 ledger empty;
+`smoke`, `full` and `read` refused because the tag does not exist. The 60 trials of each method are those of its
+ledger without terms (same seeds and parameters; two parameters differ in the last digit, 1 part in 1e16, between the
+Windows ledger and Linux).
+
+Resolution of the objective, from the ledgers (facts):
+
+- The tuning partition has 223 targets in T and 305 in C. At the frozen recalls the binomial standard error is 0.027
+  for each recall and 0.019 for the objective, taking targets as independent; they are not (7 and 12 sources per
+  network), so the true error is larger. The 0.01 of the reading rule and of the pivot is about 3 targets, below
+  this error.
+- The search itself is noisy: the best PyOcto trial (0.2589) is 0.027 above the second (0.2323); in random halves of
+  its 60 trials the best of 30 falls more than 0.01 below 0.2589 half of the time. For GaMMA a4 the top five lie
+  within 0.012 and that happens 11 % of the time.
+
+Consequence: a difference of 0.01 between the two best objectives is not evidence that terms help or hurt. The
+decisions of amendment 6 do not need that evidence: item 3 takes the maximum (it can only raise the bar) and item 5
+closes the line when the gain is small. H is read as registered, and the statement "terms help the comparators"
+is made only with the support of the paired comparison below.
+
+Paired comparison (secondary, descriptive, fixed here before the run; it changes no rule of the amendment): the
+same 60 parameter sets are scored with and without terms, so `run_retune.py read` reports, per method, the number
+of trials whose objective rises, falls or stays, and the median difference. Two-sided sign test at 0.05 on the
+trials that change: with 60 changing trials it needs 39 rises; power 0.56, 0.84 and 0.97 if terms raise 65, 70 and
+75 % of the configurations. PyOcto has 60 trials with a non-zero objective without terms and GaMMA a4 has 40, so
+GaMMA has fewer informative pairs and less power. The trials share the targets, so the test speaks about this
+partition and not about other data.
+
+Cost, measured in the ledgers on the owner's machine: PyOcto 2.6 h for 60 trials (median 39 s), GaMMA a4 3.4 h
+(median 44 s). The earlier figure of 10 min for PyOcto was wrong. Cloud times are not measured; the smoke run gives
+them.

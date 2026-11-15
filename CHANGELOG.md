@@ -5,6 +5,10 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-15
 
+- ST-RETUNE, before the run: `run_retune.py` (check, smoke, full, read; refuses any trial without the tag
+  `reg/ATLAS-0/amendment-6`) and `append_amendment.py` (amendment 6 into the card, after amendment 5). The card
+  states what the run can show: the 0.01 of the rule is below the sampling and search noise, and a paired comparison
+  over the 60 shared parameter sets is fixed as the secondary reading. No trial has been run.
 - Thesis: the [pending #45] mark and the draft note removed after PR #45 merged. The G-M5c sentence now says it
   failed on the noise of both 2M seeds (three days: 101231; 100210-11), not on one day.
 
