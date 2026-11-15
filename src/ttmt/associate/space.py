@@ -127,13 +127,16 @@ QUAKEMIGRATE = {"wf_threshold": Uniform(1.2, 3.0), "wf_stalta": Choice(((0.2, 1.
 MALMI = {"wf_threshold": Uniform(0.1, 0.5), "wf_picker": Choice(("PhaseNet", "EQTransformer")),
          "wf_stack_window": Uniform(0.3, 1.0)}
 EQNET = {"wf_threshold": Uniform(0.05, 0.7)}
+# added after registration 1 (proposed amendment 5): the card's EQNet threshold range, and the method's minimum
+# interevent time (clustering bin and per-station peak distance, published 2 s and 2.56 s) on amendment 1's range
+EQNET2 = {"wf_threshold": Uniform(0.05, 0.7), "wf_min_interevent": LogUniform(0.1, 5.0)}
 EQCORRSCAN = {"wf_mad": Uniform(8.0, 12.0), "wf_min_stations": IntRange(3, 6)}
 
 PICKERS = {"phasenet": PHASENET, "phaseno": PHASENO, "eqtransformer": EQTRANSFORMER}
 ASSOCIATORS = {"gamma": GAMMA, "pyocto": PYOCTO, "real": REAL, "harpa": HARPA}
 ASSOCIATORS_REG1 = {**ASSOCIATORS, "gamma": GAMMA_REG1}
 ASSOCIATORS_A3 = {**ASSOCIATORS, "gamma": GAMMA_A3}
-WAVEFORM = {"quakemigrate": QUAKEMIGRATE, "malmi": MALMI, "eqnet": EQNET, "eqcorrscan": EQCORRSCAN}
+WAVEFORM = {"quakemigrate": QUAKEMIGRATE, "malmi": MALMI, "eqnet": EQNET, "eqnet2": EQNET2, "eqcorrscan": EQCORRSCAN}
 
 
 def space_of(method, reg1=False, a3=False):
