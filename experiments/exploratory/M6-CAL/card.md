@@ -205,7 +205,7 @@ Evidence level and limits:
   mismatch of the split scenes on a new seed.
 
 Consequences, proposed and pending the owner's approval (they change declared criteria):
-- G-M6a: its false-split part at a fixed threshold (`M6A-REALNOISE/card.md`, at most 12 of 200 scenes) stays as a
+- G-M6a: its false-split part at a fixed threshold (`M6A-REALNOISE/card.md`, at most 13 of 210 scenes) stays as a
   descriptive check at thr 23.8; the criterion that matters becomes recall at the registered budget with the gain
   as score.
 - The 5 % and 8.3 % figures of steps 3 and its rerun are rates at one threshold, not properties of the method.
