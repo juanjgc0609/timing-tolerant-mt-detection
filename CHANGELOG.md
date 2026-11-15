@@ -3,6 +3,11 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-15
+
+- Thesis: the [pending #45] mark and the draft note removed after PR #45 merged. The G-M5c sentence now says it
+  failed on the noise of both 2M seeds (three days: 101231; 100210-11), not on one day.
+
 ## 2026-11-14
 
 - Follow-up of the independent review of PR #46 (exploratory; no registered number changes). M6-CAL card: step 3 no
@@ -21,6 +26,12 @@ Dated record of changes to the project's process, code and documents. Results ar
   structural) retracted for PyOcto: it is travel-time misfit (T 0.60-0.67 with picks at its own model times).
 - M6 cards: "SNR 12" in the M6 simulations is the per-block peak over the robust noise sd, not the network
   sqrt(E) of Appendix AB (a factor of about 2.7 apart).
+- Phase-6 analysis plan v0.2 and OSF draft (plan v2.11, points 1 to 3, approved by the owner on 14 November): the
+  e-value guarantee is dropped after G-M5c (PR #45) from `PHASE6_SAP.md` 7.6, the R3 registration draft and the OSF
+  draft; false detections near events are a measured rate with no guarantee, cause pending T4.27. The OSF draft also
+  fixes the model's order-statistic arm (cap 6 or NOCAP) through T4.26 before the freeze and lists the stopped
+  amendment-3 ledger as kept and not used. Point 4 (duplicator at U[0.05, 0.5] s) is withdrawn; ADR-0008 item 3 is
+  unchanged. Nothing was submitted to OSF.
 - T4.20 / T4.22 / T4.24 / T4.25 run (cloud, CPU, read-only copy of the tuning partition; both frozen objectives
   reproduced exactly). Ceiling in C: the ideal moment-tensor detector would recover 0.75 of the C targets PyOcto
   misses (0.77 Hi-net, 0.73 Ridgecrest; 0.76 for GaMMA a4) and no comparator hit lies below detection probability
