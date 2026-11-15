@@ -131,8 +131,8 @@ Fuente: `preregistration/drafts/taskR2_registration_DRAFT.md` y `docs/protocol/P
 > decimation), subsets drawn by ⟨regla⟩ before the run. Replication unit: consecutive 1-hour time blocks within each
 > sequence (T/30 when a sequence holds fewer than 30 hours).
 
-> The model's order statistic is fixed before the freeze. The two candidate arms, cap 6 and NOCAP, are declared in
-> the atlas. The arm used here is the one chosen on a fresh development segment by a real-seismicity criterion (task
+> The model's order statistic is fixed before the freeze. The two candidate arms, cap 6 and NOCAP, will be declared in
+> the atlas by an ATLAS-0 amendment (T4.26; ⟨tag de la enmienda⟩). The arm used here is the one chosen on a fresh development segment by a real-seismicity criterion (task
 > T4.26), not on Task 2M data: ⟨brazo elegido, informe T4.26⟩. The other arm is reported as descriptive only.
 
 **Randomization**: No randomization (observational). Station subsets are drawn by ⟨regla y semilla⟩ fixed before the
