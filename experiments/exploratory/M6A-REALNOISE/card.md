@@ -136,15 +136,15 @@ split and the calibration on real isolated events (CR-30) are closed; a run befo
 - **Detections and scores** (`scored` in `run.py`). Every method returns its atoms (kmax 4). greedy, greedy0 and
   m6-none: score = the ranking statistic s of each atom. m6: `adcg_loop` with thr = -inf (every candidate kept),
   scored two ways on the same atoms:
-  - **m6-gain, the gate's column** (`GATE_M6`): an untested atom (no earlier atom within near_km 10) scores s, a
-    tested atom scores its pair gain. This is criterion 2 as the owner approved it, and the score whose separation
-    route B measured (M6-CAL steps 4-5, AUC 0.977 / 0.980 / 0.967).
-  - **m6-min, secondary, proposed and not approved:** a tested atom scores min(s, pair gain), so it is emitted at a
-    threshold t only if both its own statistic and its gain reach t. Reason: s and the gain are on different scales
-    (in simulation s is 2-30 for spurious and 130-680 for true atoms, the gain about -9000 to 400 for spurious and
-    550-2700 for true), so under the gain alone a tested atom with a weak s can rank above every untested atom.
-    The route-B AUC was measured on the gain alone and does not validate min. It becomes the gate's score only with
-    the owner's approval before any real run (rule 14; independent review of PR #58).
+  - **m6-min, the gate's column** (`GATE_M6`): an untested atom (no earlier atom within near_km 10) scores s, a
+    tested atom scores min(s, pair gain), so it is emitted at a threshold t only if both its own statistic and its
+    gain reach t. Reason: s and the gain are on different scales (in simulation s is 2-30 for spurious and 130-680
+    for true atoms, the gain about -9000 to 400 for spurious and 550-2700 for true), so under the gain alone a
+    tested atom with a weak s can rank above every untested atom; min only removes atoms. **Chosen by the owner on
+    15 November 2026, 14:05 UTC (decision card in the project thread, option "min(s, ganancia)")**, before any real
+    run, after the independent review of PR #58 asked for his approval (rule 14). The route-B AUC (M6-CAL steps 4-5,
+    0.977 / 0.980 / 0.967) was measured on the gain alone and does not validate min.
+  - **m6-gain, secondary:** the same atoms with the literal reading of route B, a tested atom scores its pair gain.
 - **Operating point.** Per arm and per method, the detections of all 440 scenes are labelled per scene under
   LOC+T-V against that scene's sources (`ttmt.stats.label_voronoi`), pooled, and the threshold is the exact-FROC
   operating point at 30 false detections per hour (`ttmt.stats.operating_point`). Hours: 8.1 s of origin times per

@@ -16,7 +16,8 @@ two arms see identical sources.
 
 Methods, settings of M6-CAL: kmax 4; greedy (v2_loop, 5 km exclusion), greedy0 (no exclusion, the review's control
 column), m6-none (adcg_loop, no test), m6 (adcg_loop, one-event alternative "joint", near_km 10, every candidate
-kept, thr = -inf) scored two ways: m6-gain (the gate's column) and m6-min (secondary). Hit rule: LOC+T-V (ttmt.stats.label_voronoi,
+kept, thr = -inf) scored two ways: m6-min (the gate's column, owner's choice of 15 November 2026) and m6-gain
+(secondary). Hit rule: LOC+T-V (ttmt.stats.label_voronoi,
 ADR-0008 item 2).
 
 Main criterion (card.md, "Declared change of criteria", approved by the owner on 15 November 2026; route B of
@@ -85,7 +86,7 @@ DTAUS = J.DTAUS
 STRATA = J.STRATA
 SNR = J.SNR
 NAMES = ("greedy", "greedy0", "m6-none", "m6-gain", "m6-min")
-GATE_M6 = "m6-gain"     # score of the gate's m6 column: the gain alone, as approved; m6-min waits on the owner (card.md)
+GATE_M6 = "m6-min"      # score of the gate's m6 column: min(s, pair gain), chosen by the owner on 15 November 2026
 B = 2000
 
 
@@ -151,8 +152,8 @@ def null_scene(rs):
 def scored(name, atoms):
     """(scores, xy, tau) of the detections of one method in one scene. Score rule (card.md, criterion 2, declared
     before any run): greedy, greedy0, m6-none: the ranking statistic s of each atom; m6: s for an atom that was not
-    tested and the pair gain for a tested one (route B as approved, the gate's score); m6-min (secondary, proposed,
-    not approved): min(s, pair gain) for a tested atom, which must then pass the threshold on both."""
+    tested and the pair gain for a tested one (secondary, the literal reading of route B); m6-min (the gate's score,
+    chosen by the owner on 15 November 2026): min(s, pair gain) for a tested atom, which must pass on both."""
     sc = []
     for a in atoms:
         g = a.get("pair_gain")
@@ -300,9 +301,9 @@ def report(o, cut):
                    ("lower two terciles", [r for r in rows if r["kmec"] < cut])):
         d = np.array([(r[GATE_M6] == 2) - (r["greedy"] == 2) for r in R], float)
         d0 = np.array([(r[GATE_M6] == 2) - (r["greedy0"] == 2) for r in R], float)
-        dm = np.array([(r["m6-min"] == 2) - (r["greedy"] == 2) for r in R], float)
+        dm = np.array([(r["m6-gain"] == 2) - (r["greedy"] == 2) for r in R], float)
         print(f"   {lab:19s} n {len(R):4d}  {GATE_M6} - greedy {d.mean():+.3f}  {GATE_M6} - greedy0 {d0.mean():+.3f}  "
-              f"m6-min - greedy {dm.mean():+.3f}")
+              f"m6-gain - greedy {dm.mean():+.3f}")
     return rows
 
 
@@ -339,13 +340,13 @@ def main():
     gate = [r for r in R["rows"] if upper(r)]
     d = np.array([(r[GATE_M6] == 2) - (r["greedy"] == 2) for r in gate], float)
     lo, hi = boot_diff(R["pool"], R["rows"], upper, GATE_M6, "greedy", R["hours"], [SEED, 7])
-    lom, him = boot_diff(R["pool"], R["rows"], upper, "m6-min", "greedy", R["hours"], [SEED, 8])
-    dm = np.mean([(r["m6-min"] == 2) - (r["greedy"] == 2) for r in gate])
+    lom, him = boot_diff(R["pool"], R["rows"], upper, "m6-gain", "greedy", R["hours"], [SEED, 8])
+    dm = np.mean([(r["m6-gain"] == 2) - (r["greedy"] == 2) for r in gate])
     ok = d.mean() >= 0.10 and lo > 0
     print(f"G-M6a (REAL, upper tercile, n {len(d)}, at {BUDGET:g} false/h): {GATE_M6} - greedy {d.mean():+.3f} "
           f"[{lo:+.3f}, {hi:+.3f}] -> {'PASS' if ok else 'FAIL'} by the formula; NOT a gate reading until CR-30 and "
           f"the per-station S split are closed (card.md).")
-    print(f"   secondary (score proposed, not approved): m6-min - greedy {dm:+.3f} [{lom:+.3f}, {him:+.3f}]. "
+    print(f"   secondary (gain alone): m6-gain - greedy {dm:+.3f} [{lom:+.3f}, {him:+.3f}]. "
           f"Descriptive: m6 scenes with a false split at thr {THR_REF}: {R['splits']['m6@23.8']} of {NFRESH} "
           f"(reference {SPLIT_MAX} of 200)")
     print(f"\n{time.time() - t0:.0f} s")
