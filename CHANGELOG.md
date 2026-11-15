@@ -3,6 +3,11 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-15
+
+- Thesis: the [pending #45] mark and the draft note removed after PR #45 merged. The G-M5c sentence now says it
+  failed on the noise of both 2M seeds (three days: 101231; 100210-11), not on one day.
+
 ## 2026-11-14
 
 - Phase-6 analysis plan v0.2 and OSF draft (plan v2.11, points 1 to 3, approved by the owner on 14 November): the
