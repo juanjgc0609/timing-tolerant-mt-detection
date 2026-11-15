@@ -63,8 +63,10 @@ the ring). Pivot rule (declared): if the threshold is the cause, recalibrate it 
 CPU only. Cloud smoke run with fake t3 noise (1 pair per cell, 3 controls): 49 s, both arms. Laptop: a small run
 (5 pairs per cell, 10 controls) first, then the full run (30, 40; about 20-30 min on one core).
 
-    python experiments/exploratory/M6A-REALNOISE/run.py NOISE_DIR 5 10 > experiments/exploratory/M6A-REALNOISE/run_small_out.txt
+    python experiments/exploratory/M6A-REALNOISE/run.py NOISE_DIR 5 40 > experiments/exploratory/M6A-REALNOISE/run_small_out.txt
     python experiments/exploratory/M6A-REALNOISE/run.py NOISE_DIR > experiments/exploratory/M6A-REALNOISE/run_out.txt
+
+(Arguments since 15 November 2026: NOISE_DIR [NREP] [NFRESH]; see "Criterion 2 in run.py" below.)
 
 ## Update before any run (14 November 2026, supervision review X5; still no real run)
 The script had not followed M6-CAL: it still scored with the plain LOC+T `hits()` of M6-JOINT (the defect of CR-29),
@@ -121,5 +123,39 @@ words: "te doy la aprobación para aprobar las dos cosas, lo de las falsas parti
    and 5), in place of pair recall at a fixed threshold. With a score there is no fixed threshold, so the
    false-split count of point 1 is read at the reference threshold 23.8 and is descriptive.
 Both were declared before any real-noise run of this card. The comparison arm (greedy v2 loop), the upper K_mec/E
-tercile, the 0.10 margin and the bootstrap rule stay as declared. `run.py` still computes pair recall at a
-calibrated threshold: it has to be brought to criterion 2 before the gate is read (not done in this PR).
+tercile, the 0.10 margin and the bootstrap rule stay as declared. `run.py` was brought to criterion 2 in the next
+section (15 November 2026).
+
+## Criterion 2 in run.py (15 November 2026, before any real-noise run; nothing run but a smoke test)
+What `run.py` now computes, declared here before any real run. The gate is still not read until the per-station S
+split and the calibration on real isolated events (CR-30) are closed; a run before that is a diagnostic.
+
+- **No threshold calibration.** The 40 calibration scenes and the bisection are removed (route B has no fixed
+  level). Noise slots needed: 240 pair scenes + 200 fresh control scenes = 440 (was 480), each used once, in the
+  fixed permuted order; controls take the first 200, then the pairs.
+- **Detections and scores** (`scored` in `run.py`). Every method returns its atoms (kmax 4). greedy, greedy0 and
+  m6-none: score = the ranking statistic s of each atom. m6: `adcg_loop` with thr = -inf (every candidate kept);
+  an atom that was not tested (no earlier atom within near_km 10) scores s, a tested atom scores min(s, pair gain),
+  so it is emitted at a threshold t only if both its own statistic and its gain reach t. m6-gain (secondary, outside
+  the gate): the same atoms with the literal reading of route B, score = pair gain for a tested atom.
+  Why min and not the gain alone: s and the gain are on different scales (in simulation s is 2-30 for spurious and
+  130-680 for true atoms, the gain about -9000 to 400 for spurious and 550-2700 for true), so one threshold on the
+  gain alone would let a tested atom with a weak s pass far below the untested ones. With min, a tested atom never
+  scores above its own s; route B then only removes atoms, never adds one. This is a design choice, not a
+  measurement; m6-gain is printed next to it so the effect of the choice is visible.
+- **Operating point.** Per arm and per method, the detections of all 440 scenes are labelled per scene under
+  LOC+T-V against that scene's sources (`ttmt.stats.label_voronoi`), pooled, and the threshold is the exact-FROC
+  operating point at 30 false detections per hour (`ttmt.stats.operating_point`). Hours: 8.1 s of origin times per
+  scene (the loop scans taus 4-12 s in 81 bins of 0.1 s), so 440 scenes are 0.99 h and the budget is at most 29 false
+  detections. Using the 40 s of the record instead would allow 146; 8.1 s is the time the detector can place an
+  origin in, and the stricter choice. Pair recall of each pair (both sources hit) is read at that threshold.
+- **Gate (unchanged apart from criterion 2).** REAL arm, upper K_mec/E tercile, both strata and the four
+  separations pooled: recall(m6) - recall(greedy) >= 0.10 at the operating points, and the 2.5th percentile of the
+  paired bootstrap (B = 2000, resampling pairs; operating points held fixed, not re-estimated per replicate) > 0.
+  The script prints the formula's verdict with the note that it is not a gate reading yet.
+- **Descriptive, not in the gate:** scenes with a false split among the 200 fresh controls for m6 at thr 23.8
+  (reference 12 of 200) and for greedy0; the largest spurious pair gain per control scene (median, q95, max); the
+  operating thresholds and false counts of every method; the same tables on GEN.
+- Smoke run in the cloud with fake noise (Student-t, 10 random stations; 1 pair per cell, 4 controls): 167 s, both
+  arms, runs to the end. With 12 scenes the budget allows 0 false detections, so its recalls are 0 and mean nothing.
+
