@@ -1321,8 +1321,11 @@ depth up to 150 km. The generator uses `ttmt.synth.media.first_arrival`, which i
 (checked on the three presets). Not yet checked: every other caller of `ttmt.traveltime` with depths on a layer top
 (R1, M6 and CR-04 scripts use JMA2001 or continuous depths).
 **Correction:** the comparator tables (`real_ttdb`, HARPA) evaluate a node within 0.01 km of a layer top 0.01 km below
-it (`velocity.table_depth`; test `test_tables_avoid_layer_tops_e65`). The fix of `first_arrival` itself is proposed,
-not applied: it changes a core module used by registered regressions and needs its own review.
+it (`velocity.table_depth`). `first_arrival` itself is fixed (owner approval 14 Nov 2026): the head-wave loop keeps
+the interface at the source depth (`ztop < zs`), and a source within 1e-4 km of a layer top is put on it. After the
+fix the times are continuous within 1 ms at every layer top of Hadley-Kanamori and the first 40 of JMA2001 (sources
+on the top and 1e-6 to 1e-5 km off it, 1 to 300 km); the fast test suite and the regressions give the same results
+as before the fix (test `test_tables_avoid_layer_tops_e65`).
 
 ### On the order of the three errors of Task 0
 Three complete protocols, three different conclusions, and **in none of them was the cause the physics**. By

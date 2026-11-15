@@ -290,7 +290,9 @@ def test_tables_avoid_layer_tops_e65(tmp_path):
     # E65: first_arrival with the source exactly on a layer top (Hadley-Kanamori 16 km) misses the head wave along it
     from ttmt.associate.velocity import table_depth
     m, x = list(V.layers), np.array([100.0])
-    assert TT.first_arrival(m, 16.0, x)[0] - TT.first_arrival(m, 16.013, x)[0] > 0.3      # the defect, kept visible
+    for z in (5.5, 16.0, 32.0):                                    # fixed in first_arrival: continuous at the tops
+        for dz in (0.0, 1e-6, -1e-6):
+            assert abs(TT.first_arrival(m, z + dz, x)[0] - TT.first_arrival(m, z + 0.013, x)[0]) < 0.005
     assert table_depth(m, 16.0) == pytest.approx(16.01) and table_depth(m, 15.0) == 15.0 and table_depth(m, 0.0) == 0.01
     a = np.loadtxt(V.real_ttdb(tmp_path / "ttdb.txt", 1.0, 16.0, dx_deg=0.1, dz=1.0), usecols=range(8))
     on, ok = a[np.isclose(a[:, 0], 0.9) & (a[:, 1] == 16.0)][0], a[np.isclose(a[:, 0], 0.9) & (a[:, 1] == 15.0)][0]
