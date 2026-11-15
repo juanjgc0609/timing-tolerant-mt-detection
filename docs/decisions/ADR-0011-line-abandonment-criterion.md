@@ -45,10 +45,16 @@ written before any P1 number exists.
    continue only about 1 time in 4 and the 0.10 method about 4 in 5. This is a development stop rule, not a claim,
    so it errs toward not killing a real gain. Choosing the better of two arms on the
    same partition favours us and is declared with the number.
-4. **If it fires** (Δ_T < 0.05): no further variant of the model is tried to rescue T. A decision record reformulates
-   G1-v2 and the thesis to "failure atlas + identifiability theory + documented negatives", the owner confirms it,
-   and the thesis thread rewrites the claims. The atlas (ATLAS-0), the theory and the negative results stay as they
-   are.
+4. **If it fires** (Δ_T < 0.05): the result is reported as "below the 0.05 threshold of ADR-0011", with Δ_T, n_T,
+   the paired counts and the 95 per cent interval, and with what the gain is made of (which pairs, which strata).
+   Falling short does not abandon the line by itself. It triggers a written decision by the owner, who has the
+   effect size and the interval in view. The owner chooses between: (a) reformulate G1-v2 and the thesis to "failure
+   atlas + identifiability theory + documented negatives", which the thesis thread then writes; or (b) carry the
+   result forward as it is, if it is still good and new as a contribution (for example, a smaller gain confined to
+   pairs no picks-based method separates). Option (b) must state the claim at the size measured, with no wording
+   that implies the 0.05 was met. Either way, the threshold, the number and the choice are written down together in
+   one record, and the threshold is not changed after the fact (rules 14 and 15). No further model variant is tried
+   to lift Δ_T before that decision. The atlas (ATLAS-0), the theory and the negative results stay as they are.
 5. **If it does not fire** (Δ_T ≥ 0.05): nothing is claimed from it. The confirmatory claim still needs ADR-0008
    (H1 in T, then H2 in C with margin 0.05) on data not used for tuning, after block F.
 6. **Relation to other stop rules.** The decision rule of the model v2 specification §12 (three or more of P-PN1,
@@ -64,7 +70,12 @@ which the plan v2.12 listed as this abandonment criterion and the ATLAS-0 amendm
 read, which comparators, point estimate) were written by the planning thread from the supervision proposal and are
 put to the owner for confirmation on the one real choice, item 3. On 15 November 2026, 9:21 (Bogotá), the owner
 chose "Estimación puntual ≥ 0.05" on a decision card in the project thread, over the alternative "lower bound of the
-interval > 0". Item 3 stands as written.
+interval > 0". Item 3 stands as written. At 9:24 (Bogotá) the same day he added, in the project chat, that a threshold must not
+discard a result that misses it but is still good and new: "imagina que uno por ser tan exigente y elegir ciertos
+valores rechace todo incluyendo resultados buenos que no llegan a ese valor, pero que si uno reduce la exigencia
+igual siguen siendo igual de buenos y novedosos en la contribución. Así que cuidado con eso." Item 4 was rewritten
+after that message: missing the threshold triggers his decision with the effect size in view, not an automatic
+abandonment. The threshold itself and item 3 are unchanged.
 
 ## Consequences
 

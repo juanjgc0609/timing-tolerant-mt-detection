@@ -8,7 +8,9 @@ Dated record of changes to the project's process, code and documents. Results ar
 - ADR-0011: stop rule for the overlap line, approved by the owner on 15 November. After block M and one picker
   fine-tune given to every method, P1 is re-run on the tuning partition; if the better of our two arms does not beat
   the best frozen comparator by at least 0.05 in recall in T (point estimate, LOC+T-V, 30 false detections per hour),
-  G1-v2 is reformulated to atlas + identifiability theory + negatives. No registered criterion changes.
+  the result is reported with its size and interval, and the owner decides between reformulating G1-v2 to atlas +
+  identifiability theory + negatives and carrying the result forward at its measured size (owner, 15 Nov, 9:24).
+  No registered criterion changes.
 - Thesis: the [pending #45] mark and the draft note removed after PR #45 merged. The G-M5c sentence now says it
   failed on the noise of both 2M seeds (three days: 101231; 100210-11), not on one day.
 
