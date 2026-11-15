@@ -4,6 +4,11 @@ Draft revised on 14 November 2026 after the independent review of PR #53. It is 
 `experiments/exploratory/ATLAS-0/card.md` and anchored by the owner only after amendment 5 is anchored; the date
 below is the date of anchoring.
 
+Owner approval. On 14 November 2026 the owner approved retuning the comparators with station terms under an
+amendment ("apruebo todo lo demás"). On 15 November 2026 (09:17 Bogotá) the owner approved the pending steps,
+which the project coordinator reads as approval of this amendment: "verifica y apruebo todo lo que haya que
+hacer". The anchoring and the tag remain the owner's own actions.
+
 Task ATLAS-0, amendment 6 (⟨date of anchoring⟩), written after the exploratory runs of T420-CEILING (PR #47) and of
 ST-RETUNE (PR #53), and before any tuning trial with station terms. The registered text, amendments 1 to 5, every
 ledger and every frozen configuration are kept unchanged; these items add to them.

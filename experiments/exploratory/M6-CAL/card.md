@@ -87,7 +87,11 @@ bound <= 0.10). If it fails, the resolvability test with an RSS threshold is rec
 with neighbours in this form, and the next route is the owner's decision (a per-scene statistic, or the e-value route
 of M7).
 
-## Result, step 3 (`run_op10_out.txt`, near_km = 10, 4215 s). PASSES the pass rule of the threshold
+## Result, step 3 (`run_op10_out.txt`, near_km = 10, 4215 s). ~~PASSES the pass rule of the threshold~~ DOES NOT HOLD: fails the same rule on fresh seeds (see the rerun below)
+Correction of 14 November 2026 (independent review of PR #46): the pass below was read on controls that had been used
+to choose `near_km`. On fresh seeds the upper bound is 0.121 > 0.10. By the rule declared for step 3, the
+resolvability test with a fixed RSS threshold is **not calibratable in scenes with neighbours in this form**. The
+next route is decided in step 4 (the owner delegated the decision on 14 November 2026).
 Operating-loop calibration: thr = 23.8 (C1 0.010, C3 0.040 of the calibration scenes split).
 
 | fresh control | scenes split | 95 % CI |
@@ -142,3 +146,101 @@ seed 20261114, 300 scenes per control, nothing calibrated (656 s on 4 cores).
   only at the registered operating point. The step-1 caveat on differences of 0.15 or less no longer rests on a
   suspected metric flaw; it stays as a sample-size caveat (20 pairs per cell).
 
+## Step 4 (declared 14 November 2026, before running; decision delegated by the owner on 14 November 2026)
+Question: after the failure of step 3 on fresh seeds, which route does M6 take? Two alternatives, compared on
+simulation only, with seeds never used to choose any setting. Nothing of G-M6a and no reserved window is read.
+
+- **Route A, fixed level with margin.** The step-3 threshold was calibrated to 5 % on 200 scenes, with no margin for
+  the sampling error of the calibration itself. Recalibrate on a larger set with a margin: calibration set A (seed
+  20261115, 300 scenes with neighbours, mismatched pulses, `near_km` 10, operating loop), thresholds on the fixed
+  grid 23.8, 34, 48, 68, 96 (ratio about 1.41); thr* = the smallest with at most 0.035 of the scenes split (with a
+  true rate of 0.035 the confirmation below passes with probability 0.998; with 0.05, 0.92).
+- **Route B, ranking only.** No fixed level: the pair gain is the score of the second atom and the registered FROC
+  decides (ADR-0008 item 4). Supported if the gain separates true second atoms from spurious ones: AUC between the
+  gains of the tested atoms matched to a true source in near pairs and the largest spurious gain of the control
+  scenes with neighbours of set A, every candidate kept (thr = -inf).
+
+Confirmation, read once: set B (seed 20261116), 300 scenes with neighbours and 300 with one source at thr*; pairs on
+seed 20261117, 40 per cell (near and far, dtau 0.1, 0.25, 0.5, 1 s), M6 at 23.8 and at thr*, LOC+T-V.
+
+Decision rule:
+1. Route A is adopted if, on set B, the upper 95 % bound of the split rate is <= 0.10 with neighbours AND with one
+   source (at most 19 of 300 each), AND the near-pair recall pooled over the four separations at thr* is within 0.05
+   of the recall at 23.8. Then thr* is the development level, and the gain is still passed as a score.
+2. If route A fails any of the three, the fixed level stays "not calibratable"; route B is adopted if AUC >= 0.90.
+3. If neither holds, no route is supported in this form: the result is recorded as negative and the pivot is the
+   calibrated split-S / own-template pulse of the supervision design before any further threshold work.
+If no grid value reaches 0.035 on set A, route A fails at calibration and rule 2 applies.
+Cost: about 50 min on 4 cloud cores. Script: `run_step4.py`.
+
+
+## Result, step 4 (`run_step4_out.txt`, 3352 s on 4 cores; run once, after the declaration was pushed in 85014ec)
+
+| thr | 23.8 | 34 | 48 | 68 | 96 |
+|:--|--:|--:|--:|--:|--:|
+| set A, scenes with neighbours split (of 300) | 19 | 17 | 16 | 15 | 14 |
+| rate | 0.063 | 0.057 | 0.053 | 0.050 | 0.047 |
+
+- **Route A fails.** No threshold of the declared grid reaches the selection target of 0.035, so there is no thr* and
+  set B was not read (it stays unused). Quadrupling the threshold removes 5 of 19 split scenes: the false splits
+  that remain are not fluctuations near the threshold.
+- **Route B is supported by the declared rule (AUC 0.977 >= 0.90).** Gains of the tested true atoms of near pairs
+  (n = 160, pairs seed 20261117): median 1697, 10th percentile 522. Largest spurious gain per control scene
+  (270 of the 300 scenes of set A have a spurious near atom): median -162, 90th percentile -51.
+- Near pairs pooled (n = 160) at thr 23.8: m6 0.925 against greedy 0.537; far pairs unchanged (0.95 to 0.975).
+
+**Decision (delegated by the owner on 14 November 2026; rule written in step 4 before the run): route B.** The gain
+of the "one against two" test is not cut at a fixed level; it becomes the score of the second atom, and the
+false-detection budget of the registered endpoint (30 per hour on the exact FROC, ADR-0008) sets the operating point.
+
+Evidence level and limits:
+- Measured: the table, the recalls and the AUC, in simulation (homogeneous medium, Ricker pulses, Gaussian noise).
+- The AUC compares true gains from the pairs seed with spurious gains from set A; it has not been confirmed on a
+  second control set (set B is still unread and can serve for that, once).
+- An AUC is not the endpoint. Whether the ranking holds at 30 false detections per hour is measured only by the
+  end-to-end pilot (arm S), on the tuning partition.
+- Hypothesis, not tested: about 5 % of control scenes carry a spurious atom with a gain above 96 (the 14 scenes that
+  survive the largest threshold), in the range of true pairs. If so, they are a model-mismatch structure (neighbour
+  interference or pulse mismatch), not noise. Test that closes it: list gain, distance to the neighbour and pulse
+  mismatch of the split scenes on a new seed.
+
+Consequences for G-M6a (two changes of declared criteria, approved by the owner on 15 November 2026; recorded in
+`M6A-REALNOISE/card.md`):
+- its false-split part (at most 12 of 200 scenes) is read at thr 23.8 and is descriptive; the criterion that matters
+  becomes recall at the registered budget with the gain as score.
+- The 5 % and 8.3 % figures of step 3 and its rerun are rates at one threshold, not properties of the method.
+
+## Step 5 (declared 15 November 2026, before running; asked by the independent review of PR #54)
+The AUC of step 4 put true gains at SNR 12 against the spurious gains of set A only. One confirmation, then no more
+on this line:
+- **Confirmation.** Largest spurious gain per scene on set B (seed 20261116, 300 scenes with neighbours, unread until
+  now) against the true gains of the near pairs of step 4 (seed 20261117, 160 pairs), SNR 12. Route B is confirmed if
+  AUC >= 0.90, the level of step 4. Set B is spent after this.
+- **Scope at a lower SNR.** The same at SNR 8 (per-block peak) on new seeds: 300 control scenes with neighbours
+  (20261118) and 160 near pairs (20261119). AUC >= 0.90: route B holds down to SNR 8. Below 0.90: route B is stated
+  for SNR 12 only, and the score needs a normalisation by the noise level before the pilot uses it.
+- Reported, outside the rule: the share of true gains above the 95th percentile of the spurious gains, and the
+  maximum spurious gain (the tail that step 4 left as a hypothesis).
+- A smoke run of the script (4 scenes, 1 pair per cell, 14 s) read the first 4 scenes of set B and of the new seeds.
+  It was a functional check; nothing was chosen from it.
+
+    python experiments/exploratory/M6-CAL/run_step5.py > experiments/exploratory/M6-CAL/run_step5_out.txt
+
+## Result, step 5 (`run_step5_out.txt`, 553 s; run once, after the declaration was pushed in 2243a28)
+
+| | true gains of near pairs (median, 10th pct) | largest spurious gain per scene (median, 90th, 95th pct, max) | AUC | true gains above the spurious 95th pct |
+|:--|:--|:--|--:|--:|
+| SNR 12, set B (272 of 300 scenes with a spurious near atom; 160 pairs) | 1697, 522 | -182, -37, 8, 395 | 0.980 | 0.956 |
+| SNR 8, new seeds (275 of 300; 160 pairs) | 567, -7 | -168, -84, -51, 372 | 0.967 | 0.909 |
+
+- **Route B is confirmed on set B (0.980 >= 0.90) and holds at SNR 8 (0.967).** Set B is spent.
+- The tail left as a hypothesis in step 4 is measured: about 5 % of control scenes have a positive spurious gain,
+  up to about 400, below the median of true gains but above their 10th percentile at SNR 8. A fixed threshold
+  cannot remove it without losing weak pairs, which is why route A failed. Its cause is still not identified.
+- At SNR 8 one true gain in ten is negative: those pairs are not recovered by any threshold. The scope of route B
+  below SNR 8 is not measured.
+- Limits: simulation (homogeneous medium, Ricker pulses, Gaussian noise); AUC and the share above the 95th
+  percentile are not the endpoint, which only the end-to-end pilot measures.
+- On the counts: the output's "n" is the number of tested true atoms, not of pairs. A pair gives none, one or two
+  (with kmax 4 both members can be tested against a neighbour), hence 164 gains from the 160 pairs at SNR 8 and,
+  by coincidence of the total, 160 from 160 at SNR 12. The AUC is over atoms.

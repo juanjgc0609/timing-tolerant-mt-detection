@@ -24,13 +24,12 @@ Rules. H1 superiority in T, then H2 non-inferiority by 0.05 in C, intersection-u
 sign-flip at one-sided 0.025; H2 clustered score test at the level <a2> of the design check `sample_size.py calibrate` over the range
 from `sample_size.py estimate` on development <path>,
 ADR-0008 item 7), fixed sequence; secondary Holm family (SAP Section 2); intervals stratified by network (SAP 7.5);
-budget check stratified by parent event and the e-value check at 3 to 15 km and 1 to 4 s (SAP 7.6, CR-01). Power of the
+budget check stratified by parent event and the measured rate of S_mix >= log(1/p) at 3 to 15 km and 1 to 4 s, with no calibration guarantee (SAP 7.6, CR-01). Power of the
 chain <p>, size <s>.
 Prediction. <declared from development>.
 Interpretation. H1 and H2 met: superior in T and not inferior elsewhere under known truth on unseen networks. H1 not
 met: no demonstrated gain where the theory predicts one; the cells are described. The duplicator control positive: no
-claim. The e-value rate above 2p on parent-event hypotheses: the M7 guarantee does not cover event-induced false
-detections, and that is reported.
+claim. False detections near events are reported as a measured rate; no guarantee is claimed (G-M5c).
 Freeze and run. As in R2; no interim look.
 Declared limits. Injection adds signals linearly to real noise; no wave interaction; events of one network injected
 into its own noise.
