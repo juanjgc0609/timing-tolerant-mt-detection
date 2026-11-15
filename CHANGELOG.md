@@ -5,6 +5,12 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-14
 
+- Phase-6 analysis plan v0.2 and OSF draft (plan v2.11, points 1 to 3, approved by the owner on 14 November): the
+  e-value guarantee is dropped after G-M5c (PR #45) from `PHASE6_SAP.md` 7.6, the R3 registration draft and the OSF
+  draft; false detections near events are a measured rate with no guarantee, cause pending T4.27. The OSF draft also
+  fixes the model's order-statistic arm (cap 6 or NOCAP) through T4.26 before the freeze and lists the stopped
+  amendment-3 ledger as kept and not used. Point 4 (duplicator at U[0.05, 0.5] s) is withdrawn; ADR-0008 item 3 is
+  unchanged. Nothing was submitted to OSF.
 - Supervision review of the open work (exploratory; no registered number changes). M6-CAL rerun on fresh seeds with
   the step-3 settings frozen: 25 of 300 scenes with neighbours split ([0.055, 0.121]), so the 5 % of step 3 does not
   hold out of sample (7 % over both runs); card updated, `M6-CAL/run_fresh.py`. The duplicator column of pair-only
