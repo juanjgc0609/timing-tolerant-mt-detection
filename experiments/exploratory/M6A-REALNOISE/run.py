@@ -16,7 +16,7 @@ two arms see identical sources.
 
 Methods, settings of M6-CAL: kmax 4; greedy (v2_loop, 5 km exclusion), greedy0 (no exclusion, the review's control
 column), m6-none (adcg_loop, no test), m6 (adcg_loop, one-event alternative "joint", near_km 10, every candidate
-kept, thr = -inf), m6-gain (secondary, same atoms as m6, other score). Hit rule: LOC+T-V (ttmt.stats.label_voronoi,
+kept, thr = -inf) scored two ways: m6-gain (the gate's column) and m6-min (secondary). Hit rule: LOC+T-V (ttmt.stats.label_voronoi,
 ADR-0008 item 2).
 
 Main criterion (card.md, "Declared change of criteria", approved by the owner on 15 November 2026; route B of
@@ -25,7 +25,9 @@ arm (NFRESH fresh control scenes with neighbours + all pair scenes) are pooled, 
 operating point at BUDGET = 30 false detections per hour (ttmt.stats.operating_point). Hours scanned: SCAN_S = 8.1 s
 of origin times per scene (81 bins of 0.1 s, 4-12 s). Gate: REAL arm, upper K_mec/E tercile of the pairs, both
 strata and the four separations pooled: pair recall(m6) - pair recall(greedy) >= 0.10 and the 2.5th percentile of
-its paired bootstrap > 0 (B = 2000, resampling pairs, operating points held fixed). False splits of m6 at the
+its bootstrap > 0 (B = 2000; scenes resampled within control set and within each pair cell, operating points
+re-chosen in each replicate, ADR-0008 item 5). The result is recall at 30 false/h of this fixed 200 : 240 mix of
+control and pair scenes, not a deployable threshold. False splits of m6 at the
 reference threshold 23.8 (scenes, of 200; reference 12) are descriptive, not in the gate.
 The gate is NOT read until the per-station S split and the calibration on real isolated events (CR-30) are closed
 (card.md); until then a run is a diagnostic.
@@ -82,7 +84,8 @@ NEAR_KM = 10.0           # radius of the resolvability test, twice the LOC+T rad
 DTAUS = J.DTAUS
 STRATA = J.STRATA
 SNR = J.SNR
-NAMES = ("greedy", "greedy0", "m6-none", "m6", "m6-gain")
+NAMES = ("greedy", "greedy0", "m6-none", "m6-gain", "m6-min")
+GATE_M6 = "m6-gain"     # score of the gate's m6 column: the gain alone, as approved; m6-min waits on the owner (card.md)
 B = 2000
 
 
@@ -148,12 +151,12 @@ def null_scene(rs):
 def scored(name, atoms):
     """(scores, xy, tau) of the detections of one method in one scene. Score rule (card.md, criterion 2, declared
     before any run): greedy, greedy0, m6-none: the ranking statistic s of each atom; m6: s for an atom that was not
-    tested, min(s, pair gain) for a tested one (it must pass the threshold on both); m6-gain (secondary, the literal
-    reading of route B): the pair gain alone for a tested atom."""
+    tested and the pair gain for a tested one (route B as approved, the gate's score); m6-min (secondary, proposed,
+    not approved): min(s, pair gain) for a tested atom, which must then pass the threshold on both."""
     sc = []
     for a in atoms:
         g = a.get("pair_gain")
-        if name == "m6" and g is not None:
+        if name == "m6-min" and g is not None:
             sc.append(min(float(a["s"]), float(g)))
         elif name == "m6-gain" and g is not None:
             sc.append(float(g))
@@ -166,34 +169,62 @@ def scored(name, atoms):
 def run_methods(E, Y, q, lag):
     a6 = adcg_loop(E, Y, q, KMAX, lag, thr=-np.inf, near_km=NEAR_KM)     # every candidate kept: route B
     return {"greedy": v2_loop(E, Y, q, KMAX, lag), "greedy0": v2_loop(E, Y, q, KMAX, lag, min_sep=0.0),
-            "m6-none": adcg_loop(E, Y, q, KMAX, lag, thr=None, near_km=NEAR_KM), "m6": a6, "m6-gain": a6}
+            "m6-none": adcg_loop(E, Y, q, KMAX, lag, thr=None, near_km=NEAR_KM), "m6-gain": a6, "m6-min": a6}
 
 
 class Pool:
     """detections of all scenes of one arm, labelled per scene under LOC+T-V (prefix-stable, so the labels of the
-    full list hold at every threshold); targets numbered globally."""
+    full list hold at every threshold). Per scene: scores and labels local to that scene's sources (-1 false)."""
 
     def __init__(self):
         self.s = {k: [] for k in NAMES}
         self.lab = {k: [] for k in NAMES}
-        self.nt = 0
+        self.ns = []
 
     def add(self, res, srcs):
         exy = np.array([np.asarray(s[0], float)[:2] for s in srcs])
         et = np.array([float(s[1]) for s in srcs])
-        ids = np.arange(self.nt, self.nt + len(srcs))
         for k in NAMES:
             sc, xy, tau = scored(k, res[k])
-            lab = label_voronoi(sc, xy, tau, exy, et) if len(sc) else np.zeros(0, int)
             self.s[k].append(sc)
-            self.lab[k].append(np.where(lab >= 0, ids[np.maximum(lab, 0)], FALSE))
-        self.nt += len(srcs)
-        return ids
+            self.lab[k].append(label_voronoi(sc, xy, tau, exy, et) if len(sc) else np.zeros(0, int))
+        self.ns.append(len(srcs))
+        return len(self.ns) - 1
 
-    def hit(self, k, hours):
-        s, lab = np.concatenate(self.s[k]), np.concatenate(self.lab[k])
+    def hit(self, k, hours, scenes=None):
+        """operating point of method k on the scenes listed (default all; repeats allowed, each copy its own
+        targets): threshold, false count, and per listed scene the number of its sources hit."""
+        scenes = np.arange(len(self.ns)) if scenes is None else np.asarray(scenes)
+        n = np.array(self.ns)[scenes]
+        off = np.r_[0, np.cumsum(n)[:-1]]
+        s = np.concatenate([self.s[k][j] for j in scenes])
+        lab = np.concatenate([np.where(self.lab[k][j] >= 0, self.lab[k][j] + o, FALSE) for j, o in zip(scenes, off)])
         thr = operating_point(s, lab, hours, BUDGET)
-        return thr, false_count(s, lab, thr), hits_at(s, lab, thr, self.nt)
+        h = hits_at(s, lab, thr, int(n.sum()))
+        return thr, false_count(s, lab, thr), np.add.reduceat(h, off) if len(off) else h
+
+
+def boot_diff(pool, rows, sel, a, b, hours, seed):
+    """paired difference of pair recall (a - b) over the pairs in sel, with its stratified scene bootstrap: in each
+    of B replicates the control scenes and the pair scenes of each cell (stratum x dtau) are resampled with
+    replacement, the mix kept, and both operating points are re-chosen (ADR-0008 item 5)."""
+    r = np.random.default_rng(seed)
+    ctrl = np.arange(NFRESH)
+    cells = {}
+    for i, row in enumerate(rows):
+        cells.setdefault((row["stratum"], row["dtau"]), []).append(i)
+    cells = [np.array(v) for v in cells.values()]
+    inset = np.array([sel(row) for row in rows])
+    scene_of = np.array([row["scene"] for row in rows])
+    out = np.empty(B)
+    for i in range(B):
+        pr = np.concatenate([c[r.integers(0, len(c), len(c))] for c in cells])
+        sc = np.r_[r.choice(ctrl, NFRESH), scene_of[pr]]
+        d = pool.hit(a, hours, sc)[2][NFRESH:] == 2
+        d = d.astype(float) - (pool.hit(b, hours, sc)[2][NFRESH:] == 2)
+        m = inset[pr]
+        out[i] = d[m].mean() if m.any() else np.nan
+    return np.nanquantile(out, [.025, .975])
 
 
 def run_arm(arm, real, E, lag):
@@ -208,7 +239,7 @@ def run_arm(arm, real, E, lag):
         q = picker(F, rs)
         res = run_methods(E, Y, q, lag)
         pool.add(res, srcs)
-        g = [x["pair_gain"] for x in MB.spurious(res["m6"], srcs) if x["pair_gain"] is not None]
+        g = [x["pair_gain"] for x in MB.spurious(res["m6-gain"], srcs) if x["pair_gain"] is not None]
         gains += [max(g)] if g else []
         splits["greedy0"] += len(MB.spurious(res["greedy0"], srcs)) > 0
         splits["m6@23.8"] += len(MB.spurious(adcg_loop(E, Y, q, KMAX, lag, thr=THR_REF, near_km=NEAR_KM),
@@ -228,8 +259,8 @@ def run_arm(arm, real, E, lag):
                 slot, nmf = noise_for(arm, rn, real)
                 Y, F = scene(srcs, nmf)
                 q = picker(F, rs)
-                ids = pool.add(run_methods(E, Y, q, lag), srcs)
-                rows.append({"stratum": sname, "dtau": dtau, "rep": rep, "slot": slot, "ids": ids,
+                j = pool.add(run_methods(E, Y, q, lag), srcs)
+                rows.append({"stratum": sname, "dtau": dtau, "rep": rep, "slot": slot, "scene": j,
                              "kmec": kmec_over_e(F[0][1], F[1][1])})
     hours = (NFRESH + len(rows)) * SCAN_S / 3600.0
     out["hours"] = hours
@@ -238,8 +269,8 @@ def run_arm(arm, real, E, lag):
         thr, nf, hit = pool.hit(k, hours)
         out["op"][k] = (thr, nf)
         for r in rows:
-            r[k] = int(hit[r["ids"]].sum())
-    out["rows"] = rows
+            r[k] = int(hit[r["scene"]])
+    out["rows"], out["pool"] = rows, pool
     return out
 
 
@@ -264,14 +295,14 @@ def report(o, cut):
             f = lambda R, k: np.mean([r[k] == 2 for r in R]) if R else np.nan  # noqa: E731
             print(f"   {sname:7s} {dtau:5.2f} |           " + " ".join(f"{f(rr, k):8.2f}" for k in NAMES)
                   + f" | {len(up):17d} " + " ".join(f"{f(up, k):8.2f}" for k in NAMES))
+    print("   (intervals: only for the gate, scene bootstrap with re-chosen operating points, see below)")
     for lab, R in (("all pairs", rows), ("upper tercile", [r for r in rows if r["kmec"] >= cut]),
                    ("lower two terciles", [r for r in rows if r["kmec"] < cut])):
-        d = np.array([(r["m6"] == 2) - (r["greedy"] == 2) for r in R], float)
-        d0 = np.array([(r["m6"] == 2) - (r["greedy0"] == 2) for r in R], float)
-        rb = np.random.default_rng([SEED, 7, len(lab)])
-        bs = d[rb.integers(0, len(d), (B, len(d)))].mean(1)
-        print(f"   {lab:19s} n {len(R):4d}  m6 - greedy {d.mean():+.3f} [{np.quantile(bs, .025):+.3f}, "
-              f"{np.quantile(bs, .975):+.3f}]  m6 - greedy0 {d0.mean():+.3f}")
+        d = np.array([(r[GATE_M6] == 2) - (r["greedy"] == 2) for r in R], float)
+        d0 = np.array([(r[GATE_M6] == 2) - (r["greedy0"] == 2) for r in R], float)
+        dm = np.array([(r["m6-min"] == 2) - (r["greedy"] == 2) for r in R], float)
+        print(f"   {lab:19s} n {len(R):4d}  {GATE_M6} - greedy {d.mean():+.3f}  {GATE_M6} - greedy0 {d0.mean():+.3f}  "
+              f"m6-min - greedy {dm.mean():+.3f}")
     return rows
 
 
@@ -303,15 +334,20 @@ def main():
         print()
     used = [r["slot"] for r in res["REAL"]["rows"]]
     print(f"REAL slots used: {len(used)} by pairs + {NFRESH} by controls, {real.k} in all, each once")
-    gate = [r for r in res["REAL"]["rows"] if r["kmec"] >= cut]
-    d = np.array([(r["m6"] == 2) - (r["greedy"] == 2) for r in gate], float)
-    lo = np.quantile(d[np.random.default_rng([SEED, 7, len("upper tercile")]).integers(0, len(d), (B, len(d)))]
-                     .mean(1), .025)
+    R = res["REAL"]
+    upper = lambda r: r["kmec"] >= cut  # noqa: E731
+    gate = [r for r in R["rows"] if upper(r)]
+    d = np.array([(r[GATE_M6] == 2) - (r["greedy"] == 2) for r in gate], float)
+    lo, hi = boot_diff(R["pool"], R["rows"], upper, GATE_M6, "greedy", R["hours"], [SEED, 7])
+    lom, him = boot_diff(R["pool"], R["rows"], upper, "m6-min", "greedy", R["hours"], [SEED, 8])
+    dm = np.mean([(r["m6-min"] == 2) - (r["greedy"] == 2) for r in gate])
     ok = d.mean() >= 0.10 and lo > 0
-    print(f"G-M6a (REAL, upper tercile, n {len(d)}, at {BUDGET:g} false/h): m6 - greedy {d.mean():+.3f}, "
-          f"2.5th pct {lo:+.3f} -> {'PASS' if ok else 'FAIL'} by the formula; NOT a gate reading until CR-30 and the "
-          f"per-station S split are closed (card.md). Descriptive: m6 scenes with a false split at thr {THR_REF}: "
-          f"{res['REAL']['splits']['m6@23.8']} of {NFRESH} (reference {SPLIT_MAX} of 200)")
+    print(f"G-M6a (REAL, upper tercile, n {len(d)}, at {BUDGET:g} false/h): {GATE_M6} - greedy {d.mean():+.3f} "
+          f"[{lo:+.3f}, {hi:+.3f}] -> {'PASS' if ok else 'FAIL'} by the formula; NOT a gate reading until CR-30 and "
+          f"the per-station S split are closed (card.md).")
+    print(f"   secondary (score proposed, not approved): m6-min - greedy {dm:+.3f} [{lom:+.3f}, {him:+.3f}]. "
+          f"Descriptive: m6 scenes with a false split at thr {THR_REF}: {R['splits']['m6@23.8']} of {NFRESH} "
+          f"(reference {SPLIT_MAX} of 200)")
     print(f"\n{time.time() - t0:.0f} s")
 
 
