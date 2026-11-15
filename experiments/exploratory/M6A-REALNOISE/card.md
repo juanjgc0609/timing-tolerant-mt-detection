@@ -124,7 +124,10 @@ words: "te doy la aprobación para aprobar las dos cosas, lo de las falsas parti
    false-split count of point 1 is read at the reference threshold 23.8 and is descriptive.
 Both were declared before any real-noise run of this card. The comparison arm (greedy v2 loop), the upper K_mec/E
 tercile, the 0.10 margin and the bootstrap rule stay as declared. `run.py` was brought to criterion 2 in the next
-section (15 November 2026).
+section (15 November 2026). Two refinements there, both before any run: the score of a tested atom is
+min(s, pair gain), chosen by the owner on 15 November 2026, 14:05 UTC (the gain alone is kept as secondary); and the
+bootstrap uses the scene as unit with both operating points re-chosen in each replicate (ADR-0008 item 5),
+correcting the pair bootstrap with fixed operating points found by the independent review of PR #58.
 
 ## Criterion 2 in run.py (15 November 2026, before any real-noise run; nothing run but a smoke test)
 What `run.py` now computes, declared here before any real run. The gate is still not read until the per-station S

@@ -5,6 +5,13 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-15
 
+- `M6A-REALNOISE/run.py` and card brought to criterion 2 of G-M6a (exploratory; nothing run but smoke tests with fake
+  noise; G-M6a not run or read). No threshold calibration: m6 keeps every candidate, all scenes of an arm (200 fresh
+  controls + 240 pairs) are pooled and the exact-FROC operating point at 30 false/h sets the threshold (8.1 s of
+  origin times per scene). Gate score of a tested atom min(s, pair gain), chosen by the owner on 15 November 2026,
+  14:05 UTC (gain alone printed as secondary). Bootstrap by scene, stratified, with operating points re-chosen in
+  each replicate (ADR-0008 item 5; found by the independent review of PR #58). False splits at thr 23.8 descriptive.
+
 - Thesis: the [pending #45] mark and the draft note removed after PR #45 merged. The G-M5c sentence now says it
   failed on the noise of both 2M seeds (three days: 101231; 100210-11), not on one day.
 
