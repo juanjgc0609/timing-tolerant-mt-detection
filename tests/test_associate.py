@@ -622,3 +622,14 @@ def test_harpa_wrapper_serial_and_deterministic(tmp_path):
     assert np.array_equal(d1.t, d2.t) and np.array_equal(p1.det, p2.det)
     assert _recall(d1, tr) >= 0.9 and (p1.det >= 0).mean() > 0.8
     assert np.allclose(d1.s, np.bincount(p1.det[p1.det >= 0], minlength=len(d1)))
+
+
+def test_r1_model_is_frozen_e65():
+    # the registered R1 path keeps the travel times of before the E65 fix; every other model gets the fixed ones
+    from ttmt import r1
+    m, X = list(TT.JMA2001), np.arange(0.0, 120.25, 0.25)
+    assert getattr(r1.MODEL, "legacy_e65", False) and list(r1.MODEL) == m
+    assert np.max(np.abs(TT.first_arrival(r1.MODEL, 3.0, X, TT.R_VPVS) - TT.first_arrival(m, 3.0, X, TT.R_VPVS))) > 1e-3
+    hk = list(TT.HK)
+    old = TT.first_arrival(TT.frozen(hk), 16.0, [100.0])[0]
+    assert old - TT.first_arrival(hk, 16.0, [100.0])[0] > 0.3                # the defect, kept only in Frozen

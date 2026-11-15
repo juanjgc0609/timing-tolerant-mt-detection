@@ -46,12 +46,23 @@ def _split(model, zs):
 SNAP = 1e-4          # km
 
 
+class Frozen(tuple):
+    """a layered model evaluated as before the E65 fix (head wave along the interface at the source depth dropped, no
+    snapping), for the registered R1 path, so its frozen lists reproduce bit for bit (ttmt.r1.MODEL; E65)."""
+    legacy_e65 = True
+
+
+def frozen(model):
+    return Frozen(tuple(model))
+
+
 def first_arrival(model, zs, X, r=1.0):
     """first-arrival time (s) of the phase with velocities model / r, source depth zs, epicentral distances X (array)."""
     X = np.atleast_1d(np.asarray(X, float))
     # E65: a source within SNAP km of a layer top is put on it (a sliver of the source layer thinner than that breaks
     # the direct-wave ray search), and a source on a layer top keeps the head wave along it (ztop < zs below)
-    near = [t for t, _ in model[1:] if abs(t - zs) < SNAP]
+    legacy = getattr(model, "legacy_e65", False)
+    near = [] if legacy else [t for t, _ in model[1:] if abs(t - zs) < SNAP]
     if near:
         zs = float(near[0])
     h, va, tops, vall = _split(model, zs)
@@ -80,7 +91,7 @@ def first_arrival(model, zs, X, r=1.0):
     # head waves on interfaces below the source
     for j in range(len(vall)):
         ztop = tops[j]
-        if ztop < zs or j == 0:
+        if (ztop <= zs if legacy else ztop < zs) or j == 0:
             continue
         vn = vall[j]
         vabove = vall[:j]
