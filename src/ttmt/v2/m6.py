@@ -19,11 +19,13 @@ residual, so a block that first locked on the other event of a pair can move to 
 offset is absorbed by the block times, which is the timing-tolerant class of Appendix AB).
 
 Resolvability (replaces the 5 km exclusion of the registered loop). When a new atom falls within `near_km` and
-`near_s` of an accepted one, the two-event fit is compared with the best ONE-event fit whose arrivals are free (free
-time within +-free_samples and free 3-vector per block, Theorem A.3(a)). The pair is accepted only if the residual
-sum of squares drops by more than `thr`. Matched-filter samples are correlated, so `thr` is calibrated on a
-noise-only control (one event + noise), not taken from chi2 tables (done in experiments/exploratory/M6-JOINT/run.py:
-z_e^2 plus the 95th percentile of the gain on the control).
+`near_s` of an accepted one, the two-event fit is compared with the best ONE-event fit whose arrivals are free (one P
+and one S pulse per station, free times and free 3-vectors fitted jointly, the class of Theorem A.3(a)), with the
+other atoms refitted around it (``free_one_event_joint``). The pair is accepted only if the residual sum of squares
+drops by more than `thr`. `thr` has no theoretical value: the matched-filter samples are correlated, so a difference
+of RSS is not on the scale of the noise-free margin delta^2 of Corollary A.1 (which is a necessary condition on the
+signal, not the level of a statistic). The level is set only by a calibration control with neighbouring events
+(review T5.2 of 9 November 2026, `teoria-fase5/revision-A1-A3a-M6.md`).
 
 Not yet: EGF / coda dictionary (Ricker + MT only), pruning by S_mix, the a-posteriori gap of AA.4(d).
 """
@@ -174,6 +176,67 @@ def free_one_event_rss(Y, others, a, G, resp, free_samples=8):
     return float((R * R).sum())
 
 
+def _resp_full(t, nt, resp):
+    tmp = np.zeros((1, nt))
+    _place(tmp, np.ones(1), t, resp)
+    return tmp[0]
+
+
+def _free_station(Ri, tP, tS, resp, half):
+    """best joint fit of ONE P and ONE S pulse with free times and free 3-vectors to Ri (3, NT) (Theorem A.3(a): the two
+    pulses solved together with their 2 x 2 Gram, not one after the other). Grid of whole samples within +-half of
+    (tP, tS), then a local search. Returns (residual (3, NT), rss)."""
+    nt = Ri.shape[-1]
+    off = np.arange(-half, half + 1)
+    RP = np.array([_resp_full(tP + o, nt, resp) for o in off])
+    RS = np.array([_resp_full(tS + o, nt, resp) for o in off])
+    pp, ss = (RP * RP).sum(1), (RS * RS).sum(1)
+    ps = RP @ RS.T
+    bP, bS = Ri @ RP.T, Ri @ RS.T                                    # (3, n)
+    nP, nS = (bP * bP).sum(0), (bS * bS).sum(0)
+    cr = bP.T @ bS                                                   # <bP_k, bS_l>
+    det = pp[:, None] * ss[None, :] - ps ** 2
+    ok = det > 1e-9 * pp[:, None] * ss[None, :]
+    expl = np.where(ok, (ss[None, :] * nP[:, None] - 2 * ps * cr + pp[:, None] * nS[None, :]) / np.where(ok, det, 1),
+                    np.maximum(nP[:, None] / np.maximum(pp[:, None], 1e-300), nS[None, :] / np.maximum(ss[None, :], 1e-300)))
+    k, l = np.unravel_index(int(np.argmax(expl)), expl.shape)
+
+    def fit(th):
+        rp, rs = _resp_full(th[0], nt, resp), _resp_full(th[1], nt, resp)
+        A = np.stack([rp, rs], 1)                                    # (NT, 2)
+        V, *_ = np.linalg.lstsq(A, Ri.T, rcond=None)                 # (2, 3)
+        d = Ri - (A @ V).T
+        return d, float((d * d).sum())
+    from scipy.optimize import minimize
+    th0 = np.array([tP + off[k], tS + off[l]], float)
+    res = minimize(lambda th: fit(th)[1], th0, method="Nelder-Mead",
+                   options={"xatol": 1e-3, "fatol": 1e-9, "initial_simplex": th0 + np.array([[0, 0], [0.5, 0], [0, 0.5]])})
+    th = res.x if res.fun <= fit(th0)[1] else th0
+    return fit(th)
+
+
+def free_one_event_joint(Y, others, a, G, resp, rounds=3, half=16):
+    """residual sum of squares of the ONE-event alternative in the same class as the two-event fit (review T5.2 of
+    9 November 2026, items b1-b3): atom a's blocks are explained per station by one P and one S pulse with free times
+    (+-half samples, 1 s at 16 Hz) and free 3-vectors fitted jointly (A.3(a)), and the OTHER atoms are refitted
+    (tensors and block times, ``joint_refit``) around it, alternating ``rounds`` times."""
+    ns, _, nt = Y.shape
+    oth = [dict(o, T=o["T"].copy(), anchor=np.array(o.get("anchor", o["T"]), float).copy(),
+                bound=o.get("bound", np.full(o["T"].shape, 2.0))) for o in others]
+    tc = a["T"].copy()
+    F = np.zeros_like(Y)
+    for _ in range(rounds):
+        R = Y - (model(oth, G, Y.shape, resp) if oth else 0.0)
+        for i in range(ns):
+            d, _r = _free_station(R[i], tc[0, i], tc[1, i], resp, half)
+            F[i] = R[i] - d
+        if not oth:
+            break
+        oth, _R, _rss = joint_refit(Y - F, oth, G, resp, rounds=1)
+    R = Y - F - (model(oth, G, Y.shape, resp) if oth else 0.0)
+    return float((R * R).sum())
+
+
 def onset_candidates(q_b, tpred_b, half):
     """per station, the sub-sample times (samples) of every onset maximum of q_b (ns, NT) within tpred_b +- half."""
     out = []
@@ -199,12 +262,15 @@ def select(E, R, q, lag, statistic, reader, excluded):
 
 
 def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=None, near_km=5.0, near_s=1.5,
-              bound_read=2.0, bound_unread=4.0, rounds=3, cand_half=8, kernel=LEGACY_KERNEL, return_residual=False):
+              bound_read=2.0, bound_unread=4.0, rounds=3, cand_half=8, kernel=LEGACY_KERNEL, return_residual=False,
+              free="joint"):
     """M6 loop: add the best atom on the residual, refit all atoms jointly on MFn, and keep a new atom near an
     accepted one only if the resolvability test passes (thr; None = always keep, i.e. no test and no exclusion).
     A rejected candidate excludes the nodes within near_km of it, so the loop moves on.
     Atoms: dicts x, tau, s (ranking score at its step), gi, T (2, ns) peak times, m (6,), pair_gain (RSS drop of the
-    resolvability test, None if not tested)."""
+    resolvability test, None if not tested). free: "joint" (default since 9 November 2026, review T5.2) computes
+    the one-event alternative with the other atoms refitted and P and S fitted jointly; "legacy" is the first version
+    (``free_one_event_rss``), kept for the bias measurement."""
     reader = reader or default_reader(kernel.dt)
     resp = _Resp(kernel)
     lagT = np.asarray(lag, float).T
@@ -236,7 +302,10 @@ def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=Non
         if near and thr is not None:
             j = atoms.index(min(near, key=lambda a: np.linalg.norm(a["x"][:2] - new["x"][:2])))
             others = [a for k, a in enumerate(atoms) if k != j]
-            rss_one = free_one_event_rss(Y, others, atoms[j], E.G, resp)
+            if free == "joint":
+                rss_one = free_one_event_joint(Y, others, atoms[j], E.G, resp)
+            else:                                      # "legacy": the first version (bounded, sequential, others fixed)
+                rss_one = free_one_event_rss(Y, others, atoms[j], E.G, resp)
             gain = rss_one - rss_t
             new["pair_gain"] = gain
             if gain <= thr:
@@ -249,3 +318,30 @@ def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=Non
         a.pop("anchor", None)
         a.pop("cands", None)
     return (atoms, R) if return_residual else atoms
+
+
+def hits_loctv(atoms, sources, tol_km=None, tol_s=None):
+    """indices of the true sources hit under LOC+T-V (ADR-0008 item 2, ``ttmt.stats.label_voronoi``), atoms scored in
+    acceptance order (the first accepted atom has the highest score). sources: list of (xyz, tau, ...). The one
+    function every M6 experiment scores with (CR-29)."""
+    from ..stats import TOL_KM, TOL_S, label_voronoi
+    if not atoms or not sources:
+        return set()
+    sc = -np.arange(len(atoms), dtype=float)
+    dxy = np.array([np.asarray(a["x"], float)[:2] for a in atoms])
+    dt = np.array([float(a["tau"]) for a in atoms])
+    exy = np.array([np.asarray(s[0], float)[:2] for s in sources])
+    et = np.array([float(s[1]) for s in sources])
+    lab = label_voronoi(sc, dxy, dt, exy, et, tol_km or TOL_KM, tol_s or TOL_S)
+    return {int(v) for v in lab if v >= 0}
+
+
+def duplicate_atoms(atoms, half_sep):
+    """the duplicator negative control (ADR-0008 item 3, ``ttmt.stats.duplicator``) on an atom list: every atom twice,
+    at tau - half_sep and tau + half_sep; a sound pair metric gives it no more pair recall than the atoms."""
+    out = []
+    for a in atoms:
+        out.append(dict(a, tau=float(a["tau"]) - half_sep))
+    for a in atoms:
+        out.append(dict(a, tau=float(a["tau"]) + half_sep))
+    return out

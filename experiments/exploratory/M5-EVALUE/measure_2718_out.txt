@@ -1,0 +1,120 @@
+﻿== ladder_4 2800: 29 FIT / 28 TEST slots, 20 catalogue events
+   st FRON  s0 1.066 eps 0.33 |v| q50 1.97 q99 5.51 max 8.7  R alpha 10.00  T nu 39.77  comp var [0.96, 1.23, 0.81]
+      R: PIT deciles x10 [0.48, 0.55, 0.86, 0.91, 1.23, 1.11, 0.62, 0.89, 1.38, 1.97]  max dev 0.097  tail ratio @1e-2 2.74 @1e-3 1.25
+      T: PIT deciles x10 [0.02, 0.27, 0.77, 1.11, 1.93, 1.29, 0.96, 1.12, 1.03, 1.49]  max dev 0.098  tail ratio @1e-2 4.14 @1e-3 13.75
+   st PARC  s0 1.571 eps 0.50 |v| q50 2.99 q99 5.63 max 5.9  R alpha 3.57  T nu 89.10  comp var [0.82, 1.19, 0.99]
+      R: PIT deciles x10 [0.63, 0.56, 1.05, 0.71, 0.95, 0.93, 0.8, 1.07, 1.15, 2.15]  max dev 0.115  tail ratio @1e-2 1.59 @1e-3 0.00
+      T: PIT deciles x10 [0.02, 0.19, 0.61, 1.17, 1.43, 1.45, 1.34, 1.4, 1.37, 1.03]  max dev 0.098  tail ratio @1e-2 0.44 @1e-3 0.00
+   st PIEI  s0 1.479 eps 0.21 |v| q50 2.81 q99 9.09 max 9.1  R alpha 10.00  T nu 300.00  comp var [1.13, 1.11, 0.76]
+      R: PIT deciles x10 [0.34, 0.59, 0.78, 1.11, 0.84, 0.99, 1.08, 1.1, 1.68, 1.5]  max dev 0.068  tail ratio @1e-2 7.99 @1e-3 30.38
+      T: PIT deciles x10 [0.0, 0.08, 0.29, 0.89, 1.56, 1.6, 1.66, 1.66, 0.94, 1.32]  max dev 0.100  tail ratio @1e-2 6.81 @1e-3 18.62
+   st SSFR  s0 1.121 eps 0.17 |v| q50 2.15 q99 7.76 max 11.1  R alpha 10.00  T nu 300.00  comp var [1.2, 1.13, 0.67]
+      R: PIT deciles x10 [0.25, 0.6, 0.9, 0.84, 0.65, 1.15, 1.05, 1.49, 1.09, 1.98]  max dev 0.098  tail ratio @1e-2 8.25 @1e-3 56.25
+      T: PIT deciles x10 [0.0, 0.12, 0.4, 0.76, 1.44, 1.56, 1.63, 1.65, 1.18, 1.27]  max dev 0.100  tail ratio @1e-2 6.35 @1e-3 51.75
+   pi CAL median block norm 4.35  (LOW rescaled to 2.0 x median s0 1.300)
+== ladder_6 2800: 29 FIT / 28 TEST slots, 20 catalogue events
+   st ATCA  s0 1.399 eps 0.48 |v| q50 2.06 q99 6.61 max 7.0  R alpha 10.00  T nu 45.93  comp var [0.88, 1.05, 1.06]
+      R: PIT deciles x10 [1.38, 1.1, 1.55, 1.78, 1.64, 0.81, 0.66, 0.45, 0.32, 0.3]  max dev 0.078  tail ratio @1e-2 1.45 @1e-3 0.00
+      T: PIT deciles x10 [0.98, 1.26, 1.92, 1.91, 1.51, 0.81, 0.55, 0.44, 0.32, 0.3]  max dev 0.092  tail ratio @1e-2 1.51 @1e-3 6.88
+   st ATPI  s0 1.279 eps 0.41 |v| q50 2.67 q99 9.24 max 10.1  R alpha 9.69  T nu 300.00  comp var [0.91, 1.15, 0.94]
+      R: PIT deciles x10 [0.22, 0.37, 0.66, 0.33, 0.44, 1.1, 1.29, 1.65, 1.28, 2.67]  max dev 0.167  tail ratio @1e-2 9.51 @1e-3 52.38
+      T: PIT deciles x10 [0.02, 0.1, 0.29, 0.77, 0.61, 1.46, 1.71, 1.77, 1.16, 2.1]  max dev 0.110  tail ratio @1e-2 9.15 @1e-3 54.00
+   st ATVO  s0 1.319 eps 0.50 |v| q50 2.73 q99 9.01 max 10.1  R alpha 9.79  T nu 300.00  comp var [1.07, 1.1, 0.83]
+      R: PIT deciles x10 [0.34, 0.49, 0.67, 0.99, 0.52, 0.72, 0.92, 0.99, 1.53, 2.82]  max dev 0.182  tail ratio @1e-2 9.56 @1e-3 61.00
+      T: PIT deciles x10 [0.02, 0.1, 0.53, 0.87, 1.25, 0.86, 1.45, 1.28, 1.66, 2.0]  max dev 0.100  tail ratio @1e-2 8.47 @1e-3 58.00
+   st FRON  s0 0.981 eps 0.47 |v| q50 2.01 q99 6.53 max 9.3  R alpha 7.69  T nu 28.49  comp var [0.95, 1.29, 0.75]
+      R: PIT deciles x10 [0.22, 0.35, 0.66, 0.67, 1.02, 1.01, 1.07, 1.08, 1.24, 2.68]  max dev 0.168  tail ratio @1e-2 5.89 @1e-3 21.62
+      T: PIT deciles x10 [0.0, 0.13, 0.44, 0.97, 1.48, 1.48, 1.21, 0.98, 1.23, 2.07]  max dev 0.107  tail ratio @1e-2 8.34 @1e-3 39.00
+   st MURB  s0 1.280 eps 0.50 |v| q50 2.47 q99 8.80 max 10.4  R alpha 10.00  T nu 300.00  comp var [1.31, 1.14, 0.55]
+      R: PIT deciles x10 [0.48, 0.63, 0.76, 0.52, 0.86, 0.9, 1.15, 1.4, 1.1, 2.2]  max dev 0.120  tail ratio @1e-2 8.88 @1e-3 56.50
+      T: PIT deciles x10 [0.02, 0.15, 0.55, 0.8, 1.17, 1.6, 1.9, 1.2, 1.31, 1.31]  max dev 0.098  tail ratio @1e-2 8.55 @1e-3 56.50
+   st PARC  s0 1.452 eps 0.44 |v| q50 2.95 q99 6.58 max 7.3  R alpha 3.66  T nu 43.13  comp var [0.84, 1.22, 0.94]
+      R: PIT deciles x10 [0.29, 0.49, 0.43, 0.8, 0.62, 1.0, 0.87, 1.4, 1.43, 2.65]  max dev 0.165  tail ratio @1e-2 2.91 @1e-3 0.00
+      T: PIT deciles x10 [0.01, 0.1, 0.37, 0.65, 1.3, 1.53, 1.44, 1.63, 1.45, 1.52]  max dev 0.099  tail ratio @1e-2 3.24 @1e-3 10.00
+   pi CAL median block norm 2.40  (LOW rescaled to 2.0 x median s0 1.299)
+== unilateral_c40 2800: 29 FIT / 28 TEST slots, 20 catalogue events
+   st ATCA  s0 1.409 eps 0.35 |v| q50 1.94 q99 3.47 max 4.5  R alpha 10.00  T nu 300.00  comp var [0.91, 1.0, 1.09]
+      R: PIT deciles x10 [1.87, 1.84, 1.16, 1.96, 1.41, 1.11, 0.23, 0.31, 0.08, 0.03]  max dev 0.097  tail ratio @1e-2 0.00 @1e-3 0.00
+      T: PIT deciles x10 [1.03, 2.02, 1.68, 2.08, 1.5, 1.05, 0.25, 0.29, 0.08, 0.03]  max dev 0.108  tail ratio @1e-2 0.00 @1e-3 0.00
+   st ATPC  s0 1.672 eps 0.50 |v| q50 3.63 q99 7.46 max 9.0  R alpha 10.00  T nu 300.00  comp var [0.63, 1.68, 0.69]
+      R: PIT deciles x10 [0.24, 0.45, 0.58, 0.83, 0.55, 0.63, 1.26, 1.32, 1.71, 2.44]  max dev 0.143  tail ratio @1e-2 2.29 @1e-3 0.12
+      T: PIT deciles x10 [0.05, 0.29, 0.68, 1.15, 0.8, 1.1, 1.17, 1.04, 1.36, 2.38]  max dev 0.138  tail ratio @1e-2 2.45 @1e-3 0.25
+   st ATPI  s0 1.245 eps 0.30 |v| q50 2.50 q99 4.65 max 5.3  R alpha 4.84  T nu 25.15  comp var [0.85, 1.08, 1.07]
+      R: PIT deciles x10 [0.42, 0.43, 0.48, 0.68, 0.85, 0.69, 1.15, 1.11, 2.42, 1.76]  max dev 0.142  tail ratio @1e-2 0.00 @1e-3 0.00
+      T: PIT deciles x10 [0.02, 0.14, 0.6, 0.61, 1.31, 1.38, 1.68, 1.74, 1.85, 0.67]  max dev 0.098  tail ratio @1e-2 0.65 @1e-3 0.00
+   st ATVO  s0 1.300 eps 0.50 |v| q50 2.57 q99 4.61 max 5.7  R alpha 4.52  T nu 18.83  comp var [0.97, 1.11, 0.92]
+      R: PIT deciles x10 [0.48, 0.5, 0.52, 0.92, 0.63, 0.95, 1.37, 1.07, 1.47, 2.08]  max dev 0.108  tail ratio @1e-2 0.00 @1e-3 0.00
+      T: PIT deciles x10 [0.05, 0.27, 0.4, 0.92, 1.34, 1.5, 1.74, 1.44, 1.57, 0.78]  max dev 0.095  tail ratio @1e-2 0.06 @1e-3 0.00
+   st FRON  s0 0.975 eps 0.43 |v| q50 1.83 q99 4.54 max 6.4  R alpha 4.28  T nu 8.82  comp var [1.13, 1.1, 0.76]
+      R: PIT deciles x10 [0.72, 0.63, 0.8, 0.87, 1.01, 0.82, 1.25, 1.02, 1.44, 1.45]  max dev 0.045  tail ratio @1e-2 0.00 @1e-3 0.00
+      T: PIT deciles x10 [0.09, 0.35, 0.78, 1.19, 1.68, 1.64, 1.25, 1.18, 1.14, 0.69]  max dev 0.091  tail ratio @1e-2 0.30 @1e-3 0.00
+   st MURB  s0 1.258 eps 0.50 |v| q50 2.29 q99 4.59 max 6.2  R alpha 6.12  T nu 40.52  comp var [1.32, 0.88, 0.8]
+      R: PIT deciles x10 [0.44, 0.62, 1.03, 0.94, 1.24, 0.94, 0.95, 1.1, 1.43, 1.31]  max dev 0.056  tail ratio @1e-2 0.04 @1e-3 0.00
+      T: PIT deciles x10 [0.0, 0.14, 0.63, 1.32, 1.94, 1.75, 1.38, 1.26, 0.84, 0.74]  max dev 0.100  tail ratio @1e-2 0.45 @1e-3 0.38
+   st PARC  s0 1.412 eps 0.42 |v| q50 2.71 q99 6.25 max 6.5  R alpha 10.00  T nu 300.00  comp var [0.97, 0.88, 1.15]
+      R: PIT deciles x10 [0.57, 0.62, 0.64, 0.78, 0.97, 0.94, 0.88, 1.26, 1.57, 1.76]  max dev 0.076  tail ratio @1e-2 3.06 @1e-3 10.75
+      T: PIT deciles x10 [0.03, 0.18, 0.54, 0.87, 1.3, 1.63, 1.68, 1.34, 1.45, 0.97]  max dev 0.097  tail ratio @1e-2 2.52 @1e-3 10.38
+   st PIEI  s0 1.354 eps 0.45 |v| q50 2.48 q99 4.43 max 5.6  R alpha 6.00  T nu 28.15  comp var [0.98, 1.08, 0.95]
+      R: PIT deciles x10 [0.64, 0.91, 0.8, 1.16, 0.89, 0.63, 1.0, 1.28, 1.06, 1.63]  max dev 0.063  tail ratio @1e-2 0.00 @1e-3 0.00
+      T: PIT deciles x10 [0.02, 0.33, 0.78, 1.3, 1.92, 1.23, 1.69, 1.01, 1.01, 0.72]  max dev 0.098  tail ratio @1e-2 0.12 @1e-3 0.00
+   pi CAL median block norm 2.70  (LOW rescaled to 2.0 x median s0 1.327)
+== ladder_4 2801: 29 FIT / 28 TEST slots, 20 catalogue events
+   st ATPC  s0 1.546 eps 0.50 |v| q50 2.79 q99 7.15 max 7.1  R alpha 6.79  T nu 111.29  comp var [1.05, 0.89, 1.06]
+      R: PIT deciles x10 [0.67, 0.69, 0.78, 1.19, 1.0, 1.2, 1.57, 0.88, 0.85, 1.18]  max dev 0.057  tail ratio @1e-2 1.41 @1e-3 0.00
+      T: PIT deciles x10 [0.02, 0.31, 1.04, 1.57, 1.71, 2.01, 1.25, 0.41, 0.7, 0.99]  max dev 0.101  tail ratio @1e-2 2.17 @1e-3 0.00
+   st MURB  s0 1.172 eps 0.39 |v| q50 2.19 q99 10.99 max 12.9  R alpha 3.62  T nu 35.06  comp var [0.99, 1.51, 0.5]
+      R: PIT deciles x10 [0.6, 0.75, 0.94, 0.87, 0.88, 0.94, 1.21, 1.17, 1.15, 1.5]  max dev 0.050  tail ratio @1e-2 5.09 @1e-3 13.25
+      T: PIT deciles x10 [0.0, 0.13, 0.72, 1.36, 1.55, 1.49, 1.92, 1.18, 0.6, 1.05]  max dev 0.100  tail ratio @1e-2 5.81 @1e-3 33.38
+   st PARC  s0 1.318 eps 0.50 |v| q50 2.56 q99 4.40 max 4.7  R alpha 10.00  T nu 300.00  comp var [1.0, 0.96, 1.03]
+      R: PIT deciles x10 [0.62, 0.55, 0.6, 0.69, 0.74, 0.91, 1.12, 1.16, 1.66, 1.96]  max dev 0.096  tail ratio @1e-2 2.32 @1e-3 0.00
+      T: PIT deciles x10 [0.0, 0.23, 0.46, 0.72, 1.1, 1.44, 1.84, 1.96, 1.09, 1.16]  max dev 0.100  tail ratio @1e-2 0.00 @1e-3 0.00
+   st PIEI  s0 1.281 eps 0.26 |v| q50 2.50 q99 7.61 max 8.8  R alpha 4.81  T nu 23.94  comp var [1.04, 1.28, 0.68]
+      R: PIT deciles x10 [0.32, 0.43, 0.67, 1.06, 0.59, 1.05, 1.78, 1.46, 1.34, 1.3]  max dev 0.078  tail ratio @1e-2 2.74 @1e-3 0.00
+      T: PIT deciles x10 [0.0, 0.15, 0.31, 1.19, 1.42, 1.93, 2.36, 1.17, 0.28, 1.19]  max dev 0.136  tail ratio @1e-2 4.30 @1e-3 18.38
+   pi CAL median block norm 4.32  (LOW rescaled to 2.0 x median s0 1.299)
+== ladder_6 2801: 29 FIT / 28 TEST slots, 20 catalogue events
+   st ATCA  s0 1.720 eps 0.50 |v| q50 3.57 q99 7.52 max 8.6  R alpha 8.30  T nu 300.00  comp var [0.96, 1.1, 0.94]
+      R: PIT deciles x10 [0.1, 0.44, 0.44, 0.64, 0.96, 1.04, 1.23, 1.38, 1.58, 2.18]  max dev 0.118  tail ratio @1e-2 1.18 @1e-3 0.00
+      T: PIT deciles x10 [0.0, 0.09, 0.46, 0.83, 1.19, 1.37, 1.45, 1.48, 1.64, 1.49]  max dev 0.100  tail ratio @1e-2 1.79 @1e-3 3.38
+   st ATPC  s0 1.518 eps 0.50 |v| q50 2.58 q99 4.91 max 5.3  R alpha 10.00  T nu 300.00  comp var [0.98, 0.83, 1.18]
+      R: PIT deciles x10 [0.75, 1.04, 1.24, 1.11, 1.19, 0.79, 1.31, 1.18, 1.17, 0.21]  max dev 0.079  tail ratio @1e-2 0.00 @1e-3 0.00
+      T: PIT deciles x10 [0.06, 0.56, 1.27, 1.92, 1.63, 1.51, 1.0, 1.54, 0.35, 0.16]  max dev 0.093  tail ratio @1e-2 0.00 @1e-3 0.00
+   st MURB  s0 1.173 eps 0.50 |v| q50 2.15 q99 3.99 max 4.7  R alpha 3.89  T nu 10.60  comp var [1.0, 0.94, 1.06]
+      R: PIT deciles x10 [0.44, 1.02, 0.98, 0.82, 0.96, 0.9, 1.12, 1.26, 1.65, 0.86]  max dev 0.065  tail ratio @1e-2 0.00 @1e-3 0.00
+      T: PIT deciles x10 [0.0, 0.21, 0.74, 1.51, 1.81, 1.58, 1.88, 1.41, 0.53, 0.33]  max dev 0.100  tail ratio @1e-2 0.00 @1e-3 0.00
+   st PARC  s0 1.377 eps 0.39 |v| q50 2.46 q99 4.62 max 4.9  R alpha 10.00  T nu 300.00  comp var [0.9, 1.12, 0.98]
+      R: PIT deciles x10 [0.66, 0.65, 0.9, 0.85, 1.24, 1.17, 1.31, 1.2, 0.98, 1.03]  max dev 0.035  tail ratio @1e-2 1.52 @1e-3 0.00
+      T: PIT deciles x10 [0.02, 0.24, 0.58, 0.92, 1.4, 2.04, 1.83, 1.55, 0.96, 0.48]  max dev 0.104  tail ratio @1e-2 0.00 @1e-3 0.00
+   st PIEI  s0 1.296 eps 0.50 |v| q50 2.38 q99 4.13 max 4.6  R alpha 4.94  T nu 94.43  comp var [1.04, 0.94, 1.02]
+      R: PIT deciles x10 [0.55, 0.67, 0.6, 0.84, 1.33, 1.08, 1.33, 1.37, 1.08, 1.16]  max dev 0.045  tail ratio @1e-2 0.00 @1e-3 0.00
+      T: PIT deciles x10 [0.0, 0.25, 0.52, 0.94, 1.74, 2.15, 2.01, 1.16, 0.97, 0.26]  max dev 0.115  tail ratio @1e-2 0.00 @1e-3 0.00
+   st SSFR  s0 1.001 eps 0.33 |v| q50 1.82 q99 2.99 max 3.7  R alpha 4.66  T nu 7.78  comp var [1.07, 1.18, 0.75]
+      R: PIT deciles x10 [0.57, 0.87, 0.85, 0.67, 1.18, 1.21, 1.46, 1.66, 1.16, 0.36]  max dev 0.066  tail ratio @1e-2 0.00 @1e-3 0.00
+      T: PIT deciles x10 [0.0, 0.23, 0.85, 1.38, 1.92, 2.19, 2.15, 0.85, 0.41, 0.02]  max dev 0.119  tail ratio @1e-2 0.00 @1e-3 0.00
+   pi CAL median block norm 2.35  (LOW rescaled to 2.0 x median s0 1.336)
+== unilateral_c40 2801: 29 FIT / 28 TEST slots, 20 catalogue events
+   st ATBU  s0 1.275 eps 0.18 |v| q50 2.31 q99 4.04 max 4.2  R alpha 5.52  T nu 29.63  comp var [1.21, 0.86, 0.93]
+      R: PIT deciles x10 [0.7, 1.09, 0.87, 0.68, 1.01, 0.85, 1.23, 1.07, 1.23, 1.28]  max dev 0.032  tail ratio @1e-2 0.00 @1e-3 0.00
+      T: PIT deciles x10 [0.03, 0.37, 1.06, 1.22, 1.19, 1.73, 1.62, 1.27, 1.19, 0.32]  max dev 0.097  tail ratio @1e-2 0.00 @1e-3 0.00
+   st ATCA  s0 1.836 eps 0.44 |v| q50 3.78 q99 8.39 max 8.8  R alpha 8.23  T nu 300.00  comp var [0.98, 1.07, 0.96]
+      R: PIT deciles x10 [0.11, 0.36, 0.66, 0.64, 0.9, 1.02, 1.31, 1.25, 1.64, 2.13]  max dev 0.113  tail ratio @1e-2 1.24 @1e-3 0.00
+      T: PIT deciles x10 [0.01, 0.15, 0.51, 0.92, 1.09, 1.27, 1.68, 1.19, 1.74, 1.43]  max dev 0.099  tail ratio @1e-2 1.76 @1e-3 10.00
+   st ATPC  s0 1.611 eps 0.34 |v| q50 2.76 q99 5.11 max 5.5  R alpha 10.00  T nu 300.00  comp var [0.96, 0.86, 1.18]
+      R: PIT deciles x10 [0.84, 1.05, 1.43, 0.76, 1.03, 1.1, 1.03, 1.36, 1.22, 0.19]  max dev 0.081  tail ratio @1e-2 0.00 @1e-3 0.00
+      T: PIT deciles x10 [0.06, 0.66, 1.28, 1.88, 1.36, 1.64, 1.23, 1.58, 0.17, 0.15]  max dev 0.094  tail ratio @1e-2 0.00 @1e-3 0.00
+   st ATPI  s0 1.277 eps 0.50 |v| q50 2.32 q99 4.26 max 4.3  R alpha 8.03  T nu 300.00  comp var [0.96, 1.15, 0.9]
+      R: PIT deciles x10 [0.58, 0.7, 0.91, 0.94, 1.34, 0.67, 1.28, 1.37, 0.6, 1.6]  max dev 0.060  tail ratio @1e-2 0.00 @1e-3 0.00
+      T: PIT deciles x10 [0.02, 0.26, 0.62, 1.12, 1.63, 1.54, 2.12, 0.97, 0.83, 0.88]  max dev 0.112  tail ratio @1e-2 0.00 @1e-3 0.00
+   st ATVO  s0 1.334 eps 0.50 |v| q50 2.41 q99 4.16 max 4.6  R alpha 9.66  T nu 300.00  comp var [0.85, 1.19, 0.96]
+      R: PIT deciles x10 [0.69, 0.88, 0.64, 0.99, 1.05, 1.33, 1.41, 1.25, 1.12, 0.64]  max dev 0.041  tail ratio @1e-2 0.00 @1e-3 0.00
+      T: PIT deciles x10 [0.05, 0.31, 0.96, 0.83, 1.67, 1.95, 1.86, 1.2, 0.94, 0.25]  max dev 0.095  tail ratio @1e-2 0.00 @1e-3 0.00
+   st FRON  s0 1.043 eps 0.41 |v| q50 2.01 q99 5.95 max 20.5  R alpha 5.21  T nu 14.37  comp var [1.51, 0.8, 0.69]
+      R: PIT deciles x10 [0.75, 0.72, 0.66, 0.58, 0.83, 1.04, 1.03, 1.66, 1.43, 1.29]  max dev 0.066  tail ratio @1e-2 1.25 @1e-3 6.12
+      T: PIT deciles x10 [0.04, 0.43, 0.88, 1.03, 1.31, 1.53, 1.74, 1.31, 0.86, 0.89]  max dev 0.097  tail ratio @1e-2 1.68 @1e-3 9.00
+   st MURB  s0 1.238 eps 0.50 |v| q50 2.27 q99 4.10 max 5.0  R alpha 4.26  T nu 11.41  comp var [1.0, 0.95, 1.05]
+      R: PIT deciles x10 [0.5, 1.04, 0.95, 0.73, 1.0, 0.85, 1.03, 1.36, 1.58, 0.96]  max dev 0.058  tail ratio @1e-2 0.00 @1e-3 0.00
+      T: PIT deciles x10 [0.0, 0.16, 0.77, 1.58, 1.69, 1.53, 1.94, 1.51, 0.63, 0.18]  max dev 0.100  tail ratio @1e-2 0.00 @1e-3 0.00
+   st SSFR  s0 1.062 eps 0.46 |v| q50 1.92 q99 3.20 max 3.8  R alpha 5.24  T nu 7.79  comp var [1.07, 1.16, 0.77]
+      R: PIT deciles x10 [0.57, 0.95, 0.78, 0.72, 1.08, 1.47, 1.5, 1.34, 1.22, 0.37]  max dev 0.063  tail ratio @1e-2 0.00 @1e-3 0.00
+      T: PIT deciles x10 [0.01, 0.25, 1.02, 1.19, 1.88, 2.35, 1.91, 0.88, 0.49, 0.02]  max dev 0.135  tail ratio @1e-2 0.00 @1e-3 0.00
+   pi CAL median block norm 2.88  (LOW rescaled to 2.0 x median s0 1.276)

@@ -3,10 +3,79 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-14
+
+- Supervision review of the open work (exploratory; no registered number changes). M6-CAL rerun on fresh seeds with
+  the step-3 settings frozen: 25 of 300 scenes with neighbours split ([0.055, 0.121]), so the 5 % of step 3 does not
+  hold out of sample (7 % over both runs); card updated, `M6-CAL/run_fresh.py`. The duplicator column of pair-only
+  cells is declared descriptive: the control of ADR-0008 item 3 holds at the registered operating point (duplicator
+  of frozen PyOcto on the tuning partition: T 0.07-0.12 against 0.206) and stays as written.
+- `M6A-REALNOISE/run.py` brought to the M6-CAL settings before any real run (kmax 4, `near_km` 10, operating-loop
+  threshold, LOC+T-V through `hits_loctv`); it still scored with the plain LOC+T `hits()` of M6-JOINT (CR-29). Card
+  updated; G-M6a is not read until split S is handled and the threshold is calibrated on real isolated events.
+- M2-GP card: note that the 30 % gate sat at the measured noise floor (reducible share 0.31-0.33).
+
+## 2026-11-09
+
+- Thesis: the [pending #43] marks and the draft note removed after PR #43 merged.
+- Thesis, critique pass 2: CR-32, "ACAP with c in {3, 5} failed" instead of "retired", and the cap of 6 kept although
+  it ranks below chance on held-out Ridgecrest (Table 2 row "new", future-work item 3); CR-33, Appendix AB.D summary
+  says the e-value was not calibrated on real noise (pending PR #45), so no universal threshold or guaranteed
+  false-detection control is claimed; CR-34, EQNet2 sentence corrected (temporal event stacking, polarity to SKHASH,
+  no MT consistency in its loss) and false-detection control not used as a difference from it.
+- Thesis, Section 2: HARPA (Nat. Commun. 17:8140, 2026), VORA (arXiv 2607.10450) and EQNet2 (arXiv 2610.17404) cited;
+  the novelty is stated as a common moment tensor imposed across stations during detection and deflation, not the use
+  of polarity, which EQNet2 also predicts per station.
+- M2, first version (plan T4.8, exploratory): `ttmt.v2.m2`, per-(station, phase) Gaussian-process term (Matern 3/2,
+  GLS mean, marginal likelihood, optional white level per reading-quality group) on a 1-D medium, `TravelTimeModel`,
+  `fit_station_gp`, `time_blocks`; tests `tests/test_m2.py`. `tools/fetch_scedc_phases.py` fetches SCSN analyst picks
+  of the Ridgecrest 2019 sequence from the public SCEDC bucket. Exploration M2-GP (gate G-M2): FAILS. Held-out MSE
+  drop against the constant term 0.150 (days 190-196) and 0.191 on the confirmation days 197-203 of the declared
+  second step (gate 0.30); coverage of +-2 sigma 0.94 passes. The robust spread falls 28-36 % and the best picks reach
+  0.25-0.30: the mean square is held by the heavy-tailed pick noise (drop bound 0.31-0.33).
+- M6 after the theory review T5.2 and the adversarial pass 2 (CR-29, CR-30, CR-37): the one-event alternative of the
+  resolvability test is now fitted jointly (P and S together, +-1 s, neighbours refitted; `free="joint"`, default),
+  z_e^2 no longer justifies the threshold, `hits_loctv` and `duplicate_atoms` score M6 with LOC+T-V and the duplicator.
+  M6-BIAS: with neighbours the old alternative inflated the false-split gain (p95 161 against -23). M6-CAL
+  (simulation, kmax 4, mismatched pulses): a threshold calibrated on controls split 15 % of the scenes with
+  neighbours; calibrated on the operating loop, 10.5 %, half from atoms outside the test radius; with the radius at
+  10 km and thr 23.8, 5 % [2.4 %, 9.0 %]. Near-pair recall (LOC+T-V) +0.30 to +0.50 over the greedy loop with the
+  5 km exclusion. The duplicator control fails in 4 cells because it uses the true dtau (diagnosed by the review;
+  fix pending the owner).
+- M6A-REALNOISE (gate G-M6a with real noise, provisional until the review of A.1/A.3, T5.2, and the M6 test theory,
+  T5.6): card and script declared before the run.
+
 ## 2026-11-08
 
+- M5 decision step (exploratory, ADR-0010 pivot): `ttmt.v2.m5` with the mixture e-value S_mix (theory D.2) and
+  Student t, gaussian and radial (kernel bulk + Pareto tail) backgrounds; tests `tests/test_m5.py` (in CI).
+  Exploration M5-EVALUE, gate G-M5c, on Task 2M real noise (owner's laptop, CPU): FAILS on both seeds at p = 1e-3
+  (radial background 5.8e-3 on 101231, 1.2e-3 on 100210-11; passes at 1e-2); the gaussian background fails by two
+  orders of magnitude on the transient day, as D.1(a) predicts. The declared second step found the cause in
+  dependence between blocks (simultaneous tails across stations, 1.7x the independent rate), not in the marginal,
+  and pivoted to M7 by its rule; the held-out confirmation day stays unused. A third attempt, the average of
+  per-station e-values (valid under any dependence across stations), already misses the level on a fake i.i.d. null
+  (1.4e-3 at 1e-3), so it was not run on real data. Negative result recorded; the decision rests on M7.
+- Thesis (pending PR #43): the ACAP result in Table 2 (row "new") and future-work item 3: G-M5a fails on both 2M seeds,
+  G-M5b passes on CAL and fails on the held-out Ridgecrest EVAL (N4 0.616); cap-6 saturation confirmed (0.39-0.42);
+  ACAP retired, cap 6 kept.
 - Thesis: Section 8 reports the amendment-4 GaMMA tuning (60 of 60 valid, best 0.2356 against PyOcto 0.2589); with one
   search per method and no intervals neither is ordered above the other.
+- M5-ACAP closed: ACAPF = ACAP(3, floor 6) is identical to ACAP3 (the floor never binds; the read-vector median in
+  noise is above 2, so the earlier diagnosis of a cap tighter than 6 was wrong). ACAP fails G-M5a on seed 2718
+  (-0.020 [-0.041, +0.009]) and seed 3141 (-0.013 [-0.053, +0.028]) and G-M5b on the held-out Ridgecrest EVAL segment
+  (N4 0.616); it passes G-M5b on CAL. The cap 6's saturation is confirmed on EVAL (0.39-0.42). Plan §8.1 pivot
+  proposed to the owner: keep the cap 6 for ranking, retire ACAP, move robustness to the e-value (G-M5c).
+- M5-ACAP full run (laptop, CPU): G-M5b passes (ACAP3 AUC 0.663-0.700 on N4/N6/N8/U8, cap 6 0.39-0.49; CAP6 and NOCAP
+  reproduce c18c). G-M5a fails (ACAP@S0 - MT@S0 = -0.020 [-0.041, +0.009], margin -0.03; MT@S0 identical to the
+  registered 2M parts in 72/72). Diagnosis: in quiet records 3 x median is about 4.6 < 6, tighter than the cap.
+  New variant `ACAP(c, floor)` (cap max(floor, c median), default unchanged) with a unit test; ACAPF = ACAP(3, 6) is
+  tested on seed 2718 and 3141 (G-M5a) and on Ridgecrest CAL and EVAL (G-M5b), the conditions fixed in the card.
+- M5-ACAP scripts for gates G-M5a and G-M5b (plan T4.13, exploratory, not run yet):
+  `experiments/exploratory/M5-ACAP/run_a.py` runs the registered Task 2M pipeline (seed 2718, transient day) with cap
+  6, ACAP and no cap, and tests ACAP@S0 - MT@S0 at DENSE LOC+T @0.25 (lower bound > -0.03). `run_b.py` runs the C18c
+  Ridgecrest oracle with ACAP (c = 2, 3, 5); its CAP6 and NOCAP rows must reproduce `c18c_*.json` exactly; the gate
+  is AUC >= 0.65 on N4, N6, N8 and U8. Gates and costs are fixed in the card before the run.
 - M6, first version (plan T4.19, exploratory): `ttmt.v2.m6.adcg_loop`, joint refit of all accepted atoms (closed-form
   tensors, bounded block times, re-assignment among onset maxima) with the one-against-two resolvability test in
   place of the 5 km exclusion; tests `tests/test_m6.py` (in CI). Exploration M6-JOINT (simulation, SNR 12): pair

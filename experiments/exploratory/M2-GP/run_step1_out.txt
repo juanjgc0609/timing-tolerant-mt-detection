@@ -1,0 +1,21 @@
+events.csv: sha256 OK
+picks.csv: sha256 OK
+3095 events (M >= 1.5), 34 stations with >= 300 P and S picks, 107363 picks; gross |res| > 3.0 s removed: 359 (0.33 %)
+folds (time blocks): [619, 619, 619, 619, 619] events; 1-D medium Hadley-Kanamori, VP/VS 1.73
+
+held-out readings (every fold predicted by terms fitted on the other four)
+                   n  rmse 1-D  rmse const  rmse gp  MSE drop  MAD const  MAD gp  cov2 const  cov2 gp  med sigma gp
+all         107004.0     0.353       0.264    0.244     0.150      0.168   0.121       0.946    0.938         0.203
+P            62196.0     0.266       0.211    0.198     0.120      0.129   0.092       0.943    0.936         0.177
+S            44808.0     0.446       0.324    0.295     0.168      0.248   0.182       0.950    0.940         0.266
+weight 0.2     114.0     0.544       0.561    0.576    -0.054      0.273   0.245       0.807    0.789         0.238
+weight 0.5   16021.0     0.344       0.296    0.284     0.081      0.196   0.161       0.895    0.881         0.194
+weight 0.8   29977.0     0.402       0.314    0.299     0.097      0.217   0.168       0.925    0.911         0.225
+weight 1.0   60892.0     0.328       0.225    0.197     0.235      0.144   0.098       0.970    0.966         0.195
+fold 0       18250.0     0.347       0.269    0.251     0.127      0.168   0.124       0.940    0.931         0.200
+fold 1       19093.0     0.345       0.259    0.240     0.146      0.166   0.120       0.949    0.941         0.197
+fold 2       21998.0     0.354       0.270    0.249     0.147      0.174   0.126       0.941    0.934         0.199
+fold 3       23439.0     0.363       0.268    0.246     0.160      0.170   0.121       0.944    0.937         0.207
+fold 4       24224.0     0.352       0.255    0.233     0.167      0.164   0.117       0.954    0.945         0.205
+
+per station and phase (median hyperparameters over folds: ell km, sf s, sn s)

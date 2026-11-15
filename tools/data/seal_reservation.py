@@ -1,0 +1,131 @@
+"""Write data/reserved/reservation.json with the canonical SHA-256 of its sequences (plan T3.R4).
+
+The sequences are written here, in code, so the sealed document is reproducible: running the script twice gives the
+same file and the same hash. Changing a sequence after sealing changes the hash, and ttmt.registry refuses a
+reservation whose hash does not match. A new sequence or an unseal entry is added by an amendment commit that keeps
+the old hash in ``amendments``.
+
+  python tools/data/seal_reservation.py            # writes the file and prints the hash
+  python tools/data/seal_reservation.py --check    # exits 1 if the committed file differs from what this writes
+"""
+import json
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+from ttmt.registry import RESERVATION, sealed_sha256  # noqa: E402
+
+RULE = {
+    "selection": "catalogue fields only: tools/data/scan_catalogue.py --days 30 on the network's reviewed catalogue "
+                 "(no waveform, pick or detection read); availability from archive listings and StationXML only "
+                 "(tools/data/s3_availability.py)",
+    "criteria": [
+        "networks not used for development or the atlas (CI, IV, N. Hi-net) and not used by any other reserved "
+        "sequence as development data",
+        "origin times after the training period of the neural pickers of the comparator ledger (phasenet/original "
+        "and phaseno: NCEDC 1984-2019; src/ttmt/associate/provenance.py); a regional overlap is declared",
+        "at least 400 catalogued events at or above max(Mc maximum curvature + 0.2, Mc goodness of fit 90 %) in the "
+        "window, median horizontal error at most 1 km (3 km outside California), median azimuthal gap at most 180 deg",
+        "at least 8 stations with continuous three-component data within 50 km of the centre on a sampled day",
+    ],
+    "seal": "the area is a disc of radius_km around (lat, lon) and the window is [start, end) UTC; every network and "
+            "every station in the area is sealed for the window (ttmt.registry.check_read). Allowed before the "
+            "phase-6 registration: fetching and hashing bytes, and QC metadata (headers, StationXML, catalogue "
+            "aggregates). Not allowed: decoding samples, picks, detections, per-event catalogue entries.",
+}
+
+SEQUENCES = [
+    {
+        "id": "conf_geysers_2024",
+        "role": "confirmatory",
+        "name": "The Geysers geothermal field, induced seismicity, March 2024",
+        "networks": ["BG", "NC"],
+        "archive": "NCEDC AWS open dataset (s3://ncedc-pds), doi:10.7932/NCEDC",
+        "catalogue": "NCEDC/NCSS hypocentre catalogue (earthquake_catalogs/NCEDC/2024.ehpcsv)",
+        "window": {"start": "2024-03-06T00:00:00Z", "end": "2024-04-05T00:00:00Z", "lat": 38.80, "lon": -122.80,
+                   "radius_km": 60.0},
+        "catalogue_aggregates": {"n": 2348, "mc_maxc": 1.0, "mc_gft90": 1.2, "n_at_M1.0": 624, "n_at_M1.5": 107,
+                                 "M_max": 2.97, "erh_p50_km": 0.33, "gap_p50_deg": 86.0, "next_within_1s_10km": 1},
+        "availability": "2024-03-15: 46 stations within 30 km, 41 with three components (BG DP* at 500 Hz, NC HH*/HN*), "
+                        "all with StationXML in the bucket",
+        "why": "dense network (truth from the full network, evaluation on 4-12 station subsets: decimation design of "
+               "CR-04); continuous induced sequence; network BG never used",
+    },
+    {
+        "id": "conf_antelope_valley_2021",
+        "role": "confirmatory",
+        "name": "Antelope Valley M6.0 aftershocks, July 2021 (California-Nevada border)",
+        "networks": ["NN", "NC", "BK"],
+        "archive": "NCEDC AWS open dataset (waveforms); NN StationXML from the EarthScope FDSN service (not in the bucket)",
+        "catalogue": "NCEDC/NCSS hypocentre catalogue (earthquake_catalogs/NCEDC/2021.ehpcsv)",
+        "window": {"start": "2021-07-08T22:00:00Z", "end": "2021-08-07T22:00:00Z", "lat": 38.50, "lon": -119.50,
+                   "radius_km": 60.0},
+        "catalogue_aggregates": {"n": 2213, "mc_maxc": 1.0, "mc_gft90": 2.2, "n_at_M1.0": 1405, "n_at_M1.5": 1004,
+                                 "M_max": 6.0, "erh_p50_km": 0.32, "gap_p50_deg": 88.0, "next_within_1s_10km": 0,
+                                 "mc_moving_range": [0.6, 2.8]},
+        "availability": "2021-07-15: no NC/BK station with StationXML in the bucket within 50 km; 31 NN stations in the "
+                        "bucket without StationXML. Metadata must come from EarthScope before QC; if fewer than 8 "
+                        "three-component stations pass QC, the sequence is replaced by conf_bodie_2020",
+        "why": "tectonic aftershock sequence with time-varying completeness (short-term incompleteness); sparse "
+               "regional network, the target geometry",
+    },
+    {
+        "id": "conf_bodie_2020",
+        "role": "spare",
+        "name": "Bodie / Mina area sequence, April 2020",
+        "networks": ["NN", "NC"],
+        "archive": "NCEDC AWS open dataset (waveforms); NN StationXML from EarthScope",
+        "catalogue": "NCEDC/NCSS hypocentre catalogue (2020.ehpcsv)",
+        "window": {"start": "2020-04-11T14:00:00Z", "end": "2020-05-11T14:00:00Z", "lat": 38.30, "lon": -118.90,
+                   "radius_km": 60.0},
+        "catalogue_aggregates": {"n": 745, "mc_maxc": 1.6, "mc_gft90": 1.3, "n_at_mc": 477, "M_max": 5.24,
+                                 "erh_p50_km": 0.43, "gap_p50_deg": 112.0},
+        "availability": "2020-04-20: one NC station with StationXML within 60 km; relies on NN like conf_antelope_valley_2021",
+        "why": "spare for conf_antelope_valley_2021 (same networks, so at most one of the two is used)",
+    },
+    {
+        "id": "conf_colombia_cm",
+        "role": "confirmatory (slot defined by rule, pending data access)",
+        "name": "Colombian national network (SGC, CM): first sequence that meets the criteria",
+        "networks": ["CM"],
+        "archive": "Servicio Geologico Colombiano, FDSN network CM (doi:10.7914/SN/CM); access requested (plan T3.R6)",
+        "catalogue": "SGC reviewed catalogue",
+        "rule": "run scan_catalogue.py --days 30 on the SGC catalogue for 2022-01-01 to 2026-10-31 (catalogue fields "
+                "only); the highest-ranked window that meets the criteria above (horizontal error at most 3 km) and "
+                "has at least 8 three-component CM stations within 60 km is the sequence; it is added to this file by "
+                "an amendment with its window, and its area is sealed from that commit on",
+        "window": {"start": "2022-01-01T00:00:00Z", "end": "2022-01-01T00:00:00Z", "lat": 4.6, "lon": -74.1,
+                   "radius_km": 0.0},
+        "why": "a network outside California and outside every training set of the comparator ledger",
+    },
+]
+
+EXCLUDED = [
+    "Long Valley caldera swarm, September 2019 (NC): inside the training period of phasenet/original and phaseno "
+    "(NCEDC 1984-2019); usable as development data only",
+    "Searles Valley / Ridgecrest 2019 (CI): development network",
+    "Geysers 2023 and 2025 windows (BG): not used, so that BG stays a network never used for development",
+]
+
+
+def document():
+    doc = {"title": "Reserved confirmatory sequences (plan T3.R4)", "sealed_on": "2026-11-09",
+           "rule": RULE, "sequences": SEQUENCES, "excluded": EXCLUDED, "unseal": {}, "amendments": []}
+    doc["sealed_sha256"] = sealed_sha256(doc)
+    return doc
+
+
+def main():
+    text = json.dumps(document(), indent=1, ensure_ascii=False) + "\n"
+    if "--check" in sys.argv:
+        same = RESERVATION.exists() and RESERVATION.read_text() == text
+        print("reservation up to date" if same else "reservation differs from tools/data/seal_reservation.py")
+        return 0 if same else 1
+    RESERVATION.parent.mkdir(parents=True, exist_ok=True)
+    RESERVATION.write_text(text)
+    print(document()["sealed_sha256"])
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

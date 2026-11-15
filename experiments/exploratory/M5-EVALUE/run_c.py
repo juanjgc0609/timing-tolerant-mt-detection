@@ -1,0 +1,503 @@
+"""M5-EVALUE, gate G-M5c (calibration) of the v2 specification (M5 "Decidir"; theory D.1, D.2; ADR-0010 pivot).
+
+Question. On real Task 2M noise, with the Student t background estimated per station and noise block, is the null rate
+of the mixture e-value S_mix >= log(1/p) at most p, for p in {1e-2, 1e-3}?
+
+Design (fixed before the run; see card.md):
+  networks   the Task 2M REAL-arm networks of results/task2M/cfg_SEED.json (station subsets, catalogue, station
+             corrections: code/t2m_lib.py unchanged). 2718: day 101231 (transients), 3141: days 100210 + 100211.
+  slots      each network uses its noise block (about 50 min of consecutive 40 s slots). The slots of the catalogue
+             (net.cat_slots) are removed; the rest, in time order, alternate FIT (even position) / TEST (odd).
+  reading    the registered hard reading: per station and phase, the matched-filter vector (MFn = MF / sd of the
+             window, as the pipeline) at the energy peak within +-4 samples of the predicted sample.
+  background per station, fit on the DISTINCT peak read vectors (duplicates removed) at the predicted samples of
+             400 random lattice hypotheses per FIT slot (time slides on FIT data only), both phases pooled:
+               R  (primary) ttmt.v2.m5.RadialBackground: isotropic, kernel density of log|v| below the 0.99 quantile,
+                  Pareto tail above (Hill index, capped at 10: a
+                  heavier tail than estimated is conservative, a lighter one is not). Declared deviation from the specification's isotropic t, made before
+                  any real-data S_mix: the peak reader leaves no mass near 0, which a single t cannot fit (card.md).
+               T  isotropic Student t by ML (the specification's background; declared ablation).
+               G  isotropic gaussian (ablation; D.1(a) predicts it exceeds p on the transient day).
+  eps        per station 1 - r_s, r_s the polarisation reliability (ttmt.v2.m0.orientation_audit) of the P vectors of
+             the network's catalogue events, clipped to [0.05, 0.5].
+  model      s_k = s0_station + 0.3 |A_k m|, s0 = median FIT read norm / sqrt(3) (same for R, T, G).
+  pi         CAL: the catalogue tensors (least squares at the catalogue location), smoothed (prior_draws: lognormal
+             amplitude sd 0.5, jitter 0.25). LOW (stress): the same directions rescaled so that the median predicted
+             block norm over 200 lattice nodes is 2 x the median station s0, the hardest place for the level.
+             J = 2000 draws per network, seeded, independent of the TEST data.
+  hypotheses 40 random (node, origin) of the registered coarse lattice per TEST slot, seeded, independent of data.
+Gate: with the R background, for pi CAL and pi LOW, the pooled TEST rate of S_mix >= log(1/p) is <= p for p = 1e-2
+and 1e-3, on seed 2718; seed 3141 is the replicate and must pass too. Reported: 95 % upper bounds by a bootstrap of
+time clusters (network block, slot), the mean of exp(S_mix), per cell rates, the gaussian ablation (predicted by D.1(a)
+to exceed p on the transient day), and the out-of-sample fit of the t (PIT deciles of the TEST read norms).
+
+    python run_c.py measure SEED NOISE_DIR[,NOISE_DIR] [j,j,...|all] [cell,...]     (step 0: the fit, seconds)
+    python run_c.py run SEED NOISE_DIR[,NOISE_DIR] PARTSDIR [j,j,...|all] [cell,...]
+    python run_c.py analyze PARTSDIR[,PARTSDIR] [B]
+    python run_c.py diag SEED NOISE_DIR DIAGDIR [nets] [cells]      (second step, development: anatomy + what-ifs)
+    python run_c.py diagan DIAGDIR
+    python run_c.py avg SEED NOISE_DIR ADIR [nets] [cells]           (third step: S_avg null and power)
+    python run_c.py avgan ADIR[,ADIR] [B]
+    python run_c.py mkcfg SEED NOISE_DIR[,..] OUT.json       (confirmation day; then pass OUT.json as SEED)
+"""
+import json
+import math
+import os
+import sys
+
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+for p in (os.path.join(ROOT, "code"), os.path.join(ROOT, "code", "explore_contrib"), os.path.join(ROOT, "src")):
+    if p not in sys.path:
+        sys.path.insert(0, p)
+import numpy as np  # noqa: E402
+
+import t2m_lib as L2  # noqa: E402
+import c10_lib as C  # noqa: E402
+import c10_run as R  # noqa: E402
+import xc  # noqa: E402
+from task1o_consistent import matched  # noqa: E402
+from ttmt.v2.m0 import orientation_audit  # noqa: E402
+from ttmt.v2.m5 import GaussBackground, RadialBackground, TBackground, evalue_mix, prior_draws  # noqa: E402
+
+T2M = os.path.join(ROOT, "results", "task2M")
+TAG_FIT, TAG_PI, TAG_HYP = 7301, 7302, 7303
+N_FIT_READS, H_TEST, J_DRAWS = 400, 40, 2000
+GAMMA, EPS_LO, EPS_HI, LOW_LEVEL = 0.3, 0.05, 0.5, 2.0
+PS = (1e-2, 1e-3)
+
+
+def SEEDI(seed):
+    return int(L2.CFG["seed"])
+BGS = ("R", "T", "G")
+
+
+def configure(seed, ndirs):
+    """seed: a registered Task 2M seed (results/task2M/cfg_SEED.json) or the path of a cfg written by mkcfg."""
+    fn = str(seed) if str(seed).endswith(".json") else os.path.join(T2M, f"cfg_{seed}.json")
+    with open(fn) as fh:
+        c = json.load(fh)
+    L2.configure(c["seed"], ndirs, c["j0"], c["nblocks"], c["nwin"], ["MT@S0"])
+    return c
+
+
+def mkcfg(seed, ndirs, out, slots_per_block=76, max_blocks=24):
+    """cfg of a confirmation day in the Task 2M format: blocks of about 50 min (76 slots, as 2718), at most 24."""
+    nb = []
+    for d in ndirs:
+        with open(os.path.join(d, "meta.json")) as fh:
+            nb.append(len(json.load(fh)["eligible"]) // slots_per_block)
+    tot = sum(nb)
+    if tot > max_blocks:
+        nb = L2.apportion(max_blocks, nb)
+    c = {"name": f"M5-EVALUE confirmation, seed {seed}", "seed": int(seed), "noise_dirs": list(ndirs), "j0": 5000,
+         "nblocks": [int(x) for x in nb], "nwin": {"STD": 6, "DENSE": 16, "NOISE": 4}, "methods": ["MT@S0"]}
+    with open(out, "w") as fh:
+        json.dump(c, fh, indent=1)
+    print(json.dumps(c))
+
+
+WEIGHTED_FIT = False    # --weighted: fit on all reads (a peak counted once per hypothesis that reads it; third step)
+LOCAL_SCALE = False     # --local: each station divided by its own robust level in the window (third step)
+
+
+def mfn(net, slot):
+    MF, sd = matched(L2.real_segment(net.di, net.sub, slot))
+    if LOCAL_SCALE:
+        lev = np.median(np.abs(MF), axis=(1, 2)) / 0.6745                     # (ns,) robust level of each station
+        return MF / np.maximum(lev, 1e-12)[:, None, None]
+    return MF / sd
+
+
+def split_slots(net):
+    _di, blk = L2.block(net.j)
+    used = set(int(s) for s in net.cat_slots)
+    rest = [int(s) for s in blk if int(s) not in used]
+    return rest[0::2], rest[1::2]
+
+
+def read(MFn, IDX):
+    """hard reading: vectors (..., 2, ns, 3) at the energy peak within +-4 samples of IDX (..., 2, ns)."""
+    Kt = xc.peak_table_w(MFn, C.SH)
+    ns = MFn.shape[0]
+    st = np.arange(ns).reshape((1,) * (IDX.ndim - 1) + (ns,))
+    return C._vectors(MFn, Kt[st, IDX], None)
+
+
+def catalogue_terms(net):
+    """per station r_s from the P vectors of the catalogue events, and the catalogue tensors m_c (n, 6)."""
+    vP, nP, mc = [[] for _ in range(net.ns)], [[] for _ in range(net.ns)], []
+    for D, src, tau in net.cat:
+        MF, sd = matched(D)
+        E1 = C.Eng(np.asarray(src, float)[None], net.STA, net.corr, np.array([tau]), C.H_COARSE)
+        v = read(MF / sd, E1.IDX[0, 0])                                        # (2, ns, 3)
+        mc.append(np.linalg.lstsq(E1.G[0], v.reshape(-1), rcond=None)[0])
+        n = (net.STA - np.asarray(src, float)[None]) / np.linalg.norm(net.STA - np.asarray(src, float)[None],
+                                                                        axis=1, keepdims=True)
+        for i in range(net.ns):
+            vP[i].append(v[0, i])
+            nP[i].append(n[i])
+    r = np.array([orientation_audit(np.array(vP[i]), np.array(nP[i]))[1] for i in range(net.ns)])
+    return r, np.array(mc)
+
+
+def pooled_alpha(V, q0=0.99, cap=10.0):
+    """Hill index from the tail excesses r / r0_i of all stations of the network pooled (more data than one station)."""
+    ex = []
+    for x in V:
+        r = np.linalg.norm(x, axis=-1)
+        r0 = np.quantile(r, q0)
+        ex.append(np.log(r[r > r0] / r0))
+    ex = np.concatenate(ex)
+    return min(cap, 1.0 / float(np.mean(ex))) if len(ex) >= 10 else cap
+
+
+def variant_backgrounds(V):
+    """development what-if backgrounds of the second step (diagnosis only; chosen by the rule in card.md)."""
+    out = {"RL": [RadialBackground.fit(x, left="flat") for x in V],
+           "RL3": [RadialBackground.fit(x, left="flat", alpha_max=3.0) for x in V],
+           "RL2": [RadialBackground.fit(x, left="flat", alpha_max=2.0) for x in V]}
+    ap = pooled_alpha(V)
+    out["RLP"] = []
+    for f in out["RL"]:
+        g = RadialBackground(f.y, f.lfy, f.r0, ap, f.q0, left_slope=f.left_slope)
+        out["RLP"].append(g)
+    return out
+
+
+def setup(cell, j, seed, variants=False):
+    net = L2.Net2M(cell, j, "REAL")
+    E = C.Eng(R.GARR, net.STA, net.corr, R.TAUS, C.H_COARSE)
+    fit, test = split_slots(net)
+    rng = np.random.default_rng([SEEDI(seed), TAG_FIT, net.ci, j])
+    V = [[] for _ in range(net.ns)]
+    for s in fit:
+        g, t = rng.integers(E.N, size=N_FIT_READS), rng.integers(E.T, size=N_FIT_READS)
+        M = mfn(net, s)
+        tp = xc.peak_table_w(M, C.SH)[np.arange(net.ns)[None, None], E.IDX[g, t]]   # (n, 2, ns) peak samples
+        for i in range(net.ns):
+            if WEIGHTED_FIT:                                                     # every read, as a hypothesis reads it
+                V[i].append(M[i][:, tp[:, :, i].ravel()].T)
+            else:
+                V[i].append(M[i][:, np.unique(tp[:, :, i])].T)                # distinct peaks only (no duplicates)
+    V = [np.concatenate(x) for x in V]
+    bg = {"R": [RadialBackground.fit(V[i]) for i in range(net.ns)],
+          "T": [TBackground.fit(V[i]) for i in range(net.ns)],
+          "G": [GaussBackground.fit(V[i]) for i in range(net.ns)]}
+    if variants:
+        bg.update(variant_backgrounds(V))
+    s0 = np.array([np.median(np.linalg.norm(x, axis=-1)) for x in V]) / math.sqrt(3.0)
+    r, mc = catalogue_terms(net)
+    eps = np.clip(1.0 - r, EPS_LO, EPS_HI)
+    rp = np.random.default_rng([SEEDI(seed), TAG_PI, net.ci, j])
+    gsel = rp.integers(E.N, size=200)
+    Gs = E.G[gsel].reshape(200, 2 * net.ns, 3, 6)
+    med = np.array([np.median(np.linalg.norm(np.einsum("nkcl,l->nkc", Gs, m), axis=-1)) for m in mc])
+    pis = {"CAL": prior_draws(mc, J_DRAWS, rp),
+           "LOW": prior_draws(mc, J_DRAWS, rp, scale=LOW_LEVEL * np.median(s0) / np.maximum(med, 1e-300))}
+    return net, E, fit, test, bg, s0, eps, r, pis, med
+
+
+def measure(seed, ndirs, nets, cells):
+    """step 0 (before any S_mix): the t fit per station, its out-of-sample PIT on TEST reads, isotropy."""
+    configure(seed, ndirs)
+    nets = L2.CFG["nets"] if nets == "all" else [int(x) for x in nets.split(",")]
+    for j in nets:
+        for cell in cells:
+            net, E, fit, test, bg, s0, eps, r, pis, med = setup(cell, j, seed)
+            rng = np.random.default_rng([SEEDI(seed), TAG_HYP, net.ci, j, 0])
+            Vt = []
+            for s in test[:10]:
+                g, t = rng.integers(E.N, size=N_FIT_READS), rng.integers(E.T, size=N_FIT_READS)
+                Vt.append(read(mfn(net, s), E.IDX[g, t]))
+            Vt = np.concatenate(Vt).transpose(2, 0, 1, 3).reshape(net.ns, -1, 3)
+            print(f"== {cell} {j}: {len(fit)} FIT / {len(test)} TEST slots, {len(net.cat)} catalogue events")
+            for i in range(net.ns):
+                rn = np.linalg.norm(Vt[i], axis=1)
+                cv = Vt[i].var(axis=0)
+                print(f"   st {net.stations[i]:5s} s0 {s0[i]:.3f} eps {eps[i]:.2f} |v| q50 {np.median(rn):.2f} "
+                      f"q99 {np.quantile(rn, .99):.2f} max {rn.max():.1f}  R alpha {bg['R'][i].alpha:.2f}  "
+                      f"T nu {bg['T'][i].nu:.2f}  comp var {np.round(cv / cv.mean(), 2).tolist()}")
+                for k in ("R", "T"):
+                    u = bg[k][i].cdf_norm(rn)
+                    dec = np.histogram(u, bins=np.linspace(0, 1, 11))[0] / len(u)
+                    tail = [float((u > 1 - q).mean() / q) for q in (1e-2, 1e-3)]
+                    print(f"      {k}: PIT deciles x10 {np.round(dec * 10, 2).tolist()}  max dev {np.abs(dec - .1).max():.3f}"
+                          f"  tail ratio @1e-2 {tail[0]:.2f} @1e-3 {tail[1]:.2f}")
+            print(f"   pi CAL median block norm {np.median(med):.2f}  (LOW rescaled to {LOW_LEVEL} x median s0 "
+                  f"{np.median(s0):.3f})", flush=True)
+
+
+def run_part(cell, j, seed, pdir):
+    fn = os.path.join(pdir, f"{cell}_{j}.npz")
+    if os.path.exists(fn):
+        return
+    net, E, fit, test, bg, s0, eps, r, pis, med = setup(cell, j, seed)
+    ns = net.ns
+    st = np.tile(np.arange(ns), 2)                                               # block order (b, i)
+    out = {f"{k}_{pk}": [] for k in BGS for pk in pis}
+    for s in test:
+        rng = np.random.default_rng([SEEDI(seed), TAG_HYP, net.ci, j, s])
+        g, t = rng.integers(E.N, size=H_TEST), rng.integers(E.T, size=H_TEST)
+        v = read(mfn(net, s), E.IDX[g, t]).reshape(H_TEST, 2 * ns, 3)
+        A = E.G[g].reshape(H_TEST, 2 * ns, 3, 6)
+        lf = [np.stack([bg[k][i].logpdf(v[:, q]) for q, i in enumerate(st)], axis=1) for k in BGS]
+        for pk, dr in pis.items():
+            for k, S in zip(BGS, evalue_mix(v, A, lf, eps[st], dr, s0[st], GAMMA)):
+                out[f"{k}_{pk}"].append(S)
+    np.savez(fn, slots=np.array(test), cell=cell, j=j, seed=SEEDI(seed), eps=eps, r=r, med=med, s0=s0,
+             alpha=np.array([f.alpha for f in bg["R"]]), nu=np.array([f.nu for f in bg["T"]]),
+             **{k: np.array(v) for k, v in out.items()})
+    print(f"{cell} {j}: {len(test)} TEST slots, R alpha median {np.median([f.alpha for f in bg['R']]):.2f}, "
+          f"max S R_LOW {np.max(out['R_LOW']):.2f}", flush=True)
+
+
+def run(seed, ndirs, pdir, nets, cells):
+    configure(seed, ndirs)
+    nets = L2.CFG["nets"] if nets == "all" else [int(x) for x in nets.split(",")]
+    os.makedirs(pdir, exist_ok=True)
+    for j in nets:
+        for cell in cells:
+            run_part(cell, j, seed, pdir)
+
+
+DIAG_BGS = ("R", "RL", "RL3", "RL2", "RLP", "T")
+
+
+def diag_part(cell, j, seed, ddir):
+    """second step, development (2718): per-block anatomy of the R exceedances and the what-if backgrounds."""
+    fn = os.path.join(ddir, f"{cell}_{j}.npz")
+    if os.path.exists(fn):
+        return
+    net, E, fit, test, bg, s0, eps, r, pis, med = setup(cell, j, seed, variants=True)
+    ns = net.ns
+    st = np.tile(np.arange(ns), 2)
+    thr = math.log(1e3)
+    S = {f"{k}_{pk}": [] for k in DIAG_BGS for pk in pis}
+    ntail, anat, dup = [], [], []
+    for s in test:
+        rng = np.random.default_rng([SEEDI(seed), TAG_HYP, net.ci, j, s])
+        g, t = rng.integers(E.N, size=H_TEST), rng.integers(E.T, size=H_TEST)
+        M = mfn(net, s)
+        v = read(M, E.IDX[g, t]).reshape(H_TEST, 2 * ns, 3)
+        tp = xc.peak_table_w(M, C.SH)[np.arange(ns)[None, None], E.IDX[g, t]]      # (H, 2, ns)
+        dup.append((tp[:, 0] == tp[:, 1]).sum(1))                                # stations whose P and S read one peak
+        A = E.G[g].reshape(H_TEST, 2 * ns, 3, 6)
+        rn = np.linalg.norm(v, axis=-1)                                          # (H, K)
+        r0 = np.array([bg["R"][i].r0 for i in st])
+        ylo = np.array([math.exp(bg["R"][i].y[0]) for i in st])
+        ntail.append((rn > r0).sum(1))
+        lf = [np.stack([bg[k][i].logpdf(v[:, q]) for q, i in enumerate(st)], axis=1) for k in DIAG_BGS]
+        for pk, dr in pis.items():
+            res = evalue_mix(v, A, lf, eps[st], dr, s0[st], GAMMA)
+            for k, x in zip(DIAG_BGS, res):
+                S[f"{k}_{pk}"].append(np.where(np.isnan(x), np.inf, x))
+            for h in np.where(S[f"R_{pk}"][-1] >= thr)[0]:
+                loo = []
+                for q in range(2 * ns):                                          # block q made neutral (eps = 1)
+                    e2 = eps[st].copy()
+                    e2[q] = 1.0
+                    loo.append(evalue_mix(v[h:h + 1], A[h:h + 1], lf[0][h:h + 1], e2, dr, s0[st], GAMMA)[0])
+                loo = np.where(np.isnan(loo), np.inf, loo)
+                q = int(np.argmin(loo))
+                anat.append([pk == "LOW", s, h, float(S[f"R_{pk}"][-1][h]), float(loo[q]), q, int(st[q]),
+                             float(rn[h, q]), float(r0[q]), float(ylo[q]), int((rn[h] > r0).sum()),
+                             int((rn[h] < ylo).sum()), int(dup[-1][h])])
+    np.savez(fn, cell=cell, j=j, seed=SEEDI(seed), slots=np.array(test), ntail=np.array(ntail), dup=np.array(dup),
+             anat=np.array(anat, float).reshape(-1, 13), stations=np.array(net.stations),
+             alpha_pooled=bg["RLP"][0].alpha, **{k: np.array(x) for k, x in S.items()})
+    print(f"diag {cell} {j}: {len(anat)} R exceedances at 1e-3, pooled alpha {bg['RLP'][0].alpha:.2f}", flush=True)
+
+
+def diag(seed, ndirs, ddir, nets, cells):
+    configure(seed, ndirs)
+    nets = L2.CFG["nets"] if nets == "all" else [int(x) for x in nets.split(",")]
+    os.makedirs(ddir, exist_ok=True)
+    for j in nets:
+        for cell in cells:
+            diag_part(cell, j, seed, ddir)
+
+
+def diag_analyze(ddir):
+    P = [dict(np.load(os.path.join(ddir, f), allow_pickle=False)) for f in sorted(os.listdir(ddir)) if f.endswith(".npz")]
+    print(f"== diagnosis, {len(P)} parts (development data; nothing here is a gate)")
+    print("what-if null rates (NaN read as +inf):")
+    for k in DIAG_BGS:
+        line = f"   {k:4s}"
+        for pk in ("CAL", "LOW"):
+            S = np.concatenate([p[f"{k}_{pk}"].reshape(-1) for p in P])
+            line += f"  {pk}: " + " ".join(f"p {q:g} {(S >= math.log(1 / q)).mean():.2e}" for q in PS)
+        print(line)
+    A = np.concatenate([p["anat"] for p in P])
+    print(f"anatomy of the R exceedances at 1e-3 ({len(A)}, CAL and LOW):")
+    if len(A):
+        single = A[:, 4] < math.log(1e3)
+        print(f"   driven by ONE block (neutralising it drops S below log 1e3): {single.mean():.2f}")
+        print(f"   that block above r0 (tail): {(A[:, 7] > A[:, 8]).mean():.2f}; below the grid (hole): "
+              f"{(A[:, 7] < A[:, 9]).mean():.2f}; read norm / r0 quantiles 50/90: "
+              f"{np.round(np.quantile(A[:, 7] / A[:, 8], [.5, .9]), 2).tolist()}")
+        print(f"   blocks above r0 per exceeding hypothesis: mean {A[:, 10].mean():.2f}; with >= 2: {(A[:, 10] >= 2).mean():.2f}")
+        print(f"   exceeding hypotheses with a station whose P and S read the same peak: {(A[:, 12] > 0).mean():.2f}")
+    du = np.concatenate([p["dup"].reshape(-1) for p in P])
+    print(f"P and S read the same peak at >= 1 station: {(du > 0).mean():.3f} of all TEST hypotheses")
+    nt = np.concatenate([p["ntail"].reshape(-1) for p in P])
+    K = np.concatenate([np.full(p["ntail"].size, 2 * len(p["stations"])) for p in P])
+    pt = nt.sum() / K.sum()
+    exp2 = float(np.mean(1 - (1 - pt) ** K - K * pt * (1 - pt) ** (K - 1)))
+    print(f"dependence: per-block tail rate {pt:.4f}; P(>= 2 tail blocks in a hypothesis) observed {(nt >= 2).mean():.4f}"
+          f" vs independent {exp2:.4f}")
+    ap = [float(p["alpha_pooled"]) for p in P]
+    print(f"pooled alpha quantiles 5/50/95: {np.round(np.quantile(ap, [.05, .5, .95]), 2).tolist()}")
+
+
+def avg_part(cell, j, seed, adir):
+    """third step: S_avg (per-station e-values averaged, valid under dependence across stations) with background RL.
+    Null on TEST slots; power at the TRUE hypotheses of the network's catalogue events (pi leave-one-out)."""
+    fn = os.path.join(adir, f"{cell}_{j}.npz")
+    if os.path.exists(fn):
+        return
+    net, E, fit, test, bg, s0, eps, r, pis, med = setup(cell, j, seed, variants=True)
+    ns = net.ns
+    st = np.tile(np.arange(ns), 2)
+    rl = bg["RL"]
+    out = {k: [] for k in ("avg_CAL", "avg_LOW", "prod_CAL", "prod_LOW")}
+    for s in test:
+        rng = np.random.default_rng([SEEDI(seed), TAG_HYP, net.ci, j, s])
+        g, t = rng.integers(E.N, size=H_TEST), rng.integers(E.T, size=H_TEST)
+        v = read(mfn(net, s), E.IDX[g, t]).reshape(H_TEST, 2 * ns, 3)
+        A = E.G[g].reshape(H_TEST, 2 * ns, 3, 6)
+        lf = np.stack([rl[i].logpdf(v[:, q]) for q, i in enumerate(st)], axis=1)
+        for pk, dr in pis.items():
+            out[f"avg_{pk}"].append(evalue_mix(v, A, lf, eps[st], dr, s0[st], GAMMA, groups=st))
+            out[f"prod_{pk}"].append(evalue_mix(v, A, lf, eps[st], dr, s0[st], GAMMA))
+    _r, mc = catalogue_terms(net)
+    pw = []
+    rp = np.random.default_rng([SEEDI(seed), TAG_PI + 10, net.ci, j])
+    for c, ((D, _sc, _tc), (src, tau)) in enumerate(zip(net.cat, net.cat_truth)):
+        MF, sd = matched(D)
+        E1 = C.Eng(np.asarray(src, float)[None], net.STA, net.corr, np.array([tau]), C.H_COARSE)
+        v = read(MF / sd, E1.IDX[0, 0]).reshape(1, 2 * ns, 3)
+        A = E1.G[0].reshape(1, 2 * ns, 3, 6)
+        lf = np.stack([rl[i].logpdf(v[:, q]) for q, i in enumerate(st)], axis=1)
+        dr = prior_draws(np.delete(mc, c, axis=0), J_DRAWS, rp)                # pi without this event
+        pw.append([evalue_mix(v, A, lf, eps[st], dr, s0[st], GAMMA, groups=st)[0],
+                   evalue_mix(v, A, lf, eps[st], dr, s0[st], GAMMA)[0]])
+    np.savez(fn, slots=np.array(test), cell=cell, j=j, seed=SEEDI(seed), power=np.array(pw),
+             **{k: np.array(x) for k, x in out.items()})
+    print(f"avg {cell} {j}: max S_avg LOW {np.max(out['avg_LOW']):.2f}, catalogue S_avg median "
+          f"{np.median(np.array(pw)[:, 0]):.1f}", flush=True)
+
+
+def avg(seed, ndirs, adir, nets, cells):
+    configure(seed, ndirs)
+    nets = L2.CFG["nets"] if nets == "all" else [int(x) for x in nets.split(",")]
+    os.makedirs(adir, exist_ok=True)
+    for j in nets:
+        for cell in cells:
+            avg_part(cell, j, seed, adir)
+
+
+def avg_analyze(adirs, B):
+    parts = []
+    for d in adirs:
+        parts += [dict(np.load(os.path.join(d, f))) for f in sorted(os.listdir(d)) if f.endswith(".npz")]
+    for seed in sorted({int(p["seed"]) for p in parts}):
+        P = [p for p in parts if int(p["seed"]) == seed]
+        keys = sorted({(int(p["j"]), int(s)) for p in P for s in p["slots"]})
+        kid = {k: i for i, k in enumerate(keys)}
+        print(f"== seed {seed}: {len(P)} parts, {sum(p['avg_CAL'].size for p in P)} TEST hypotheses (background RL)")
+        ok = True
+        for name in ("avg_CAL", "avg_LOW", "prod_CAL", "prod_LOW"):
+            S = np.concatenate([p[name].reshape(-1) for p in P])
+            S = np.where(np.isnan(S), np.inf, S)
+            cl = np.concatenate([np.repeat([kid[(int(p["j"]), int(s))] for s in p["slots"]], p[name].shape[1]) for p in P])
+            rng = np.random.default_rng(0)
+            line = f"   {name:8s} non-finite {int((~np.isfinite(S)).sum())}"
+            for q in PS:
+                x = (S >= math.log(1 / q)).astype(float)
+                ks, n_ = np.bincount(cl, x, len(keys)), np.bincount(cl, None, len(keys))
+                bt = [ks[i].sum() / n_[i].sum() for i in (rng.integers(len(keys), size=len(keys)) for _ in range(B))]
+                line += f"  | p {q:g}: rate {x.mean():.2e} (95 % ub {np.quantile(bt, .975):.2e})"
+                if name.startswith("avg"):
+                    ok &= x.mean() <= q
+            print(line)
+        pw = np.concatenate([p["power"] for p in P])
+        fa, fp = (pw[:, 0] >= math.log(1e3)).mean(), (pw[:, 1] >= math.log(1e3)).mean()
+        print(f"   power at the true hypotheses of {len(pw)} catalogue events (pi leave-one-out), S >= log 1e3: "
+              f"S_avg {fa:.2f}, product {fp:.2f}; median S_avg {np.median(pw[:, 0]):.1f}, product {np.median(pw[:, 1]):.1f}")
+        print(f"   calibration (S_avg <= p at 1e-2 and 1e-3, CAL and LOW): {'PASS' if ok else 'FAIL'}; "
+              f"power (S_avg fraction >= 0.5): {'PASS' if fa >= 0.5 else 'FAIL'}\n")
+
+
+def analyze(pdirs, B):
+    parts = []
+    for d in pdirs:
+        parts += [dict(np.load(os.path.join(d, f), allow_pickle=False)) for f in sorted(os.listdir(d)) if f.endswith(".npz")]
+    for seed in sorted({int(p["seed"]) for p in parts}):
+        P = [p for p in parts if int(p["seed"]) == seed]
+        n_eval = sum(p["R_CAL"].size for p in P)
+        print(f"== seed {seed}: {len(P)} parts, {n_eval} TEST hypotheses, numpy {np.__version__}")
+        # time clusters: (network block j, slot); the three cells of a block share the noise
+        keys = sorted({(int(p["j"]), int(s)) for p in P for s in p["slots"]})
+        kid = {k: i for i, k in enumerate(keys)}
+        verdict = {}
+        for name in [f"{k}_{pk}" for k in BGS for pk in ("CAL", "LOW")]:
+            S = np.concatenate([p[name].reshape(-1) for p in P])
+            n_nan = int(np.isnan(S).sum())
+            S = np.where(np.isnan(S), np.inf, S)       # NaN came from inf - inf with f_k(v_k) = 0: it is S = +inf
+            cl = np.concatenate([np.repeat([kid[(int(p["j"]), int(s))] for s in p["slots"]], p[name].shape[1])
+                                 for p in P])
+            e = np.exp(np.minimum(S, 700))
+            line = f"   {name}: non-finite S {int((~np.isfinite(S)).sum())} (NaN read as +inf {n_nan})  mean exp(S) {e.mean():.3g}  median S {np.median(S):.2f}"
+            rng = np.random.default_rng(0)
+            for p_ in PS:
+                x = (S >= math.log(1 / p_)).astype(float)
+                ks, ns_ = np.bincount(cl, x, len(keys)), np.bincount(cl, None, len(keys))
+                bt = [ks[i].sum() / ns_[i].sum() for i in (rng.integers(len(keys), size=len(keys)) for _ in range(B))]
+                rate, ub = x.mean(), float(np.quantile(bt, 0.975))
+                line += f"  | p {p_:g}: rate {rate:.2e} (95 % ub {ub:.2e}) {'<=' if rate <= p_ else '>'} p"
+                verdict[(name, p_)] = rate <= p_
+            print(line)
+            for cell in L2.CELLS:
+                if not any(str(p["cell"]) == cell for p in P):
+                    continue
+                Sc = np.concatenate([p[name].reshape(-1) for p in P if str(p["cell"]) == cell])
+                Sc = np.where(np.isnan(Sc), np.inf, Sc)
+                print(f"      {cell:15s} " + "  ".join(f"p {p_:g}: {(Sc >= math.log(1 / p_)).mean():.2e}" for p_ in PS))
+        nu = np.concatenate([p["alpha"] for p in P])
+        eps = np.concatenate([p["eps"] for p in P])
+        print(f"   R tail index quantiles 5/50/95: {np.round(np.quantile(nu, [.05, .5, .95]), 2).tolist()};"
+              f" eps 5/50/95: {np.round(np.quantile(eps, [.05, .5, .95]), 2).tolist()}")
+        ok = all(verdict[(n, p_)] for n in ("R_CAL", "R_LOW") for p_ in PS)
+        print(f"   G-M5c seed {seed}: {'PASS' if ok else 'FAIL'} (R background, pi CAL and LOW, p 1e-2 and 1e-3)\n")
+
+
+if __name__ == "__main__":
+    if "--weighted" in sys.argv:
+        sys.argv.remove("--weighted")
+        WEIGHTED_FIT = True
+    if "--local" in sys.argv:
+        sys.argv.remove("--local")
+        LOCAL_SCALE = True
+    cmd = sys.argv[1] if len(sys.argv) > 1 else ""
+    if cmd == "mkcfg":
+        mkcfg(int(sys.argv[2]), sys.argv[3].split(","), sys.argv[4])
+    elif cmd == "measure":
+        measure(sys.argv[2], sys.argv[3].split(","), sys.argv[4] if len(sys.argv) > 4 else "all",
+                sys.argv[5].split(",") if len(sys.argv) > 5 else list(L2.CELLS))
+    elif cmd == "run":
+        run(sys.argv[2], sys.argv[3].split(","), sys.argv[4], sys.argv[5] if len(sys.argv) > 5 else "all",
+            sys.argv[6].split(",") if len(sys.argv) > 6 else list(L2.CELLS))
+    elif cmd == "diag":
+        diag(sys.argv[2], sys.argv[3].split(","), sys.argv[4], sys.argv[5] if len(sys.argv) > 5 else "all",
+             sys.argv[6].split(",") if len(sys.argv) > 6 else list(L2.CELLS))
+    elif cmd == "avg":
+        avg(sys.argv[2], sys.argv[3].split(","), sys.argv[4], sys.argv[5] if len(sys.argv) > 5 else "all",
+            sys.argv[6].split(",") if len(sys.argv) > 6 else list(L2.CELLS))
+    elif cmd == "avgan":
+        avg_analyze(sys.argv[2].split(","), int(sys.argv[3]) if len(sys.argv) > 3 else 2000)
+    elif cmd == "diagan":
+        diag_analyze(sys.argv[2])
+    elif cmd == "analyze":
+        analyze(sys.argv[2].split(","), int(sys.argv[3]) if len(sys.argv) > 3 else 2000)
+    else:
+        raise SystemExit(__doc__)

@@ -554,3 +554,21 @@ def test_acap_does_not_saturate_where_the_absolute_cap_does():
     s = {k: (separation(v, 1.0), separation(v, 100.0)) for k, v in stats.items()}
     assert s["cap6"][1] < 0.3 * s["cap6"][0]                                # absolute cap: saturated
     assert s["acap3"][1] > 0.7 * s["acap3"][0] and s["acap3"][1] > 3 * s["cap6"][1]
+
+
+def test_acap_floor_is_the_cap_in_a_quiet_record_and_relative_in_a_loud_one():
+    """ACAP(c, floor): cap = max(floor, c median). Quiet record (c median < floor): identical to the absolute cap
+    6 map; loud record: identical to the relative cap (so it keeps ACAP's non-saturation)."""
+    from ttmt.detector import ACAP
+    st = ACAP(3.0, floor=6.0)
+    r = np.array([0.5, 1.0, 1.0, 1.5, 2.0, 9.0, 40.0])
+    assert np.allclose(st.phi(r), np.minimum(r, 6.0))                         # median 1.5: 3 x 1.5 < 6
+    assert np.allclose(st.phi(10 * r), ACAP(3.0).phi(10 * r))                 # median 15: relative cap 45
+    rng = np.random.default_rng(2)
+    vf = rng.normal(size=(2, 3, 24))
+    vf[1] *= 30.0                                                             # node 0 quiet, node 1 loud
+    Q = np.linalg.qr(rng.normal(size=(2, 24, 6)))[0]
+    s, v = st.score(vf, Q)
+    nv = np.linalg.norm(vf.reshape(2, 3, 8, 3), axis=-1)
+    cap = np.maximum(6.0, 3.0 * np.median(nv, axis=-1, keepdims=True))
+    assert np.allclose(np.linalg.norm(v.reshape(2, 3, 8, 3), axis=-1), np.minimum(nv, cap))

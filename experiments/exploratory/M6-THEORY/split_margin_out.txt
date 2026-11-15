@@ -1,0 +1,12 @@
+co-located pairs with DIFFERENT random double couples, SNR 12 per event; median over 40 pairs of delta^2 (whitened)
+info limit delta^2 = 10.8; current test 50 % acceptance near delta^2 = 38 (E.3)
+  dtau        P  S one pulse  S free split  split<=0.1s  split<=0.2s  calibrated
+  0.02     0.00          3.2          0.03         0.03         0.03         3.2
+  0.03     0.01          7.0          0.14         0.14         0.14         7.0
+  0.05     0.05         18.2          0.75         0.77         0.75        18.2
+  0.08     0.16         36.3          3.00         3.72         3.00        36.3
+  0.10     0.29         48.2          5.47         7.89         5.47        48.2
+  0.15     0.71         59.0         13.37        24.81        13.37        59.0
+  0.25     0.93         56.7         18.90        52.59        37.14        56.7
+  0.35     1.33         81.3         27.17        64.84        57.85        81.3
+  0.50     1.44         83.4         29.25        83.20        77.29        83.4

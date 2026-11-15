@@ -1,0 +1,41 @@
+M6-THEORY  seed 20261108  numpy 2.5.3  NCTRL 40  NREP 40
+
+E.1 spectral constants of the LEGACY kernel (per sample; Ricker 2 Hz at 16 Hz)
+  A2 = sum a(k)^2 = 3.291 (closed form 0.4114/(fc dt) = 3.291)
+  omega^2 = 0.7711 /sample^2 = 197.4 s^-2 (5 pi^2 fc^2 = 197.4); omega_r^2/omega^2 = 0.9000 (0.9)
+  (psi_r - omega_r^4)/(psi - omega^4) = 0.4500 (0.45)
+  kappa1 = A2 omega_r^2/omega^2 = 2.962; kappa2 = 1.481
+  lambda_r = r'Cr/r'r = 3.775; lambda for r' = 3.635; max |S|^2 = 4.607
+
+E.2 null: one source + noise (M6-JOINT control seeds); gain of the code vs fixed-time linear theory
+  scenes with a tested spurious atom: 40 of 40; dims TT 48, pair 12, positive eigenvalues 9
+  code gain     median   -101.8  q95    -51.3  max      4.0
+  theory mean   median   -136.1  (tr C(P2-P1)); MC fixed-time mean median   -135.6
+  fixed-time MC pooled q95    -80.4  max    -34.3
+  E.2 bound (level 0.05) median     10.8  max     15.8
+  search inflation (code gain - theory mean): median   34.4, q95   84.8
+  corr(code gain, theory mean) = 0.14
+
+E.3 power of the test alone: two sources at one lattice node, atoms started at the truth, SNR 12
+  case   dtau | margin MF  code g0 delta_TT^2 (wh.) | accept  pred gain med
+  diff   0.02 |      76.9     76.9             26.0 |   0.05  0.30    -68.0
+  diff   0.03 |     141.0    141.0             47.6 |   0.62  0.64     20.5
+  diff   0.04 |     266.3    266.3             89.9 |   0.75  0.87    137.9
+  diff   0.05 |     402.8    404.0            136.0 |   0.95  0.97    259.2
+  diff   0.06 |     487.5    496.5            164.6 |   0.95  0.97    312.9
+  diff   0.08 |     844.5    855.4            285.1 |   0.97  0.99    640.6
+  diff   0.10 |     952.4    978.0            321.5 |   1.00  1.00    783.6
+  same   0.06 |      24.5     24.5             16.6 |   0.00  0.03    -92.5
+  same   0.08 |      74.1     74.1             50.0 |   0.12  0.24    -37.5
+  same   0.09 |     113.4    113.4             76.6 |   0.50  0.54      9.5
+  same   0.10 |     172.4    172.4            116.4 |   0.72  0.81     55.1
+  same   0.12 |     338.4    338.4            228.5 |   1.00  0.99    202.5
+  same   0.15 |     670.8    670.8            452.9 |   1.00  1.00    520.7
+  same   0.25 |    1535.7   1535.7           1036.9 |   1.00  1.00   1245.4
+  pred = mean over scenes of P(N(g0 + m0, 4 lambda' g0 + s_null^2) > thr), m0 = median code gain under H0 -101.8, s_null 41.6
+
+E.5 near 0.5 s cell of M6-JOINT (same seeds): greedy matching vs optimal matching of atoms to sources
+  near 0.25: m6-none pair recall greedy matching 1.00, optimal 1.00
+  near 0.50: m6-none pair recall greedy matching 0.75, optimal 1.00
+
+2141 s

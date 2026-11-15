@@ -6,6 +6,8 @@ Universidad Icesi - Trabajo de grado - Juan Jose Gordillo Cordoba - October 2026
 
 Director: Uram Aníbal Sosa Aguirre
 
+*Draft note: passages marked **[pending #45]** report results of a pull request not yet merged; the marks are removed when it is.*
+
 ---
 
 ## Abstract
@@ -144,6 +146,18 @@ octree and keeps the cells consistent with enough picks; REAL [88] counts picks 
 PhaseLink [5] and graph neural networks [6] exist but need training data from the region. All of them inherit the
 errors of the picks: a missed pick cannot be recovered, and in dense sequences the assignment of picks to events is
 ambiguous.
+HARPA [Shi et al. 2026] associates picks with travel-time neural fields and unbalanced optimal transport, and VORA
+[Song et al. 2026] clusters picks on a Voronoi graph with an optional expectation-maximisation step that splits merged events;
+its stress tests separate events down to about 5 s, well above the sub-second separations of the dense windows of
+Section 6. EQNet2 [Wang and Zhu 2026] is a multi-station transformer that predicts phases, events, magnitudes and
+association from the waveforms, with a per-station polarity head, and was tested on Ridgecrest 2019 with 16 stations.
+It is trained with temporal event stacking, which simulates overlapping arrivals from events closely spaced in time,
+although overlaps are not evaluated separately. Its polarities feed focal mechanisms computed with SKHASH after
+detection, and no moment-tensor or focal-mechanism consistency enters its training loss; its event hit rule tolerates
+3 s in origin time, and its results are given at a fixed threshold, with no calibration of the false-detection rate
+described. Control of false detections is not claimed here as a difference from EQNet2: the doctoral line has no
+validated control yet (Section 8). Per-station polarity is therefore not specific to this thesis; what is specific is that the detector imposes a
+common moment tensor on the readings of all stations while it detects and deflates events.
 
 **Waveform migration and stacking.** QuakeMigrate [109] stacks onset functions of the waveforms along predicted
 moveouts on a grid; back-projection stacking of P and S waves can include focal mechanism corrections [112], [122]. Such
@@ -405,7 +419,11 @@ tensor is an e-value with a universal threshold, as any likelihood ratio against
 alternative is [Vovk and Wang 2021; Ramdas et al. 2023], time slides calibrate exactly the global null of no coherent
 source but not the false detections caused by real events, as in gravitational-wave background estimation [Was et al.
 2010; Capano et al. 2016], and no coherence certificate can guarantee the separation of
-overlapping events near the information limit.
+overlapping events near the information limit. These are theorems under an exact null. On one day of real noise the
+e-value was not calibrated (gate G-M5c, `experiments/exploratory/M5-EVALUE/card.md`) **[pending #45]**, and whether
+the cause is the marginal law of some stations or the dependence between them was not separated. Until a valid
+e-value or another null is shown on real data, neither a universal threshold nor a guaranteed control of false
+detections is claimed.
 
 ---
 
@@ -761,7 +779,7 @@ produced the truth list.
 | G1-M | An off-grid group BLASSO with per-station time shifts adds detections over BOMP-PK | Refuted on synthetic data (2E) |
 | G1-R | Bounding the influence of each station (cap or Huber) adds detections over an unbounded pursuit in dense sequences | Confirmed twice on synthetic data (2F, 2I) and once on real noise with transients (2M) under the registered epicentre rule; the effect belongs to the per-station bound, which BOMP-PK can also use (descriptive arm of 2F, C18f); consistent with Propositions 1 and 4, written after the results. Rescored post hoc with one-to-one matching and the origin time required, the 2M contrasts keep lower bounds above zero, while 2F meets its rule with weak clutter only (+0.023 and +0.027 with strong clutter against a point criterion of 0.03) and its equivalence rule 2F-c fails on the upper side; with the origin time required 2I-a is met for one seed of two (+0.019 against 0.03 for seed 6262, E6b, already so in the registered secondary reading; one-to-one matching changes it by at most 0.001), while 2I-b and 2I-c are met |
 | G1-C | Pick-free station terms add detections when the origin time is required | Partially confirmed, in one geometry: the pooled gain of 2L is essentially that of the one-sided eight-station network, there is no demonstrated gain with four stations, and the terms were worse than the catalogue ones in about 22 per cent of the networks |
-| new | The cap trades robustness to transients for saturation in continuous seismicity | Proposed after the experiments as an explanation; its parts are proved in a simplified model (Gaussian noise, fixed readings; Propositions 1, 2, 4), and the saturation was measured at true hypocentres of real events (C18). Appendix AB proves that the trade-off is unavoidable for any score whose station influence is bounded uniformly, and that a bound relative to the background (ACAP) avoids it; that ACAP helps on real data is untested |
+| new | The cap trades robustness to transients for saturation in continuous seismicity | Proposed after the experiments as an explanation; its parts are proved in a simplified model (Gaussian noise, fixed readings; Propositions 1, 2, 4), and the saturation was measured at true hypocentres of real events (C18). Appendix AB proves that the trade-off is unavoidable for any score whose station influence is bounded uniformly, and that a bound relative to the background (ACAP) avoids it. Tested on real data in the doctoral line (gates G-M5a and G-M5b, exploratory), ACAP failed: it lost recall to the cap on the 2M transient day (-0.020 [-0.041, +0.009] and -0.013 [-0.053, +0.028], against a tolerance of 0.03), and it avoided saturation on the Ridgecrest development segment but not on the held-out one (AUC 0.616 on N4, against 0.65); the saturation of the cap was confirmed on the held-out segment (AUC 0.39 to 0.42). ACAP with c in {3, 5} failed; no value of c set on the measured null of the peak readings was tested, and no held-out segment is left to test one. The cap of 6 is kept, although on the held-out segment it ranks real events below event-free windows (AUC 0.39 to 0.42) |
 
 ### 7.2 Why the pick-free detector fails on real seismicity
 
@@ -900,8 +918,11 @@ neural picker without associating picks; what the moment-tensor subspace and the
 the open question. (2) Prediction for deflation: subtract empirical
 waveforms (the stacked residual of accepted events, or templates) instead of a point-source wavelet, so that S coda
 does not leave ghosts, and subtract at the sub-sample arrival time, which removes the residual of Proposition AB.B.6.
-(3) A registered test of a background-relative bound (ACAP, Appendix AB.C) and of the logarithmic compression on real
-noise and real seismicity, with the conditional threshold of Theorem AB.C.2. (4) A second synthetic generator, with
+(3) A test of a background-relative bound and of the logarithmic compression on real noise and real seismicity, with
+the conditional threshold of Theorem AB.C.2. The simplest such bound, ACAP (Appendix AB.C), has since been tested with
+c in {3, 5} and failed: it failed its robustness gate on the 2M transient day and its saturation gate on the held-out
+Ridgecrest segment (Table 2, row "new"; `experiments/exploratory/M5-ACAP/card.md`), so the trade-off that Appendix AB
+says a background-relative bound avoids is not avoided by this one, with these values of c, on real data. (4) A second synthetic generator, with
 two-subevent sources, and a second real noise network for the bounded-influence result. (5) External timestamping of
 every future registration. These items, with the failure atlas and the new model, form the separate doctoral line of
 ADR-0006.
@@ -1068,13 +1089,20 @@ Numbered references follow the numbering of the bibliography of `docs/proposal/D
   anytime-valid inference," Statist. Sci., vol. 38, no. 4, pp. 576-601, 2023.
 - [Shahram and Milanfar 2004] M. Shahram and P. Milanfar, "Imaging below the diffraction limit: a statistical
   analysis," IEEE Trans. Image Process., vol. 13, no. 5, pp. 677-689, 2004.
+- [Shi et al. 2026] C. Shi, G. Poggiali, C. Marone, M. V. de Hoop, I. Dokmanić et al., "High-rate phase association
+  with travel time neural fields (HARPA)," Nat. Commun., vol. 17, 8140, 2026, doi:10.1038/s41467-026-74092-y.
 - [Smith 2005] S. T. Smith, "Statistical resolution limits and the complexified Cramér-Rao bound," IEEE Trans.
   Signal Process., vol. 53, no. 5, pp. 1597-1609, 2005.
+- [Song et al. 2026] J. Song, W. Zhu, H. Wang, U. Kumar, T. Taira, and R. M. Allen, "VORA: Rapid association of earthquake phases from
+  local to global," preprint,
+  arXiv:2607.10450, 2026.
 - [Ueno et al. 2002] H. Ueno, S. Hatakeyama, T. Aketagawa, J. Funasaki, and N. Hamada, "Improvement of hypocenter
   determination procedures in the Japan Meteorological Agency," Q. J. Seismol., vol. 65, pp. 123-134, 2002 (in
   Japanese).
 - [Vovk and Wang 2021] V. Vovk and R. Wang, "E-values: calibration, combination and applications," Ann. Statist.,
   vol. 49, no. 3, pp. 1736-1754, 2021.
+- [Wang and Zhu 2026] H. Wang and W. Zhu, "Event-centric earthquake monitoring with a multi-station transformer
+  (EQNet2)," preprint, arXiv:2610.17404, 2026.
 - [Was et al. 2010] M. Was et al., "On the background estimation by time slides in a network of gravitational wave
   detectors," Class. Quantum Grav., vol. 27, 015005, 2010 (arXiv:0906.2120).
 - [Zhang and Wen 2015] M. Zhang and L. Wen, "An effective method for small event detection: match and locate (M&L),"
