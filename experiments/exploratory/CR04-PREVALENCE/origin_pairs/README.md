@@ -14,7 +14,11 @@ Results (measured): 28,060 events; 96 (0.34 %) have the next event within 1 s an
 within 1 s at any distance in the box, against 3.7 % expected from a Poisson process at the local rate (events in a
 centred 10-minute window).
 
-Reading (hypothesis, not tested): the gap between 1.89 % and 3.7 % suggests that the catalogue misses roughly half of
-the events with a neighbour within 1 s. Other explanations are not excluded: the Poisson reference ignores spatial
-clustering and the magnitude-dependent dead time of the network, and the 10-minute rate smooths bursts. The 49 pairs
+Sensitivity (`sensitivity.py`, output `sensitivity_out.txt`): the observed-to-Poisson ratio is 0.51 for rate windows of
+5 minutes or more and 0.64 for a 60 s window (noisy rate, reference biased low); 0.70, 0.65 and 0.41 for M >= 1.5, 2.0
+and 2.5; 0.59 from 9 July on. A deficit appears in every variant; its size depends on the reference.
+
+Reading (hypothesis, not tested): the catalogue misses between about a third and a half of the events with a neighbour
+within 1 s (ratio 0.41 to 0.70 across the variants above). Other explanations are not excluded: the Poisson reference ignores spatial
+clustering and the magnitude-dependent dead time of the network, and the 10-minute rate smooths bursts. The larger deficit at M >= 2.5 fits a magnitude-dependent dead time. The 49 pairs
 under 0.1 s are probably duplicates in large part (not checked). The registered measurement with QTM decides.
