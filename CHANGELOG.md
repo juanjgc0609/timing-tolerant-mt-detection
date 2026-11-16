@@ -3,6 +3,13 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-16
+
+- `ttmt.associate.eqnet2_assoc`: EQNet2 (AI4EPS/EQNet develop 40a48ed1, weights EQNet2-v0 base, no prompt) as a
+  waveform comparator in two stages: network scores stored once per record (GPU), threshold and EQNet2's "time"
+  clustering per trial (CPU). Space `EQNET2` (wf_threshold, wf_min_interevent) for ledger a5. Tests use synthetic
+  scores and a stub network only; no partition read (amendment 5 not anchored).
+
 ## 2026-11-15
 
 - `M6A-REALNOISE/run.py` and card brought to criterion 2 of G-M6a (exploratory; nothing run but smoke tests with fake
