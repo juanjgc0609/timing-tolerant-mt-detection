@@ -1,0 +1,6 @@
+M6-CAL step 5  near_km 10.0  kmax 4  numpy 2.5.3
+SNR 12, set B: true gains of near pairs n 160 (of 160 pairs), median 1696.6, q10 521.9; largest spurious gain per control scene n 272 of 300, median -181.6, q90 -37.1, q95 7.7, max 395.1; AUC 0.980; true gains above the spurious q95: 0.956
+SNR 8, new seeds: true gains of near pairs n 164 (of 160 pairs), median 567.0, q10 -6.7; largest spurious gain per control scene n 275 of 300, median -167.8, q90 -84.0, q95 -51.2, max 372.2; AUC 0.967; true gains above the spurious q95: 0.909
+
+DECISION (rule of card.md, step 5): route B CONFIRMED on set B (AUC 0.980); scope at SNR 8: holds (AUC 0.967)
+553 s

@@ -5,8 +5,22 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-15
 
+- `M6A-REALNOISE/run.py` and card brought to criterion 2 of G-M6a (exploratory; nothing run but smoke tests with fake
+  noise; G-M6a not run or read). No threshold calibration: m6 keeps every candidate, all scenes of an arm (200 fresh
+  controls + 240 pairs) are pooled and the exact-FROC operating point at 30 false/h sets the threshold (8.1 s of
+  origin times per scene). Gate score of a tested atom min(s, pair gain), chosen by the owner on 15 November 2026,
+  14:05 UTC (gain alone printed as secondary). Bootstrap by scene, stratified, with operating points re-chosen in
+  each replicate (ADR-0008 item 5; found by the independent review of PR #58). False splits at thr 23.8 descriptive.
+
 - Thesis: the [pending #45] mark and the draft note removed after PR #45 merged. The G-M5c sentence now says it
   failed on the noise of both 2M seeds (three days: 101231; 100210-11), not on one day.
+- Comparators added after registration 1 (T4.17, PR #51; no registered number changes). HARPA (Nat. Commun.
+  17:8140, 2026; phase_association 7adf666) wrapped as an associator (`harpa_assoc.py`: common 1-D model as a
+  differentiable table, P and S, serial and seeded; space of three associator parameters on ranges the card already
+  uses; own ledger `tuning_ledger_a5.csv`, proposed amendment 5, no trial before it is anchored). EQNet2 status and
+  provenance only: code AI4EPS/EQNet develop 40a48ed1, weights EQNet2-v0 with sha256 (`gpu_weights.sha256`),
+  training data CEED NCEDC subset through 2022 (`provenance.py`). E65: `traveltime.first_arrival` fixed for sources
+  on a layer top; the registered R1 path keeps the pre-fix times (`traveltime.frozen`, bit-identical), declared in E65.
 
 ## 2026-11-14
 
@@ -15,6 +29,22 @@ Dated record of changes to the project's process, code and documents. Results ar
   a Poisson process at the local rate (ratio 0.41-0.70 across rate windows, magnitude cuts and start days,
   `sensitivity.py`); the reading "the catalogue misses between about a third and a half" is a hypothesis. The registered
   CR-04 measurement is unchanged.
+- Follow-up of the independent review of PR #46 (exploratory; no registered number changes). M6-CAL card: step 3 no
+  longer reads "PASSES" (fresh seeds: 25 of 300, above the 0.10 bound); step 4 declared before running (fixed level
+  with margin against the gain used as a ranking score; sets and seeds new), `M6-CAL/run_step4.py`.
+- G-M6a false-split gate derived from a declared rate and its power: at most 12 of 200 fresh control scenes
+  (one-sided test of rate >= 0.10 at level 0.032, power 0.796 at 0.05). The earlier change from "<= 2" to "<= 4 of 40" was an
+  undeclared relaxation and is withdrawn; `M6A-REALNOISE/run.py` now counts scenes, not atoms. Nothing run.
+- M6-CAL steps 4 and 5: a fixed threshold does not bring false splits to the target (14 to 19 of 300 across the
+  grid); the gain as a ranking score is adopted by the rule declared beforehand (AUC 0.977, confirmed on the unread
+  set B at 0.980, 0.967 at SNR 8). G-M6a: the two changes of declared criteria (false splits at most 12 of 200
+  scenes; main criterion recall at the registered budget with the gain as score) approved by the owner on
+  15 November 2026 and recorded in `M6A-REALNOISE/card.md`.
+- `STAGE-LOSS-B1`: scripts and outputs of the duplicator control at the registered operating point and of the oracle
+  runs of PyOcto and GaMMA on the tuning partition. Reading 1 of `STAGE-LOSS/README.md` (the pair merge is
+  structural) retracted for PyOcto: it is travel-time misfit (T 0.60-0.67 with picks at its own model times).
+- M6 cards: "SNR 12" in the M6 simulations is the per-block peak over the robust noise sd, not the network
+  sqrt(E) of Appendix AB (a factor of about 2.7 apart).
 - Phase-6 analysis plan v0.2 and OSF draft (plan v2.11, points 1 to 3, approved by the owner on 14 November): the
   e-value guarantee is dropped after G-M5c (PR #45) from `PHASE6_SAP.md` 7.6, the R3 registration draft and the OSF
   draft; false detections near events are a measured rate with no guarantee, cause pending T4.27. The OSF draft also
