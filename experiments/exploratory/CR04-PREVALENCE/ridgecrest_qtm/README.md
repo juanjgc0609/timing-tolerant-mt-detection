@@ -26,6 +26,10 @@ identified the column; magnitude is not used.
 `traveltime` fix of this PR applied, and `PYTHONPATH=<export>/src`. Without `-I` because under `-I` the package
 resolved to the laptop's editable install.
 
+Code after E65: main now carries the E65 fix of `traveltime` (a source within 1e-4 km of a layer top is put on it
+and keeps the head wave), which this run did not have. A rerun with this branch's code is queued on the same laptop
+and will be added here as a reproduction; until then the numbers below are those of b4513390 plus the surface fix.
+
 ## Result (`prevalence_ridgecrest_2019_qtm.json`, SHA-256 99429c3a6d94bc9492e03dd2b5fbb81027258771687f5d1e0434c7146bab031a)
 Y = share of the catalogued events whose separation is in T = [0.1, 1) s; 95 % block-bootstrap interval:
 
