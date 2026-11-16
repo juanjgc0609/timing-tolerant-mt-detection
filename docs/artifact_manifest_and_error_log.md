@@ -169,7 +169,7 @@ to 2L, are also in `outputs/explore_contrib/`, with their scripts, reports and o
 
 ## 3. The design errors that inverted or nullified a result
 
-This is the central content of this manifest. The log contains 64 errors, E1 to E64. In the
+This is the central content of this manifest. The log contains 65 errors, E1 to E65. In the
 first six (E1 to E6) the resulting number looked valid, and in all six it was detected **only because
 it turned out to be implausible**, not because there was a visible fault in the code; the following ones were detected
 by controls, preregistered rules or audits, as indicated in each one.
@@ -1301,6 +1301,36 @@ registered operating points, so the failure removes no claim; it qualifies the r
 method also at a threshold fixed on development data, with its realised false-alarm rate and an interval for it; a
 method whose deployable threshold exceeds the budget fails false-alarm calibration, whatever its recall at an
 operating point chosen on the evaluation data.
+
+### E65. A source exactly on a layer top loses the head wave along it in `ttmt.traveltime.first_arrival`
+**Script:** `src/ttmt/traveltime.py` (`_split`, `first_arrival`), found while building HARPA's travel-time table
+(thread "Sumar EQNet2 y HARPA como comparadores", 2026-11-09).
+**Symptom:** travel times jump when the source depth equals a layer top. Hadley-Kanamori, P, source at 16 km: 0.39 s
+late at 100 km; at 32 km: 1.55 s at 150 km and 2.55 s at 200 km; at 5.5 km: 0.94 s at 60 km (S about 1.7 times
+more). 0.013 km below or above the interface the times are continuous. A source within about 1e-6 km below a layer
+top gives meaningless times (a constant 2.16 s at every distance at 5.5 + 1e-6 km), from the near-zero layer
+thickness.
+**Cause:** `_split` puts a layer whose top equals the source depth below the source, and the head-wave sum skips the
+interface at the source depth, so the refraction along it is missing.
+**Detection:** a unit test of the bilinear table against `first_arrival` at random depths failed at the table nodes
+on 5.5 and 16 km.
+**Scope:** every evaluation with the source on a layer top (independent review of PR #51, 15 Nov 2026). Hadley-Kanamori:
+up to 8.0 s (S, 32 km, 300 km) and 1.8 s (S, 5.5 km). JMA2001 (layer tops every 0.25 km, small velocity steps): 372
+of 478 top/phase cases change by more than 1 ms, at most 11 ms (S, 0.25 to 1 km). R1 (`ttmt.r1`) builds its JMA2001
+tables at the coarse-node depths 3, 7 and 11 km, all layer tops (changes of 1.5 to 6.6 ms, against samples of 1/16 s),
+and `SourceTimes` rounds catalogue depths to 0.1 km, which can fall on a top. M2 (`ttmt.v2.m2`, exploratory) uses
+Hadley-Kanamori with catalogue depths, so an event exactly at 5.5, 16 or 32 km is off by up to seconds. REAL's `ttdb`
+(`Velocity1D.real_ttdb`, 1 km steps) had wrong rows at 16 and 32 km; REAL has no tuning trial and no reported result.
+The generator uses `ttmt.synth.media.first_arrival`, which is continuous at its interfaces (checked on the three
+presets).
+**Correction:** the comparator tables (`real_ttdb`, HARPA) evaluate a node within 0.01 km of a layer top 0.01 km below
+it (`velocity.table_depth`). `first_arrival` itself is fixed (owner approval 14 Nov 2026): the head-wave loop keeps
+the interface at the source depth (`ztop < zs`), and a source within 1e-4 km of a layer top is put on it. After the
+fix the times are continuous within 1 ms at every layer top of Hadley-Kanamori and the first 40 of JMA2001 (sources
+on the top and 1e-6 to 1e-5 km off it, 1 to 300 km), and identical to the old ones off the tops. Deviation, declared:
+the registered R1 path keeps the old behaviour (`ttmt.r1.MODEL = traveltime.frozen(JMA2001)`, bit-identical to the
+code before the fix at its node depths), so its frozen lists reproduce without re-running; every other caller gets
+the fixed times (tests `test_tables_avoid_layer_tops_e65`, `test_r1_model_is_frozen_e65`).
 
 ### On the order of the three errors of Task 0
 Three complete protocols, three different conclusions, and **in none of them was the cause the physics**. By

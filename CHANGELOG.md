@@ -9,11 +9,29 @@ Dated record of changes to the project's process, code and documents. Results ar
   `reg/ATLAS-0/amendment-6`) and `append_amendment.py` (amendment 6 into the card, after amendment 5). The card
   states what the run can show: the 0.01 of the rule is below the sampling and search noise, and a paired comparison
   over the 60 shared parameter sets is fixed as the secondary reading. No trial has been run.
+- `M6A-REALNOISE/run.py` and card brought to criterion 2 of G-M6a (exploratory; nothing run but smoke tests with fake
+  noise; G-M6a not run or read). No threshold calibration: m6 keeps every candidate, all scenes of an arm (200 fresh
+  controls + 240 pairs) are pooled and the exact-FROC operating point at 30 false/h sets the threshold (8.1 s of
+  origin times per scene). Gate score of a tested atom min(s, pair gain), chosen by the owner on 15 November 2026,
+  14:05 UTC (gain alone printed as secondary). Bootstrap by scene, stratified, with operating points re-chosen in
+  each replicate (ADR-0008 item 5; found by the independent review of PR #58). False splits at thr 23.8 descriptive.
 - Thesis: the [pending #45] mark and the draft note removed after PR #45 merged. The G-M5c sentence now says it
   failed on the noise of both 2M seeds (three days: 101231; 100210-11), not on one day.
+- Comparators added after registration 1 (T4.17, PR #51; no registered number changes). HARPA (Nat. Commun.
+  17:8140, 2026; phase_association 7adf666) wrapped as an associator (`harpa_assoc.py`: common 1-D model as a
+  differentiable table, P and S, serial and seeded; space of three associator parameters on ranges the card already
+  uses; own ledger `tuning_ledger_a5.csv`, proposed amendment 5, no trial before it is anchored). EQNet2 status and
+  provenance only: code AI4EPS/EQNet develop 40a48ed1, weights EQNet2-v0 with sha256 (`gpu_weights.sha256`),
+  training data CEED NCEDC subset through 2022 (`provenance.py`). E65: `traveltime.first_arrival` fixed for sources
+  on a layer top; the registered R1 path keeps the pre-fix times (`traveltime.frozen`, bit-identical), declared in E65.
 
 ## 2026-11-14
 
+- CR-04, catalogue bound (exploratory, `experiments/exploratory/CR04-PREVALENCE/origin_pairs/`): in the SCSN
+  catalogue of Ridgecrest (30 days, 28,060 events) 1.89 % of events have another origin within 1 s, against 3.7 % for
+  a Poisson process at the local rate (ratio 0.41-0.70 across rate windows, magnitude cuts and start days,
+  `sensitivity.py`); the reading "the catalogue misses between about a third and a half" is a hypothesis. The registered
+  CR-04 measurement is unchanged.
 - Follow-up of the independent review of PR #46 (exploratory; no registered number changes). M6-CAL card: step 3 no
   longer reads "PASSES" (fresh seeds: 25 of 300, above the 0.10 bound); step 4 declared before running (fixed level
   with margin against the gain used as a ranking score; sets and seeds new), `M6-CAL/run_step4.py`.

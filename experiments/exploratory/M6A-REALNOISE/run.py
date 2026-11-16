@@ -1,7 +1,7 @@
 """M6A-REALNOISE: gate G-M6a of the v2 specification (M6) with REAL noise, first step (plan T4.23, owner's approval of
 8 November 2026). Does the M6 loop (joint refit + resolvability test, ``ttmt.v2.m6.adcg_loop``) beat the greedy v2
-loop (5 km exclusion) by >= 0.10 of pair recall on pairs at 0.1-1 s whose K_mec/E is in the upper tercile, when the
-noise is real continuous noise and the threshold of the test is calibrated on that noise?
+loop (5 km exclusion) by >= 0.10 of pair recall at the registered false-detection budget on pairs at 0.1-1 s whose
+K_mec/E is in the upper tercile, when the noise is real continuous noise?
 
 One factor changes with respect to M6-JOINT (simulation, PR #39): the noise. Two arms on the SAME sources:
   REAL  raw 3C noise of eligible 40 s slots of a Task 2M noise day (Alto Tiberina, 16 Hz, written by
@@ -14,23 +14,26 @@ those of M6-JOINT / M6C-SUBSAMPLE. Each source is scaled so that its median stro
 robust sd of THIS scene's noise through the filter. Sources come from one random stream, noise from another, so the
 two arms see identical sources.
 
-Methods, with the settings carried forward from M6-CAL (14 November 2026, supervision review X5; before this change
-the script still had kmax 2, near_km 5 and the plain LOC+T `hits()` of M6-JOINT, the defect of CR-29): kmax 4;
-greedy (v2_loop, 5 km exclusion), greedy0 (no exclusion: the control column of the review), m6-none (adcg_loop, no
-test), m6 (adcg_loop, one-event alternative "joint", near_km 10). Threshold: calibrated on the OPERATING loop of the
-same arm, by bisection, as M6-CAL step 2: the smallest thr at which adcg_loop as run splits at most 5 % of the
-control scenes WITH NEIGHBOURS (target + overlapping neighbour + isolated source, separate slots); no floor (review
-T5.2 and M6-BIAS). Hit rule: LOC+T-V, `ttmt.v2.m6.hits_loctv` (the registered rule, ADR-0008 item 2).
+Methods, settings of M6-CAL: kmax 4; greedy (v2_loop, 5 km exclusion), greedy0 (no exclusion, the review's control
+column), m6-none (adcg_loop, no test), m6 (adcg_loop, one-event alternative "joint", near_km 10, every candidate
+kept, thr = -inf) scored two ways: m6-min (the gate's column, owner's choice of 15 November 2026) and m6-gain
+(secondary). Hit rule: LOC+T-V (ttmt.stats.label_voronoi,
+ADR-0008 item 2).
 
-Gate (declared before the run, card.md): pairs at dtau in {0.1, 0.25, 0.5, 1.0} s, both separation strata pooled,
-K_mec/E (ttmt.synth.inject.kmec_over_e on the scaled block vectors) in the upper tercile of all pairs of the run;
-REAL arm: pair recall(m6) - pair recall(greedy) >= 0.10 and the 2.5th percentile of its paired bootstrap > 0
-(B = 2000, resampling pairs). Also in the gate (card.md, "Gate on false splits, derived"): at most SPLIT_MAX = 12 of
-NFRESH = 200 fresh control SCENES with neighbours have a false split (one-sided test of rate >= 0.10 at level 0.032;
-power 0.796 at a true rate of 0.05, 0.975 at 0.035). Scenes are counted, not atoms. Secondary:
-the same numbers on GEN, per stratum, per tercile.
+Main criterion (card.md, "Declared change of criteria", approved by the owner on 15 November 2026; route B of
+M6-CAL steps 4-5): no fixed threshold. Each method's detections carry a score (rule in `scored`), all scenes of an
+arm (NFRESH fresh control scenes with neighbours + all pair scenes) are pooled, and the threshold is the exact-FROC
+operating point at BUDGET = 30 false detections per hour (ttmt.stats.operating_point). Hours scanned: SCAN_S = 8.1 s
+of origin times per scene (81 bins of 0.1 s, 4-12 s). Gate: REAL arm, upper K_mec/E tercile of the pairs, both
+strata and the four separations pooled: pair recall(m6) - pair recall(greedy) >= 0.10 and the 2.5th percentile of
+its bootstrap > 0 (B = 2000; scenes resampled within control set and within each pair cell, operating points
+re-chosen in each replicate, ADR-0008 item 5). The result is recall at 30 false/h of this fixed 200 : 240 mix of
+control and pair scenes, not a deployable threshold. False splits of m6 at the
+reference threshold 23.8 (scenes, of 200; reference 12) are descriptive, not in the gate.
+The gate is NOT read until the per-station S split and the calibration on real isolated events (CR-30) are closed
+(card.md); until then a run is a diagnostic.
 
-    python run.py NOISE_DIR [NREP] [NCTRL] [NFRESH] > run_out.txt
+    python run.py NOISE_DIR [NREP] [NFRESH] > run_out.txt
 NOISE_DIR: a directory written by code/t2m_data.py (noise.npy, meta.json with "eligible"), e.g. day 101231.
 """
 import importlib.util
@@ -65,22 +68,25 @@ from ttmt.synth.inject import kmec_over_e  # noqa: E402
 from ttmt.traveltime import homogeneous  # noqa: E402
 from ttmt.v2.loop import v2_loop  # noqa: E402
 from ttmt.v2.m1 import OnsetEngine  # noqa: E402
-from ttmt.v2.m6 import adcg_loop, hits_loctv  # noqa: E402
+from ttmt.stats import FALSE, false_count, hits_at, label_voronoi, operating_point  # noqa: E402
+from ttmt.v2.m6 import adcg_loop  # noqa: E402
 
 SEED = 20261109
 NOISE_DIR = sys.argv[1] if len(sys.argv) > 1 else None
 NREP = int(sys.argv[2]) if len(sys.argv) > 2 else 30
-NCTRL = int(sys.argv[3]) if len(sys.argv) > 3 else 40     # calibration scenes
-NFRESH = int(sys.argv[4]) if len(sys.argv) > 4 else 200   # fresh control scenes of the gate
-SPLIT_MAX = 12           # gate: scenes with a false split among NFRESH = 200 (binomial design in card.md)
+NFRESH = int(sys.argv[3]) if len(sys.argv) > 3 else 200   # fresh control scenes with neighbours
+SPLIT_MAX = 12           # reference: scenes with a false split among 200 at THR_REF (descriptive, criterion 2)
+THR_REF = 23.8           # reference threshold of the descriptive false-split count
+BUDGET = 30.0            # registered false-detection budget per hour (ADR-0008 item 4)
+SCAN_S = 8.1             # seconds of origin time scanned per scene (taus 4-12 s, step 0.1 s)
 NSTA = 8
 KMAX = 4                 # M6-CAL (CR-37)
 NEAR_KM = 10.0           # radius of the resolvability test, twice the LOC+T radius (M6-CAL step 3)
-SPLIT_TARGET = 0.05      # share of control scenes split at the calibrated threshold
 DTAUS = J.DTAUS
 STRATA = J.STRATA
 SNR = J.SNR
-NAMES = ("greedy", "greedy0", "m6-none", "m6")
+NAMES = ("greedy", "greedy0", "m6-none", "m6-gain", "m6-min")
+GATE_M6 = "m6-min"      # score of the gate's m6 column: min(s, pair gain), chosen by the owner on 15 November 2026
 B = 2000
 
 
@@ -137,51 +143,111 @@ def noise_for(arm, rn, real):
 
 
 def null_scene(rs):
-    """calibration / false-split control with neighbours (review T5.2): the target, a neighbour 6-14 km away and
+    """fresh false-detection control with neighbours (review T5.2): the target, a neighbour 6-14 km away and
     0.5-1.5 s later (overlapping arrivals) and an isolated source 6-14 km away and 3 s later."""
     s1 = J.source(rs)
     return [s1, J.source(rs, s1[0], (6.0, 14.0), 6.0 + rs.uniform(0.5, 1.5)), J.source(rs, s1[0], (6.0, 14.0), 9.0)]
 
 
+def scored(name, atoms):
+    """(scores, xy, tau) of the detections of one method in one scene. Score rule (card.md, criterion 2, declared
+    before any run): greedy, greedy0, m6-none: the ranking statistic s of each atom; m6: s for an atom that was not
+    tested and the pair gain for a tested one (secondary, the literal reading of route B); m6-min (the gate's score,
+    chosen by the owner on 15 November 2026): min(s, pair gain) for a tested atom, which must pass on both."""
+    sc = []
+    for a in atoms:
+        g = a.get("pair_gain")
+        if name == "m6-min" and g is not None:
+            sc.append(min(float(a["s"]), float(g)))
+        elif name == "m6-gain" and g is not None:
+            sc.append(float(g))
+        else:
+            sc.append(float(a["s"]))
+    xy = np.array([np.asarray(a["x"], float)[:2] for a in atoms]).reshape(-1, 2)
+    return np.array(sc, float), xy, np.array([float(a["tau"]) for a in atoms], float)
+
+
+def run_methods(E, Y, q, lag):
+    a6 = adcg_loop(E, Y, q, KMAX, lag, thr=-np.inf, near_km=NEAR_KM)     # every candidate kept: route B
+    return {"greedy": v2_loop(E, Y, q, KMAX, lag), "greedy0": v2_loop(E, Y, q, KMAX, lag, min_sep=0.0),
+            "m6-none": adcg_loop(E, Y, q, KMAX, lag, thr=None, near_km=NEAR_KM), "m6-gain": a6, "m6-min": a6}
+
+
+class Pool:
+    """detections of all scenes of one arm, labelled per scene under LOC+T-V (prefix-stable, so the labels of the
+    full list hold at every threshold). Per scene: scores and labels local to that scene's sources (-1 false)."""
+
+    def __init__(self):
+        self.s = {k: [] for k in NAMES}
+        self.lab = {k: [] for k in NAMES}
+        self.ns = []
+
+    def add(self, res, srcs):
+        exy = np.array([np.asarray(s[0], float)[:2] for s in srcs])
+        et = np.array([float(s[1]) for s in srcs])
+        for k in NAMES:
+            sc, xy, tau = scored(k, res[k])
+            self.s[k].append(sc)
+            self.lab[k].append(label_voronoi(sc, xy, tau, exy, et) if len(sc) else np.zeros(0, int))
+        self.ns.append(len(srcs))
+        return len(self.ns) - 1
+
+    def hit(self, k, hours, scenes=None):
+        """operating point of method k on the scenes listed (default all; repeats allowed, each copy its own
+        targets): threshold, false count, and per listed scene the number of its sources hit."""
+        scenes = np.arange(len(self.ns)) if scenes is None else np.asarray(scenes)
+        n = np.array(self.ns)[scenes]
+        off = np.r_[0, np.cumsum(n)[:-1]]
+        s = np.concatenate([self.s[k][j] for j in scenes])
+        lab = np.concatenate([np.where(self.lab[k][j] >= 0, self.lab[k][j] + o, FALSE) for j, o in zip(scenes, off)])
+        thr = operating_point(s, lab, hours, BUDGET)
+        h = hits_at(s, lab, thr, int(n.sum()))
+        return thr, false_count(s, lab, thr), np.add.reduceat(h, off) if len(off) else h
+
+
+def boot_diff(pool, rows, sel, a, b, hours, seed):
+    """paired difference of pair recall (a - b) over the pairs in sel, with its stratified scene bootstrap: in each
+    of B replicates the control scenes and the pair scenes of each cell (stratum x dtau) are resampled with
+    replacement, the mix kept, and both operating points are re-chosen (ADR-0008 item 5)."""
+    r = np.random.default_rng(seed)
+    ctrl = np.arange(NFRESH)
+    cells = {}
+    for i, row in enumerate(rows):
+        cells.setdefault((row["stratum"], row["dtau"]), []).append(i)
+    cells = [np.array(v) for v in cells.values()]
+    inset = np.array([sel(row) for row in rows])
+    scene_of = np.array([row["scene"] for row in rows])
+    out = np.empty(B)
+    for i in range(B):
+        pr = np.concatenate([c[r.integers(0, len(c), len(c))] for c in cells])
+        sc = np.r_[r.choice(ctrl, NFRESH), scene_of[pr]]
+        d = pool.hit(a, hours, sc)[2][NFRESH:] == 2
+        d = d.astype(float) - (pool.hit(b, hours, sc)[2][NFRESH:] == 2)
+        m = inset[pr]
+        out[i] = d[m].mean() if m.any() else np.nan
+    return np.nanquantile(out, [.025, .975])
+
+
 def run_arm(arm, real, E, lag):
     out = {"arm": arm}
-    cal = []
-    for c in range(NCTRL):
-        rs, rn = np.random.default_rng([SEED, 1, c]), np.random.default_rng([SEED, 11, c])
-        srcs = null_scene(rs)
-        _s, nmf = noise_for(arm, rn, real)
-        Y, F = scene(srcs, nmf)
-        cal.append((srcs, Y, picker(F, rs)))
-    gains = []
-    for srcs, Y, q in cal:                  # largest spurious gain of each scene with every candidate kept (reported)
-        a = adcg_loop(E, Y, q, KMAX, lag, thr=-np.inf, near_km=NEAR_KM)
-        g = [x["pair_gain"] for x in MB.spurious(a, srcs) if x["pair_gain"] is not None]
-        gains += [max(g)] if g else []
-
-    def rate(th):
-        return np.mean([len(MB.spurious(adcg_loop(E, Y, q, KMAX, lag, thr=th, near_km=NEAR_KM), srcs)) > 0
-                        for srcs, Y, q in cal])
-    lo, hi = 1.0, 400.0                     # bisection in log thr on the loop as run (M6-CAL step 2)
-    if rate(lo) <= SPLIT_TARGET:
-        hi = lo
-    else:
-        for _ in range(6):
-            mid = float(np.sqrt(lo * hi))
-            lo, hi = (lo, mid) if rate(mid) <= SPLIT_TARGET else (mid, hi)
-    thr = hi
-    out.update(thr=thr, n_gain=len(gains), gain_med=float(np.median(gains)) if gains else np.nan,
-               gain_max=float(max(gains)) if gains else np.nan, cal_rate=float(rate(thr)))
-    splits = {"greedy0": 0, "m6": 0}          # SCENES with at least one false split
+    pool, gains = Pool(), []
+    splits = {"greedy0": 0, "m6@23.8": 0}     # SCENES with at least one false split (descriptive, criterion 2)
     for c in range(NFRESH):
         rs, rn = np.random.default_rng([SEED, 2, c]), np.random.default_rng([SEED, 12, c])
         srcs = null_scene(rs)
         _s, nmf = noise_for(arm, rn, real)
         Y, F = scene(srcs, nmf)
         q = picker(F, rs)
-        for k, a in (("greedy0", v2_loop(E, Y, q, KMAX, lag, min_sep=0.0)),
-                     ("m6", adcg_loop(E, Y, q, KMAX, lag, thr=thr, near_km=NEAR_KM))):
-            splits[k] += len(MB.spurious(a, srcs)) > 0
-    out["splits"] = splits
+        res = run_methods(E, Y, q, lag)
+        pool.add(res, srcs)
+        g = [x["pair_gain"] for x in MB.spurious(res["m6-gain"], srcs) if x["pair_gain"] is not None]
+        gains += [max(g)] if g else []
+        splits["greedy0"] += len(MB.spurious(res["greedy0"], srcs)) > 0
+        splits["m6@23.8"] += len(MB.spurious(adcg_loop(E, Y, q, KMAX, lag, thr=THR_REF, near_km=NEAR_KM),
+                                             srcs)) > 0
+    out.update(splits=splits, n_gain=len(gains), gain_med=float(np.median(gains)) if gains else np.nan,
+               gain_q95=float(np.quantile(gains, .95)) if gains else np.nan,
+               gain_max=float(max(gains)) if gains else np.nan)
     rows = []
     for sname, sep in STRATA.items():
         for dtau in DTAUS:
@@ -194,42 +260,50 @@ def run_arm(arm, real, E, lag):
                 slot, nmf = noise_for(arm, rn, real)
                 Y, F = scene(srcs, nmf)
                 q = picker(F, rs)
-                ke = kmec_over_e(F[0][1], F[1][1])
-                res = {"greedy": v2_loop(E, Y, q, KMAX, lag), "greedy0": v2_loop(E, Y, q, KMAX, lag, min_sep=0.0),
-                       "m6-none": adcg_loop(E, Y, q, KMAX, lag, thr=None, near_km=NEAR_KM),
-                       "m6": adcg_loop(E, Y, q, KMAX, lag, thr=thr, near_km=NEAR_KM)}
-                row = {"stratum": sname, "dtau": dtau, "rep": rep, "slot": slot, "kmec": ke}
-                for k, a in res.items():
-                    row[k] = len(hits_loctv(a, srcs))
-                rows.append(row)
-    out["rows"] = rows
+                j = pool.add(run_methods(E, Y, q, lag), srcs)
+                rows.append({"stratum": sname, "dtau": dtau, "rep": rep, "slot": slot, "scene": j,
+                             "kmec": kmec_over_e(F[0][1], F[1][1])})
+    hours = (NFRESH + len(rows)) * SCAN_S / 3600.0
+    out["hours"] = hours
+    out["op"] = {}
+    for k in NAMES:
+        thr, nf, hit = pool.hit(k, hours)
+        out["op"][k] = (thr, nf)
+        for r in rows:
+            r[k] = int(hit[r["scene"]])
+    out["rows"], out["pool"] = rows, pool
     return out
 
 
 def report(o, cut):
     rows = o["rows"]
-    print(f"== arm {o['arm']}: control {NCTRL} scenes with neighbours (3 sources), {o['n_gain']} scenes with a spurious near atom, largest RSS gain "
-          f"median / max {o['gain_med']:.1f} / {o['gain_max']:.1f}; operating-loop thr {o['thr']:.1f} "
-          f"(calibration scenes split {o['cal_rate']:.3f})")
-    print(f"   fresh control: scenes with a false split, of {NFRESH} with neighbours: greedy0 {o['splits']['greedy0']}, "
-          f"m6 {o['splits']['m6']}")
-    print(f"   {'stratum':7s} {'dtau':>5s} | pair recall " + " ".join(f"{k:>8s}" for k in NAMES)
+    print(f"== arm {o['arm']}: {NFRESH} fresh control scenes with neighbours + {len(rows)} pair scenes, "
+          f"{o['hours']:.3f} h scanned ({SCAN_S} s of origin times per scene), budget {BUDGET:g}/h "
+          f"(at most {int(np.floor(BUDGET * o['hours'] + 1e-9))} false detections)")
+    print("   operating point (threshold, false detections): "
+          + ", ".join(f"{k} {t:.2f} ({n})" for k, (t, n) in o["op"].items()))
+    print(f"   control: {o['n_gain']} scenes with a spurious near atom; its largest pair gain median / q95 / max "
+          f"{o['gain_med']:.1f} / {o['gain_q95']:.1f} / {o['gain_max']:.1f}")
+    print(f"   descriptive: scenes with a false split, of {NFRESH}: greedy0 {o['splits']['greedy0']}, "
+          f"m6 at thr {THR_REF} {o['splits']['m6@23.8']} (reference {SPLIT_MAX} of 200, not in the gate)")
+    print(f"   pair recall at the operating point")
+    print(f"   {'stratum':7s} {'dtau':>5s} | all pairs " + " ".join(f"{k:>8s}" for k in NAMES)
           + " | upper tercile (n) " + " ".join(f"{k:>8s}" for k in NAMES))
     for sname in STRATA:
         for dtau in DTAUS:
             rr = [r for r in rows if r["stratum"] == sname and r["dtau"] == dtau]
             up = [r for r in rr if r["kmec"] >= cut]
             f = lambda R, k: np.mean([r[k] == 2 for r in R]) if R else np.nan  # noqa: E731
-            print(f"   {sname:7s} {dtau:5.2f} |             " + " ".join(f"{f(rr, k):8.2f}" for k in NAMES)
+            print(f"   {sname:7s} {dtau:5.2f} |           " + " ".join(f"{f(rr, k):8.2f}" for k in NAMES)
                   + f" | {len(up):17d} " + " ".join(f"{f(up, k):8.2f}" for k in NAMES))
+    print("   (intervals: only for the gate, scene bootstrap with re-chosen operating points, see below)")
     for lab, R in (("all pairs", rows), ("upper tercile", [r for r in rows if r["kmec"] >= cut]),
                    ("lower two terciles", [r for r in rows if r["kmec"] < cut])):
-        d = np.array([(r["m6"] == 2) - (r["greedy"] == 2) for r in R], float)
-        d0 = np.array([(r["m6"] == 2) - (r["greedy0"] == 2) for r in R], float)
-        rb = np.random.default_rng([SEED, 7, len(lab)])
-        bs = d[rb.integers(0, len(d), (B, len(d)))].mean(1)
-        print(f"   {lab:19s} n {len(R):4d}  m6 - greedy {d.mean():+.3f} [{np.quantile(bs, .025):+.3f}, "
-              f"{np.quantile(bs, .975):+.3f}]  m6 - greedy0 {d0.mean():+.3f}")
+        d = np.array([(r[GATE_M6] == 2) - (r["greedy"] == 2) for r in R], float)
+        d0 = np.array([(r[GATE_M6] == 2) - (r["greedy0"] == 2) for r in R], float)
+        dm = np.array([(r["m6-gain"] == 2) - (r["greedy"] == 2) for r in R], float)
+        print(f"   {lab:19s} n {len(R):4d}  {GATE_M6} - greedy {d.mean():+.3f}  {GATE_M6} - greedy0 {d0.mean():+.3f}  "
+              f"m6-gain - greedy {dm.mean():+.3f}")
     return rows
 
 
@@ -239,17 +313,19 @@ def main():
     real = Noise(NOISE_DIR) if NOISE_DIR else None
     STA = real.STA if real else None
     if STA is None:
-        raise SystemExit("usage: run.py NOISE_DIR [NREP] [NCTRL] [NFRESH]")
+        raise SystemExit("usage: run.py NOISE_DIR [NREP] [NFRESH]")
     XN = S.nodes()
     taus = np.round(np.arange(4.0, 12.0 + 1e-9, 0.1), 10)
+    assert abs(len(taus) * 0.1 - SCAN_S) < 1e-9
     tt, _ = homogeneous(XN, STA, S.VP, S.VS)
     Gs, Qs = node_operators(XN, STA)
     E = OnsetEngine(XN, STA, tt, taus, OnsetDelay(np.full((NSTA, 2), -S.LAG)), Gs, Qs, rounding="nearest")
     lag = np.full((NSTA, 2), S.LAG / S.DT)
-    print(f"M6A-REALNOISE  seed {SEED}  {NREP} pairs per cell, {NCTRL} controls  numpy {np.__version__}")
+    print(f"M6A-REALNOISE  seed {SEED}  {NREP} pairs per cell, {NFRESH} fresh controls  numpy {np.__version__}")
     print(f"noise day {real.meta.get('day')} ({NOISE_DIR}), stations {','.join(real.stations)}, "
           f"{len(real.slots)} eligible slots")
-    print(f"SNR {SNR} (median strong-block peak / robust sd of the scene's filtered noise), kmax {KMAX}, near_km {NEAR_KM}, LOC+T-V")
+    print(f"SNR {SNR} (median strong-block peak / robust sd of the scene's filtered noise), kmax {KMAX}, "
+          f"near_km {NEAR_KM}, LOC+T-V, budget {BUDGET:g} false/h on the exact FROC")
     res = {arm: run_arm(arm, real, E, lag) for arm in ("REAL", "GEN")}
     ke = np.array([r["kmec"] for r in res["REAL"]["rows"]])
     cut = float(np.nanquantile(ke, 2 / 3))
@@ -257,15 +333,22 @@ def main():
     for arm in ("REAL", "GEN"):
         report(res[arm], cut)
         print()
-    used = sorted(r["slot"] for r in res["REAL"]["rows"])
-    print(f"REAL slots used by pairs: {len(used)} (+ {NCTRL + NFRESH} control), unique {len(set(used))}")
-    gate = [r for r in res["REAL"]["rows"] if r["kmec"] >= cut]
-    d = np.array([(r["m6"] == 2) - (r["greedy"] == 2) for r in gate], float)
-    lo = np.quantile(d[np.random.default_rng([SEED, 7, len("upper tercile")]).integers(0, len(d), (B, len(d)))]
-                     .mean(1), .025)
-    ok = d.mean() >= 0.10 and lo > 0 and res["REAL"]["splits"]["m6"] <= SPLIT_MAX and NFRESH == 200
-    print(f"G-M6a (REAL, upper tercile): m6 - greedy {d.mean():+.3f}, 2.5th pct {lo:+.3f}, m6 scenes with a false split "
-          f"{res['REAL']['splits']['m6']} of {NFRESH} (limit {SPLIT_MAX} of 200) -> {'PASS' if ok else 'FAIL'}")
+    used = [r["slot"] for r in res["REAL"]["rows"]]
+    print(f"REAL slots used: {len(used)} by pairs + {NFRESH} by controls, {real.k} in all, each once")
+    R = res["REAL"]
+    upper = lambda r: r["kmec"] >= cut  # noqa: E731
+    gate = [r for r in R["rows"] if upper(r)]
+    d = np.array([(r[GATE_M6] == 2) - (r["greedy"] == 2) for r in gate], float)
+    lo, hi = boot_diff(R["pool"], R["rows"], upper, GATE_M6, "greedy", R["hours"], [SEED, 7])
+    lom, him = boot_diff(R["pool"], R["rows"], upper, "m6-gain", "greedy", R["hours"], [SEED, 8])
+    dm = np.mean([(r["m6-gain"] == 2) - (r["greedy"] == 2) for r in gate])
+    ok = d.mean() >= 0.10 and lo > 0
+    print(f"G-M6a (REAL, upper tercile, n {len(d)}, at {BUDGET:g} false/h): {GATE_M6} - greedy {d.mean():+.3f} "
+          f"[{lo:+.3f}, {hi:+.3f}] -> {'PASS' if ok else 'FAIL'} by the formula; NOT a gate reading until CR-30 and "
+          f"the per-station S split are closed (card.md).")
+    print(f"   secondary (gain alone): m6-gain - greedy {dm:+.3f} [{lom:+.3f}, {him:+.3f}]. "
+          f"Descriptive: m6 scenes with a false split at thr {THR_REF}: {R['splits']['m6@23.8']} of {NFRESH} "
+          f"(reference {SPLIT_MAX} of 200)")
     print(f"\n{time.time() - t0:.0f} s")
 
 
