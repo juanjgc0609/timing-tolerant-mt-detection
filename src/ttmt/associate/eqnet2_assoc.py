@@ -12,9 +12,9 @@ dropped. The scores are saved (:func:`save_scores`) as the picker probabilities 
 
 Stage 2 (:func:`detect`, CPU, per trial). As published: per station, peaks of the event score above the threshold,
 origin time = peak time - travel time, epicentre = station + (distance, azimuth) on the local plane of the frame,
-depth = station depth + predicted depth; then EQNet2's "time" clustering (``metrics_continuous.py``): a histogram of
-the origin times weighted by the scores, local maxima over three bins whose summed score is at least MIN_STATION (3),
-each origin assigned to the nearest such peak within one bin. A detection is the score-weighted mean origin and
+depth = station depth + predicted depth (``extract_events``: distance in km, azimuth in radians clockwise from north,
+from station to event, depth offset added to the station depth; the 16-sample peak kernel of ``predict.py`` line 658);
+then EQNet2's "time" clustering (:func:`cluster`, ``metrics_continuous.py``). A detection is the median origin and
 location of its members, scored by their summed score.
 
 Tuned (space.EQNET2): wf_threshold [0.05, 0.7] (the card's EQNet range); wf_min_interevent log-uniform [0.1, 5] s,
@@ -127,37 +127,48 @@ def candidates(sc, sta_xyz, threshold, min_interevent):
     return np.array(rows, float).reshape(-1, 5)
 
 
-def cluster(c, bin_s):
-    """EQNet2's "time" clustering of candidates c (t, x, y, z, w): Detections."""
+def cluster(c, bin_s, span=None):
+    """EQNet2's "time" clustering of candidates c (t, x, y, z, w) as in ``metrics_continuous.py`` (cluster_method
+    "time") at 40a48ed1: histogram of origin times weighted by score with bin ``bin_s`` (published DT); local maxima by
+    a 3-bin max pool (ties kept, as ``hist_pool == hist``); the top K = int(span / 5) of them (span = record length;
+    published "max 1 event per 5 s"), kept if at least MIN_STATION; every candidate between the centres of the two
+    neighbouring bins of a peak gets that peak, peaks taken in decreasing height so a lower one overwrites; an event
+    is the median origin and location of its members, scored by their summed score, dropped below MIN_STATION / 2.
+    Declared differences: the bins start one bin before the first candidate, not at the first pick or candidate of
+    the record, and one empty bin pads each end (the published neighbour index wraps around at the first bin)."""
+    empty = Detections(np.zeros(0), np.zeros((0, 3)), np.zeros(0))
     if len(c) == 0:
-        return Detections(np.zeros(0), np.zeros((0, 3)), np.zeros(0))
+        return empty
     t, w = c[:, 0], c[:, 4]
     edges = np.arange(t.min() - bin_s, t.max() + 2 * bin_s, bin_s)
     hist, _ = np.histogram(t, bins=edges, weights=w)
+    xt = (edges[:-1] + edges[1:]) / 2
     pad = np.r_[-np.inf, hist, -np.inf]
-    peak = np.where((hist >= pad[:-2]) & (hist >= pad[2:]) & (hist >= MIN_STATION))[0]
-    if len(peak) == 0:
-        return Detections(np.zeros(0), np.zeros((0, 3)), np.zeros(0))
-    b = np.clip(np.searchsorted(edges, t, side="right") - 1, 0, len(hist) - 1)
-    k = np.abs(b[:, None] - peak[None, :])
-    near = np.argmin(k, axis=1)
-    ok = k[np.arange(len(t)), near] <= 1
+    h = np.where((hist >= pad[:-2]) & (hist >= pad[2:]), hist, 0.0)
+    k = len(h) if span is None else min(len(h), int(float(span) / 5))
+    top = np.argsort(-h, kind="stable")[:k]
+    top = top[h[top] >= MIN_STATION]
+    lab = np.full(len(t), -1)
+    for i, p in enumerate(top):
+        lab[(t >= xt[max(p - 1, 0)]) & (t <= xt[min(p + 1, len(xt) - 1)])] = i
     T, X, S = [], [], []
-    for p in range(len(peak)):
-        m = ok & (near == p)
-        if not m.any():
+    for i in range(len(top)):
+        m = lab == i
+        if not m.any() or w[m].sum() < MIN_STATION / 2:
             continue
-        ww = w[m] / w[m].sum()
-        T.append(float(ww @ t[m]))
-        X.append(ww @ c[m, 1:4])
+        T.append(float(np.median(t[m])))
+        X.append(np.median(c[m, 1:4], axis=0))
         S.append(float(w[m].sum()))
-    return Detections(np.array(T), np.array(X).reshape(-1, 3), np.array(S))
+    if not T:
+        return empty
+    o = np.argsort(T)
+    return Detections(np.array(T)[o], np.array(X).reshape(-1, 3)[o], np.array(S)[o])
 
 
 def detect(sc, sta_xyz, cfg):
     """one trial: Detections from stored scores."""
     c = candidates(sc, np.asarray(sta_xyz, float), cfg["wf_threshold"], cfg["wf_min_interevent"])
-    return cluster(c, float(cfg["wf_min_interevent"]))
+    return cluster(c, float(cfg["wf_min_interevent"]), span=sc["score"].shape[1] * sc["dt"])
 
 
 def runner():

@@ -671,6 +671,26 @@ def test_eqnet2_detect_recovers_events_and_resolves_pairs_only_with_a_short_bin(
     assert np.array_equal(back["score"], sc["score"][::-1])
 
 
+def test_eqnet2_cluster_follows_published_rules_and_azimuth_convention():
+    from ttmt.associate import eqnet2_assoc as EQ
+    # azimuth in radians clockwise from north, station -> event (extract_events at 40a48ed1)
+    sc = {"score": np.zeros((3, 50), np.float32), "tt": np.zeros((3, 50), np.float32), "dt": 0.16, "t0": 0.0}
+    sc.update(dist=np.full((3, 50), 10.0, np.float32), az=np.full((3, 50), np.pi / 2, np.float32),
+              dz=np.full((3, 50), 5.0, np.float32))
+    sc["score"][:, 20] = 0.9
+    c = EQ.candidates(sc, np.zeros((3, 3)), 0.3, 1.0)
+    assert np.allclose(c[:, 1:4], [10.0, 0.0, 5.0], atol=1e-5)               # due east, 5 km below the station
+    # two equal neighbouring bins are both peaks (max pool with ties); later, lower peaks overwrite
+    one = np.array([[0.1, 0, 0, 0, 1.0]] * 3 + [[1.1, 0, 0, 0, 1.0]] * 3)
+    assert len(EQ.cluster(one, 1.0)) == 2
+    # top K = int(span / 5): a 4 s record keeps no event, as published
+    assert len(EQ.cluster(one, 1.0, span=4.0)) == 0 and len(EQ.cluster(one, 1.0, span=10.0)) == 2
+    # median, not mean, of the members
+    med = np.array([[5.0, 0, 0, 0, 1.0], [5.1, 0, 0, 0, 1.0], [5.2, 9, 9, 9, 1.0]])
+    d = EQ.cluster(med, 2.0)
+    assert len(d) == 1 and abs(d.t[0] - 5.1) < 1e-9 and np.allclose(d.xyz[0], 0.0)
+
+
 def test_eqnet2_space_and_windows():
     from ttmt.associate import eqnet2_assoc as EQ
     sp = SP.space_of("eqnet2")
