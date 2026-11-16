@@ -5,13 +5,19 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-15
 
+- ADR-0011: stop rule for the overlap line, approved by the owner on 15 November. After block M and one picker
+  fine-tune given to every method, P1 is re-run on the tuning partition; if the better of our two arms does not beat
+  the best frozen comparator by at least 0.05 in recall in T (point estimate, LOC+T-V, 30 false detections per hour),
+  the result is reported as "does not meet the registered target", with its size and interval. The + 0.05 is an
+  ambition target (rule 36): a real smaller effect (interval excluding zero) or a clear failure goes to an owner
+  decision with the numbers in view, not to automatic abandonment. Validity thresholds are unchanged.
+  No registered criterion changes.
 - `M6A-REALNOISE/run.py` and card brought to criterion 2 of G-M6a (exploratory; nothing run but smoke tests with fake
   noise; G-M6a not run or read). No threshold calibration: m6 keeps every candidate, all scenes of an arm (200 fresh
   controls + 240 pairs) are pooled and the exact-FROC operating point at 30 false/h sets the threshold (8.1 s of
   origin times per scene). Gate score of a tested atom min(s, pair gain), chosen by the owner on 15 November 2026,
   14:05 UTC (gain alone printed as secondary). Bootstrap by scene, stratified, with operating points re-chosen in
   each replicate (ADR-0008 item 5; found by the independent review of PR #58). False splits at thr 23.8 descriptive.
-
 - Thesis: the [pending #45] mark and the draft note removed after PR #45 merged. The G-M5c sentence now says it
   failed on the noise of both 2M seeds (three days: 101231; 100210-11), not on one day.
 - Comparators added after registration 1 (T4.17, PR #51; no registered number changes). HARPA (Nat. Commun.
