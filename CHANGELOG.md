@@ -3,6 +3,13 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-16
+
+- `N2-REPICK` run on the laptop (140 s, GPU). Declared reading: LOW zone (net S - K = -8 of 120, 95 % interval
+  [-23, 7]); the target is not met. With the partner removed exactly, 88 of 120 targets still have fewer than 6
+  picked arrivals (50 have none). The card records a defect of its own control below 0.5 s and the ceiling S = 32
+  of 120 as effect size. No registered number changes.
+
 ## 2026-11-15
 
 - `N2-REPICK` (exploratory, approved by the owner on 15 November): card and script of the ideal "pick, subtract,
