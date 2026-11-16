@@ -30,7 +30,7 @@ from .radiation import node_operators
 from .station_terms import OnsetDelay, PeakDelay, anchored_peak_terms, estimate_peak_terms, onset_terms, pick_arrays
 
 R = HINET
-MODEL = TT.JMA2001
+MODEL = TT.frozen(TT.JMA2001)          # registered R1: travel times as before the E65 fix
 TOL = 0.5          # s, pick support of the hybrid
 W_WAVE = 0.5       # weight of the waveform-score percentile
 DKM, DTS = 5.0, 1.5

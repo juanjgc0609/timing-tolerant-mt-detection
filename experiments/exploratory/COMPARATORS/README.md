@@ -18,6 +18,8 @@ device) and `repro_puente.py` (gate G3a, target 1).
 | EQcorrscan | pending: wrapper (separate `ttmt-eqc` env) |
 | QuakeMigrate, MALMI | pending: install and wrapper (not in the environments of PR #8) |
 | EQNet | not runnable: no released weights for the 2022 model (`environments/DEVIATIONS.md`) |
+| PhaseNet + HARPA (added after registration 1, owner 2026-11-09, T4.17) | ready: wrapper `harpa_assoc.py`, tested with HARPA 7adf666 (CPU) |
+| EQNet2 (added after registration 1, owner 2026-11-09, T4.17, CR-34) | pending: EQNet2-v0 weights and inference on the device (see "Comparators added after registration 1") |
 
 `ttmt.associate.pipeline.STATUS` holds the same table; `tune_cli.py run` refuses a method that is not ready.
 
@@ -336,3 +338,41 @@ one record per station count of the card that the network has (Ridgecrest, 11 st
 stations: k = 4, 6), named by the atlas run name `label__k<k>`, and is its own bootstrap block. Tuning uses the base
 runs only (the contamination variants are reading only). The partition label is the generator's. The distance axis
 uses the set manifest's `catalogue_centroid` (card item 4); a manifest without it is refused.
+
+
+## Comparators added after registration 1: HARPA and EQNet2 (owner 2026-11-09, T4.17)
+
+Same protocol as every comparator (60 configurations, the anchored seeds, the tune partition only, objective
+`(recall_T + recall_C) / 2` at 30 false detections per hour), with one difference: the card did not list them, so they
+are tuned in their own ledger, `tuning_ledger_a5.csv` (`ledger.require_a4` refuses any other), under a proposed
+ATLAS-0 amendment 5 that the preregistration thread drafts and anchors before the first trial. The Ridgecrest EVAL
+segment is spent (CR-23) and is never read here.
+
+**HARPA** (Shi et al., Nat. Commun. 17:8140, 2026; DaDaCheng/phase_association at 7adf666). Pick associator
+(SGLD on event locations and times, Wasserstein loss per station, assignment by linear sum assignment); no
+amplitudes, no polarity. Wrapper `ttmt.associate.harpa_assoc`: the common 1-D model as a differentiable travel-time
+table replacing HARPA's constant-speed arrival time (fixed `one_d`, default True; False runs HARPA as published with
+the slowness-averaged velocities); P and S picks (HARPA's default is P only); `ncpu = 1` and `random`, `numpy`,
+`torch` seeded with 42 before each call (HARPA otherwise draws with the global generators and runs a process pool).
+Tuned: `as_min_picks` [3, 8], `as_max_time_residual` [0.3, 2] s (PyOcto's tolerance range), `as_dbscan_eps`
+log-uniform [3, 20] s (GaMMA's range after amendment 4). Fixed: README "fast association" schedule (1000 + 1000 SGLD
+steps). Smoke (cloud CPU, toy ring of 8 stations, picks with 0.02 s noise): 12 isolated events, recall 1.00, every
+pick associated, median epicentre error 0.12 km (1-D) and 0.54 km (homogeneous), two calls identical; 8 pairs 0.5 s
+apart, 16 of 16 events found within 0.2 s. Cost: about 50 s per 400 s toy record (1-D), so a 60-trial run on the
+4.17 h tune partition is expected at tens of CPU hours; measure one trial on the device before the run and run the
+records in parallel processes if needed (each call is seeded, so the result does not depend on the order).
+HARPA install: `pip install --no-deps git+https://github.com/DaDaCheng/phase_association@7adf66667eee66a2d5e34ceb47df584dba8ad1d2`
+plus `POT` and `pyproj` (torch, obspy, pandas, scikit-learn, tqdm are already in `ttmt-gpu`).
+
+**EQNet2** (Wang and Zhu, arXiv 2610.17404, 2026). End-to-end waveform method: per-station phase, polarity and
+event-centre scores with travel time and relative hypocentre, then a time-space clustering into a catalog
+(`metrics_continuous.py`). The inference code is public on AI4EPS/EQNet branch `develop` (40a48ed, 14 Oct 2026; `main`
+7dd24ed still lacks it), weights in the AI4EPS/models release `EQNet2-v0`. Checked here: the `swin2` + `upernet2`
+model builds (16.0 M parameters) and runs a forward pass on CPU on a 16-station, 4096-sample window with random weights
+(3.6 s), output shapes as `predict.py` expects. Not yet done: the weights (the release cannot be downloaded from the
+cloud), the adapter from our records (3 components, 100 Hz, station longitude, latitude and depth, the input order
+of `predict.py`) and the run on the device. Design to keep: the event-centre scores of a record are computed once (they
+do not depend on tuned parameters) and stored, as the picker probabilities are; a trial thresholds them and runs
+EQNet2's own clustering. That clustering bins origin times at DT = 2 s, so as published it cannot report two events
+inside regime T; by the rule of amendment 1 (REAL `tint`, PyOcto `min_interevent_time`) its time bin is tuned
+log-uniform in [0.1, 5] s together with the score threshold (`wf_threshold`, the card's EQNet range [0.05, 0.7]).

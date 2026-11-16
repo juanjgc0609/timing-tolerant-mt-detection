@@ -23,6 +23,14 @@ COLUMNS = ("method", "trial", "seed", "params", "objective", "recall_T", "recall
 
 LEDGER_A3 = LEDGER.with_name("tuning_ledger_a3.csv")       # GaMMA under ATLAS-0 amendment 3 (E63); stopped
 LEDGER_A4 = LEDGER.with_name("tuning_ledger_a4.csv")       # GaMMA under ATLAS-0 amendment 4 (DBSCAN tuned)
+# comparators added after registration 1 (HARPA, EQNet2; owner 2026-11-09, T4.17): their own ledger, so no row of
+# the registered ledgers is mixed with a method the card did not list. Proposed ATLAS-0 amendment 5, not yet anchored
+LEDGER_A5 = LEDGER.with_name("tuning_ledger_a5.csv")
+ADDED_METHODS = ("harpa", "eqnet2")
+
+
+def added_after_registration(method):
+    return method.split("+")[-1] in ADDED_METHODS
 
 
 def require_a4(method, path, action):
@@ -32,6 +40,9 @@ def require_a4(method, path, action):
     if method.endswith("+gamma") and Path(path).resolve() != LEDGER_A4.resolve():
         raise ValueError(f"{action} {method}: GaMMA after ATLAS-0 amendment 4 uses only --ledger {LEDGER_A4}, "
                          f"not {path}")
+    if added_after_registration(method) and Path(path).resolve() != LEDGER_A5.resolve():
+        raise ValueError(f"{action} {method}: comparators added after registration 1 (proposed amendment 5) use only "
+                         f"--ledger {LEDGER_A5}, not {path}")
 
 
 def params_json(cfg):
