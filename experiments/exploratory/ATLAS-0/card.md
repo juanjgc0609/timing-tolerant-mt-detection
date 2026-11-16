@@ -447,5 +447,6 @@ against its first parent 9e074d2 is the reviewed change only: `src/ttmt/associat
 `EQNET2` key in `ttmt.associate.space`, the `eqnet2` STATUS text in `ttmt.associate.pipeline`, tests in
 `tests/test_associate.py` and the CHANGELOG; nothing frozen at the tag changes. One declared difference from the
 published code: the adapter caps the candidate events per window at the top K = int(record length / 5), while
-`metrics_continuous.py` (40a48ed1, lines 582 and 605) takes K = int((t1 - t0) / 5) over the span of candidate and
+`metrics_continuous.py` (40a48ed1, lines 583, 590 and 605) takes K = int((t[-1] - t[0]) / 5) on the grid
+t = arange(t0, t1, DT) over the span of candidate and
 pick times. EQNet2 trials may start after this line is merged.
