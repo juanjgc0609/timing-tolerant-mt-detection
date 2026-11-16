@@ -159,7 +159,7 @@ tuned.
 | measure | recovered (32), median [q25, q75] | not recovered (88) | AUC, 95 % interval |
 |---|---|---|---|
 | `snr_med` | 6.93 [3.85, 15.23] | 3.63 [1.63, 5.71] | **0.718** [0.593, 0.865] |
-| channels with ratio >= 5 (of 33) | 21.5 [6, 32] | 7 [1, 13] | 0.739 [0.590, 0.913] |
+| channels with ratio >= 5 | 21.5 [6, 32] | 7 [1, 13] | 0.739 [0.590, 0.913] |
 
 **Reading by the declared rule: the low-signal hypothesis is PARTLY supported** (0.60 to 0.75; the interval reaches
 both neighbouring zones). Signal level matters, and it does not explain the loss alone.
