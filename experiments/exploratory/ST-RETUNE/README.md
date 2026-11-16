@@ -116,7 +116,8 @@ Runner: `run_pipeline(..., terms=)` subtracts the terms for every method; `tune_
 
 ## Amendment 6 of ATLAS-0
 
-Draft in `amendment-6-draft.md` (not anchored). Steps to anchor, after amendment 5 is anchored and this PR is
+Draft in `amendment-6-draft.md`; written into the card on 16 Nov 2026 after amendment 5 was anchored (tag
+`reg/ATLAS-0/amendment-5`). The tag of amendment 6 is still pending. Steps to anchor, after amendment 5 is anchored and this PR is
 reviewed: the text is appended to `experiments/exploratory/ATLAS-0/card.md` with the date, the PR is merged, and the
 owner tags the merge commit:
 

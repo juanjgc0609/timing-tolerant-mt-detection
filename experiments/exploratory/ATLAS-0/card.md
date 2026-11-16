@@ -381,3 +381,129 @@ SHA-256 8c1133f2..., stays on the device, not frozen and not used.
 The change widens GaMMA's search and cannot be chosen to lower its result.
 Freeze: `ttmt.associate.space`, `ttmt.associate.gamma_assoc`, `ttmt.associate.ledger`, `ttmt.associate.tune` and their
 tests in `tests/test_associate.py`; environment `ttmt-gpu` unchanged.
+
+## Amendment 5 (EQNet2 and HARPA; to be anchored as `reg/ATLAS-0/amendment-5`, before any of their tuning trials)
+Task ATLAS-0, amendment 5 (16 November 2026; owner approval 15 November 2026, "verifica y apruebo todo lo que haya que
+hacer"), written before any EQNet2 or HARPA configuration was tried on any partition.
+The registered text, amendments 1 to 4 and every ledger are kept unchanged; these items add to them.
+1. Comparator set. Two methods join the core set:
+   - EQNet2: AI4EPS/EQNet, branch develop, commit 40a48ed1d9e8bc53fe7283c9c96bb8be535c3395 (14 October 2026), with the weights of the AI4EPS/models
+     release "EQNet2-v0": the comparator uses `eqnet_base_noprompt_v0.pth` (192,090,382 B, SHA-256
+     1547df1b83961729c9ee35796fbcc3514d6f74c99fc789c4b591f58256d255a1, epoch 32, `add_prompt=False`, the README's
+     `--no-prompt` setting; swin2 + upernet2, 15,967,129 parameters). The other three files of the release are
+     recorded by hash only in `environments/gpu_weights.sha256`; arXiv 2610.17404.
+     The released EQNet code (7dd24ed) cannot run the 2022 model (`environments/DEVIATIONS.md`), so EQNet2 takes
+     EQNet's place in the set.
+   - HARPA: DaDaCheng/phase_association, commit 7adf66667eee66a2d5e34ceb47df584dba8ad1d2 (Shi et al., Nat. Commun. 17, 8140, 2026), on PhaseNet picks
+     with the common PHASENET picker space.
+   Adding comparators can only make the intersection-union rule of ADR-0008, item 6, harder to meet; it is not chosen
+   on any result.
+2. Search spaces (`ttmt.associate.space`), under amendment 1, item 1 (no fixed minimum time of 1 s or more between
+   output events in regime T):
+   - EQNet2: `wf_threshold` uniform in [0.05, 0.7], the EQNet range of the card; the minimum interval between events
+     `wf_min_interevent` log-uniform in [0.1, 5] s, used for both of EQNet2's fixed intervals: the per-station minimum
+     peak distance (published 2.56 s) and the origin-time bin of its clustering (`DT`, published 2 s); both under a new key `EQNET2`,
+     leaving the 2022 `EQNET` entry unchanged; as `tint` of REAL and `min_interevent_time` of PyOcto in amendment 1, because the
+     published grouping of 2 s (`DT` in `metrics_continuous.py`) cannot output two events in T.
+   - HARPA: `min_peak_pre_event` integer in [3, 8] (the range of every associator), `max_time_residual` uniform in
+     [0.3, 2.0] s (the range of PyOcto's tolerance), `dbscan_eps` log-uniform in [3, 20] s (GaMMA's range after
+     amendment 4). Fixed: the common 1-D velocity model, P and S picks, ncpu 1, seed 42 and the "fast" schedule of
+     the HARPA README (1,000 + 1,000 SGLD steps), as set in `COMPARATORS/README.md`, section "Comparators added after
+     registration 1".
+   Criterion: each range holds the published default and reuses a range already registered for another method; no
+   range was chosen on a result.
+3. Ledger and budget (CR-07). Each method gets 60 trials from `seeds.tuning_seeds(60)` over the space of item 2,
+   scored on the tuning partition of amendment 1, item 4, with the objective of amendment 1, item 2. Every trial goes
+   to a new ledger, `tuning_ledger_a5.csv` (the ledger module refuses any other for these methods), whose SHA-256
+   enters the freeze; the best trial of each method is frozen in `experiments/exploratory/COMPARATORS/frozen/`.
+4. CR-22. PhaseNet+HARPA adds no picker and no weights. It uses PhaseNet of SeisBench 0.12.6 with the common space
+   (`original` or `instance`, SHA-256 in `environments/gpu_weights.sha256`), whose provenance and known overlap
+   (`instance`: Italy 2005-2020, Alto Tiberina 2010 included) are declared in `ttmt.associate.provenance` and
+   amendment 1, item 3. EQNet2 is end to end, and its internal picker is not replaced. The EQNet2-v0 weights are trained on
+   the NCEDC subset of CEED through 2022, with NCEDC 2023 held out (arXiv 2610.17404, Section 2.4; about 325,000
+   events). That is no declared overlap with Ridgecrest 2019, Hi-net 2012 or Alto Tiberina 2010
+   (`provenance.overlaps` is empty for all four). Two caveats are declared. (a) Only Section 2.4 names the subset;
+   the introduction says "California Earthquake Event Dataset" without one, so the absence of SCEDC data from training
+   rests on that section. (b) Ridgecrest, 4 to 10 July 2019, is the authors' own continuous test case (Section 3.2).
+   A design tuned while looking at it would favour EQNet2, not the model, so EQNet2's Ridgecrest results carry a
+   "competitor's test set" flag.
+
+Disclosure: the tuned objectives of PyOcto (best 0.2589) and GaMMA amendment 4 (best 0.2356) were known when this was
+written. EQNet2 was smoke-tested on CPU with random weights and on the laptop with synthetic noise only; no EQNet2 or HARPA output has been read on
+any partition.
+Freeze, in two stages.
+- At the tag: `ttmt.associate.space` (with `HARPA`), `ttmt.associate.ledger` (`LEDGER_A5`, `ADDED_METHODS`),
+  `ttmt.associate.tune`, `ttmt.associate.harpa_assoc`, `ttmt.associate.provenance` and their tests in
+  `tests/test_associate.py`; environment `ttmt-gpu` with HARPA 7adf666 and EQNet develop 40a48ed1 installed as
+  recorded in `environments/DEVIATIONS.md`. HARPA trials may start after the tag.
+- Before the first EQNet2 trial: one commit that only adds the `EQNET2` key of item 2 (`wf_threshold`,
+  `wf_min_interevent`, ranges as written), the EQNet2 adapter (records to the input of `predict.py`, EQNet2's own
+  peak distance and clustering `DT` both set to `wf_min_interevent`) and their tests, and changes nothing frozen at the tag. That commit is
+  independently reviewed and its hash is recorded below this amendment as an erratum line before any EQNet2 trial
+  runs.
+
+## Amendment 6 (station terms; to be anchored as `reg/ATLAS-0/amendment-6`)
+Task ATLAS-0, amendment 6 (16 November 2026), written after the exploratory runs of T420-CEILING (PR #47) and of
+ST-RETUNE (PR #53), and before any tuning trial with station terms. The registered text, amendments 1 to 5, every
+ledger and every frozen configuration are kept unchanged; these items add to them.
+
+1. Station terms as a fixed preprocessing step. For a network with an independent calibration set, static
+   per-station, per-phase terms are subtracted from the picks before association
+   (`ttmt.associate.pipeline.run_pipeline`, argument `terms`), the same file for every method of the comparator set
+   and for the model.
+   - Ridgecrest: SCSN analyst picks of 9 to 15 July 2019 (days 190-196) from the SCEDC public bucket, selection of
+     `tools/fetch_scedc_phases.py` (type eq, M >= 1.5, box 35.45-36.15 N, 117.95-117.25 W): 3133 events, 135 102
+     picks, SHA-256 of `events.csv` aa87e042b84b47ad8a998b09816401ae92dba57966a051cf895d97bc20a061ed and of
+     `picks.csv` 90a2146a986958ba4e341436d398411220d9037272b8fbfe48ee323e5ad860ff. Estimator
+     `ttmt.associate.station_terms.from_catalogue` against the frame's model (Hadley-Kanamori): pick weight >= 0.5,
+     epicentral distance <= 60 km, |residual| < 3 s, at least 30 picks per term, median; a missing term takes the
+     median of its phase. Terms file `experiments/exploratory/ST-RETUNE/terms_ridgecrest_2019.json`, SHA-256
+     1ba1719e07a6193ca490009a7d488efba8469a881d7007bdd91a50360ab898bc (22 terms, 677 to 2627 picks each).
+   - Hi-net: no independent calibration set is available; no terms for any method, the model included.
+   - Alto Tiberina: no terms for any method, the model included (no calibration set was sought; it is not part of
+     the tuning partition).
+   A network gains terms later only by a further amendment, before any run on it.
+2. Ledger and budget. 60 trials per method (PyOcto, GaMMA; HARPA under amendment 5) from `seeds.tuning_seeds(60)`
+   over the registered spaces (amendments 1, 4 and 5), on the tuning partition of amendment 1, item 4, with the
+   objective of amendment 1, item 2. Every trial goes to `tuning_ledger_a6.csv`; the ledger module refuses any other
+   ledger for a trial with terms and refuses a trial without terms in that one (`ledger.require_ledger`). A smoke run
+   of the first 3 trials of each method comes first; its rows stay in the ledger and count in the 60. The best trial
+   of each method is frozen as `frozen/<method>_a6.json`, next to the existing frozen files, which stay.
+   HARPA's trials with terms also go to `tuning_ledger_a6.csv`, and none may run before amendment 5 is anchored and
+   its 60 trials without terms are in `tuning_ledger_a5.csv` (`ledger.require_ledger` refuses them until then).
+3. Use against the model. Each comparator runs with whichever of its two frozen configurations (without terms, and
+   with terms under this amendment) has the higher tuning objective; an exact tie keeps the configuration without
+   terms. The choice for each comparator is fixed and recorded in the card before any read-partition run. This can
+   only raise the bar of ADR-0008. The model has a single configuration: terms on wherever an independent set exists
+   (item 1), off elsewhere. It is not chosen among options.
+4. Reporting. Results are reported per network. On Hi-net no method is corrected, the misfit of the comparators'
+   1-D model is large there (PyOcto with oracle picks reaches 0.50 isolated recall), and the model is built to
+   tolerate timing misfit, so leaving Hi-net uncorrected favours the model structurally: an advantage on Hi-net alone
+   is not claimed as a gain without this caveat.
+5. One search. This retuning is run once. If neither PyOcto nor GaMMA gains at least 0.01 in the tuning objective
+   over its frozen value, the result is recorded as negative and the line closes: no second search space, no other
+   estimate of the terms and no further retuning with terms for the comparators.
+
+Disclosure. Known when this was written: the tuned objectives of PyOcto (0.2589) and GaMMA amendment 4 (0.2356).
+The exploratory results of T420-CEILING on the tuning partition: terms estimated from the injected sources failed
+their acceptance criterion (Hi-net isolated recall with oracle picks 0.54, needed 0.85), and with PhaseNet picks no
+estimate or tolerance tried raised PyOcto above its frozen recall in T. The ST-RETUNE checks at the frozen PyOcto
+configuration: with the terms of 9 July alone, T 0.202 and C 0.328 against 0.206 and 0.311; with the terms of this
+amendment, T 0.215 and C 0.348; so a result of "no change" for PyOcto is a likely outcome. Days 190-196 were the
+development days of M2-GP (PR #46) and days 197-203 its confirmation days; that use was for the model's own station
+terms and involved no comparator. The M2-GP fetch of 9 November held 3095 events and 133 952 picks; the bucket has
+since gained 38 events, and the hashes of item 1 fix the set used here. The three selection values (weight >= 0.5,
+distance <= 60 km, at least 30 picks) were set when the one-day check was written, before any association result
+with catalogue terms existed; no other values were tried, and the repository cannot prove the order because they
+entered in the same commit as that check. The S term of TOW2 (-0.33 s, 677 picks) is the median of two groups of
+residuals (about -0.54 s, 439 picks, and +0.77 s, 238 picks), so it is not a static delay; it is kept because the
+rule was fixed before it was seen, and it is 1 of 22 terms.
+
+Freeze: `ttmt.associate.station_terms`, `ttmt.associate.pipeline`, `ttmt.associate.ledger`, `ttmt.associate.tune`,
+`experiments/exploratory/COMPARATORS/tune_cli.py`, the terms file of item 1 and their tests
+(`tests/test_associate.py`, `tests/test_detectability.py`); environment as amendment 4.
+
+Owner approval. On 14 November 2026 the owner approved retuning the comparators with station terms under an
+amendment ("apruebo todo lo demás"). On 15 November 2026 (09:17 Bogotá) the owner approved the pending steps,
+which the project coordinator reads as approval of this amendment: "verifica y apruebo todo lo que haya que
+hacer". The anchoring and the tag remain the owner's own actions.

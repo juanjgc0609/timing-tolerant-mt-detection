@@ -20,7 +20,7 @@ def text(date):
     body = rest[rest.index("Task ATLAS-0, amendment 6"):]
     if body.count(PLACEHOLDER) != 1:
         raise SystemExit("the draft must hold the date placeholder exactly once")
-    return head.replace("draft, to be anchored", "anchored") + "\n" + body.replace(PLACEHOLDER, date).rstrip() \
+    return head.replace("draft, to be anchored", "to be anchored") + "\n" + body.replace(PLACEHOLDER, date).rstrip() \
         + "\n\n" + approval.rstrip() + "\n"
 
 

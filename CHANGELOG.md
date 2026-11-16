@@ -5,12 +5,42 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-16
 
+- ATLAS-0 amendment 6 written into the card (`append_amendment.py`, text of `ST-RETUNE/amendment-6-draft.md`, dated
+  16 November 2026), after amendment 5 was anchored (`reg/ATLAS-0/amendment-5`, 351695c). Station terms as a fixed
+  preprocessing step where an independent calibration set exists; 60 trials per method in `tuning_ledger_a6.csv`.
+  No trial with terms has run. Tag `reg/ATLAS-0/amendment-6` follows the merge of PR #53.
 - ST-RETUNE, point of the independent review of PR #53: amendment 6 draft, item 2, and `ledger.require_ledger`
   now say that a comparator of amendment 5 (HARPA) takes station terms only in `tuning_ledger_a6.csv` and only after
   its 60 trials without terms are in `tuning_ledger_a5.csv`.
+- `N2-REPICK` run on the laptop (140 s, GPU). Declared reading: LOW zone (net S - K = -8 of 120, 95 % interval
+  [-23, 7]); the target is not met. With the partner removed exactly, 88 of 120 targets still have fewer than 6
+  picked arrivals (50 have none). The card records a defect of its own control below 0.5 s and the ceiling S = 32
+  of 120 as effect size. No registered number changes.
+- `N2-REPICK` after the independent review: same-machine control added and rerun (K_local = K = 40 in all rows; net
+  -8 again). Step 2, declared before running: AUC of the per-channel peak ratio between recovered and not recovered
+  targets 0.718 [0.593, 0.865], low-signal hypothesis partly supported; Hi-net recovers 5 of 54 against 27 of 66 at
+  Ridgecrest at the same signal level, unexplained.
 
 ## 2026-11-15
 
+- `N2-REPICK` (exploratory, approved by the owner on 15 November): card and script of the ideal "pick, subtract,
+  pick again" test on the tuning partition, declared before the subtraction is run. The baseline stage shows that
+  40 of the 120 T targets lost at the picker reach 6 picks once the partner's arrivals leave the truth (assignment
+  effect, no subtraction). Target on the net count in three zones (>= 40, 15-39, < 15).
+- ATLAS-0 amendment 5 written into the card (owner approval 15 November): EQNet2 (develop 40a48ed1, weights
+  `eqnet_base_noprompt_v0.pth`, SHA-256 1547df1b...55a1) and PhaseNet+HARPA (7adf666) join the core set, 60 trials
+  each in `tuning_ledger_a5.csv`, EQNet2's event-grouping interval log-uniform in [0.1, 5] s (amendment 1 rule). No
+  trial of either method has run. Tag `reg/ATLAS-0/amendment-5` follows the merge.
+
+## 2026-11-15
+
+- ADR-0011: stop rule for the overlap line, approved by the owner on 15 November. After block M and one picker
+  fine-tune given to every method, P1 is re-run on the tuning partition; if the better of our two arms does not beat
+  the best frozen comparator by at least 0.05 in recall in T (point estimate, LOC+T-V, 30 false detections per hour),
+  the result is reported as "does not meet the registered target", with its size and interval. The + 0.05 is an
+  ambition target (rule 36): a real smaller effect (interval excluding zero) or a clear failure goes to an owner
+  decision with the numbers in view, not to automatic abandonment. Validity thresholds are unchanged.
+  No registered criterion changes.
 - ST-RETUNE, before the run: `run_retune.py` (check, smoke, full, read; refuses any trial without the tag
   `reg/ATLAS-0/amendment-6`) and `append_amendment.py` (amendment 6 into the card, after amendment 5). The card
   states what the run can show: the 0.01 of the rule is below the sampling and search noise, and a paired comparison
