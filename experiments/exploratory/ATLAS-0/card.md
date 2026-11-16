@@ -401,7 +401,8 @@ The registered text, amendments 1 to 4 and every ledger are kept unchanged; thes
 2. Search spaces (`ttmt.associate.space`), under amendment 1, item 1 (no fixed minimum time of 1 s or more between
    output events in regime T):
    - EQNet2: `wf_threshold` uniform in [0.05, 0.7], the EQNet range of the card; the event-grouping interval
-     log-uniform in [0.1, 5] s, as `tint` of REAL and `min_interevent_time` of PyOcto in amendment 1, because the
+     `wf_min_interval` (replacing the published `DT`) log-uniform in [0.1, 5] s; both under a new key `EQNET2`,
+     leaving the 2022 `EQNET` entry unchanged; as `tint` of REAL and `min_interevent_time` of PyOcto in amendment 1, because the
      published grouping of 2 s (`DT` in `metrics_continuous.py`) cannot output two events in T.
    - HARPA: `min_peak_pre_event` integer in [3, 8] (the range of every associator), `max_time_residual` uniform in
      [0.3, 2.0] s (the range of PyOcto's tolerance), `dbscan_eps` log-uniform in [3, 20] s (GaMMA's range after
@@ -429,9 +430,13 @@ The registered text, amendments 1 to 4 and every ledger are kept unchanged; thes
 Disclosure: the tuned objectives of PyOcto (best 0.2589) and GaMMA amendment 4 (best 0.2356) were known when this was
 written. EQNet2 was smoke-tested on CPU with random weights and on the laptop with synthetic noise only; no EQNet2 or HARPA output has been read on
 any partition.
-Freeze: `ttmt.associate.space`, `ttmt.associate.ledger` (`LEDGER_A5`, `ADDED_METHODS`), `ttmt.associate.tune`,
-`ttmt.associate.harpa_assoc`, `ttmt.associate.provenance` and their tests in `tests/test_associate.py`; environment
-`ttmt-gpu` with HARPA 7adf666 and EQNet develop 40a48ed1 installed as recorded in `environments/DEVIATIONS.md`. The
-EQNet2 adapter (records to the input of `predict.py`) and its event-grouping parameter do not exist yet: they enter
-the code under the space of item 2 and are frozen with their tests before the first EQNet2 trial; no EQNet2 trial
-runs before then.
+Freeze, in two stages.
+- At the tag: `ttmt.associate.space` (with `HARPA`), `ttmt.associate.ledger` (`LEDGER_A5`, `ADDED_METHODS`),
+  `ttmt.associate.tune`, `ttmt.associate.harpa_assoc`, `ttmt.associate.provenance` and their tests in
+  `tests/test_associate.py`; environment `ttmt-gpu` with HARPA 7adf666 and EQNet develop 40a48ed1 installed as
+  recorded in `environments/DEVIATIONS.md`. HARPA trials may start after the tag.
+- Before the first EQNet2 trial: one commit that only adds the `EQNET2` key of item 2 (`wf_threshold`,
+  `wf_min_interval`, ranges as written), the EQNet2 adapter (records to the input of `predict.py`, EQNet2's own
+  clustering with `DT` = `wf_min_interval`) and their tests, and changes nothing frozen at the tag. That commit is
+  independently reviewed and its hash is recorded below this amendment as an erratum line before any EQNet2 trial
+  runs.
