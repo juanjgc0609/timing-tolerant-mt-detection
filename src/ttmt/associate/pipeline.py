@@ -10,8 +10,8 @@ import importlib
 from ..atlas.schema import MethodRun
 from . import pickers
 
-ASSOCIATOR_MODULES = {"gamma": "gamma_assoc", "pyocto": "pyocto_assoc", "real": "real_assoc"}
-MIN_PICKS_KEY = {"gamma": "as_min_picks", "pyocto": "as_min_picks", "real": "as_nps0"}
+ASSOCIATOR_MODULES = {"gamma": "gamma_assoc", "pyocto": "pyocto_assoc", "real": "real_assoc", "harpa": "harpa_assoc"}
+MIN_PICKS_KEY = {"gamma": "as_min_picks", "pyocto": "as_min_picks", "real": "as_nps0", "harpa": "as_min_picks"}
 
 # every method of the card: "ready" (wrapper here, tested), "pending" (what is missing), "not runnable" (why)
 STATUS = {
@@ -23,6 +23,10 @@ STATUS = {
     "quakemigrate": "pending: wrapper and install (not in the comparator environments of PR #8)",
     "malmi": "pending: wrapper and install (not in the comparator environments of PR #8)",
     "eqnet": "not runnable: the 2022 EQNet model has no released weights (environments/DEVIATIONS.md)",
+    # added after registration 1 (owner 2026-11-09, T4.17; proposed amendment 5, ledger tuning_ledger_a5.csv)
+    "phasenet+harpa": "ready",
+    "eqnet2": "pending: EQNet2-v0 weights (AI4EPS/models release) and inference on the device; code public in "
+              "AI4EPS/EQNet branch develop 40a48ed (environments/DEVIATIONS.md)",
 }
 
 
