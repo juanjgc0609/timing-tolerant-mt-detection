@@ -3,6 +3,13 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-16
+
+- ATLAS-0 amendment 5 written into the card (owner approval 15 November): EQNet2 (develop 40a48ed1, weights
+  `eqnet_base_noprompt_v0.pth`, SHA-256 1547df1b...55a1) and PhaseNet+HARPA (7adf666) join the core set, 60 trials
+  each in `tuning_ledger_a5.csv`, EQNet2's event-grouping interval log-uniform in [0.1, 5] s (amendment 1 rule). No
+  trial of either method has run. Tag `reg/ATLAS-0/amendment-5` follows the merge.
+
 ## 2026-11-15
 
 - ADR-0011: stop rule for the overlap line, approved by the owner on 15 November. After block M and one picker
