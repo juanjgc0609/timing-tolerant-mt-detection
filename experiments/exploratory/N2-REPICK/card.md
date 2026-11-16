@@ -119,3 +119,23 @@ decision (rule 36); no criterion was declared on S, so no "passes" is claimed fo
 - Hypothesis now favoured, to be checked: the picker-stage loss in T is mainly a low-signal problem, not an overlap
   problem. Cheap check: per-station SNR of the 88 targets that stay below 6 picks against the 32 that recover.
 - If it holds, the low-SNR source (N-1, signed stack) addresses most of this loss and N-2 at most a quarter of it.
+
+## Step 2: is it low signal? (declared on 16 November 2026, before running)
+
+Question: do the targets that stay below 6 picked arrivals after the exact subtraction differ in signal level from
+the 32 that recover? Same data, same 120 targets; `run.py snr lost.json repick.json`. Descriptive; no parameter is
+tuned.
+
+- Measure per target: `snr_med`, the median over channels of the peak of the target's own injected waveform over
+  the robust sd (1.4826 MAD) of the record's noise. Secondary: number of channels with ratio at least 5.
+- Statistic: AUC of `snr_med` between recovered (n = 32) and not recovered (n = 88), bootstrap over realisations
+  (2000 resamples, seed 20261121).
+- Reading on the point estimate, interval reported: AUC >= 0.75 the low-signal hypothesis is supported; 0.60 to
+  0.75 partly (signal level matters but does not explain the loss alone); < 0.60 not supported, and another cause
+  must be looked for (label width, station geometry, the other events of records with k > 2).
+- Known before running: only the counts of the Result section. No signal level of any target has been computed.
+- Limit: an association, not a cause; a peak ratio is not the network SNR of Appendix AB.
+
+### Result of step 2
+
+Not run yet.

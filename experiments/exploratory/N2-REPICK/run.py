@@ -202,6 +202,50 @@ def repick(a):
     json.dump({"rows": rows, "K": K, "S": S, "limit": a.limit}, open(a.out, "w"), indent=1)
 
 
+def snr(a):
+    """Step 2 of card.md: is a target that stays below min_picks after the subtraction a weak one? Per channel, the
+    peak of the target's own injected waveform over the robust sd of the noise of the record."""
+    L, R = json.load(open(a.lost)), json.load(open(a.repick))["rows"]
+    mp, rows = L["min_picks"], []
+    for lab in sorted({x["label"] for x in R}):
+        set_id = next(x["set_id"] for x in R if x["label"] == lab)
+        data, comps, truth, codes, fs = rebuild(set_id)(lab)
+        noise = (data - np.sum(comps, axis=0)).reshape(-1, data.shape[-1])
+        sd = 1.4826 * np.median(np.abs(noise - np.median(noise, axis=1, keepdims=True)), axis=1)
+        for x in R:
+            if x["label"] == lab:
+                r = np.abs(comps[x["event"]].reshape(-1, data.shape[-1])).max(axis=1) / np.maximum(sd, 1e-30)
+                rows.append(dict(x, snr_med=float(np.median(r)), n_ch5=int((r >= 5).sum()), n_ch=int(r.size)))
+    rec = np.array([x["n_repick"] >= mp for x in rows])
+    print(f"targets {len(rows)}; recovered after subtraction {int(rec.sum())}, not recovered {int((~rec).sum())}; "
+          f"array shape of the last record {data.shape}, {len(codes)} stations")
+    for k in ("snr_med", "n_ch5"):
+        v = np.array([x[k] for x in rows], float)
+        t, f = v[rec], v[~rec]
+        auc = float(np.mean(t[:, None] > f[None, :]) + 0.5 * np.mean(t[:, None] == f[None, :]))
+        labs = sorted({x["label"] for x in rows})
+        rng, bs = np.random.default_rng(20261121), []
+        for _ in range(2000):                              # bootstrap over realisations
+            pick = rng.choice(labs, len(labs))
+            vv = np.concatenate([[x[k] for x in rows if x["label"] == l] for l in pick]).astype(float)
+            rr = np.concatenate([[x["n_repick"] >= mp for x in rows if x["label"] == l] for l in pick])
+            if rr.any() and (~rr).any():
+                tt, ff = vv[rr], vv[~rr]
+                bs.append(np.mean(tt[:, None] > ff[None, :]) + 0.5 * np.mean(tt[:, None] == ff[None, :]))
+        print(f"{k}: recovered median {np.median(t):.2f} (q25 {np.quantile(t, .25):.2f}, q75 {np.quantile(t, .75):.2f}); "
+              f"not recovered median {np.median(f):.2f} (q25 {np.quantile(f, .25):.2f}, q75 {np.quantile(f, .75):.2f}); "
+              f"AUC {auc:.3f}, 95 % interval [{np.quantile(bs, .025):.3f}, {np.quantile(bs, .975):.3f}]")
+    v = np.array([x["snr_med"] for x in rows])
+    for s_ in ("ridgecrest", "hinet"):
+        m = np.array([s_ in x["set_id"] for x in rows])
+        print(f"  {s_}: n {int(m.sum())}, recovered {int(rec[m].sum())}, median snr_med {np.median(v[m]):.2f}")
+    v = np.array([x["snr_med"] for x in rows], float)
+    auc = float(np.mean(v[rec][:, None] > v[~rec][None, :]) + 0.5 * np.mean(v[rec][:, None] == v[~rec][None, :]))
+    zone = "SUPPORTED" if auc >= 0.75 else ("PARTLY supported" if auc >= 0.60 else "NOT supported")
+    print(f"\nREADING (card.md, step 2): AUC of snr_med {auc:.3f} -> low-signal hypothesis {zone}")
+    json.dump({"rows": rows}, open(a.out, "w"), indent=1)
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="stage", required=True)
@@ -212,5 +256,9 @@ if __name__ == "__main__":
     r.add_argument("lost")
     r.add_argument("--limit", type=int, default=0)
     r.add_argument("--out", default="repick.json")
+    q = sub.add_parser("snr")
+    q.add_argument("lost")
+    q.add_argument("repick")
+    q.add_argument("--out", default="snr.json")
     a = ap.parse_args()
-    (baseline if a.stage == "baseline" else repick)(a)
+    {"baseline": baseline, "repick": repick, "snr": snr}[a.stage](a)
