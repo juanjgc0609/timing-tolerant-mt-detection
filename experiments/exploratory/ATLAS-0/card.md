@@ -441,3 +441,12 @@ Freeze, in two stages.
   peak distance and clustering `DT` both set to `wf_min_interevent`) and their tests, and changes nothing frozen at the tag. That commit is
   independently reviewed and its hash is recorded below this amendment as an erratum line before any EQNet2 trial
   runs.
+Erratum (16 November 2026; second freeze stage, recorded after the tag and before any EQNet2 trial). The EQNet2 commit is merge
+commit a080a66ea1dae21a0f95d9345024e8e62b205c28 on main (PR #62, independently reviewed at 2a733a7). Its diff
+against its first parent 9e074d2 is the reviewed change only: `src/ttmt/associate/eqnet2_assoc.py` (new), the
+`EQNET2` key in `ttmt.associate.space`, the `eqnet2` STATUS text in `ttmt.associate.pipeline`, tests in
+`tests/test_associate.py` and the CHANGELOG; nothing frozen at the tag changes. One declared difference from the
+published code: the adapter caps the candidate events per window at the top K = int(record length / 5), while
+`metrics_continuous.py` (40a48ed1, lines 583, 590 and 605) takes K = int((t[-1] - t[0]) / 5) on the grid
+t = arange(t0, t1, DT) over the span of candidate and
+pick times. EQNet2 trials may start after this line is merged.

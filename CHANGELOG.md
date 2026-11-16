@@ -5,11 +5,14 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-16
 
+- ATLAS-0 amendment 5, erratum line (second freeze stage): the EQNet2 commit is merge a080a66 (PR #62); one
+  declared difference, the adapter's top-K cap uses the record length instead of the span of candidate and pick
+  times. No EQNet2 trial has run.
 - `ttmt.associate.eqnet2_assoc`: EQNet2 (AI4EPS/EQNet develop 40a48ed1, weights EQNet2-v0 base, no prompt) as a
   waveform comparator in two stages: network scores stored once per record (GPU), threshold and EQNet2's "time"
   clustering per trial (CPU), following `metrics_continuous.py` (max-pool peaks, top K, overwrite, medians). Space
   `EQNET2` (wf_threshold, wf_min_interevent: per-station peak distance and clustering DT) for ledger a5. Tests use synthetic
-  scores and a stub network only; no partition read. Enters as the amendment-5 erratum commit (squash).
+  scores and a stub network only; no partition read. Entered as merge a080a66, recorded in the amendment-5 erratum.
 - `N2-REPICK` run on the laptop (140 s, GPU). Declared reading: LOW zone (net S - K = -8 of 120, 95 % interval
   [-23, 7]); the target is not met. With the partner removed exactly, 88 of 120 targets still have fewer than 6
   picked arrivals (50 have none). The card records a defect of its own control below 0.5 s and the ceiling S = 32
