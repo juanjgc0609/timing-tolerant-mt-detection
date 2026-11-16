@@ -60,6 +60,14 @@ def require_ledger(method, path, action, terms=None):
                          f"ledger takes no trial without them (got {path}, terms {'on' if terms else 'off'})")
     if not a6:
         require_a4(method, path, action)
+    elif added_after_registration(method):
+        # amendment 6, item 2: a comparator of amendment 5 is retuned with terms only after its own search without
+        # terms is complete in LEDGER_A5, which cannot exist before amendment 5 is anchored
+        from ..atlas.seeds import N_TRIALS
+        n = len(done(method, LEDGER_A5)) if LEDGER_A5.exists() else 0
+        if n < N_TRIALS:
+            raise ValueError(f"{action} {method}: trials with station terms need the {N_TRIALS} trials without terms "
+                             f"in {LEDGER_A5} first (amendment 5 anchored and run); it holds {n}")
 
 
 def params_json(cfg):

@@ -35,6 +35,8 @@ ledger and every frozen configuration are kept unchanged; these items add to the
    ledger for a trial with terms and refuses a trial without terms in that one (`ledger.require_ledger`). A smoke run
    of the first 3 trials of each method comes first; its rows stay in the ledger and count in the 60. The best trial
    of each method is frozen as `frozen/<method>_a6.json`, next to the existing frozen files, which stay.
+   HARPA's trials with terms also go to `tuning_ledger_a6.csv`, and none may run before amendment 5 is anchored and
+   its 60 trials without terms are in `tuning_ledger_a5.csv` (`ledger.require_ledger` refuses them until then).
 3. Use against the model. Each comparator runs with whichever of its two frozen configurations (without terms, and
    with terms under this amendment) has the higher tuning objective; an exact tie keeps the configuration without
    terms. The choice for each comparator is fixed and recorded in the card before any read-partition run. This can

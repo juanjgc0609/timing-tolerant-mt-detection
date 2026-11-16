@@ -117,7 +117,7 @@ def test_gamma_runs_and_freezes_only_in_the_a4_ledger(tmp_path):
     L.require_a4("phasenet+pyocto", L.LEDGER, "run")
 
 
-def test_trials_with_station_terms_use_only_the_a6_ledger(tmp_path):
+def test_trials_with_station_terms_use_only_the_a6_ledger(tmp_path, monkeypatch):
     # ATLAS-0 amendment 6: a trial with terms must not land in a registered ledger, nor one without in the new one
     for m in ("phasenet+pyocto", "phasenet+gamma"):
         for led in (L.LEDGER, L.LEDGER_A4, tmp_path / "other.csv"):
@@ -130,6 +130,13 @@ def test_trials_with_station_terms_use_only_the_a6_ledger(tmp_path):
     L.require_ledger("phasenet+pyocto", L.LEDGER, "run", False)
     with pytest.raises(ValueError, match="amendment 4"):
         L.require_ledger("phasenet+gamma", L.LEDGER, "run", False)
+    # a comparator of amendment 5 (HARPA) takes terms only once its search without terms is complete in LEDGER_A5
+    monkeypatch.setattr(L, "LEDGER_A5", tmp_path / "a5.csv")
+    with pytest.raises(ValueError, match="without terms"):
+        L.require_ledger("phasenet+harpa", L.LEDGER_A6, "run", True)
+    monkeypatch.setattr(L, "done", lambda m, path=None: set(range(60)))
+    (tmp_path / "a5.csv").write_text("")
+    L.require_ledger("phasenet+harpa", L.LEDGER_A6, "run", True)
 
 
 def test_pipeline_subtracts_station_terms_from_the_picks(monkeypatch):

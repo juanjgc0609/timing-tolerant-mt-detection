@@ -3,6 +3,12 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-16
+
+- ST-RETUNE, point of the independent review of PR #53: amendment 6 draft, item 2, and `ledger.require_ledger`
+  now say that a comparator of amendment 5 (HARPA) takes station terms only in `tuning_ledger_a6.csv` and only after
+  its 60 trials without terms are in `tuning_ledger_a5.csv`.
+
 ## 2026-11-15
 
 - ST-RETUNE, before the run: `run_retune.py` (check, smoke, full, read; refuses any trial without the tag
