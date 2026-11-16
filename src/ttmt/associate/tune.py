@@ -114,13 +114,11 @@ def code_version():
         return "unknown"
 
 
-def run(method, runner, records, ledger=L.LEDGER, n_trials=SP.N_TRIALS, env="", trials=None, log=print,
-        terms=False):
+def run(method, runner, records, ledger=L.LEDGER, n_trials=SP.N_TRIALS, env="", trials=None, log=print):
     """the random search of one method. runner(config, record) -> Detections. Every trial of space.trials(method)
     not yet in the ledger is run and appended (resumable; a failing trial is appended with status "error" and an
-    objective nan, and still counts in the budget). terms: the records carry station terms (ATLAS-0 amendment 6),
-    which fixes the ledger. Returns the ledger rows of the method."""
-    L.require_ledger(method, ledger, "run", terms)
+    objective nan, and still counts in the budget). Returns the ledger rows of the method."""
+    L.require_a4(method, ledger, "run")
     if not records:
         raise ValueError("no tuning records")
     check_records(records)
