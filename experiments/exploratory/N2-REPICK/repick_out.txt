@@ -1,0 +1,32 @@
+check on ss_hinet_2012_egf_v1_00000.0_000: 158 picks on the unmodified record; event 1 has 2 picked arrivals here, 2 with the stored probabilities
+ss_hinet_2012_egf_v1_00000.0_000: done (1/20, 13 s)
+ss_hinet_2012_egf_v1_00000.0_001: done (2/20, 19 s)
+ss_hinet_2012_egf_v1_00000.0_002: done (3/20, 26 s)
+ss_hinet_2012_egf_v1_00000.0_003: done (4/20, 32 s)
+ss_hinet_2012_egf_v1_00000.0_004: done (5/20, 38 s)
+ss_hinet_2012_egf_v1_00000.0_005: done (6/20, 44 s)
+ss_hinet_2012_egf_v1_00000.0_006: done (7/20, 51 s)
+ss_hinet_2012_egf_v1_00000.0_007: done (8/20, 57 s)
+ss_hinet_2012_egf_v1_00000.0_008: done (9/20, 63 s)
+ss_hinet_2012_egf_v1_00000.0_009: done (10/20, 69 s)
+ss_ridgecrest_2019_egf_v1_02100.0_000: done (11/20, 77 s)
+ss_ridgecrest_2019_egf_v1_02100.0_001: done (12/20, 84 s)
+ss_ridgecrest_2019_egf_v1_02100.0_002: done (13/20, 91 s)
+ss_ridgecrest_2019_egf_v1_02100.0_003: done (14/20, 98 s)
+ss_ridgecrest_2019_egf_v1_02100.0_004: done (15/20, 104 s)
+ss_ridgecrest_2019_egf_v1_02100.0_005: done (16/20, 111 s)
+ss_ridgecrest_2019_egf_v1_02100.0_006: done (17/20, 118 s)
+ss_ridgecrest_2019_egf_v1_02100.0_007: done (18/20, 126 s)
+ss_ridgecrest_2019_egf_v1_02100.0_008: done (19/20, 132 s)
+ss_ridgecrest_2019_egf_v1_02100.0_009: done (20/20, 138 s)
+
+targets lost at the picker and re-picked: 120 (of 120 lost; 0 have no partner in the truth)
+reach 6 picks: control K 40, after subtraction S 32, both 20; net S - K = -8
+unique targets (a target counts once whatever k): 52; K 14, S 13, net -1
+  separation 0.10-0.25 s: n 25, K 14, S 5
+  separation 0.25-0.50 s: n 37, K 14, S 12
+  separation 0.50-1.01 s: n 58, K 12, S 15
+picked arrivals per target, after minus control: median -1, mean -1.31, share with more 0.17, with fewer 0.58
+net S - K, 95 % bootstrap interval over 20 realisations: [-23, 7]
+
+READING (card.md): net -8 of 120 -> LOW zone
