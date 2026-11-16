@@ -5,6 +5,9 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-16
 
+- ATLAS-0 amendment 5, erratum line (second freeze stage): the EQNet2 commit is merge a080a66 (PR #62); one
+  declared difference, the adapter's top-K cap uses the record length instead of the span of candidate and pick
+  times. No EQNet2 trial has run.
 - `ttmt.associate.eqnet2_assoc`: EQNet2 (AI4EPS/EQNet develop 40a48ed1, weights EQNet2-v0 base, no prompt) as a
   waveform comparator in two stages: network scores stored once per record (GPU), threshold and EQNet2's "time"
   clustering per trial (CPU), following `metrics_continuous.py` (max-pool peaks, top K, overwrite, medians). Space
