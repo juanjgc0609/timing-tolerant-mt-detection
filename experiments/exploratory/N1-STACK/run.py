@@ -22,15 +22,17 @@ target sources, travel times of the set's prediction model (realdata.pred_model)
 block's catalogued events masked per station BEFORE anything else ([tP - 1 s, tS + 8 s], fraction reported):
   slides     100 time slides: station i rolled by 20 s x m_i, the m_i distinct among stations (slots of 20 s in
              300 s), seed 20261123; local maxima of max-over-positions separated >= 1 s; threshold = the value
-             exceeded 30 times per hour of slid noise (check: recount within 20-45 per hour).
+             exceeded 30 times per hour of slid noise (arithmetic recount, about 30 per hour by construction).
   unslid     the block as it is, origins whose reads stay inside it: threshold = its 3rd highest local maximum.
   main       the larger of the two (the zone is read with it). Both are reported, with their ratio.
+The same mask is applied to the noise part of every target record (review of d5a93d1); R with neither null nor
+targets masked is reported as a sensitivity, and R at both ends of the slide threshold's interval.
 Sensitivity: n_loc = 1000 against n_loc = 100 on the first 5 slides.
 
 Stages:
   baseline   tuning manifests only: reproduces the frozen objective of PhaseNet+PyOcto (stops otherwise), lists P-C (C
-             targets with stage "picker", STAGE-LOSS rule) and the positive control (up to 60 targets the frozen
-             comparator detects, label order).  python run.py baseline <tune_phasenet.json>... --out pops.json
+             targets with stage "picker", STAGE-LOSS rule) and the positive control (up to 30 targets per set that the
+             frozen comparator detects, label order within the set; >= 0.90 required in each set).  python run.py baseline <tune_phasenet.json>... --out pops.json
   stats      set files and the real records (laptop). P-T from N2-REPICK/repick.json (n_repick < 6), measured on the
              record with the partner subtracted (N2-REPICK rebuild, which checks the events add up to the stored
              signal); P-C and control on the unmodified record.
@@ -62,7 +64,7 @@ N_SLIDES, SLOT_S = 100, 20.0
 MASK = (-1.0, 8.0)        # s: catalogued-event mask [tP + MASK[0], tS + MASK[1]] per station
 UNSLID_RANK = 3           # the unslid threshold is the 3rd highest local maximum
 CONTROL_MIN = 0.90
-N_CONTROL = 60
+N_CONTROL = 30          # per set (review of d5a93d1)
 SEED_GRID, SEED_SLIDES, SEED_BOOT = 20261124, 20261123, 20261122
 MIN_PICKS = 6
 
@@ -301,7 +303,9 @@ def baseline(a):
             pc.append(row)
         if ev["got"][j]:
             hit.setdefault((lab, int(e)), dict(row, regime="T" if ev["T"][j] else "C"))
-    control = [hit[k] for k in sorted(hit)][:N_CONTROL]
+    control = []
+    for sid in sorted({k[0].split("_0")[0] for k in hit}):          # per set, label order within it (review)
+        control += [hit[k] for k in sorted(hit) if k[0].startswith(sid)][:N_CONTROL]
     print(f"P-C (C targets lost at the picker): {len(pc)} rows, {len({(x['label'], x['event']) for x in pc})} unique; "
           f"targets detected: {len(hit)} unique, control takes {len(control)}")
     json.dump({"partition": part, "manifests": [str(m) for m in a.manifests], "pc": pc, "control": control},
@@ -357,6 +361,8 @@ def stats(a):
         Qs = np.stack([operator_basis(x, STA) for x in P])
         nl = noise_null(Rn, mask, P, Lg, Qs, np.random.default_rng(SEED_SLIDES), N_SLIDES)
         th = thresholds(nl, np.random.default_rng(SEED_BOOT))
+        nl0 = noise_null(Rn, np.zeros_like(mask), P, Lg, Qs, np.random.default_rng(SEED_SLIDES), N_SLIDES)
+        th0 = thresholds(nl0, np.random.default_rng(SEED_BOOT))      # sensitivity: no catalogue mask anywhere
         # sensitivity n_loc = 1000 against 100 on the first N_SENS_SLIDES slides (same offsets)
         P2 = grid(txyz, N_LOC_SENS, SEED_GRID)
         L2 = lags(model, P2, STA)
@@ -372,7 +378,8 @@ def stats(a):
                 mx["en"].append(local_maxima(en))
             H5 = N_SENS_SLIDES * nl["hours_slide"]
             sens[nm] = {k: rate_threshold(np.concatenate(mx[k]), H5) for k in mx}
-        S[sid] = {"rd": rd, "STA": STA, "sd": sd, "noise_t0": tr0.t0, "th": th, "sens": sens,
+        S[sid] = {"rd": rd, "STA": STA, "sd": sd, "noise_t0": tr0.t0, "th": th, "th_nomask": th0, "sens": sens,
+                  "keep": (~mask)[:, None, :].astype(float),
                   "mask_fraction": float(mask.mean()), "n_catalogued": int((~tr0.target).sum())}
         for k in ("mt", "en"):
             t = th[k]
@@ -380,7 +387,9 @@ def stats(a):
                   f"{t['slides_interval'][1]:.2f}] ({t['hours_slides']:.2f} h, recount {t['recount_per_h']:.1f}/h), "
                   f"unslid {t['unslid']:.2f} ({t['hours_unslid']:.3f} h, {t['n_unslid_maxima']} maxima), "
                   f"ratio {t['ratio_unslid_over_slides']:.2f}, main {t['main']:.2f}; "
-                  f"n_loc 1000/100 on {N_SENS_SLIDES} slides {sens['1000'][k] / sens['100'][k]:.3f}", flush=True)
+                  f"n_loc 1000/100 on {N_SENS_SLIDES} slides {sens['1000'][k] / sens['100'][k]:.3f}; "
+                  f"without the mask: slides {th0[k]['slides']:.2f}, unslid {th0[k]['unslid']:.2f}, "
+                  f"main {th0[k]['main']:.2f}", flush=True)
         print(f"{sid}: catalogued events in the block {S[sid]['n_catalogued']}, masked fraction "
               f"{S[sid]['mask_fraction']:.3f}; {time.time() - t00:.0f} s", flush=True)
         if not 20.0 <= th["mt"]["recount_per_h"] <= 45.0 or not 20.0 <= th["en"]["recount_per_h"] <= 45.0:
@@ -394,9 +403,12 @@ def stats(a):
         rd, STA = s["rd"], s["STA"]
         sig, noise = rd.arrays(lab)
         truth = rd.truth(lab)
+        if abs(truth.t0 - s["noise_t0"]) > 1e-9:
+            sys.exit(f"{lab}: record t0 {truth.t0} is not the noise block's {s['noise_t0']}: stop")
         norm = lambda x: matched(pre16(x)) / s["sd"][:, None, None]   # noqa: E731
         Rsig, Rnoi = norm(sig), norm(noise)
-        R0 = Rsig + Rnoi                                                   # linear front end: unmodified record
+        R0 = Rsig + Rnoi * s["keep"]          # linear front end; catalogued windows masked as in the null (review)
+        R0u = Rsig + Rnoi                     # no mask: sensitivity
         need_pt = [x for x in pt if x["label"] == lab]
         comps = None
         if need_pt:
@@ -406,11 +418,13 @@ def stats(a):
                 if x["label"] != lab:
                     continue
                 e = x["event"]
-                R = R0
+                R, Ru = R0, R0u
                 if pop == "P-T":
-                    R = R0 - norm(comps[x["partner"]].astype(float))
+                    Rp = norm(comps[x["partner"]].astype(float))
+                    R, Ru = R0 - Rp, R0u - Rp
                 Q = operator_basis(truth.xyz[e], STA)
                 x["S_mt"], x["S_en"] = target_stats(R, truth.arr_t_obs[e], truth.t0, Q)
+                x["S_mt_nomask"], x["S_en_nomask"] = target_stats(Ru, truth.arr_t_obs[e], truth.t0, Q)
                 x["n_blocks"] = int(np.isfinite(truth.arr_t_obs[e]).sum())
         print(f"{lab}: done ({li + 1}/{len(labels)}, {time.time() - t00:.0f} s)", flush=True)
     for pop in rows:
@@ -422,21 +436,29 @@ def stats(a):
             x["above_mt_slides"] = bool(x["S_mt"] > th["mt"]["slides"])
             x["above_mt_unslid"] = bool(x["S_mt"] > th["mt"]["unslid"])
             x["diff"] = int(x["above_mt"]) - int(x["above_en"])
+            lo, hi = th["mt"]["slides_interval"]
+            x["above_mt_slides_lo"] = bool(x["S_mt"] > max(lo, th["mt"]["unslid"]))
+            x["above_mt_slides_hi"] = bool(x["S_mt"] > max(hi, th["mt"]["unslid"]))
+            x["above_mt_nomask"] = bool(x["S_mt_nomask"] > S[x["set_id"]]["th_nomask"]["mt"]["main"])
 
     ctl = rows["control"]
-    fc = float(np.mean([x["above_mt"] for x in ctl])) if ctl else float("nan")
-    print(f"\npositive control: {sum(x['above_mt'] for x in ctl)} of {len(ctl)} above the main S_mt threshold "
-          f"({fc:.3f}; needed {CONTROL_MIN})")
+    fcs = {}
+    for sid in set_ids:
+        cs = [x for x in ctl if x["set_id"] == sid]
+        fcs[sid] = float(np.mean([x["above_mt"] for x in cs])) if cs else float("nan")
+        print(f"\npositive control {sid}: {sum(x['above_mt'] for x in cs)} of {len(cs)} above the main S_mt "
+              f"threshold ({fcs[sid]:.3f}; needed {CONTROL_MIN} in each set)")
+
     out = {"limit": a.limit, "labels": labels, "rows": rows,
-           "noise": {sid: {"th": S[sid]["th"], "sens": S[sid]["sens"], "sd": S[sid]["sd"].tolist(),
+           "noise": {sid: {"th": S[sid]["th"], "th_nomask": S[sid]["th_nomask"], "sens": S[sid]["sens"], "sd": S[sid]["sd"].tolist(),
                            "mask_fraction": S[sid]["mask_fraction"], "n_catalogued": S[sid]["n_catalogued"]}
                      for sid in S},
-           "control_fraction": fc}
+           "control_fraction": fcs}
     json.dump(out, open(a.out, "w"), indent=1)
     if a.limit:
         print("small version: checks only, no R and no reading")
         return
-    if not fc >= CONTROL_MIN:
+    if not all(v >= CONTROL_MIN for v in fcs.values()):
         print("STOP: the positive control fails; the statistic or the threshold is wrong and nothing is read")
         return
 
@@ -447,11 +469,15 @@ def stats(a):
         Re, cie = boot_ratio(rr, "above_en")
         Rs, _ = boot_ratio(rr, "above_mt_slides")
         Ru, _ = boot_ratio(rr, "above_mt_unslid")
+        Rlo, _ = boot_ratio(rr, "above_mt_slides_lo")
+        Rhi, _ = boot_ratio(rr, "above_mt_slides_hi")
+        Rnm, _ = boot_ratio(rr, "above_mt_nomask")
         d, cid = boot_ratio(rr, "diff")
         uq = {(x["label"], x["event"]): x for x in rr}
         print(f"{name}: n {len(rr)} ({len(uq)} unique); R(S_mt) {R:.3f} [{ci[0]:.3f}, {ci[1]:.3f}]; "
               f"R(S_en) {Re:.3f} [{cie[0]:.3f}, {cie[1]:.3f}]; paired S_mt - S_en {d:+.3f} [{cid[0]:+.3f}, "
-              f"{cid[1]:+.3f}]; R with the slide threshold {Rs:.3f}, with the unslid {Ru:.3f}; unique "
+              f"{cid[1]:+.3f}]; R with the slide threshold {Rs:.3f}, with the unslid {Ru:.3f}; main threshold at the "
+              f"slide interval ends {Rlo:.3f} / {Rhi:.3f}; without the mask {Rnm:.3f}; unique "
               f"{sum(x['above_mt'] for x in uq.values())} of {len(uq)}")
         return R, ci, d, cid
 

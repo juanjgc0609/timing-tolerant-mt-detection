@@ -4,10 +4,8 @@
 Origen: decisión del dueño en tarjeta, 16 de noviembre 11:39 AM Bogotá, "Priorizar eventos débiles", tras el
 resultado de N-2 (PR #60).
 
-Este archivo es el borrador de `experiments/exploratory/N1-STACK/card.md`. Se sube al repositorio como ficha
-**antes** de correr, en un PR nuevo después de que el #60 se fusione (no se añaden commits al #60, ya revisado).
-El implementador puede fijar detalles de la interfaz del código; **no** puede cambiar población, medida, umbral de
-ruido ni zonas sin volver al supervisor.
+Ficha subida al repositorio **antes** de correr (PR #63, tras la fusión del #60). El implementador fija detalles
+de la interfaz del código; **no** cambia población, medida, umbral de ruido ni zonas sin volver al supervisor.
 
 ## Pregunta
 
@@ -111,17 +109,6 @@ partición, la fracción de llegadas verdaderas que PhaseNet lee frente al nivel
 menos, la hipótesis del dominio de entrenamiento queda apoyada y el afinado del lector (N-3) debe incluir Hi-net.
 Criterio: diferencia de fracción leída a señal igualada (tres tramos de señal), con intervalo por realización.
 
-## Revisión del umbral (16 de noviembre de 2026, antes de correr)
-
-Motivo [medido por el hilo de implementación]: la partición de ajuste tiene un solo bloque de ruido de 300 s por
-conjunto (0.083 h), con eventos de catálogo dentro. A 30 por hora el umbral descansaría en 2 o 3 máximos.
-
-Cambio: las horas de ruido salen de deslizamientos de tiempo entre estaciones (100 deslizamientos, al menos 20 s de
-diferencia, semilla fija), con las llegadas de los eventos de catálogo enmascaradas por estación antes de deslizar.
-Como deslizar rompe la coherencia del ruido entre estaciones (lo que ya falló en M5), el **umbral principal es el
-mayor de dos**: el de deslizamientos a 30 por hora y el del bloque sin deslizar (tercer máximo local más alto). La
-zona se lee con ese máximo; se reportan los dos por separado y su cociente. Población, medida y zonas no cambian.
-
 ## Revisión del diseño antes de correr (16 de noviembre de 2026; nada se había corrido)
 
 Motivo, hallado por el hilo de implementación en `data/manifests/synth`: la partición de ajuste tiene **un solo
@@ -139,12 +126,25 @@ Decisión del supervisor (mismo día, antes de cualquier corrida); población, m
    30/h y el del bloque sin deslizar (su 3.er máximo local más alto, con la máscara; unos 30/h en 0.083 h). La zona
    se lee con ese máximo. Se reporta R con cada umbral por separado y el cociente de los dos umbrales; si el sin
    deslizar supera al de time-slides en más de 20 %, se dice como evidencia de ruido coherente.
-3. La comprobación de 20-45 máximos por hora se aplica solo al nulo de time-slides. El control positivo (≥ 0.90 de
+3. El recuento de 20-45 máximos por hora se aplica solo al nulo de time-slides; es aritmética (da unos 30 por
+   construcción), no una validación. El control positivo (≥ 0.90 de
    los aciertos de PyOcto sobre el umbral principal) se mantiene.
 4. Límite: un solo bloque de 300 s por conjunto; el umbral sin deslizar descansa en 2-3 máximos y su intervalo es
    muy ancho.
 5. El recorrido de ruido usa la misma regla de lectura que los objetivos, y la sd robusta por estación sale del
    bloque de ruido también para los registros con señal.
+
+## Correcciones tras la revisión independiente de d5a93d1 (16 de noviembre de 2026, antes de correr)
+
+1. La máscara de catálogo se aplica también al ruido de los objetivos: R = R_señal + R_ruido · (fuera de máscara)
+   (− R_vecino en P-T); el t0 de cada registro es el del bloque (se comprueba y se detiene si no). Sin esto, el nulo
+   pierde la energía de los eventos de catálogo y los objetivos no, y R sube. Sensibilidad: R con nulo y objetivos
+   sin máscara.
+2. Control positivo por conjunto: hasta 30 aciertos de PyOcto por conjunto (orden de etiqueta dentro del conjunto) y
+   ≥ 0.90 en **cada** conjunto; si uno falla, no se lee nada.
+3. Se reporta R también en los dos extremos del intervalo del umbral de time-slides.
+4. La sd robusta por estación sale del bloque de ruido con sus eventos de catálogo; la infla algo, igual para nulo y
+   objetivos, sin sesgo entre ellos.
 
 ## Implementación (`run.py`; detalles de interfaz fijados antes de correr y aceptados por el supervisor)
 
@@ -165,7 +165,7 @@ Decisión del supervisor (mismo día, antes de cualquier corrida); población, m
   solo, así que "5 registros" se lee como 5 deslizamientos).
 - P-T: filas de `N2-REPICK/repick.json` con `n_repick < 6`, sobre el registro con el vecino restado (reconstrucción
   de N2-REPICK, que se detiene si los eventos no suman la señal guardada). P-C y control: etapa `baseline`
-  (reproduce el objetivo congelado o se detiene). Bootstrap de R por realización, 10 000, semilla 20261122.
+  (reproduce el objetivo congelado o se detiene; control: 30 por conjunto). Bootstrap de R por realización, 10 000, semilla 20261122.
 - Versión pequeña: `stats --limit 2` (una realización de cada conjunto, nulo completo), solo comprobaciones, sin R
   ni lectura.
 - Prueba con datos falsos en la nube (ruido gaussiano, 7 estaciones, 20 deslizamientos): recuento 29.4 por hora;
