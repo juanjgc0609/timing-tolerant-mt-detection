@@ -400,8 +400,9 @@ The registered text, amendments 1 to 4 and every ledger are kept unchanged; thes
    on any result.
 2. Search spaces (`ttmt.associate.space`), under amendment 1, item 1 (no fixed minimum time of 1 s or more between
    output events in regime T):
-   - EQNet2: `wf_threshold` uniform in [0.05, 0.7], the EQNet range of the card; the event-grouping interval
-     `wf_min_interval` (replacing the published `DT`) log-uniform in [0.1, 5] s; both under a new key `EQNET2`,
+   - EQNet2: `wf_threshold` uniform in [0.05, 0.7], the EQNet range of the card; the minimum interval between events
+     `wf_min_interevent` log-uniform in [0.1, 5] s, used for both of EQNet2's fixed intervals: the per-station minimum
+     peak distance (published 2.56 s) and the origin-time bin of its clustering (`DT`, published 2 s); both under a new key `EQNET2`,
      leaving the 2022 `EQNET` entry unchanged; as `tint` of REAL and `min_interevent_time` of PyOcto in amendment 1, because the
      published grouping of 2 s (`DT` in `metrics_continuous.py`) cannot output two events in T.
    - HARPA: `min_peak_pre_event` integer in [3, 8] (the range of every associator), `max_time_residual` uniform in
@@ -436,7 +437,7 @@ Freeze, in two stages.
   `tests/test_associate.py`; environment `ttmt-gpu` with HARPA 7adf666 and EQNet develop 40a48ed1 installed as
   recorded in `environments/DEVIATIONS.md`. HARPA trials may start after the tag.
 - Before the first EQNet2 trial: one commit that only adds the `EQNET2` key of item 2 (`wf_threshold`,
-  `wf_min_interval`, ranges as written), the EQNet2 adapter (records to the input of `predict.py`, EQNet2's own
-  clustering with `DT` = `wf_min_interval`) and their tests, and changes nothing frozen at the tag. That commit is
+  `wf_min_interevent`, ranges as written), the EQNet2 adapter (records to the input of `predict.py`, EQNet2's own
+  peak distance and clustering `DT` both set to `wf_min_interevent`) and their tests, and changes nothing frozen at the tag. That commit is
   independently reviewed and its hash is recorded below this amendment as an erratum line before any EQNet2 trial
   runs.
