@@ -5,6 +5,11 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-16
 
+- `N1-STACK` (exploratory, owner's choice of 16 November "Priorizar eventos débiles"): card and script of the
+  pre-test of the signed stack for weak events, declared before running. Card = the supervisor's design, plus a
+  design revision made before any run: the tuning partition has one 300 s noise block per set, so the threshold at
+  30 false per hour comes from 100 time slides (catalogued arrivals masked per station) and the main threshold is the
+  larger of the slide and unslid ones. Nothing has run on project data.
 - `N2-REPICK` run on the laptop (140 s, GPU). Declared reading: LOW zone (net S - K = -8 of 120, 95 % interval
   [-23, 7]); the target is not met. With the partner removed exactly, 88 of 120 targets still have fewer than 6
   picked arrivals (50 have none). The card records a defect of its own control below 0.5 s and the ceiling S = 32
