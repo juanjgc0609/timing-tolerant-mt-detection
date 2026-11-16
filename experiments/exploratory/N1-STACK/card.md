@@ -146,6 +146,40 @@ Decisión del supervisor (mismo día, antes de cualquier corrida); población, m
 4. La sd robusta por estación sale del bloque de ruido con sus eventos de catálogo; la infla algo, igual para nulo y
    objetivos, sin sesgo entre ellos.
 
+## Primera corrida (NOCAP) y decisión del supervisor (16 de noviembre de 2026)
+
+**Intento 1, registrado (commit 1950aeb; `baseline_out.txt`, `stats_smoke_out.txt`, `stats_out.txt`, `stats.json`).**
+S_mt se programó sin tope (NOCAP), una elección de interfaz que se apartó del diseño ("el estadístico del detector de
+v2"), que lleva el tope 6 registrado del MT-FW. La línea base se reprodujo (T 0.2063, C 0.3115). La corrida se
+**detuvo en el control positivo**: Hi-net 0 de 6 y Ridgecrest 20 de 30, frente a 0.90 por conjunto. No se calculó
+ni se leyó R. Lo que quedó a la vista antes de la decisión siguiente:
+- Umbrales S_mt: Hi-net 76 748 con time-slides y 203 779 sin deslizar (cociente 2.66, fracción enmascarada 0.498,
+  14 eventos de catálogo); Ridgecrest 222 y 324 (cociente 1.46, fracción enmascarada 0.298, 8 eventos).
+- Medianas de S_mt: control Hi-net 893 y Ridgecrest 945; **P-T Hi-net 111 y Ridgecrest 40** (un vistazo a la
+  población, aunque no se leyó R).
+
+**Decisión del supervisor (mismo día, tras ver lo anterior; necesita el visto bueno del dueño por las reglas 14 y
+20, pedido en tarjeta en el hilo del supervisor):**
+1. Se repite con **CAP6** (cada bloque con |v| limitado a 6 antes de proyectar, `detector.CAP6`): vuelve al
+   estadístico del diseño. S_en sigue sin tope. Población, medida R, umbral principal (el mayor de los dos) y
+   zonas 0.30 / 0.10 no cambian.
+2. Diagnóstico barato, con regla fijada antes: en los máximos de S_mt del nulo, la fracción de la energía leída
+   (Σ_b |v_ib|², sin tope) que aporta la estación más fuerte, por conjunto: en el 2 % más alto de los máximos de
+   cada deslizamiento y en los 10 máximos más altos sin deslizar. Si la mediana supera 0.5 **con NOCAP**, la
+   hipótesis del transitorio de una sola estación queda apoyada; si no, la causa es otra y se dice. Se imprime
+   también con CAP6.
+3. Regla de parada con CAP6: control positivo **agrupado** ≥ 0.90 (como estaba escrito en el diseño); el control
+   por conjunto se reporta, y un conjunto con menos de 10 (Hi-net tiene 6) se marca como insuficiente para
+   juzgarlo solo. Esto reemplaza la regla por conjunto de las correcciones tras la revisión, y se declara como
+   cambio tras ver datos. Si falla, la lectura es "instrumento no válido" y se para; no hay tercera variante sin
+   el supervisor y el dueño.
+4. Límites: en Hi-net la mitad del bloque queda enmascarada; el umbral sin deslizar es 2.66 veces el deslizado
+   (ruido coherente o eventos sin catalogar). Se reporta el mismo cociente con CAP6.
+5. R no se imprime hasta que se confirme la aprobación del dueño: `--read`.
+
+Corridas: `stats ... --radial nocap --out stats_nocap_diag.json` (diagnóstico; repite el intento 1) y
+`stats ... --radial cap6 --out stats_cap6.json` (sin `--read`).
+
 ## Implementación (`run.py`; detalles de interfaz fijados antes de correr y aceptados por el supervisor)
 
 - Front end de R1 (`datasets._preprocess`): media y tendencia fuera, Butterworth 4 de fase cero 0.5-6 Hz, 16 Hz,
@@ -154,7 +188,7 @@ Decisión del supervisor (mismo día, antes de cualquier corrida); población, m
 - Lectura: en cada bloque (estación, fase), el vector de 3 componentes en el pico de energía dentro de [-1, +8]
   muestras de la llegada (−0.06 a +0.5 s, como `inject.radiated_vectors`); llegada ausente = vector cero.
   Tolerancia de origen: máximo sobre desplazamientos comunes de −4..+4 muestras, cada estadístico el suyo.
-- S_mt = ½‖Qᵀv‖², Q base ortonormal de `radiation_operator` en la posición verdadera con todas las estaciones del
+- S_mt = ½‖Qᵀv‖² en el intento 1; desde la decisión de arriba, ½‖Qᵀφ(v)‖² con φ el tope 6. Q base ortonormal de `radiation_operator` en la posición verdadera con todas las estaciones del
   registro (`ProjectedEnergy` sin tope). S_en = ½‖v‖² en las mismas lecturas.
 - Recorrido de ruido: 100 posiciones uniformes en la caja de las fuentes objetivo del conjunto (profundidad ≥ 0.5 km,
   semilla 20261124), tiempos del modelo de predicción del conjunto (`realdata.pred_model`: HK1977 / JMA2001);

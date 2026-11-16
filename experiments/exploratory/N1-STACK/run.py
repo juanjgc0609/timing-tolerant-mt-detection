@@ -7,9 +7,10 @@ Ideal case: true location, injected arrival times (arr_t_obs), origin tolerance 
 
 Statistics (one front end, the one of R1: demean, detrend, Butterworth 4 zero-phase 0.5-6 Hz, 16 Hz, Z down, the
 2 Hz Ricker matched filter of ttmt.kernel, every station divided by the robust sd of its filtered NOISE block):
-  S_mt  0.5 ||Q^T v||^2, Q the orthonormal basis of the moment-tensor radiation operator (ttmt.radiation) at the
-        hypothesis location and all stations of the record: the projected energy of the v2 detector without cap
-        (MT-FW NOCAP, ttmt.detector.ProjectedEnergy), read without the picker.
+  S_mt  0.5 ||Q^T phi(v)||^2, Q the orthonormal basis of the moment-tensor radiation operator (ttmt.radiation) at
+        the hypothesis location and all stations of the record, phi the radial cap 6 of the registered MT-FW
+        (ttmt.detector.CAP6: every block's |v| limited to 6), read without the picker. --radial nocap gives the
+        uncapped statistic of the first run (1950aeb), which failed the positive control.
   S_en  0.5 ||v||^2 on the same reads: energy summed over stations and phases, no radiation pattern (QuakeMigrate's
         idea, no sign).
   v     the 3-component vector of every block (station, phase) at the energy peak within [-1, +8] samples of its
@@ -67,6 +68,9 @@ CONTROL_MIN = 0.90
 N_CONTROL = 30          # per set (review of d5a93d1)
 SEED_GRID, SEED_SLIDES, SEED_BOOT = 20261124, 20261123, 20261122
 MIN_PICKS = 6
+CAP = 6.0                 # radial cap of the registered MT-FW (detector.CAP6): S_mt reads |v| capped at CAP per block
+RADIAL = {"kind": "cap6"}  # set by --radial; "nocap" reproduces the first run (1950aeb)
+N_DIAG_UNSLID = 10        # top unslid maxima used in the strongest-station diagnostic
 
 
 def _load(name, path):
@@ -115,6 +119,14 @@ def peak_vectors(R):
 
 
 # ============================================================================================ statistics
+def capped(V):
+    """the radial map of S_mt on 3-vectors (..., 3): CAP6 (|v| limited to CAP) or none."""
+    if RADIAL["kind"] == "nocap":
+        return V
+    nv = np.linalg.norm(V, axis=-1, keepdims=True)
+    return V * np.minimum(1.0, CAP / np.maximum(nv, 1e-12))
+
+
 def operator_basis(xyz, STA):
     from ttmt.radiation import basis, radiation_operator
     return basis(radiation_operator(np.asarray(xyz, float), np.asarray(STA, float)))
@@ -131,8 +143,9 @@ def target_stats(R, arr_s, t0, Q):
         c = k + d
         ok = np.isfinite(c) & (c >= 0) & (c < n)
         cc = np.where(ok, c, 0).astype(int)
-        v = np.where(ok[..., None], V[np.arange(ns)[None, :], cc], 0.0).reshape(-1)
-        y = v @ Q
+        v = np.where(ok[..., None], V[np.arange(ns)[None, :], cc], 0.0)
+        y = capped(v).reshape(-1) @ Q
+        v = v.reshape(-1)
         best[0] = max(best[0], 0.5 * float(y @ y))
         best[1] = max(best[1], 0.5 * float(v @ v))
     return best
@@ -158,7 +171,7 @@ def lags(model, P, STA):
     return out
 
 
-def scan(V, L, Qs, circular):
+def scan(V, L, Qs, circular, return_arg=False):
     """max over positions of S_mt and S_en for every origin sample: V (ns, n, 3) peak vectors, L (N, 2, ns) lags in
     samples, Qs (N, 6 ns, r). circular: indices taken modulo n (time slides); else origins whose reads stay inside."""
     ns, n, _ = V.shape
@@ -169,29 +182,52 @@ def scan(V, L, Qs, circular):
         t = np.arange(max(0, -int(Lr.min()) - READ[0]), n - int(Lr.max()) - READ[1])
     mt = np.full(len(t), -np.inf)
     en = np.full(len(t), -np.inf)
+    gmt = np.zeros(len(t), int)
     st = np.arange(ns)[None, None, :]
+    Vc = capped(V)
     for g in range(len(L)):
         idx = t[:, None, None] + Lr[g][None]                               # (nt, 2, ns)
         if circular:
             idx = idx % n
         v = V[st, idx].reshape(len(t), -1)                                 # (nt, 6 ns)
-        y = v @ Qs[g]
-        mt = np.maximum(mt, 0.5 * (y * y).sum(1))
+        y = Vc[st, idx].reshape(len(t), -1) @ Qs[g]
+        smt = 0.5 * (y * y).sum(1)
+        gmt = np.where(smt > mt, g, gmt)
+        mt = np.maximum(mt, smt)
         en = np.maximum(en, 0.5 * (v * v).sum(1))
+    if return_arg:
+        return t, mt, en, gmt
     return t, mt, en
 
 
-def local_maxima(x, sep=SEP):
-    """values of the greedy non-maximum suppression of x: largest first, none within sep samples of a kept one."""
+def top_station_share(V, L, t, gmt, picks, circular):
+    """diagnostic (supervisor, 16 Nov): for the S_mt maxima at positions picks of the scan, the share of the read
+    energy sum_b |v_ib|^2 (uncapped) carried by the strongest station."""
+    ns, n, _ = V.shape
+    Lr = np.floor(L + 0.5).astype(int)
+    out = []
+    for j in picks:
+        idx = t[j] + Lr[gmt[j]]                                            # (2, ns)
+        if circular:
+            idx = idx % n
+        e = (V[np.arange(ns)[None, :], idx] ** 2).sum(-1).sum(0)          # (ns,)
+        out.append(float(e.max() / max(e.sum(), 1e-300)))
+    return out
+
+
+def local_maxima(x, sep=SEP, index=False):
+    """values (and with index, positions) of the greedy non-maximum suppression of x: largest first, none within
+    sep samples of a kept one."""
     order = np.argsort(-x, kind="stable")
     taken = np.zeros(len(x), bool)
     out = []
     for i in order:
         if taken[i]:
             continue
-        out.append(x[i])
+        out.append(i)
         taken[max(0, i - sep + 1):i + sep] = True
-    return np.array(out)
+    out = np.array(out, int)
+    return (x[out], out) if index else x[out]
 
 
 def rate_threshold(maxima, hours, budget=BUDGET):
@@ -230,16 +266,21 @@ def noise_null(Rn, mask, P, Lg, Qs, rng, n_slides):
     Rm = np.where(mask[:, None, :], 0.0, Rn)
     V = peak_vectors(Rm)
     ns, n, _ = V.shape
-    out = {"slides_mt": [], "slides_en": [], "offsets": []}
+    out = {"slides_mt": [], "slides_en": [], "offsets": [], "share_slides": []}
     for s in range(n_slides):
         off = slide_offsets(ns, n, rng)
         Vs = np.stack([np.roll(V[i], off[i], axis=0) for i in range(ns)])
-        _t, mt, en = scan(Vs, Lg, Qs, circular=True)
-        out["slides_mt"].append(local_maxima(mt))
+        t, mt, en, gmt = scan(Vs, Lg, Qs, circular=True, return_arg=True)
+        mv, mi = local_maxima(mt, index=True)
+        out["slides_mt"].append(mv)
         out["slides_en"].append(local_maxima(en))
         out["offsets"].append(off.tolist())
-    t, mt, en = scan(V, Lg, Qs, circular=False)
-    out["unslid_mt"], out["unslid_en"] = local_maxima(mt), local_maxima(en)
+        k = max(1, int(np.ceil(len(mv) * 0.02)))                          # top 2 % of each slide's maxima
+        out["share_slides"] += top_station_share(Vs, Lg, t, gmt, mi[:k], True)
+    t, mt, en, gmt = scan(V, Lg, Qs, circular=False, return_arg=True)
+    mv, mi = local_maxima(mt, index=True)
+    out["unslid_mt"], out["unslid_en"] = mv, local_maxima(en)
+    out["share_unslid"] = top_station_share(V, Lg, t, gmt, mi[:N_DIAG_UNSLID], False)
     out["hours_slide"] = n / FS16 / 3600.0
     out["hours_unslid"] = len(t) / FS16 / 3600.0
     return out
@@ -390,6 +431,15 @@ def stats(a):
                   f"n_loc 1000/100 on {N_SENS_SLIDES} slides {sens['1000'][k] / sens['100'][k]:.3f}; "
                   f"without the mask: slides {th0[k]['slides']:.2f}, unslid {th0[k]['unslid']:.2f}, "
                   f"main {th0[k]['main']:.2f}", flush=True)
+        for nm in ("slides", "unslid"):
+            sh = np.array(nl["share_" + nm])
+            print(f"{sid} diagnostic ({RADIAL['kind']}): strongest-station share of the read energy at the "
+                  f"{'top 2 % of every slide' if nm == 'slides' else f'top {N_DIAG_UNSLID} unslid'} S_mt maxima: "
+                  f"n {len(sh)}, median {np.median(sh):.3f}, q25 {np.quantile(sh, .25):.3f}, "
+                  f"q75 {np.quantile(sh, .75):.3f} -> single-station hypothesis "
+                  f"{'SUPPORTED' if np.median(sh) > 0.5 else 'not supported'} (rule: median > 0.5, read on nocap)",
+                  flush=True)
+        S[sid]["share"] = {nm: list(map(float, nl["share_" + nm])) for nm in ("slides", "unslid")}
         print(f"{sid}: catalogued events in the block {S[sid]['n_catalogued']}, masked fraction "
               f"{S[sid]['mask_fraction']:.3f}; {time.time() - t00:.0f} s", flush=True)
         if not 20.0 <= th["mt"]["recount_per_h"] <= 45.0 or not 20.0 <= th["en"]["recount_per_h"] <= 45.0:
@@ -451,15 +501,30 @@ def stats(a):
 
     out = {"limit": a.limit, "labels": labels, "rows": rows,
            "noise": {sid: {"th": S[sid]["th"], "th_nomask": S[sid]["th_nomask"], "sens": S[sid]["sens"], "sd": S[sid]["sd"].tolist(),
-                           "mask_fraction": S[sid]["mask_fraction"], "n_catalogued": S[sid]["n_catalogued"]}
+                           "mask_fraction": S[sid]["mask_fraction"], "n_catalogued": S[sid]["n_catalogued"],
+                           "share": S[sid]["share"]}
                      for sid in S},
-           "control_fraction": fcs}
+           "control_fraction": fcs, "radial": RADIAL["kind"]}
     json.dump(out, open(a.out, "w"), indent=1)
     if a.limit:
         print("small version: checks only, no R and no reading")
         return
-    if not all(v >= CONTROL_MIN for v in fcs.values()):
-        print("STOP: the positive control fails; the statistic or the threshold is wrong and nothing is read")
+    fpool = float(np.mean([x["above_mt"] for x in ctl])) if ctl else float("nan")
+    print(f"positive control pooled: {sum(x['above_mt'] for x in ctl)} of {len(ctl)} ({fpool:.3f}; stop rule of the "
+          f"supervisor's decision of 16 Nov: pooled >= {CONTROL_MIN}; per set reported, a set with n < 10 flagged "
+          f"as too small to judge alone)")
+    for sid in set_ids:
+        if sum(x["set_id"] == sid for x in ctl) < 10:
+            print(f"  {sid}: control n < 10, too small to judge alone")
+    if RADIAL["kind"] == "nocap":
+        if not all(v >= CONTROL_MIN for v in fcs.values()):
+            print("STOP (first run, rule per set): the positive control fails; nothing is read")
+        return
+    if not fpool >= CONTROL_MIN:
+        print("STOP: the pooled positive control fails with CAP6 -> instrument not valid; nothing is read")
+        return
+    if not a.read:
+        print("control passes; R is not printed until the owner's approval of CAP6 is confirmed (run with --read)")
         return
 
     def report(name, rr):
@@ -512,5 +577,9 @@ if __name__ == "__main__":
     s.add_argument("repick")
     s.add_argument("--limit", type=int, default=0)
     s.add_argument("--out", default="stats.json")
+    s.add_argument("--radial", choices=("cap6", "nocap"), default="cap6")
+    s.add_argument("--read", action="store_true", help="print R and the reading (only after the owner's approval)")
     a = ap.parse_args()
+    if a.stage == "stats":
+        RADIAL["kind"] = a.radial
     {"baseline": baseline, "stats": stats}[a.stage](a)
