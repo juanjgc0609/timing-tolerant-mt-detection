@@ -34,13 +34,17 @@ def associator(name):
     return importlib.import_module(f".{ASSOCIATOR_MODULES[name]}", __package__)
 
 
-def run_pipeline(method, cfg, frame, prob_path):
+def run_pipeline(method, cfg, frame, prob_path, terms=None):
     """one trial of a pick-based pipeline on one record. prob_path: the probability file, or a callable
-    weights -> path when the picker's weights are tuned."""
+    weights -> path when the picker's weights are tuned. terms: (ns, 2) static station terms subtracted from the
+    picks before association (ATLAS-0 amendment 6), the same for every method."""
     pk, asc = method.split("+", 1)
     path = prob_path(cfg.get("pk_weights")) if callable(prob_path) else prob_path
     prob, dt, t0, _meta = pickers.load_probabilities(path, frame.codes)
     picks = pickers.picks_from_probabilities(prob, dt, cfg["pk_threshold"], cfg["pk_peak_distance"], t0)
+    if terms is not None:
+        from . import station_terms
+        picks = station_terms.apply(picks, terms)
     a = {k: v for k, v in cfg.items() if k.startswith("as_")}
     det, picks = associator(asc).associate(frame, picks, a)
     return MethodRun(method, det, picks, dict(cfg), int(cfg[MIN_PICKS_KEY[asc]]))
@@ -49,5 +53,5 @@ def run_pipeline(method, cfg, frame, prob_path):
 def runner(method):
     """tune.run runner: the record's data must be {"frame": Frame, "prob": path or callable weights -> path}."""
     def run(cfg, record):
-        return run_pipeline(method, cfg, record.data["frame"], record.data["prob"]).det
+        return run_pipeline(method, cfg, record.data["frame"], record.data["prob"], record.data.get("terms")).det
     return run

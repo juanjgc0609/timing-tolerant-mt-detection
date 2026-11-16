@@ -5,6 +5,13 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-16
 
+- ATLAS-0 amendment 6 written into the card (`append_amendment.py`, text of `ST-RETUNE/amendment-6-draft.md`, dated
+  16 November 2026), after amendment 5 was anchored (`reg/ATLAS-0/amendment-5`, 351695c). Station terms as a fixed
+  preprocessing step where an independent calibration set exists; 60 trials per method in `tuning_ledger_a6.csv`.
+  No trial with terms has run. Tag `reg/ATLAS-0/amendment-6` follows the merge of PR #53.
+- ST-RETUNE, point of the independent review of PR #53: amendment 6 draft, item 2, and `ledger.require_ledger`
+  now say that a comparator of amendment 5 (HARPA) takes station terms only in `tuning_ledger_a6.csv` and only after
+  its 60 trials without terms are in `tuning_ledger_a5.csv`.
 - `ttmt.associate.eqnet2_assoc`: EQNet2 (AI4EPS/EQNet develop 40a48ed1, weights EQNet2-v0 base, no prompt) as a
   waveform comparator in two stages: network scores stored once per record (GPU), threshold and EQNet2's "time"
   clustering per trial (CPU), following `metrics_continuous.py` (max-pool peaks, top K, overwrite, medians). Space
@@ -39,6 +46,10 @@ Dated record of changes to the project's process, code and documents. Results ar
   ambition target (rule 36): a real smaller effect (interval excluding zero) or a clear failure goes to an owner
   decision with the numbers in view, not to automatic abandonment. Validity thresholds are unchanged.
   No registered criterion changes.
+- ST-RETUNE, before the run: `run_retune.py` (check, smoke, full, read; refuses any trial without the tag
+  `reg/ATLAS-0/amendment-6`) and `append_amendment.py` (amendment 6 into the card, after amendment 5). The card
+  states what the run can show: the 0.01 of the rule is below the sampling and search noise, and a paired comparison
+  over the 60 shared parameter sets is fixed as the secondary reading. No trial has been run.
 - `M6A-REALNOISE/run.py` and card brought to criterion 2 of G-M6a (exploratory; nothing run but smoke tests with fake
   noise; G-M6a not run or read). No threshold calibration: m6 keeps every candidate, all scenes of an arm (200 fresh
   controls + 240 pairs) are pooled and the exact-FROC operating point at 30 false/h sets the threshold (8.1 s of
@@ -94,6 +105,18 @@ Dated record of changes to the project's process, code and documents. Results ar
   no tolerance tried raises PyOcto above its frozen T of 0.206, and GaMMA falls; with oracle picks PyOcto gains
   (T 0.17 to 0.30-0.33). New `station_terms.fill_missing` (tested) and `T420-CEILING/terms_variants.py`. Results in
   the card and in `results/t420_ceiling/`.
+- ST-RETUNE (design and pilot, no retuning run): card `experiments/exploratory/ST-RETUNE/README.md` with the
+  hypothesis, reading rule, risks, pivot criterion and a draft of ATLAS-0 amendment 6 (not anchored). New
+  `station_terms.from_catalogue` (tested) and `catalogue_terms.py`. Pilot on Ridgecrest with SCSN analyst picks of
+  9 July 2019 (720 events, independent of every target): terms for 11 of 11 stations, correlation 0.91 with the
+  injected ones, median residual of the injected arrivals 0.172 to 0.093 s; frozen PyOcto with PhaseNet picks
+  unchanged (T 0.202 against 0.206, C 0.328 against 0.311), with oracle picks T 0.17 to 0.31. Hi-net has no
+  independent set.
+- ST-RETUNE after the independent review: registered terms from days 190-196 (`terms_ridgecrest_2019.json`, 3133
+  events; within 0.028 s of the one-day terms), amendment 6 rewritten (`amendment-6-draft.md`: single configuration
+  for the model, Hi-net without terms for every method and the fairness caveat, pivot inside the text, fuller
+  disclosure, TOW2 S flagged as not static). Runner hook `run_pipeline(terms=)`, `tune_cli.py run --terms` and
+  `ledger.require_ledger` with `tuning_ledger_a6.csv` (tests). No tuning trial run.
 - Supervision review of the open work (exploratory; no registered number changes). M6-CAL rerun on fresh seeds with
   the step-3 settings frozen: 25 of 300 scenes with neighbours split ([0.055, 0.121]), so the 5 % of step 3 does not
   hold out of sample (7 % over both runs); card updated, `M6-CAL/run_fresh.py`. The duplicator column of pair-only
