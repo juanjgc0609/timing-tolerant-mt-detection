@@ -134,6 +134,10 @@ the rerun:
 
 Rerun output: `repick2_out.txt`, `repick2.json` (the first outputs are kept).
 
+**Rerun (16 November 2026, 162 s, GPU).** K_local = 40, equal to K in every one of the 120 rows, so the two pickers
+are the same and the net does not come from the machine. S 32, net S - K_local = -8, 95 % interval [-23, 7]: LOW
+zone again. Sets: 12 targets reach 6 picks only after the subtraction, 20 reach it only in the control, 20 in both.
+
 ## Step 2: is it low signal? (declared on 16 November 2026, before running)
 
 Question: do the targets that stay below 6 picked arrivals after the exact subtraction differ in signal level from
@@ -150,6 +154,23 @@ tuned.
 - Known before running: only the counts of the Result section. No signal level of any target has been computed.
 - Limit: an association, not a cause; a peak ratio is not the network SNR of Appendix AB.
 
-### Result of step 2
+### Result of step 2 (16 November 2026, 122 s; `snr_out.txt`, `snr.json`)
 
-Not run yet.
+| measure | recovered (32), median [q25, q75] | not recovered (88) | AUC, 95 % interval |
+|---|---|---|---|
+| `snr_med` | 6.93 [3.85, 15.23] | 3.63 [1.63, 5.71] | **0.718** [0.593, 0.865] |
+| channels with ratio >= 5 (of 33) | 21.5 [6, 32] | 7 [1, 13] | 0.739 [0.590, 0.913] |
+
+**Reading by the declared rule: the low-signal hypothesis is PARTLY supported** (0.60 to 0.75; the interval reaches
+both neighbouring zones). Signal level matters, and it does not explain the loss alone.
+
+What it does not explain (measured, read after the run): the two sets have about the same signal level (median
+`snr_med` 3.85 at Ridgecrest, 4.11 at Hi-net) but 27 of 66 recover at Ridgecrest and 5 of 54 at Hi-net. So on
+Hi-net something other than the peak ratio keeps the picker from seeing a target that is alone. Hypotheses to
+check, none tested: the picker's training domain (PhaseNet "original" is Californian), the frequency content of the
+Hi-net short-period records, the remaining events of records with k > 2.
+
+Consequence proposed for the owner: the claim "the picker loss in T is a low-signal problem" is not to be written;
+what is measured is that it is mostly not an overlap problem (88 of 120 stay lost with the partner removed). The
+low-SNR source (N-1) stays justified in part; a picker adapted to Hi-net is a second candidate cause, cheap to test
+with the per-set split of any picker fine-tune.

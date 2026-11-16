@@ -9,6 +9,10 @@ Dated record of changes to the project's process, code and documents. Results ar
   [-23, 7]); the target is not met. With the partner removed exactly, 88 of 120 targets still have fewer than 6
   picked arrivals (50 have none). The card records a defect of its own control below 0.5 s and the ceiling S = 32
   of 120 as effect size. No registered number changes.
+- `N2-REPICK` after the independent review: same-machine control added and rerun (K_local = K = 40 in all rows; net
+  -8 again). Step 2, declared before running: AUC of the per-channel peak ratio between recovered and not recovered
+  targets 0.718 [0.593, 0.865], low-signal hypothesis partly supported; Hi-net recovers 5 of 54 against 27 of 66 at
+  Ridgecrest at the same signal level, unexplained.
 
 ## 2026-11-15
 
