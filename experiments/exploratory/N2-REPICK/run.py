@@ -144,7 +144,7 @@ def repick(a):
     labels = sorted({x["label"] for x in lost})
     if a.limit:
         labels = labels[:a.limit]
-    done, t00 = {}, time.time()
+    done, local, t00 = {}, {}, time.time()
 
     def picks_of(data, codes, fs, t0):
         prob, dt, tp = pickers.annotate_seisbench(stream_of(data, codes, fs, t0), codes, "PhaseNet", pkc["pk_weights"],
@@ -163,14 +163,18 @@ def repick(a):
                   flush=True)
             if abs(int(n_new[ref["event"]]) - ref["n_picked"]) > 1:
                 sys.exit("the picker of this machine does not reproduce the stored picks: stop")
+        p0 = picks_of(data, codes, fs, truth.t0)          # same-machine control (review of PR #60): unmodified record
         for f in sorted({x["partner"] for x in lost if x["label"] == lab}):
             p = picks_of(data - comps[f].astype(float), codes, fs, truth.t0)
             n = SL.match(p, without(truth, f))[1]
+            n0 = SL.match(p0, without(truth, f))[1]
             for x in lost:
                 if x["label"] == lab and x["partner"] == f:
                     done[(lab, x["event"])] = int(n[x["event"]])
+                    local[(lab, x["event"])] = int(n0[x["event"]])
         print(f"{lab}: done ({li + 1}/{len(labels)}, {time.time() - t00:.0f} s)", flush=True)
-    rows = [dict(x, n_repick=done[(x["label"], x["event"])]) for x in lost if (x["label"], x["event"]) in done]
+    rows = [dict(x, n_repick=done[(x["label"], x["event"])], n_control_local=local[(x["label"], x["event"])])
+            for x in lost if (x["label"], x["event"]) in done]
     n = len(rows)
     K = sum(x["n_control"] >= mp for x in rows)
     S = sum(x["n_repick"] >= mp for x in rows)
@@ -180,6 +184,14 @@ def repick(a):
     Ku = sum(x["n_control"] >= mp for x in uniq.values())
     print(f"\ntargets lost at the picker and re-picked: {n} (of {len(L['lost'])} lost; {len(L['lost']) - len(lost)} have no partner in the truth)")
     print(f"reach {mp} picks: control K {K}, after subtraction S {S}, both {both}; net S - K = {S - K}")
+    KL = sum(x["n_control_local"] >= mp for x in rows)
+    print(f"same-machine control K_local {KL} (stored-pick control K {K}; rows where the two differ: "
+          f"{sum(x['n_control_local'] != x['n_control'] for x in rows)}); net S - K_local = {S - KL}")
+    for nm, key in (("K", "n_control"), ("K_local", "n_control_local")):
+        print(f"  S without {nm} (reached only after the subtraction): {sum(x['n_repick'] >= mp > x[key] for x in rows)}; "
+              f"{nm} without S (lost by the subtraction): {sum(x[key] >= mp > x['n_repick'] for x in rows)}")
+    if abs(KL - K) > 2 and not a.limit:
+        print("WARNING: K_local and K differ by more than 2: the two pickers are not the same; read S - K_local only")
     print(f"unique targets (a target counts once whatever k): {len(uniq)}; K {Ku}, S {Su}, net {Su - Ku}")
     for lo, hi in ((0.1, 0.25), (0.25, 0.5), (0.5, 1.01)):
         rr = [x for x in rows if lo <= x["sep_s"] < hi]
@@ -194,12 +206,20 @@ def repick(a):
     bs = per[rng.integers(0, len(per), (10000, len(per)))].sum(1)
     print(f"net S - K, 95 % bootstrap interval over {len(labs)} realisations: [{np.quantile(bs, .025):.0f}, "
           f"{np.quantile(bs, .975):.0f}]")
+    perl = np.array([sum((x["n_repick"] >= mp) - (x["n_control_local"] >= mp) for x in rows if x["label"] == l)
+                     for l in labs])
+    bl = perl[np.random.default_rng(20261120).integers(0, len(perl), (10000, len(perl)))].sum(1)
+    print(f"net S - K_local, 95 % bootstrap interval: [{np.quantile(bl, .025):.0f}, {np.quantile(bl, .975):.0f}]")
     if not a.limit:
         net = S - K
         zone = "PASSES the target" if net >= 40 else ("MIDDLE zone: target not met, effect reported" if net >= 15
                                                        else "LOW zone")
         print(f"\nREADING (card.md): net {net} of {len(L['lost'])} -> {zone}")
-    json.dump({"rows": rows, "K": K, "S": S, "limit": a.limit}, open(a.out, "w"), indent=1)
+        nl = S - KL
+        zl = "PASSES the target" if nl >= 40 else ("MIDDLE zone: target not met, effect reported" if nl >= 15
+                                                    else "LOW zone")
+        print(f"READING with the same-machine control (added after review, same boundaries): net {nl} -> {zl}")
+    json.dump({"rows": rows, "K": K, "K_local": KL, "S": S, "limit": a.limit}, open(a.out, "w"), indent=1)
 
 
 def snr(a):

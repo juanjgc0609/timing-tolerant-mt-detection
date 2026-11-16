@@ -120,6 +120,20 @@ decision (rule 36); no criterion was declared on S, so no "passes" is claimed fo
   problem. Cheap check: per-station SNR of the 88 targets that stay below 6 picks against the 32 that recover.
 - If it holds, the low-SNR source (N-1, signed stack) addresses most of this loss and N-2 at most a quarter of it.
 
+## Addition after the independent review of b47d9e0 (16 November 2026)
+
+The review reached this thread after the run of d15237e had been read. Two points taken, both declared here before
+the rerun:
+
+- Same-machine control. K comes from the stored picks and S from the picker of the laptop; a difference between the
+  two pickers would enter S - K. `repick` now also picks the unmodified rebuilt record on the same machine and
+  matches it with the partner out of the truth (K_local). Both nets are reported; the zone boundaries stay as the
+  absolute counts declared above; if K_local and K differ by more than 2 the reading is taken on S - K_local.
+  What is known beforehand: the first run gave K 40, S 32. S is deterministic, so only K_local is new.
+- The sets S without K and K without S are printed next to the net.
+
+Rerun output: `repick2_out.txt`, `repick2.json` (the first outputs are kept).
+
 ## Step 2: is it low signal? (declared on 16 November 2026, before running)
 
 Question: do the targets that stay below 6 picked arrivals after the exact subtraction differ in signal level from
