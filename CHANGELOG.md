@@ -9,17 +9,42 @@ Dated record of changes to the project's process, code and documents. Results ar
   waveform comparator in two stages: network scores stored once per record (GPU), threshold and EQNet2's "time"
   clustering per trial (CPU), following `metrics_continuous.py` (max-pool peaks, top K, overwrite, medians). Space
   `EQNET2` (wf_threshold, wf_min_interevent: per-station peak distance and clustering DT) for ledger a5. Tests use synthetic
-  scores and a stub network only; no partition read (amendment 5 not anchored).
+  scores and a stub network only; no partition read. Enters as the amendment-5 erratum commit (squash).
+- `N2-REPICK` run on the laptop (140 s, GPU). Declared reading: LOW zone (net S - K = -8 of 120, 95 % interval
+  [-23, 7]); the target is not met. With the partner removed exactly, 88 of 120 targets still have fewer than 6
+  picked arrivals (50 have none). The card records a defect of its own control below 0.5 s and the ceiling S = 32
+  of 120 as effect size. No registered number changes.
+- `N2-REPICK` after the independent review: same-machine control added and rerun (K_local = K = 40 in all rows; net
+  -8 again). Step 2, declared before running: AUC of the per-channel peak ratio between recovered and not recovered
+  targets 0.718 [0.593, 0.865], low-signal hypothesis partly supported; Hi-net recovers 5 of 54 against 27 of 66 at
+  Ridgecrest at the same signal level, unexplained.
 
 ## 2026-11-15
 
+- `N2-REPICK` (exploratory, approved by the owner on 15 November): card and script of the ideal "pick, subtract,
+  pick again" test on the tuning partition, declared before the subtraction is run. The baseline stage shows that
+  40 of the 120 T targets lost at the picker reach 6 picks once the partner's arrivals leave the truth (assignment
+  effect, no subtraction). Target on the net count in three zones (>= 40, 15-39, < 15).
+- ATLAS-0 amendment 5 written into the card (owner approval 15 November): EQNet2 (develop 40a48ed1, weights
+  `eqnet_base_noprompt_v0.pth`, SHA-256 1547df1b...55a1) and PhaseNet+HARPA (7adf666) join the core set, 60 trials
+  each in `tuning_ledger_a5.csv`, EQNet2's event-grouping interval log-uniform in [0.1, 5] s (amendment 1 rule). No
+  trial of either method has run. Tag `reg/ATLAS-0/amendment-5` follows the merge.
+
+## 2026-11-15
+
+- ADR-0011: stop rule for the overlap line, approved by the owner on 15 November. After block M and one picker
+  fine-tune given to every method, P1 is re-run on the tuning partition; if the better of our two arms does not beat
+  the best frozen comparator by at least 0.05 in recall in T (point estimate, LOC+T-V, 30 false detections per hour),
+  the result is reported as "does not meet the registered target", with its size and interval. The + 0.05 is an
+  ambition target (rule 36): a real smaller effect (interval excluding zero) or a clear failure goes to an owner
+  decision with the numbers in view, not to automatic abandonment. Validity thresholds are unchanged.
+  No registered criterion changes.
 - `M6A-REALNOISE/run.py` and card brought to criterion 2 of G-M6a (exploratory; nothing run but smoke tests with fake
   noise; G-M6a not run or read). No threshold calibration: m6 keeps every candidate, all scenes of an arm (200 fresh
   controls + 240 pairs) are pooled and the exact-FROC operating point at 30 false/h sets the threshold (8.1 s of
   origin times per scene). Gate score of a tested atom min(s, pair gain), chosen by the owner on 15 November 2026,
   14:05 UTC (gain alone printed as secondary). Bootstrap by scene, stratified, with operating points re-chosen in
   each replicate (ADR-0008 item 5; found by the independent review of PR #58). False splits at thr 23.8 descriptive.
-
 - Thesis: the [pending #45] mark and the draft note removed after PR #45 merged. The G-M5c sentence now says it
   failed on the noise of both 2M seeds (three days: 101231; 100210-11), not on one day.
 - Comparators added after registration 1 (T4.17, PR #51; no registered number changes). HARPA (Nat. Commun.

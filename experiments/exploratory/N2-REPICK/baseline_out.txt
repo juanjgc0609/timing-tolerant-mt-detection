@@ -1,0 +1,3 @@
+partition b60d99b3d0bbbbfa  T 0.2063 (frozen 0.206278)  C 0.3115 (frozen 0.311475)
+T targets 223; lost at the picker 120; without a partner in the truth 0
+control K (stored picks, partner's arrivals removed from the truth): 40 of 120 reach 6 picks
