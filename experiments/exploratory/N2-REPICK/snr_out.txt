@@ -1,0 +1,7 @@
+targets 120; recovered after subtraction 32, not recovered 88; array shape of the last record (11, 3, 30000), 11 stations
+snr_med: recovered median 6.93 (q25 3.85, q75 15.23); not recovered median 3.63 (q25 1.63, q75 5.71); AUC 0.718, 95 % interval [0.593, 0.865]
+n_ch5: recovered median 21.50 (q25 6.00, q75 32.00); not recovered median 7.00 (q25 1.00, q75 13.00); AUC 0.739, 95 % interval [0.590, 0.913]
+  ridgecrest: n 66, recovered 27, median snr_med 3.85
+  hinet: n 54, recovered 5, median snr_med 4.11
+
+READING (card.md, step 2): AUC of snr_med 0.718 -> low-signal hypothesis PARTLY supported
