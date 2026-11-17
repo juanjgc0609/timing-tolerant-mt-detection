@@ -25,8 +25,8 @@ STATUS = {
     "eqnet": "not runnable: the 2022 EQNet model has no released weights (environments/DEVIATIONS.md)",
     # added after registration 1 (owner 2026-11-09, T4.17; proposed amendment 5, ledger tuning_ledger_a5.csv)
     "phasenet+harpa": "ready",
-    "eqnet2": "pending: adapter eqnet2_assoc ready (two stages); stage 1 not yet run on the device records; code "
-              "AI4EPS/EQNet branch develop 40a48ed (environments/DEVIATIONS.md)",
+    "eqnet2": "ready (two stages: experiments/exploratory/COMPARATORS/eqnet2_stage1.py on the GPU, then tune_cli.py "
+              "run eqnet2 on tune_eqnet2.json; runner eqnet2_assoc.runner); code AI4EPS/EQNet develop 40a48ed",
 }
 
 

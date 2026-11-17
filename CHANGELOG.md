@@ -3,6 +3,14 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-17
+
+- EQNet2 stage 1 on the tuning partition: `experiments/exploratory/COMPARATORS/eqnet2_stage1.py` writes the network
+  scores of every tuning record and `tune_eqnet2.json`, with the inputs of EQNet2's published continuous run
+  (E, N, Z at 100 Hz; amplitude in um/s through a per-dataset `--scale`, required; station longitude and latitude by
+  inverting `Dataset.to_xy`; stations in the published `--sort` order). `tune_cli.py run eqnet2` uses
+  `eqnet2_assoc.runner`; pipeline STATUS of eqnet2 is "ready". No record read yet.
+
 ## 2026-11-16
 
 - ATLAS-0 amendment 6 written into the card (`append_amendment.py`, text of `ST-RETUNE/amendment-6-draft.md`, dated

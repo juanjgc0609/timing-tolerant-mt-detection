@@ -2,6 +2,7 @@
 
     python tune_cli.py records ss_ridgecrest_2019_egf_v1 ss_hinet_2012_egf_v1 --out C:/Users/juanj/ttmt/tune
     python tune_cli.py run phasenet+pyocto <out>/*/tune_phasenet.json [--env ttmt-gpu] [--trials 60]
+    python tune_cli.py run eqnet2 <out>/*/tune_eqnet2.json --ledger tuning_ledger_a5.csv   (after eqnet2_stage1.py)
     python tune_cli.py freeze phasenet+pyocto frozen/phasenet+pyocto.json
     python tune_cli.py flags            # methods whose best development recall in T or C is outside [0.2, 0.85]
     python tune_cli.py sensitivity phasenet+pyocto
@@ -75,13 +76,22 @@ def main(argv=None):
             keys = [k for k in terms if k in m]
             if len(keys) > 1:
                 raise SystemExit(f"{m}: more than one --terms key matches")
-            for r in TU.load_manifest(m, a.method):
+            raw = json.load(open(m))["records"] if a.method == "eqnet2" else None
+            for i, r in enumerate(TU.load_manifest(m, a.method)):
+                if raw is not None:                 # EQNet2 stage-1 scores (eqnet2_stage1.py, tune_eqnet2.json)
+                    import os
+                    r.data["eqnet2"] = os.path.join(os.path.dirname(os.path.abspath(m)), raw[i]["eqnet2"])
                 if keys:
                     r.data["terms"] = load_terms(terms[keys[0]], r.data["frame"])
                 recs.append(r)
         if terms and not any("terms" in r.data for r in recs):
             raise SystemExit("--terms given but no manifest matches a key")
-        TU.run(a.method, PL.runner(a.method), recs, ledger=a.ledger, n_trials=a.trials, env=env.strip(),
+        if a.method == "eqnet2":
+            from ttmt.associate import eqnet2_assoc as EQ
+            run = EQ.runner()
+        else:
+            run = PL.runner(a.method)
+        TU.run(a.method, run, recs, ledger=a.ledger, n_trials=a.trials, env=env.strip(),
                terms=bool(terms))
     elif a.cmd == "freeze":
         print(json.dumps(L.freeze(a.method, a.out, a.ledger), indent=1))
