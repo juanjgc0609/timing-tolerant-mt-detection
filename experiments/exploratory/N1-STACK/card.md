@@ -238,7 +238,7 @@ diagnóstico"), solo en los aciertos de PyOcto. Declarado aquí antes de correr.
   (ventana, pico, filtro) y se revisa antes que G; **0.4 a 0.6**, ambas.
 - Límites: g se mide en velocidad filtrada 2-20 Hz a 100 Hz y v en la salida del filtro adaptado de 0.5-6 Hz a
   16 Hz; un cambio de signo por bloque entre las dos bandas baja f_emp, así que una f_emp baja no separa del todo
-  "lectura" de "banda". El rango 1 frente a 6 hace que una f_emp alta sea la evidencia más fuerte.
+  "lectura" de "banda", y una f_emp entre 0.4 y 0.6 se lee como "no separa". El rango 1 frente a 6 hace que una f_emp alta sea la evidencia más fuerte.
 - v: los vectores leídos en el desplazamiento común con mayor ‖v‖²; las dos fracciones sobre ese mismo v.
 - Comprobación del código con un evento sintético analítico en ruido gaussiano (nube, sin datos del proyecto): f_an
   0.998 y f_emp 0.998 con g conocido, así que la lectura y el orden de filas reproducen un evento que sí sigue el
