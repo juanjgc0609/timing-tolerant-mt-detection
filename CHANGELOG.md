@@ -18,6 +18,9 @@ Dated record of changes to the project's process, code and documents. Results ar
   instrument not valid by the declared rule; no R computed. Diagnostic: the slide-null maxima come from one station
   (median share 0.99 Hi-net, 0.79 Ridgecrest). Measured after the run: only about a fifth of the read energy of
   detected EGF events falls in the analytic moment-tensor subspace (0.26 Hi-net, 0.21 Ridgecrest).
+- `N1-STACK` diagnostics (owner's approval of 16 November, 028aa3f): empirical-G fraction f_emp 0.29 (Hi-net, n 6)
+  and 0.03 (Ridgecrest) -> by the declared rule the cause is the vector reading (band not separated); the
+  analytic-G chain control gives 0.69 and 0.77, middle zone, no conclusion.
 - `N2-REPICK` run on the laptop (140 s, GPU). Declared reading: LOW zone (net S - K = -8 of 120, 95 % interval
   [-23, 7]); the target is not met. With the partner removed exactly, 88 of 120 targets still have fewer than 6
   picked arrivals (50 have none). The card records a defect of its own control below 0.5 s and the ceiling S = 32

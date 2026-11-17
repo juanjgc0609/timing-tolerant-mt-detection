@@ -269,6 +269,31 @@ aprobada por el supervisor.
 - Comprobación en la nube con un lector falso (ruido gaussiano, 7 estaciones): mediana 0.969. Uso:
   `run.py gcheck pops.json stats_nocap_diag.json --out gcheck.json`, en la misma sesión que `gdiag`.
 
+## Resultado del diagnóstico y del control de la cadena (17 de noviembre de 2026, portátil; commit 028aa3f)
+
+Salidas: `gdiag_out.txt`, `gdiag.json`, `gcheck_out.txt`, `gcheck.json`. Lectura por las reglas declaradas arriba;
+la interpretación final es del supervisor.
+
+| | Hi-net (n 6, < 10) | Ridgecrest (n 30) |
+|---|---|---|
+| f_emp mediana [q25, q75] (azar) | 0.291 [0.258, 0.369] (0.024) | 0.033 [0.020, 0.127] (0.015) |
+| f_an mediana (azar) | 0.135 (0.143) | 0.129 (0.091) |
+| f_emp − f_an emparejado, mediana | +0.159 | −0.095 |
+| regla gdiag (> 0.6 G, < 0.4 lectura) | < 0.4: lectura | < 0.4: lectura |
+| convención: sin girar Z / P-S intercambiados | 0.316 / 0.000: coherente | 0.037 / 0.001: coherente |
+| gcheck, G analítico, S_mt/S_en mediana [mín, máx] | 0.685 [0.245, 0.819] | 0.768 [0.707, 0.838] |
+| regla gcheck (≥ 0.8 bien, < 0.5 error) | entre ambas: no se concluye | entre ambas: no se concluye |
+
+Lo que se mide, sin ir más allá de las reglas:
+- Por la regla de `gdiag`, la causa señalada es **la lectura del vector**, en los dos conjuntos: el vector leído
+  apenas se parece al g propio del evento (Ridgecrest 0.033, casi el azar 0.015). Por el límite declarado, esa
+  regla no separa "lectura" de "banda" (g a 2-20 Hz, v a 0.5-6 Hz).
+- `gcheck` queda en la zona media: con el G analítico en los registros reales, la cadena recupera 0.69 y 0.77 de la
+  energía en el subespacio, frente a 0.97 con ruido gaussiano en la nube. No se concluye que la cadena esté bien
+  ni que tenga un error de convención; la comprobación de convención de `gdiag` tampoco señala error.
+- f_an de los aciertos es aquí 0.13 (mismo v para las dos fracciones), menor que el 0.21-0.26 de S_mt/S_en de
+  `stats` (allí cada estadístico toma su propio máximo sobre desplazamientos).
+
 ## Implementación (`run.py`; detalles de interfaz fijados antes de correr y aceptados por el supervisor)
 
 - Front end de R1 (`datasets._preprocess`): media y tendencia fuera, Butterworth 4 de fase cero 0.5-6 Hz, 16 Hz,
