@@ -260,17 +260,58 @@ def _split(labels, sid):
     return set(p[:h]), set(p[h:])
 
 
+QNOISE, GAIN_PASS = 0.999, 0.20
+CAP = 6.0
+
+
+def _peaks(R, lo, hi):
+    """(ns, n, 3): for every station and centre sample c, the 3-vector at the energy peak in c + [lo, hi]."""
+    ns, _, n = R.shape
+    E = (R * R).sum(1)
+    best = np.full((ns, n), -1.0); k = np.zeros((ns, n), int)
+    for o in range(lo, hi + 1):
+        j = np.clip(np.arange(n) + o, 0, n - 1)
+        upd = E[:, j] > best
+        best = np.where(upd, E[:, j], best); k = np.where(upd, j[None, :], k)
+    return R.transpose(0, 2, 1)[np.arange(ns)[:, None], k]
+
+
+def _smt(Vp, fr, origins, off_s, Qw, cap):
+    """S_mt = 1/2 ||Qw^T phi(v)||^2 for each origin sample (array), arrivals at origin + off_s (2, ns) seconds; the read
+    of N1-STACK: common shift -0.25..+0.25 s in steps of 1/16 s, the one with the largest ||v||^2; phi = CAP6 or none."""
+    ns, n, _ = Vp.shape
+    off = off_s * fr                                                          # (2, ns) samples
+    bestE = np.full(len(origins), -1.0); bestv = np.zeros((len(origins), 2, ns, 3))
+    for d in range(-4, 5):
+        c = np.floor(origins[:, None, None] + off[None] + d * fr / 16.0 + 0.5)
+        ok = np.isfinite(c) & (c >= 0) & (c < n)
+        cc = np.where(ok, c, 0).astype(int)
+        v = np.where(ok[..., None], Vp[np.arange(ns)[None, None, :], cc], 0.0)
+        e = (v * v).sum((1, 2, 3))
+        upd = e > bestE
+        bestE = np.where(upd, e, bestE); bestv[upd] = v[upd]
+    if cap:
+        nv = np.linalg.norm(bestv, axis=-1, keepdims=True)
+        bestv = bestv * np.minimum(1.0, CAP / np.maximum(nv, 1e-12))
+    y = bestv.reshape(len(origins), -1) @ Qw
+    return 0.5 * (y * y).sum(1)
+
+
 def band_stage(a):
-    """card.md, step 3. Every target of the tune partition with snr_med >= 5 (median over stations of the injected
-    truth's per-station SNR). For each candidate band: v read with _bandfront and _read (energy peak in [-0.06, +0.5] s,
-    common shift +-0.25 s), every station divided by the robust sd of its band-passed noise block, catalogue mask
-    as in N1-STACK; f_emp = (v.g_w)^2 / (|v|^2 |g_w|^2) with the target's own injected g (Z down, absent blocks zero),
-    g_w = g / sd per station when --weight (the step-2 fix), else g. Descriptive: f_an with Q of diag(1/sd) G (or G),
-    and the current R1 chain (16 Hz, Ricker) as reference."""
+    """card.md, step 3 as revised by the supervisor on 17 November (before running). Population: every target of the
+    tune partition with snr_med >= 5. For each candidate (four bands at 100 Hz without resampling or Ricker, and the
+    operative reference 0.5-6 Hz at 16 Hz with the Ricker), every station divided by the robust sd of its noise
+    block in that front end, catalogue mask of N1-STACK, Q of diag(1/sd) G at the true location (the step-2 fix):
+    margin m = S_mt of the target (true location, observed arrivals) / the 0.999 quantile of the same S_mt over every
+    origin of the unslid masked noise block at the same location (predicted arrivals of the set's model). CAP6 is the
+    main statistic, uncapped descriptive. f_emp with g/sd as a reading check of the chosen band."""
     from ttmt.synth import realdata as RD
     from ttmt.synth import sets
+    from ttmt.synth.realdata import first_arrival
     from ttmt.radiation import basis, radiation_operator
     n1 = _n1()
+    cands = [f"{b[0]:g}-{b[1]:g}" for b in BANDS]
+    REF = "R1 0.5-6 16Hz Ricker"
     out = []
     for sid in a.sets:
         rd = sets.SetReader(sid, "tune", verify="fingerprint")
@@ -279,27 +320,19 @@ def band_stage(a):
         tr0 = rd.truth(rd.labels[0])
         _s, noise = rd.arrays(rd.labels[0])
         mfn = n1.matched(n1.pre16(noise))
-        sd16 = n1.station_sd(mfn)
         m16 = n1.catalogue_mask(tr0.t0, mfn.shape[-1], tr0, STA, model)
         idx = np.minimum((np.arange(noise.shape[-1]) * 16 / 100).astype(int), m16.shape[1] - 1)
         k16, k100 = (~m16)[:, None, :].astype(float), (~m16[:, idx])[:, None, :].astype(float)
-        fr = {}
-        for band in BANDS:
-            rn = _bandfront(noise, band)
-            fr[band] = (rn * k100, np.median(np.abs(rn), axis=(1, 2)) / 0.6745)
-        R16n = mfn * k16
+        fe = {}
+        for b, name in zip(BANDS, cands):
+            rn = _bandfront(noise, b)
+            fe[name] = (lambda x, b=b: _bandfront(x, b), 100.0, np.median(np.abs(rn), axis=(1, 2)) / 0.6745, k100, rn)
+        fe[REF] = (lambda x: n1.matched(n1.pre16(x)), 16.0, n1.station_sd(mfn), k16, mfn)
+        Vn = {}
+        for name, (fn, fr, sd, kk, rn) in fe.items():
+            k = fr / 16.0
+            Vn[name] = _peaks(rn * kk / sd[:, None, None], int(round(-1 * k)), int(round(8 * k)))
         choose, confirm = _split(rd.labels, sid)
-        gc_rows = json.load(open(a.gcheck))["rows"]
-        sids_gc = sorted({r["set_id"] for r in gc_rows})
-        for band in BANDS:                                  # card limits: the analytic noise-free check of every band
-            rng = np.random.default_rng(20261125)
-            for s2 in sids_gc[:sids_gc.index(sid)]:
-                for _ in [r for r in gc_rows if r["set_id"] == s2]:
-                    rng.normal(size=6); rng.uniform(20.0, 260.0)
-            f = chain_f(dict(REAL, band=band, resample=False, ricker=False, qweight=bool(a.weight)), sid,
-                        [r for r in gc_rows if r["set_id"] == sid], rng, rd.man, fr[band][1])
-            print(f"{sid}: analytic noise-free f in {band[0]:g}-{band[1]:g} Hz median {np.median(f):.3f} "
-                  f"[{min(f):.3f}, {max(f):.3f}] (descriptive, independent of g)")
         for lab in rd.labels:
             sig, _n = rd.arrays(lab)
             truth = rd.truth(lab)
@@ -308,64 +341,119 @@ def band_stage(a):
             tg = [e for e in range(len(truth.t)) if truth.target[e] and np.isfinite(snr_med[e]) and snr_med[e] >= SNR_MIN]
             if not tg:
                 continue
-            Rb = {band: (_bandfront(sig, band) + fr[band][0]) / fr[band][1][:, None, None] for band in BANDS}
-            R16 = (n1.matched(n1.pre16(sig)) + R16n) / sd16[:, None, None]
+            Vs, Rs = {}, {}
+            for name, (fn, fr, sd, kk, rn) in fe.items():
+                k = fr / 16.0
+                Rs[name] = (fn(sig) + rn * kk) / sd[:, None, None]
+                Vs[name] = _peaks(Rs[name], int(round(-1 * k)), int(round(8 * k)))
             for e in tg:
+                x = truth.xyz[e]
+                G = radiation_operator(x, STA)
+                X = np.hypot(STA[:, 0] - x[0], STA[:, 1] - x[1]); z = max(float(x[2]), 0.5)
+                tt = np.stack([first_arrival(model, z, X, "P")[0], first_arrival(model, z, X, "S")[0]], 0)  # (2, ns)
                 g = np.array(truth.meta["targets"][e]["g"], float)
-                g = np.nan_to_num(g.transpose(1, 0, 2))
-                g[~np.isfinite(truth.arr_t_obs[e].T)] = 0.0
-                g[..., 2] *= -1.0
-                G = radiation_operator(truth.xyz[e], STA)
+                g = np.nan_to_num(g.transpose(1, 0, 2)); g[~np.isfinite(truth.arr_t_obs[e].T)] = 0.0; g[..., 2] *= -1.0
                 row = {"set_id": sid, "label": lab, "event": int(e), "half": "choose" if lab in choose else "confirm",
                        "snr_med": float(snr_med[e]), "pair": int(truth.pair[e])}
-
-                def fe(v, sd):
-                    v = v.reshape(-1)
-                    w = np.tile(np.repeat(1.0 / sd, 3), 2) if a.weight else np.ones(v.size)
+                for name, (fn, fr, sd, kk, rn) in fe.items():
+                    w = np.tile(np.repeat(1.0 / sd, 3), 2)
+                    Qw = basis(w[:, None] * G)
+                    off_t = (truth.arr_t_obs[e].T - truth.t0)                  # (2, ns) s from the record start
+                    o_n = np.arange(0, Vn[name].shape[1], fr / 16.0)
+                    for cap, tag in ((True, "m"), (False, "m_nocap")):
+                        st = float(_smt(Vs[name], fr, np.array([0.0]), off_t, Qw, cap)[0])
+                        sn = _smt(Vn[name], fr, o_n, tt, Qw, cap)
+                        row[f"{tag}|{name}"] = st / max(float(np.quantile(sn, QNOISE)), 1e-300)
+                    # reading check: f_emp with g/sd, the read at the best common shift of the target
                     gw = g.reshape(-1) * w
-                    Q = basis(w[:, None] * G)
-                    y = v @ Q
-                    vv = max(float(v @ v), 1e-300)
-                    return float((v @ gw) ** 2 / (vv * max(float(gw @ gw), 1e-300))), float(y @ y) / vv
-                for band in BANDS:
-                    v = _read(Rb[band], 100.0, truth.arr_t_obs[e], truth.t0, REAL)
-                    row[f"f_emp_{band[0]:g}_{band[1]:g}"], row[f"f_an_{band[0]:g}_{band[1]:g}"] = fe(v, fr[band][1])
-                v = n1.read_at_best(R16, truth.arr_t_obs[e], truth.t0)
-                row["f_emp_R1"], row["f_an_R1"] = fe(v, sd16)
+                    Rt = Rs[name]
+                    vv = (n1.read_at_best(Rt, truth.arr_t_obs[e], truth.t0) if fr == 16.0 else
+                          _read(Rt, 100.0, truth.arr_t_obs[e], truth.t0, REAL))
+                    vv = vv.reshape(-1)
+                    row[f"f_emp|{name}"] = float((vv @ gw) ** 2 / (max(float(vv @ vv), 1e-300) * max(float(gw @ gw), 1e-300)))
                 out.append(row)
-    keys = [f"{b[0]:g}_{b[1]:g}" for b in BANDS]
+    def med(sid, half, key):
+        return float(np.median([x[key] for x in out if x["set_id"] == sid and x["half"] == half]))
     best = {}
     for sid in a.sets:
-        r = [x for x in out if x["set_id"] == sid and x["half"] == "choose"]
-        meds = {k: float(np.median([x[f"f_emp_{k}"] for x in r])) for k in keys}
+        meds = {c: med(sid, "choose", f"m|{c}") for c in cands}
         best[sid] = max(meds, key=meds.get)
-        print(f"{sid}: choosing half n {len(r)} targets; median f_emp per band "
-              + ", ".join(f"{k} Hz {m:.3f}" for k, m in meds.items())
-              + f"; R1 operative chain (0.5-6 Hz, 16 Hz, Ricker, same weighting) {np.median([x['f_emp_R1'] for x in r]):.3f} -> best {best[sid]} Hz")
-    pooled = {k: float(np.median([np.median([x[f"f_emp_{k}"] for x in out if x["set_id"] == s and x["half"] == "choose"])
-                                  for s in a.sets])) for k in keys}
+        n = sum(1 for x in out if x["set_id"] == sid and x["half"] == "choose")
+        print(f"{sid}: choosing half n {n}; median margin m (CAP6) per band " + ", ".join(f"{c} Hz {v:.3f}" for c, v in meds.items())
+              + f"; reference {REF} {med(sid, 'choose', f'm|{REF}'):.3f} -> best {best[sid]} Hz")
+        print("  descriptive: uncapped " + ", ".join(f"{c} {med(sid, 'choose', f'm_nocap|{c}'):.3f}" for c in cands + [REF]))
+    pooled = {c: float(np.mean([med(s, "choose", f"m|{c}") for s in a.sets])) for c in cands}
     chosen = max(pooled, key=pooled.get)
-    print(f"chosen band (one for all sets, largest mean of the per-set medians): {chosen} Hz"
-          + ("" if len(set(best.values())) == 1 else
-             "; the sets prefer different bands" + (" by more than 0.1: reported, the owner decides" if any(
-                 np.median([x[f"f_emp_{best[s]}"] for x in out if x["set_id"] == s and x["half"] == "choose"])
-                 - np.median([x[f"f_emp_{chosen}"] for x in out if x["set_id"] == s and x["half"] == "choose"]) > 0.1
-                 for s in a.sets) else " by 0.1 or less")))
+    note = ""
+    for s in a.sets:
+        if best[s] != chosen and med(s, "choose", f"m|{best[s]}") > 1.10 * med(s, "choose", f"m|{chosen}"):
+            note = "; a set prefers another band by more than 10 %: reported, the owner decides"
+    print(f"chosen band (largest mean of the per-set median margins): {chosen} Hz" + note)
     rng = np.random.default_rng(SEED_BOOT3)
     for sid in a.sets:
         r = [x for x in out if x["set_id"] == sid and x["half"] == "confirm"]
         labs = sorted({x["label"] for x in r})
-        by = {l: np.array([x[f"f_emp_{chosen}"] for x in r if x["label"] == l]) for l in labs}
-        med = float(np.median(np.concatenate(list(by.values()))))
-        bs = [np.median(np.concatenate([by[l] for l in rng.choice(labs, len(labs))])) for _ in range(B3)]
+        mc = {l: np.array([x[f"m|{chosen}"] for x in r if x["label"] == l]) for l in labs}
+        mr = {l: np.array([x[f"m|{REF}"] for x in r if x["label"] == l]) for l in labs}
+        gain = float(np.median(np.concatenate(list(mc.values()))) / np.median(np.concatenate(list(mr.values()))) - 1)
+        bs = []
+        for _ in range(B3):
+            ll = rng.choice(labs, len(labs))
+            bs.append(np.median(np.concatenate([mc[l] for l in ll])) / np.median(np.concatenate([mr[l] for l in ll])) - 1)
         lo, hi = np.quantile(bs, [0.025, 0.975])
-        zone = ("passes" if med >= 0.6 else ("target not met, useful effect: the owner decides" if med >= 0.4 else
-                "LOW: the analytic G is not enough, back to physics before the pilot"))
-        print(f"{sid}: confirming half n {len(r)} targets in {len(labs)} realisations; f_emp {chosen} Hz median "
-              f"{med:.3f} [95 % {lo:.3f}, {hi:.3f}] -> {zone} (card rule: >= 0.6 / 0.4-0.6 / < 0.4)")
-        print(f"  descriptive: f_an {chosen} Hz median {np.median([x[f'f_an_{chosen}'] for x in r]):.3f}; R1 operative "
-              f"chain f_emp {np.median([x['f_emp_R1'] for x in r]):.3f}, f_an {np.median([x['f_an_R1'] for x in r]):.3f}")
-    json.dump({"rows": out, "chosen": chosen, "weight": bool(a.weight)}, open(a.out, "w"), indent=1)
+        zone = ("passes: adopt the band" if gain >= GAIN_PASS else
+                ("useful smaller gain: the owner decides" if gain > 0 else "no gain: keep the current band (with weights)"))
+        fe_c = float(np.median([x[f"f_emp|{chosen}"] for x in r]))
+        print(f"{sid}: confirming half n {len(r)} targets in {len(labs)} realisations; median margin {chosen} Hz "
+              f"{np.median(np.concatenate(list(mc.values()))):.3f} vs reference {np.median(np.concatenate(list(mr.values()))):.3f}; "
+              f"gain {gain:+.1%} [95 % {lo:+.1%}, {hi:+.1%}] -> {zone} (card rule: >= +20 % / 0-20 % / <= 0)")
+        print(f"  reading check: f_emp (g/sd) {chosen} Hz median {fe_c:.3f}"
+              + (" -> BELOW 0.4: flagged, not adopted without a look" if fe_c < 0.4 else " (>= 0.4)")
+              + f"; reference f_emp {np.median([x[f'f_emp|{REF}'] for x in r]):.3f}")
+    json.dump({"rows": out, "chosen": chosen}, open(a.out, "w"), indent=1)
+
+
+def gdiagw_stage(a):
+    """supervisor, 17 Nov, item 4 (descriptive): N1-STACK gdiag recomputed with g and Q weighted by 1/sd (the step-2
+    fix); same hits, front end, mask and reading as gdiag (028aa3f / 2508ddf)."""
+    from ttmt.synth import realdata as RD
+    from ttmt.synth import sets
+    from ttmt.radiation import basis, radiation_operator
+    n1 = _n1()
+    pops = json.load(open(a.pops))
+    ctl = [dict(x) for x in pops["control"]]
+    out, cache = [], {}
+    for sid in sorted({x["set_id"] for x in ctl}):
+        rd = sets.SetReader(sid, "tune", verify="fingerprint")
+        STA = np.asarray(rd.man["xyz"], float)
+        model = RD.pred_model(rd.man["dataset"])
+        tr0 = rd.truth(rd.labels[0])
+        _s, noise = rd.arrays(rd.labels[0])
+        mfn = n1.matched(n1.pre16(noise))
+        sd = n1.station_sd(mfn)
+        keep = (~n1.catalogue_mask(tr0.t0, mfn.shape[-1], tr0, STA, model))[:, None, :].astype(float)
+        cache[sid] = (rd, STA, sd, keep, mfn)
+    for x in ctl:
+        rd, STA, sd, keep, mfn = cache[x["set_id"]]
+        sig, _n = rd.arrays(x["label"])
+        truth = rd.truth(x["label"])
+        n1.check_station_order(rd, truth)
+        R = (n1.matched(n1.pre16(sig)) + mfn * keep) / sd[:, None, None]
+        e = x["event"]
+        v = n1.read_at_best(R, truth.arr_t_obs[e], truth.t0).reshape(-1)
+        g = np.array(truth.meta["targets"][e]["g"], float)
+        g = np.nan_to_num(g.transpose(1, 0, 2)); g[~np.isfinite(truth.arr_t_obs[e].T)] = 0.0; g[..., 2] *= -1.0
+        w = np.tile(np.repeat(1.0 / sd, 3), 2)
+        vv = float(v @ v)
+        y = v @ basis(w[:, None] * radiation_operator(truth.xyz[e], STA))
+        gw = g.reshape(-1) * w
+        out.append(dict(x, f_emp_w=float((v @ gw) ** 2 / (vv * max(float(gw @ gw), 1e-300))), f_an_w=float(y @ y) / vv))
+    for sid in sorted({x["set_id"] for x in out}):
+        r = [x for x in out if x["set_id"] == sid]
+        fe = np.array([x["f_emp_w"] for x in r]); fa = np.array([x["f_an_w"] for x in r])
+        print(f"{sid}: n {len(r)}; weighted f_emp median {np.median(fe):.3f} [q25 {np.quantile(fe, .25):.3f}, q75 "
+              f"{np.quantile(fe, .75):.3f}]; weighted f_an median {np.median(fa):.3f} (descriptive; unweighted in gdiag2)")
+    json.dump({"rows": out}, open(a.out, "w"), indent=1)
 
 
 if __name__ == "__main__":
@@ -376,8 +464,7 @@ if __name__ == "__main__":
     c.add_argument("--laptop", action="store_true", help="read each set's noise block for the per-station sd")
     b3 = sub.add_parser("band"); b3.add_argument("--sets", nargs="+",
                                                   default=["ss_hinet_2012_egf_v1", "ss_ridgecrest_2019_egf_v1"])
-    b3.add_argument("--gcheck", default=str(ROOT / "experiments/exploratory/N1-STACK/gcheck2.json"))
-    b3.add_argument("--weight", action="store_true", help="g and Q weighted by 1/sd (the step-2 fix)")
     b3.add_argument("--out", default="band.json")
+    gw = sub.add_parser("gdiagw"); gw.add_argument("pops"); gw.add_argument("--out", default="gdiagw.json")
     a = p.parse_args()
-    {"sp": sp_stage, "chain": chain_stage, "band": band_stage}[a.stage](a)
+    {"sp": sp_stage, "chain": chain_stage, "band": band_stage, "gdiagw": gdiagw_stage}[a.stage](a)

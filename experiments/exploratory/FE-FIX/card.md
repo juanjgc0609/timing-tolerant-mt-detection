@@ -190,3 +190,36 @@ como debe.
   Ricker) con el mismo peso (fila «R1 operative chain»).
 - Límite: la frecuencia de muestreo y el filtro operativos del modelo los fija ADR-0012 después, con su costo de
   cómputo. El Ricker se eligió por la potencia de detección en ruido, que f no mide.
+
+### Revisión del paso 3 antes de correr (supervisor, 17 de noviembre de 2026, 10:34 AM Bogotá)
+
+Motivo: la revisión independiente de d39221a señaló que elegir la banda por f_emp favorece 2-20 Hz por
+construcción, porque g se midió en 2-20 Hz. El control analítico tampoco sirve para elegir: sin ruido da ~1.0 en
+todas las bandas, y con ruido su pulso fabricado decidiría la banda. Es un cambio de diseño anterior a cualquier
+corrida; lo decide el supervisor y no necesita al dueño. **Sustituye la medida de elección y la confirmación de la
+sección anterior.** Población, mitades, bandas, front end, lectura y semillas no cambian.
+
+- **Medida de elección: margen de detección m** de cada objetivo. m = S_mt del objetivo (posición verdadera, llegadas
+  observadas, la lectura de N1-STACK con desplazamiento común) / cuantil 0.999 del mismo S_mt sobre todos los orígenes
+  del bloque de ruido **sin deslizar**, con los eventos de catálogo enmascarados, en la misma posición (llegadas del
+  modelo de predicción del conjunto, orígenes cada 1/16 s). S_mt = ½‖Q_wᵀφ(v)‖² con Q_w de diag(1/sd)·G (el arreglo
+  del paso 2). Fijado por el implementador: φ = CAP6, el estadístico registrado; sin tope como descriptivo.
+- Elección: la banda con mayor media de las medianas de m por conjunto en la mitad de elección. Si la mejor banda de
+  un conjunto supera en ese conjunto a la elegida en más del 10 %, se reporta y decide el dueño.
+- **Confirmación** en la otra mitad, emparejada contra la referencia operativa (0.5-6 Hz, 16 Hz, Ricker, con pesos).
+  Ganancia = mediana de m con la banda elegida / mediana de m de la referencia − 1, por conjunto. Tres zonas: **+20 %
+  o más** pasa y se adopta; **entre 0 y +20 %** la ganancia es útil pero menor y decide el dueño; **0 o menos** se
+  queda la banda actual (con pesos) y se dice. Intervalo 95 % por bootstrap de realizaciones, 10 000 remuestreos,
+  semilla 20261124.
+- f_emp con g/sd queda solo como chequeo de lectura de la banda elegida: por debajo de 0.4 se avisa y no se adopta sin
+  mirar. **f_emp está sesgado hacia 2-20 Hz por construcción** (g medido en 2-20 Hz) y no dice qué banda detecta mejor.
+- Ítem 4 (descriptivo): `run.py gdiagw ../N1-STACK/pops.json --out gdiagw.json` recalcula el f_emp de `gdiag` de N-1 con
+  g y Q pesados por 1/sd; el resultado se anota también en la ficha de N-1.
+- Ítem 5: el supervisor verificó leyendo el código que `r1.Net` divide por `station_scale` (r1.py:60-61), que
+  `node_operators` usa solo geometría y que `p1_windows` divide además MF por su sd. La prueba ejecutada va en las
+  pruebas unitarias de ADR-0012.
+- Prueba del código en la nube (lector falso, geometría de Hi-net, sd distintas, pulsos de 8 Hz, SNR alto): `band`
+  corre de punta a punta. Con SNR alto el tope CAP6 satura todos los bloques, y los márgenes quedan entre 4.2 y 5.9.
+  `gdiagw` da f_emp pesado 0.997. Solo prueba el código.
+- Uso: `run.py band --out band.json` y `run.py gdiagw ../N1-STACK/pops.json --out gdiagw.json`. Costo previsto: unos
+  minutos, CPU, sin GPU.
