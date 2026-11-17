@@ -328,6 +328,32 @@ ninguna regla ni ningún umbral:
   f_clean es alto y f con ruido queda en 0.69-0.77, la pérdida es del ruido y no de la cadena.
 - Se corren junto con `gband`, si el dueño lo aprueba, repitiendo `gdiag` y `gcheck` con las mismas semillas.
 
+## Resultado de la comprobación de banda y de las comprobaciones de la revisión (17 de noviembre de 2026, portátil; commit 2508ddf)
+
+Corridos con las mismas semillas sobre e435c6a, sin cambiar código ni reglas. El control de orden de estaciones se
+hizo de verdad en los 36 aciertos (gband y gdiag) y coincide con el manifiesto. `gcheck` se corrió con el ref
+documentado (`stats_nocap_diag.json`), igual que la vez anterior. Salidas: `gband*`, `gdiag2*`, `gcheck2*`
+(`gdiag.json` y `gcheck.json` quedan intactos).
+
+| Medida | Hi-net (n 6) | Ridgecrest (n 30) | Regla declarada |
+|---|---|---|---|
+| f_emp 2-20 Hz, mediana [q25, q75] | 0.569 [0.481, 0.664] | 0.597 [0.480, 0.706] | entre 0.4 y 0.6: no separa |
+| f_emp 0.5-6 Hz (misma corrida) | 0.291 | 0.033 | — |
+| diferencia emparejada, mediana | +0.208 | +0.509 | descriptivo |
+| razón de S_en 2-20 / 0.5-6 Hz | 4.26 | 2.62 | descriptivo |
+| correlación de rangos \|v\|-\|g\| en 2-20 Hz | +0.720 | +0.670 | descriptivo |
+| gdiag repetido: f_emp / f_an | 0.291 / 0.135 | 0.033 / 0.129 | igual que 028aa3f: "lectura del vector" |
+| gdiag: correlación de rangos \|v\|-\|g\| en 0.5-6 Hz | +0.714 | +0.421 | descriptivo |
+| gcheck repetido: S_mt/S_en con ruido | 0.685 | 0.768 | entre 0.5 y 0.8: sin conclusión |
+| gcheck: f sobre la lectura sin ruido | 0.705 | 0.771 | descriptivo |
+
+Lectura según la ficha, sin veredicto propio: la comprobación de banda **no separa** en ninguno de los dos
+conjuntos (Ridgecrest 0.597 queda justo bajo 0.6; Hi-net tiene n < 10). La lectura de la zona le toca al supervisor.
+Observaciones descriptivas, sin regla previa: las correlaciones de rangos son positivas en ambas bandas, lo que no
+apoya un desajuste de índices entre v y g; y en `gcheck` f sin ruido es casi igual a f con ruido, de modo que la
+pérdida del 0.23-0.30 no viene del ruido sino de la propia cadena con G analítico (en la nube, con lector falso,
+f sin ruido fue 0.998).
+
 ## Implementación (`run.py`; detalles de interfaz fijados antes de correr y aceptados por el supervisor)
 
 - Front end de R1 (`datasets._preprocess`): media y tendencia fuera, Butterworth 4 de fase cero 0.5-6 Hz, 16 Hz,

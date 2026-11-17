@@ -21,6 +21,9 @@ Dated record of changes to the project's process, code and documents. Results ar
 - `N1-STACK` diagnostics (owner's approval of 16 November, 028aa3f): empirical-G fraction f_emp 0.29 (Hi-net, n 6)
   and 0.03 (Ridgecrest) -> by the declared rule the cause is the vector reading (band not separated); the
   analytic-G chain control gives 0.69 and 0.77, middle zone, no conclusion.
+- `N1-STACK` band check (owner's approval of 17 November, 2508ddf): f_emp read at 2-20 Hz 0.569 (Hi-net, n 6)
+  and 0.597 (Ridgecrest) -> does not separate by the declared rule; review checks: station order matches in all
+  36 hits, block-norm rank correlation positive (+0.42 to +0.72), gcheck noise-free f 0.705 / 0.771 (descriptive).
 - `N2-REPICK` run on the laptop (140 s, GPU). Declared reading: LOW zone (net S - K = -8 of 120, 95 % interval
   [-23, 7]); the target is not met. With the partner removed exactly, 88 of 120 targets still have fewer than 6
   picked arrivals (50 have none). The card records a defect of its own control below 0.5 s and the ceiling S = 32
