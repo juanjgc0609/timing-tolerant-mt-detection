@@ -294,6 +294,25 @@ Lo que se mide, sin ir más allá de las reglas:
 - f_an de los aciertos es aquí 0.13 (mismo v para las dos fracciones), menor que el 0.21-0.26 de S_mt/S_en de
   `stats` (allí cada estadístico toma su propio máximo sobre desplazamientos).
 
+## Comprobación de banda (supervisor, 17 de noviembre de 2026; declarada antes de correr)
+
+Pendiente del sí del dueño (tarjeta del supervisor). No toca P-T ni R.
+
+- Población y g: los mismos aciertos y el mismo g de `gdiag` (bloques sin llegada en cero, Z hacia abajo).
+- Front end elegido: **el mismo filtro con que se midió g**, `realdata.bandpass` 2-20 Hz (Butterworth de fase cero)
+  a 100 Hz, sin filtro adaptado ni remuestreo; cada estación dividida por la sd robusta de su bloque de ruido
+  filtrado igual; máscara de catálogo llevada a 100 Hz. Misma regla de lectura en segundos: pico de energía en
+  [−0.06, +0.5] s de cada llegada, desplazamientos comunes de −0.25..+0.25 s en pasos de 1/16 s, la lectura con
+  mayor ‖v‖².
+- Medida: f_emp en 2-20 Hz, emparejada con f_emp en 0.5-6 Hz (front end de R1, recalculada en la misma corrida).
+- Lectura fijada: mediana por conjunto **> 0.6** en 2-20 Hz, la causa es la banda; **< 0.4**, la causa es la regla
+  de lectura (pico o ventana) y no la banda; entre ambas no separa.
+- Descriptivo, sin regla: razón de S_en (normalizado por el ruido de cada banda) entre 2-20 Hz y 0.5-6 Hz por acierto.
+- Comprobación del código en la nube (sin datos del proyecto): un evento analítico con pulso de 8 Hz y g medido
+  por `inject.radiated_vectors` (el camino real de los conjuntos) da f_emp 0.998 en 2-20 Hz y 0.566 en 0.5-6 Hz.
+  Esto confirma además la convención de `meta['targets'][e]['g']` que usan `gdiag` y `gband`.
+- Uso: `run.py gband pops.json --out gband.json`.
+
 ## Implementación (`run.py`; detalles de interfaz fijados antes de correr y aceptados por el supervisor)
 
 - Front end de R1 (`datasets._preprocess`): media y tendencia fuera, Butterworth 4 de fase cero 0.5-6 Hz, 16 Hz,

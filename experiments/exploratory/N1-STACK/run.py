@@ -720,6 +720,104 @@ def gcheck(a):
     json.dump({"rows": out}, open(a.out, "w"), indent=1)
 
 
+# ============================================================================================ gband stage
+FS_RAW = 100
+
+
+def front_raw(x):
+    """the band of the injected g: realdata.bandpass 2-20 Hz at 100 Hz, Z down, no matched filter."""
+    from ttmt.synth.realdata import bandpass
+    d = bandpass(np.asarray(x, float), FS_RAW)
+    d[:, 2] *= -1.0
+    return d
+
+
+def read_raw(R, arr_s, t0):
+    """read_at_best at 100 Hz: energy peak in [-0.06, +0.5] s of each onset, common shifts of -0.25..+0.25 s in steps
+    of 1/16 s (the same rule as the 16 Hz reading, in seconds); the read with the largest ||v||^2."""
+    ns, _, n = R.shape
+    lo, hi = int(round(READ[0] / FS16 * FS_RAW)), int(round(READ[1] / FS16 * FS_RAW))
+    E = (R * R).sum(1)
+    best, out = -1.0, None
+    k0 = np.floor((arr_s.T - t0) * FS_RAW + 0.5)
+    for d in range(-SHIFT, SHIFT + 1):
+        c = k0 + int(round(d * FS_RAW / FS16))
+        v = np.zeros((2, ns, 3))
+        for b in range(2):
+            for i in range(ns):
+                if not np.isfinite(c[b, i]):
+                    continue
+                a, z = int(max(c[b, i] + lo, 0)), int(min(c[b, i] + hi + 1, n))
+                if z <= a:
+                    continue
+                k = a + int(np.argmax(E[i, a:z]))
+                v[b, i] = R[i, :, k]
+        e = float((v * v).sum())
+        if e > best:
+            best, out = e, v
+    return out
+
+
+def gband(a):
+    """card.md (supervisor, 17 Nov): band check. Same hits and g as gdiag; v read with the 2-20 Hz band of g at
+    100 Hz (front_raw, no matched filter), every station divided by the robust sd of its band-passed noise block,
+    catalogue mask as everywhere. f_emp_2_20 paired with f_emp of the 0.5-6 Hz front end (recomputed here).
+    Descriptive: S_en in each band (noise-normalised) and their ratio per hit."""
+    from ttmt.synth import realdata as RD
+    from ttmt.synth import sets
+    pops = json.load(open(a.pops))
+    ctl = [dict(x) for x in pops["control"]]
+    cache, out = {}, []
+    for sid in sorted({x["set_id"] for x in ctl}):
+        rd = sets.SetReader(sid, "tune", verify="fingerprint")
+        STA = np.asarray(rd.man["xyz"], float)
+        model = RD.pred_model(rd.man["dataset"])
+        tr0 = rd.truth(rd.labels[0])
+        _s, noise = rd.arrays(rd.labels[0])
+        mfn = matched(pre16(noise))
+        sd16 = station_sd(mfn)
+        m16 = catalogue_mask(tr0.t0, mfn.shape[-1], tr0, STA, model)
+        rn = front_raw(noise)
+        sdr = np.median(np.abs(rn), axis=(1, 2)) / 0.6745
+        idx = np.minimum((np.arange(rn.shape[-1]) * FS16 / FS_RAW).astype(int), m16.shape[1] - 1)
+        m100 = m16[:, idx]
+        cache[sid] = (rd, sd16, (~m16)[:, None, :].astype(float), sdr, (~m100)[:, None, :].astype(float))
+    for x in ctl:
+        rd, sd16, k16, sdr, k100 = cache[x["set_id"]]
+        sig, noise = rd.arrays(x["label"])
+        truth = rd.truth(x["label"])
+        e = x["event"]
+        g = np.array(truth.meta["targets"][e]["g"], float)
+        g = np.nan_to_num(g.transpose(1, 0, 2))
+        g[~np.isfinite(truth.arr_t_obs[e].T)] = 0.0
+        g[..., 2] *= -1.0
+        g = g.reshape(-1)
+
+        def frac(v):
+            v = v.reshape(-1)
+            return float((v @ g) ** 2 / (max(float(v @ v), 1e-300) * max(float(g @ g), 1e-300))), 0.5 * float(v @ v)
+        R16 = (matched(pre16(sig)) + matched(pre16(noise)) * k16) / sd16[:, None, None]
+        R2 = (front_raw(sig) + front_raw(noise) * k100) / sdr[:, None, None]
+        f16, en16 = frac(read_at_best(R16, truth.arr_t_obs[e], truth.t0))
+        f2, en2 = frac(read_raw(R2, truth.arr_t_obs[e], truth.t0))
+        out.append(dict(x, f_emp_05_6=f16, f_emp_2_20=f2, S_en_05_6=en16, S_en_2_20=en2, en_ratio=en2 / en16))
+    for sid in sorted({x["set_id"] for x in out}):
+        r = [x for x in out if x["set_id"] == sid]
+        f2 = np.array([x["f_emp_2_20"] for x in r])
+        f1 = np.array([x["f_emp_05_6"] for x in r])
+        er = np.array([x["en_ratio"] for x in r])
+        med = float(np.median(f2))
+        zone = ("cause is the band" if med > 0.6 else
+                ("cause is the reading rule (peak or window), not the band" if med < 0.4 else "does not separate"))
+        print(f"{sid}: n {len(r)}; f_emp 2-20 Hz median {med:.3f} [q25 {np.quantile(f2, .25):.3f}, q75 "
+              f"{np.quantile(f2, .75):.3f}]; f_emp 0.5-6 Hz median {np.median(f1):.3f}; paired difference median "
+              f"{np.median(f2 - f1):+.3f}" + ("" if len(r) >= 10 else "; n < 10")
+              + f" -> {zone} (card rule: > 0.6 band, < 0.4 reading rule)")
+        print(f"  descriptive: noise-normalised S_en ratio 2-20 / 0.5-6 Hz median {np.median(er):.3f} [q25 "
+              f"{np.quantile(er, .25):.3f}, q75 {np.quantile(er, .75):.3f}]")
+    json.dump({"rows": out}, open(a.out, "w"), indent=1)
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="stage", required=True)
@@ -740,7 +838,10 @@ if __name__ == "__main__":
     c.add_argument("pops")
     c.add_argument("ref", help="stats_nocap_diag.json (median S_en of the control hits)")
     c.add_argument("--out", default="gcheck.json")
+    gb = sub.add_parser("gband")
+    gb.add_argument("pops")
+    gb.add_argument("--out", default="gband.json")
     a = ap.parse_args()
     if a.stage == "stats":
         RADIAL["kind"] = a.radial
-    {"baseline": baseline, "stats": stats, "gdiag": gdiag, "gcheck": gcheck}[a.stage](a)
+    {"baseline": baseline, "stats": stats, "gdiag": gdiag, "gcheck": gcheck, "gband": gband}[a.stage](a)
