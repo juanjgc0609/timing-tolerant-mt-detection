@@ -1,0 +1,14 @@
+P-T: 88 rows (n_repick < 6) of 120; P-C: 148; control: 36
+ss_hinet_2012_egf_v1 S_mt: threshold slides 76748.48 [76660.14, 76850.94] (8.33 h, recount 29.9/h), unslid 203779.14 (0.081 h, 249 maxima), ratio 2.66, main 203779.14; n_loc 1000/100 on 5 slides 1.010; without the mask: slides 2427392.52, unslid 3816329.85, main 3816329.85
+ss_hinet_2012_egf_v1 S_en: threshold slides 210185.96 [208662.24, 210260.67] (8.33 h, recount 29.9/h), unslid 600257.25 (0.081 h, 258 maxima), ratio 2.86, main 600257.25; n_loc 1000/100 on 5 slides 1.011; without the mask: slides 5755007.79, unslid 15347249.03, main 15347249.03
+ss_hinet_2012_egf_v1: catalogued events in the block 14, masked fraction 0.498; 170 s
+ss_ridgecrest_2019_egf_v1 S_mt: threshold slides 222.20 [217.76, 225.53] (8.33 h, recount 29.9/h), unslid 324.03 (0.079 h, 233 maxima), ratio 1.46, main 324.03; n_loc 1000/100 on 5 slides 1.061; without the mask: slides 8836.32, unslid 6651.07, main 8836.32
+ss_ridgecrest_2019_egf_v1 S_en: threshold slides 1000.02 [985.80, 1018.89] (8.33 h, recount 29.9/h), unslid 1330.82 (0.079 h, 245 maxima), ratio 1.33, main 1330.82; n_loc 1000/100 on 5 slides 1.055; without the mask: slides 22342.88, unslid 29970.20, main 29970.20
+ss_ridgecrest_2019_egf_v1: catalogued events in the block 8, masked fraction 0.298; 276 s
+ss_hinet_2012_egf_v1_00000.0_000: done (1/2, 284 s)
+ss_ridgecrest_2019_egf_v1_02100.0_000: done (2/2, 284 s)
+
+positive control ss_hinet_2012_egf_v1: 0 of 0 above the main S_mt threshold (nan; needed 0.9 in each set)
+
+positive control ss_ridgecrest_2019_egf_v1: 2 of 5 above the main S_mt threshold (0.400; needed 0.9 in each set)
+small version: checks only, no R and no reading
