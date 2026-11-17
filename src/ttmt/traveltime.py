@@ -69,8 +69,11 @@ def first_arrival(model, zs, X, r=1.0):
     va = va / r
     vall = vall / r
     out = np.full(X.shape, np.inf)
-    # direct wave
-    if len(h):
+    # direct wave; a source at or above the surface (zs <= 0) has no layer above it and travels along the surface
+    # (not on the frozen R1 path, which keeps its registered values)
+    if not len(h) and not legacy:
+        out = X / vall[0]
+    elif len(h):
         vmax = va.max()
         for k, x in enumerate(X):
             if x < 1e-6:

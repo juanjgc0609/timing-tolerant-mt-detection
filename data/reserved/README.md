@@ -29,12 +29,27 @@ and the registry then refuses the whole file.
 | Id | Role | Networks | Window (UTC) | Catalogue aggregates | Three-component stations | Open item |
 |:--|:--|:--|:--|:--|:--|:--|
 | `conf_geysers_2024` | confirmatory | BG, NC | 2024-03-06 to 2024-04-05 | 2,348 events; Mc 1.0 (maximum curvature), 1.2 (goodness of fit 90 %); 624 at M >= 1.0; median horizontal error 0.33 km | 41 of 46 within 30 km on 2024-03-15, all with StationXML | 182 GB in the disc of 60 km (BG at 500 Hz); the run needs only the evaluated subsets |
-| `conf_antelope_valley_2021` | confirmatory | NN, NC, BK | 2021-07-08 22:00 to 2021-08-07 22:00 | 2,213 events; Mc 1.0 / 2.2 (moving Mc 0.6 to 2.8: short-term incompleteness after the M 6.0); 1,405 at M >= 1.0 | NN stations only near the source; their StationXML is not in the bucket | NN metadata from EarthScope, then QC; if fewer than 8 stations pass, `conf_bodie_2020` replaces it |
-| `conf_bodie_2020` | spare | NN, NC | 2020-04-11 14:00 to 2020-05-11 14:00 | 745 events; Mc 1.6 / 1.3; 477 at Mc | as above (NN) | used only if Antelope Valley fails QC |
+| `conf_antelope_valley_2021` | withdrawn 2026-11-15 (kept sealed) | NN, NC, BK | 2021-07-08 22:00 to 2021-08-07 22:00 | 2,213 events; Mc 1.0 / 2.2 (moving Mc 0.6 to 2.8: short-term incompleteness after the M 6.0); 1,405 at M >= 1.0 | NN stations only near the source; their StationXML is not in the bucket | NN metadata from EarthScope, then QC; if fewer than 8 stations pass, `conf_bodie_2020` replaces it |
+| `conf_bodie_2020` | withdrawn 2026-11-15 (kept sealed) | NN, NC | 2020-04-11 14:00 to 2020-05-11 14:00 | 745 events; Mc 1.6 / 1.3; 477 at Mc | as above (NN) | used only if Antelope Valley fails QC |
+| `conf_kilauea_2024` | confirmatory (amendment 2026-11-15) | HV, PT, NP, IU | 2024-01-19 19:31 to 2024-02-18 19:31 | 2,127 events (ComCat hv); 1,192 at Mc 2.0; median horizontal error 0.36 km; 20 pairs within 1 s and 10 km | 36 within 50 km on 2024-01-26 with three components and >= 90 % MUSTANG availability | EarthScope, not S3: bytes are hashed when fetched, before any read |
+| `conf_magna_2020` | spare (amendment 2026-11-15) | UU, GS, RE, NP | 2020-03-18 13:09 to 2020-04-17 13:09 | 1,923 events (ComCat uu); 1,021 at Mc 0.8 | 8 on 2020-03-25 by the rule as written (RE.EACA, EACA1, EACA2 within about 0.2 km: 6 distinct sites) | used only if Kilauea fails its data QC |
 | `conf_colombia_cm` | confirmatory slot | CM (SGC) | chosen by the rule in the file | - | - | data access requested from SGC (T3.R6); the window is added by amendment and sealed from that commit |
 
 The aggregates come from `tools/data/scan_catalogue.py --days 30` on the NCEDC catalogues of 2019 to 2026, and the
 station counts from `tools/data/s3_availability.py`; both read catalogue fields, archive listings and StationXML only.
+
+Amendment of 15 November 2026 (sealed SHA-256 996f70ad... -> c0deacc5...): Antelope Valley and Bodie fail criterion 4.
+Within 50 km on the sampled day they have 6 and 6 three-component stations; the temporary GM.AE01-06 at Antelope Valley
+have metadata but no archived data (MUSTANG 0 %). No other NCEDC 2020-2026 window reaches 400 events at Mc. The
+replacement rule was written before the search (same four criteria; sources ComCat ak, hv, uu, uw, pr, ok, tx, nm, mb
+2020-2026; ranking by events at Mc; criterion 4 on day 8 with MUSTANG availability >= 90 %, network SY excluded). It
+chose `conf_kilauea_2024`, with `conf_magna_2020` as spare. Inputs and outputs (catalogue manifests, scan tables,
+station texts and MUSTANG metrics with SHA-256) are on the author's machine under `ttmt/real_meta/`. The scripts are
+`tools/data/scan_catalogue.py --types earthquake` and `tools/data/criterion4_stations.py`. Order of events: the rule was posted in the
+real-data thread on 2026-11-15 at 14:06 UTC, together with the download-only brief sent to the laptop, and the scans
+ran after that. The rule file was later extended (18:47 UTC) with a clarification and the ranking, so its timestamp
+alone does not prove the order; the order rests on the thread's record. Criterion 2 as sealed lists phasenet/original
+and phaseno; EQNet2-v0 (amendment 5, NCEDC through 2022) covers 2020 but not Utah, declared for the spare.
 
 ## Why these and not others
 

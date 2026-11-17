@@ -174,3 +174,17 @@ def test_waveform_qc_with_samples_refuses_a_sealed_window(tmp_path, monkeypatch)
         qc.waveform_qc([p], t0, t0 + 10, samples=True, coords={"BG.B": (38.8, -122.7)})
     qc.waveform_qc([p], t0, t0 + 10, samples=True, coords={"BG.B": (30.0, -110.0)})   # outside the disc
     assert qc.waveform_qc([p], t0, t0 + 10, samples=False)["BG.B..DPZ"].coverage > 0.99  # headers only
+
+
+def test_teleseism_windows():
+    """CR-16 flags: a M 7 event at 60 deg opens a window just before its P (about 600 s) and closes after the
+    2.5 km/s surface waves; a M 5 event is ignored; overlapping windows merge."""
+    from ttmt.qc import teleseism_windows
+    site = (0.0, 0.0)
+    ev = [(1000.0, 0.0, 60.0, 10.0, 7.0), (1100.0, 0.0, 61.0, 10.0, 6.0), (50000.0, 0.0, 30.0, 10.0, 5.0)]
+    w = teleseism_windows(ev, *site, 0.0, 1e5)
+    assert len(w) == 1 and w[0][2] == 2
+    [(a, b, n)] = w
+    assert 1000 + 560 < a + 30 < 1000 + 640                      # iasp91 P at 60 deg is about 600 s
+    assert abs(b - (1100 + 61 * 111.19 / 2.5 + 600)) < 1.0
+    assert teleseism_windows(ev, *site, 0.0, 1000.0) == []       # before any arrival

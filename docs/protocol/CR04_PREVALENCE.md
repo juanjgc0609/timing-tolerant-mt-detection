@@ -1,6 +1,7 @@
 # CR-04: prevalence of the target regime in dense real sequences
 
-Status: rule and code fixed 2026-11-01, measurement not run. Owner of the measurement: the reference-catalogue thread.
+Status: rule and code fixed 2026-11-01. Ridgecrest 2019 (QTM) measured 2026-11-15
+(`experiments/exploratory/CR04-PREVALENCE/ridgecrest_qtm/`); Hi-net and Alto Tiberina not run. Owner of the measurement: the reference-catalogue thread.
 Sources: ADR-0008 items 1, 4 and 7; ATLAS-0 card, "Regime grid" and "Endpoint"; critique register CR-04.
 
 ## 1. Why this is needed

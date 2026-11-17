@@ -45,7 +45,7 @@
   },
   {
    "id": "conf_antelope_valley_2021",
-   "role": "confirmatory",
+   "role": "withdrawn (fails criterion 4; kept sealed so that NN stays unused)",
    "name": "Antelope Valley M6.0 aftershocks, July 2021 (California-Nevada border)",
    "networks": [
     "NN",
@@ -81,7 +81,7 @@
   },
   {
    "id": "conf_bodie_2020",
-   "role": "spare",
+   "role": "withdrawn (fails criterion 4; kept sealed)",
    "name": "Bodie / Mina area sequence, April 2020",
    "networks": [
     "NN",
@@ -109,6 +109,69 @@
    "why": "spare for conf_antelope_valley_2021 (same networks, so at most one of the two is used)"
   },
   {
+   "id": "conf_kilauea_2024",
+   "role": "confirmatory",
+   "name": "Kilauea south caldera and upper East Rift seismicity, January-February 2024 (Hawaii)",
+   "networks": [
+    "HV",
+    "PT",
+    "NP",
+    "IU"
+   ],
+   "archive": "EarthScope DMC (FDSN dataselect); not in an S3 bucket, so no ETag listing: bytes are hashed when fetched (purpose fetch) and the hashes are committed before any read",
+   "catalogue": "ComCat, catalog hv (HVO), 2020-01 to 2026-10, type earthquake",
+   "window": {
+    "start": "2024-01-19T19:31:16Z",
+    "end": "2024-02-18T19:31:16Z",
+    "lat": 19.3,
+    "lon": -155.3,
+    "radius_km": 60.0
+   },
+   "catalogue_aggregates": {
+    "n": 2127,
+    "n_at_mc": 1192,
+    "mc_maxc": 2.0,
+    "M_max": 5.88,
+    "erh_p50_km": 0.36,
+    "gap_p50_deg": 88.0,
+    "next_within_1s_10km": 20,
+    "next_within_2s_10km": 26
+   },
+   "availability": "2024-01-26 (day 8): 36 stations within 50 km with a three-component set (HH, BH, EH or HN) whose epochs cover the day and MUSTANG percent_availability >= 90 % on all three channels; network SY (synthetics) not counted",
+   "why": "replacement chosen 2026-11-15 by the fixed rule of the real-data thread (first candidate by events at Mc among ComCat ak, hv, uu, uw, pr, ok, tx, nm, mb 2020-2026 that meets criteria 3 and 4); volcanic swarm, network HV never used; no comparator weight trained on Hawaii after 2018 (STEAD, global, 1984-2018: regional overlap declared); EQNet2-v0 (amendment 5: CEED, NCEDC through 2022) ends before 2024 and is another region"
+  },
+  {
+   "id": "conf_magna_2020",
+   "role": "spare",
+   "name": "Magna M5.7 aftershocks, March-April 2020 (Utah)",
+   "networks": [
+    "UU",
+    "GS",
+    "RE",
+    "NP"
+   ],
+   "archive": "EarthScope DMC (FDSN dataselect); bytes hashed when fetched",
+   "catalogue": "ComCat, catalog uu (UUSS), type earthquake",
+   "window": {
+    "start": "2020-03-18T13:09:31Z",
+    "end": "2020-04-17T13:09:31Z",
+    "lat": 40.7,
+    "lon": -112.1,
+    "radius_km": 60.0
+   },
+   "catalogue_aggregates": {
+    "n": 1923,
+    "n_at_mc": 1021,
+    "mc_maxc": 0.8,
+    "M_max": 5.7,
+    "erh_p50_km": 0.38,
+    "gap_p50_deg": 88.0,
+    "next_within_1s_10km": 1
+   },
+   "availability": "2020-03-25 (day 8): 8 stations by the rule as written, of which RE.EACA, EACA1 and EACA2 lie within about 0.2 km of each other (6 distinct sites); declared, and the spare is used only if conf_kilauea_2024 fails its data QC",
+   "why": "next candidate of the same ranking that meets criteria 3 and 4; tectonic aftershocks, other region; 2020 lies inside the EQNet2-v0 training period (amendment 5: CEED, NCEDC through 2022), which criterion 2 as sealed does not list; the region (Utah) is not in it, so no overlap, declared"
+  },
+  {
    "id": "conf_colombia_cm",
    "role": "confirmatory (slot defined by rule, pending data access)",
    "name": "Colombian national network (SGC, CM): first sequence that meets the criteria",
@@ -131,9 +194,16 @@
  "excluded": [
   "Long Valley caldera swarm, September 2019 (NC): inside the training period of phasenet/original and phaseno (NCEDC 1984-2019); usable as development data only",
   "Searles Valley / Ridgecrest 2019 (CI): development network",
-  "Geysers 2023 and 2025 windows (BG): not used, so that BG stays a network never used for development"
+  "Geysers 2023 and 2025 windows (BG): not used, so that BG stays a network never used for development",
+  "Antelope Valley 2021 and Bodie 2020 (NN): fail criterion 4 (2026-11-15: 6 and 6 three-component stations within 50 km on the sampled day; the temporary GM.AE01-06 have metadata but no archived data), withdrawn and kept sealed"
  ],
  "unseal": {},
- "amendments": [],
- "sealed_sha256": "996f70ada0a0b027f51b30048347354146c348b214f283dba2498b4ea55fdd2b"
+ "amendments": [
+  {
+   "date": "2026-11-15",
+   "previous_sealed_sha256": "996f70ada0a0b027f51b30048347354146c348b214f283dba2498b4ea55fdd2b",
+   "change": "Antelope Valley and Bodie withdrawn (criterion 4); conf_kilauea_2024 added as confirmatory and conf_magna_2020 as spare by the replacement rule of the real-data thread (fixed before the search; owner's choice of 2026-11-15)"
+  }
+ ],
+ "sealed_sha256": "c0deacc58b59cd0c7b1e532bd2432ac3648098348d49419545427a5f314d5591"
 }
