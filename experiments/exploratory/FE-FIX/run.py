@@ -160,6 +160,8 @@ def chain_f(cfg, sid, rows_set, rng, man, sd_real):
     sd = sd_real if cfg["sd"] == "real" else np.ones(ns)
     if sd is None:
         return None
+    if len(sd) != ns:          # fake geometry (7 stations) with a set's sd: the set's first 7 stations' sd, in order
+        sd = np.asarray(sd)[:ns]
     fs, n = float(man["fs"]), 30000
     fvals = []
     for r in rows_set:
@@ -239,11 +241,131 @@ def chain_stage(a):
     json.dump({"rows": out, "sd": {k: v.tolist() for k, v in sdr.items()}}, open(a.out, "w"), indent=1)
 
 
+# ============================================================================================ step 3: band
+BANDS = [(0.5, 6.0), (1.0, 10.0), (2.0, 20.0), (2.0, 30.0)]
+SNR_MIN, SEED_SPLIT, SEED_BOOT3, B3 = 5.0, 20261123, 20261124, 10000
+
+
+def _bandfront(x, band):
+    """candidate front end: demean, detrend, Butterworth 4 zero-phase band-pass at 100 Hz, Z down; no resampling and
+    no matched filter (a 16 Hz rate cannot hold bands above 8 Hz; the Ricker of 2 Hz belongs to the 0.5-6 Hz band)."""
+    return _front(x, dict(REAL, band=band, resample=False, ricker=False), 100.0)[0]
+
+
+def _split(labels, sid):
+    """half for choosing, half for confirming, by realisation, per set (stratified), fixed seed."""
+    rng = np.random.default_rng([SEED_SPLIT, sum(map(ord, sid))])
+    p = list(rng.permutation(sorted(labels)))
+    h = (len(p) + 1) // 2
+    return set(p[:h]), set(p[h:])
+
+
+def band_stage(a):
+    """card.md, step 3. Every target of the tune partition with snr_med >= 5 (median over stations of the injected
+    truth's per-station SNR). For each candidate band: v read with _bandfront and _read (energy peak in [-0.06, +0.5] s,
+    common shift +-0.25 s), every station divided by the robust sd of its band-passed noise block, catalogue mask
+    as in N1-STACK; f_emp = (v.g_w)^2 / (|v|^2 |g_w|^2) with the target's own injected g (Z down, absent blocks zero),
+    g_w = g / sd per station when --weight (the step-2 fix), else g. Descriptive: f_an with Q of diag(1/sd) G (or G),
+    and the current R1 chain (16 Hz, Ricker) as reference."""
+    from ttmt.synth import realdata as RD
+    from ttmt.synth import sets
+    from ttmt.radiation import basis, radiation_operator
+    n1 = _n1()
+    out = []
+    for sid in a.sets:
+        rd = sets.SetReader(sid, "tune", verify="fingerprint")
+        STA = np.asarray(rd.man["xyz"], float)
+        model = RD.pred_model(rd.man["dataset"])
+        tr0 = rd.truth(rd.labels[0])
+        _s, noise = rd.arrays(rd.labels[0])
+        mfn = n1.matched(n1.pre16(noise))
+        sd16 = n1.station_sd(mfn)
+        m16 = n1.catalogue_mask(tr0.t0, mfn.shape[-1], tr0, STA, model)
+        idx = np.minimum((np.arange(noise.shape[-1]) * 16 / 100).astype(int), m16.shape[1] - 1)
+        k16, k100 = (~m16)[:, None, :].astype(float), (~m16[:, idx])[:, None, :].astype(float)
+        fr = {}
+        for band in BANDS:
+            rn = _bandfront(noise, band)
+            fr[band] = (rn * k100, np.median(np.abs(rn), axis=(1, 2)) / 0.6745)
+        R16n = mfn * k16
+        choose, confirm = _split(rd.labels, sid)
+        for lab in rd.labels:
+            sig, _n = rd.arrays(lab)
+            truth = rd.truth(lab)
+            n1.check_station_order(rd, truth)
+            snr_med = np.nanmedian(truth.snr, axis=1)
+            tg = [e for e in range(len(truth.t)) if truth.target[e] and np.isfinite(snr_med[e]) and snr_med[e] >= SNR_MIN]
+            if not tg:
+                continue
+            Rb = {band: (_bandfront(sig, band) + fr[band][0]) / fr[band][1][:, None, None] for band in BANDS}
+            R16 = (n1.matched(n1.pre16(sig)) + R16n) / sd16[:, None, None]
+            for e in tg:
+                g = np.array(truth.meta["targets"][e]["g"], float)
+                g = np.nan_to_num(g.transpose(1, 0, 2))
+                g[~np.isfinite(truth.arr_t_obs[e].T)] = 0.0
+                g[..., 2] *= -1.0
+                G = radiation_operator(truth.xyz[e], STA)
+                row = {"set_id": sid, "label": lab, "event": int(e), "half": "choose" if lab in choose else "confirm",
+                       "snr_med": float(snr_med[e]), "pair": int(truth.pair[e])}
+
+                def fe(v, sd):
+                    v = v.reshape(-1)
+                    w = np.tile(np.repeat(1.0 / sd, 3), 2) if a.weight else np.ones(v.size)
+                    gw = g.reshape(-1) * w
+                    Q = basis(w[:, None] * G)
+                    y = v @ Q
+                    vv = max(float(v @ v), 1e-300)
+                    return float((v @ gw) ** 2 / (vv * max(float(gw @ gw), 1e-300))), float(y @ y) / vv
+                for band in BANDS:
+                    v = _read(Rb[band], 100.0, truth.arr_t_obs[e], truth.t0, REAL)
+                    row[f"f_emp_{band[0]:g}_{band[1]:g}"], row[f"f_an_{band[0]:g}_{band[1]:g}"] = fe(v, fr[band][1])
+                v = n1.read_at_best(R16, truth.arr_t_obs[e], truth.t0)
+                row["f_emp_R1"], row["f_an_R1"] = fe(v, sd16)
+                out.append(row)
+    keys = [f"{b[0]:g}_{b[1]:g}" for b in BANDS]
+    best = {}
+    for sid in a.sets:
+        r = [x for x in out if x["set_id"] == sid and x["half"] == "choose"]
+        meds = {k: float(np.median([x[f"f_emp_{k}"] for x in r])) for k in keys}
+        best[sid] = max(meds, key=meds.get)
+        print(f"{sid}: choosing half n {len(r)} targets; median f_emp per band "
+              + ", ".join(f"{k} Hz {m:.3f}" for k, m in meds.items())
+              + f"; current R1 chain {np.median([x['f_emp_R1'] for x in r]):.3f} -> best {best[sid]} Hz")
+    pooled = {k: float(np.median([np.median([x[f"f_emp_{k}"] for x in out if x["set_id"] == s and x["half"] == "choose"])
+                                  for s in a.sets])) for k in keys}
+    chosen = max(pooled, key=pooled.get)
+    print(f"chosen band (one for all sets, largest mean of the per-set medians): {chosen} Hz"
+          + ("" if len(set(best.values())) == 1 else
+             "; the sets prefer different bands" + (" by more than 0.1: reported, the owner decides" if any(
+                 np.median([x[f"f_emp_{best[s]}"] for x in out if x["set_id"] == s and x["half"] == "choose"])
+                 - np.median([x[f"f_emp_{chosen}"] for x in out if x["set_id"] == s and x["half"] == "choose"]) > 0.1
+                 for s in a.sets) else " by 0.1 or less")))
+    rng = np.random.default_rng(SEED_BOOT3)
+    for sid in a.sets:
+        r = [x for x in out if x["set_id"] == sid and x["half"] == "confirm"]
+        labs = sorted({x["label"] for x in r})
+        by = {l: np.array([x[f"f_emp_{chosen}"] for x in r if x["label"] == l]) for l in labs}
+        med = float(np.median(np.concatenate(list(by.values()))))
+        bs = [np.median(np.concatenate([by[l] for l in rng.choice(labs, len(labs))])) for _ in range(B3)]
+        lo, hi = np.quantile(bs, [0.025, 0.975])
+        zone = ("passes" if med >= 0.6 else ("target not met, useful effect: the owner decides" if med >= 0.4 else
+                "LOW: the analytic G is not enough, back to physics before the pilot"))
+        print(f"{sid}: confirming half n {len(r)} targets in {len(labs)} realisations; f_emp {chosen} Hz median "
+              f"{med:.3f} [95 % {lo:.3f}, {hi:.3f}] -> {zone} (card rule: >= 0.6 / 0.4-0.6 / < 0.4)")
+        print(f"  descriptive: f_an {chosen} Hz median {np.median([x[f'f_an_{chosen}'] for x in r]):.3f}; current R1 "
+              f"chain f_emp {np.median([x['f_emp_R1'] for x in r]):.3f}, f_an {np.median([x['f_an_R1'] for x in r]):.3f}")
+    json.dump({"rows": out, "chosen": chosen, "weight": bool(a.weight)}, open(a.out, "w"), indent=1)
+
+
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
     sub = p.add_subparsers(dest="stage", required=True)
     s = sub.add_parser("sp"); s.add_argument("gcheck"); s.add_argument("--out", default="sp.json")
     c = sub.add_parser("chain"); c.add_argument("gcheck"); c.add_argument("--out", default="chain.json")
     c.add_argument("--laptop", action="store_true", help="read each set's noise block for the per-station sd")
+    b3 = sub.add_parser("band"); b3.add_argument("--sets", nargs="+",
+                                                  default=["ss_hinet_2012_egf_v1", "ss_ridgecrest_2019_egf_v1"])
+    b3.add_argument("--weight", action="store_true", help="g and Q weighted by 1/sd (the step-2 fix)")
+    b3.add_argument("--out", default="band.json")
     a = p.parse_args()
-    {"sp": sp_stage, "chain": chain_stage}[a.stage](a)
+    {"sp": sp_stage, "chain": chain_stage, "band": band_stage}[a.stage](a)

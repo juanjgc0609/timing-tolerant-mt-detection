@@ -129,4 +129,8 @@ divide por `station_scale` y construye Gs y Qst sin pesos: el modelo principal t
 Prueba del código de (b) en la nube con sd falsas (lognormales, semilla 5, máximo/mínimo 11.7) y geometría de Hi-net:
 (a) 0.847, (b) 1.000. Solo prueba que el código hace lo que dice; no dice nada de las sd reales.
 
+Detalle de interfaz (corregido tras un fallo de dimensiones en la primera corrida, 4770cb8, que se detuvo en Ridgecrest antes
+de normalizar y no se guardó): en la configuración con geometría falsa (7 estaciones) y sd del conjunto se usan las sd de las
+7 primeras estaciones del manifiesto, en orden. En Hi-net (7 estaciones) no cambia nada.
+
 Costo en el portátil: menos de 1 minuto, CPU, sin GPU; lee solo el bloque de ruido de la partición de ajuste.
