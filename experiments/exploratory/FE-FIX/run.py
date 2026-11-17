@@ -341,7 +341,7 @@ def band_stage(a):
         best[sid] = max(meds, key=meds.get)
         print(f"{sid}: choosing half n {len(r)} targets; median f_emp per band "
               + ", ".join(f"{k} Hz {m:.3f}" for k, m in meds.items())
-              + f"; current R1 chain {np.median([x['f_emp_R1'] for x in r]):.3f} -> best {best[sid]} Hz")
+              + f"; R1 operative chain (0.5-6 Hz, 16 Hz, Ricker, same weighting) {np.median([x['f_emp_R1'] for x in r]):.3f} -> best {best[sid]} Hz")
     pooled = {k: float(np.median([np.median([x[f"f_emp_{k}"] for x in out if x["set_id"] == s and x["half"] == "choose"])
                                   for s in a.sets])) for k in keys}
     chosen = max(pooled, key=pooled.get)
@@ -363,7 +363,7 @@ def band_stage(a):
                 "LOW: the analytic G is not enough, back to physics before the pilot"))
         print(f"{sid}: confirming half n {len(r)} targets in {len(labs)} realisations; f_emp {chosen} Hz median "
               f"{med:.3f} [95 % {lo:.3f}, {hi:.3f}] -> {zone} (card rule: >= 0.6 / 0.4-0.6 / < 0.4)")
-        print(f"  descriptive: f_an {chosen} Hz median {np.median([x[f'f_an_{chosen}'] for x in r]):.3f}; current R1 "
+        print(f"  descriptive: f_an {chosen} Hz median {np.median([x[f'f_an_{chosen}'] for x in r]):.3f}; R1 operative "
               f"chain f_emp {np.median([x['f_emp_R1'] for x in r]):.3f}, f_an {np.median([x['f_an_R1'] for x in r]):.3f}")
     json.dump({"rows": out, "chosen": chosen, "weight": bool(a.weight)}, open(a.out, "w"), indent=1)
 

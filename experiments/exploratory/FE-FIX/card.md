@@ -155,6 +155,10 @@ a 0.999 en los dos conjuntos con (a) en 0.70-0.77. **Por la regla del supervisor
 es (b)**, que cumple la meta de la cadena (≥ 0.95). Ningún otro elemento mueve f más de 0.02, salvo el control de
 signo, que la baja como debe. La lectura le toca al supervisor.
 
+**Lectura del supervisor (17 de noviembre de 2026):** por la regla declarada, la causa es el blanqueo y el arreglo es
+(b): 0.999 / 0.999 frente a 0.705 / 0.771. Ningún otro elemento mueve f más de 0.02, y el control de Z invertida baja
+como debe.
+
 ## Paso 3: implementación (17 de noviembre de 2026; declarada antes de correr)
 
 `run.py band --weight --out band.json`. Lo que fija el implementador, sin tocar población, medidas ni umbrales:
@@ -181,3 +185,8 @@ signo, que la baja como debe. La lectura le toca al supervisor.
 - Prueba del código en la nube con un lector falso (geometría de Hi-net, sd distintas por estación, pulsos de 8 Hz,
   SNR alto): todas las bandas dan 1.000, la cadena R1 0.996-0.999. Solo prueba el código.
 - Costo previsto en el portátil: unos minutos, CPU, sin GPU; lee solo la partición de ajuste.
+- Confirmado por el supervisor (17 de noviembre) con dos condiciones: `--weight` (g y Q pesados por 1/sd) y, como
+  referencia descriptiva que no entra en la elección, la banda 0.5-6 Hz con la cadena operativa del modelo (16 Hz y
+  Ricker) con el mismo peso (fila «R1 operative chain»).
+- Límite: la frecuencia de muestreo y el filtro operativos del modelo los fija ADR-0012 después, con su costo de
+  cómputo. El Ricker se eligió por la potencia de detección en ruido, que f no mide.
