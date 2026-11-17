@@ -584,6 +584,7 @@ def check_station_order(rd, truth):
     st = truth.meta.get("stations")
     if st is not None and list(st) != list(rd.man["stations"]):
         sys.exit(f"station order of the truth {st} differs from the manifest {rd.man['stations']}: stop")
+    print(f"  station-order check: {'done, matches the manifest' if st is not None else 'NOT done (truth has no meta stations)'}")
 
 
 # ============================================================================================ gdiag stage
