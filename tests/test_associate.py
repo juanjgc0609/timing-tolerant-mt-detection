@@ -117,6 +117,53 @@ def test_gamma_runs_and_freezes_only_in_the_a4_ledger(tmp_path):
     L.require_a4("phasenet+pyocto", L.LEDGER, "run")
 
 
+def test_trials_with_station_terms_use_only_the_a6_ledger(tmp_path, monkeypatch):
+    # ATLAS-0 amendment 6: a trial with terms must not land in a registered ledger, nor one without in the new one
+    for m in ("phasenet+pyocto", "phasenet+gamma"):
+        for led in (L.LEDGER, L.LEDGER_A4, tmp_path / "other.csv"):
+            with pytest.raises(ValueError, match="station terms"):
+                TU.run(m, lambda c, r: None, [object()], ledger=led, log=lambda *_: None, terms=True)
+        with pytest.raises(ValueError, match="station terms"):
+            TU.run(m, lambda c, r: None, [object()], ledger=L.LEDGER_A6, log=lambda *_: None)
+        L.require_ledger(m, L.LEDGER_A6, "run", True)
+        L.require_ledger(m, L.LEDGER_A6, "freeze")                       # freeze reads the mode from the path
+    L.require_ledger("phasenet+pyocto", L.LEDGER, "run", False)
+    with pytest.raises(ValueError, match="amendment 4"):
+        L.require_ledger("phasenet+gamma", L.LEDGER, "run", False)
+    # a comparator of amendment 5 (HARPA) takes terms only once its search without terms is complete in LEDGER_A5
+    monkeypatch.setattr(L, "LEDGER_A5", tmp_path / "a5.csv")
+    with pytest.raises(ValueError, match="without terms"):
+        L.require_ledger("phasenet+harpa", L.LEDGER_A6, "run", True)
+    monkeypatch.setattr(L, "done", lambda m, path=None: set(range(60)))
+    (tmp_path / "a5.csv").write_text("")
+    L.require_ledger("phasenet+harpa", L.LEDGER_A6, "run", True)
+
+
+def test_pipeline_subtracts_station_terms_from_the_picks(monkeypatch):
+    from ttmt.associate import pipeline as PL2
+    from ttmt.atlas.schema import Picks
+    seen = {}
+
+    class Fake:
+        @staticmethod
+        def associate(frame, picks, a):
+            seen["t"] = picks.t.copy()
+            return None, picks
+
+    class Frame:
+        codes = ["A", "B"]
+
+    pk = Picks(np.array([0, 1, 1]), np.array([0, 0, 1]), np.array([10.0, 11.0, 12.0]), np.ones(3))
+    monkeypatch.setattr(PL2.pickers, "load_probabilities", lambda path, codes: (None, 0.01, 0.0, {}))
+    monkeypatch.setattr(PL2.pickers, "picks_from_probabilities", lambda *a: pk)
+    monkeypatch.setattr(PL2, "associator", lambda name: Fake)
+    cfg = {"pk_threshold": 0.1, "pk_peak_distance": 0.5, "as_min_picks": 6}
+    PL2.run_pipeline("phasenet+pyocto", cfg, Frame(), "x")
+    assert np.array_equal(seen["t"], [10.0, 11.0, 12.0])
+    PL2.run_pipeline("phasenet+pyocto", cfg, Frame(), "x", terms=np.array([[0.1, 0.0], [0.2, -0.3]]))
+    assert np.allclose(seen["t"], [9.9, 10.8, 12.3])
+
+
 def test_gamma_eikonal_zmax_deepens_only_the_travel_time_grid(tmp_path):
     from ttmt.associate import gamma_assoc as G
     cfg = dict(as_min_picks=5, as_max_sigma11=1.0, as_method="BGMM")
@@ -633,3 +680,92 @@ def test_r1_model_is_frozen_e65():
     hk = list(TT.HK)
     old = TT.first_arrival(TT.frozen(hk), 16.0, [100.0])[0]
     assert old - TT.first_arrival(hk, 16.0, [100.0])[0] > 0.3                # the defect, kept only in Frozen
+
+
+# ------------------------------------------------------------------------------------------------- EQNet2
+def _eqnet2_scores(events, sta, dt=0.16, n=2000, width=0.3):
+    """synthetic stage-1 output: per station a score bump at origin + travel time, with the exact travel time,
+    distance and azimuth of each event (what a perfect EQNet2 would return)."""
+    from ttmt.associate import eqnet2_assoc as EQ
+    t = np.arange(n) * dt
+    sc = {k: np.zeros((len(sta), n), np.float32) for k in ("score", "tt", "dist", "az", "dz")}
+    for t0, xyz in events:
+        tp = V.times(xyz, sta)[0]
+        for i in range(len(sta)):
+            g = 0.9 * np.exp(-0.5 * ((t - t0 - tp[i]) / width) ** 2)
+            m = g > sc["score"][i]
+            sc["score"][i, m] = g[m]
+            sc["tt"][i, m] = tp[i]
+            dx, dy = xyz[0] - sta[i, 0], xyz[1] - sta[i, 1]
+            sc["dist"][i, m], sc["az"][i, m], sc["dz"][i, m] = np.hypot(dx, dy), np.arctan2(dx, dy), xyz[2]
+    return {**sc, "dt": dt, "t0": 0.0}
+
+
+def test_eqnet2_detect_recovers_events_and_resolves_pairs_only_with_a_short_bin(tmp_path):
+    from ttmt.associate import eqnet2_assoc as EQ
+    sta = ring()
+    iso = [(20.0 + 30 * k, np.array([2.0 * k - 4, 1.0, 8.0])) for k in range(5)]
+    sc = _eqnet2_scores(iso, sta)
+    d = EQ.detect(sc, sta, dict(wf_threshold=0.3, wf_min_interevent=2.0))
+    assert len(d) == 5 and np.max(np.abs(np.sort(d.t) - [e[0] for e in iso])) < 0.1
+    assert np.max(np.abs(d.xyz[np.argsort(d.t)] - np.array([e[1] for e in iso]))) < 0.5
+    pair = [(100.0, np.array([0.0, 0.0, 8.0])), (101.5, np.array([1.0, 0.0, 8.0]))]
+    sp = _eqnet2_scores(pair, sta, width=0.15)
+    assert len(EQ.detect(sp, sta, dict(wf_threshold=0.3, wf_min_interevent=2.0))) == 1     # published scale merges
+    assert len(EQ.detect(sp, sta, dict(wf_threshold=0.3, wf_min_interevent=0.5))) == 2
+    EQ.save_scores(tmp_path / "s.npz", sc, [f"S{i}" for i in range(8)])
+    back = EQ.load_scores(tmp_path / "s.npz", [f"S{i}" for i in range(8)][::-1])
+    assert np.array_equal(back["score"], sc["score"][::-1])
+
+
+def test_eqnet2_cluster_follows_published_rules_and_azimuth_convention():
+    from ttmt.associate import eqnet2_assoc as EQ
+    # azimuth in radians clockwise from north, station -> event (extract_events at 40a48ed1)
+    sc = {"score": np.zeros((3, 50), np.float32), "tt": np.zeros((3, 50), np.float32), "dt": 0.16, "t0": 0.0}
+    sc.update(dist=np.full((3, 50), 10.0, np.float32), az=np.full((3, 50), np.pi / 2, np.float32),
+              dz=np.full((3, 50), 5.0, np.float32))
+    sc["score"][:, 20] = 0.9
+    c = EQ.candidates(sc, np.zeros((3, 3)), 0.3, 1.0)
+    assert np.allclose(c[:, 1:4], [10.0, 0.0, 5.0], atol=1e-5)               # due east, 5 km below the station
+    # two equal neighbouring bins are both peaks (max pool with ties); later, lower peaks overwrite
+    one = np.array([[0.1, 0, 0, 0, 1.0]] * 3 + [[1.1, 0, 0, 0, 1.0]] * 3)
+    assert len(EQ.cluster(one, 1.0)) == 2
+    # top K = int(span / 5): a 4 s record keeps no event, as published
+    assert len(EQ.cluster(one, 1.0, span=4.0)) == 0 and len(EQ.cluster(one, 1.0, span=10.0)) == 2
+    # median, not mean, of the members
+    med = np.array([[5.0, 0, 0, 0, 1.0], [5.1, 0, 0, 0, 1.0], [5.2, 9, 9, 9, 1.0]])
+    d = EQ.cluster(med, 2.0)
+    assert len(d) == 1 and abs(d.t[0] - 5.1) < 1e-9 and np.allclose(d.xyz[0], 0.0)
+
+
+def test_eqnet2_space_and_windows():
+    from ttmt.associate import eqnet2_assoc as EQ
+    sp = SP.space_of("eqnet2")
+    assert set(sp) == {"wf_threshold", "wf_min_interevent"}
+    for _i, _s, c in SP.trials("eqnet2"):
+        SP.check(sp, c)
+    assert EQ.windows(100) == [0] and EQ.windows(4096) == [0]
+    w = EQ.windows(10000)
+    assert w[0] == 0 and w[-1] == 10000 - 4096 and all(b - a <= 2048 for a, b in zip(w, w[1:]))
+
+
+def test_eqnet2_annotate_layout_with_a_stub_model():
+    torch = pytest.importorskip("torch")
+    from ttmt.associate import eqnet2_assoc as EQ
+
+    class Stub(torch.nn.Module):          # event score = channel-0 mean per (time block, station); hypocentre = index
+        def forward(self, b):
+            x = b["data"]                                                  # (1, 3, 4096, ns)
+            assert x.shape[1:3] == (3, 4096) and x.shape[3] % 16 == 0
+            assert b["station_location"].shape == (1, x.shape[3], 3)
+            e = x[:, 0].reshape(1, 256, 16, -1).mean(2)
+            h = torch.zeros(1, 5, 256, x.shape[3]); h[:, 0] = 1.5
+            return {"event": torch.logit(e.clamp(1e-4, 1 - 1e-4)), "hypocenter": h}
+    ns, n = 5, 9000
+    wave = np.zeros((ns, 3, n), np.float32)
+    wave[2, 0, 4992:5008] = 0.8                                            # one block on station 2
+    sc = EQ.annotate(Stub(), "cpu", wave, np.zeros((ns, 3)), t0=10.0)
+    assert sc["score"].shape == (ns, -(-n // 16)) and sc["dt"] == 0.16 and sc["t0"] == 10.0
+    j = int(np.argmax(sc["score"][2]))
+    assert j == 4992 // 16 and sc["score"][2, j] == pytest.approx(0.8, abs=1e-3) and sc["score"][0].max() < 1e-3
+    assert np.allclose(sc["tt"], 1.5)

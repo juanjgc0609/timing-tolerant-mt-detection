@@ -94,3 +94,26 @@ def test_fill_missing_gives_the_common_shift_to_stations_without_a_term():
     assert f[1, 0] == 0.3 and f[2, 1] == 0.4                 # median of the estimated terms of the phase
     assert np.array_equal(f[d != 0], d[d != 0])              # estimated terms untouched
     assert np.array_equal(ST.fill_missing(np.zeros((3, 2))), np.zeros((3, 2)))   # nothing estimated: nothing to fill
+
+
+def test_terms_from_catalogue_recover_delays_and_respect_the_selection():
+    from ttmt.associate.velocity import Velocity1D
+    rng = np.random.default_rng(5)
+    vel = Velocity1D(((0.0, 5.5), (5.5, 6.3)), 1.73, "test")
+    codes, true = ["AAA", "BBB", "CCC"], np.array([[0.2, 0.5], [-0.1, 0.3], [0.4, -0.2]])
+    picks, depth = [], {}
+    for e in range(60):
+        depth[str(e)] = float(rng.uniform(2, 12))
+        for s, c in enumerate(codes[:2]):                    # CCC gets too few picks
+            d = float(rng.uniform(5, 50))
+            tt = np.asarray(vel.times(np.array([0.0, 0.0, depth[str(e)]]), np.array([[d, 0.0, 0.0]])))[:, 0]
+            for ph in (0, 1):
+                picks.append(dict(evid=e, sta=c, phase="PS"[ph], weight=1.0, dist_km=d,
+                                  tt_s=tt[ph] + true[s, ph] + rng.normal(0, 0.03)))
+    picks.append(dict(evid=0, sta="CCC", phase="P", weight=1.0, dist_km=10.0, tt_s=2.5))
+    picks.append(dict(evid=0, sta="AAA", phase="P", weight=0.2, dist_km=10.0, tt_s=50.0))     # low weight: ignored
+    picks.append(dict(evid=0, sta="AAA", phase="P", weight=1.0, dist_km=10.0, tt_s=50.0))     # gross: ignored
+    picks.append(dict(evid=0, sta="ZZZ", phase="P", weight=1.0, dist_km=10.0, tt_s=2.0))      # unknown station
+    d, n = ST.from_catalogue(codes, vel, picks, depth)
+    assert np.abs(d[:2] - true[:2]).max() < 0.02
+    assert np.all(d[2] == 0.0) and n[2, 0] == 1 and n[0, 0] == 60
