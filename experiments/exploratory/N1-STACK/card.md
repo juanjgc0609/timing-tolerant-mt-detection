@@ -354,6 +354,18 @@ apoya un desajuste de índices entre v y g; y en `gcheck` f sin ruido es casi ig
 pérdida del 0.23-0.30 no viene del ruido sino de la propia cadena con G analítico (en la nube, con lector falso,
 f sin ruido fue 0.998).
 
+## Lectura del supervisor y cierre de N-1 (17 de noviembre de 2026)
+
+- Por la regla declarada, `gband` queda en la zona media en los dos conjuntos (0.569 y 0.597): **no separa**.
+- Medido, descriptivo emparejado: leer en 2-20 Hz sube f_emp en +0.21 (Hi-net) y +0.51 (Ridgecrest), y la energía
+  normalizada en 2-20 Hz es 2.6 a 4.3 veces la de 0.5-6 Hz. Con `gcheck` sin ruido en 0.705 y 0.771 hay además una
+  pérdida de unos 0.25 en la propia cadena de lectura con registros reales, que el lector falso de la nube no tenía.
+- Lectura: **dos causas a la vez**, la banda (efecto grande) y una pérdida de la cadena de lectura; ninguna sola
+  explica todo.
+- **Hipótesis abierta, sin probar:** la explicación de la pérdida de la cadena (sin ruido, con G analítico) no se ha
+  medido.
+- N-1 se cierra aquí; no se corre nada más. Dónde se arregla el front end lo decide el dueño en el hilo del supervisor.
+
 ## Implementación (`run.py`; detalles de interfaz fijados antes de correr y aceptados por el supervisor)
 
 - Front end de R1 (`datasets._preprocess`): media y tendencia fuera, Butterworth 4 de fase cero 0.5-6 Hz, 16 Hz,
