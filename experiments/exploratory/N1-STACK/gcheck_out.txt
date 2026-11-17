@@ -1,0 +1,2 @@
+ss_hinet_2012_egf_v1: 10 analytic-G events at the median S_en of the hits (3945.6); S_mt/S_en median 0.685 [min 0.245, max 0.819] -> between 0.5 and 0.8: reported, no conclusion (card rule: >= 0.8 / < 0.5)
+ss_ridgecrest_2019_egf_v1: 10 analytic-G events at the median S_en of the hits (4400.1); S_mt/S_en median 0.768 [min 0.707, max 0.838] -> between 0.5 and 0.8: reported, no conclusion (card rule: >= 0.8 / < 0.5)

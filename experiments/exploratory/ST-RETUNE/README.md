@@ -1,6 +1,7 @@
 # ST-RETUNE: retuning the comparators with independent station terms (T4.25, design before the run)
 
-Status: design and pilot only (14 Nov 2026). **No retuning has been run and no ledger is touched.** The retuning needs
+Status: retuning run under amendment 6 (17 Nov 2026); results below, section "Result". (Design status of 14 Nov:
+no retuning had been run.) The retuning needs
 an amendment of ATLAS-0 anchored by the owner first (draft below). Owner's approval of the proposal: 14 Nov 2026,
 as a hypothesis to test, with a pivot criterion. Depends on PR #47 (station terms, `T420-CEILING`).
 
@@ -169,3 +170,45 @@ partition and not about other data.
 Cost, measured in the ledgers on the owner's machine: PyOcto 2.6 h for 60 trials (median 39 s), GaMMA a4 3.4 h
 (median 44 s). The earlier figure of 10 min for PyOcto was wrong. Cloud times are not measured; the smoke run gives
 them.
+
+## Result (17 Nov 2026, registered run under amendment 6)
+
+Run: cloud CPU, main d157996 (tag `reg/ATLAS-0/amendment-6` -> 98a6b05, same frozen files), `run_retune.py smoke`,
+`full` and `read`; 60 of 60 trials per method, all with status ok, in `tuning_ledger_a6.csv`. Output
+`results/st_retune/retune_a6.json`, frozen files `COMPARATORS/frozen/phasenet+pyocto_a6.json` and
+`phasenet+gamma_a6.json`.
+
+| method | frozen, no terms | retuned, terms | gain | H (rule) | used against the model |
+|:--|--:|--:|--:|:--|:--|
+| PyOcto | 0.2589 (T 0.206, C 0.311) | 0.2814 (T 0.215, C 0.348) | +0.023 | holds | with terms |
+| GaMMA (a4) | 0.2356 (T 0.179, C 0.292) | 0.2838 (T 0.233, C 0.334) | +0.048 | holds | with terms |
+
+Pivot (item 5): both methods gain at least 0.01; the line stays open.
+
+Machine check (descriptive, `machine_check.py`, `results/st_retune/machine_check.json`): the two frozen
+configurations without terms, re-scored in the same cloud container, give exactly the ledger values (PyOcto 0.258877,
+GaMMA 0.235588, both recalls equal to 6 digits). The differences below are therefore the terms, not the machine.
+
+Paired comparison (secondary, fixed on 15 Nov): same 60 parameter sets with and without terms.
+
+| method | trials up / down / equal | median difference | two-sided sign test |
+|:--|:--|--:|:--|
+| PyOcto | 44 / 16 / 0 | +0.011 | p = 4e-4 (39 of 60 needed) |
+| GaMMA | 33 / 4 / 23 | +0.005 | p = 1e-6 (25 of 37 needed) |
+
+The 23 equal GaMMA trials include 20 whose objective is 0 with and without terms. In recall T the median paired gain
+is +0.029 for PyOcto (44 up, 9 down) and +0.009 for GaMMA (32 up, 3 down); in C it is +0.003 and 0.000. The best
+PyOcto trial with terms is trial 57, the same configuration that was best without terms, so for PyOcto the gain is
+the terms at a fixed configuration. The parameters of trial 3 (both methods) and trial 38 (GaMMA) differ by one unit
+in the last place from the ledger without terms (Windows ledger against the cloud; cause not checked, a
+difference in the math library is the likely one); the pairing check accepts
+them at rtol 1e-12.
+
+Reading. With independent station terms on Ridgecrest the comparators gain, consistently across configurations, and
+mostly in T. This differs from the exploratory finding of PR #47 (terms from the injected sources did not raise PyOcto
+with PhaseNet picks); the difference is the source of the terms and the retuning. It raises the bar for our model:
+from now on the comparison uses the `_a6` configurations (item 3). Limits: the gains are measured on the tuning
+partition that chose the configurations (optimistic for both arms alike, as for every frozen configuration); the
+terms correct Ridgecrest only, and the objective pools Ridgecrest and Hi-net, so the per-network split is reported
+when the read partition is run (item 4). The 0.01 threshold is below the noise of the objective (section above); the
+claim that terms help rests on the paired comparison, not on the two maxima.

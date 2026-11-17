@@ -532,3 +532,10 @@ Owner approval. On 14 November 2026 the owner approved retuning the comparators 
 amendment ("apruebo todo lo demás"). On 15 November 2026 (09:17 Bogotá) the owner approved the pending steps,
 which the project coordinator reads as approval of this amendment: "verifica y apruebo todo lo que haya que
 hacer". The anchoring and the tag remain the owner's own actions.
+
+Choice under amendment 6, item 3 (17 November 2026, from `results/st_retune/retune_a6.json`; recorded before any
+read-partition run). PyOcto: configuration with terms, `frozen/phasenet+pyocto_a6.json` (trial 57, objective 0.2814
+against 0.2589 without terms). GaMMA: configuration with terms, `frozen/phasenet+gamma_a6.json` (trial 46, objective
+0.2838 against 0.2356 under amendment 4). Item 5: both gain at least 0.01, so the line of station terms for the
+comparators stays open. Terms apply to Ridgecrest only (item 1); Hi-net and Alto Tiberina run without terms for every
+method.

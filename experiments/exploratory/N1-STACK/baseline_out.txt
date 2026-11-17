@@ -1,0 +1,22 @@
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+PyOcto does not support multi-threading on Windows. Only one thread will be used for association. Set n_threads=1 to suppress this warning.
+partition b60d99b3d0bbbbfa  T 0.2063 (frozen 0.206278)  C 0.3115 (frozen 0.311475)
+P-C (C targets lost at the picker): 148 rows, 66 unique; targets detected: 49 unique, control takes 36
