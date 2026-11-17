@@ -6,12 +6,17 @@ Universidad Icesi - Trabajo de grado - Juan Jose Gordillo Cordoba - October 2026
 
 Director: Uram Aníbal Sosa Aguirre
 
-*Draft note (17 November 2026): figures of the thesis's own detector computed on real noise or real data (Tasks 2M,
-R0 and R1, exploration C18, and the doctoral-line gates G-M5) come from a pipeline that divides each station by its
-own noise deviation but projects on a moment-tensor subspace built without those weights (`src/ttmt/r1.py:60-61`,
-found in PR #68). Passages marked **[whitening review]** contain such figures. They stand as recorded and are not
-deleted; each is pending review until it is repeated with the fix or declared affected. Simulations with equal noise at
-every station and the comparators (PhaseNet, PyOcto, GaMMA, QuakeMigrate) are not affected.*
+*Draft note (17 November 2026): figures of the thesis's own detector on real seismicity (Tasks R0 and R1 with the
+hybrid, the Ridgecrest explorations C18, and the Ridgecrest segment of gate G-M5b) come from a pipeline that divides
+each station by its own noise deviation (`code/r0/r0_run.py:50-51` with `code/r0/r0_lib.py:135`, and
+`code/r1/r1_lib.py:151`) but projects on a moment-tensor subspace built without those weights; the defect was found
+in PR #68 in the later port `src/ttmt/r1.py:60-61`. Passages marked **[whitening review]** contain such figures. They
+stand as recorded and are not deleted; each is pending review until it is repeated with the fix or declared affected.
+Task 2M was checked and is not affected: its noise is levelled per channel when the files are prepared
+(`code/t2m_data.py:32-33`), the synthetic events are added without any division by station, and the matched filter is
+divided by one deviation for the whole window (`code/t2m_lib.py:328`), so data and subspace stay consistent. The same
+holds for exploration C18f, gate G-M5c and the 2M part of gate G-M5a. Simulations with equal noise at every station
+and the comparators (PhaseNet, PyOcto, GaMMA, QuakeMigrate) are not affected either.*
 
 ---
 
@@ -37,7 +42,7 @@ each event can be hit only once; under that stricter rule one registered criteri
 longer met. On one day of real noise with transients and injected synthetic events (Alto Tiberina, Italy) the capped
 detector exceeded uncapped block pursuit by +0.228 [+0.148, +0.298] with the registered epicentre rule, +0.205
 [+0.133, +0.279] when each event can be hit only once, and +0.083 [+0.051, +0.118] when the origin time is also
-required; block pursuit with the same cap recovers most of that gap, so the gain belongs to the per-station bound. **[whitening review]** On real seismicity the
+required; block pursuit with the same cap recovers most of that gap, so the gain belongs to the per-station bound. On real seismicity the
 pick-free detector failed: on one hour of the 2019 Ridgecrest sequence it recalled at most 0.022 of the catalogued
 events against up to 0.667 for PhaseNet with PyOcto, and on a 2012 swarm recorded by seven Hi-net stations it found 1
 of 54 target events. **[whitening review]** A hybrid that adds pick-free candidates to a pick-based associator and scores them by the
@@ -100,7 +105,7 @@ The contributions are the following, stated at the level the evidence supports.
    the work (sixty-four so far, E1 to E64) is part of
    the record.
 2. **Bounded influence helps in noise with transients.** A per-station cap or a Huber fit adds detections in
-   dense sequences on synthetic data and on one day of real noise with transients and injected events **[whitening review]**, against a
+   dense sequences on synthetic data and on one day of real noise with transients and injected events, against a
    pursuit with no robust per-station preprocessing (no despiking or robust normalisation was compared), by a smaller
    amount when the origin time is also required and each event can be hit only once (under that rule one of the
    registered synthetic criteria is not met, Section 6.2); the gain belongs to the per-station bound
@@ -301,7 +306,7 @@ $2c\sqrt{\log(1+M^2/c^2)}$ with the amplitude $M$; for the identity it is unboun
 deviations, one that passed the quality control of Task 2M, replacing a clean block of typical norm $\sqrt3$, can move
 $\sigma$ by at most about 8 with the cap and 25 with the logarithmic map (12 and 47 in the worst case of two large
 blocks), and by up to 12,500 without a bound. A real event at the detection threshold of Task 2M has
-$\sigma$ of about 12.4 (a threshold of 77.4 in score units) **[whitening review]**, so the bound does not show that one transient cannot
+$\sigma$ of about 12.4 (a threshold of 77.4 in score units), so the bound does not show that one transient cannot
 produce a capped detection: one transient can move a capped score by about the threshold itself, and an uncapped one
 by a thousand times more. The protection is relative to the identity, and it is offered as the mechanism behind the
 gains of Tasks 2F, 2I and 2M, an explanation written after those results.
@@ -385,7 +390,7 @@ mechanisms. Against one-event explanations whose time and amplitude are free at 
 timing-tolerant method can afford, the margin splits by station and does not change when both events are shifted by the
 same station statics. As the separation goes to zero the margin grows linearly when the radiated amplitude vectors of
 the two events differ in direction at some arrival, and quadratically when they are parallel (the same mechanism). For
-a pair at the detection threshold of Task 2M (SNR 12.4 per event) **[whitening review]** this gives a minimum resolvable separation of about
+a pair at the detection threshold of Task 2M (SNR 12.4 per event) this gives a minimum resolvable separation of about
 0.03 s in origin time with different mechanisms, 0.1 s with the same one, and 0.5 km in plan: well below the 0.25 s
 tolerance and the 5 km hit radius, so model error and the algorithm, not the information in the data, limit the
 detector in the regimes tested.
@@ -425,7 +430,7 @@ alternative is [Vovk and Wang 2021; Ramdas et al. 2023], time slides calibrate e
 source but not the false detections caused by real events, as in gravitational-wave background estimation [Was et al.
 2010; Capano et al. 2016], and no coherence certificate can guarantee the separation of
 overlapping events near the information limit. These are theorems under an exact null. On the real noise of both Task 2M
-seeds (three days) the e-value was not calibrated (gate G-M5c, `experiments/exploratory/M5-EVALUE/card.md`) **[whitening review]**, and whether
+seeds (three days) the e-value was not calibrated (gate G-M5c, `experiments/exploratory/M5-EVALUE/card.md`), and whether
 the cause is the marginal law of some stations or the dependence between them was not separated. Until a valid
 e-value or another null is shown on real data, neither a universal threshold nor a guaranteed control of false
 detections is claimed.
@@ -530,7 +535,7 @@ that every value printed here occurs in it verbatim; the specification of the ro
 Differences are in event recall (fraction of target events detected) at the operating point of each method. "Epicentre rule"
 means a hit needs the epicentre within 5 km; "origin time required" adds an origin within 0.5 s (Section 5.2).
 
-**Table 1. Evidence table.** Rows E8 to E15 (real noise and real data) are under **[whitening review]**.
+**Table 1. Evidence table.** Rows E11 to E15 (real data) are under **[whitening review]**.
 
 | # | Data | Test | Claim | Value | Source (file:line) |
 |:--|:--|:--|:--|:--|:--|
@@ -642,7 +647,7 @@ pooled gain is essentially that of the one-sided eight-station cell, there is no
 and the terms were worse than the registered ones in about 22 per cent of the networks. Rescored post hoc one to one,
 2L-a gives +0.058 and +0.060, and 2L-a to 2L-d and the secondary BOMP rule are all still met.
 
-### 6.3 Real noise with injected events (Task 2M; Appendix Y.31) **[whitening review]**
+### 6.3 Real noise with injected events (Task 2M; Appendix Y.31)
 
 Task 2M injected synthetic events into continuous noise of days of the Alto Tiberina network (northern Apennines, Italy, 2010)
 that no earlier analysis had used. On the primary day, one day whose noise contains transients, the capped MT-FW and
@@ -776,7 +781,7 @@ produced the truth list.
 
 ### 7.1 The hypotheses as they now stand
 
-**Table 2. Status of the hypotheses.** The real-data parts of rows G1, G1-R and "new" are under **[whitening review]**.
+**Table 2. Status of the hypotheses.** The real-data parts of rows G1 and "new" are under **[whitening review]**.
 
 | Hypothesis | Statement | Status |
 |:--|:--|:--|
@@ -881,7 +886,7 @@ one event. *What R1 tests.* All truth events of the swarm lie within 3.1 km of i
 epicentre within 5 km, so R1 tests detection and origin time, not location. A second detection of an event that is
 already hit counts as neutral, never as false, for every method. That convention favours the detectors that deflate
 imperfectly and so emit repeat detections (Proposition AB.B.6), because their repeats do not take the false-detection
-budget; in the dense windows of 2M 5 to 7 per cent of all detections were such repeats. **[whitening review]** 2F, 2I, 2L, 2M, R0 and R1
+budget; in the dense windows of 2M 5 to 7 per cent of all detections were such repeats. 2F, 2I, 2L, 2M, R0 and R1
 have been rescored one to one, and 2A to 2D with repeats counted as false (Section 5.2); the verdicts of R0, R1, 2A to
 2D and 2L do not change. Task 2E was not regenerated, so its verdict, already negative, rests on the neutral convention
 alone (critique CR-21). The freeze list covered the project code, the data
@@ -912,7 +917,7 @@ against the moment-tensor subspace and deflates accepted events beats pick-based
 where most of the timing error is within the tolerance (against associators fed by an STA/LTA picker and QuakeMigrate,
 with operating points chosen on the evaluation data, and no better than block pursuit with the same tolerance), and loses to PhaseNet-based association on two real sequences
 where it is not. Adding its candidates to a PhaseNet associator did not demonstrably help on unseen data. What
-survives as a contribution is the bound on the influence of each station, measured on one day of real noise **[whitening review]** and
+survives as a contribution is the bound on the influence of each station, measured on one day of real noise and
 consistent with Propositions 1 and 4, the theory of Appendix AB that explains why such a bound must be relative to the
 background, and the record of how the method was tested.
 

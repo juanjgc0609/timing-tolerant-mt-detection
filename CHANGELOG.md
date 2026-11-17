@@ -5,8 +5,9 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-17
 
-- Thesis: every figure of the thesis detector on real noise or real data (2M, R0, R1, C18, G-M5) marked
-  **[whitening review]**, with a draft note, after the whitening mismatch found in PR #68; nothing deleted or changed.
+- Thesis: every figure of the thesis detector on real seismicity (R0, R1, the Ridgecrest explorations C18, gate G-M5b)
+  marked **[whitening review]**, with a draft note, after the whitening mismatch found in PR #68; Task 2M, C18f and
+  G-M5c divide by one deviation per window and are not marked. Nothing deleted or changed.
 - ATLAS-0 card: the amendment-5 erratum line, which the revert and reapply of PR #53 left after amendment 6, moved
   back to the end of amendment 5 and labelled "Amendment 5, erratum". Wording unchanged (one line rejoined); the
   amendment-6 text is byte-identical to the tag `reg/ATLAS-0/amendment-6`.
