@@ -296,7 +296,7 @@ Lo que se mide, sin ir más allá de las reglas:
 
 ## Comprobación de banda (supervisor, 17 de noviembre de 2026; declarada antes de correr)
 
-Pendiente del sí del dueño (tarjeta del supervisor). No toca P-T ni R.
+Aprobada por el dueño en la tarjeta del supervisor el 17 de noviembre de 2026, 7:16 AM Bogotá ("Sí, comprobar la banda"); frase de Remote Control escrita en el hilo a las 7:19 AM. No toca P-T ni R.
 
 - Población y g: los mismos aciertos y el mismo g de `gdiag` (bloques sin llegada en cero, Z hacia abajo).
 - Front end elegido: **el mismo filtro con que se midió g**, `realdata.bandpass` 2-20 Hz (Butterworth de fase cero)
