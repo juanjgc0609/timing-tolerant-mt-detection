@@ -236,3 +236,6 @@ sección anterior.** Población, mitades, bandas, front end, lectura y semillas 
   media de las medianas de m con CAP6, se dice «sin diferencia con el tope» y la elección se hace con m sin tope. La
   confirmación y sus tres zonas se leen con la misma medida que eligió.
 - Prueba del código en la nube (mismo lector falso, sin error de tiempos): las dos lecturas coinciden, como deben.
+- Límite (supervisor, 17 de noviembre): en Hi-net el modelo 1-D tiene un desajuste conocido (P −0.15 s y S −0.35 s de
+  mediana, STAGE-LOSS) que castiga más a las bandas altas. Si después el modelo opera con términos por estación, la
+  banda elegida aquí es conservadora para las bandas altas.
