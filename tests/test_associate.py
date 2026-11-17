@@ -816,3 +816,19 @@ def test_eqnet2_stage1_inputs_order_units_and_manifest(tmp_path):
     j = int(np.argmax(sc["score"].max(1)))
     assert j == 3 and sc["t0"] == 5.0
     assert np.allclose(sc["tt"][:, 10], 0.0, atol=1e-3)                      # log10(1 um/s) = 0: units applied
+
+
+def test_eqnet2_stage1_run_attaches_scores_in_manifest_order(tmp_path, monkeypatch):
+    import importlib
+    import sys
+    from types import SimpleNamespace
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "experiments" / "exploratory" / "COMPARATORS"))
+    S1 = importlib.import_module("eqnet2_stage1")
+    m = tmp_path / "tune_eqnet2.json"
+    m.write_text(json.dumps({"records": [{"eqnet2": "eqnet2_a.npz"}, {"eqnet2": "eqnet2_b.npz"}]}))
+    monkeypatch.setattr(TU, "load_manifest", lambda p, meth: [SimpleNamespace(data={}), SimpleNamespace(data={})])
+    recs = S1.load_records([str(m)])
+    assert [os.path.basename(r.data["eqnet2"]) for r in recs] == ["eqnet2_a.npz", "eqnet2_b.npz"]
+    monkeypatch.setattr(TU, "load_manifest", lambda p, meth: [SimpleNamespace(data={})])
+    with pytest.raises(SystemExit):
+        S1.load_records([str(m)])

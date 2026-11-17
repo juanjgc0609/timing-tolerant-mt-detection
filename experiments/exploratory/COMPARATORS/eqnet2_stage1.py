@@ -1,9 +1,14 @@
 """EQNet2 stage 1 on the tuning partition (ATLAS-0 amendment 5): network scores of every tuning record, saved next
 to the PhaseNet manifest, and a manifest tune_eqnet2.json that points each record to its score file.
 
-    python eqnet2_stage1.py C:/Users/juanj/ttmt/tune/<set>/tune_phasenet.json ... \
+    python eqnet2_stage1.py scores C:/Users/juanj/ttmt/tune/<set>/tune_phasenet.json ... \
         --checkpoint C:/Users/juanj/ttmt/eqnet2/eqnet_base_noprompt_v0.pth --eqnet-path C:/Users/juanj/ttmt/eqnet2/EQNet \
         --scale ridgecrest_2019=1e6 [--scale hinet_2012=<um/s per count>]
+    python eqnet2_stage1.py run C:/Users/juanj/ttmt/tune/*/tune_eqnet2.json --env ttmt-gpu --trials 60
+
+"run" is the ATLAS-0 random search of EQNet2 stage 2 (``ttmt.associate.tune.run`` with ``eqnet2_assoc.runner``) into
+tuning_ledger_a5.csv; it lives here so that the files frozen at the amendment-6 tag (tune_cli.py, pipeline.py) are
+not changed.
 
 Inputs as the published continuous run of EQNet2 (README of AI4EPS/EQNet at 40a48ed1, mseed command; loader
 ``eqnet.data.seismic_network`` lines 1800-1856):
@@ -102,14 +107,43 @@ def run_manifest(path, model, device, scales, centre_of=dataset_centre, reader_o
     return p
 
 
+def load_records(paths):
+    """tuning records of tune_eqnet2.json manifests with the path of each record's score file in data["eqnet2"]
+    (ttmt.associate.tune.load_manifest keeps every record, in the manifest's order)."""
+    from ttmt.associate import tune as TU
+    recs = []
+    for m in paths:
+        raw = json.load(open(m))["records"]
+        root = os.path.dirname(os.path.abspath(m))
+        loaded = TU.load_manifest(m, "eqnet2")
+        if len(loaded) != len(raw):
+            raise SystemExit(f"{m}: manifest and loaded records differ in number")
+        for r, j in zip(loaded, raw):
+            r.data["eqnet2"] = os.path.join(root, j["eqnet2"])
+            recs.append(r)
+    return recs
+
+
 def main(argv=None):
+    from ttmt.associate import ledger as L
     ap = argparse.ArgumentParser()
-    ap.add_argument("manifests", nargs="+", help="tune_phasenet.json of each set (written by tune_cli.py records)")
-    ap.add_argument("--checkpoint", required=True)
-    ap.add_argument("--eqnet-path", required=True)
-    ap.add_argument("--device", default=None)
-    ap.add_argument("--scale", action="append", default=[], metavar="DATASET=FACTOR")
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    s = sub.add_parser("scores")
+    s.add_argument("manifests", nargs="+", help="tune_phasenet.json of each set (written by tune_cli.py records)")
+    s.add_argument("--checkpoint", required=True)
+    s.add_argument("--eqnet-path", required=True)
+    s.add_argument("--device", default=None)
+    s.add_argument("--scale", action="append", default=[], metavar="DATASET=FACTOR")
+    r = sub.add_parser("run")
+    r.add_argument("manifests", nargs="+", help="tune_eqnet2.json of each set (written by the scores command)")
+    r.add_argument("--env", default="")
+    r.add_argument("--trials", type=int, default=60)
+    r.add_argument("--ledger", default=str(L.LEDGER_A5))
     a = ap.parse_args(argv)
+    if a.cmd == "run":
+        from ttmt.associate import tune as TU
+        TU.run("eqnet2", EQ.runner(), load_records(a.manifests), ledger=a.ledger, n_trials=a.trials, env=a.env)
+        return
     scales = {k: float(v) for k, v in (s.split("=", 1) for s in a.scale)}
     if a.eqnet_path not in sys.path:
         sys.path.insert(0, a.eqnet_path)

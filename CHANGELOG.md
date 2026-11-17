@@ -5,12 +5,12 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-17
 
-- EQNet2 stage 1 on the tuning partition: `experiments/exploratory/COMPARATORS/eqnet2_stage1.py` writes the network
-  scores of every tuning record and `tune_eqnet2.json`, with the inputs of EQNet2's published continuous run
-  (E, N, Z at 100 Hz; amplitude in um/s through a per-dataset `--scale`, required; station longitude and latitude by
-  inverting `Dataset.to_xy`; stations in the published `--sort` order). `tune_cli.py run eqnet2` uses
-  `eqnet2_assoc.runner`; pipeline STATUS of eqnet2 is "ready". No record read yet. ATLAS-0 card: a disclosure line below the
-  amendment-5 erratum declares the adapter's 4096-sample windows and the amplitude units (declaration only).
+- EQNet2 stage 1 on the tuning partition: `experiments/exploratory/COMPARATORS/eqnet2_stage1.py scores` writes the
+  network scores of every tuning record and `tune_eqnet2.json` with the inputs of EQNet2's published continuous run
+  (E, N, Z at 100 Hz; amplitude in um/s through a required per-dataset `--scale`; station longitude and latitude by
+  inverting `Dataset.to_xy`; published `--sort` order); `eqnet2_stage1.py run` is the tuning of stage 2 into
+  `tuning_ledger_a5.csv`, so `tune_cli.py` and `pipeline.py` (frozen at the amendment-6 tag) do not change. ATLAS-0
+  card: "Amendment 5, erratum 2" records these inputs and the 4096-sample windows. No record read yet.
 - ATLAS-0 card: the amendment-5 erratum line, which the revert and reapply of PR #53 left after amendment 6, moved
   back to the end of amendment 5 and labelled "Amendment 5, erratum". Wording unchanged (one line rejoined); the
   amendment-6 text is byte-identical to the tag `reg/ATLAS-0/amendment-6`.
