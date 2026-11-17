@@ -38,14 +38,18 @@ and the registry then refuses the whole file.
 The aggregates come from `tools/data/scan_catalogue.py --days 30` on the NCEDC catalogues of 2019 to 2026, and the
 station counts from `tools/data/s3_availability.py`; both read catalogue fields, archive listings and StationXML only.
 
-Amendment of 15 November 2026 (sealed SHA-256 996f70ad... -> 23911872...): Antelope Valley and Bodie fail criterion 4.
+Amendment of 15 November 2026 (sealed SHA-256 996f70ad... -> c0deacc5...): Antelope Valley and Bodie fail criterion 4.
 Within 50 km on the sampled day they have 6 and 6 three-component stations; the temporary GM.AE01-06 at Antelope Valley
 have metadata but no archived data (MUSTANG 0 %). No other NCEDC 2020-2026 window reaches 400 events at Mc. The
 replacement rule was written before the search (same four criteria; sources ComCat ak, hv, uu, uw, pr, ok, tx, nm, mb
 2020-2026; ranking by events at Mc; criterion 4 on day 8 with MUSTANG availability >= 90 %, network SY excluded). It
 chose `conf_kilauea_2024`, with `conf_magna_2020` as spare. Inputs and outputs (catalogue manifests, scan tables,
 station texts and MUSTANG metrics with SHA-256) are on the author's machine under `ttmt/real_meta/`. The scripts are
-`tools/data/scan_catalogue.py --types earthquake` and `tools/data/criterion4_stations.py`.
+`tools/data/scan_catalogue.py --types earthquake` and `tools/data/criterion4_stations.py`. Order of events: the rule was posted in the
+real-data thread on 2026-11-15 at 14:06 UTC, together with the download-only brief sent to the laptop, and the scans
+ran after that. The rule file was later extended (18:47 UTC) with a clarification and the ranking, so its timestamp
+alone does not prove the order; the order rests on the thread's record. Criterion 2 as sealed lists phasenet/original
+and phaseno; EQNet2-v0 (amendment 5, NCEDC through 2022) covers 2020 but not Utah, declared for the spare.
 
 ## Why these and not others
 

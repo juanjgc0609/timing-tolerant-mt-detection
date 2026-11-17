@@ -69,7 +69,7 @@ Dated record of changes to the project's process, code and documents. Results ar
 - CR-16 flags: `ttmt.qc.teleseism_windows` (rule fixed before any flag: ComCat M >= 5.5 anywhere, iasp91 first P
   - 30 s to distance / 2.5 km/s + 600 s; test in `tests/test_registry.py`) and `tools/data/teleseism_flags.py` for
   the development spans used by time-slide nulls (2M noise days of Alto Tiberina, R0, R1).
-- Reservation amendment (sealed SHA-256 996f70ad... -> 23911872...): Antelope Valley 2021 and Bodie 2020 fail
+- Reservation amendment (sealed SHA-256 996f70ad... -> c0deacc5...): Antelope Valley 2021 and Bodie 2020 fail
   criterion 4 (6 and 6 three-component stations within 50 km on the sampled day; GM.AE01-06 have no archived data)
   and are withdrawn but kept sealed. By the replacement rule written before the search (same criteria, ComCat
   regional catalogues 2020-2026), `conf_kilauea_2024` (HV, 36 stations) is confirmatory and `conf_magna_2020` (UU) the

@@ -101,7 +101,8 @@ SEQUENCES = [
         "why": "replacement chosen 2026-11-15 by the fixed rule of the real-data thread (first candidate by events at "
                "Mc among ComCat ak, hv, uu, uw, pr, ok, tx, nm, mb 2020-2026 that meets criteria 3 and 4); volcanic "
                "swarm, network HV never used; no comparator weight trained on Hawaii after 2018 (STEAD, global, "
-               "1984-2018: regional overlap declared)",
+               "1984-2018: regional overlap declared); EQNet2-v0 (amendment 5: CEED, NCEDC through 2022) ends before 2024 "
+               "and is another region",
     },
     {
         "id": "conf_magna_2020",
@@ -117,7 +118,9 @@ SEQUENCES = [
         "availability": "2020-03-25 (day 8): 8 stations by the rule as written, of which RE.EACA, EACA1 and EACA2 lie "
                         "within about 0.2 km of each other (6 distinct sites); declared, and the spare is used only "
                         "if conf_kilauea_2024 fails its data QC",
-        "why": "next candidate of the same ranking that meets criteria 3 and 4; tectonic aftershocks, other region",
+        "why": "next candidate of the same ranking that meets criteria 3 and 4; tectonic aftershocks, other region; "
+               "2020 lies inside the EQNet2-v0 training period (amendment 5: CEED, NCEDC through 2022), which "
+               "criterion 2 as sealed does not list; the region (Utah) is not in it, so no overlap, declared",
     },
     {
         "id": "conf_colombia_cm",

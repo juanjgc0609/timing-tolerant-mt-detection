@@ -65,3 +65,15 @@ def test_surface_source_has_finite_times():
         t = st(np.array([0.0, 0.0, z]), sta)
         assert np.isfinite(t).all()
         assert np.abs(t - ref).max() < 0.05
+
+
+def test_surface_source_frozen_path_unchanged():
+    """the frozen R1 model (traveltime.frozen, E65) keeps its registered behaviour: a source at 0 km has no direct
+    wave there, so the surface fix does not change R1's frozen lists."""
+    import numpy as np
+    from ttmt import traveltime as TT
+    X = np.array([1.0, 5.0, 10.0])
+    t_new = TT.first_arrival(TT.HK, 0.0, X)
+    t_old = TT.first_arrival(TT.frozen(TT.HK), 0.0, X)
+    assert np.isfinite(t_new).all()
+    assert not np.isfinite(t_old).all()
