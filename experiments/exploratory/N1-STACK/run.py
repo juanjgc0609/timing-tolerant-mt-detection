@@ -566,6 +566,73 @@ def stats(a):
                  if rr[hi[0]] < 0.5 * rr[rc[0]] else "Hi-net not below half"))
 
 
+# ============================================================================================ gdiag stage
+def read_at_best(R, arr_s, t0):
+    """(2, ns, 3) read vectors of a target at the common shift (-SHIFT..SHIFT) with the largest ||v||^2."""
+    ns, _, n = R.shape
+    V = peak_vectors(R)
+    k = np.floor((arr_s.T - t0) * FS16 + 0.5)
+    best, out = -1.0, None
+    for d in range(-SHIFT, SHIFT + 1):
+        c = k + d
+        ok = np.isfinite(c) & (c >= 0) & (c < n)
+        cc = np.where(ok, c, 0).astype(int)
+        v = np.where(ok[..., None], V[np.arange(ns)[None, :], cc], 0.0)
+        e = float((v * v).sum())
+        if e > best:
+            best, out = e, v
+    return out
+
+
+def gdiag(a):
+    """card.md, 'Diagnóstico declarado': f_emp (rank-1 empirical G, the target's own injected g) against f_an
+    (analytic 6-D subspace) on the positive-control targets; uncapped, same front end, mask and reading."""
+    from ttmt.synth import realdata as RD
+    from ttmt.synth import sets
+    pops = json.load(open(a.pops))
+    ctl = [dict(x) for x in pops["control"]]
+    out, cache = [], {}
+    for sid in sorted({x["set_id"] for x in ctl}):
+        rd = sets.SetReader(sid, "tune", verify="fingerprint")
+        STA = np.asarray(rd.man["xyz"], float)
+        model = RD.pred_model(rd.man["dataset"])
+        tr0 = rd.truth(rd.labels[0])
+        _s, noise = rd.arrays(rd.labels[0])
+        mfn = matched(pre16(noise))
+        sd = station_sd(mfn)
+        keep = (~catalogue_mask(tr0.t0, mfn.shape[-1], tr0, STA, model))[:, None, :].astype(float)
+        cache[sid] = (rd, STA, sd, keep)
+    for x in ctl:
+        rd, STA, sd, keep = cache[x["set_id"]]
+        sig, noise = rd.arrays(x["label"])
+        truth = rd.truth(x["label"])
+        R = (matched(pre16(sig)) + matched(pre16(noise)) * keep) / sd[:, None, None]
+        e = x["event"]
+        v = read_at_best(R, truth.arr_t_obs[e], truth.t0).reshape(-1)
+        g = np.array(truth.meta["targets"][e]["g"], float)          # (ns, 2, 3), E N Z-up
+        g = np.nan_to_num(g.transpose(1, 0, 2))                     # (2, ns, 3)
+        g[..., 2] *= -1.0                                           # Z down, as the front end
+        g = g.reshape(-1)
+        vv = float(v @ v)
+        Q = operator_basis(truth.xyz[e], STA)
+        y = v @ Q
+        f_an = float(y @ y) / vv
+        f_emp = float((v @ g) ** 2 / (vv * max(float(g @ g), 1e-300)))
+        out.append(dict(x, f_emp=f_emp, f_an=f_an, dim=int(v.size)))
+    for sid in sorted({x["set_id"] for x in out}):
+        r = [x for x in out if x["set_id"] == sid]
+        fe = np.array([x["f_emp"] for x in r])
+        fa = np.array([x["f_an"] for x in r])
+        D = r[0]["dim"]
+        med = float(np.median(fe))
+        zone = "cause is G" if med > 0.6 else ("cause is the vector reading" if med < 0.4 else "both")
+        print(f"{sid}: n {len(r)}; f_emp median {med:.3f} [q25 {np.quantile(fe, .25):.3f}, q75 "
+              f"{np.quantile(fe, .75):.3f}] (random {1 / D:.3f}); f_an median {np.median(fa):.3f} (random "
+              f"{6 / D:.3f}); paired f_emp - f_an median {np.median(fe - fa):+.3f}"
+              + ("" if len(r) >= 10 else "; n < 10") + f" -> {zone} (card rule: > 0.6 G, < 0.4 reading)")
+    json.dump({"rows": out}, open(a.out, "w"), indent=1)
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="stage", required=True)
@@ -579,7 +646,10 @@ if __name__ == "__main__":
     s.add_argument("--out", default="stats.json")
     s.add_argument("--radial", choices=("cap6", "nocap"), default="cap6")
     s.add_argument("--read", action="store_true", help="print R and the reading (only after the owner's approval)")
+    q = sub.add_parser("gdiag")
+    q.add_argument("pops")
+    q.add_argument("--out", default="gdiag.json")
     a = ap.parse_args()
     if a.stage == "stats":
         RADIAL["kind"] = a.radial
-    {"baseline": baseline, "stats": stats}[a.stage](a)
+    {"baseline": baseline, "stats": stats, "gdiag": gdiag}[a.stage](a)

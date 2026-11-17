@@ -218,6 +218,32 @@ Hipótesis, sin probar: el estadístico falla sobre todo porque **G no se ajusta
 no solo por el ruido. Prueba que la cerraría: la misma fracción con un G empírico (los vectores g_ib medidos en
 cada EGF, que inject guarda en `meta['targets'][...]['g']`), en los mismos aciertos.
 
+**Lectura del supervisor (17 de noviembre de 2026):** N-1 queda como **instrumento no válido**. No se lee R ni hay
+tercera variante. La fracción S_mt / S_en queda como dato descriptivo posterior, sin regla.
+
+## Diagnóstico declarado, sin correr: G empírico frente a G analítico (17 de noviembre de 2026)
+
+Pendiente del visto bueno del dueño (tarjeta del supervisor). No toca P-T ni R.
+
+- Población: los mismos aciertos de PyOcto del control (`pops.json`, 30 Ridgecrest y 6 Hi-net), sobre el registro
+  sin modificar, con la misma máscara, front end y lectura (pico en [-1, +8] muestras, desplazamiento común de −4..+4).
+- G empírico: los vectores radiados de cada objetivo que guarda la inyección (`truth.meta['targets'][e]['g']`,
+  forma (ns, 2, 3), Z cambiada a hacia abajo y ordenada como `radiation_operator`). Como un solo evento da un solo
+  vector, el subespacio empírico tiene rango 1: f_emp = (v·ĝ)² / ‖v‖², con su referencia al azar 1 / (6 ns).
+  G analítico: f_an = ‖Qᵀv‖² / ‖v‖² (rango 6), referencia 6 / (6 ns). Medidas emparejadas en cada objetivo, sin tope,
+  por conjunto; se reporta también la diferencia emparejada.
+- Lectura fijada antes de correr (supervisor), sobre la mediana de f_emp por conjunto: **> 0.6** la causa es G (la
+  lectura del vector reproduce el evento, el modelo analítico no); **< 0.4** la causa está en la lectura del vector
+  (ventana, pico, filtro) y se revisa antes que G; **0.4 a 0.6**, ambas.
+- Límites: g se mide en velocidad filtrada 2-20 Hz a 100 Hz y v en la salida del filtro adaptado de 0.5-6 Hz a
+  16 Hz; un cambio de signo por bloque entre las dos bandas baja f_emp, así que una f_emp baja no separa del todo
+  "lectura" de "banda". El rango 1 frente a 6 hace que una f_emp alta sea la evidencia más fuerte.
+- v: los vectores leídos en el desplazamiento común con mayor ‖v‖²; las dos fracciones sobre ese mismo v.
+- Comprobación del código con un evento sintético analítico en ruido gaussiano (nube, sin datos del proyecto): f_an
+  0.998 y f_emp 0.998 con g conocido, así que la lectura y el orden de filas reproducen un evento que sí sigue el
+  modelo.
+- Uso: `run.py gdiag pops.json --out gdiag.json` (programado, sin correr).
+
 ## Implementación (`run.py`; detalles de interfaz fijados antes de correr y aceptados por el supervisor)
 
 - Front end de R1 (`datasets._preprocess`): media y tendencia fuera, Butterworth 4 de fase cero 0.5-6 Hz, 16 Hz,
