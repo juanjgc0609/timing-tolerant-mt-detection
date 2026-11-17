@@ -180,6 +180,44 @@ ni se leyó R. Lo que quedó a la vista antes de la decisión siguiente:
 Corridas: `stats ... --radial nocap --out stats_nocap_diag.json` (diagnóstico; repite el intento 1) y
 `stats ... --radial cap6 --out stats_cap6.json` (sin `--read`).
 
+**Aprobación del dueño** (tarjeta en el hilo del supervisor, 16 de noviembre de 2026, 4:48 PM Bogotá, opción "Sí,
+repetir con el tope"): repetir N-1 con CAP6, mismo criterio y zonas, con la corrida sin tope registrada como intento.
+Marca de la revisión independiente para cualquier lectura: CAP6 se fijó tras mirar la población (umbrales y medianas
+de P-T del intento 1); su efecto en el control y en los umbrales se reporta junto a R.
+
+## Resultado del intento 2 (CAP6) y del diagnóstico (16 de noviembre de 2026, portátil; commit 061d8d8)
+
+Salidas: `stats_nocap_diag_out.txt`, `stats_nocap_diag.json` (NOCAP repetido, 440 s; mismas cifras que el intento 1)
+y `stats_cap6_out.txt`, `stats_cap6.json` (495 s). 20 de 20 realizaciones; sin errores.
+
+**Lectura por la regla declarada: con CAP6 el control positivo agrupado da 0 de 36 (Hi-net 0 de 6, Ridgecrest 0 de
+30; hacía falta 0.90). Instrumento no válido; no se calculó ni se leyó R.** Por la decisión del supervisor, no hay
+tercera variante sin él y sin el dueño.
+
+| | Hi-net NOCAP | Hi-net CAP6 | Ridgecrest NOCAP | Ridgecrest CAP6 |
+|---|---|---|---|---|
+| umbral S_mt time-slides | 76 748 | 54.5 | 222 | 49.4 |
+| umbral S_mt sin deslizar | 203 779 | 106.6 | 324 | 91.3 |
+| cociente sin deslizar / time-slides | 2.66 | 1.96 | 1.46 | 1.85 |
+| control sobre el umbral principal | 0 de 6 | 0 de 6 | 20 de 30 | 0 de 30 |
+| mediana S_mt del control | 893 | 54.8 | 945 | 42.9 |
+
+Diagnóstico de la estación más fuerte (regla: mediana > 0.5 con NOCAP):
+- time-slides, 2 % más alto: Hi-net 0.992 y Ridgecrest 0.792. **Apoyada**: los máximos del nulo deslizado los
+  pone una sola estación.
+- 10 máximos más altos sin deslizar: Hi-net 0.304 (no apoyada) y Ridgecrest 0.528 (apoyada, por poco). En Hi-net
+  el umbral sin deslizar, que es el principal, viene de energía en varias estaciones a la vez: ruido coherente o
+  eventos sin catalogar.
+
+Medida adicional, leída después de la corrida, sin regla (se reporta, no decide nada): la fracción de la energía
+leída que cae en el subespacio del tensor, S_mt / S_en con NOCAP, en los aciertos de PyOcto es de mediana 0.259 en
+Hi-net (6 eventos) y 0.207 en Ridgecrest (30). Con un vector al azar sería 6/42 = 0.14 y 6/66 = 0.09. El operador
+de radiación analítico (rayos rectos, medio homogéneo, cocientes P/S fijos) explica así solo una quinta parte de los
+eventos reales de EGF. Con CAP6 la fracción baja a 0.011-0.016, porque el tope iguala los bloques y borra el patrón.
+Hipótesis, sin probar: el estadístico falla sobre todo porque **G no se ajusta a las funciones de Green reales**, y
+no solo por el ruido. Prueba que la cerraría: la misma fracción con un G empírico (los vectores g_ib medidos en
+cada EGF, que inject guarda en `meta['targets'][...]['g']`), en los mismos aciertos.
+
 ## Implementación (`run.py`; detalles de interfaz fijados antes de correr y aceptados por el supervisor)
 
 - Front end de R1 (`datasets._preprocess`): media y tendencia fuera, Butterworth 4 de fase cero 0.5-6 Hz, 16 Hz,

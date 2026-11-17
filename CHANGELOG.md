@@ -14,6 +14,10 @@ Dated record of changes to the project's process, code and documents. Results ar
   (Hi-net 0 of 6, Ridgecrest 20 of 30, needed 0.90); no R computed. Supervisor's decision (owner's approval
   requested): rerun with the registered cap 6, strongest-station diagnostic of the noise maxima, pooled control;
   R printed only with `--read` after the approval.
+- `N1-STACK` attempt 2 (CAP6, owner's approval of 16 November, 061d8d8): pooled positive control 0 of 36 ->
+  instrument not valid by the declared rule; no R computed. Diagnostic: the slide-null maxima come from one station
+  (median share 0.99 Hi-net, 0.79 Ridgecrest). Measured after the run: only about a fifth of the read energy of
+  detected EGF events falls in the analytic moment-tensor subspace (0.26 Hi-net, 0.21 Ridgecrest).
 - `N2-REPICK` run on the laptop (140 s, GPU). Declared reading: LOW zone (net S - K = -8 of 120, 95 % interval
   [-23, 7]); the target is not met. With the partner removed exactly, 88 of 120 targets still have fewer than 6
   picked arrivals (50 have none). The card records a defect of its own control below 0.5 s and the ceiling S = 32
