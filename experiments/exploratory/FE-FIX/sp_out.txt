@@ -1,0 +1,4 @@
+ss_hinet_2012_egf_v1: 10 events; S-P minimum per event median 1.91 s [min 1.77, max 1.92]; blocks with S-P < 0.6 s: 0; noise-free f median 0.705 -> 0.705 without them (rise +0.000) -> P/S overlap is not the cause (card rule: >= 0.90 main / < +0.05 not)
+  descriptive: blocks with S-P < 0.75 s (read window end + largest shift): 0; Spearman(S-P minimum, noise-free f) +0.33
+ss_ridgecrest_2019_egf_v1: 10 events; S-P minimum per event median 2.08 s [min 1.44, max 2.68]; blocks with S-P < 0.6 s: 0; noise-free f median 0.771 -> 0.771 without them (rise +0.000) -> P/S overlap is not the cause (card rule: >= 0.90 main / < +0.05 not)
+  descriptive: blocks with S-P < 0.75 s (read window end + largest shift): 0; Spearman(S-P minimum, noise-free f) -0.53

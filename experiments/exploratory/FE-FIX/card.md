@@ -1,0 +1,132 @@
+# FE-FIX: arreglar la lectura del modelo antes del piloto (diseño)
+
+17 de noviembre de 2026. Diseño del supervisor; lo implementa un hilo de programación (Opus); la lectura de cada
+paso la hace el supervisor. Origen: decisión del dueño en tarjeta, 17 de noviembre 7:45 AM Bogotá, "Arreglar antes
+del piloto", tras N-1 (PR #63).
+
+Ficha de FE-FIX (copia del diseño del supervisor, `/mnt/project-files/supervision/fe-fix-lectura-del-modelo-2026-11-17.md`).
+Se sube **antes** de correr cada paso. El implementador fija la interfaz; no cambia población, medidas ni umbrales sin volver al supervisor.
+
+## Qué se sabe [medido, PR #63]
+
+- La lectura actual (front end R1: 0.5-6 Hz, remuestreo a 16 Hz, Ricker de 2 Hz) da f_emp 0.291 (Hi-net) y 0.033
+  (Ridgecrest) en los aciertos de PyOcto; a 2-20 Hz sin Ricker, 0.569 y 0.597. La energía en 2-20 Hz es 2.6 a 4.3
+  veces la de 0.5-6 Hz.
+- Con eventos fabricados con el G analítico y **sin ruido**, la cadena real da 0.705 y 0.771; el lector simplificado
+  de la nube daba 0.998. Hay una pérdida de unos 0.25 dentro de la cadena, de causa desconocida.
+- Candidata propuesta por la revisión: solape P/S en estaciones cercanas (S-P menor que la ventana de lectura).
+
+## Datos
+
+Solo la partición de ajuste `b60d99b3d0bbbbfa`. Nada reservado, ningún segmento gastado, ningún libro mayor. Lo que
+se elige aquí (banda, ventana) se elige en una mitad y se confirma en la otra.
+
+## Paso 1. Solape P/S (descriptivo, sin correr nada nuevo)
+
+Sobre `gcheck2.json`: f sin ruido frente al S-P mínimo del evento; y f sin ruido quitando los bloques con S-P < 0.6 s.
+Lectura fijada: si al quitarlos la mediana sube a 0.90 o más, el solape P/S es la causa principal; si sube menos de
+0.05, no lo es; entre medias, es parte.
+
+## Paso 2. Dónde se pierde la cadena (sin ruido, eventos analíticos de gcheck)
+
+Partir del lector de la nube (f 0.998) e ir cambiando **un elemento a la vez** hacia la cadena real, midiendo f sin
+ruido en cada paso: geometría y estaciones reales; remuestreo a 16 Hz; filtro 0.5-6 Hz; Ricker de 2 Hz; giro y signo
+de componentes; ventana de lectura; regla del pico y desplazamiento común. Se reporta la tabla completa.
+Lectura: la causa es el elemento que más baja f; si ninguno baja más de 0.05 por sí solo, la pérdida es de
+interacción y se dice. Meta de la cadena arreglada: f sin ruido ≥ 0.95 en los dos conjuntos.
+
+## Paso 3. Elegir la banda y confirmarla
+
+- Población: todos los objetivos de la partición (T, C e aislados) con `snr_med` ≥ 5 de la verdad inyectada, no solo
+  los aciertos de PyOcto (Hi-net tenía 6). Se parten por realización en mitad de elección y mitad de confirmación,
+  con semilla fija 20261123, estratificado por conjunto.
+- Candidatas, fijadas ya: 0.5-6 Hz (actual), 1-10 Hz, 2-20 Hz, 2-30 Hz; cada una con la cadena arreglada del paso 2.
+- Se elige la de mayor mediana de f_emp en la mitad de elección (la misma banda para los dos conjuntos; si difieren
+  por más de 0.1, se reporta y decide el dueño).
+- Lectura en la mitad de confirmación, sobre la mediana de f_emp por conjunto (regla 36, tres zonas):
+  ≥ 0.6 pasa; 0.4 a 0.6 meta no alcanzada, efecto útil, decide el dueño; < 0.4 baja: el G analítico no basta y hay
+  que volver a la física (funciones de Green empíricas o corrección por estación) antes del piloto.
+- Intervalo: bootstrap por realización, 10 000 remuestreos, semilla 20261124.
+
+## Después
+
+- El cambio de front end es un cambio de diseño del modelo: se registra en ADR-0012 (reservado por el plan v2.18) con estos
+  números antes del piloto.
+- La prueba N-1 queda cerrada; repetirla con la lectura nueva sería una ficha nueva que decide el dueño.
+
+## Límites
+
+- Semisintético con funciones de Green empíricas; el G empírico tiene rango 1 y se midió a 2-20 Hz, lo que favorece a
+  esa banda: por eso la elección se confirma también con el gcheck analítico sin ruido, que no depende de g.
+- Elegir y confirmar en la misma partición de ajuste, en mitades distintas; no es evidencia confirmatoria.
+
+## Costo
+
+Paso 1, minutos en la nube. Pasos 2 y 3, horas de portátil (frase de autorización del dueño en el hilo que corra).
+
+## Paso 1: implementación y resultado (17 de noviembre de 2026, nube, sin datos de forma de onda)
+
+- `run.py sp ../N1-STACK/gcheck2.json --out sp.json`. Para cada evento analítico de `gcheck2.json` calcula el S-P de
+  cada estación con el modelo de predicción del conjunto en la posición verdadera (la misma llamada `first_arrival`
+  que usó `gcheck`; estaciones del manifiesto en git). Solo usa geometría: no lee ningún registro.
+- `gcheck2.json` no guarda la lectura por bloque. Si algún evento tuviera bloques con S-P < 0.6 s, quitarlos exigiría
+  una corrida nueva y el script se detiene. Si no hay ninguno, f no cambia por construcción.
+- Descriptivo, añadido por el implementador y sin regla: bloques con S-P < 0.75 s (fin de la ventana de lectura,
+  +8 muestras a 16 Hz, más el mayor desplazamiento común, +4) y Spearman entre el S-P mínimo y f sin ruido.
+- Orden de los hechos: la regla se declaró en el diseño del supervisor (`fe-fix-lectura-del-modelo-2026-11-17.md`,
+  17 de noviembre de 2026, 7:47 AM Bogotá) antes del cálculo; el cálculo (geometría determinista sobre una salida que
+  ya existía) se hizo en la nube y esta sección se subió después.
+
+| Conjunto | Eventos | S-P mínimo por evento, mediana [mín, máx] | Bloques con S-P < 0.6 s | f sin ruido, antes → sin ellos | Bloques con S-P < 0.75 s | Spearman (S-P mín, f) |
+|---|---|---|---|---|---|---|
+| Hi-net | 10 | 1.91 s [1.77, 1.92] | 0 de 70 | 0.705 → 0.705 (+0.000) | 0 | +0.33 |
+| Ridgecrest | 10 | 2.08 s [1.44, 2.68] | 0 de 110 | 0.771 → 0.771 (+0.000) | 0 | −0.53 |
+
+Por la regla de la ficha (subida < 0.05), **el solape P/S no es la causa** en ninguno de los dos conjuntos. Ninguna
+estación está a menos de 1.4 s de S-P, y la ventana de lectura termina a 0.75 s como máximo. La lectura le toca al
+supervisor. Salidas: `sp.json`, `sp_out.txt`.
+
+## Paso 2: implementación (17 de noviembre de 2026; declarada antes de la corrida en el portátil)
+
+`run.py chain ../N1-STACK/gcheck2.json [--laptop] --out chain.json`. Mismos 10 eventos analíticos por conjunto que
+`gcheck` (tensores y orígenes resorteados con su semilla 20261125 y su orden; el script se detiene si un origen no
+coincide con `gcheck2.json`), sin ruido. Cada configuración da la mediana [mín, máx] de f = ‖Qᵀv‖²/‖v‖².
+
+**Corrección de una premisa del diseño.** El 0.998 de la nube no salió de un lector simplificado: era la misma
+función `gcheck` (mismo remuestreo, filtro, Ricker, giro, ventana, pico y desplazamiento) con un lector falso de
+datos: 7 estaciones uniformes en ±20 km a cota 0, modelo de Ridgecrest y ruido gaussiano de la misma sd en todas las
+estaciones. Por eso la tabla tiene dos partes:
+
+1. **Hacia la cadena real**, un elemento a la vez desde la comprobación de la nube: geometría y estaciones del
+   conjunto (manifiesto en git y posiciones de `gcheck2.json`); modelo de velocidad del conjunto; normalización por
+   estación con la sd robusta del bloque de ruido del conjunto (necesita el portátil). También la versión acumulada.
+2. **Desde la cadena real**, quitando un elemento a la vez, con la alternativa fijada aquí: sin normalización por
+   estación (sd = 1); sin remuestreo (lectura a 100 Hz, misma ventana y desplazamientos en segundos, Ricker de 2 Hz
+   muestreado a 100 Hz); sin el pasabanda 0.5-6 Hz; sin el filtro adaptado; sin el giro de Z (control de signo, no
+   debe subir f); ventana más ancha [−0.25, +1.0] s; regla de polarización principal de la ventana (vector propio
+   mayor del segundo momento 3×3, signo del pico de energía, norma √λ) en lugar del pico; sin desplazamiento común.
+
+Lectura fijada por el supervisor: la causa es el elemento que más baja f; si ninguno baja más de 0.05 por sí solo,
+es interacción. Meta de la cadena arreglada: f sin ruido ≥ 0.95 en los dos conjuntos.
+
+**Prueba del código en la nube (17 de noviembre, antes de subir esta sección; solo geometría en git, ningún
+registro):** con las estaciones, posiciones y modelo reales y sd = 1, f sin ruido es 0.999 [0.997, 0.999] en
+Hi-net y 0.998 [0.996, 0.999] en Ridgecrest, igual que la comprobación de la nube. Todo lo que no depende del ruido
+del conjunto queda en ~0.998; el único elemento que falta medir para llegar a 0.705 / 0.771 es la normalización por
+estación. Salida: `chain_cloud_out.txt`.
+
+**Hipótesis (sin probar hasta la corrida en el portátil):** dividir cada estación por su sd saca a v del espacio de
+G, porque la base Q se calcula con G sin ponderar. Si se confirma, el arreglo natural es ponderar también el
+operador (Q de diag(1/sd)·G), y la pregunta de si el modelo principal tiene el mismo desajuste es del supervisor.
+
+**Comprobación declarada por el supervisor (17 de noviembre, antes de correr):** (a) f sin ruido con la
+normalización por sd_i y Q de G sin pesos (la cadena actual) y (b) lo mismo con Q de diag(1/sd)·G (configuración
+`qweight`). Lectura: si (b) sube a 0.95 o más y (a) se queda en 0.70-0.77, la causa es el blanqueo y el arreglo es
+(b); si (b) no sube más de 0.05 sobre (a), no lo es. Se reporta el cociente máximo/mínimo de sd_i por conjunto. Si se
+confirma, el arreglo entra en ADR-0012 junto con la banda. El supervisor señala que `r1.Net` (src/ttmt/r1.py:60-61)
+divide por `station_scale` y construye Gs y Qst sin pesos: el modelo principal tendría la misma estructura (hipótesis).
+
+Prueba del código de (b) en la nube con sd falsas (lognormales, semilla 5, máximo/mínimo 11.7) y geometría de Hi-net:
+(a) 0.847, (b) 1.000. Solo prueba que el código hace lo que dice; no dice nada de las sd reales.
+
+Costo en el portátil: menos de 1 minuto, CPU, sin GPU; lee solo el bloque de ruido de la partición de ajuste.
