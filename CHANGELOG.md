@@ -8,6 +8,8 @@ Dated record of changes to the project's process, code and documents. Results ar
 - `FE-FIX` (owner's choice of 17 November "Arreglar antes del piloto"): card and script. Step 1 (geometry only): no
   block with S-P < 0.75 s, P/S overlap is not the cause of the chain loss. Step 2 declared (chain element by element;
   supervisor's check of Q from diag(1/sd) G); cloud part: real geometry and model with sd = 1 give 0.999 / 0.998.
+  Step 2 on the laptop (24b2e4a): only the per-station sd normalisation with an unweighted Q lowers f (0.705 / 0.771);
+  with Q of diag(1/sd) G, f is 0.999 in both sets.
 - `N1-STACK` (exploratory, owner's choice of 16 November "Priorizar eventos débiles"): card and script of the
   pre-test of the signed stack for weak events, declared before running. Card = the supervisor's design, plus a
   design revision made before any run: the tuning partition has one 300 s noise block per set, so the threshold at

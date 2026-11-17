@@ -134,3 +134,23 @@ de normalizar y no se guardó): en la configuración con geometría falsa (7 est
 7 primeras estaciones del manifiesto, en orden. En Hi-net (7 estaciones) no cambia nada.
 
 Costo en el portátil: menos de 1 minuto, CPU, sin GPU; lee solo el bloque de ruido de la partición de ajuste.
+
+## Paso 2: resultado (17 de noviembre de 2026, portátil; commit 24b2e4a, 31 s, CPU)
+
+| f sin ruido, mediana [mín, máx] | Hi-net | Ridgecrest |
+|---|---|---|
+| comprobación de la nube | 0.999 [0.997, 0.999] | 0.999 [0.997, 0.999] |
+| + geometría del conjunto / + modelo del conjunto | 0.999 / 0.999 | 0.998 / 0.999 |
+| + normalización por estación (sola) | 0.837 [0.753, 0.910] | 0.834 [0.658, 0.939] |
+| (a) cadena real (gcheck) | 0.705 [0.624, 0.819] | 0.771 [0.728, 0.849] |
+| (b) cadena real con Q de diag(1/sd)·G | **0.999 [0.998, 1.000]** | **0.999 [0.997, 1.000]** |
+| real sin normalización (sd = 1) | 0.999 | 0.998 |
+| real sin remuestreo / sin pasabanda / sin Ricker | 0.707 / 0.705 / 0.690 | 0.779 / 0.771 / 0.770 |
+| real sin giro de Z (control de signo) | 0.196 | 0.435 |
+| real con ventana ancha / polarización principal / sin desplazamiento | 0.705 / 0.707 / 0.705 | 0.771 / 0.778 / 0.771 |
+| cociente máximo/mínimo de sd_i | 5.70 | 7.63 |
+
+Por las reglas declaradas: el elemento que más baja f es la normalización por estación (−0.29 y −0.23), y (b) sube
+a 0.999 en los dos conjuntos con (a) en 0.70-0.77. **Por la regla del supervisor, la causa es el blanqueo y el arreglo
+es (b)**, que cumple la meta de la cadena (≥ 0.95). Ningún otro elemento mueve f más de 0.02, salvo el control de
+signo, que la baja como debe. La lectura le toca al supervisor.
