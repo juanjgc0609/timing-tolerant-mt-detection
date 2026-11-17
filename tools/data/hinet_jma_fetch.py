@@ -3,7 +3,7 @@
 Run on the laptop ONLY after the NIED registration-completion e-mail has arrived. Credentials come from the
 environment (HINET_USER, HINET_PASS); never write them in a file, a commit or the chat.
 
-python -I hinet_jma_fetch.py --out C:/Users/juanj/ttmt/hinet_jma [--year 2012]
+python -I hinet_jma_fetch.py --out C:/Users/juanj/ttmt/hinet_jma [--year 2012] [--weeks N]   (--weeks 1: size probe)
 
 Uses HinetPy (pip install HinetPy==0.9.1): Client(user, password).get_arrivaltime(startdate, span) with span <= 7 days
 (checked in HinetPy 0.9.1, client.py: CatalogClient.get_arrivaltime -> data="measure"). Saves one raw file per week
@@ -34,6 +34,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
     ap.add_argument("--year", type=int, default=2012)
+    ap.add_argument("--weeks", type=int, default=0, help="stop after N weeks (0: whole year)")
     a = ap.parse_args()
     user, pw = os.environ.get("HINET_USER"), os.environ.get("HINET_PASS")
     if not user or not pw:
@@ -44,7 +45,7 @@ def main():
     os.makedirs(raw, exist_ok=True)
     d, end = date(a.year, 1, 1), date(a.year + 1, 1, 1)
     rows = []
-    while d < end:
+    while d < end and (not a.weeks or len(rows) < a.weeks):
         span = min(7, (end - d).days)
         name = os.path.join(raw, f"measure_{d:%Y%m%d}_{span}.txt")
         if not (os.path.exists(name) and os.path.getsize(name) > 0):
