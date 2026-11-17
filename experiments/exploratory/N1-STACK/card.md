@@ -313,6 +313,21 @@ Pendiente del sí del dueño (tarjeta del supervisor). No toca P-T ni R.
   Esto confirma además la convención de `meta['targets'][e]['g']` que usan `gdiag` y `gband`.
 - Uso: `run.py gband pops.json --out gband.json`.
 
+### Comprobaciones añadidas tras la revisión de a7cea2c (declaradas antes de correr, descriptivas, sin regla)
+
+La revisión independiente señaló dos dudas sobre los resultados de `gdiag`/`gcheck`: en Ridgecrest f_an (0.129)
+supera a f_emp (0.033), lo que podría indicar un desajuste de índices entre v y g; y el 0.69-0.77 de `gcheck` no
+separa la cadena del ruido. Se anotan como límites de esos resultados y se añaden tres medidas, que no cambian
+ninguna regla ni ningún umbral:
+
+- `gdiag` y `gband` paran si el orden de estaciones de la verdad (`meta['stations']`) difiere del manifiesto.
+- `gdiag` y `gband` imprimen la correlación de rangos (Spearman) entre las normas por bloque |v| y |g| sobre los
+  bloques con g no nulo. Cerca de cero o negativa haría sospechar un desajuste de índices. En la nube: +0.996
+  (`gband`, evento sintético) y +0.837 (`gdiag`).
+- `gcheck` imprime f sobre la lectura sin ruido (f_clean). En la nube: 0.998 (f con ruido 0.969). Si en el portátil
+  f_clean es alto y f con ruido queda en 0.69-0.77, la pérdida es del ruido y no de la cadena.
+- Se corren junto con `gband`, si el dueño lo aprueba, repitiendo `gdiag` y `gcheck` con las mismas semillas.
+
 ## Implementación (`run.py`; detalles de interfaz fijados antes de correr y aceptados por el supervisor)
 
 - Front end de R1 (`datasets._preprocess`): media y tendencia fuera, Butterworth 4 de fase cero 0.5-6 Hz, 16 Hz,

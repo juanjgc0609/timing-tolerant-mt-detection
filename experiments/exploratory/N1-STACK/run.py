@@ -566,6 +566,26 @@ def stats(a):
                  if rr[hi[0]] < 0.5 * rr[rc[0]] else "Hi-net not below half"))
 
 
+def norm_rank_corr(v, g):
+    """Spearman correlation between the per-block norms |v_ib| and |g_ib| over the blocks where g is non-zero:
+    insensitive to sign, band scale and component order (review of a7cea2c, station-order check)."""
+    a = np.linalg.norm(np.asarray(v).reshape(-1, 3), axis=1)
+    b = np.linalg.norm(np.asarray(g).reshape(-1, 3), axis=1)
+    ok = b > 0
+    if ok.sum() < 3:
+        return float("nan")
+    ra = np.argsort(np.argsort(a[ok])).astype(float)
+    rb = np.argsort(np.argsort(b[ok])).astype(float)
+    return float(np.corrcoef(ra, rb)[0, 1])
+
+
+def check_station_order(rd, truth):
+    """the truth's station list must be the manifest's (order of g and of STA)."""
+    st = truth.meta.get("stations")
+    if st is not None and list(st) != list(rd.man["stations"]):
+        sys.exit(f"station order of the truth {st} differs from the manifest {rd.man['stations']}: stop")
+
+
 # ============================================================================================ gdiag stage
 def read_at_best(R, arr_s, t0):
     """(2, ns, 3) read vectors of a target at the common shift (-SHIFT..SHIFT) with the largest ||v||^2."""
@@ -606,6 +626,7 @@ def gdiag(a):
         rd, STA, sd, keep = cache[x["set_id"]]
         sig, noise = rd.arrays(x["label"])
         truth = rd.truth(x["label"])
+        check_station_order(rd, truth)
         R = (matched(pre16(sig)) + matched(pre16(noise)) * keep) / sd[:, None, None]
         e = x["event"]
         v = read_at_best(R, truth.arr_t_obs[e], truth.t0).reshape(-1)
@@ -623,7 +644,7 @@ def gdiag(a):
         gz = g.copy()
         gz[..., 2] *= -1.0                                          # Z down, as the front end
         out.append(dict(x, f_emp=frac(gz), f_emp_zup=frac(g), f_emp_swap=frac(gz[::-1]), f_an=f_an,
-                        dim=int(v.size)))
+                        dim=int(v.size), rank_corr=norm_rank_corr(v, gz)))
     for sid in sorted({x["set_id"] for x in out}):
         r = [x for x in out if x["set_id"] == sid]
         fe = np.array([x["f_emp"] for x in r])
@@ -640,6 +661,9 @@ def gdiag(a):
         bad = mz > med + 0.2 or ms > med + 0.2
         print(f"  convention check: f_emp median without the Z flip {mz:.3f}, with P and S swapped {ms:.3f} -> "
               + ("CONVENTION WRONG: the zone of this set is not read" if bad else "convention consistent"))
+        rc = np.array([x["rank_corr"] for x in r], float)
+        print(f"  descriptive (review of a7cea2c): rank correlation of block norms |v| vs |g| median "
+              f"{np.nanmedian(rc):+.3f} [q25 {np.nanquantile(rc, .25):+.3f}, q75 {np.nanquantile(rc, .75):+.3f}]")
     json.dump({"rows": out}, open(a.out, "w"), indent=1)
 
 
@@ -705,10 +729,12 @@ def gcheck(a):
             Ru = matched(pre16(unit)) / sd[:, None, None]
             arr = tr0.t0 + t0 + tt                                         # record time of the arrivals
             v1 = read_at_best(Ru, arr, tr0.t0)
+            y1 = v1.reshape(-1) @ operator_basis(x, STA)
+            f_clean = float(y1 @ y1) / max(float((v1 * v1).sum()), 1e-300)
             sc = np.sqrt(en_ref / max(0.5 * float((v1 * v1).sum()), 1e-300))
             v = read_at_best(Rn + sc * Ru, arr, tr0.t0).reshape(-1)
             y = v @ operator_basis(x, STA)
-            out.append({"set_id": sid, "f": float(y @ y) / float(v @ v), "S_en": 0.5 * float(v @ v),
+            out.append({"set_id": sid, "f": float(y @ y) / float(v @ v), "f_clean": f_clean, "S_en": 0.5 * float(v @ v),
                         "scale": float(sc), "t0": t0, "xyz": x.tolist()})
         f = np.array([r["f"] for r in out if r["set_id"] == sid])
         med = float(np.median(f))
@@ -717,6 +743,9 @@ def gcheck(a):
                  else "between 0.5 and 0.8: reported, no conclusion"))
         print(f"{sid}: {len(f)} analytic-G events at the median S_en of the hits ({en_ref:.1f}); S_mt/S_en median "
               f"{med:.3f} [min {f.min():.3f}, max {f.max():.3f}] -> {zone} (card rule: >= 0.8 / < 0.5)")
+        fc = np.array([r["f_clean"] for r in out if r["set_id"] == sid])
+        print(f"  descriptive (review of a7cea2c): f on the noise-free read median {np.median(fc):.3f} "
+              f"[min {fc.min():.3f}, max {fc.max():.3f}]")
     json.dump({"rows": out}, open(a.out, "w"), indent=1)
 
 
@@ -786,6 +815,7 @@ def gband(a):
         rd, sd16, k16, sdr, k100 = cache[x["set_id"]]
         sig, noise = rd.arrays(x["label"])
         truth = rd.truth(x["label"])
+        check_station_order(rd, truth)
         e = x["event"]
         g = np.array(truth.meta["targets"][e]["g"], float)
         g = np.nan_to_num(g.transpose(1, 0, 2))
@@ -799,8 +829,10 @@ def gband(a):
         R16 = (matched(pre16(sig)) + matched(pre16(noise)) * k16) / sd16[:, None, None]
         R2 = (front_raw(sig) + front_raw(noise) * k100) / sdr[:, None, None]
         f16, en16 = frac(read_at_best(R16, truth.arr_t_obs[e], truth.t0))
-        f2, en2 = frac(read_raw(R2, truth.arr_t_obs[e], truth.t0))
-        out.append(dict(x, f_emp_05_6=f16, f_emp_2_20=f2, S_en_05_6=en16, S_en_2_20=en2, en_ratio=en2 / en16))
+        v2 = read_raw(R2, truth.arr_t_obs[e], truth.t0)
+        f2, en2 = frac(v2)
+        out.append(dict(x, f_emp_05_6=f16, f_emp_2_20=f2, S_en_05_6=en16, S_en_2_20=en2, en_ratio=en2 / en16,
+                        rank_corr_2_20=norm_rank_corr(v2, g)))
     for sid in sorted({x["set_id"] for x in out}):
         r = [x for x in out if x["set_id"] == sid]
         f2 = np.array([x["f_emp_2_20"] for x in r])
@@ -815,6 +847,8 @@ def gband(a):
               + f" -> {zone} (card rule: > 0.6 band, < 0.4 reading rule)")
         print(f"  descriptive: noise-normalised S_en ratio 2-20 / 0.5-6 Hz median {np.median(er):.3f} [q25 "
               f"{np.quantile(er, .25):.3f}, q75 {np.quantile(er, .75):.3f}]")
+        rc = np.array([x["rank_corr_2_20"] for x in r], float)
+        print(f"  descriptive: rank correlation of block norms |v| vs |g| in 2-20 Hz median {np.nanmedian(rc):+.3f}")
     json.dump({"rows": out}, open(a.out, "w"), indent=1)
 
 
