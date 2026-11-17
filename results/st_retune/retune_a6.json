@@ -1,0 +1,33 @@
+{
+ "phasenet+gamma": {
+  "H": "holds",
+  "frozen": 0.235588,
+  "gain": 0.04821699999999998,
+  "paired": {
+   "down": 4,
+   "equal": 23,
+   "mean": 0.013265416666666667,
+   "median": 0.0049180000000000005,
+   "pairs": 60,
+   "up": 33
+  },
+  "retuned": 0.283805,
+  "used_against_model": "with terms"
+ },
+ "phasenet+pyocto": {
+  "H": "holds",
+  "frozen": 0.258877,
+  "gain": 0.022516999999999954,
+  "paired": {
+   "down": 16,
+   "equal": 0,
+   "mean": 0.017124616666666665,
+   "median": 0.0106925,
+   "pairs": 60,
+   "up": 44
+  },
+  "retuned": 0.281394,
+  "used_against_model": "with terms"
+ },
+ "pivot": "at least one method gains"
+}

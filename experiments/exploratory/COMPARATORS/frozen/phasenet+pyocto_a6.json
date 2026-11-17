@@ -1,0 +1,24 @@
+{
+ "code": "d1579967c4e6",
+ "env": "cloud-cpu terms:ridgecrest:1ba1719e07a6",
+ "frozen_utc": "2026-11-17T17:23:16Z",
+ "ledger_sha256": "a0ace05fc277b41891a3816cb0b8ca8309a5c0ad1e85dcaf7045498e94931c1e",
+ "method": "phasenet+pyocto",
+ "objective": 0.281394,
+ "params": {
+  "as_min_interevent_time": 0.9235250089293513,
+  "as_min_picks": 6,
+  "as_pick_match_tolerance": 0.6606950012391015,
+  "as_tolerance": 0.6465062806923814,
+  "pk_peak_distance": 0.48917440724723293,
+  "pk_threshold": 0.0638435613778138,
+  "pk_weights": "original"
+ },
+ "partition": "b60d99b3d0bbbbfa",
+ "recall_C": 0.347541,
+ "recall_T": 0.215247,
+ "seed": 927082897,
+ "trial": 57,
+ "trials_in_ledger": 60,
+ "trials_ok": 60
+}
