@@ -154,3 +154,30 @@ Por las reglas declaradas: el elemento que más baja f es la normalización por 
 a 0.999 en los dos conjuntos con (a) en 0.70-0.77. **Por la regla del supervisor, la causa es el blanqueo y el arreglo
 es (b)**, que cumple la meta de la cadena (≥ 0.95). Ningún otro elemento mueve f más de 0.02, salvo el control de
 signo, que la baja como debe. La lectura le toca al supervisor.
+
+## Paso 3: implementación (17 de noviembre de 2026; declarada antes de correr)
+
+`run.py band --weight --out band.json`. Lo que fija el implementador, sin tocar población, medidas ni umbrales:
+
+- Población: todos los objetivos (`truth.target`) de todas las realizaciones de ajuste de cada conjunto con
+  snr_med ≥ 5, donde snr_med es la mediana sobre estaciones de `truth.snr` (SNR por estación de la verdad inyectada).
+  Incluye T, C y aislados; el compañero de un par queda en el registro.
+- Mitades: por realización y por conjunto, permutación con semilla `[20261123, suma de los códigos del id del conjunto]`;
+  la primera mitad (redondeo hacia arriba) elige, la otra confirma.
+- Front end de cada banda candidata (0.5-6, 1-10, 2-20 y 2-30 Hz): quitar media y tendencia, Butterworth 4 de fase cero
+  a 100 Hz, Z hacia abajo; **sin remuestreo ni filtro adaptado**, porque 16 Hz no puede contener bandas por encima de
+  8 Hz y el Ricker de 2 Hz pertenece a la banda de 0.5-6 Hz (el paso 2 mostró que ninguno de los dos mueve f). Cada
+  estación se divide por la sd robusta de su bloque de ruido en esa banda; máscara de catálogo de N1-STACK llevada a 100 Hz.
+- Lectura: la regla de N1-STACK en segundos (pico de energía en [−0.06, +0.5] s, desplazamiento común ±0.25 s).
+- Medida: f_emp = (v·g_w)²/(‖v‖²‖g_w‖²) con el g inyectado del propio objetivo (Z hacia abajo, bloques ausentes en
+  cero) y **g_w = g/sd por estación** (el arreglo del paso 2, pendiente de la lectura del supervisor; sin `--weight`
+  se usa g). Descriptivos: f_an con Q de diag(1/sd)·G, y la cadena actual R1 (16 Hz, Ricker) como referencia.
+- Elección: la banda con mayor media de las dos medianas por conjunto en la mitad de elección; si la mejor banda de
+  un conjunto supera a la elegida en más de 0.1 en ese conjunto, se reporta y decide el dueño.
+- Confirmación: mediana de f_emp por conjunto en la otra mitad con la banda elegida; tres zonas (≥ 0.6 pasa; 0.4-0.6
+  meta no alcanzada, efecto útil, decide el dueño; < 0.4 baja). Intervalo 95 % por bootstrap de realizaciones,
+  10 000 remuestreos, semilla 20261124.
+- Límite (de la ficha): f sin ruido de los eventos analíticos de `gcheck` en cada banda, con el arreglo, independiente de g.
+- Prueba del código en la nube con un lector falso (geometría de Hi-net, sd distintas por estación, pulsos de 8 Hz,
+  SNR alto): todas las bandas dan 1.000, la cadena R1 0.996-0.999. Solo prueba el código.
+- Costo previsto en el portátil: unos minutos, CPU, sin GPU; lee solo la partición de ajuste.

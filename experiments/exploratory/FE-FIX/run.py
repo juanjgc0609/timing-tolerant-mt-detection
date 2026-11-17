@@ -289,6 +289,17 @@ def band_stage(a):
             fr[band] = (rn * k100, np.median(np.abs(rn), axis=(1, 2)) / 0.6745)
         R16n = mfn * k16
         choose, confirm = _split(rd.labels, sid)
+        gc_rows = json.load(open(a.gcheck))["rows"]
+        sids_gc = sorted({r["set_id"] for r in gc_rows})
+        for band in BANDS:                                  # card limits: the analytic noise-free check of every band
+            rng = np.random.default_rng(20261125)
+            for s2 in sids_gc[:sids_gc.index(sid)]:
+                for _ in [r for r in gc_rows if r["set_id"] == s2]:
+                    rng.normal(size=6); rng.uniform(20.0, 260.0)
+            f = chain_f(dict(REAL, band=band, resample=False, ricker=False, qweight=bool(a.weight)), sid,
+                        [r for r in gc_rows if r["set_id"] == sid], rng, rd.man, fr[band][1])
+            print(f"{sid}: analytic noise-free f in {band[0]:g}-{band[1]:g} Hz median {np.median(f):.3f} "
+                  f"[{min(f):.3f}, {max(f):.3f}] (descriptive, independent of g)")
         for lab in rd.labels:
             sig, _n = rd.arrays(lab)
             truth = rd.truth(lab)
@@ -365,6 +376,7 @@ if __name__ == "__main__":
     c.add_argument("--laptop", action="store_true", help="read each set's noise block for the per-station sd")
     b3 = sub.add_parser("band"); b3.add_argument("--sets", nargs="+",
                                                   default=["ss_hinet_2012_egf_v1", "ss_ridgecrest_2019_egf_v1"])
+    b3.add_argument("--gcheck", default=str(ROOT / "experiments/exploratory/N1-STACK/gcheck2.json"))
     b3.add_argument("--weight", action="store_true", help="g and Q weighted by 1/sd (the step-2 fix)")
     b3.add_argument("--out", default="band.json")
     a = p.parse_args()
