@@ -643,6 +643,81 @@ def gdiag(a):
     json.dump({"rows": out}, open(a.out, "w"), indent=1)
 
 
+# ============================================================================================ gcheck stage
+N_CHECK, SEED_CHECK, PULSE_FC = 10, 20261125, 4.0
+
+
+def gcheck(a):
+    """card.md (supervisor, 17 Nov): control of the chain. N_CHECK events per set with the ANALYTIC G (random moment
+    tensors, fixed seed) added to the set's noise block the way inject adds a waveform (inject._taper, sub-sample
+    inject._shift), at the true locations of the positive-control hits, arrivals from the set's prediction model,
+    pulses of a 4 Hz Ricker in velocity, Z up in the data. Scaled so that S_en equals the median S_en of the
+    control hits of the set (stats_nocap_diag.json). Same front end, mask and reading; f = S_mt / S_en uncapped
+    (= ||Q^T v||^2 / ||v||^2 on the read with the largest ||v||^2)."""
+    from ttmt.kernel import ricker
+    from ttmt.radiation import radiation_operator
+    from ttmt.synth import inject as INJ
+    from ttmt.synth import realdata as RD
+    from ttmt.synth import sets
+    from ttmt.synth.realdata import first_arrival
+    pops = json.load(open(a.pops))
+    ref = json.load(open(a.ref))["rows"]["control"]
+    rng = np.random.default_rng(SEED_CHECK)
+    out = []
+    for sid in sorted({x["set_id"] for x in pops["control"]}):
+        rd = sets.SetReader(sid, "tune", verify="fingerprint")
+        STA = np.asarray(rd.man["xyz"], float)
+        fs = float(rd.man["fs"])
+        model = RD.pred_model(rd.man["dataset"])
+        tr0 = rd.truth(rd.labels[0])
+        _s, noise = rd.arrays(rd.labels[0])
+        mfn = matched(pre16(noise))
+        sd = station_sd(mfn)
+        keep = (~catalogue_mask(tr0.t0, mfn.shape[-1], tr0, STA, model))[:, None, :].astype(float)
+        Rn = mfn * keep / sd[:, None, None]
+        en_ref = float(np.median([x["S_en"] for x in ref if x["set_id"] == sid]))
+        locs = [rd.truth(x["label"]).xyz[x["event"]] for x in pops["control"] if x["set_id"] == sid]
+        ns, _, n = noise.shape
+        for j in range(N_CHECK):
+            x = np.asarray(locs[j % len(locs)], float)
+            m = rng.normal(size=6)
+            t0 = float(rng.uniform(20.0, 300.0 - 40.0))                  # origin, s from the block start
+            X = np.hypot(STA[:, 0] - x[0], STA[:, 1] - x[1])
+            z = max(float(x[2]), 0.5)
+            tt = np.stack([first_arrival(model, z, X, "P")[0], first_arrival(model, z, X, "S")[0]], 1)  # (ns, 2)
+            g = (radiation_operator(x, STA) @ m).reshape(2, ns, 3)
+            pre, L = 2.0, 40.0
+            tl = np.arange(int(L * fs)) / fs - pre
+            w = np.zeros((ns, 3, len(tl)))
+            for b in range(2):
+                for i in range(ns):
+                    w[i] += g[b, i][:, None] * ricker(tl - tt[i, b] - 0.1, PULSE_FC)[None]
+            w[:, 2] *= -1.0                                                # data are Z up
+            w *= INJ._taper(w.shape[-1], fs, 0.5)
+            i0 = int(np.floor((t0 - pre) * fs))
+            frac = (t0 - pre) * fs - i0
+            w = INJ._shift(w, fs, frac / fs)
+            unit = np.zeros_like(noise)
+            j1 = min(i0 + w.shape[-1], n)
+            unit[:, :, i0:j1] = w[:, :, :j1 - i0]
+            Ru = matched(pre16(unit)) / sd[:, None, None]
+            arr = tr0.t0 + t0 + tt                                         # record time of the arrivals
+            v1 = read_at_best(Ru, arr, tr0.t0)
+            sc = np.sqrt(en_ref / max(0.5 * float((v1 * v1).sum()), 1e-300))
+            v = read_at_best(Rn + sc * Ru, arr, tr0.t0).reshape(-1)
+            y = v @ operator_basis(x, STA)
+            out.append({"set_id": sid, "f": float(y @ y) / float(v @ v), "S_en": 0.5 * float(v @ v),
+                        "scale": float(sc), "t0": t0, "xyz": x.tolist()})
+        f = np.array([r["f"] for r in out if r["set_id"] == sid])
+        med = float(np.median(f))
+        zone = ("chain correct: a low f on the EGFs is physics" if med >= 0.8 else
+                ("CONVENTION OR READING ERROR: fix before interpreting anything" if med < 0.5
+                 else "between 0.5 and 0.8: reported, no conclusion"))
+        print(f"{sid}: {len(f)} analytic-G events at the median S_en of the hits ({en_ref:.1f}); S_mt/S_en median "
+              f"{med:.3f} [min {f.min():.3f}, max {f.max():.3f}] -> {zone} (card rule: >= 0.8 / < 0.5)")
+    json.dump({"rows": out}, open(a.out, "w"), indent=1)
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="stage", required=True)
@@ -659,7 +734,11 @@ if __name__ == "__main__":
     q = sub.add_parser("gdiag")
     q.add_argument("pops")
     q.add_argument("--out", default="gdiag.json")
+    c = sub.add_parser("gcheck")
+    c.add_argument("pops")
+    c.add_argument("ref", help="stats_nocap_diag.json (median S_en of the control hits)")
+    c.add_argument("--out", default="gcheck.json")
     a = ap.parse_args()
     if a.stage == "stats":
         RADIAL["kind"] = a.radial
-    {"baseline": baseline, "stats": stats, "gdiag": gdiag}[a.stage](a)
+    {"baseline": baseline, "stats": stats, "gdiag": gdiag, "gcheck": gcheck}[a.stage](a)

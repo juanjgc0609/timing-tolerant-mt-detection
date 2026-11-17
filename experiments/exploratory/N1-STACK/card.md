@@ -250,6 +250,25 @@ diagnóstico"), solo en los aciertos de PyOcto. Declarado aquí antes de correr.
   f_emp en más de 0.2 en un conjunto, la convención está mal y la zona de ese conjunto no se lee.
 - Uso: `run.py gdiag pops.json --out gdiag.json` (programado, sin correr).
 
+## Control de la cadena con G analítico (supervisor, 17 de noviembre de 2026; declarado antes de correr)
+
+Dentro del diagnóstico que aprobó el dueño (no toca P-T ni lee zona). Propuesta de la revisión independiente,
+aprobada por el supervisor.
+
+- 10 eventos por conjunto con el **G analítico** (`radiation_operator` × tensor al azar, semilla 20261125), en las
+  posiciones verdaderas de los aciertos de PyOcto del control, con llegadas del modelo de predicción del conjunto.
+  Pulso Ricker de 4 Hz en velocidad en cada llegada, Z hacia arriba en los datos, sumado al bloque de ruido del
+  conjunto como lo hace `inject` (`_taper` de 0.5 s y desplazamiento fraccionario `_shift`), en un origen al azar
+  del bloque. Escala: la que da a S_en la mediana de S_en de los aciertos del conjunto (`stats_nocap_diag.json`).
+- Mismo front end, máscara y lectura; f = S_mt / S_en sin tope, sobre la lectura con mayor ‖v‖².
+- Lectura fijada: mediana de f **≥ 0.8** la cadena (convenciones, lectura, filtro) está bien y una f baja en los EGF
+  es física; **< 0.5** hay un error de convención o de lectura y se arregla antes de interpretar nada; entre ambas,
+  se reporta y no se concluye.
+- Límite: no usa `inject.realise` completo (que planea sus propios pares y escalas por SNR de tarjeta), sino sus
+  mismas primitivas de suma; el pulso es analítico, no un EGF.
+- Comprobación en la nube con un lector falso (ruido gaussiano, 7 estaciones): mediana 0.969. Uso:
+  `run.py gcheck pops.json stats_nocap_diag.json --out gcheck.json`, en la misma sesión que `gdiag`.
+
 ## Implementación (`run.py`; detalles de interfaz fijados antes de correr y aceptados por el supervisor)
 
 - Front end de R1 (`datasets._preprocess`): media y tendencia fuera, Butterworth 4 de fase cero 0.5-6 Hz, 16 Hz,
