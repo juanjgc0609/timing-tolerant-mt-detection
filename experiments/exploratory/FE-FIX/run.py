@@ -360,10 +360,13 @@ def band_stage(a):
                     Qw = basis(w[:, None] * G)
                     off_t = (truth.arr_t_obs[e].T - truth.t0)                  # (2, ns) s from the record start
                     o_n = np.arange(0, Vn[name].shape[1], fr / 16.0)
+                    o_t = np.array([(truth.t[e] - truth.t0) * fr])                 # true origin, record samples
                     for cap, tag in ((True, "m"), (False, "m_nocap")):
-                        st = float(_smt(Vs[name], fr, np.array([0.0]), off_t, Qw, cap)[0])
-                        sn = _smt(Vn[name], fr, o_n, tt, Qw, cap)
-                        row[f"{tag}|{name}"] = st / max(float(np.quantile(sn, QNOISE)), 1e-300)
+                        sn = max(float(np.quantile(_smt(Vn[name], fr, o_n, tt, Qw, cap), QNOISE)), 1e-300)
+                        # main: predicted arrivals at the true location and origin (no oracle times; supervisor)
+                        row[f"{tag}|{name}"] = float(_smt(Vs[name], fr, o_t, tt, Qw, cap)[0]) / sn
+                        # descriptive: observed arrivals (cost of the timing error in each band)
+                        row[f"{tag}_obs|{name}"] = float(_smt(Vs[name], fr, np.array([0.0]), off_t, Qw, cap)[0]) / sn
                     # reading check: f_emp with g/sd, the read at the best common shift of the target
                     gw = g.reshape(-1) * w
                     Rt = Rs[name]
@@ -382,19 +385,28 @@ def band_stage(a):
         print(f"{sid}: choosing half n {n}; median margin m (CAP6) per band " + ", ".join(f"{c} Hz {v:.3f}" for c, v in meds.items())
               + f"; reference {REF} {med(sid, 'choose', f'm|{REF}'):.3f} -> best {best[sid]} Hz")
         print("  descriptive: uncapped " + ", ".join(f"{c} {med(sid, 'choose', f'm_nocap|{c}'):.3f}" for c in cands + [REF]))
+        print("  descriptive: with observed arrivals, CAP6 " + ", ".join(
+            f"{c} {med(sid, 'choose', f'm_obs|{c}'):.3f}" for c in cands + [REF]))
+    key = "m"
     pooled = {c: float(np.mean([med(s, "choose", f"m|{c}") for s in a.sets])) for c in cands}
+    if min(pooled.values()) >= 0.95 * max(pooled.values()):
+        key = "m_nocap"
+        pooled = {c: float(np.mean([med(s, "choose", f"m_nocap|{c}") for s in a.sets])) for c in cands}
+        print("no difference with the cap (every candidate within 5 % of the best CAP6 median margin): the choice and "
+              "the confirmation use the uncapped margin")
     chosen = max(pooled, key=pooled.get)
+    best = {s: max(cands, key=lambda c: med(s, "choose", f"{key}|{c}")) for s in a.sets}
     note = ""
     for s in a.sets:
-        if best[s] != chosen and med(s, "choose", f"m|{best[s]}") > 1.10 * med(s, "choose", f"m|{chosen}"):
+        if best[s] != chosen and med(s, "choose", f"{key}|{best[s]}") > 1.10 * med(s, "choose", f"{key}|{chosen}"):
             note = "; a set prefers another band by more than 10 %: reported, the owner decides"
-    print(f"chosen band (largest mean of the per-set median margins): {chosen} Hz" + note)
+    print(f"chosen band (largest mean of the per-set median margins, {key}): {chosen} Hz" + note)
     rng = np.random.default_rng(SEED_BOOT3)
     for sid in a.sets:
         r = [x for x in out if x["set_id"] == sid and x["half"] == "confirm"]
         labs = sorted({x["label"] for x in r})
-        mc = {l: np.array([x[f"m|{chosen}"] for x in r if x["label"] == l]) for l in labs}
-        mr = {l: np.array([x[f"m|{REF}"] for x in r if x["label"] == l]) for l in labs}
+        mc = {l: np.array([x[f"{key}|{chosen}"] for x in r if x["label"] == l]) for l in labs}
+        mr = {l: np.array([x[f"{key}|{REF}"] for x in r if x["label"] == l]) for l in labs}
         gain = float(np.median(np.concatenate(list(mc.values()))) / np.median(np.concatenate(list(mr.values()))) - 1)
         bs = []
         for _ in range(B3):
@@ -410,7 +422,7 @@ def band_stage(a):
         print(f"  reading check: f_emp (g/sd) {chosen} Hz median {fe_c:.3f}"
               + (" -> BELOW 0.4: flagged, not adopted without a look" if fe_c < 0.4 else " (>= 0.4)")
               + f"; reference f_emp {np.median([x[f'f_emp|{REF}'] for x in r]):.3f}")
-    json.dump({"rows": out, "chosen": chosen}, open(a.out, "w"), indent=1)
+    json.dump({"rows": out, "chosen": chosen, "measure": key}, open(a.out, "w"), indent=1)
 
 
 def gdiagw_stage(a):

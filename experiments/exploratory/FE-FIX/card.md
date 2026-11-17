@@ -223,3 +223,16 @@ sección anterior.** Población, mitades, bandas, front end, lectura y semillas 
   `gdiagw` da f_emp pesado 0.997. Solo prueba el código.
 - Uso: `run.py band --out band.json` y `run.py gdiagw ../N1-STACK/pops.json --out gdiagw.json`. Costo previsto: unos
   minutos, CPU, sin GPU.
+
+### Segunda revisión de la interfaz del paso 3 (supervisor, 17 de noviembre de 2026, 10:37 AM Bogotá; antes de correr)
+
+- **Tiempos.** Las llegadas observadas son tiempos de oráculo y favorecen a las bandas altas, donde un error de
+  0.1-0.3 s pesa más. La medida principal lee el objetivo con las **llegadas predichas** por el modelo del conjunto en
+  la posición verdadera y en el origen verdadero (las mismas del ruido), con el mismo máximo sobre el desplazamiento
+  común. Sin términos por estación: los términos anclados de R1 se estiman en ventanas CAL del conjunto real y no
+  existen para estos conjuntos semisintéticos (lo anota el implementador; si el supervisor quiere otra cosa, se cambia
+  antes de correr). Las llegadas observadas quedan como descriptivo del costo del error de tiempos en cada banda.
+- **Regla de empate.** CAP6 sigue siendo el principal. Si todas las candidatas quedan a menos del 5 % de la mejor en la
+  media de las medianas de m con CAP6, se dice «sin diferencia con el tope» y la elección se hace con m sin tope. La
+  confirmación y sus tres zonas se leen con la misma medida que eligió.
+- Prueba del código en la nube (mismo lector falso, sin error de tiempos): las dos lecturas coinciden, como deben.
