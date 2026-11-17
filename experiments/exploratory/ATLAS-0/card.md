@@ -441,6 +441,25 @@ Freeze, in two stages.
   peak distance and clustering `DT` both set to `wf_min_interevent`) and their tests, and changes nothing frozen at the tag. That commit is
   independently reviewed and its hash is recorded below this amendment as an erratum line before any EQNet2 trial
   runs.
+Amendment 5, erratum (16 November 2026; second freeze stage, recorded after the tag and before any EQNet2 trial). The EQNet2 commit is merge
+commit a080a66ea1dae21a0f95d9345024e8e62b205c28 on main (PR #62, independently reviewed at 2a733a7). Its diff
+against its first parent 9e074d2 is the reviewed change only: `src/ttmt/associate/eqnet2_assoc.py` (new), the
+`EQNET2` key in `ttmt.associate.space`, the `eqnet2` STATUS text in `ttmt.associate.pipeline`, tests in
+`tests/test_associate.py` and the CHANGELOG; nothing frozen at the tag changes. One declared difference from the
+published code: the adapter caps the candidate events per window at the top K = int(record length / 5), while
+`metrics_continuous.py` (40a48ed1, lines 583, 590 and 605) takes K = int((t[-1] - t[0]) / 5) on the grid
+t = arange(t0, t1, DT) over the span of candidate and pick times. EQNet2 trials may start after this line is merged.
+
+Amendment 5, erratum, disclosure (17 November 2026; declaration only, no registered criterion or frozen code changes).
+Two further differences from EQNet2's published continuous run. (a) Stage 1 of the adapter fixed in a080a66 runs
+the network on windows of 4096 samples (40.96 s at 100 Hz) with half overlap (hop 2048 samples), and each output
+sample (0.16 s) is taken from the window in which it is most central; the published mseed command runs patches of
+up to 360000 samples, so a 300 s tuning record would be a single window. The choice was fixed in a080a66 before any
+partition was read. (b) The run script `experiments/exploratory/COMPARATORS/eqnet2_stage1.py` (PR #66) gives the
+network its amplitude input in micrometres per second, as the published loader does (m/s times 1e6), through one
+factor per dataset: 1e6 for the Ridgecrest sets (m/s); the factor of the Hi-net sets (counts) is taken from the
+Hi-net channel table and recorded here before any Hi-net record is scored. Stations enter in the published `--sort`
+order.
 
 ## Amendment 6 (station terms; to be anchored as `reg/ATLAS-0/amendment-6`)
 Task ATLAS-0, amendment 6 (16 November 2026), written after the exploratory runs of T420-CEILING (PR #47) and of
@@ -507,12 +526,3 @@ Owner approval. On 14 November 2026 the owner approved retuning the comparators 
 amendment ("apruebo todo lo demás"). On 15 November 2026 (09:17 Bogotá) the owner approved the pending steps,
 which the project coordinator reads as approval of this amendment: "verifica y apruebo todo lo que haya que
 hacer". The anchoring and the tag remain the owner's own actions.
-Erratum (16 November 2026; second freeze stage, recorded after the tag and before any EQNet2 trial). The EQNet2 commit is merge
-commit a080a66ea1dae21a0f95d9345024e8e62b205c28 on main (PR #62, independently reviewed at 2a733a7). Its diff
-against its first parent 9e074d2 is the reviewed change only: `src/ttmt/associate/eqnet2_assoc.py` (new), the
-`EQNET2` key in `ttmt.associate.space`, the `eqnet2` STATUS text in `ttmt.associate.pipeline`, tests in
-`tests/test_associate.py` and the CHANGELOG; nothing frozen at the tag changes. One declared difference from the
-published code: the adapter caps the candidate events per window at the top K = int(record length / 5), while
-`metrics_continuous.py` (40a48ed1, lines 583, 590 and 605) takes K = int((t[-1] - t[0]) / 5) on the grid
-t = arange(t0, t1, DT) over the span of candidate and
-pick times. EQNet2 trials may start after this line is merged.
