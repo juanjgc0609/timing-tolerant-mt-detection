@@ -3,6 +3,12 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-17
+
+- ATLAS-0 card: the amendment-5 erratum line, which the revert and reapply of PR #53 left after amendment 6, moved
+  back to the end of amendment 5 and labelled "Amendment 5, erratum". Wording unchanged (one line rejoined); the
+  amendment-6 text is byte-identical to the tag `reg/ATLAS-0/amendment-6`.
+
 ## 2026-11-16
 
 - ATLAS-0 amendment 6 written into the card (`append_amendment.py`, text of `ST-RETUNE/amendment-6-draft.md`, dated
