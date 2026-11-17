@@ -10,9 +10,6 @@ Dated record of changes to the project's process, code and documents. Results ar
   shared parameter sets p = 4e-4 (PyOcto) and 1e-6 (GaMMA). Frozen `_a6` configurations chosen under item 3 and
   recorded in the ATLAS-0 card. Machine check: the frozen configurations without terms reproduce their ledger values
   exactly in the cloud.
-
-## 2026-11-17
-
 - ATLAS-0 card: the amendment-5 erratum line, which the revert and reapply of PR #53 left after amendment 6, moved
   back to the end of amendment 5 and labelled "Amendment 5, erratum". Wording unchanged (one line rejoined); the
   amendment-6 text is byte-identical to the tag `reg/ATLAS-0/amendment-6`.

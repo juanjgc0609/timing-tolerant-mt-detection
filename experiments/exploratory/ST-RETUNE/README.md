@@ -199,10 +199,12 @@ Paired comparison (secondary, fixed on 15 Nov): same 60 parameter sets with and 
 The 23 equal GaMMA trials include 20 whose objective is 0 with and without terms. In recall T the median paired gain
 is +0.029 for PyOcto (44 up, 9 down) and +0.009 for GaMMA (32 up, 3 down); in C it is +0.003 and 0.000. The best
 PyOcto trial with terms is trial 57, the same configuration that was best without terms, so for PyOcto the gain is
-the terms at a fixed configuration.
+the terms at a fixed configuration. The parameters of trial 3 (both methods) and trial 38 (GaMMA) differ by one unit
+in the last place from the ledger without terms (Windows against Linux float printing); the pairing check accepts
+them at rtol 1e-12.
 
 Reading. With independent station terms on Ridgecrest the comparators gain, consistently across configurations, and
-mostly in T. This reverses the exploratory finding of PR #47 (terms from the injected sources did not raise PyOcto
+mostly in T. This differs from the exploratory finding of PR #47 (terms from the injected sources did not raise PyOcto
 with PhaseNet picks); the difference is the source of the terms and the retuning. It raises the bar for our model:
 from now on the comparison uses the `_a6` configurations (item 3). Limits: the gains are measured on the tuning
 partition that chose the configurations (optimistic for both arms alike, as for every frozen configuration); the
