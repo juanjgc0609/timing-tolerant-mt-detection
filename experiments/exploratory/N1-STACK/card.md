@@ -223,7 +223,8 @@ tercera variante. La fracción S_mt / S_en queda como dato descriptivo posterior
 
 ## Diagnóstico declarado, sin correr: G empírico frente a G analítico (17 de noviembre de 2026)
 
-Pendiente del visto bueno del dueño (tarjeta del supervisor). No toca P-T ni R.
+**Aprobado por el dueño** en tarjeta del supervisor (16 de noviembre de 2026, 9:27 PM Bogotá, "Sí, hacer el
+diagnóstico"), solo en los aciertos de PyOcto. Declarado aquí antes de correr. No toca P-T ni R ni lee zona.
 
 - Población: los mismos aciertos de PyOcto del control (`pops.json`, 30 Ridgecrest y 6 Hi-net), sobre el registro
   sin modificar, con la misma máscara, front end y lectura (pico en [-1, +8] muestras, desplazamiento común de −4..+4).
