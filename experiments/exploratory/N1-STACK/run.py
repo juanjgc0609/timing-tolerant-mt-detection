@@ -687,6 +687,8 @@ def gcheck(a):
             tt = np.stack([first_arrival(model, z, X, "P")[0], first_arrival(model, z, X, "S")[0]], 1)  # (ns, 2)
             g = (radiation_operator(x, STA) @ m).reshape(2, ns, 3)
             pre, L = 2.0, 40.0
+            if tt.max() + 0.6 > L - pre:
+                sys.exit(f"{sid}: an S arrival at {tt.max():.1f} s does not fit the {L - pre:.0f} s pulse window: stop")
             tl = np.arange(int(L * fs)) / fs - pre
             w = np.zeros((ns, 3, len(tl)))
             for b in range(2):
