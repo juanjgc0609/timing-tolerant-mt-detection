@@ -200,7 +200,8 @@ The 23 equal GaMMA trials include 20 whose objective is 0 with and without terms
 is +0.029 for PyOcto (44 up, 9 down) and +0.009 for GaMMA (32 up, 3 down); in C it is +0.003 and 0.000. The best
 PyOcto trial with terms is trial 57, the same configuration that was best without terms, so for PyOcto the gain is
 the terms at a fixed configuration. The parameters of trial 3 (both methods) and trial 38 (GaMMA) differ by one unit
-in the last place from the ledger without terms (Windows against Linux float printing); the pairing check accepts
+in the last place from the ledger without terms (Windows ledger against the cloud; cause not checked, a
+difference in the math library is the likely one); the pairing check accepts
 them at rtol 1e-12.
 
 Reading. With independent station terms on Ridgecrest the comparators gain, consistently across configurations, and
