@@ -1,0 +1,38 @@
+P-T: 88 rows (n_repick < 6) of 120; P-C: 148; control: 36
+ss_hinet_2012_egf_v1 S_mt: threshold slides 54.51 [53.15, 55.87] (8.33 h, recount 29.9/h), unslid 106.63 (0.081 h, 249 maxima), ratio 1.96, main 106.63; n_loc 1000/100 on 5 slides 1.024; without the mask: slides 73.58, unslid 115.37, main 115.37
+ss_hinet_2012_egf_v1 S_en: threshold slides 210185.96 [208662.24, 210260.67] (8.33 h, recount 29.9/h), unslid 600257.25 (0.081 h, 258 maxima), ratio 2.86, main 600257.25; n_loc 1000/100 on 5 slides 1.011; without the mask: slides 5755007.79, unslid 15347249.03, main 15347249.03
+ss_hinet_2012_egf_v1 diagnostic (cap6): strongest-station share of the read energy at the top 2 % of every slide S_mt maxima: n 500, median 0.925, q25 0.734, q75 0.973 -> single-station hypothesis SUPPORTED (rule: median > 0.5, read on nocap)
+ss_hinet_2012_egf_v1 diagnostic (cap6): strongest-station share of the read energy at the top 10 unslid S_mt maxima: n 10, median 0.253, q25 0.230, q75 0.315 -> single-station hypothesis not supported (rule: median > 0.5, read on nocap)
+ss_hinet_2012_egf_v1: catalogued events in the block 14, masked fraction 0.498; 203 s
+ss_ridgecrest_2019_egf_v1 S_mt: threshold slides 49.43 [48.69, 50.05] (8.33 h, recount 29.9/h), unslid 91.34 (0.079 h, 228 maxima), ratio 1.85, main 91.34; n_loc 1000/100 on 5 slides 1.132; without the mask: slides 77.66, unslid 138.79, main 138.79
+ss_ridgecrest_2019_egf_v1 S_en: threshold slides 1000.02 [985.80, 1018.89] (8.33 h, recount 29.9/h), unslid 1330.82 (0.079 h, 245 maxima), ratio 1.33, main 1330.82; n_loc 1000/100 on 5 slides 1.055; without the mask: slides 22342.88, unslid 29970.20, main 29970.20
+ss_ridgecrest_2019_egf_v1 diagnostic (cap6): strongest-station share of the read energy at the top 2 % of every slide S_mt maxima: n 500, median 0.410, q25 0.318, q75 0.532 -> single-station hypothesis not supported (rule: median > 0.5, read on nocap)
+ss_ridgecrest_2019_egf_v1 diagnostic (cap6): strongest-station share of the read energy at the top 10 unslid S_mt maxima: n 10, median 0.205, q25 0.192, q75 0.239 -> single-station hypothesis not supported (rule: median > 0.5, read on nocap)
+ss_ridgecrest_2019_egf_v1: catalogued events in the block 8, masked fraction 0.298; 365 s
+ss_hinet_2012_egf_v1_00000.0_000: done (1/20, 372 s)
+ss_hinet_2012_egf_v1_00000.0_001: done (2/20, 378 s)
+ss_hinet_2012_egf_v1_00000.0_002: done (3/20, 384 s)
+ss_hinet_2012_egf_v1_00000.0_003: done (4/20, 389 s)
+ss_hinet_2012_egf_v1_00000.0_004: done (5/20, 394 s)
+ss_hinet_2012_egf_v1_00000.0_005: done (6/20, 400 s)
+ss_hinet_2012_egf_v1_00000.0_006: done (7/20, 407 s)
+ss_hinet_2012_egf_v1_00000.0_007: done (8/20, 413 s)
+ss_hinet_2012_egf_v1_00000.0_008: done (9/20, 418 s)
+ss_hinet_2012_egf_v1_00000.0_009: done (10/20, 422 s)
+ss_ridgecrest_2019_egf_v1_02100.0_000: done (11/20, 422 s)
+ss_ridgecrest_2019_egf_v1_02100.0_001: done (12/20, 431 s)
+ss_ridgecrest_2019_egf_v1_02100.0_002: done (13/20, 439 s)
+ss_ridgecrest_2019_egf_v1_02100.0_003: done (14/20, 446 s)
+ss_ridgecrest_2019_egf_v1_02100.0_004: done (15/20, 454 s)
+ss_ridgecrest_2019_egf_v1_02100.0_005: done (16/20, 462 s)
+ss_ridgecrest_2019_egf_v1_02100.0_006: done (17/20, 471 s)
+ss_ridgecrest_2019_egf_v1_02100.0_007: done (18/20, 480 s)
+ss_ridgecrest_2019_egf_v1_02100.0_008: done (19/20, 486 s)
+ss_ridgecrest_2019_egf_v1_02100.0_009: done (20/20, 493 s)
+
+positive control ss_hinet_2012_egf_v1: 0 of 6 above the main S_mt threshold (0.000; needed 0.9 in each set)
+
+positive control ss_ridgecrest_2019_egf_v1: 0 of 30 above the main S_mt threshold (0.000; needed 0.9 in each set)
+positive control pooled: 0 of 36 (0.000; stop rule of the supervisor's decision of 16 Nov: pooled >= 0.9; per set reported, a set with n < 10 flagged as too small to judge alone)
+  ss_hinet_2012_egf_v1: control n < 10, too small to judge alone
+STOP: the pooled positive control fails with CAP6 -> instrument not valid; nothing is read

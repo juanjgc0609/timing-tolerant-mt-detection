@@ -1,0 +1,1151 @@
+{
+ "partition": "b60d99b3d0bbbbfa",
+ "manifests": [
+  "C:/Users/juanj/ttmt/tune/ss_ridgecrest_2019_egf_v1/tune_phasenet.json",
+  "C:/Users/juanj/ttmt/tune/ss_hinet_2012_egf_v1/tune_phasenet.json"
+ ],
+ "pc": [
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_000__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 0
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_000__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 3
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_000__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 8
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_000__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 0
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_000__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 3
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_000__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 8
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_000__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 0
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_000__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 3
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_000__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 8
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_001__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_001",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 3
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_001__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_001",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 7
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_001__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_001",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 3
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_001__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_001",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 7
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_001__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_001",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 3
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_001__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_001",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 7
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_002__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_002",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 4
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_002__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_002",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 8
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_002__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_002",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 4
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_002__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_002",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 8
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_002__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_002",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 4
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_002__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_002",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 8
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_003__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_003",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 8
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_003__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_003",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 11
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_003__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_003",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 11
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_003__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_003",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 11
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_004__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_004",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 8
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_004__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_004",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 10
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_004__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_004",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 8
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_004__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_004",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 10
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_004__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_004",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 8
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_004__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_004",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 10
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_005__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_005",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 6
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_005__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_005",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 6
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_006__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_006",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 1
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_006__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_006",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 11
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_006__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_006",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 1
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_006__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_006",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 11
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_006__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_006",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 1
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_006__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_006",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 11
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_007__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_007",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 2
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_007__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_007",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 10
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_007__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_007",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 11
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_007__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_007",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 2
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_007__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_007",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 10
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_007__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_007",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 11
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_007__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_007",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 2
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_007__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_007",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 10
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_007__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_007",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 11
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_008__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_008",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 0
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_008__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_008",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 6
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_008__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_008",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 9
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_008__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_008",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 0
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_008__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_008",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 6
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_008__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_008",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 9
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_008__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_008",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 0
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_008__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_008",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 6
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_008__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_008",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 9
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_009__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_009",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 0
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_009__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_009",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 2
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_009__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_009",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 7
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_009__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_009",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 0
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_009__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_009",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 2
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_009__k6",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_009",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 7
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_009__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_009",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 0
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_009__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_009",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 2
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_009__k8",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_009",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 7
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_000__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_000",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 0
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_000__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_000",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 6
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_000__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_000",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 7
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_000__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_000",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 9
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_000__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_000",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 0
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_000__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_000",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 2
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_000__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_000",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 6
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_000__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_000",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 7
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_000__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_000",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 9
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_001__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_001",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 0
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_001__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_001",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 4
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_001__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_001",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 7
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_001__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_001",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 8
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_001__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_001",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 0
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_001__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_001",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 2
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_001__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_001",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 4
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_001__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_001",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 6
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_001__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_001",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 7
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_001__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_001",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 8
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_002__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_002",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 1
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_002__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_002",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 6
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_002__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_002",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 1
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_002__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_002",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 6
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_003__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_003",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 1
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_003__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_003",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 3
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_003__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_003",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 4
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_003__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_003",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 7
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_003__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_003",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 9
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_003__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_003",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 1
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_003__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_003",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 3
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_003__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_003",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 4
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_003__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_003",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 7
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_003__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_003",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 9
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_004__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_004",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 1
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_004__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_004",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 5
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_004__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_004",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 6
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_004__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_004",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 8
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_004__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_004",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 10
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_004__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_004",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 1
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_004__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_004",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 5
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_004__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_004",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 6
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_004__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_004",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 8
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_004__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_004",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 10
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_005__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_005",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 2
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_005__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_005",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 4
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_005__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_005",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 8
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_005__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_005",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 9
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_005__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_005",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 2
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_005__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_005",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 4
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_005__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_005",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 8
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_005__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_005",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 9
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_006__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_006",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 0
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_006__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_006",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 4
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_006__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_006",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 6
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_006__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_006",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 9
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_006__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_006",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 11
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_006__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_006",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 0
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_006__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_006",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 4
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_006__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_006",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 6
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_006__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_006",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 9
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_006__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_006",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 11
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_007__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_007",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 1
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_007__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_007",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 2
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_007__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_007",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 4
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_007__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_007",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 6
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_007__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_007",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 9
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_007__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_007",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 10
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_007__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_007",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 1
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_007__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_007",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 2
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_007__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_007",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 4
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_007__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_007",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 6
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_007__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_007",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 9
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_007__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_007",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 10
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_008__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_008",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 9
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_008__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_008",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 5
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_008__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_008",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 9
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_009__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_009",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 0
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_009__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_009",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 2
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_009__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_009",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 4
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_009__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_009",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 0
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_009__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_009",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 2
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_009__k6",
+   "label": "ss_hinet_2012_egf_v1_00000.0_009",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 4
+  }
+ ],
+ "control": [
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_004__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_004",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 0,
+   "regime": "C"
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_004__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_004",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 9,
+   "regime": "T"
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_006__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_006",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 3,
+   "regime": "T"
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_008__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_008",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 0,
+   "regime": "C"
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_008__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_008",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 1,
+   "regime": "C"
+  },
+  {
+   "record": "ss_hinet_2012_egf_v1_00000.0_009__k4",
+   "label": "ss_hinet_2012_egf_v1_00000.0_009",
+   "set_id": "ss_hinet_2012_egf_v1",
+   "event": 6,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_000__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 2,
+   "regime": "T"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_000__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 6,
+   "regime": "T"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_000__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 7,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_000__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 9,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_000__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_000",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 11,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_001__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_001",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 4,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_001__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_001",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 5,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_001__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_001",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 6,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_001__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_001",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 9,
+   "regime": "T"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_002__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_002",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 2,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_002__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_002",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 3,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_002__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_002",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 5,
+   "regime": "T"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_002__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_002",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 7,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_002__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_002",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 12,
+   "regime": "T"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_003__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_003",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 3,
+   "regime": "T"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_003__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_003",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 4,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_003__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_003",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 9,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_004__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_004",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 1,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_004__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_004",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 4,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_004__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_004",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 5,
+   "regime": "T"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_004__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_004",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 9,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_005__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_005",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 1,
+   "regime": "T"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_005__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_005",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 2,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_005__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_005",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 5,
+   "regime": "T"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_005__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_005",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 7,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_005__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_005",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 11,
+   "regime": "T"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_006__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_006",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 2,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_006__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_006",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 3,
+   "regime": "T"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_006__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_006",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 5,
+   "regime": "C"
+  },
+  {
+   "record": "ss_ridgecrest_2019_egf_v1_02100.0_006__k4",
+   "label": "ss_ridgecrest_2019_egf_v1_02100.0_006",
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "event": 10,
+   "regime": "C"
+  }
+ ]
+}

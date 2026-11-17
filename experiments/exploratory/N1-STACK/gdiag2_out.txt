@@ -1,0 +1,42 @@
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+ss_hinet_2012_egf_v1: n 6; f_emp median 0.291 [q25 0.258, q75 0.369] (random 0.024); f_an median 0.135 (random 0.143); paired f_emp - f_an median +0.159; n < 10 -> cause is the vector reading (card rule: > 0.6 G, < 0.4 reading)
+  convention check: f_emp median without the Z flip 0.316, with P and S swapped 0.000 -> convention consistent
+  descriptive (review of a7cea2c): rank correlation of block norms |v| vs |g| median +0.714 [q25 +0.677, q75 +0.727]
+ss_ridgecrest_2019_egf_v1: n 30; f_emp median 0.033 [q25 0.020, q75 0.127] (random 0.015); f_an median 0.129 (random 0.091); paired f_emp - f_an median -0.095 -> cause is the vector reading (card rule: > 0.6 G, < 0.4 reading)
+  convention check: f_emp median without the Z flip 0.037, with P and S swapped 0.001 -> convention consistent
+  descriptive (review of a7cea2c): rank correlation of block norms |v| vs |g| median +0.421 [q25 +0.351, q75 +0.604]

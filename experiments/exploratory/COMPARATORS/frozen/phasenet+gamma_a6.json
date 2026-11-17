@@ -1,0 +1,25 @@
+{
+ "code": "2ad7f9f5e66b",
+ "env": "cloud-cpu terms:ridgecrest:1ba1719e07a6",
+ "frozen_utc": "2026-11-17T17:23:16Z",
+ "ledger_sha256": "a0ace05fc277b41891a3816cb0b8ca8309a5c0ad1e85dcaf7045498e94931c1e",
+ "method": "phasenet+gamma",
+ "objective": 0.283805,
+ "params": {
+  "as_dbscan_eps": 16.117123579750075,
+  "as_dbscan_min_samples": 5,
+  "as_max_sigma11": 1.692031649612506,
+  "as_method": "BGMM",
+  "as_min_picks": 7,
+  "pk_peak_distance": 0.056425598218959316,
+  "pk_threshold": 0.28378561717478484,
+  "pk_weights": "original"
+ },
+ "partition": "b60d99b3d0bbbbfa",
+ "recall_C": 0.334426,
+ "recall_T": 0.233184,
+ "seed": 2506009082,
+ "trial": 46,
+ "trials_in_ledger": 60,
+ "trials_ok": 60
+}

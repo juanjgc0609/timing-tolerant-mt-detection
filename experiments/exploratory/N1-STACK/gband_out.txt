@@ -1,0 +1,42 @@
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+  station-order check: done, matches the manifest
+ss_hinet_2012_egf_v1: n 6; f_emp 2-20 Hz median 0.569 [q25 0.481, q75 0.664]; f_emp 0.5-6 Hz median 0.291; paired difference median +0.208; n < 10 -> does not separate (card rule: > 0.6 band, < 0.4 reading rule)
+  descriptive: noise-normalised S_en ratio 2-20 / 0.5-6 Hz median 4.256 [q25 4.025, q75 4.437]
+  descriptive: rank correlation of block norms |v| vs |g| in 2-20 Hz median +0.720
+ss_ridgecrest_2019_egf_v1: n 30; f_emp 2-20 Hz median 0.597 [q25 0.480, q75 0.706]; f_emp 0.5-6 Hz median 0.033; paired difference median +0.509 -> does not separate (card rule: > 0.6 band, < 0.4 reading rule)
+  descriptive: noise-normalised S_en ratio 2-20 / 0.5-6 Hz median 2.620 [q25 1.676, q75 3.359]
+  descriptive: rank correlation of block norms |v| vs |g| in 2-20 Hz median +0.670

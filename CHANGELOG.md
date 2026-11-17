@@ -8,12 +8,37 @@ Dated record of changes to the project's process, code and documents. Results ar
 - Thesis: every figure of the thesis detector on real seismicity (R0, R1, the Ridgecrest explorations C18, gate G-M5b)
   marked **[whitening review]**, with a draft note, after the whitening mismatch found in PR #68; Task 2M, C18f and
   G-M5c divide by one deviation per window and are not marked. Nothing deleted or changed.
+- ST-RETUNE run under ATLAS-0 amendment 6 (60 trials per method, cloud CPU): PyOcto 0.2589 -> 0.2814, GaMMA a4
+  0.2356 -> 0.2838 in the tuning objective; H holds for both, pivot not triggered; paired sign test over the 60
+  shared parameter sets p = 4e-4 (PyOcto) and 1e-6 (GaMMA). Frozen `_a6` configurations chosen under item 3 and
+  recorded in the ATLAS-0 card. Machine check: the frozen configurations without terms reproduce their ledger values
+  exactly in the cloud.
 - ATLAS-0 card: the amendment-5 erratum line, which the revert and reapply of PR #53 left after amendment 6, moved
   back to the end of amendment 5 and labelled "Amendment 5, erratum". Wording unchanged (one line rejoined); the
   amendment-6 text is byte-identical to the tag `reg/ATLAS-0/amendment-6`.
 
 ## 2026-11-16
 
+- `N1-STACK` (exploratory, owner's choice of 16 November "Priorizar eventos débiles"): card and script of the
+  pre-test of the signed stack for weak events, declared before running. Card = the supervisor's design, plus a
+  design revision made before any run: the tuning partition has one 300 s noise block per set, so the threshold at
+  30 false per hour comes from 100 time slides (catalogued arrivals masked per station) and the main threshold is the
+  larger of the slide and unslid ones. Nothing has run on project data.
+- `N1-STACK` attempt 1 (laptop, uncapped S_mt, 1950aeb): baseline reproduced; stopped at the positive control
+  (Hi-net 0 of 6, Ridgecrest 20 of 30, needed 0.90); no R computed. Supervisor's decision (owner's approval
+  requested): rerun with the registered cap 6, strongest-station diagnostic of the noise maxima, pooled control;
+  R printed only with `--read` after the approval.
+- `N1-STACK` attempt 2 (CAP6, owner's approval of 16 November, 061d8d8): pooled positive control 0 of 36 ->
+  instrument not valid by the declared rule; no R computed. Diagnostic: the slide-null maxima come from one station
+  (median share 0.99 Hi-net, 0.79 Ridgecrest). Measured after the run: only about a fifth of the read energy of
+  detected EGF events falls in the analytic moment-tensor subspace (0.26 Hi-net, 0.21 Ridgecrest).
+- `N1-STACK` diagnostics (owner's approval of 16 November, 028aa3f): empirical-G fraction f_emp 0.29 (Hi-net, n 6)
+  and 0.03 (Ridgecrest) -> by the declared rule the cause is the vector reading (band not separated); the
+  analytic-G chain control gives 0.69 and 0.77, middle zone, no conclusion.
+- `N1-STACK` band check (owner's approval of 17 November, 2508ddf): f_emp read at 2-20 Hz 0.569 (Hi-net, n 6)
+  and 0.597 (Ridgecrest) -> does not separate by the declared rule; review checks: station order matches in all
+  36 hits, block-norm rank correlation positive (+0.42 to +0.72), gcheck noise-free f 0.705 / 0.771 (descriptive).
+  Supervisor reading: two causes at once (band, large effect; reading-chain loss ~0.25, cause open). N-1 closed.
 - ATLAS-0 amendment 6 written into the card (`append_amendment.py`, text of `ST-RETUNE/amendment-6-draft.md`, dated
   16 November 2026), after amendment 5 was anchored (`reg/ATLAS-0/amendment-5`, 351695c). Station terms as a fixed
   preprocessing step where an independent calibration set exists; 60 trials per method in `tuning_ledger_a6.csv`.
