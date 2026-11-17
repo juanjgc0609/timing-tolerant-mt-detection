@@ -213,7 +213,7 @@ Medida adicional, leída después de la corrida, sin regla (se reporta, no decid
 leída que cae en el subespacio del tensor, S_mt / S_en con NOCAP, en los aciertos de PyOcto es de mediana 0.259 en
 Hi-net (6 eventos) y 0.207 en Ridgecrest (30). Con un vector al azar sería 6/42 = 0.14 y 6/66 = 0.09. El operador
 de radiación analítico (rayos rectos, medio homogéneo, cocientes P/S fijos) explica así solo una quinta parte de los
-eventos reales de EGF. Con CAP6 la fracción baja a 0.011-0.016, porque el tope iguala los bloques y borra el patrón.
+eventos reales de EGF.
 Hipótesis, sin probar: el estadístico falla sobre todo porque **G no se ajusta a las funciones de Green reales**, y
 no solo por el ruido. Prueba que la cerraría: la misma fracción con un G empírico (los vectores g_ib medidos en
 cada EGF, que inject guarda en `meta['targets'][...]['g']`), en los mismos aciertos.
@@ -242,7 +242,12 @@ diagnóstico"), solo en los aciertos de PyOcto. Declarado aquí antes de correr.
 - v: los vectores leídos en el desplazamiento común con mayor ‖v‖²; las dos fracciones sobre ese mismo v.
 - Comprobación del código con un evento sintético analítico en ruido gaussiano (nube, sin datos del proyecto): f_an
   0.998 y f_emp 0.998 con g conocido, así que la lectura y el orden de filas reproducen un evento que sí sigue el
-  modelo.
+  modelo. Ese evento sintético no pasó por `inject` (pulsos Ricker con G analítico, Z hacia abajo invertida a Z
+  hacia arriba como en los conjuntos): prueba la lectura y el orden de filas, no la convención de
+  `meta['targets'][e]['g']`.
+- Por eso (revisión de 2f33a2c), antes de leer la regla: g se pone a cero en los bloques sin llegada, igual que v; y
+  se imprimen también f_emp sin girar Z y con P y S intercambiados. Si alguna de esas dos medianas supera a la de
+  f_emp en más de 0.2 en un conjunto, la convención está mal y la zona de ese conjunto no se lee.
 - Uso: `run.py gdiag pops.json --out gdiag.json` (programado, sin correr).
 
 ## Implementación (`run.py`; detalles de interfaz fijados antes de correr y aceptados por el supervisor)

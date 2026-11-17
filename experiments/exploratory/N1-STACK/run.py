@@ -611,14 +611,19 @@ def gdiag(a):
         v = read_at_best(R, truth.arr_t_obs[e], truth.t0).reshape(-1)
         g = np.array(truth.meta["targets"][e]["g"], float)          # (ns, 2, 3), E N Z-up
         g = np.nan_to_num(g.transpose(1, 0, 2))                     # (2, ns, 3)
-        g[..., 2] *= -1.0                                           # Z down, as the front end
-        g = g.reshape(-1)
+        g[~np.isfinite(truth.arr_t_obs[e].T)] = 0.0                  # same absent blocks as v (review of 2f33a2c)
         vv = float(v @ v)
         Q = operator_basis(truth.xyz[e], STA)
         y = v @ Q
         f_an = float(y @ y) / vv
-        f_emp = float((v @ g) ** 2 / (vv * max(float(g @ g), 1e-300)))
-        out.append(dict(x, f_emp=f_emp, f_an=f_an, dim=int(v.size)))
+
+        def frac(gg):
+            gg = gg.reshape(-1)
+            return float((v @ gg) ** 2 / (vv * max(float(gg @ gg), 1e-300)))
+        gz = g.copy()
+        gz[..., 2] *= -1.0                                          # Z down, as the front end
+        out.append(dict(x, f_emp=frac(gz), f_emp_zup=frac(g), f_emp_swap=frac(gz[::-1]), f_an=f_an,
+                        dim=int(v.size)))
     for sid in sorted({x["set_id"] for x in out}):
         r = [x for x in out if x["set_id"] == sid]
         fe = np.array([x["f_emp"] for x in r])
@@ -630,6 +635,11 @@ def gdiag(a):
               f"{np.quantile(fe, .75):.3f}] (random {1 / D:.3f}); f_an median {np.median(fa):.3f} (random "
               f"{6 / D:.3f}); paired f_emp - f_an median {np.median(fe - fa):+.3f}"
               + ("" if len(r) >= 10 else "; n < 10") + f" -> {zone} (card rule: > 0.6 G, < 0.4 reading)")
+        mz = float(np.median([x["f_emp_zup"] for x in r]))
+        ms = float(np.median([x["f_emp_swap"] for x in r]))
+        bad = mz > med + 0.2 or ms > med + 0.2
+        print(f"  convention check: f_emp median without the Z flip {mz:.3f}, with P and S swapped {ms:.3f} -> "
+              + ("CONVENTION WRONG: the zone of this set is not read" if bad else "convention consistent"))
     json.dump({"rows": out}, open(a.out, "w"), indent=1)
 
 
