@@ -6,6 +6,18 @@ Universidad Icesi - Trabajo de grado - Juan Jose Gordillo Cordoba - October 2026
 
 Director: Uram Aníbal Sosa Aguirre
 
+*Draft note (17 November 2026): figures of the thesis's own detector on real seismicity (Tasks R0 and R1 with the
+hybrid, the Ridgecrest explorations C18, and the Ridgecrest segment of gate G-M5b) come from a pipeline that divides
+each station by its own noise deviation (`code/r0/r0_run.py:50-51` with `code/r0/r0_lib.py:135`, and
+`code/r1/r1_lib.py:151`) but projects on a moment-tensor subspace built without those weights; the defect was found
+in PR #68 in the later port `src/ttmt/r1.py:60-61`. Passages marked **[whitening review]** contain such figures. They
+stand as recorded and are not deleted; each is pending review until it is repeated with the fix or declared affected.
+Task 2M was checked and is not affected: its noise is levelled per channel when the files are prepared
+(`code/t2m_data.py:32-33`), the synthetic events are added without any division by station, and the matched filter is
+divided by one deviation for the whole window (`code/t2m_lib.py:328`), so data and subspace stay consistent. The same
+holds for exploration C18f, gate G-M5c and the 2M part of gate G-M5a. Simulations with equal noise at every station
+and the comparators (PhaseNet, PyOcto, GaMMA, QuakeMigrate) are not affected either.*
+
 ---
 
 ## Abstract
@@ -33,15 +45,15 @@ detector exceeded uncapped block pursuit by +0.228 [+0.148, +0.298] with the reg
 required; block pursuit with the same cap recovers most of that gap, so the gain belongs to the per-station bound. On real seismicity the
 pick-free detector failed: on one hour of the 2019 Ridgecrest sequence it recalled at most 0.022 of the catalogued
 events against up to 0.667 for PhaseNet with PyOcto, and on a 2012 swarm recorded by seven Hi-net stations it found 1
-of 54 target events. A hybrid that adds pick-free candidates to a pick-based associator and scores them by the
+of 54 target events. **[whitening review]** A hybrid that adds pick-free candidates to a pick-based associator and scores them by the
 PhaseNet picks they explain found 23 of 54 against 22 for the associator alone (exact McNemar p = 0.50), so no gain was
-demonstrated. A short theory of the deployed statistic, written after the experiments, is consistent with both sides:
+demonstrated. **[whitening review]** A short theory of the deployed statistic, written after the experiments, is consistent with both sides:
 the cap bounds the effect of one station on the score by a constant and leaves the Gaussian false-alarm tail
 unchanged, and it discards amplitude information once readings saturate, which is part of why it fails in continuous
 seismicity; a further result shows that no score can have a uniformly bounded station influence without saturating,
 so a bound has to be relative to the background. The diagnosis of the real-data failures (at Ridgecrest, timing errors of 0.35 to 0.41 s against a
 tolerance of 0.25 s; on the swarm, a quarter or more of the readings off by more than 0.5 s,
-S-dominated energy, coda ghosts after deflation) defines what a pick-free detector would need before it can compete
+S-dominated energy, coda ghosts after deflation) **[whitening review]** defines what a pick-free detector would need before it can compete
 with modern pickers.
 
 ---
@@ -106,9 +118,9 @@ The contributions are the following, stated at the level the evidence supports.
 3. **Two registered negative results on real seismicity, with a measured diagnosis.** The pick-free detector fails on
    the 2019 Ridgecrest aftershock sequence and on a 2012 Hi-net swarm, and the causes are measured: travel-time errors
    larger than the reading tolerance, a capped score that saturates in continuous seismicity, S-wave energy that
-   dominates the P reading at near stations, and ghost events left by imperfect deflation.
+   dominates the P reading at near stations, and ghost events left by imperfect deflation. **[whitening review]**
 4. **A hybrid with pick-based association, tested once.** Adding pick-free candidates to a PhaseNet associator and
-   scoring every candidate by the picks it explains did not add a demonstrable number of detections on unseen data.
+   scoring every candidate by the picks it explains did not add a demonstrable number of detections on unseen data. **[whitening review]**
 
 It does not claim that pick-free moment-tensor detection beats modern pick-based association on real data; the two
 real tests show the opposite. Nor does it claim that the detector of the thesis (MT-FW) is better than block
@@ -523,7 +535,7 @@ that every value printed here occurs in it verbatim; the specification of the ro
 Differences are in event recall (fraction of target events detected) at the operating point of each method. "Epicentre rule"
 means a hit needs the epicentre within 5 km; "origin time required" adds an origin within 0.5 s (Section 5.2).
 
-**Table 1. Evidence table.**
+**Table 1. Evidence table.** Rows E11 to E15 (real data) are under **[whitening review]**.
 
 | # | Data | Test | Claim | Value | Source (file:line) |
 |:--|:--|:--|:--|:--|:--|
@@ -659,7 +671,7 @@ of BOMP-PK itself: the capped pursuit recovered almost all of the gap, leaving +
 moment-tensor pursuit can use; it is not a property of MT-FW. No registered test compared the cap with standard
 despiking or per-station normalisation outside the subspace score.
 
-### 6.4 First real test: Ridgecrest 2019 (Task R0; Appendix Y.30)
+### 6.4 First real test: Ridgecrest 2019 (Task R0; Appendix Y.30) **[whitening review]**
 
 Task R0 tested the registered detector (MT-FW with cap 6, pick-free station terms and the local refinement) on one
 hour of the 2019 Ridgecrest aftershock sequence recorded by the Southern California network, with the analyst
@@ -678,7 +690,7 @@ generator (before its position-dependent model error, Section 6.2) and a reading
 measured: the deflation of the capped detector subtracts a cap-sized prediction (Section 3.4), so a magnitude 3
 aftershock is only partly removed and its residual can be selected again.
 
-### 6.5 What fails on real data (exploration C18; Appendix Y.32)
+### 6.5 What fails on real data (exploration C18; Appendix Y.32) **[whitening review]**
 
 On the development segment of the Ridgecrest hour only, exploration C18 tested the remedies the diagnosis named. At
 the true hypocentres of the development events, the capped score did not separate real events from event-free windows
@@ -698,7 +710,7 @@ recalled 5 of 16 on one subnetwork, exactly the threshold; with every event in t
 of R0 on the same segment, so out of sample the gate is not met; this reading was made after R1 and is declared post
 hoc (error E59).
 
-### 6.6 Second real test: a Hi-net swarm, and the hybrid (Task R1)
+### 6.6 Second real test: a Hi-net swarm, and the hybrid (Task R1) **[whitening review]**
 
 **Data and design.** Seven borehole stations of the Hi-net network [Obara et al. 2005] recorded a swarm of the
 Fukushima-Yamagata border region on 2 September 2012 from 03:20:00 to 03:53:20 UTC; the record is the public example
@@ -769,7 +781,7 @@ produced the truth list.
 
 ### 7.1 The hypotheses as they now stand
 
-**Table 2. Status of the hypotheses.**
+**Table 2. Status of the hypotheses.** The real-data parts of rows G1 and "new" are under **[whitening review]**.
 
 | Hypothesis | Statement | Status |
 |:--|:--|:--|
@@ -779,7 +791,7 @@ produced the truth list.
 | G1-C | Pick-free station terms add detections when the origin time is required | Partially confirmed, in one geometry: the pooled gain of 2L is essentially that of the one-sided eight-station network, there is no demonstrated gain with four stations, and the terms were worse than the catalogue ones in about 22 per cent of the networks |
 | new | The cap trades robustness to transients for saturation in continuous seismicity | Proposed after the experiments as an explanation; its parts are proved in a simplified model (Gaussian noise, fixed readings; Propositions 1, 2, 4), and the saturation was measured at true hypocentres of real events (C18). Appendix AB proves that the trade-off is unavoidable for any score whose station influence is bounded uniformly, and that a bound relative to the background (ACAP) avoids it. Tested on real data in the doctoral line (gates G-M5a and G-M5b, exploratory), ACAP failed: it lost recall to the cap on the 2M transient day (-0.020 [-0.041, +0.009] and -0.013 [-0.053, +0.028], against a tolerance of 0.03), and it avoided saturation on the Ridgecrest development segment but not on the held-out one (AUC 0.616 on N4, against 0.65); the saturation of the cap was confirmed on the held-out segment (AUC 0.39 to 0.42). ACAP with c in {3, 5} failed; no value of c set on the measured null of the peak readings was tested, and no held-out segment is left to test one. The cap of 6 is kept, although on the held-out segment it ranks real events below event-free windows (AUC 0.39 to 0.42) |
 
-### 7.2 Why the pick-free detector fails on real seismicity
+### 7.2 Why the pick-free detector fails on real seismicity **[whitening review]**
 
 The two real tests fail in different ways, and the differences are informative.
 
@@ -865,7 +877,7 @@ with the flat score surface just outside the hit radius found in Appendix AB.B.
 PhaseNet, the strongest picker available, and won. *Operating points.* Every method's operating point was chosen on
 the evaluation data (in the same way for all methods); the deployable threshold of R1, fixed on development data,
 exceeded the false-detection budget for the hybrid (41.8 per hour against 30, a false-alarm calibration failure, error
-E64). *Truth lists.* The Ridgecrest catalogue is an analyst catalogue;
+E64) **[whitening review]**. *Truth lists.* The Ridgecrest catalogue is an analyst catalogue;
 the Hi-net truth list comes from template matching with the JMA events as templates and favours events similar to them. Only 29 of its 54 targets were detected by any method at any threshold, so the ceiling of the test was
 about 0.54.
 *Sample size.* R1 had 54 targets and the power analysis of Section 5.3 showed that only a gain of about 0.2 would
@@ -920,7 +932,7 @@ does not leave ghosts, and subtract at the sub-sample arrival time, which remove
 the conditional threshold of Theorem AB.C.2. The simplest such bound, ACAP (Appendix AB.C), has since been tested with
 c in {3, 5} and failed: it failed its robustness gate on the 2M transient day and its saturation gate on the held-out
 Ridgecrest segment (Table 2, row "new"; `experiments/exploratory/M5-ACAP/card.md`), so the trade-off that Appendix AB
-says a background-relative bound avoids is not avoided by this one, with these values of c, on real data. (4) A second synthetic generator, with
+says a background-relative bound avoids is not avoided by this one, with these values of c, on real data. **[whitening review]** (4) A second synthetic generator, with
 two-subevent sources, and a second real noise network for the bounded-influence result. (5) External timestamping of
 every future registration. These items, with the failure atlas and the new model, form the separate doctoral line of
 ADR-0006.

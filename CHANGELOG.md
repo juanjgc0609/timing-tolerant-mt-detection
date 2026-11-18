@@ -5,6 +5,9 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-17
 
+- Thesis: every figure of the thesis detector on real seismicity (R0, R1, the Ridgecrest explorations C18, gate G-M5b)
+  marked **[whitening review]**, with a draft note, after the whitening mismatch found in PR #68; Task 2M, C18f and
+  G-M5c divide by one deviation per window and are not marked. Nothing deleted or changed.
 - ST-RETUNE run under ATLAS-0 amendment 6 (60 trials per method, cloud CPU): PyOcto 0.2589 -> 0.2814, GaMMA a4
   0.2356 -> 0.2838 in the tuning objective; H holds for both, pivot not triggered; paired sign test over the 60
   shared parameter sets p = 4e-4 (PyOcto) and 1e-6 (GaMMA). Frozen `_a6` configurations chosen under item 3 and
