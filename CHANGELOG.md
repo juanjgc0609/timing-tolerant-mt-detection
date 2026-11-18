@@ -5,6 +5,12 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-17
 
+- EQNet2 stage 1 on the tuning partition: `experiments/exploratory/COMPARATORS/eqnet2_stage1.py scores` writes the
+  network scores of every tuning record and `tune_eqnet2.json` with the inputs of EQNet2's published continuous run
+  (E, N, Z at 100 Hz; amplitude in um/s through a required per-dataset `--scale`; station longitude and latitude by
+  inverting `Dataset.to_xy`; published `--sort` order); `eqnet2_stage1.py run` is the tuning of stage 2 into
+  `tuning_ledger_a5.csv`, so `tune_cli.py` and `pipeline.py` (frozen at the amendment-6 tag) do not change. ATLAS-0
+  card: "Amendment 5, erratum 2" records these inputs and the 4096-sample windows. No record read yet.
 - Thesis: every figure of the thesis detector on real seismicity (R0, R1, the Ridgecrest explorations C18, gate G-M5b)
   marked **[whitening review]**, with a draft note, after the whitening mismatch found in PR #68; Task 2M, C18f and
   G-M5c divide by one deviation per window and are not marked. Nothing deleted or changed.

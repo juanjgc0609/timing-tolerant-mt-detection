@@ -450,6 +450,23 @@ published code: the adapter caps the candidate events per window at the top K = 
 `metrics_continuous.py` (40a48ed1, lines 583, 590 and 605) takes K = int((t[-1] - t[0]) / 5) on the grid
 t = arange(t0, t1, DT) over the span of candidate and pick times. EQNet2 trials may start after this line is merged.
 
+Amendment 5, erratum 2 (17 November 2026; EQNet2 inputs, recorded before any EQNet2 trial; declares, changes no
+registered criterion). The EQNet2 run script is `experiments/exploratory/COMPARATORS/eqnet2_stage1.py`, fixed by the
+commit that merges PR #66 into main (its hash is added to this line by the next card change, before the first EQNet2
+trial). It calls the adapter of a080a66 unchanged and writes to `tuning_ledger_a5.csv` through `ttmt.associate.tune.run`;
+no file frozen at the amendment-6 tag changes. Its input choices, all fixed before any partition was read:
+(a) windows: the adapter's 4096 samples (40.96 s at 100 Hz) with half overlap (hop 2048 samples), each output
+sample (0.16 s) taken from the window in which it is most central; the published mseed command runs patches of up
+to 360000 samples, so a 300 s tuning record would be one window; (b) components E, N, Z at 100 Hz, as the sets;
+(c) amplitude in micrometres per second, as the published loader (m/s times 1e6), through one factor per dataset:
+1e6 for the Ridgecrest sets, which are in m/s by a scalar sensitivity per channel (`stations.csv` "response",
+flat band of the HH broadband sensors; the published loader removes the full response); the factor of the Hi-net
+sets (counts) and its source (instrument sensitivity per station from the Hi-net channel table, or one shared value)
+are recorded below this line before any Hi-net record enters stage 1; (d) station longitude and latitude from the
+frame by inverting `ttmt.datasets.Dataset.to_xy` about the dataset centre, depth the frame's z; (e) stations in the
+published `--sort` order (three groups by `optimal_transport_clustering` of longitude and latitude, then lexsort
+by group, longitude, latitude; more than 5 stations).
+
 ## Amendment 6 (station terms; to be anchored as `reg/ATLAS-0/amendment-6`)
 Task ATLAS-0, amendment 6 (16 November 2026), written after the exploratory runs of T420-CEILING (PR #47) and of
 ST-RETUNE (PR #53), and before any tuning trial with station terms. The registered text, amendments 1 to 5, every

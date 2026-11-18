@@ -769,3 +769,66 @@ def test_eqnet2_annotate_layout_with_a_stub_model():
     j = int(np.argmax(sc["score"][2]))
     assert j == 4992 // 16 and sc["score"][2, j] == pytest.approx(0.8, abs=1e-3) and sc["score"][0].max() < 1e-3
     assert np.allclose(sc["tt"], 1.5)
+
+
+def test_eqnet2_stage1_inputs_order_units_and_manifest(tmp_path):
+    import importlib
+    import sys
+    from types import SimpleNamespace
+    torch = pytest.importorskip("torch")
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "experiments" / "exploratory" / "COMPARATORS"))
+    S1 = importlib.import_module("eqnet2_stage1")
+    from ttmt import datasets as DS
+    centre = (35.7, -117.5)
+    ll = np.array([[-117.6, 35.6, 0.0], [-117.4, 35.8, 0.2]])
+    x, y = DS.Dataset.to_xy(ll[:, 1], ll[:, 0], centre)
+    assert np.allclose(S1.lonlat_depth(np.c_[x, y, ll[:, 2]], centre), ll)        # inverse of to_xy
+
+    class Stub(torch.nn.Module):          # score from the data; travel time = log10 of the mean |amplitude|
+        def forward(self, b):
+            x, amp = b["data"], b["amplitude"]
+            e = x[:, 0].reshape(1, 256, 16, -1).abs().mean(2)
+            h = torch.zeros(1, 5, 256, x.shape[3])
+            h[:, 0] = torch.log10(amp[:, 2].abs().reshape(1, 256, 16, -1).mean(2) + 1e-12)
+            return {"event": torch.logit(e.clamp(1e-4, 1 - 1e-4)), "hypocenter": h}
+    codes = [f"S{i}" for i in range(7)]
+    xyz = np.c_[np.linspace(-20, 20, 7), np.linspace(10, -10, 7), np.zeros(7)]
+    n = 6000
+    wave = np.zeros((7, 3, n), np.float32)
+    wave[:, 2] = 1e-6                                          # 1 um/s on Z once scaled
+    wave[3, 0, 2992:3008] = 0.8e-6
+    reader = SimpleNamespace(partition="tune", labels=["b0"], man={"fs": 100.0, "stations": codes, "xyz": xyz.tolist()},
+                             data=lambda lab: wave, truth=lambda lab: SimpleNamespace(t0=5.0))
+    man = tmp_path / "tune_phasenet.json"
+    man.write_text(json.dumps({"set_id": "x", "records": [{"label": "b0", "dataset": "ridgecrest_2019", "k": 4},
+                                                          {"label": "b0", "dataset": "ridgecrest_2019", "k": 6}]}))
+    rev = lambda p, k: np.arange(len(p))[::-1]                 # a stand-in clustering that reverses the order
+    with pytest.raises(SystemExit):
+        S1.run_manifest(str(man), Stub(), "cpu", {}, centre_of=lambda d: centre, reader_of=lambda s: reader)
+    out = S1.run_manifest(str(man), Stub(), "cpu", {"ridgecrest_2019": 1e6}, centre_of=lambda d: centre,
+                          reader_of=lambda s: reader, cluster=rev, log=lambda *_: None)
+    m2 = json.load(open(out))
+    assert [r["eqnet2"] for r in m2["records"]] == ["eqnet2_b0.npz"] * 2 and m2["eqnet2"]["scale_um_per_s"] == 1e6
+    order = S1.station_order(S1.lonlat_depth(xyz, centre), rev)
+    assert m2["eqnet2"]["station_order"] == [codes[i] for i in order]
+    from ttmt.associate import eqnet2_assoc as EQ
+    sc = EQ.load_scores(tmp_path / "eqnet2_b0.npz", codes)                  # back in the frame's order
+    j = int(np.argmax(sc["score"].max(1)))
+    assert j == 3 and sc["t0"] == 5.0
+    assert np.allclose(sc["tt"][:, 10], 0.0, atol=1e-3)                      # log10(1 um/s) = 0: units applied
+
+
+def test_eqnet2_stage1_run_attaches_scores_in_manifest_order(tmp_path, monkeypatch):
+    import importlib
+    import sys
+    from types import SimpleNamespace
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "experiments" / "exploratory" / "COMPARATORS"))
+    S1 = importlib.import_module("eqnet2_stage1")
+    m = tmp_path / "tune_eqnet2.json"
+    m.write_text(json.dumps({"records": [{"eqnet2": "eqnet2_a.npz"}, {"eqnet2": "eqnet2_b.npz"}]}))
+    monkeypatch.setattr(TU, "load_manifest", lambda p, meth: [SimpleNamespace(data={}), SimpleNamespace(data={})])
+    recs = S1.load_records([str(m)])
+    assert [os.path.basename(r.data["eqnet2"]) for r in recs] == ["eqnet2_a.npz", "eqnet2_b.npz"]
+    monkeypatch.setattr(TU, "load_manifest", lambda p, meth: [SimpleNamespace(data={})])
+    with pytest.raises(SystemExit):
+        S1.load_records([str(m)])
