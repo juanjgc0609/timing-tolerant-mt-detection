@@ -471,8 +471,8 @@ Amendment 5, erratum 2, hash (18 November 2026). The commit that merges PR #66 i
 only (independent review at 267e03b; the head 3034e18 adds main's PR #69 and nothing of its own):
 `experiments/exploratory/COMPARATORS/eqnet2_stage1.py` (new), erratum 2 in this card, tests in
 `tests/test_associate.py` and the CHANGELOG, 242 lines added and none removed. The Hi-net amplitude factor of item
-(c) is still to be recorded; EQNet2 trials on the Ridgecrest sets may start after this line is merged, on Hi-net
-after the factor line.
+(c) is still to be recorded. Every EQNet2 trial reads the whole tuning partition (Ridgecrest and Hi-net sets, the
+data of the other comparators), so no EQNet2 trial starts before that factor line is merged.
 
 ## Amendment 6 (station terms; to be anchored as `reg/ATLAS-0/amendment-6`)
 Task ATLAS-0, amendment 6 (16 November 2026), written after the exploratory runs of T420-CEILING (PR #47) and of
