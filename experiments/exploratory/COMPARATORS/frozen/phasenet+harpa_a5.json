@@ -1,0 +1,23 @@
+{
+ "code": "d1579967c4e6",
+ "env": "ttmt-gpu",
+ "frozen_utc": "2026-11-18T15:58:49Z",
+ "ledger_sha256": "4ce42f669a8073d6427abae8a517d05539d6e33cb1bd0b829fe0d8c5aeb31e3e",
+ "method": "phasenet+harpa",
+ "objective": 0.188142,
+ "params": {
+  "as_dbscan_eps": 4.850725459461312,
+  "as_max_time_residual": 1.1001487998346915,
+  "as_min_picks": 4,
+  "pk_peak_distance": 0.19113064243589464,
+  "pk_threshold": 0.07404158991117295,
+  "pk_weights": "original"
+ },
+ "partition": "b60d99b3d0bbbbfa",
+ "recall_C": 0.232787,
+ "recall_T": 0.143498,
+ "seed": 971508949,
+ "trial": 44,
+ "trials_in_ledger": 60,
+ "trials_ok": 59
+}
