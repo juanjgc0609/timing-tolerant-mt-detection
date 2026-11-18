@@ -466,6 +466,13 @@ are recorded below this line before any Hi-net record enters stage 1; (d) statio
 frame by inverting `ttmt.datasets.Dataset.to_xy` about the dataset centre, depth the frame's z; (e) stations in the
 published `--sort` order (three groups by `optimal_transport_clustering` of longitude and latitude, then lexsort
 by group, longitude, latitude; more than 5 stations).
+Amendment 5, erratum 2, hash (18 November 2026). The commit that merges PR #66 is
+5880ff1756a898497070bffd1d7c9bde5a751437 on main. Its diff against its first parent 73cc0f6 is the reviewed change
+only (independent review at 267e03b; the head 3034e18 adds main's PR #69 and nothing of its own):
+`experiments/exploratory/COMPARATORS/eqnet2_stage1.py` (new), erratum 2 in this card, tests in
+`tests/test_associate.py` and the CHANGELOG, 242 lines added and none removed. The Hi-net amplitude factor of item
+(c) is still to be recorded; EQNet2 trials on the Ridgecrest sets may start after this line is merged, on Hi-net
+after the factor line.
 
 ## Amendment 6 (station terms; to be anchored as `reg/ATLAS-0/amendment-6`)
 Task ATLAS-0, amendment 6 (16 November 2026), written after the exploratory runs of T420-CEILING (PR #47) and of
