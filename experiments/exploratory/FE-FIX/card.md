@@ -282,10 +282,12 @@ La lectura le toca al supervisor.
    en los dos conjuntos y los conjuntos apuntan en sentidos opuestos, así que **decide el dueño**. Recomendación del
    supervisor: no cambiar la banda en ADR-0012; solo entra el arreglo de pesos. El f_emp de Ridgecrest (0.183) queda
    marcado.
-2. Medido, descriptivo, y lo que más pesa: todas las medianas de m son menores que 1. Con eventos reales (EGF), ruido
-   real y la posición y los tiempos verdaderos, el estadístico queda por debajo del cuantil 0.999 del ruido en su propia
-   posición, en cualquier banda. El m sin tope de Hi-net (~0.002) indica máximos de ruido enormes.
-3. `gdiagw`: con g pesado, f_emp baja a 0.078 / 0.060. La explicación de banda de N-1 era incompleta (anotado como
+2. Medido, descriptivo, y lo que más pesa: con CAP6 todas las medianas de m son menores que 1. Con eventos reales (EGF),
+   ruido real y la posición y los tiempos verdaderos, el estadístico principal queda por debajo del cuantil 0.999 del
+   ruido en su propia posición, en cualquier banda. Sin tope, Hi-net sigue en ~0.002 (máximos de ruido enormes), pero
+   Ridgecrest da 2.6-5.6: allí es el tope lo que deja al objetivo bajo el cuantil (corrección de la revisión de a7f22db).
+3. `gdiagw`: con g pesado, f_emp baja en Hi-net (0.291 → 0.078) y sube poco en Ridgecrest (0.033 → 0.060); los dos
+   siguen muy por debajo de 0.4 (dirección por red corregida tras la revisión de a7f22db). La explicación de banda de N-1 era incompleta (anotado como
    corrección en la ficha de N-1). **Hipótesis sin probar:** el G analítico de rayos rectos no representa las señales
    reales de estos conjuntos, porque los EGF son la onda real del evento original, con efectos de sitio y dispersión.
 

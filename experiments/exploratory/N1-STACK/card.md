@@ -406,5 +406,6 @@ La revisión de FE-FIX mostró que `gdiag` comparaba v/sd con g sin pesar. Recal
 0.033 sin pesos.
 
 **Corrección (supervisor, 18 de noviembre de 2026):** la explicación de banda de la lectura del supervisor de N-1 era
-incompleta. Con g pesado, f_emp baja en lugar de subir, así que el blanqueo no explica la lectura baja. Hipótesis sin
+incompleta. Con g pesado, f_emp baja en Hi-net y sube poco en Ridgecrest, y los dos quedan muy por debajo de 0.4, así
+que el blanqueo no explica la lectura baja. Hipótesis sin
 probar: el G analítico de rayos rectos no representa las señales reales (EGF con efectos de sitio y dispersión).
