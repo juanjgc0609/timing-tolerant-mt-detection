@@ -1,0 +1,184 @@
+{
+ "rows": [
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "f_clean": 0.7299815035187938,
+   "sp_min": 1.9052437385076262,
+   "n_sta": 7,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.7299815035187938
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "f_clean": 0.6237179292569781,
+   "sp_min": 1.765978276833152,
+   "n_sta": 7,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.6237179292569781
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "f_clean": 0.6499502634086992,
+   "sp_min": 1.9052437385076262,
+   "n_sta": 7,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.6499502634086992
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "f_clean": 0.8186584952080175,
+   "sp_min": 1.9167512979768282,
+   "n_sta": 7,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.8186584952080175
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "f_clean": 0.6448615180608737,
+   "sp_min": 1.9052437385076262,
+   "n_sta": 7,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.6448615180608737
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "f_clean": 0.7135856158517169,
+   "sp_min": 1.9052437385076262,
+   "n_sta": 7,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.7135856158517169
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "f_clean": 0.6543544034930748,
+   "sp_min": 1.9052437385076262,
+   "n_sta": 7,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.6543544034930748
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "f_clean": 0.7820786089481864,
+   "sp_min": 1.765978276833152,
+   "n_sta": 7,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.7820786089481864
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "f_clean": 0.6967365348479698,
+   "sp_min": 1.9052437385076262,
+   "n_sta": 7,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.6967365348479698
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "f_clean": 0.7221594270454249,
+   "sp_min": 1.9167512979768282,
+   "n_sta": 7,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.7221594270454249
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "f_clean": 0.78962626052255,
+   "sp_min": 2.0824128526220895,
+   "n_sta": 11,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.78962626052255
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "f_clean": 0.734081486055124,
+   "sp_min": 2.0824128526220895,
+   "n_sta": 11,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.734081486055124
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "f_clean": 0.8189865179649349,
+   "sp_min": 2.188112567752081,
+   "n_sta": 11,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.8189865179649349
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "f_clean": 0.7277943927149311,
+   "sp_min": 2.517991398067889,
+   "n_sta": 11,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.7277943927149311
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "f_clean": 0.8489040863821933,
+   "sp_min": 1.438120606766594,
+   "n_sta": 11,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.8489040863821933
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "f_clean": 0.7823725709650685,
+   "sp_min": 2.0824128526220895,
+   "n_sta": 11,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.7823725709650685
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "f_clean": 0.7722585022311678,
+   "sp_min": 2.0496462052061784,
+   "n_sta": 11,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.7722585022311678
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "f_clean": 0.7641816402876289,
+   "sp_min": 2.6840510077705098,
+   "n_sta": 11,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.7641816402876289
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "f_clean": 0.7697351115869921,
+   "sp_min": 2.0824128526220895,
+   "n_sta": 11,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.7697351115869921
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "f_clean": 0.7682672733347037,
+   "sp_min": 2.0496462052061784,
+   "n_sta": 11,
+   "n_below_cut": 0,
+   "n_below_window": 0,
+   "f_clean_without": 0.7682672733347037
+  }
+ ]
+}
