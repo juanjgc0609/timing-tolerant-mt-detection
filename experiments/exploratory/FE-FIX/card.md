@@ -239,3 +239,37 @@ sección anterior.** Población, mitades, bandas, front end, lectura y semillas 
 - Límite (supervisor, 17 de noviembre): en Hi-net el modelo 1-D tiene un desajuste conocido (P −0.15 s y S −0.35 s de
   mediana, STAGE-LOSS) que castiga más a las bandas altas. Si después el modelo opera con términos por estación, la
   banda elegida aquí es conservadora para las bandas altas.
+
+## Paso 3: resultado (17 de noviembre de 2026, portátil; commit 7f1cc44, band 97 s y gdiagw 7 s, CPU)
+
+Orden de estaciones verificado en todos los eventos. Aviso sin efecto: `nanmedian` avisó de eventos con toda la SNR
+en NaN; quedan fuera porque el filtro exige snr_med finito.
+
+| Mediana de m (CAP6), mitad de elección | 0.5-6 | 1-10 | 2-20 | 2-30 | referencia R1 |
+|---|---|---|---|---|---|
+| Hi-net (n 25) | 0.289 | 0.305 | **0.311** | 0.310 | 0.262 |
+| Ridgecrest (n 32) | **0.578** | 0.423 | 0.465 | 0.540 | 0.488 |
+| descriptivo, sin tope: Hi-net / Ridgecrest | 0.002 / 3.883 | 0.003 / 5.228 | 0.003 / 5.636 | 0.003 / 4.884 | 0.001 / 2.639 |
+| descriptivo, llegadas observadas: Hi-net / Ridgecrest | 0.262 / 0.662 | 0.292 / 0.409 | 0.273 / 0.253 | 0.274 / 0.337 | 0.229 / 0.452 |
+
+Banda elegida (mayor media de las medianas, CAP6; no hubo empate del 5 %): **0.5-6 Hz** a 100 Hz sin Ricker. Hi-net
+prefería 2-20 Hz, pero por menos del 10 %, así que no salta el aviso.
+
+| Confirmación | n (realizaciones) | m elegida / referencia | Ganancia [IC 95 %] | Zona por la regla | f_emp (g/sd) elegida / referencia |
+|---|---|---|---|---|---|
+| Hi-net | 24 (5) | 0.346 / 0.163 | +112.1 % [−9.1 %, +260.8 %] | pasa (≥ +20 %) | 0.475 / 0.078 |
+| Ridgecrest | 29 (5) | 0.475 / 0.570 | −16.8 % [−47.9 %, +9.4 %] | sin ganancia: se queda la banda actual con pesos | **0.183, por debajo de 0.4: avisado** / 0.103 |
+
+`gdiagw` (descriptivo, N-1 con g y Q pesados): f_emp 0.078 [0.035, 0.160] en Hi-net (n 6) y 0.060 [0.028, 0.186] en
+Ridgecrest (n 30); f_an pesado 0.099 / 0.175. Sin pesos (`gdiag2`) eran 0.291 / 0.033.
+
+Notas del implementador, descriptivas y sin veredicto:
+- El intervalo de Hi-net cruza 0 con 5 realizaciones; la zona sale de la mediana, como fija la ficha.
+- La banda elegida y la referencia comparten 0.5-6 Hz. La diferencia entre ellas es solo la tasa de muestreo (100
+  frente a 16 Hz) y el filtro de Ricker.
+- Las medianas de m están por debajo de 1 en todos los casos: el objetivo típico con snr_med ≥ 5 no supera el cuantil
+  0.999 del ruido en su posición. Sin tope, m de Hi-net es ~0.002, lo que apunta a máximos de ruido muy grandes.
+- De la revisión: el cuantil del ruido incluye orígenes enmascarados y de borde con lectura cero, lo que sube algo m
+  por igual en todas las bandas. Los valores absolutos de m no son umbrales calibrados.
+
+La lectura le toca al supervisor.

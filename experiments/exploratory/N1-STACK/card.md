@@ -398,3 +398,9 @@ Orden en el portátil (entorno `ttmt-gpu`, `TTMT_DATA_ROOT`, `TTMT_WORK_ROOT` co
     python experiments/exploratory/N1-STACK/run.py stats pops.json experiments/exploratory/N2-REPICK/repick.json --out stats.json
 
 La zona la lee el supervisor; este hilo solo entrega las salidas.
+
+## Nota posterior (FE-FIX, 17 de noviembre de 2026; descriptivo)
+
+La revisión de FE-FIX mostró que `gdiag` comparaba v/sd con g sin pesar. Recalculado con g y Q pesados por 1/sd
+(`FE-FIX/run.py gdiagw`, commit 7f1cc44): f_emp 0.078 en Hi-net (n 6) y 0.060 en Ridgecrest (n 30), frente a 0.291 y
+0.033 sin pesos. No cambia ninguna lectura de esta ficha.
