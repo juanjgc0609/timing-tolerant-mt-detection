@@ -403,4 +403,8 @@ La zona la lee el supervisor; este hilo solo entrega las salidas.
 
 La revisión de FE-FIX mostró que `gdiag` comparaba v/sd con g sin pesar. Recalculado con g y Q pesados por 1/sd
 (`FE-FIX/run.py gdiagw`, commit 7f1cc44): f_emp 0.078 en Hi-net (n 6) y 0.060 en Ridgecrest (n 30), frente a 0.291 y
-0.033 sin pesos. No cambia ninguna lectura de esta ficha.
+0.033 sin pesos.
+
+**Corrección (supervisor, 18 de noviembre de 2026):** la explicación de banda de la lectura del supervisor de N-1 era
+incompleta. Con g pesado, f_emp baja en lugar de subir, así que el blanqueo no explica la lectura baja. Hipótesis sin
+probar: el G analítico de rayos rectos no representa las señales reales (EGF con efectos de sitio y dispersión).

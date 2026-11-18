@@ -273,3 +273,20 @@ Notas del implementador, descriptivas y sin veredicto:
   por igual en todas las bandas. Los valores absolutos de m no son umbrales calibrados.
 
 La lectura le toca al supervisor.
+
+## Lectura del supervisor del paso 3 (18 de noviembre de 2026)
+
+1. Por la regla, Ridgecrest da −17 % [−48 %, +9 %], cero o menos: se queda la banda actual, con pesos. Hi-net da
+   +112 % [−9 %, +261 %] y pasa por la estimación puntual, pero con n 24 en 5 realizaciones y un intervalo que cruza 0.
+   La banda elegida y la referencia solo difieren en 100 frente a 16 Hz y en el Ricker. La banda tenía que ser la misma
+   en los dos conjuntos y los conjuntos apuntan en sentidos opuestos, así que **decide el dueño**. Recomendación del
+   supervisor: no cambiar la banda en ADR-0012; solo entra el arreglo de pesos. El f_emp de Ridgecrest (0.183) queda
+   marcado.
+2. Medido, descriptivo, y lo que más pesa: todas las medianas de m son menores que 1. Con eventos reales (EGF), ruido
+   real y la posición y los tiempos verdaderos, el estadístico queda por debajo del cuantil 0.999 del ruido en su propia
+   posición, en cualquier banda. El m sin tope de Hi-net (~0.002) indica máximos de ruido enormes.
+3. `gdiagw`: con g pesado, f_emp baja a 0.078 / 0.060. La explicación de banda de N-1 era incompleta (anotado como
+   corrección en la ficha de N-1). **Hipótesis sin probar:** el G analítico de rayos rectos no representa las señales
+   reales de estos conjuntos, porque los EGF son la onda real del evento original, con efectos de sitio y dispersión.
+
+No se corre nada más en FE-FIX.
