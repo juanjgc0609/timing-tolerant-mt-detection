@@ -5,7 +5,8 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-18
 
-- ATLAS-0 card: hash line of amendment 5, erratum 2 (PR #66 merged as 5880ff1). No other change.
+- ATLAS-0 card: hash line of amendment 5, erratum 2 (PR #66 merged as 5880ff1), which also states that no EQNet2
+  trial starts before the Hi-net amplitude-factor line, since every trial reads the whole tuning partition.
 
 ## 2026-11-17
 
