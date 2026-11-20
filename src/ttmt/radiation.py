@@ -98,11 +98,27 @@ def stack_Q(Qs):
     return out
 
 
-def node_operators(XN, STA):
+def station_weights(w, ns):
+    """row weights (2 ns 3,) of G for per-station weights w (ns,): rows ordered (phase, station, component)."""
+    w = np.asarray(w, float).reshape(-1)
+    if w.shape != (ns,):
+        raise ValueError(f"station weights have shape {w.shape}, expected ({ns},)")
+    if not np.all(np.isfinite(w)) or np.any(w <= 0):
+        raise ValueError("station weights must be finite and positive")
+    return np.tile(np.repeat(w, 3), 2)
+
+
+def node_operators(XN, STA, weights=None):
     """per-node operators of the registered engines (r0_run.Net): Gs (N, 6 ns, 6) from radiation_operator and the
-    stacked bases Qst (N, 6 ns, 6)."""
+    stacked bases Qst (N, 6 ns, 6).
+
+    ADR-0012: when the data of each station are divided by its noise level sd_i, pass ``weights = 1 / sd`` (ns,): the
+    operator is then diag(1/sd) G and Q its basis, so that a noise-free event stays in the span. ``weights=None`` (the
+    default) is the registered path, unchanged."""
     STA = np.asarray(STA, float)
     Gs = np.stack([radiation_operator(g, STA) for g in np.asarray(XN, float)])
+    if weights is not None:
+        Gs = station_weights(weights, len(STA))[None, :, None] * Gs
     return Gs, stack_Q([basis(g) for g in Gs])
 
 

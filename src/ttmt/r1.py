@@ -4,7 +4,7 @@ hyb_dev.py (pct, waveform_scores, evaluate) and hyb_dev2.py (score_candidates).
 
 The pick stage (PhaseNet, GaMMA, PyOcto) is not part of the core package: its output ``picks_all.json`` is an input.
 
-    python -m ttmt.r1 p1 SEGMENT PICKS.json OUT.json [--jobs 16] [--strict-partition]
+    python -m ttmt.r1 p1 SEGMENT PICKS.json OUT.json [--jobs 16] [--strict-partition] [--weighted-q]
     python -m ttmt.r1 hybrid SEGMENT PICKS.json P1.json OUT.json
     python -m ttmt.r1 all PICKS.json OUTDIR [--jobs 16]          (p1 and hybrid of cal and eval, then the analysis)
 
@@ -48,7 +48,7 @@ class Net:
     windows of the CAL truth events with M >= 1.0 (origin at 6.5 s of window time), homogeneous peak terms (used only
     by the descriptive R0-style comparators), coarse lattice with its radiation operators and bases."""
 
-    def __init__(self, segment, strict_partition=False):
+    def __init__(self, segment, strict_partition=False, weighted_q=False):
         self.names = R.subnets["H7"]
         self.centre = R.frame()
         self.cat = R.catalogue_local(self.centre)
@@ -68,7 +68,10 @@ class Net:
             self.calwin.append((R.window(self.d16, ts), np.array([e["x"], e["y"], e["z"]]), 6.5))
         self.corr_sc = estimate_peak_terms(self.STA, self.calwin, R.vp, R.vs)
         self.XN = coarse_grid(R.depths)
-        self.Gs, self.Qst = node_operators(self.XN, self.STA)
+        # ADR-0012: the data are divided by station_scale; weighted_q weights the operator the same way (off by
+        # default, so the registered R1 lists reproduce bit for bit)
+        self.weighted_q = bool(weighted_q)
+        self.Gs, self.Qst = node_operators(self.XN, self.STA, 1.0 / self.scale if weighted_q else None)
 
 
 def model_times(src, STA):
@@ -101,10 +104,10 @@ def p1_windows(net, E, ws, idx):
 _W = {}
 
 
-def _worker_init(segment, onset_vals, strict):
+def _worker_init(segment, onset_vals, strict, weighted_q=False):
     from .runtime import pin_blas
     pin_blas(strict=False)
-    net = Net(segment, strict)
+    net = Net(segment, strict, weighted_q)
     E, _ = engine(net, OnsetDelay(np.array(onset_vals)))
     _W.update(net=net, E=E, ws=R.starts(segment))
 
@@ -114,15 +117,17 @@ def _worker_chunk(rng):
     return rng, p1_windows(_W["net"], _W["E"], _W["ws"], range(*rng)), time.time() - t0
 
 
-def run_p1(segment, picks, jobs=1, chunk=40, strict=False, log=print):
+def run_p1(segment, picks, jobs=1, chunk=40, strict=False, log=print, weighted_q=False):
     """r1_run.run + merge: the P1 detection list of a segment (dict as p1_<segment>.json)."""
     onset = OnsetDelay(np.array(picks["pick_terms"]))
-    net = Net(segment, strict)
+    net = Net(segment, strict, weighted_q)
     E, corr = engine(net, onset)
     ws = R.starts(segment)
     meta = {"lag": corr.info["lag"].tolist(), "lag_readings": corr.info["lag_readings"], "segment": segment,
             "names": net.names, "centre": net.centre, "STA": net.STA.tolist(), "scale": net.scale.tolist(),
             "corr_layered": corr.tolist(), "n_calwin": len(net.calwin), "n_windows": len(ws)}
+    if weighted_q:
+        meta["weighted_q"] = True                                          # ADR-0012; absent on the registered path
     todo = [(a, min(a + chunk, len(ws))) for a in range(0, len(ws), chunk)]
     res = {}
     if jobs <= 1:
@@ -132,7 +137,7 @@ def run_p1(segment, picks, jobs=1, chunk=40, strict=False, log=print):
             log(f"{time.strftime('%H:%M:%S')} {segment} chunk {a} {b} of {len(ws)}")
     else:
         from concurrent.futures import ProcessPoolExecutor
-        with ProcessPoolExecutor(jobs, initializer=_worker_init, initargs=(segment, onset.values.tolist(), strict)) as ex:
+        with ProcessPoolExecutor(jobs, initializer=_worker_init, initargs=(segment, onset.values.tolist(), strict, weighted_q)) as ex:
             for rng, atoms, sec in ex.map(_worker_chunk, todo):
                 res[rng] = (atoms, sec)
                 log(f"{time.strftime('%H:%M:%S')} {segment} chunk {rng[0]} {rng[1]} of {len(ws)}")
@@ -285,9 +290,12 @@ def main(argv=None):
     if "--strict-partition" in a:
         a.remove("--strict-partition")
         strict = True
+    weighted_q = "--weighted-q" in a                                     # ADR-0012 (off: the registered path)
+    if weighted_q:
+        a.remove("--weighted-q")
     cmd = a[0]
     if cmd == "p1":
-        _dump(run_p1(a[1], json.load(open(a[2])), jobs, strict=strict), a[3])
+        _dump(run_p1(a[1], json.load(open(a[2])), jobs, strict=strict, weighted_q=weighted_q), a[3])
     elif cmd == "hybrid":
         _dump(run_hybrid(a[1], json.load(open(a[2])), json.load(open(a[3])), strict), a[4])
     elif cmd == "all":

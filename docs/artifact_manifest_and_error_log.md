@@ -1647,3 +1647,15 @@ also uses GaMMA from `gamma_src/` and PyOcto. The commands and times are in
 bit the records of Task 2A, and the exact controls of Tasks 2B to 2F and 2I, one has to set
 `OPENBLAS_CORETYPE` to the kernel with which each network was written (E31); Tasks 2C to 2F and 2I set it and
 check it in each process (E32) and additionally need threadpoolctl.
+
+### E66. The operator is not weighted like the data when each station is divided by its noise level
+**Script:** `src/ttmt/r1.py` (`Net`: `d16 / station_scale`, `node_operators(XN, STA)`); the same structure in M5
+`--local` and in G-M6a's script. Found by FE-FIX step 2 (PR #68, 17 Nov 2026).
+**Symptom:** a noise-free analytic event read through the real chain keeps only 0.705 (Hi-net) and 0.771 (Ridgecrest)
+of its energy in span(Q); with Q of diag(1/sd) G, 0.999.
+**Cause:** the data are divided by the per-station sd and the operator is not, so v = diag(1/sd) G m leaves span(G).
+**Scope:** every result of our model with real noise and per-station scaling (R0, R1, C18a, G-M1a, M5 `--local`).
+Results with Gaussian noise of equal sd at every station are not affected.
+**Correction:** ADR-0012. `node_operators(..., weights=1/sd)` and `r1.Net(..., weighted_q=True)`; off by default so
+the registered path reproduces bit for bit; the affected results are re-run descriptively.
+
