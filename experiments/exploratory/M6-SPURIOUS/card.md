@@ -54,3 +54,13 @@ the reading ambiguous; it is replaced, before reading, by this one, applied by `
   4. Otherwise no clear cause.
 - Expected size: about 5 % of 600 scenes with neighbours, so about 30 positive scenes in the mismatched arm; the
   60 % share and the ratios are read on that small n and reported with Clopper-Pearson intervals.
+
+## Declarations before reading (20 November 2026, after review of 789873a; `rows.json` not yet written)
+1. The full run executes the `run.py` committed in 789873a: sha256 `c7fdc3fb0bf8f33d83c541f330d594df0cbea5faca719905085b7b2c8e83af56`,
+   `git diff 789873a` empty. The same shell command added the empty-tail guard and then started the run, and the file
+   has not been edited since (mtime 22:24:00 UTC, process start 22:23:59-22:24:00 UTC at the one-second granularity
+   of `ps`). The smoke run of 4 scenes per kind used the version without the guard; its scenes are the first 4 of
+   each kind of the same seed and are inside the full run.
+2. The line "reading (card): ..." that `run.py` prints in `run_out.txt` applies the superseded, non-exclusive rule
+   of 079b3d2. **The valid reading is `analyse_out.txt`** (amendment 1, `analyse.py`); the `run_out.txt` line is
+   kept for the record and is not the result.
