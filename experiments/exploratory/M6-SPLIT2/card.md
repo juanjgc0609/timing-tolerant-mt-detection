@@ -27,9 +27,9 @@ splitting 20261126, isolated events 20261127)
 - (ii) split data, model without it;
 - (iii) split data, splitting shared with the isolated events (the model above);
 - (iv) split data, splitting free per event (descriptive, as X1);
-- (vi) descriptive, hypothesis 2: arms (i) and M6-SPLIT's window-only constraint with MATCHED pulses (the kernel's
+- (v) descriptive, hypothesis 2: arms (i) and M6-SPLIT's window-only constraint with MATCHED pulses (the kernel's
   Ricker, no stretch or phase), the rest as above.
-Scenes: M6-CAL settings (8-station ring, homogeneous medium, mismatched pulses except in (vi), SNR 12, kmax 4,
+Scenes: M6-CAL settings (8-station ring, homogeneous medium, mismatched pulses except in (v), SNR 12, kmax 4,
 near_km 10, LOC+T-V). 200 single-source controls; near pairs (1.5-5 km), dtau 0.1, 0.25, 0.5, 1.0 s, 40 per cell.
 
 ## Criteria (unchanged from M6-SPLIT and the supervision note of 20 November, section 3)
@@ -43,7 +43,7 @@ If all three pass, G-M6a runs with (iii) after ADR-0012.
 - (iii) splits fewer control scenes than M6-SPLIT's window-only constraint (24 of 200), because the isolated events
   fix phi_i and delta_i.
 - From the formulation's table, the remaining recall loss in (iii) concentrates below 0.1-0.25 s.
-- If (vi) closes most of the gap between (i) and the window-only constraint, hypothesis 2 holds and pulse mismatch,
+- If (v) closes most of the gap between (i) and the window-only constraint, hypothesis 2 holds and pulse mismatch,
   not splitting, is the larger cost.
 
 ## Cost
