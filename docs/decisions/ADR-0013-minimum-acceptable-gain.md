@@ -1,6 +1,6 @@
 # ADR-0013: Minimum acceptable gain in T (more than 2 points), next to the 5-point target of ADR-0011
 
-Date: 20 November 2026. Status: proposed, waiting for the owner's approval. Written before any P1 number exists.
+Date: 20 November 2026. Status: accepted by the owner (see "Approval"). Written before any P1 number exists.
 Number taken from the ledger of the master plan (§11; ADR-0012 is reserved for the FE-FIX front-end change).
 
 ## Context
@@ -45,12 +45,21 @@ Sosa Aguirre) and reported his view in the project chat on 20 November 2026, 12:
    cent discordant pairs, a standard error near 0.037, block inflation excluded. With those assumptions, a method
    whose true gain is 0.05 lands above 0.02 about 79 per cent of the time, and one at 0.02 about half of the time.
    Separating 0.02 from 0 on the tuning partition is not possible at n_T = 223. That is why the confirmatory test of
-   ADR-0008 is where the claim is decided.
+   ADR-0008 is where the claim is decided. Under the same assumptions the interval excludes zero only for Δ_T above
+   about 0.073 (1.96 × 0.037), so the zone "below the minimum, real effect" is practically unreachable in P1: any
+   Δ_T ≤ 0.02 will in practice read as "clear failure". The owner decides in both zones, so nothing changes in
+   practice, but the zone is kept for the confirmatory data, where n is larger.
+6. **Change of governance, declared.** In ADR-0011 item 4, a gain below the target always went to an owner decision.
+   Here a gain between 0.02 and 0.05 continues without one, following the director's words ("si no se llega a 5 no
+   hay problema, pero eso sí, por lo menos más de 2"). The owner saw this on the approval card.
 
 ## Approval
 
-Pending. The owner relayed the director's words (quoted above). The thresholds and zones of item 2 were written by the
-planning thread from those words and from ADR-0011. The owner approves or changes them before any P1 run.
+The owner relayed the director's words (quoted above). The thresholds and zones of item 2 were written by the planning
+thread from those words and from ADR-0011. Reading "more than 2" on the point estimate is an interpretation of the
+planning thread, since the director did not specify it. On 20 November 2026, 12:41 (Bogotá), the owner chose "Aprobar
+como está" on a decision card in the project thread. The card stated that between 2 and 5 the line continues without
+his decision and that below 2 he decides. The alternative it offered was to require the whole interval above 2.
 
 ## Consequences
 
