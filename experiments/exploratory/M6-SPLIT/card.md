@@ -71,7 +71,8 @@ Reading by the declared rule:
   (0.05 to 0.15) and "costs too much" (more than 0.15). By the card's words 0.150 is not "more than 0.15", so the
   zone is "useful". The script printed "COSTS TOO MUCH" because it compared floating-point means
   (0.89375 - 0.74375 > 0.15 in binary); this is a defect of the script's printout, not a change of the rule, and
-  the zone read here is the one of the card.
+  the zone read here is the one of the card. After the run the script compares counts exactly (`run.py`, decision line); `run_out.txt` is
+  left as produced. The point does not change the outcome: validity already fails.
 - **Route B:** AUC 0.885 < 0.90, fails.
 
 What is measured, outside the rule:

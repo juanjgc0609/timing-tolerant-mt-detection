@@ -130,9 +130,10 @@ def main():
             g_sp = [x[1] for x in ctrl if x[1] is not None]
             g_t = [g for d in R.DTAUS for o in pairs[d] for g in o[1]]
             rec = {d: float(np.mean([o[0] for o in pairs[d]])) for d in R.DTAUS}
-            pooled = float(np.mean([o[0] for d in R.DTAUS for o in pairs[d]]))
+            hits = int(sum(o[0] for d in R.DTAUS for o in pairs[d]))
+            pooled = hits / (len(R.DTAUS) * NPAIR)
             lo, hi = R.cp(k, NCTRL)
-            res[arm] = dict(k=k, rec=rec, pooled=pooled, auc=auc(g_t, g_sp))
+            res[arm] = dict(k=k, rec=rec, pooled=pooled, hits=hits, auc=auc(g_t, g_sp))
             print(f"arm {arm:3s}: control scenes split at thr {THR_REF}: {k}/{NCTRL} [{lo:.3f}, {hi:.3f}]; "
                   f"near-pair recall " + ", ".join(f"{d:.2f}s {v:.3f}" for d, v in rec.items())
                   + f", pooled {pooled:.3f}; AUC {res[arm]['auc']:.3f} (true gains n {len(g_t)}, median "
@@ -140,8 +141,10 @@ def main():
                   f"{np.median(g_sp) if g_sp else np.nan:.1f}, max {max(g_sp) if g_sp else np.nan:.1f}); "
                   f"{time.time() - t0:.0f} s", flush=True)
     r3, r1 = res["iii"], res["i"]
-    gap = r1["pooled"] - r3["pooled"]
-    zone = "PASS" if gap < 0.05 else ("USEFUL, owner decides" if gap <= 0.15 else "COSTS TOO MUCH")
+    npair = len(R.DTAUS) * NPAIR
+    dh = r1["hits"] - r3["hits"]                  # exact zone boundaries on counts (no floating-point comparison)
+    gap = dh / npair
+    zone = "PASS" if 100 * dh < 5 * npair else ("USEFUL, owner decides" if 100 * dh <= 15 * npair else "COSTS TOO MUCH")
     print(f"\nDECISION (card.md): validity, arm iii {r3['k']} of {NCTRL} split (limit 12 of 200): "
           f"{'ok' if r3['k'] <= 12 and NCTRL == 200 else 'FAILS' if r3['k'] > 12 else 'n != 200'}; "
           f"recall gap i - iii {gap:+.3f}: {zone}; AUC iii {r3['auc']:.3f}: {'ok' if r3['auc'] >= 0.90 else 'FAILS'}")
