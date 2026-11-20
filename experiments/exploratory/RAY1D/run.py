@@ -101,7 +101,7 @@ def check_stage(a):
                     cases += [("fake_sd_weighted", sdf, True), ("fake_sd_unweighted", sdf, False)]
                 for name, sd, wq in cases:
                     R = R0 / sd[:, None, None]
-                    v = n1.read_at_best(R, (t0 + tt).T, 0.0).reshape(-1)
+                    v = n1.read_at_best(R, t0 + tt, 0.0).reshape(-1)
                     w = _weights(sd) if wq else np.ones(6 * ns)
                     y = v @ basis(w[:, None] * G)
                     res[f"{tag}|{name}"].append(float(y @ y) / max(float(v @ v), 1e-300))
