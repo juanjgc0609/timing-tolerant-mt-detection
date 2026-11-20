@@ -15,6 +15,10 @@ Dated record of changes to the project's process, code and documents. Results ar
   (primary) the defect does not explain the failure (AUC +0.011 [+0.001, +0.025]); for the registered capped score
   it explains part of it (+0.079 [+0.027, +0.136], from below chance to about chance); after the fix neither score
   separates real events. Thesis draft note updated; the "[whitening review]" markers stay.
+- M6-SPURIOUS (calendar M-2, card and amendment 1 declared before reading): cause of the ~5 % positive spurious pair
+  gains of M6-CAL. Positive scenes of 600: one source 28 mismatched / 0 exact; with neighbours 26 / 11 (McNemar p
+  8.3e-3). Reading of the rule: no clear cause; the tail is a declared limit of M6 in simulation. Descriptive: with
+  one source the tail is entirely pulse mismatch; with neighbours a part remains with exact pulses.
 - `docs/GLOSSARY.md` (rule 27): one definition per term; three SNR meanings in use named apart (SNR_blk, SNR_net,
   SNR_med); the two scoring modules (`ttmt.stats`, `ttmt.scoring`) described with an open item.
 - `docs/DATA_USE_LEDGER.md` (rule 28, calendar T-4): every read of a held-out or evaluation set so far, and the
