@@ -3,6 +3,13 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-20
+
+- ADR-0013 (accepted by the owner on 20 November, 12:41 Bogotá): minimum acceptable gain in T of more than 2 points (Δ_T > 0.02,
+  point estimate), from the thesis director as relayed by the owner on 20 November. The 5-point target of ADR-0011
+  stays. The ADR-0011 zone below the target is split at 0.02, and between 0.02 and 0.05 the line continues without an
+  owner decision. Validity thresholds and ADR-0008 are unchanged. Nothing has been run.
+
 ## 2026-11-17
 
 - EQNet2 stage 1 on the tuning partition: `experiments/exploratory/COMPARATORS/eqnet2_stage1.py scores` writes the
