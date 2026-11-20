@@ -147,6 +147,7 @@ def measure_stage(a):
     from ttmt.synth import realdata as RD
     from ttmt.synth import sets
     from ttmt.synth.realdata import first_arrival
+    from ttmt.ray_operator import clipped
     n1 = _n1()
     out = []
     for sid in a.sets:
@@ -181,7 +182,8 @@ def measure_stage(a):
                 v = n1.read_at_best(R, truth.arr_t_obs[e], truth.t0).reshape(-1)
                 vv, gg = max(float(v @ v), 1e-300), max(float(gw @ gw), 1e-300)
                 row = {"set_id": sid, "label": lab, "event": int(e), "snr_med": float(snr_med[e]),
-                       "pair": int(truth.pair[e]), "f_emp": float((v @ gw) ** 2 / (vv * gg))}
+                       "pair": int(truth.pair[e]), "f_emp": float((v @ gw) ** 2 / (vv * gg)),
+                       "clipped": clipped(x, model, STA), "rays": 2 * len(STA)}
                 o_t = np.array([(truth.t[e] - truth.t0) * 16.0])
                 for k, (_Gw, Qw) in _ops(x, STA, model, sd).items():
                     for cap, tag in ((True, "m"), (False, "m_nocap")):
@@ -226,6 +228,8 @@ def measure_stage(a):
                     "median_straight": float(np.median([x[f"{k}|straight"] for x in r])),
                     "median_ray_fs": float(np.median([x[f"{k}|ray_fs"] for x in r]))}
         s["f_emp"] = float(np.median([x["f_emp"] for x in r]))
+        s["clipped"] = [int(sum(x["clipped"] for x in r)), int(sum(x["rays"] for x in r)),
+                        int(sum(x["clipped"] > 0 for x in r))]
         summary[sid] = s
         print(f"{sid}: n {s['n']} targets in {s['realisations']} realisations")
         for k in ("m", "m_nocap"):
@@ -237,9 +241,10 @@ def measure_stage(a):
             q = s[k]
             print(f"  {k} median: ray {q['median_ray']:.3f} vs straight {q['median_straight']:.3f} (ray+free surface "
                   f"{q['median_ray_fs']:.3f}); difference {q['delta']:+.3f} [95 % {q['ci95'][0]:+.3f}, {q['ci95'][1]:+.3f}]")
-        print(f"  f_emp median {s['f_emp']:.3f} (does not depend on G; anchor)")
+        print(f"  f_emp median {s['f_emp']:.3f} (does not depend on G; descriptive anchor)")
+        print(f"  rays with p*v > 1 (sine clipped): {s['clipped'][0]} of {s['clipped'][1]}, in {s['clipped'][2]} targets")
     print("zones (card; read by the supervisor): m gain >= +20 % in both sets / between, or only one set / <= 0 in both;"
-          " polarisation: f rises >= 0.20 supported, < 0.05 not")
+          " polarisation (f_g, median difference ray - straight): >= 0.20 supported, < 0.05 not")
     json.dump({"rows": out, "summary": summary}, open(a.out, "w"), indent=1)
 
 

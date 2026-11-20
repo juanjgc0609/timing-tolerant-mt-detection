@@ -84,6 +84,19 @@ def ray_directions(src, STA, model):
     return out
 
 
+def clipped(src, model, STA):
+    """number of (phase, station) rays with p*v > 1 at the source or at the surface (sine clipped to 1)."""
+    from ttmt.synth.media import first_arrival
+    src = np.asarray(src, float); STA = np.asarray(STA, float)
+    zs = max(float(src[2]), 0.5)
+    X = np.hypot(STA[:, 0] - src[0], STA[:, 1] - src[1])
+    k = 0
+    for ph in ("P", "S"):
+        p = np.asarray(first_arrival(model, zs, X, ph)[1], float)
+        k += int(np.sum((p * layer_velocity(model, zs, ph) > 1.0) | (p * layer_velocity(model, 0.0, ph) > 1.0)))
+    return k
+
+
 def ray_operator(src, STA, model, free_surface=False):
     """G_ray (2 ns 3, 6) of a source at src (km, z down) for stations STA (ns, 3), in the 1-D model."""
     src = np.asarray(src, float); STA = np.asarray(STA, float)

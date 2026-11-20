@@ -63,8 +63,17 @@ del evento original, así que ningún G sintético la representará del todo.
    etapa calcula dos medidas que sí dependen de G, por conjunto, como diferencia de medianas G_ray − recto, con
    intervalo por realización:
    - f_g = ‖Q_wᵀ g_w‖²/‖g_w‖², la fracción de la onda empírica inyectada que cae en el subespacio. Sin ruido ni
-     lectura, es la prueba directa de la polarización. **Propuesta como medida de la regla 0.2 / 0.05.**
+     lectura, es la prueba directa de la polarización. **Medida de la regla 0.2 / 0.05 (confirmado por el supervisor; ver la corrección al final).**
    - f_an = ‖Q_wᵀ v‖²/‖v‖², el vector leído en el subespacio (descriptiva).
 6. **Bootstrap.** Por realización (etiqueta), 10 000 remuestreos, semilla 20261125, una sola secuencia para los dos
    conjuntos en el orden de `--sets`. La ganancia es la mediana de m con G_ray / la mediana con G recto − 1.
 7. **Veredicto.** El script imprime los números y las zonas de la ficha; la zona la lee el supervisor.
+
+## Corrección del supervisor (20 de noviembre de 2026, antes de ver ningún valor de G_ray en datos)
+
+Registrada también al final de `supervision/tras-reunion-director-2026-11-20.md`.
+1. La regla 0.2 / 0.05 se aplica a f_g = ‖Q_wᵀ g_w‖²/‖g_w‖², leída como diferencia de medianas G_ray − recto, por
+   conjunto. f_emp queda como ancla descriptiva y f_an como descriptiva. (f_emp no depende de G: error del diseño.)
+2. Se acepta `pred_model` para el p de Hi-net. Se cuentan e informan por conjunto los rayos con p·v > 1 (seno
+   recortado a 1), en la fuente o en la superficie.
+Las zonas sobre m quedan como estaban escritas.
