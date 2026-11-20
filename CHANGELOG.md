@@ -3,6 +3,21 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-20
+
+- WHITEN-REVIEW (`experiments/exploratory/WHITEN-REVIEW`, card declared before running, commit 1c9f0ef): code audit
+  of every result the whitening mismatch of PR #68 could touch. Affected: R0, R1, C18 b-j, G-M5b Ridgecrest. Not
+  affected: C18a and G-M1a (per-station readings, no subspace), the M6 simulations (equal noise sd), Task 2M.
+  M5 `--local`: mismatch ratio 1.09-1.12 on i.i.d. noise, above the 1.10 written before running (near miss; f loss
+  < 0.005). C18b re-run on the Ridgecrest calibration segment with Q from diag(1/scale) G (data fetched from GitHub at
+  the data card's commit, checksums match): frozen REG and NOCAP reproduced exactly; uncapped AUC +0.011 [+0.001,
+  +0.025], so the defect does not explain the R0 failure; capped AUC +0.079 [+0.027, +0.136], from below chance to
+  about chance. Thesis draft note updated; the "[whitening review]" markers stay.
+- `docs/GLOSSARY.md` (rule 27): one definition per term; three SNR meanings in use named apart (SNR_blk, SNR_net,
+  SNR_med); the two scoring modules (`ttmt.stats`, `ttmt.scoring`) described with an open item.
+- `docs/DATA_USE_LEDGER.md` (rule 28, calendar T-4): every read of a held-out or evaluation set so far, and the
+  attempts per line of work as the cards state them.
+
 ## 2026-11-17
 
 - EQNet2 stage 1 on the tuning partition: `experiments/exploratory/COMPARATORS/eqnet2_stage1.py scores` writes the
