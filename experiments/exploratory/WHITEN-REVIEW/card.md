@@ -92,16 +92,17 @@ scale max/min 4.48): noise-free f 1.0000 (min) in the weighted basis, 0.818 (med
 All pass.
 
 **M5 `--local` check: does NOT pass as written.** Median max/min per-station level on i.i.d. t4 windows: 1.085 (4
-stations), 1.106 (6), 1.120 (8), against the threshold 1.10 that I fixed before running. The threshold was too tight:
-sampling error alone reaches it. Descriptive, added after seeing the ratios: at those levels the noise-free f in the
-unweighted basis is 0.9992 (median; min 0.9950, N8 geometry, 500 draws). Verdict by the rule: listed as affected.
-Reading: the loss of f is below 0.005, against 0.18-0.33 on real noise; near miss, the owner decides; recommendation:
-no re-run (the step was a level test on a null, and the M5 negative rests on the coherent product path).
+stations, passes), 1.106 (6), 1.120 (8), against the threshold 1.10 fixed before running. The M5 networks have at
+least 8 stations (`M5-EVALUE/card.md`, station rule of `t2m_stations.py`), so 1.120 applies. **By the rule: affected,
+listed for a re-run.** Post hoc, produced after seeing the ratios: the threshold was too tight (sampling error alone
+reaches it), and at those levels the noise-free f in the unweighted basis is 0.9992 (median; min 0.9950, N8 geometry,
+500 draws), a loss below 0.005 against 0.18-0.33 on real noise. On that post-hoc argument I recommend not re-running
+(the step was a level test on a null, and the M5 negative rests on the coherent product path); the owner decides.
 
 **C18b with Q_w (primary reading, NOCAP-W − NOCAP):** +0.013, +0.014, +0.013, +0.006 on N4, N6, N8, U8; pooled
-**+0.011, 95 % [+0.001, +0.025]** (16 events, 222 null windows, 10 000 resamples, seed 20261126). Zone: **the defect
-does not explain the R0 failure** on real data at the true hypocentres. Fraction above the null q99 unchanged except
-U8 (0.062 to 0.125, one event).
+**+0.011, 95 % [+0.001, +0.025]** (16 events, 222 null windows, 10 000 resamples, seed 20261126). Zone: **for the uncapped score the
+defect does not explain the R0 failure** on real data at the true hypocentres. Under NOCAP the fraction above the null q99 is
+unchanged except U8 (0.062 to 0.125, one event); under REG, N6 and U8 drop from 0.062 to 0.
 
 **Descriptive (REG-W − REG, the registered capped score):** +0.052, +0.101, +0.102, +0.062; pooled +0.079, 95 %
 [+0.027, +0.136]. The registered statistic goes from below chance (0.39-0.49) to about chance (0.46-0.60); no event
@@ -109,9 +110,10 @@ gets above the null q99 on any subnet. So the defect pushed the capped score bel
 still leaves it without separating power after the fix.
 
 **What this changes.**
-1. R0, R1, C18 b-j and G-M5b Ridgecrest stay as recorded and stay marked "[whitening review]" with this note: on the
-   R0 calibration data the fix raises the registered score's AUC by 0.08 (to about 0.5) and the uncapped score's by
-   0.01; it does not change the conclusion that the capped pick-free statistic does not separate real events here.
+1. Reading of the rule: for the uncapped score (primary) the defect does not explain the R0 failure (+0.011); for
+   the registered capped score it explains part of it (+0.079, the "explains part" zone of the same rule, reported as
+   descriptive as declared), from below chance to about chance; after the fix neither score separates real events.
+   R0, R1, C18 b-j and G-M5b Ridgecrest stay as recorded and stay marked "[whitening review]" with this note.
 2. C18a (timing) and G-M1a are not affected: their markers can be lifted for those statements.
 3. When ADR-0012 merges, `run.py` is re-run with its option in place of `weighted_Q` and must reproduce
    `out_analyse.txt` exactly (pending, this thread).

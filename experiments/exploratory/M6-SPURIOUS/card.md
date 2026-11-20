@@ -38,3 +38,19 @@ Descriptive: distribution of positive gains per arm; the gain against the atom-t
 ## Limits
 Homogeneous medium, Ricker family, Gaussian noise, ring geometry of M6-JOINT. A named cause is a cause in this
 simulator; G-M6a on real noise is where it has to hold.
+
+## Amendment 1 (20 November 2026, after review of 079b3d2, before any output of the full run was read)
+The full run was started at 079b3d2 (smoke run of 4 scenes per kind read; nothing chosen from it). The review found
+the reading ambiguous; it is replaced, before reading, by this one, applied by `analyse.py` to `rows.json`:
+- **Nearest source** of the spurious atom: the true source with the smallest normalised cost max(d / 5 km, |dt| /
+  1.5 s); ties go to the lower index (target, neighbour, isolated).
+- **Order of reading** (the first that holds is named):
+  1. **H3** (mismatch x neighbour): with neighbours p_exact <= 0.2 x p_mis (McNemar p < 0.01), and p_mis(C1) <=
+     0.2 x p_mis(C3) (Fisher exact, one-sided, p < 0.01).
+  2. **H1** (pulse mismatch): with neighbours p_exact <= 0.2 x p_mis (McNemar p < 0.01), and p_mis(C1) is not small
+     (the H3 condition on C1 fails).
+  3. **H2** (neighbour): mismatched, p(C1) <= 0.2 x p(C3) with Fisher p < 0.01, exact pulses do not remove the tail,
+     and at least 60 % of the positive-gain spurious atoms with neighbours are nearest to the neighbour.
+  4. Otherwise no clear cause.
+- Expected size: about 5 % of 600 scenes with neighbours, so about 30 positive scenes in the mismatched arm; the
+  60 % share and the ratios are read on that small n and reported with Clopper-Pearson intervals.

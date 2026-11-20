@@ -8,11 +8,13 @@ Dated record of changes to the project's process, code and documents. Results ar
 - WHITEN-REVIEW (`experiments/exploratory/WHITEN-REVIEW`, card declared before running, commit 1c9f0ef): code audit
   of every result the whitening mismatch of PR #68 could touch. Affected: R0, R1, C18 b-j, G-M5b Ridgecrest. Not
   affected: C18a and G-M1a (per-station readings, no subspace), the M6 simulations (equal noise sd), Task 2M.
-  M5 `--local`: mismatch ratio 1.09-1.12 on i.i.d. noise, above the 1.10 written before running (near miss; f loss
-  < 0.005). C18b re-run on the Ridgecrest calibration segment with Q from diag(1/scale) G (data fetched from GitHub at
-  the data card's commit, checksums match): frozen REG and NOCAP reproduced exactly; uncapped AUC +0.011 [+0.001,
-  +0.025], so the defect does not explain the R0 failure; capped AUC +0.079 [+0.027, +0.136], from below chance to
-  about chance. Thesis draft note updated; the "[whitening review]" markers stay.
+  M5 `--local`: median per-station level ratio on i.i.d. noise 1.085 / 1.106 / 1.120 for 4 / 6 / 8 stations; the
+  M5 networks have at least 8 stations, so by the rule written before running (> 1.10) it is affected and listed for a
+  re-run. Post hoc: f loss < 0.005; the owner decides whether to re-run. C18b re-run on the Ridgecrest calibration segment with Q from diag(1/scale) G (data fetched from GitHub at
+  the data card's commit, checksums match): frozen REG and NOCAP reproduced exactly; for the uncapped score
+  (primary) the defect does not explain the failure (AUC +0.011 [+0.001, +0.025]); for the registered capped score
+  it explains part of it (+0.079 [+0.027, +0.136], from below chance to about chance); after the fix neither score
+  separates real events. Thesis draft note updated; the "[whitening review]" markers stay.
 - `docs/GLOSSARY.md` (rule 27): one definition per term; three SNR meanings in use named apart (SNR_blk, SNR_net,
   SNR_med); the two scoring modules (`ttmt.stats`, `ttmt.scoring`) described with an open item.
 - `docs/DATA_USE_LEDGER.md` (rule 28, calendar T-4): every read of a held-out or evaluation set so far, and the

@@ -47,4 +47,4 @@ Counts as the cards state them. "Not stated" means the card does not give a coun
 | N1-STACK | 2 runs (uncapped, then the v2 statistic after a decision taken after seeing data) | negative (instrument not valid for N-1) | learning log 16 Nov; PR #63 |
 | N2-REPICK | 1 | low zone, parked | PR #60 |
 | FE-FIX | step 1, step 2, step 3 (bands: not stated here, see `fe-fix/card.md`) | weights fix only; band unchanged | PR #68 |
-| WHITEN-REVIEW | 1 (2 arms x 2 statistics, declared) | defect does not explain the R0 failure | this PR |
+| WHITEN-REVIEW | 1 (2 arms x 2 statistics, declared) | uncapped: defect does not explain the R0 failure (+0.011); registered capped: explains part (+0.079, to about chance); neither separates after the fix | this PR |
