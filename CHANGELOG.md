@@ -3,6 +3,13 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-20
+
+- ADR-0012 (owner's decision of 18 November, "Arreglar pesos y correr el piloto"): operator weighted like the data,
+  Q of diag(1/sd) G. `ttmt.radiation.node_operators(..., weights)`, `station_weights`; `ttmt.r1.Net(..., weighted_q)`
+  and `ttmt.r1 p1 --weighted-q`. Off by default: the registered R1 path is unchanged. Band unchanged. Tests in
+  `tests/test_adr0012.py`. Error E66.
+
 ## 2026-11-17
 
 - EQNet2 stage 1 on the tuning partition: `experiments/exploratory/COMPARATORS/eqnet2_stage1.py scores` writes the
