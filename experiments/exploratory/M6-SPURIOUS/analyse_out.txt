@@ -1,0 +1,10 @@
+C1 mismatched: 28/600 = 0.047 [0.031, 0.067]
+C1 exact: 0/600 = 0.000 [0.000, 0.006]
+C3 mismatched: 26/600 = 0.043 [0.028, 0.063]
+C3 exact: 11/600 = 0.018 [0.009, 0.033]
+C3 paired McNemar: only mismatched 25, only exact 10, p 8.34e-03
+Fisher C1 vs C3 (mismatched, one-sided): p 6.62e-01
+positive C3 mismatched, nearest target / neighbour / isolated: [8, 11, 7] (neighbour share 0.42 [0.23, 0.63])
+reading (amendment 1): no clear cause
+C3 mismatched gains: q95 -8.3, max 385.6, n 552
+C3 exact gains: q95 -30.7, max 592.5, n 516

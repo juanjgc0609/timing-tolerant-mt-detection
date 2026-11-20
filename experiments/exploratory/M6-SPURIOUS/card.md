@@ -64,3 +64,27 @@ the reading ambiguous; it is replaced, before reading, by this one, applied by `
 2. The line "reading (card): ..." that `run.py` prints in `run_out.txt` applies the superseded, non-exclusive rule
    of 079b3d2. **The valid reading is `analyse_out.txt`** (amendment 1, `analyse.py`); the `run_out.txt` line is
    kept for the record and is not the result.
+
+## Result (20 November 2026, cloud, 1126 s on 4 cores; `analyse_out.txt` is the valid reading)
+
+| arm | scenes with a positive spurious gain (of 600) | 95 % CI |
+|:--|--:|:--|
+| one source (C1), mismatched pulses | 28 (0.047) | [0.031, 0.067] |
+| one source (C1), exact pulses | 0 | [0, 0.006] |
+| with neighbours (C3), mismatched | 26 (0.043) | [0.028, 0.063] |
+| with neighbours (C3), exact | 11 (0.018) | [0.009, 0.033] |
+
+C3 paired: 25 scenes positive only when mismatched, 10 only when exact, McNemar p 8.3e-3. Fisher C1 against C3
+(mismatched): p 0.66. Nearest source of the positive C3 atoms: target 8, neighbour 11, isolated 7 (neighbour share
+0.42 [0.23, 0.63]). Largest gains: C3 mismatched 386, C3 exact 593.
+
+**Reading of amendment 1: no clear cause.** Exact pulses remove 58 % of the tail with neighbours, short of the 80 %
+the rule asks (11 > 0.2 x 26); C1 is not smaller than C3; the neighbour share is below 60 %. Per calendar M-2 the
+tail is declared a limit of M6 in simulation.
+
+Descriptive, after seeing the table (not a named cause): the tail has two parts. (a) With one source it is
+entirely pulse mismatch: 28 of 600 positive when mismatched, 0 of 600 exact (paired, every positive scene is a
+mismatched-only one). (b) With neighbours a part remains with exact pulses (11 of 600, up to 593), which one-source
+scenes never show; its nearest source is spread over target, neighbour and isolated source. A test of (b) needs its
+own card (for example, the same scenes with the neighbour moved beyond 1.5 s), and of (a) a pulse family in the
+kernel or in the one-event fit. Neither is run here.
