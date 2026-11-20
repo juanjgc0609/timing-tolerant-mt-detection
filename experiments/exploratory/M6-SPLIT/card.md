@@ -80,8 +80,10 @@ What is measured, outside the rule:
   recall from 0.894 to 0.613, AUC from 0.946 to 0.740.
 - The constraint recovers part of it on every number (39 -> 24 splits, 0.613 -> 0.744 recall, 0.740 -> 0.885 AUC),
   but not to the level of data without splitting.
-- Free splitting per event (iv) recovers the same recall as (iii) but no false splits (41), which supports the
-  station constraint over free splitting, as X1 predicted.
+- Free splitting per event (iv) recovers the same recall as (iii) but with 41 false splits against 24, which
+  supports the station constraint over free splitting, as X1 predicted.
+- The declared hypothesis is not supported: (iii) does not come back near (i) (24 against 3 split scenes, 0.150 of
+  recall lost), and (iv) does not lose recall against (iii).
 - Hypotheses, not tested: (1) delta <= 0.2 s is below the resolution of the 2 Hz pulse (period 0.5 s), so phi_i and
   delta_i are poorly determined from one window of one or two events (the sanity check of two scenes showed delay
   errors up to 0.13 s); estimating them from many isolated events per station (the "calibrated per station" of the
