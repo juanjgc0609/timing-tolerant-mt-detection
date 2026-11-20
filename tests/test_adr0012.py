@@ -60,3 +60,35 @@ def test_bad_weights_rejected(w):
     STA, XN, _sd = _setup()
     with pytest.raises(ValueError):
         node_operators(XN, STA, w)
+
+
+def _fake_net(monkeypatch):
+    """r1.Net with every data access replaced: records the weights it passes to node_operators."""
+    import types
+    from ttmt import r1
+    scale = np.array([1.0, 2.0, 4.0])
+    R = types.SimpleNamespace(subnets={"H7": ["a", "b", "c"]}, frame=lambda: None, catalogue_local=lambda c: [],
+                              stations=lambda n, c: (np.zeros((3, 3)), None), segment=lambda s: (0.0, 1.0),
+                              partition=None, load_waveforms=lambda n, s, t: (None, np.ones((3, 3, 8))),
+                              station_scale=lambda d: scale, cal=(0.0, 1.0), m_terms=1.0, depths=None, vp=6.0, vs=3.5)
+    seen = []
+    monkeypatch.setattr(r1, "R", R)
+    monkeypatch.setattr(r1, "legacy_t_end", lambda p, s: 1.0)
+    monkeypatch.setattr(r1, "estimate_peak_terms", lambda *a: None)
+    monkeypatch.setattr(r1, "coarse_grid", lambda d: np.zeros((1, 3)))
+    monkeypatch.setattr(r1, "node_operators", lambda XN, STA, w=None: (seen.append(w), (None, None))[1])
+    return r1, scale, seen
+
+
+def test_net_passes_inverse_scale_only_when_weighted(monkeypatch):
+    r1, scale, seen = _fake_net(monkeypatch)
+    assert r1.Net("cal").weighted_q is False and seen[-1] is None
+    assert r1.Net("cal", weighted_q=True).weighted_q is True
+    assert np.array_equal(seen[-1], 1.0 / scale)
+
+
+def test_hybrid_refuses_a_mixed_weighting():
+    from ttmt import r1
+    for p1d, wq in (({"weighted_q": True}, False), ({}, True)):
+        with pytest.raises(ValueError, match="refusing the mix"):
+            r1.run_hybrid("cal", {}, p1d, weighted_q=wq)
