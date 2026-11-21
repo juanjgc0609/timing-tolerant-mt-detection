@@ -1,0 +1,10 @@
+M6-SPURIOUS seed 20261127, 600 scenes per kind, SNR_blk 12, kmax 4, near_km 10.0, thr -inf
+C1 mismatched: 600 scenes with a spurious near atom; positive gain 28/600 = 0.047; gain median -106.4 q90 -32.8 q95 -2.8 max 179.8
+C1 exact     : 600 scenes with a spurious near atom; positive gain 0/600 = 0.000; gain median -110.1 q90 -61.2 q95 -51.7 max -21.9
+C3 mismatched: 552 scenes with a spurious near atom; positive gain 26/600 = 0.043; gain median -173.0 q90 -50.8 q95 -8.3 max 385.6
+C3 exact     : 516 scenes with a spurious near atom; positive gain 11/600 = 0.018; gain median -120.1 q90 -51.6 q95 -30.7 max 592.5
+C1 paired: positive only mismatched 28, only exact 0, exact McNemar p 3.73e-09
+C3 paired: positive only mismatched 25, only exact 10, exact McNemar p 8.34e-03
+C3 mismatched, positive scenes: nearest source target / neighbour / isolated = 0.31 / 0.42 / 0.27 (n 26)
+reading (card): H1 False, H2 False, H3 False -> no clear cause
+wall 1126 s

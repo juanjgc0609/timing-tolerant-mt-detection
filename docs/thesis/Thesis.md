@@ -12,6 +12,11 @@ each station by its own noise deviation (`code/r0/r0_run.py:50-51` with `code/r0
 `code/r1/r1_lib.py:151`) but projects on a moment-tensor subspace built without those weights; the defect was found
 in PR #68 in the later port `src/ttmt/r1.py:60-61`. Passages marked **[whitening review]** contain such figures. They
 stand as recorded and are not deleted; each is pending review until it is repeated with the fix or declared affected.
+Review of 20 November 2026 (`experiments/exploratory/WHITEN-REVIEW`): on the R0 calibration segment, at the true
+hypocentres, the defect explains part of the failure of the registered capped score (AUC +0.08, 95 % interval [0.03,
+0.14], from 0.39-0.49 to 0.46-0.60, about chance) and does not explain that of the uncapped score (+0.01, [0.001,
+0.025]); after the fix neither score separates real events there. The timing statements of §6.5 (exploration C18a) and gate
+G-M1a never use the subspace and are not affected.
 Task 2M was checked and is not affected: its noise is levelled per channel when the files are prepared
 (`code/t2m_data.py:32-33`), the synthetic events are added without any division by station, and the matched filter is
 divided by one deviation for the whole window (`code/t2m_lib.py:328`), so data and subspace stay consistent. The same

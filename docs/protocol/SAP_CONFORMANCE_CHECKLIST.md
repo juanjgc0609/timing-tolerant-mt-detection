@@ -50,3 +50,6 @@ session (CR-19).
 22. Futility look (R2 only) taken at the registered point, if at all, and reported as non-binding.
 23. Every registered number in the result entry is traced to a file and line of the frozen analysis output.
 24. Number re-derived by a person (R2: ten discordant targets chosen by the seed): which, and the result.
+25. (SAP v0.3, 7.2) R2: lag-1 autocorrelation of d_j reported; if above 0.2, the primary analysis used 2-hour blocks and the 1-hour analysis is a sensitivity analysis.
+26. (SAP v0.3, 7.6) Hours of evaluated record stated; with fewer than 37 hours the deployable hypothesis was not tested.
+27. (SAP v0.3, 2) The ADR-0013 zone of the point estimate is reported next to H1; "sufficient" or "ambition met" is not written as confirmed unless H1 is rejected.
