@@ -393,7 +393,12 @@ the two events differ in direction at some arrival, and quadratically when they 
 a pair at the detection threshold of Task 2M (SNR 12.4 per event) this gives a minimum resolvable separation of about
 0.03 s in origin time with different mechanisms, 0.1 s with the same one, and 0.5 km in plan: well below the 0.25 s
 tolerance and the 5 km hit radius, so model error and the algorithm, not the information in the data, limit the
-detector in the regimes tested.
+detector in the regimes tested. Because every P polarisation lies along the ray, the linear term comes from the S
+arrivals alone (Proposition AB.A.9). Shear-wave splitting with a free fast axis at each station removes it, so the
+margin of a pair grows only quadratically. At 0.1 s this is 0.37 of the margin without splitting (Proposition
+AB.A.10). On the estimation side, the Cramér-Rao standard deviation of the separation reaches the separation itself
+near 0.06 s, and the split of moment between the two events is the worst-determined quantity (numerical result
+AB.A.8).
 
 *Greedy recovery with timing error (AB.B).* This part is mainly a negative result. A computable certificate that the
 deployed greedy step selects a true event, despite statics and overlap, is never contradicted in simulation but never
@@ -406,8 +411,10 @@ autocorrelation at 0.216 s. The deflation on the sample grid leaves a fixed frac
 
 *The robust statistic (AB.C).* Besides the correction of Proposition 4(b), a threshold computed from the norms of the
 readings at each hypothesis is valid conditionally on those norms whatever their law (heavy tails, non-stationarity,
-transients) as long as the directions of the noise readings are isotropic; in simulation it had no false alarm where
-every fixed threshold calibrated on Gaussian noise failed. Any score whose change under the replacement of one block is
+transients) as long as the directions of the noise readings are isotropic, the blocks are independent and the
+reading rule does not look at the directions. In simulation it had no false alarm where every fixed threshold
+calibrated on Gaussian noise failed. A reading chosen to maximise the projection breaks it: with 16 candidates per
+block, the rate was 0.27 at a nominal 0.01. Any score whose change under the replacement of one block is
 bounded uniformly is itself bounded, so it saturates: bounded influence and amplitude ordering are compatible only if
 the bound is relative to the background. A cap at a multiple of the median block norm (ACAP) is the simplest radial
 score of that kind; it is scale-equivariant, bounds the influence of up to six of fourteen blocks, and leaves the
@@ -425,10 +432,13 @@ to a multi-station subspace score.
 
 *Components of a new model (AB.D).* Results for the doctoral line (ADR-0006), not used by this thesis: a block
 contamination likelihood does not saturate only if its background has polynomial tails, its mixture over the moment
-tensor is an e-value with a universal threshold, as any likelihood ratio against an exact null with a mixture
-alternative is [Vovk and Wang 2021; Ramdas et al. 2023], time slides calibrate exactly the global null of no coherent
-source but not the false detections caused by real events, as in gravitational-wave background estimation [Was et al.
-2010; Capano et al. 2016], and no coherence certificate can guarantee the separation of
+tensor is an e-value with a universal threshold when the blocks are independent, as any likelihood ratio against an
+exact null with a mixture alternative is [Vovk and Wang 2021; Ramdas et al. 2023]. Time slides calibrate exactly the
+global null of no coherent source when the stations are independent, as in gravitational-wave background estimation
+[Was et al. 2010; Capano et al. 2016], but never the false detections caused by real events. With noise correlated
+between stations they are liberal: at a correlation of 0.05, a nominal 0.05 test rejected 34 per cent of
+event-free windows in simulation. Background windows taken at the same time at all stations keep that dependence and
+give a valid null under joint stationarity (Proposition AB.D.6). No coherence certificate can guarantee the separation of
 overlapping events near the information limit. These are theorems under an exact null. On the real noise of both Task 2M
 seeds (three days) the e-value was not calibrated (gate G-M5c, `experiments/exploratory/M5-EVALUE/card.md`), and whether
 the cause is the marginal law of some stations or the dependence between them was not separated. Until a valid
@@ -560,6 +570,10 @@ means a hit needs the epicentre within 5 km; "origin time required" adds an orig
 | E14 | real data | Task R1 (registered) | Hybrid minus the best pick-based configuration | 23 vs 26 of 54; p = 0.9688; NOT MET | `results/taskR1/run/analysis_eval.txt:26` |
 | E15 | real data | Task R1 (registered, descriptive) | Pick-free detector alone (P1) minus the associator | 1 vs 22 of 54 | `results/taskR1/run/analysis_eval.txt:29` |
 | E16 | theory | Propositions AA.9.5 and AB.C.1 (numerical check) | Gaussian null: upper 1e-4 quantile of the score for identity, cap, log maps against the bound with the factor kappa of the earlier version and the corrected bound | 28.50; 14.59; 7.18; 7.18; 6.78 | `experiments/exploratory/THEORY-5/tail_check_c1_out.txt:6` |
+| E17 | theory | Proposition AB.A.10 (numerical check, synthetic) | Co-located pair, 8 stations: margin with free S splitting over margin without it at 0.1 s; SNR needed for delta >= 3.29 without and with splitting | 0.374; 5.8; 15.7 | `experiments/exploratory/THEORY-5/check_assumptions_out.txt:37` |
+| E18 | theory | Theorem AB.C.2, limits (numerical check, synthetic) | Exceedance of the conditional threshold at nominal 0.01 with the energy-peak reading and with a joint reading of 16 candidates per block | 0.0000; 0.2693 | `experiments/exploratory/THEORY-5/check_assumptions_out.txt:8`, `:10` |
+| E19 | theory | Proposition AB.D.3, limits (numerical check, synthetic) | Time-slide p-values in event-free windows: P(p <= 0.05) with inter-station correlation 0 and 0.05 | 0.073; 0.340 | `experiments/exploratory/THEORY-5/check_assumptions_out.txt:5`, `:6` |
+| E20 | theory | Numerical result AB.A.8 (synthetic) | Cramér-Rao sd of the separation at SNR 12.4 for a co-located pair with different mechanisms at 0.05 and 0.1 s | 0.0593 s; 0.0399 s | `experiments/exploratory/THEORY-5/check_fisher_out.txt:4`, `:5` |
 
 In E1 the four values are, in order, the differences at 0.1 and 0.25 false events per window in the four-station cell
 of seed 2024 and in the six-station cell of seed 7331, the smallest and largest cells of the rule. E5c gives the

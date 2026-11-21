@@ -26,18 +26,22 @@ $V_S=3$ km/s, $V_P=1.73V_S$, 8-station `spread` network, radiation operator of `
 | AB.A.4–AB.A.5 | With different mechanisms the margin grows **linearly** with the separation; with the same mechanism, **quadratically** | Theorem | measured slopes 1.00 and 2.00 |
 | AB.A.6 | Network form: $\delta^2\approx\omega^2\,\Delta\boldsymbol\theta^{\mathsf T}F_{\rm pol}\Delta\boldsymbol\theta$, observability weighted by polarization diversity | Corollary | — |
 | AB.A.7 | Minimum resolvable separation: $\propto\mathrm{SNR}^{-1}$ with mechanism diversity, $\propto\mathrm{SNR}^{-1/2}$ without it | Corollary | 0.034 s and 0.098 s at SNR 12.4 |
+| AB.A.8 | Fisher information of a co-located pair: smallest eigenvalue $\propto\Delta\tau^4$ (different mechanisms) and $\Delta\tau^6$ (same), along the transfer of moment between the events; the information on $\Delta\tau$ itself $\propto\Delta\tau^2$ and $\Delta\tau^4$ | Numerical result (replaces a conjecture that it refutes) | Cramér-Rao sd of $\Delta\tau$ equals $\Delta\tau$ near 0.055 s and 0.07 s at SNR 12.4 |
+| AB.A.9 | The P arrivals carry no first-order term: $\kappa_{iP}=0$ for every pair of tensors, so $K_{\rm mec}$ comes from S alone | Proposition | — |
+| AB.A.10 | S splitting with a free fast axis lowers the S residual of one block from $O(\Delta^2)$ to $O(\Delta^4)$ | Proposition | network margin $\times0.37$ at 0.1 s; SNR needed 5.8 → 15.7 |
 | AB.B.1 | Exact condition for the energy-peak reading (D1) to read the correct arrival | Lemma | interference $<0.144\,\lVert\mathbf g\rVert$ |
 | AB.B.2–AB.B.4 | Computable certificate of correct selection for the deployed algorithm with statics and overlap | Lemma and Theorem; **negative result in practice** | never contradicted, but it never activates (0 of 216 cases): actual margin ≈15 %, so it certifies nothing here |
 | AB.B.5 | Recovery of $K$ events by induction | Theorem | — |
 | AB.B.6 | The deployed deflation leaves up to a fixed fraction of each arrival because of the sub-sample offset | Proposition | median residual 16 to 19 % (up to 36 %) of the peak amplitude |
 | AB.C.1 | **Correction of AA.9.5(b)**: the Lipschitz constant is 1, not $\kappa=2.146$ | Proposition | bound 28.50 → 14.59 (empirical 7.12) |
-| AB.C.2 | **Conditional** tail valid for any amplitude law (heavy tails, non-stationary, isotropic transients) | Theorem | median threshold 9.75 at $p=10^{-4}$ |
+| AB.C.2 | **Conditional** tail valid for any amplitude law (heavy tails, non-stationary, isotropic transients), for independent blocks and a reading rule blind to directions | Theorem | median threshold 9.75 at $p=10^{-4}$; joint reading with 16 candidates per block: rate 0.27 at $p=10^{-2}$ |
 | AB.C.3 | **Impossibility**: influence bounded in the absolute sense implies saturation | Proposition | — |
 | AB.C.4 | ACAP (cap relative to the block median): scale equivariant (does not saturate), bounded relative influence, zero cost if max/median $\le c_1$ | Proposition | — |
 | AB.D.1 | Contamination likelihood: influence of a transient $\propto\log(1/f_{\rm background})$; the evidence for an event grows as $\nu\log a$ (tail index of the background) | Proposition | measured slope 3.00 with $\nu=3$ |
-| AB.D.2 | The mixture version over the tensor is an e-value: universal threshold $\log(1/p)$ without calibration | Theorem | — |
-| AB.D.3 | *Time-slides*: exact p-value for the global null "no coherent source", with no floor; does not control false detections caused by real events | Proposition | — |
+| AB.D.2 | The mixture version over the tensor is an e-value: universal threshold $\log(1/p)$ without calibration, **if the blocks are independent**; the average of per-station e-values is one under any dependence | Theorem | with shared scale across blocks, $P(e\ge10)=0.10$–0.16 |
+| AB.D.3 | *Time-slides*: exact p-value for the global null "no coherent source" **when the stations are independent**; with correlated noise between stations they are liberal; they never control false detections caused by real events | Proposition | inter-station correlation 0.05: $P(\hat p\le0.05)=0.34$ |
 | AB.D.4 | Joint decomposition: $\sigma_{\min}(\Gamma)\propto\Delta\tau$, so certificates of type AA.6(a) require SNR $\propto\Delta\tau^{-3}$ against the necessary $\Delta\tau^{-1}$ | Proposition | measured slope 2.00 of $1-\cos\theta_1$ |
+| AB.D.6 | Background-window (common-shift) null: valid under joint stationarity without independence between stations | Proposition | — |
 
 **Relation to prior work.** Several results adapt known ones and are not claimed as new. The SNR$^{-1}$ and
 SNR$^{-1/2}$ laws of AB.A.7 are the statistical resolution limits of two same-shape sources (Shahram and Milanfar,
@@ -308,6 +312,18 @@ $F_{\rm pol}$ is the observability matrix of AA.8 with the energy weights $E_{ib
 - **Same mechanism, nearby positions.** $\kappa_{ib}=O(|\Delta\mathbf x|^2)$ because the radiation varies smoothly, and the two
   terms are $O(|\Delta\mathbf x|^4)$: $\delta=O(|\Delta\mathbf x|^2)$.
 
+*Which arrivals carry the first-order term.* In the far field every P polarization is along the ray, whatever the
+tensor, so $\kappa_{iP}=0$ and $K_{\rm mec}$ is a sum over S arrivals only (Proposition AB.A.9). The first-order
+identifiability of a co-located pair is therefore an S property, which is what S splitting attacks (Proposition AB.A.10).
+
+*One pulse for all arrivals.* Parts AB.A.4 to AB.A.7 use the same pulse $\bar s$ at every station, in both branches
+and for both events. Attenuation (S loses high frequencies faster than P), source duration and the phase shift of a
+post-critical S break this. For a pulse $\bar s_{ib}$ per arrival, shared by the two events at that arrival, the proofs
+of AB.A.4 and AB.A.5 hold block by block with $\omega_{ib}^2=\lVert\dot{\bar s}_{ib}\rVert^2$ and
+$\psi_{ib}$, and Corollary AB.A.6 becomes $\delta_{\rm TT}^2=\sum_{ib}\omega_{ib}^2\Delta_{ib}^2\kappa_{ib}+O(\max\Delta^4)$. A pulse that
+differs between the two events at the same arrival, or a phase-shifted arrival, is outside these results; for the
+latter the model needs a second pulse per arrival (the Hilbert transform of $\bar s$), three more parameters per block.
+
 **Numerical verification** (`experiments/exploratory/THEORY-5/check_identifiability.py`, `experiments/exploratory/THEORY-5/check_identifiability_out.txt`).
 
 *One arrival.* The ratio between the exact residual of Lemma AB.A.4 (maximized numerically) and the leading term of
@@ -364,10 +380,82 @@ SNR $\ge12$; the < 0.5 s cell should be split into < 0.1 s (where identifiabilit
 similar mechanisms) and 0.1–0.5 s. The covariate that the atlas must record, besides the separation, is
 $K_{\rm mec}/E$ (computable for each injected pair), because it changes the order of the scaling law.
 
-**Conjecture AB.A.8 (Fisher information of the pair).** The Fisher matrix of the 20 parameters of the pair becomes singular
-as $\Delta\tau\to0$, with its smallest eigenvalue of order $\Delta\tau^2$ if $K_{\rm mec}>0$ and of order $\Delta\tau^4$ if
-$K_{\rm mec}=0$, and the Cramér-Rao bound of $\Delta\tau$ scales accordingly. It is the estimation version of AB.A.5; it is not
-proved here.
+## AB.A.8 Fisher information of the pair (numerical result)
+
+The first version of this appendix stated a conjecture: the smallest eigenvalue of the Fisher matrix of the 20
+parameters of the pair would be of order $\Delta\tau^2$ if $K_{\rm mec}>0$ and of order $\Delta\tau^4$ if $K_{\rm mec}=0$. The
+numerical check below **refutes** that form, and the statement is replaced by the following numerical result. It is not
+a theorem.
+
+**Numerical result AB.A.8.** Co-located pair, parameters $(x,y,z,\tau,\mathbf m)$ for each event, white noise of unit
+variance. As $\Delta\tau\to0$:
+(a) the smallest eigenvalue of the Fisher matrix is of order $\Delta\tau^4$ with different mechanisms and $\Delta\tau^6$
+with the same one, and its eigenvector is the transfer of moment between the two events ($\mathbf m_1$ and $\mathbf m_2$
+moving in opposite directions);
+(b) the information on $\Delta\tau$ itself (the Schur complement of the other 19 parameters) is of order
+$\Delta\tau^2$ and $\Delta\tau^4$, the orders of Theorem AB.A.5, so that the Cramér-Rao standard deviation of
+$\Delta\tau$ grows as $\Delta\tau^{-1}$ and $\Delta\tau^{-2}$.
+
+*Verification* (`experiments/exploratory/THEORY-5/check_fisher.py`, `check_fisher_out.txt`; the model of `lib5.py`,
+400 Hz grid, central differences, the smallest eigenvalue unchanged to $10^{-7}$ when the step is tripled). Smallest
+eigenvalue per unit event energy: $2.37\times10^{-7}$, $3.81\times10^{-6}$, $6.19\times10^{-5}$ at $\Delta\tau=5,10,20$ ms with
+different mechanisms (a factor 16 per doubling) and $2.34\times10^{-10}$, $1.50\times10^{-8}$, $9.68\times10^{-7}$ with the same
+mechanism (a factor 64). Cramér-Rao standard deviation of $\Delta\tau$ at SNR 12.4: 0.50, 0.25, 0.13, 0.059, 0.040 s at
+$\Delta\tau=5,10,20,50,100$ ms with different mechanisms, and 4.06, 1.06, 0.31, 0.083, 0.041 s with the same mechanism.
+
+*Reading.* (i) The standard deviation equals $\Delta\tau$ near 0.055 s (different mechanisms) and 0.07 s (same). With
+different mechanisms, estimating $\Delta\tau$ is harder than detecting that there are two events (0.034 s in
+Corollary AB.A.7); with the same mechanism the two limits are close (0.098 s). (ii) The worst-determined quantity is
+how the moment is split between the two events: a magnitude per event of a pair closer than about 0.1 s is not
+reported without its uncertainty.
+
+## AB.A.9 The P arrivals carry no first-order term
+
+**Proposition AB.A.9.** In the far-field operator of the repository (and of any point source in a homogeneous or
+layered medium), $\mathbf g_{iP}(\mathbf m)=\mathbf n_i\,(\mathbf n_i^{\mathsf T}M\mathbf n_i)\,c_{iP}$, with $\mathbf n_i$ the ray direction at the
+receiver and $c_{iP}$ a scalar. Hence $\mathbf g^1_{iP}\times\mathbf g^2_{iP}=0$ for every pair of tensors, $\kappa_{iP}=0$
+in Corollary AB.A.6, and
+
+$$K_{\rm mec}=\sum_i\kappa_{iS}.$$
+
+*Proof.* Both P vectors are multiples of $\mathbf n_i$. $\square$
+
+With a free surface the P displacement at the receiver is a fixed (tensor-independent) vector in the radial-vertical
+plane times the same scalar, so the conclusion does not change. *Check:* the largest $\lVert\mathbf g^1_{iP}\times\mathbf g^2_{iP}\rVert^2$
+over 50 random pairs is $3\times10^{-37}$ (`check_assumptions_out.txt`, N4). Consequence: for a co-located pair, the
+linear growth of the margin in Theorem AB.A.5(i) comes from the S arrivals only; the P arrivals enter at second order,
+as for parallel polarizations.
+
+## AB.A.10 S splitting with a free fast axis
+
+**Proposition AB.A.10.** Let the one-event class of one S block allow shear-wave splitting: a fast axis $\phi$ in the
+plane normal to the ray, and the fast and slow components each a pulse with its own time, with delay
+$0\le\delta\le\delta_{\max}$. For S data $\mathbf g_1\bar s+\mathbf g_2\bar s(\cdot-\Delta)$ with $\mathbf g_1,\mathbf g_2$ in that plane, the
+residual of the block against this class is $O(\Delta^4)$ as $\Delta\to0$, for any $\mathbf g_1,\mathbf g_2$ with
+$\langle\mathbf g_1+\mathbf g_2,\mathbf f\rangle\ne0$ and $\langle\mathbf g_1+\mathbf g_2,\mathbf s\rangle\ne0$ for the chosen basis, against
+$\Theta(\Delta^2)$ for the class of Theorem AB.A.3 when $\mathbf g_1\times\mathbf g_2\ne0$.
+
+*Proof.* For a fixed axis, with fast and slow unit vectors $\mathbf f$ and $\mathbf s$, the block separates into two scalar
+problems. Each scalar problem has two data pulses $\langle\mathbf g_k,\mathbf f\rangle$ (or $\mathbf s$) and one model pulse with a free
+time and amplitude. That is the parallel case of Theorem AB.A.5(ii). Evaluating its expansion at $u^\ast=\beta/(\alpha+\beta)$ needs only $\alpha+\beta\ne0$, not $\alpha,\beta>0$, and gives an upper bound on the residual of
+$\tfrac{\psi-\omega^4}{4}\Delta^4\,\alpha^2\beta^2/(\alpha+\beta)^2+O(\Delta^6)$. The two optimal times differ by
+$O(\Delta)$, so the delay constraint is met for $\Delta$ small. Choosing any admissible axis gives the upper bound
+$O(\Delta^4)$. $\square$
+
+*Check* (`check_assumptions.py`, N4; 40 random pairs per separation). The ratio of the residual with free splitting to
+the residual of Theorem AB.A.3 is 0.0004, 0.0014, 0.0034 and 0.058 at $\Delta=5,10,20,40$ ms. The fast-slow delays used
+are at most 0.15 s, so a bound $\delta_{\max}=0.2$ s does not protect.
+
+*Network.* Co-located pair, different mechanisms, 8-station network, 12 pairs. The median of $\delta/\sqrt E$ with free
+splitting at every station, divided by that of Theorem AB.A.3, is 0.11, 0.23, 0.37 and 0.68 at $\Delta\tau=0.02,0.05,0.1,0.2$ s.
+The SNR needed for $\delta\ge3.29$ at 0.1 s goes from 5.8 to 15.7.
+
+*Consequence for a joint fit with splitting.* If the axis and delay of a station are estimated within the same window
+as the pair, the one-event class uses those parameters and loses the first-order S term of Proposition AB.A.9. Sharing
+them between the two events of the two-event hypothesis does not help, because the competing class has one event.
+They keep the S term only if they are fixed by other data: other events of the same station in a longer window, or a
+calibration. Which of these two options to use is a design choice of the joint fit; this proposition only says what
+each costs.
 
 ---
 
@@ -456,6 +544,12 @@ the maximum over $\mathbf u$ of a sum is at most the sum of the maxima. The Cauc
 $|\langle\mathbf u_{ib},\cdot\rangle|$ by $\lVert\mathbf u_{ib}\rVert\lVert\cdot\rVert$. The noise bound is Proposition AB.C.1 applied to each
 node (the maximum over $\mathbf s$ of 1-Lipschitz functions is 1-Lipschitz) and a union over nodes. $\square$
 
+*Assumptions of the noise bound.* It uses Proposition AB.C.1 and needs the same independence: different stations
+independent, and the P and S windows of one station further apart than the kernel support. If the two windows of a
+station overlap (an S−P time below about 0.6 s, a hypocentral distance below about 5 km), the noise readings of P and S
+are correlated with coefficient at most $|a(t_S-t_P)|$, and the constant 1 becomes $\sqrt{1+\max_i|a(t_{iS}-t_{iP})|}\le\sqrt2$.
+With noise correlated between stations the bound has no constant of this kind (Section AB.C.2, limits).
+
 $\Lambda_{jk}$ is the **timing-tolerant coherence** between source $k$ and node $j$: it is computed exactly
 by enumerating $2^{r-1}$ signs (in practice $r\le16$; the leftover terms are bounded by Cauchy-Schwarz). Unlike
 the cell bound AA.6, it sees the geometry of the subspace.
@@ -480,6 +574,12 @@ including the deflation residuals (Proposition AB.B.6), then the $K$ selections 
 sources.
 
 *Proof.* Induction on $r$ with Theorem AB.B.4. $\square$
+
+*Scope.* The theorem assumes that the representative nodes of the sources not yet found are admissible. After the
+first acceptance, step 4 of the algorithm excludes every node within 5 km of it. For two sources closer than 5 km
+(the overlapping regime this work targets), the representative node of the second one is excluded and the
+hypothesis fails: the theorem is vacuous there. Removing the exclusion is the purpose of the resolvability test of
+the new model (component M6), not of this theorem.
 
 **Proposition AB.B.6 (what the deployed deflation leaves).** Isolated source, node on the grid ($\eta=0$), no noise,
 reading at the nearest sample with offset $\delta_{ib}\le\Delta/2$, so that $\mathbf v_{ib}=a(\delta_{ib})\mathbf g_{ib}$. After
@@ -669,6 +769,23 @@ Limits of Theorem AB.C.2, stated in advance:
   row `heavy_pol`), but that is not a guarantee: a transient polarized along the subspace of a hypothesis
   would break it.
 - **Independence of P and S** at the same station, as in AA.9.5.
+- **Independence between stations.** Assumption (I) asks for independent blocks, and real noise is correlated between
+  stations: on real noise the tails of different stations coincide 1.7 times more often than under independence
+  (`experiments/exploratory/M5-EVALUE/card.md`). With a common component between stations at zero lag (correlation
+  up to 0.5), the threshold recorded no exceedance in the 8-station geometry (`check_assumptions_out.txt`, N1a),
+  because of its slack: it lies 1.65 to 1.73 times above the exact conditional quantile
+  (`check_rederive_bcd_out.txt`). That is not a guarantee. Calibration that keeps the dependence is Proposition AB.D.6.
+- **The reading rule must be blind to directions.** The proof needs the read blocks to have isotropic directions
+  independent of the norms. The energy peak satisfies this, because it is equivariant under rotations. A rule that
+  chooses the reading of each block to maximize the projection on the subspace of the hypothesis (a joint reading)
+  selects on the statistic itself, and the theorem does not apply. *Check* (`check_assumptions_out.txt`, N2): isotropic
+  noise, 16 blocks, the threshold at $p=10^{-2}$. Energy peak: 0 exceedances in 3000 trials. Joint reading by
+  coordinate ascent with 4 candidates per block: rate 0.0033. With 16 candidates: rate **0.27**. A joint reading can be
+  used to rank. Deciding with it needs either a rule that looks only at norms (or onset probabilities), or calibration of
+  the whole procedure with the null of Proposition AB.D.6.
+- **Multiplicity over the grid.** The union bound $p/N$ over the $N$ hypotheses of a grid (about $6\times10^4$ per
+  origin in the registered lattice) is very conservative, because neighbouring hypotheses are strongly correlated.
+  Calibrating the maximum over the window with the null of Proposition AB.D.6 avoids that cost and keeps validity.
 - **A weaker alternative and why it is not enough.** If only per-station sign symmetry is assumed (the law of the
   record of station $i$ is invariant under $\mathbf y_i\mapsto-\mathbf y_i$, independent stations), the same argument
   with per-station Rademacher signs gives a valid bound without isotropy. But the conditional p-value of a sign
@@ -827,6 +944,19 @@ but not guaranteed). The other side: with a diffuse prior the e-value is very co
 $e^{S_{\rm mix}}$ is almost 0 because its mean of 1 is supplied by rare, enormous values); its power depends on $\pi$, and a $\pi$
 centred on the tensors of the area (for example, that of the calibration events) is the natural choice.
 
+*Dependence.* The product step of the proof needs independent blocks. With a scale common to all blocks of a window
+and correlated directions (correlation 0.3 and 0.6, exact marginals $f_k$), the e-value is not valid: $P(e\ge10)$ is
+0.100 and 0.158 (it must be at most 0.1), and the mean of $e$ is 5.4 and 8.2 (it must be at most 1). With independent
+blocks the mean is $2.0\pm1.1$, compatible with 1 (`check_rederive_bcd_out.txt`, D.2). The form that holds under any
+dependence between stations is the average over stations of per-station e-values (Vovk and Wang, 2021), at a cost in
+power (`experiments/exploratory/M5-EVALUE/card.md`, third step).
+
+*What e-BH covers.* The e-value of a hypothesis is valid when all its blocks follow the background $f_k$. A wrong
+hypothesis next to a real event (a lobe, a duplicate, a deflation residual) reads energy of that event, so its blocks
+do not follow $f_k$ and its e-value is not a null e-value. e-BH therefore controls the proportion of false detections
+caused by the background, not of those caused by real events. This is the same limit as for the *time-slides*
+(Proposition AB.D.3).
+
 ## AB.D.3 *Time-slides*: which null they calibrate
 
 **Proposition AB.D.3.** Let the record of a circular window of length $T$ samples be $\mathbf y=(\mathbf y_1,\dots,\mathbf y_{n_s})$, and
@@ -854,6 +984,42 @@ under $H_0$; with events present, small shifts retain part of their coherence an
 conservative, not liberal. For adaptive conformal inference (Gibbs and Candès, 2021) the guarantee is deterministic and long-run:
 with $\alpha_{t+1}=\alpha_t+\gamma(\alpha-\mathrm{err}_t)$, $|\tfrac1T\sum_t\mathrm{err}_t-\alpha|\le(\max(\alpha_1,1-\alpha_1)+\gamma)/(\gamma T)$, without
 exchangeability, but marginal in time and not per window.
+
+*Correlated noise between stations.* The proposition needs the stations to be independent under $H_0$. Real noise
+is correlated between stations (microseisms, cultural noise, coherent transients), and an independent shift per
+station destroys that correlation. The shifted records are then less coherent than the record under test, and the
+p-value is **liberal**. *Check* (`check_assumptions_out.txt`, N1b): 8 stations, a zero-moveout beam, 300 windows
+without any event, $B=99$. With no correlation, $P(\hat p\le0.05)=0.073$. With a common component of correlation
+0.05 it is **0.34**, and with 0.2 it is **1.00**. On real data the threshold without shifts was 1.46 to 2.66 times the
+*time-slide* threshold (`experiments/exploratory/N1-STACK/card.md`).
+
+## AB.D.6 A null that keeps the dependence between stations
+
+**Proposition AB.D.6 (background-window null).** Let $\mathbf y^{(0)}$ be the window under test and
+$\mathbf y^{(1)},\dots,\mathbf y^{(B)}$ windows of the same network, each with every station taken at the same times (a common
+shift). Under $H_0$, assume the $B+1$ windows are exchangeable. This holds for example if the noise of the whole network
+is jointly stationary, the windows are chosen by a rule that does not look at their content, and they are separated
+by more than the correlation time. Then for any statistic $M$ (the maximum over the grid of the full detector, joint
+reading and deflation included),
+$\hat p=(1+\#\{b\ge1:M(\mathbf y^{(b)})\ge M(\mathbf y^{(0)})\})/(B+1)$ satisfies $P_{H_0}(\hat p\le u)\le u$.
+
+*Proof.* Under exchangeability the rank of $M(\mathbf y^{(0)})$ among the $B+1$ values is uniform up to ties, which only
+make $\hat p$ conservative. $\square$
+
+The proposition makes no assumption about the dependence between stations: a common shift preserves it exactly.
+- *Dependence between windows.* If the windows are only weakly dependent, the excess of the level over $u$ is
+  bounded by the total-variation distance between the sequence of windows and an exchangeable one (Barber, Candès,
+  Ramdas and Tibshirani, 2023).
+- *Masking.* Masking the catalogued events of the background windows is a content-dependent choice. It makes the
+  windows exchangeable only with windows that have no catalogued event, so the null it calibrates is "no catalogued
+  event in the window". Events missing from the catalogue make $\hat p$ conservative, not liberal.
+- *Scope.* Like Proposition AB.D.3, it calibrates the global null and not the false detections caused by real events
+  in the window.
+- *Cost and resolution.* The smallest attainable level is $1/(B+1)$, so a level of $10^{-3}$ per window needs about
+  a thousand background windows.
+
+This is the null that the background thresholds "without shifts" of the repository already compute; *time-slides*
+remain useful only as a lower bound for the threshold.
 
 ## AB.D.4 Joint decomposition: what certificates can and cannot promise
 
@@ -884,6 +1050,29 @@ is only the projection of the noise and of the model error; (ii) with a dictiona
 mismatch $\eta$ of an atom against the signal enters Lemma AB.B.2 as $-\eta\lVert\mathbf Y\rVert$ and does not enter Theorem AB.A.3
 (the timing-tolerant class does not depend on the dictionary), which cleanly separates what the dictionary changes
 (detection) from what it does not (identifiability).
+
+**Remark AB.D.4' (misspecified operator).** Theorem AB.A.3 does not depend on the operator, but detection does,
+through the fraction $f=\lVert Q^{\mathsf T}\mathbf g\rVert^2/\lVert\mathbf g\rVert^2$ of the signal in the subspace of the operator.
+The repository operator uses straight rays in a homogeneous medium, a fixed S/P ratio (1.5 in RMS radiation units)
+and no free surface. With the source at 9 km depth, 7 of the 8 stations of the test network see the straight ray
+at 63 to 81° of incidence, beyond the SV critical angle (35.3°), where the free surface shifts the phase of SV.
+
+Mean of $f$ over 300 double couples (`check_assumptions_out.txt`, N3), modelled operator against a "true" one:
+
+| True signal | $f$ |
+|:--|--:|
+| S/P ratio 3 / 5.2 | 0.965 / 0.924 |
+| free surface at the straight-ray incidence | 0.822 |
+| arrival steepened by a slower near-surface layer (sine of incidence × 0.45) | 0.761 |
+| the same with free surface, operator with the steepened ray and no free surface | 0.999 |
+| lognormal site gains (sd 0.5) | 0.956 |
+| 2 of 8 stations misoriented by 30° | 0.918 |
+| all of the above together, straight-ray operator / steepened-ray operator | 0.709 / 0.730 |
+
+For these modelled errors, alone or together, $f$ stays at about 0.7 or higher. A much lower $f$ on real data
+therefore points to another cause: component conventions, orientation, reading or noise. A separate P and S tensor
+(a 12-dimensional subspace) only repairs the S/P ratio, and at low SNR it costs power: 0.85 → 0.69 at network energy
+40 and level $10^{-5}$.
 
 **Conjecture AB.D.5 (target statement of §6 of the model design note, reformulated).** For two events with
 $K_{\rm mec}>0$, the joint decomposition with joint reading selection and contamination likelihood separates the
@@ -921,8 +1110,23 @@ The integration was carried out as follows:
    was found not calibrated (gate G-M5c, PR #45), and the cause, marginal or dependence, has not been separated (T4.27).
    So the e-value with e-BH is not used as the false-detection control; false detections are reported as FROC and
    measured rate (PHASE6_SAP v0.2, 7.6).
+6. **Revision of 21 November 2026.** It does not change any proof of the first version. It adds:
+   - the numerical result AB.A.8, which replaces and refutes the former conjecture;
+   - Propositions AB.A.9 and AB.A.10 (which arrivals carry the first-order term, and S splitting);
+   - Proposition AB.D.6 (a background-window null that keeps the dependence between stations);
+   - Remark AB.D.4' (misspecified operator);
+   - the limits of AB.B.3, AB.B.5, AB.C.2, AB.D.2 and AB.D.3 under dependence between stations and under a joint reading;
+   - the pulse per arrival in AB.A.6.
+
+   Checks: `check_rederive_bcd.py` (an independent re-derivation of the constants and bounds of Parts B, C and D, all
+   confirmed), `check_assumptions.py` and `check_fisher.py`, in `experiments/exploratory/THEORY-5/`. AB.A.9 and AB.A.10
+   are short proofs and are candidates for the director's review (rule 31). Until that review they are called
+   propositions in review.
 
 ## References
+
+- Barber, R. F., Candès, E. J., Ramdas, A., Tibshirani, R. J. (2023). Conformal prediction beyond exchangeability.
+  *Annals of Statistics* 51, 816–845.
 
 - Archimedes' hat-box theorem: the projection of the uniform measure on $S^2$ onto an axis is uniform.
 - Boucheron, S., Lugosi, G., Massart, P. (2013). *Concentration Inequalities*. Oxford University Press (Gaussian
