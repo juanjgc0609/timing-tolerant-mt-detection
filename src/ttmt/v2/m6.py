@@ -182,10 +182,10 @@ def _resp_full(t, nt, resp):
     return tmp[0]
 
 
-def _free_station(Ri, tP, tS, resp, half):
+def _free_station(Ri, tP, tS, resp, half, return_times=False):
     """best joint fit of ONE P and ONE S pulse with free times and free 3-vectors to Ri (3, NT) (Theorem A.3(a): the two
     pulses solved together with their 2 x 2 Gram, not one after the other). Grid of whole samples within +-half of
-    (tP, tS), then a local search. Returns (residual (3, NT), rss)."""
+    (tP, tS), then a local search. Returns (residual (3, NT), rss), and the two times if return_times."""
     nt = Ri.shape[-1]
     off = np.arange(-half, half + 1)
     RP = np.array([_resp_full(tP + o, nt, resp) for o in off])
@@ -212,7 +212,7 @@ def _free_station(Ri, tP, tS, resp, half):
     res = minimize(lambda th: fit(th)[1], th0, method="Nelder-Mead",
                    options={"xatol": 1e-3, "fatol": 1e-9, "initial_simplex": th0 + np.array([[0, 0], [0.5, 0], [0, 0.5]])})
     th = res.x if res.fun <= fit(th0)[1] else th0
-    return fit(th)
+    return (*fit(th), float(th[0]), float(th[1])) if return_times else fit(th)
 
 
 def free_one_event_joint(Y, others, a, G, resp, rounds=3, half=16):

@@ -3,6 +3,15 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-20
+
+- M6-SPLIT (exploratory, simulation; director's request of 20 November): S-wave splitting as a constraint inside
+  the M6 joint fit, per station (phi_i, delta_i <= 0.2 s, common to all atoms, in both hypotheses;
+  `src/ttmt/v2/m6split.py`). Declared before the run, run once. Validity fails: 24 of 200 single-source control
+  scenes split (limit 12); near-pair recall 0.744 against 0.894 without splitting (cost 0.150, the boundary of the
+  "useful" zone); AUC 0.885 (< 0.90). Split data without the constraint: 39 of 200, 0.613, 0.740. G-M6a does not
+  run with this model.
+
 ## 2026-11-17
 
 - EQNet2 stage 1 on the tuning partition: `experiments/exploratory/COMPARATORS/eqnet2_stage1.py scores` writes the
