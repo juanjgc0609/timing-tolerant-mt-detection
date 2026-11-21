@@ -170,13 +170,64 @@ def _grid_split(cost, dmax):
     return float(ph % np.pi), float(dl), float(c0)
 
 
-def estimate_split(Y, atoms, G, resp, frames, mode, dmax, extra=None):
+def _copy_atoms(atoms):
+    return [dict(a, T=a["T"].copy(), anchor=np.array(a.get("anchor", a["T"]), float).copy(), m=a["m"].copy(),
+                 phi=a["phi"].copy(), dl=a["dl"].copy()) for a in atoms]
+
+
+def copy_iso(iso):
+    return None if iso is None else [(Yw, _copy_atoms(aw)) for Yw, aw in iso]
+
+
+def _iso_cost(iso, i, G, resp, frames):
+    """cost(phi, dl) of station i summed over the isolated windows (their tensors and times fixed)."""
+    if not iso:
+        return lambda ph, dl: 0.0
+    ns = iso[0][0].shape[0]
+    parts = []
+    for Yw, aw in iso:
+        gs = [(G[a["gi"]] @ a["m"]).reshape(2, ns, 3) for a in aw]
+        base = Yw[i].copy()
+        for k, a in enumerate(aw):
+            _block(base, a, 0, i, gs[k][0, i], a["T"][0, i], resp, frames, -1.0)
+        parts.append((base, aw, gs))
+
+    def cost(ph, dl):
+        c = 0.0
+        for base, aw, gs in parts:
+            m = np.zeros_like(base)
+            for k, a in enumerate(aw):
+                Pf, Ps, _ = _proj(frames(a["gi"]), i, ph)
+                _place_S(m, gs[k][1, i], a["T"][1, i], Pf, Ps, dl, resp)
+            d = base - m
+            c += float((d * d).sum())
+        return c
+    return cost
+
+
+def _set_iso(iso, i, ph, dl):
+    for _Yw, aw in (iso or []):
+        for a in aw:
+            a["phi"][i], a["dl"][i] = ph, dl
+
+
+def refit_iso(iso, G, resp, frames):
+    """tensors and block times of the isolated events at the current splitting (in place)."""
+    for Yw, aw in (iso or []):
+        fit_tensors(Yw, aw, G, resp, frames)
+        refine_block_times(Yw, aw, G, resp, frames)
+        fit_tensors(Yw, aw, G, resp, frames)
+
+
+def estimate_split(Y, atoms, G, resp, frames, mode, dmax, extra=None, iso=None):
     """(phi_i, delta_i) per station on the residual of the window: one pair shared by all atoms (station) or one per
-    atom (event); tensors and times fixed. extra (ns, 3, NT): fixed model terms (subtracted)."""
+    atom (event); tensors and times fixed. extra (ns, 3, NT): fixed model terms (subtracted). iso (station mode):
+    isolated windows [(Y_w, atoms_w)] whose events share the station's splitting; their cost is added."""
     ns = Y.shape[0]
     groups = [list(range(len(atoms)))] if mode == "station" else [[k] for k in range(len(atoms))]
     gs = [(G[a["gi"]] @ a["m"]).reshape(2, ns, 3) for a in atoms]
     for i in range(ns):
+        ic = _iso_cost(iso, i, G, resp, frames) if mode == "station" else (lambda ph, dl: 0.0)
         for grp in groups:
             rest = [k for k in range(len(atoms)) if k not in grp]
             base = Y[i] - (extra[i] if extra is not None else 0.0)
@@ -194,21 +245,29 @@ def estimate_split(Y, atoms, G, resp, frames, mode, dmax, extra=None):
                     Pf, Ps, _ = _proj(frames(a["gi"]), i, ph)
                     _place_S(m, gs[k][1, i], a["T"][1, i], Pf, Ps, dl, resp)
                 d = base - m
-                return float((d * d).sum())
+                return float((d * d).sum()) + ic(ph, dl)
             ph, dl, _c = _grid_split(cost, dmax)
             for k in grp:
                 atoms[k]["phi"][i], atoms[k]["dl"][i] = ph, dl
+            if mode == "station":
+                _set_iso(iso, i, ph, dl)
     return atoms
 
 
-def joint_refit(Y, atoms, G, resp, frames, mode, dmax, rounds=3, extra=None, split=True):
+def joint_refit(Y, atoms, G, resp, frames, mode, dmax, rounds=3, extra=None, split=True, iso=None):
     Z = Y - extra if extra is not None else Y
     for _ in range(rounds):
-        fit_tensors(Z, atoms, G, resp, frames)
-        refine_block_times(Z, atoms, G, resp, frames)
-        if split:
+        if atoms:
             fit_tensors(Z, atoms, G, resp, frames)
-            estimate_split(Z, atoms, G, resp, frames, mode, dmax)
+            refine_block_times(Z, atoms, G, resp, frames)
+        refit_iso(iso, G, resp, frames)
+        if split:
+            if atoms:
+                fit_tensors(Z, atoms, G, resp, frames)
+            estimate_split(Z, atoms, G, resp, frames, mode, dmax, iso=iso)
+    if not atoms:
+        refit_iso(iso, G, resp, frames)
+        return atoms, Z.copy(), float((Z * Z).sum())
     fit_tensors(Z, atoms, G, resp, frames)
     R = Z - model(atoms, G, Y.shape, resp, frames)
     return atoms, R, float((R * R).sum())
@@ -231,7 +290,7 @@ def _free_split_fit(Ri, tP, tS, ax, dl, resp):
     return Fi, float((d * d).sum())
 
 
-def free_one_event(Y, others, a, G, resp, frames, mode, dmax, rounds=3, half=16):
+def free_one_event(Y, others, a, G, resp, frames, mode, dmax, rounds=3, half=16, iso=None):
     """RSS of the one-event alternative with splitting in the same class as the two-event fit: atom a's blocks are one
     free P and one split S per station (free times and amplitudes), the other atoms refitted around it; in "station"
     mode the free S shares (phi_i, delta_i) with the other atoms, estimated here."""
@@ -242,9 +301,11 @@ def free_one_event(Y, others, a, G, resp, frames, mode, dmax, rounds=3, half=16)
     fr = frames(a["gi"])
     tc = a["T"].copy()
     ph, dls = a["phi"].copy(), a["dl"].copy()
+    iso = copy_iso(iso) if mode == "station" else None
     F = np.zeros_like(Y)
     for it in range(rounds):
         for i in range(ns):
+            ic = _iso_cost(iso, i, G, resp, frames)
             if it == 0:                                          # start from the unsplit free fit
                 Ri = Y[i] - (model(oth, G, Y.shape, resp, frames, [i])[i] if oth else 0.0)
                 _d, _r, tc[0, i], tc[1, i] = _free_station(Ri, tc[0, i], tc[1, i], resp, half, return_times=True)
@@ -258,9 +319,10 @@ def free_one_event(Y, others, a, G, resp, frames, mode, dmax, rounds=3, half=16)
 
             def cost(phv, dlv):
                 Ri = resid(phv, dlv)
-                return _free_split_fit(Ri, tc[0, i], tc[1, i], _proj(fr, i, phv)[2], dlv, resp)[1]
+                return _free_split_fit(Ri, tc[0, i], tc[1, i], _proj(fr, i, phv)[2], dlv, resp)[1] + ic(phv, dlv)
             p_, d_, _c = _grid_split(cost, dmax)
             ph[i], dls[i] = p_, d_
+            _set_iso(iso, i, p_, d_)
             Ri = resid(p_, d_)
             ax = _proj(fr, i, p_)[2]
             th0 = np.array([tc[0, i], tc[1, i]], float)
@@ -271,18 +333,34 @@ def free_one_event(Y, others, a, G, resp, frames, mode, dmax, rounds=3, half=16)
                     and np.all(np.abs(res.x - a["T"][:, i]) <= half)):
                 tc[0, i], tc[1, i] = res.x
             F[i] = _free_split_fit(Ri, tc[0, i], tc[1, i], ax, d_, resp)[0]
+        refit_iso(iso, G, resp, frames)
         if not oth:
-            break
+            if not iso:
+                break
+            continue
         oth, _R, _rss = joint_refit(Y, oth, G, resp, frames, mode, dmax, rounds=1, extra=F, split=(mode == "event"))
     R = Y - F - (model(oth, G, Y.shape, resp, frames) if oth else 0.0)
-    return float((R * R).sum())
+    return float((R * R).sum()) + iso_rss(iso, G, resp, frames)
+
+
+def iso_rss(iso, G, resp, frames):
+    """residual sum of squares of the isolated windows (added to both hypotheses, so the pair gain compares the two
+    hypotheses with the isolated events refitted under each one's splitting)."""
+    out = 0.0
+    for Yw, aw in (iso or []):
+        R = Yw - model(aw, G, Yw.shape, resp, frames)
+        out += float((R * R).sum())
+    return out
 
 
 def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=None, near_km=10.0, near_s=1.5,
               bound_read=2.0, bound_unread=4.0, rounds=3, cand_half=8, kernel=LEGACY_KERNEL, mode="station",
-              dmax_s=DMAX_S):
+              dmax_s=DMAX_S, iso_windows=None):
     """``ttmt.v2.m6.adcg_loop`` with splitting estimated inside the joint fit and inside the one-event alternative
-    (mode "station": shared per station; "event": free per atom, descriptive). Atoms carry phi, dl (samples)."""
+    (mode "station": shared per station; "event": free per atom, descriptive). Atoms carry phi, dl (samples).
+    iso_windows (mode "station" only): list of (Y_w, q_w), windows of isolated events at the same stations (M6-SPLIT2);
+    each is read with one atom (``m6.adcg_loop``, kmax 1), and its event then shares the station's splitting with
+    the atoms of this window in every joint fit, in both hypotheses; their residual is added to both RSS."""
     reader = reader or default_reader(kernel.dt)
     resp = _Resp(kernel)
     frames = Frames(E.XN, E.STA)
@@ -293,6 +371,17 @@ def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=Non
     ns = E.ns
     excluded = np.zeros(E.N, bool)
     atoms = []
+    iso = None
+    if iso_windows and mode == "station":
+        from .m6 import adcg_loop as _m6_loop
+        iso = []
+        for Yw, qw in iso_windows:
+            aw = _m6_loop(E, Yw, qw, 1, lag, statistic=statistic, reader=reader, thr=None, kernel=kernel)
+            for a_ in aw:
+                a_.update(anchor=a_["T"].copy(), bound=np.full(a_["T"].shape, bound_read), phi=np.zeros(ns),
+                          dl=np.zeros(ns))
+            iso.append((np.asarray(Yw, float), aw))
+        _a, _R, _r = joint_refit(Y, [], E.G, resp, frames, mode, dmax, rounds, iso=iso)
     tries = 0
     while len(atoms) < kmax and tries < 3 * kmax:
         tries += 1
@@ -308,6 +397,8 @@ def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=Non
                                                                               cand_half))] for b in range(2)]
         if mode == "station" and atoms:
             phi0, dl0 = atoms[0]["phi"].copy(), atoms[0]["dl"].copy()
+        elif iso and iso[0][1]:
+            phi0, dl0 = iso[0][1][0]["phi"].copy(), iso[0][1][0]["dl"].copy()
         else:
             phi0, dl0 = np.zeros(ns), np.zeros(ns)
         new = {"gi": gi, "x": np.asarray(E.XN[gi], float), "tau": float(E.taus[tj]), "s": s_val,
@@ -317,17 +408,19 @@ def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=Non
                 and abs(a["tau"] - new["tau"]) <= near_s]
         trial = [dict(a, T=a["T"].copy(), anchor=a["anchor"].copy(), phi=a["phi"].copy(), dl=a["dl"].copy())
                  for a in atoms] + [new]
-        trial, R_t, rss_t = joint_refit(Y, trial, E.G, resp, frames, mode, dmax, rounds)
+        iso_t = copy_iso(iso)
+        trial, R_t, rss_t = joint_refit(Y, trial, E.G, resp, frames, mode, dmax, rounds, iso=iso_t)
+        rss_t += iso_rss(iso_t, E.G, resp, frames)
         if near and thr is not None:
             j = atoms.index(min(near, key=lambda a: np.linalg.norm(a["x"][:2] - new["x"][:2])))
             others = [a for k, a in enumerate(atoms) if k != j]
-            rss_one = free_one_event(Y, others, atoms[j], E.G, resp, frames, mode, dmax)
+            rss_one = free_one_event(Y, others, atoms[j], E.G, resp, frames, mode, dmax, iso=iso)
             gain = rss_one - rss_t
             new["pair_gain"] = gain
             if gain <= thr:
                 excluded |= np.linalg.norm(E.XN[:, :2] - new["x"][None, :2], axis=1) <= near_km
                 continue
-        atoms, R = trial, R_t
+        atoms, R, iso = trial, R_t, iso_t
         atoms[-1]["pair_gain"] = new["pair_gain"]
         excluded[gi] = True
     for a in atoms:

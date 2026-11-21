@@ -1,7 +1,10 @@
 # Experiment card: M6-SPLIT2. S splitting shared by all events of the station inside one joint fit
 
-Stage: S0, draft, 20 November 2026. **Not run, and not to be run until the owner decides** (asked by the supervisor
-after M6-SPLIT). No code yet. Exploratory, simulation only; G-M6a is not run.
+Stage: S1, 21 November 2026. Drafted 20 November 2026 (2a7c454, PR #75) before any code; the owner chose
+"Restricción común a la estación" on 21 November 2026, 00:56 UTC. Code built and pushed with this card before the
+run; thresholds, arms, seeds and predictions unchanged. A smoke test of one control and one pair on seed 999
+(outside the declared seeds) only timed the code (arm iii about 20 s per loop). Exploratory, simulation only; G-M6a
+is not run.
 
 ## Why
 M6-SPLIT (PR #75) estimated phi_i and delta_i from the window of the test alone: validity failed (24 of 200 single-
@@ -45,6 +48,18 @@ If all three pass, G-M6a runs with (iii) after ADR-0012.
 - From the formulation's table, the remaining recall loss in (iii) concentrates below 0.1-0.25 s.
 - If (v) closes most of the gap between (i) and the window-only constraint, hypothesis 2 holds and pulse mismatch,
   not splitting, is the larger cost.
+
+## Implementation notes (written before the run; no criterion changes)
+- `ttmt.v2.m6split.adcg_loop(..., iso_windows=[(Y_w, q_w)])`: each isolated window is first read with one atom by
+  `m6.adcg_loop` (kmax 1, no splitting); then the station's (phi_i, delta_i) is estimated on the isolated windows,
+  and in every joint fit of the test window the splitting cost of station i is the sum over the test window and the
+  isolated windows, whose tensors and times are refitted at each round. Each hypothesis keeps its own copy of the
+  isolated events, and their residual is added to the RSS of both, so the pair gain compares the two hypotheses
+  with the isolated events refitted under each one's splitting.
+- Arm (v) is run as two sub-arms on matched pulses: v-i (as arm i) and v-w (M6-SPLIT's window-only constraint).
+- Without isolated windows the code is that of M6-SPLIT.
+
+    python experiments/exploratory/M6-SPLIT2/run.py > experiments/exploratory/M6-SPLIT2/run_out.txt
 
 ## Cost
 CPU, cloud, 4 cores: about 3 to 5 hours (the isolated windows multiply the splitting step about 5 times).
