@@ -177,7 +177,8 @@ S group, $\delta_{\rm TT}$ does not change when the two events are shifted by th
 classes, so the squared distance is the sum of the per-station distances. For fixed times, the
 least-squares fit of $(\mathbf h_P,\mathbf h_S)$ on two pulses with Gram matrix $\big(\begin{smallmatrix}1&\alpha\\\alpha&1\end{smallmatrix}\big)\otimes I_3$
 leaves the residual $\lVert\mathbf d_i\rVert^2-\mathbf B^{\mathsf T}\big(\begin{smallmatrix}1&\alpha\\\alpha&1\end{smallmatrix}\big)^{-1}\mathbf B$, which is the expression
-written. (b) $\mathcal M_1\subset\mathcal M_1^{\rm TT}$. (c) With orthogonal groups, the residual of each group is
+written. The minimum over $(t_P,t_S)\in\mathbb R^2$ is attained: the residual is continuous in the times and tends to
+$\lVert\mathbf d_i\rVert^2$, its supremum, when either time goes to infinity, because $a(t)\to0$. (b) $\mathcal M_1\subset\mathcal M_1^{\rm TT}$. (c) With orthogonal groups, the residual of each group is
 invariant to a common translation of its data pulses, because the class allows the model pulse to be translated by the
 same amount. $\square$
 
