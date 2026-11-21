@@ -31,7 +31,9 @@ Ambition and sufficiency (ADR-0013, PR #72) [v0.3]. The two levels of ADR-0013 (
 than +0.02 over the best tuned comparator) describe the point estimate of the H1 difference with its interval; they
 are not tests. The confirmatory claim is H1 (superiority, difference > 0, one-sided 0.025). "Sufficient" or "ambition
 met" is never written as confirmed unless H1 is rejected; the report gives the zone of the point estimate next to the
-H1 result. A +0.02 effect is not detectable at any feasible size (Section 9).
+H1 result. A +0.02 effect is not detectable at any feasible size: by scaling item 4 of the reference output by
+(0.05 / 0.02)², about 6 200 targets in T, that is hundreds of thousands of catalogued events at the prevalence of
+Section 9 (an approximation, not a solved design).
 
 Estimand: the difference in recall, model minus comparator, over the targets of the regime, weighted to the real
 prevalence of its cells (ADR-0008 item 4), at the operating point where each method has at most 30 false detections
@@ -164,8 +166,8 @@ catalogue. Planning effects: +0.05 in T for R3 and G4, +0.10 for R2; true differ
 Feasibility [v0.3]: +0.05 in T needs about 1 000 targets in T at power 0.80 (item 4 of the reference output: 992 at
 rho 0.7, icc 0.1, f 0.3). With the close-pair prevalence measured on a development catalogue (CR-04, 1.42-1.67 %, a
 strong lower bound because of catalogue dead time; 16.8 % under the Poisson reference) that is between about 6 000 and
-60 000 catalogued events, before the truth-precision and station rules of 3.3-3.4 remove more. So +0.05 in T is
-planned for R3 only; R2 plans +0.10 and, by Section 8, does not test T if its eligible targets give power below 0.50.
+70 000 catalogued events, before the truth-precision and station rules of 3.3-3.4 remove more. So +0.05 in T is
+planned for R3 (and the simulated gate G4), not R2; R2 plans +0.10 and, by Section 8, does not test T if its eligible targets give power below 0.50.
 The comparator recall assumed here (0.40) is above the measured one (0.215-0.233 in T with station terms, tune
 partition); `sample_size.py solve` is re-run with the recall, rho and icc estimated after pilot P1, before any
 registration is anchored (rule 30). Reference numbers are in
