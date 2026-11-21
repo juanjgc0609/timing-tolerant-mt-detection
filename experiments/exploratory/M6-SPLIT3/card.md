@@ -1,6 +1,8 @@
 # Experiment card: M6-SPLIT3. Splitting estimated once per station from isolated events, then held fixed
 
-Stage: S0, declared 21 November 2026 before any code or run. Asked by the thread that finishes the supervision items
+Stage: S0, declared 21 November 2026 before any code or run. **Conditional (written 21 November 2026, 01:40 UTC,
+before M6-SPLIT2 is read): it runs only if M6-SPLIT2 fails validity (more than 12 of 200 control scenes split in its
+arm iii), as the comparison of whether a prior calibration fixes it. Otherwise it is not run.** Asked by the thread that finishes the supervision items
 (arm (v) of the M6-SPLIT discussion; hypothesis 1 of M6-SPLIT and the proposal of the formulation thread); the owner
 asked that everything that does not need the laptop be run. Exploratory, simulation only; G-M6a is not run.
 

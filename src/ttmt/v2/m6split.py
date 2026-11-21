@@ -320,7 +320,10 @@ def free_one_event(Y, others, a, G, resp, frames, mode, dmax, rounds=3, half=16,
             def cost(phv, dlv):
                 Ri = resid(phv, dlv)
                 return _free_split_fit(Ri, tc[0, i], tc[1, i], _proj(fr, i, phv)[2], dlv, resp)[1] + ic(phv, dlv)
-            p_, d_, _c = _grid_split(cost, dmax)
+            if mode == "fixed":                                   # M6-SPLIT3: splitting held fixed
+                p_, d_ = float(a["phi"][i]), float(a["dl"][i])
+            else:
+                p_, d_, _c = _grid_split(cost, dmax)
             ph[i], dls[i] = p_, d_
             _set_iso(iso, i, p_, d_)
             Ri = resid(p_, d_)
@@ -358,7 +361,8 @@ def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=Non
               dmax_s=DMAX_S, iso_windows=None):
     """``ttmt.v2.m6.adcg_loop`` with splitting estimated inside the joint fit and inside the one-event alternative
     (mode "station": shared per station; "event": free per atom, descriptive). Atoms carry phi, dl (samples).
-    iso_windows (mode "station" only): list of (Y_w, q_w), windows of isolated events at the same stations (M6-SPLIT2);
+    mode "fixed" (M6-SPLIT3): the splitting is estimated once from iso_windows and then held fixed in both hypotheses.
+    iso_windows (modes "station" and "fixed"): list of (Y_w, q_w), windows of isolated events at the same stations (M6-SPLIT2);
     each is read with one atom (``m6.adcg_loop``, kmax 1), and its event then shares the station's splitting with
     the atoms of this window in every joint fit, in both hypotheses; their residual is added to both RSS."""
     reader = reader or default_reader(kernel.dt)
@@ -372,7 +376,7 @@ def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=Non
     excluded = np.zeros(E.N, bool)
     atoms = []
     iso = None
-    if iso_windows and mode == "station":
+    if iso_windows and mode in ("station", "fixed"):
         from .m6 import adcg_loop as _m6_loop
         iso = []
         for Yw, qw in iso_windows:
@@ -381,7 +385,10 @@ def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=Non
                 a_.update(anchor=a_["T"].copy(), bound=np.full(a_["T"].shape, bound_read), phi=np.zeros(ns),
                           dl=np.zeros(ns))
             iso.append((np.asarray(Yw, float), aw))
-        _a, _R, _r = joint_refit(Y, [], E.G, resp, frames, mode, dmax, rounds, iso=iso)
+        _a, _R, _r = joint_refit(Y, [], E.G, resp, frames, "station", dmax, rounds, iso=iso)
+        if mode == "fixed":                                   # estimated once from the isolated events, then fixed
+            fixed = (iso[0][1][0]["phi"].copy(), iso[0][1][0]["dl"].copy()) if iso[0][1] else (np.zeros(ns),) * 2
+            iso = None
     tries = 0
     while len(atoms) < kmax and tries < 3 * kmax:
         tries += 1
@@ -397,6 +404,8 @@ def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=Non
                                                                               cand_half))] for b in range(2)]
         if mode == "station" and atoms:
             phi0, dl0 = atoms[0]["phi"].copy(), atoms[0]["dl"].copy()
+        elif mode == "fixed" and iso_windows:
+            phi0, dl0 = fixed[0].copy(), fixed[1].copy()
         elif iso and iso[0][1]:
             phi0, dl0 = iso[0][1][0]["phi"].copy(), iso[0][1][0]["dl"].copy()
         else:
@@ -409,7 +418,8 @@ def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=Non
         trial = [dict(a, T=a["T"].copy(), anchor=a["anchor"].copy(), phi=a["phi"].copy(), dl=a["dl"].copy())
                  for a in atoms] + [new]
         iso_t = copy_iso(iso)
-        trial, R_t, rss_t = joint_refit(Y, trial, E.G, resp, frames, mode, dmax, rounds, iso=iso_t)
+        trial, R_t, rss_t = joint_refit(Y, trial, E.G, resp, frames, mode, dmax, rounds, iso=iso_t,
+                                        split=(mode != "fixed"))
         rss_t += iso_rss(iso_t, E.G, resp, frames)
         if near and thr is not None:
             j = atoms.index(min(near, key=lambda a: np.linalg.norm(a["x"][:2] - new["x"][:2])))
