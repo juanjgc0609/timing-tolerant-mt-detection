@@ -13,6 +13,14 @@ Each script isolates one statement: `check_identifiability.py` (Parts AB.A), `ch
 with the corrected bound of AB.C.1 printed next to the bound of AA.9.5(b); it reproduces the quantiles of
 `results/theory/tail_check_out.txt` exactly.
 
+## Revision of 21 November 2026
+Three scripts were added for the revision of Appendix AB. `check_rederive_bcd.py` re-derives the constants and bounds
+of Parts B, C and D from their statements and confirms them all. `check_assumptions.py` checks what happens when the
+assumptions fail: correlated stations (AB.C.2, AB.D.3), a joint reading (AB.C.2) and a misspecified operator
+(AB.D.4'); it also checks AB.A.9 and AB.A.10. `check_fisher.py` computes numerical result AB.A.8 and refutes the
+former conjecture. They are NumPy only, seed 20261120, and run in under a minute. Re-run in the cloud with Python
+3.13.18 and NumPy 2.5.3, the three outputs were byte-identical to those of the first run.
+
 ## Hypothesis and refutation
 Not a hypothesis test. A statement is refuted if a script finds a violation of a proved bound.
 

@@ -1,0 +1,38 @@
+[N1a] inter-station corr 0.0: C.2 exceedance at p=1e-2, 1e-3: 0.0000, 0.00000 | after spatial whitening: 0.0000, 0.00000
+[N1a] inter-station corr 0.1: C.2 exceedance at p=1e-2, 1e-3: 0.0000, 0.00000 | after spatial whitening: 0.0000, 0.00000
+[N1a] inter-station corr 0.3: C.2 exceedance at p=1e-2, 1e-3: 0.0000, 0.00000 | after spatial whitening: 0.0000, 0.00000
+[N1a] inter-station corr 0.5: C.2 exceedance at p=1e-2, 1e-3: 0.0000, 0.00000 | after spatial whitening: 0.0000, 0.00000
+[N1b] inter-station corr 0.0: time-slide p-values, P(p<=0.05) = 0.073, P(p<=0.01) = 0.000 (valid: 0.05, 0.01; 300 null windows, B=99)
+[N1b] inter-station corr 0.05: time-slide p-values, P(p<=0.05) = 0.340, P(p<=0.01) = 0.140 (valid: 0.05, 0.01; 300 null windows, B=99)
+[N1b] inter-station corr 0.2: time-slide p-values, P(p<=0.05) = 1.000, P(p<=0.01) = 0.880 (valid: 0.05, 0.01; 300 null windows, B=99)
+[N2] C.2 exceedance, energy-peak reading: p=1e-2 0.0000, p=1e-3 0.0000
+[N2] joint reading (4 candidates/block): p=1e-2 0.0033, p=1e-3 0.0000
+[N2] joint reading (16 candidates/block): p=1e-2 0.2693, p=1e-3 0.0013
+[N3] exact model                                    f(6-D) = 1.000  f(12-D, separate P and S tensors) = 1.000
+[N3] S/P ratio 3 (model 1.5)                        f(6-D) = 0.965  f(12-D, separate P and S tensors) = 1.000
+[N3] S/P ratio 5.2 (model 1.5)                      f(6-D) = 0.924  f(12-D, separate P and S tensors) = 1.000
+[N3] free surface, straight-ray incidence           f(6-D) = 0.822  f(12-D, separate P and S tensors) = 0.841
+[N3] steep arrival (x0.45), straight model          f(6-D) = 0.761  f(12-D, separate P and S tensors) = 0.768
+[N3] steep arrival + free surface, straight model   f(6-D) = 0.790  f(12-D, separate P and S tensors) = 0.795
+[N3] steep arrival + free surface, RAY1D model      f(6-D) = 0.999  f(12-D, separate P and S tensors) = 0.999
+[N3] site gains lognormal sd 0.5                    f(6-D) = 0.956  f(12-D, separate P and S tensors) = 0.965
+[N3] misorientation 2 of 8 stations, 30 deg         f(6-D) = 0.918  f(12-D, separate P and S tensors) = 0.921
+[N3] ALL: steep+FS+S/P 5.2+gains+misor., straight   f(6-D) = 0.709  f(12-D, separate P and S tensors) = 0.761
+[N3] ALL, RAY1D model                               f(6-D) = 0.730  f(12-D, separate P and S tensors) = 0.841
+[N3] straight-ray incidence angles (deg): [44.0, 63.0, 71.0, 75.0, 77.0, 78.0, 79.0, 81.0] | SV critical angle 35.3
+[N3] power at level 1e-5, E=40 (exact): 6-D 0.854, 12-D 0.687
+[N3] power at level 1e-5, E=40 (S/P 5.2): 6-D 0.792, 12-D 0.685
+[N3] power at level 1e-5, E=80 (exact): 6-D 1.000, 12-D 0.999
+[N3] power at level 1e-5, E=80 (S/P 5.2): 6-D 0.999, 12-D 0.998
+[N3] power at level 1e-5, E=154 (exact): 6-D 1.000, 12-D 1.000
+[N3] power at level 1e-5, E=154 (S/P 5.2): 6-D 1.000, 12-D 1.000
+[N4] one S block, data g1 s(t) + g2 s(t-D) in the plane normal to the ray
+[N4] D=0.005 s: median R_TT/D^2 =     46.69  median R_split/D^4 =        819.0  R_split/R_TT = 0.0004  max fast-slow delay used 0.112 s
+[N4] D=0.010 s: median R_TT/D^2 =     39.27  median R_split/D^4 =        565.6  R_split/R_TT = 0.0014  max fast-slow delay used 0.070 s
+[N4] D=0.020 s: median R_TT/D^2 =     42.71  median R_split/D^4 =        364.1  R_split/R_TT = 0.0034  max fast-slow delay used 0.116 s
+[N4] D=0.040 s: median R_TT/D^2 =     27.55  median R_split/D^4 =       1005.1  R_split/R_TT = 0.0584  max fast-slow delay used 0.140 s
+[N4] max over stations of |g1 x g2|^2 for P (50 random pairs): 2.94e-37 (P carries no first-order term)
+[N4] colocated pair, D=0.02 s: median delta_TT/sqrtE = 0.1327, with free splitting 0.0149 (ratio 0.109); SNR for delta>=3.29: 24.8 vs 220.2
+[N4] colocated pair, D=0.05 s: median delta_TT/sqrtE = 0.3131, with free splitting 0.0726 (ratio 0.228); SNR for delta>=3.29: 10.5 vs 45.3
+[N4] colocated pair, D=0.10 s: median delta_TT/sqrtE = 0.5680, with free splitting 0.2098 (ratio 0.374); SNR for delta>=3.29: 5.8 vs 15.7
+[N4] colocated pair, D=0.20 s: median delta_TT/sqrtE = 0.6118, with free splitting 0.4193 (ratio 0.682); SNR for delta>=3.29: 5.4 vs 7.8

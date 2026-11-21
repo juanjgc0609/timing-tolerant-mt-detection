@@ -1,0 +1,10 @@
+[A.8] different mechanisms           dtau=0.005 s: lambda_min/E = 2.368e-07, lambda_2/E = 3.062e-06, CRB sd(dtau) at SNR 12.4 = 0.5014 s
+[A.8] different mechanisms           dtau=0.010 s: lambda_min/E = 3.805e-06, lambda_2/E = 4.858e-05, CRB sd(dtau) at SNR 12.4 = 0.2523 s
+[A.8] different mechanisms           dtau=0.020 s: lambda_min/E = 6.185e-05, lambda_2/E = 7.495e-04, CRB sd(dtau) at SNR 12.4 = 0.1293 s
+[A.8] different mechanisms           dtau=0.050 s: lambda_min/E = 2.680e-03, lambda_2/E = 1.803e-02, CRB sd(dtau) at SNR 12.4 = 0.0593 s
+[A.8] different mechanisms           dtau=0.100 s: lambda_min/E = 5.196e-02, lambda_2/E = 8.106e-02, CRB sd(dtau) at SNR 12.4 = 0.0399 s
+[A.8] same mechanism (m2 = 0.7 m1)   dtau=0.005 s: lambda_min/E = 2.337e-10, lambda_2/E = 3.018e-04, CRB sd(dtau) at SNR 12.4 = 4.0560 s
+[A.8] same mechanism (m2 = 0.7 m1)   dtau=0.010 s: lambda_min/E = 1.498e-08, lambda_2/E = 1.205e-03, CRB sd(dtau) at SNR 12.4 = 1.0600 s
+[A.8] same mechanism (m2 = 0.7 m1)   dtau=0.020 s: lambda_min/E = 9.680e-07, lambda_2/E = 4.784e-03, CRB sd(dtau) at SNR 12.4 = 0.3066 s
+[A.8] same mechanism (m2 = 0.7 m1)   dtau=0.050 s: lambda_min/E = 2.538e-04, lambda_2/E = 2.843e-02, CRB sd(dtau) at SNR 12.4 = 0.0831 s
+[A.8] same mechanism (m2 = 0.7 m1)   dtau=0.100 s: lambda_min/E = 2.110e-02, lambda_2/E = 8.979e-02, CRB sd(dtau) at SNR 12.4 = 0.0411 s
