@@ -117,3 +117,7 @@ still leaves it without separating power after the fix.
 2. C18a (timing) and G-M1a are not affected: their markers can be lifted for those statements.
 3. When ADR-0012 merges, `run.py` is re-run with its option in place of `weighted_Q` and must reproduce
    `out_analyse.txt` exactly (pending, this thread).
+
+## Owner's decision (21 November 2026, 01:36 UTC)
+M5 `--local` is not re-run. Owner's words: "Y no es necesario repetirlo, ya que recomiendas que no." It stays listed
+as affected (by the rule), with the post-hoc f loss < 0.005 as the reason it is not repeated.
