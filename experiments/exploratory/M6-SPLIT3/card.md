@@ -33,3 +33,22 @@ isolated events 20261134. 200 controls, 40 near pairs per dtau in 0.1, 0.25, 0.5
 `run.py` (written 22 November 2026 before the run; smoke test on seed 999 only, about 8 s per loop in the fixed arm).
 `ttmt.v2.m6split.adcg_loop(..., mode="fixed", iso_windows=...)`; runs after M6-SPLIT2 finishes (same 4 cores).
 About 1 to 2 hours.
+
+## Result (run once, 22 November 2026, 2766 s for the three arms; `run_out.txt` unchanged)
+| arm | control scenes split (of 200) | near-pair recall pooled | 0.10 s | AUC |
+|:--|--:|--:|--:|--:|
+| (i) no splitting | 1 | 0.906 (145/160) | 0.725 | 0.962 |
+| (ii) split data, model without it | 34 | 0.613 | 0.400 | 0.683 |
+| (fixed) splitting from isolated events, held | **57** | 0.806 (129/160) | 0.525 | 0.873 |
+
+- Validity: 57 of 200 against the limit 12. **FAILS.**
+- Recall against (i): 16 of 160 lost, gap 0.100 (exact: 100*16 = 1600 > 5*160 = 800, <= 15*160 = 2400): close zone,
+  the owner would decide, but the card fails on validity and AUC first.
+- AUC 0.873 < 0.90: **FAILS.**
+- Prediction (recover almost all of M6-SPLIT (iii)'s loss at 0.1 s): **not supported**; 0.525 against 0.725 for (i)
+  here, where M6-SPLIT (iii) had 0.475 against 0.775.
+- Reading (hypothesis, not tested): the largest spurious gain per control rises from median -111 (i) to -41 here. A
+  splitting estimated from ten isolated events and then held leaves S-wave residual at each station that a second
+  atom can fit, so calibrating first does not remove the false pairs; it makes them more frequent than estimating
+  inside the fit (M6-SPLIT (iii): 24 of 200).
+- G-M6a does not run with this setup.
