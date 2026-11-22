@@ -26,6 +26,7 @@ from ..kernel import LEGACY as LEGACY_KERNEL
 from .loop import RANK_DEFAULT, default_reader, refine_times
 from .m6 import _free_station, _place, _resp_full, _Resp, onset_candidates, select
 
+NONCONV = [0]                                   # isolated fits that hit max_rounds (M6-SPLIT2b)
 DMAX_S = 0.2                                    # largest split delay (s), fixed by the design
 PHI_GRID = np.arange(12) * np.pi / 12           # fast-axis angle grid (15 degrees)
 N_DELTA = 9                                     # delay grid 0 .. DMAX on N_DELTA points
@@ -225,13 +226,15 @@ def converge_iso(iso, G, resp, frames, rtol=1e-6, max_rounds=30):
     if not iso:
         return 0.0
     prev = iso_rss(iso, G, resp, frames)
+    cur = prev
     for _ in range(max_rounds):
         refit_iso(iso, G, resp, frames)
         cur = iso_rss(iso, G, resp, frames)
         if abs(prev - cur) <= rtol * max(prev, 1e-12):
             return cur
         prev = cur
-    return prev
+    NONCONV[0] += 1                                   # counted and printed by the experiment (review of d609134)
+    return cur
 
 
 def estimate_split(Y, atoms, G, resp, frames, mode, dmax, extra=None, iso=None):

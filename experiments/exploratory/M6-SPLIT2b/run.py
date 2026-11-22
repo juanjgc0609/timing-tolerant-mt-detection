@@ -107,22 +107,24 @@ def job_pre(c):
 
 
 def job_ctrl(args):
+    m6split.NONCONV[0] = 0
     arm, c = args
     srcs, Y, q, iso = scene((SEED_C, 1, c), "C1", arm)
     a = loops(arm, Y, q, THR_REF, iso)
     b = loops(arm, Y, q, -np.inf, iso)
     g = [x["pair_gain"] for x in MB.spurious(b, srcs) if x["pair_gain"] is not None]
-    return len(MB.spurious(a, srcs)) > 0, (max(g) if g else None)
+    return len(MB.spurious(a, srcs)) > 0, (max(g) if g else None), m6split.NONCONV[0]
 
 
 def job_pair(args):
+    m6split.NONCONV[0] = 0
     arm, dtau, c = args
     srcs, Y, q, iso = scene((SEED_P, int(100 * dtau), c), "pair", arm, dtau)
     a = loops(arm, Y, q, THR_REF, iso)
     b = loops(arm, Y, q, -np.inf, iso)
     sp = {id(x) for x in MB.spurious(b, srcs)}
-    return len(m6.hits_loctv(a, srcs)) == 2, [x["pair_gain"] for x in b if x["pair_gain"] is not None
-                                              and id(x) not in sp]
+    return (len(m6.hits_loctv(a, srcs)) == 2, [x["pair_gain"] for x in b if x["pair_gain"] is not None
+                                               and id(x) not in sp], m6split.NONCONV[0])
 
 
 def auc(t, s):
@@ -134,7 +136,7 @@ def auc(t, s):
 
 def main():
     t0 = time.time()
-    print(f"M6-SPLIT2  NISO {NISO}, controls {NCTRL} (one source), pairs {NPAIR} per cell (near), seeds {SEED_C}/{SEED_P}/"
+    print(f"M6-SPLIT2b  NISO {NISO}, controls {NCTRL} (one source), pairs {NPAIR} per cell (near), seeds {SEED_C}/{SEED_P}/"
           f"{SEED_SPLIT}/{SEED_ISO}, thr_ref {THR_REF}, delta <= {m6split.DMAX_S} s, numpy {np.__version__}", flush=True)
     res = {}
     if PRECHECK:
@@ -159,6 +161,8 @@ def main():
             pooled = hits / (len(R.DTAUS) * NPAIR)
             lo, hi = R.cp(k, NCTRL)
             res[arm] = dict(k=k, rec=rec, pooled=pooled, hits=hits, auc=auc(g_t, g_sp))
+            nc = sum(x[2] for x in ctrl) + sum(o[2] for d in R.DTAUS for o in pairs[d])
+            print(f"   isolated fits that did not converge (hit 30 rounds) in arm {arm}: {nc}")
             print(f"arm {arm:4s}: control scenes split at thr {THR_REF}: {k}/{NCTRL} [{lo:.3f}, {hi:.3f}]; "
                   f"near-pair recall " + ", ".join(f"{d:.2f}s {v:.3f}" for d, v in rec.items())
                   + f", pooled {pooled:.3f}; AUC {res[arm]['auc']:.3f} (true gains n {len(g_t)}, median "
