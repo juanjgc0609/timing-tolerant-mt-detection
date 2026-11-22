@@ -30,5 +30,6 @@ M6-SPLIT2 (20261124-27) or M6-SPURIOUS (20261127-28): controls 20261131, pairs 2
 isolated events 20261134. 200 controls, 40 near pairs per dtau in 0.1, 0.25, 0.5, 1.0 s.
 
 ## Code and cost
+`run.py` (written 22 November 2026 before the run; smoke test on seed 999 only, about 8 s per loop in the fixed arm).
 `ttmt.v2.m6split.adcg_loop(..., mode="fixed", iso_windows=...)`; runs after M6-SPLIT2 finishes (same 4 cores).
 About 1 to 2 hours.
