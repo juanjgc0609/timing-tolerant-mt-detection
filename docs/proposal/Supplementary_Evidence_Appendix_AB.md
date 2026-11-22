@@ -164,11 +164,16 @@ only changes **the order** with which the margin grows with it (Theorem AB.A.5).
 
 **Theorem AB.A.3.** (a) $\delta_{\rm TT}(\xi)^2=\sum_{i=1}^{n_s}R_i$, with
 
-$$R_i=\min_{t_P,t_S\in\mathbb R,\ \mathbf h_P,\mathbf h_S\in\mathbb R^3}\big\lVert\mathbf d_i-\mathbf h_P\bar s(\cdot-t_P)-\mathbf h_S\bar s(\cdot-t_S)\big\rVert^2
-=\lVert\mathbf d_i\rVert^2-\max_{t_P,t_S}\ \frac{\lVert\mathbf b_P\rVert^2+\lVert\mathbf b_S\rVert^2-2\alpha\langle\mathbf b_P,\mathbf b_S\rangle}{1-\alpha^2},$$
+$$R_i=\inf_{t_P,t_S\in\mathbb R,\ \mathbf h_P,\mathbf h_S\in\mathbb R^3}\big\lVert\mathbf d_i-\mathbf h_P\bar s(\cdot-t_P)-\mathbf h_S\bar s(\cdot-t_S)\big\rVert^2
+=\lVert\mathbf d_i\rVert^2-\sup_{t_P,t_S}\ \frac{\lVert\mathbf b_P\rVert^2+\lVert\mathbf b_S\rVert^2-2\alpha\langle\mathbf b_P,\mathbf b_S\rangle}{1-\alpha^2},$$
 
 where $\mathbf d_i$ is the part of $\boldsymbol\mu_\xi$ at station $i$, $\mathbf b_b=\langle\mathbf d_i,\bar s(\cdot-t_b)\rangle\in\mathbb R^3$ and
-$\alpha=a(t_S-t_P)$ (at $|\alpha|=1$ the quotient is replaced by its limit, $\lVert\mathbf b_P\rVert^2$).
+$\alpha=a(t_S-t_P)$. At $t_P=t_S$ ($\alpha=1$) the two pulses coincide and the quotient is replaced by the one-pulse value
+$\lVert\mathbf b_P\rVert^2$. That is not its limit: as $t_S\to t_P$ the span of the two pulses tends to the span of $\bar s$ and
+$\dot{\bar s}$, and the quotient tends to $\lVert\mathbf b_P\rVert^2+\lVert\dot{\mathbf b}_P\rVert^2/\omega^2$, with
+$\dot{\mathbf b}_P=\langle\mathbf d_i,\dot{\bar s}(\cdot-t_P)\rangle$. The residual is therefore not continuous on the diagonal, and the
+infimum can be approached there by a pulse-plus-derivative pair that the class does not contain, so it need not be
+attained. Hence $\inf$ and $\sup$; nothing below needs attainment.
 (b) $\delta_1\ge\delta_{\rm TT}$.
 (c) If at each station the pulses of the P group (the two P of the data and the P of the model) are orthogonal to those of the
 S group, $\delta_{\rm TT}$ does not change when the two events are shifted by the same statics $e_{ib}$ (common to both).
@@ -177,8 +182,7 @@ S group, $\delta_{\rm TT}$ does not change when the two events are shifted by th
 classes, so the squared distance is the sum of the per-station distances. For fixed times, the
 least-squares fit of $(\mathbf h_P,\mathbf h_S)$ on two pulses with Gram matrix $\big(\begin{smallmatrix}1&\alpha\\\alpha&1\end{smallmatrix}\big)\otimes I_3$
 leaves the residual $\lVert\mathbf d_i\rVert^2-\mathbf B^{\mathsf T}\big(\begin{smallmatrix}1&\alpha\\\alpha&1\end{smallmatrix}\big)^{-1}\mathbf B$, which is the expression
-written. The minimum over $(t_P,t_S)\in\mathbb R^2$ is attained: the residual is continuous in the times and tends to
-$\lVert\mathbf d_i\rVert^2$, its supremum, when either time goes to infinity, because $a(t)\to0$. (b) $\mathcal M_1\subset\mathcal M_1^{\rm TT}$. (c) With orthogonal groups, the residual of each group is
+written. (b) $\mathcal M_1\subset\mathcal M_1^{\rm TT}$. (c) With orthogonal groups, the residual of each group is
 invariant to a common translation of its data pulses, because the class allows the model pulse to be translated by the
 same amount. $\square$
 
@@ -413,8 +417,9 @@ reported without its uncertainty.
 ## AB.A.9 The P arrivals carry no first-order term
 
 **Proposition AB.A.9.** In the far-field operator of the repository (and of any point source in a homogeneous or
-layered medium), $\mathbf g_{iP}(\mathbf m)=\mathbf n_i\,(\mathbf n_i^{\mathsf T}M\mathbf n_i)\,c_{iP}$, with $\mathbf n_i$ the ray direction at the
-receiver and $c_{iP}$ a scalar. Hence $\mathbf g^1_{iP}\times\mathbf g^2_{iP}=0$ for every pair of tensors, $\kappa_{iP}=0$
+layered medium), $\mathbf g_{iP}(\mathbf m)=\mathbf n^{\rm rec}_i\,(\mathbf n_i^{{\rm src}\,\mathsf T}M\mathbf n^{\rm src}_i)\,c_{iP}$, with
+$\mathbf n^{\rm src}_i$ the take-off direction of the ray at the source, $\mathbf n^{\rm rec}_i$ its direction at the receiver (the
+two coincide for straight rays) and $c_{iP}$ a scalar. Hence $\mathbf g^1_{iP}\times\mathbf g^2_{iP}=0$ for every pair of tensors, $\kappa_{iP}=0$
 in Corollary AB.A.6, and
 
 $$K_{\rm mec}=\sum_i\kappa_{iS}.$$
@@ -423,7 +428,7 @@ $$K_{\rm mec}=\sum_i\kappa_{iS}.$$
 
 With a free surface the P displacement at the receiver is a fixed (tensor-independent) vector in the radial-vertical
 plane times the same scalar, so the conclusion does not change. *Check:* the largest $\lVert\mathbf g^1_{iP}\times\mathbf g^2_{iP}\rVert^2$
-over 50 random pairs is $3\times10^{-37}$ (`check_assumptions_out.txt`, N4). Consequence: for a co-located pair, the
+over 50 random pairs is below $10^{-36}$, rounding level (`check_assumptions_out.txt`, N4). Consequence: for a co-located pair, the
 linear growth of the margin in Theorem AB.A.5(i) comes from the S arrivals only; the P arrivals enter at second order,
 as for parallel polarizations.
 
@@ -440,7 +445,9 @@ $\Theta(\Delta^2)$ for the class of Theorem AB.A.3 when $\mathbf g_1\times\mathb
 problems. Each scalar problem has two data pulses $\langle\mathbf g_k,\mathbf f\rangle$ (or $\mathbf s$) and one model pulse with a free
 time and amplitude. That is the parallel case of Theorem AB.A.5(ii). Evaluating its expansion at $u^\ast=\beta/(\alpha+\beta)$ needs only $\alpha+\beta\ne0$, not $\alpha,\beta>0$, and gives an upper bound on the residual of
 $\tfrac{\psi-\omega^4}{4}\Delta^4\,\alpha^2\beta^2/(\alpha+\beta)^2+O(\Delta^6)$. The two optimal times differ by
-$O(\Delta)$, so the delay constraint is met for $\Delta$ small. Choosing any admissible axis gives the upper bound
+$O(\Delta)$, so the bound $\delta\le\delta_{\max}$ is met for $\Delta$ small. If the difference comes out negative (the
+"slow" component earlier than the "fast" one), the axis rotated by 90° swaps the two components and gives $\delta\ge0$
+with the same residual. Choosing any admissible axis gives the upper bound
 $O(\Delta^4)$. $\square$
 
 *Check* (`check_assumptions.py`, N4; 40 random pairs per separation). The ratio of the residual with free splitting to
@@ -999,7 +1006,8 @@ without any event, $B=99$. With no correlation, $P(\hat p\le0.05)=0.073$. With a
 **Proposition AB.D.6 (background-window null).** Let $\mathbf y^{(0)}$ be the window under test and
 $\mathbf y^{(1)},\dots,\mathbf y^{(B)}$ windows of the same network, each with every station taken at the same times (a common
 shift). Under $H_0$, assume the $B+1$ windows are exchangeable. This holds for example if the noise of the whole network
-is jointly stationary, the windows are chosen by a rule that does not look at their content, and they are separated
+is jointly stationary, all $B+1$ windows (the one under test included) are chosen by a rule that does not look at
+their content, and they are separated
 by more than the correlation time. Then for any statistic $M$ (the maximum over the grid of the full detector, joint
 reading and deflation included),
 $\hat p=(1+\#\{b\ge1:M(\mathbf y^{(b)})\ge M(\mathbf y^{(0)})\})/(B+1)$ satisfies $P_{H_0}(\hat p\le u)\le u$.
@@ -1011,15 +1019,21 @@ The proposition makes no assumption about the dependence between stations: a com
 - *Dependence between windows.* If the windows are only weakly dependent, the excess of the level over $u$ is
   bounded by the total-variation distance between the sequence of windows and an exchangeable one (Barber, Candès,
   Ramdas and Tibshirani, 2023).
-- *Masking.* Masking the catalogued events of the background windows is a content-dependent choice. It makes the
-  windows exchangeable only with windows that have no catalogued event, so the null it calibrates is "no catalogued
-  event in the window". Events missing from the catalogue make $\hat p$ conservative, not liberal.
+- *Scanning.* If every window of a record is tested in turn, the guarantee is per window, and the scan needs a
+  correction for multiplicity.
+- *Masking.* Masking must mean **dropping whole windows** that contain a catalogued event. The null calibrated is then
+  "no catalogued event in the window", and events missing from the catalogue make $\hat p$ conservative. Zeroing or
+  cutting segments inside the background windows is a different operation. It leaves them less energetic than an
+  unmasked test window, and that makes $\hat p$ **liberal**. The thresholds "without shifts" of
+  `experiments/exploratory/N1-STACK/run.py` (and FE-FIX) zero the catalogued segments, per station. They apply the same
+  mask to the noise part of the target records, which reduces the bias but does not remove it. To be valid in the sense
+  of this proposition they must be recomputed by dropping windows.
 - *Scope.* Like Proposition AB.D.3, it calibrates the global null and not the false detections caused by real events
   in the window.
 - *Cost and resolution.* The smallest attainable level is $1/(B+1)$, so a level of $10^{-3}$ per window needs about
   a thousand background windows.
 
-This is the null that the background thresholds "without shifts" of the repository already compute; *time-slides*
+Up to the masking just described, this is the null that the background thresholds "without shifts" of the repository compute; *time-slides*
 remain useful only as a lower bound for the threshold.
 
 ## AB.D.4 Joint decomposition: what certificates can and cannot promise
@@ -1055,8 +1069,8 @@ mismatch $\eta$ of an atom against the signal enters Lemma AB.B.2 as $-\eta\lVer
 **Remark AB.D.4' (misspecified operator).** Theorem AB.A.3 does not depend on the operator, but detection does,
 through the fraction $f=\lVert Q^{\mathsf T}\mathbf g\rVert^2/\lVert\mathbf g\rVert^2$ of the signal in the subspace of the operator.
 The repository operator uses straight rays in a homogeneous medium, a fixed S/P ratio (1.5 in RMS radiation units)
-and no free surface. With the source at 9 km depth, 7 of the 8 stations of the test network see the straight ray
-at 63 to 81° of incidence, beyond the SV critical angle (35.3°), where the free surface shifts the phase of SV.
+and no free surface. With the source at 9 km depth, all 8 stations of the test network see the straight ray
+beyond the SV critical angle (35.3°): one at 44° and seven at 63 to 81° of incidence, where the free surface shifts the phase of SV.
 
 Mean of $f$ over 300 double couples (`check_assumptions_out.txt`, N3), modelled operator against a "true" one:
 

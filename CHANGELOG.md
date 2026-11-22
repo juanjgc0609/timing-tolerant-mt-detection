@@ -17,6 +17,14 @@ Dated record of changes to the project's process, code and documents. Results ar
   - New scripts `check_rederive_bcd.py`, `check_assumptions.py` and `check_fisher.py` in
     `experiments/exploratory/THEORY-5/`, all synthetic, each with its output.
 - Thesis: the Appendix AB paragraphs of Section 4 carry these limits and results; evidence rows E17 to E20 added.
+- Appendix AB, after independent review of 7a9e75d:
+  - A.3(a) uses inf/sup. The two-pulse residual is not continuous on the diagonal t_P = t_S, so the minimum need not
+    be attained, and the one-pulse value there is a convention, not a limit.
+  - A.9 is stated with the take-off and receiver directions.
+  - A.10 swaps the axis when the delay comes out negative.
+  - D.4': all 8 stations are beyond the SV critical angle.
+  - D.6: the test window is chosen blind to content too, and a scan needs a multiplicity correction. Masking must drop
+    whole windows; the segment-zeroing masks of N1-STACK and FE-FIX make the p-value liberal.
 
 ## 2026-11-17
 
