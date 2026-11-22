@@ -1,6 +1,6 @@
 # Statistical analysis plan, phase 6 (and the phase-4 gate)
 
-Version 0.3, 21 November 2026 (v0.1, 23 October 2026, statistical design thread; v0.2, 14 November 2026, drops the e-value guarantee of 7.6 after G-M5c; v0.3 changes are listed in Section 11, with the ones that need the owner's approval marked). Draft: it becomes binding for a test when the text is copied
+Version 0.3, 21 November 2026 (v0.1, 23 October 2026, statistical design thread; v0.2, 14 November 2026, drops the e-value guarantee of 7.6 after G-M5c; v0.3 changes are listed in Section 11, with the owner's approval of items 2, 4 and 6). Draft: it becomes binding for a test when the text is copied
 into that test's registration and anchored (ADR-0004). It applies the single beat rule of ADR-0008 to the two
 confirmatory tests of phase 6 (registrations R2 and R3, drafts in `preregistration/drafts/`) and to the phase-4 gate
 G4. Code: `src/ttmt/stats.py` (every decision rule) and `experiments/exploratory/P6-SAP/sample_size.py` (sample size).
@@ -32,7 +32,7 @@ than +0.02 over the best tuned comparator) describe the point estimate of the H1
 are not tests. The confirmatory claim is H1 (superiority, difference > 0, one-sided 0.025). "Sufficient" or "ambition
 met" is never written as confirmed unless H1 is rejected; the report gives the zone of the point estimate next to the
 H1 result. A +0.02 effect is not detectable at any feasible size: by scaling item 4 of the reference output by
-(0.05 / 0.02)², about 6 200 targets in T, that is hundreds of thousands of catalogued events at the prevalence of
+(0.05 / 0.02)², about 6 200 targets in T, that is about 37 000 to 440 000 catalogued events at the prevalences of
 Section 9 (an approximation, not a solved design).
 
 Estimand: the difference in recall, model minus comparator, over the targets of the regime, weighted to the real
@@ -186,10 +186,10 @@ of ADR-0004 item 4.
 | # | Section | Change | Kind | Owner's approval (rule 14) |
 |:--|:--|:--|:--|:--|
 | 1 | 9 | Feasibility paragraph: +0.05 in T planned for R3 only; R2 plans +0.10; recall assumption to be re-estimated after P1 | states what the numbers already imply; no threshold changes | not needed (wording); owner informed |
-| 2 | 2 | ADR-0013 levels are descriptive zones of the point estimate, not tests; "sufficient" never claimed as confirmed without H1 | interpretation of a decision already approved (ADR-0013) | **needed** |
+| 2 | 2 | ADR-0013 levels are descriptive zones of the point estimate, not tests; "sufficient" never claimed as confirmed without H1 | interpretation of a decision already approved (ADR-0013) | **approved** by the owner, 21 Nov 2026 01:51 UTC ("Apruebo los tres") |
 | 3 | 9 | Re-run of the sample size with measured recall after P1 | already required by rule 30 | not needed |
-| 4 | 7.2 | R2 serial-dependence rule: lag-1 autocorrelation of d_j > 0.2 -> 2-hour blocks primary | new analysis rule, fixed before any R2 data | **needed** |
+| 4 | 7.2 | R2 serial-dependence rule: lag-1 autocorrelation of d_j > 0.2 -> 2-hour blocks primary | new analysis rule, fixed before any R2 data | **approved** by the owner, 21 Nov 2026 01:51 UTC ("Apruebo los tres") |
 | 5 | 3.5 | Ledger path `docs/DATA_USE_LEDGER.md` | cohesion | not needed |
-| 6 | 7.6 | Deployable hypothesis not tested with fewer than 37 hours of record | new condition, fixed before any R2 data | **needed** |
+| 6 | 7.6 | Deployable hypothesis not tested with fewer than 37 hours of record | new condition, fixed before any R2 data | **approved** by the owner, 21 Nov 2026 01:51 UTC ("Apruebo los tres") |
 
-No data of R2 or R3 has been read; every change is made before any result it could depend on.
+Items 2, 4 and 6 were approved together on the owner's decision card. No data of R2 or R3 has been read; every change is made before any result it could depend on.

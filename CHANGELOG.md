@@ -8,8 +8,8 @@ Dated record of changes to the project's process, code and documents. Results ar
 - SAP v0.3 (`docs/protocol/PHASE6_SAP.md`, Section 11 lists every change): ADR-0013 levels are descriptive zones of
   the point estimate, not tests; +0.05 in T planned for R3 only (about 1 000 targets in T, between about 6 000 and
   70 000 catalogued events); R2 serial-dependence rule (lag-1 autocorrelation > 0.2 -> 2-hour blocks); deployable
-  hypothesis not tested with fewer than 37 hours; ledger path. Three changes need the owner's approval (items 2, 4,
-  6). Conformance checklist items 25-27 added. No R2 or R3 data read.
+  hypothesis not tested with fewer than 37 hours; ledger path. Items 2, 4 and 6 approved by the owner on 21 November
+  2026, 01:51 UTC ("Apruebo los tres"). Conformance checklist items 25-27 added. No R2 or R3 data read.
 - WHITEN-REVIEW: owner's decision recorded, M5 `--local` not re-run.
 
 ## 2026-11-20
