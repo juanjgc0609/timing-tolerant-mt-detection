@@ -91,6 +91,12 @@ Consequence: arm iii of this run does not test "splitting shared with isolated e
 (no isolated windows). A fix (isolated events refitted to convergence before the loop and the same number of rounds
 in both hypotheses, or a fixed point check) needs a new declared run; it is not done here.
 
+**Note added 22 November 2026, after M6-SPLIT2b (review of PR #75).** The fix was run as M6-SPLIT2b (new seeds,
+isolated fits converged, same rule in both hypotheses). The bias persists: median largest spurious gain +86.8
+(here +115), 114 of 200 control scenes split. The convergence defect therefore explains at most part of this run's
+failure. The statements above that the validity number "is not a property of the idea" and that the run "does not
+test the idea" are too strong: they hold only for the share due to the defect. See `../M6-SPLIT2b/card.md`.
+
 What the valid arms say (descriptive): splitting in the data costs today's model 46 split scenes and 0.29 of recall
 (ii against i); free splitting per event (iv) recovers recall to 0.806 but not validity (51); with matched pulses and
 no splitting (v-i) the numbers equal arm i (0 against 2 split scenes, 0.906 against 0.912), so pulse mismatch alone
