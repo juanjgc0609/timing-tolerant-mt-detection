@@ -44,3 +44,28 @@ Two jobs, each under the 2 h job limit: `ARMS=i,v-i,v-w` then `ARMS=iii`, append
     PRECHECK=1 python experiments/exploratory/M6-SPLIT2b/run.py > experiments/exploratory/M6-SPLIT2b/precheck_out.txt
     ARMS=i,v-i,v-w python experiments/exploratory/M6-SPLIT2b/run.py > experiments/exploratory/M6-SPLIT2b/run_out.txt
     ARMS=iii python experiments/exploratory/M6-SPLIT2b/run.py >> experiments/exploratory/M6-SPLIT2b/run_out.txt
+
+## Result (second attempt, run once, 22 November 2026; `precheck_out.txt` and `run_out.txt` unchanged)
+Pre-check: median of the largest spurious gain -92.8 (in [-200, -50]), run allowed (100 s). Jobs: i, v-i, v-w 2466 s;
+iii 6287 s (both under 2 h). Non-converged isolated fits: 0 in i, v-i, v-w; 8 in iii.
+
+| arm | control scenes split (of 200) | near-pair recall pooled | 0.10 s | AUC | median largest spurious gain |
+|:--|--:|--:|--:|--:|--:|
+| i (no splitting, mismatched) | 6 | 0.931 (149/160) | 0.825 | 0.952 | -103.7 |
+| v-i (no splitting, matched) | 0 | 0.912 (146/160) | 0.800 | 0.938 | -113.2 |
+| v-w (window-only constraint, matched) | 19 | 0.819 (131/160) | 0.700 | 0.881 | -83.8 |
+| **iii (shared with isolated events, fix on)** | **114** | 0.850 (136/160) | 0.675 | 0.904 | **+86.8** |
+
+- Arm iii against arm i: validity 114 of 200 against the limit 12, **FAILS**. Recall 13 of 160 lost, gap 0.081
+  (exact: 1300 > 800, <= 2400): useful zone, owner would decide, but validity fails first. AUC 0.904 passes.
+- Second attempt of M6-SPLIT2: **FAILS** on validity. Prediction "fewer split controls than M6-SPLIT's 24" not
+  supported.
+- v-w against v-i: 19 of 200 split (fails validity), 15 of 160 lost (gap 0.094), AUC 0.881. With matched pulses the
+  window-only constraint still fails validity, so pulse mismatch is not the only cost of the splitting.
+- The fix did not remove the positive bias: the pre-check (no splitting in the data) gives -92.8, but with
+  splitting in the data the median is +86.8 (M6-SPLIT2: +115). So the bias is tied to estimating the splitting
+  with the isolated events, not only to unconverged isolated fits. Limit of the declared pre-check: without
+  splitting in the data it could not see this. Cause not diagnosed (hypothesis, not tested: the shared splitting
+  search over pair window plus isolated windows reaches a better optimum in the two-event hypothesis than in the
+  one-event one, because the grid search starts from a different place).
+- G-M6a does not run with this model.
