@@ -19,7 +19,8 @@ of Parts B, C and D from their statements and confirms them all. `check_assumpti
 assumptions fail: correlated stations (AB.C.2, AB.D.3), a joint reading (AB.C.2) and a misspecified operator
 (AB.D.4'); it also checks AB.A.9 and AB.A.10. `check_fisher.py` computes numerical result AB.A.8 and refutes the
 former conjecture. They are NumPy only, seed 20261120, and run in under a minute. Re-run in the cloud with Python
-3.13.18 and NumPy 2.5.3, the three outputs were byte-identical to those of the first run.
+3.13.18 and NumPy 2.5.3, the three outputs were byte-identical to those of the first run. An independent re-run matched as well, except on the N4 line
+with the P cross-product, which is rounding noise at the 1e-37 level (the appendix quotes it as "below 1e-36").
 
 ## Hypothesis and refutation
 Not a hypothesis test. A statement is refuted if a script finds a violation of a proved bound.
