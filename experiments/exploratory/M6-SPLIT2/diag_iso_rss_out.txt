@@ -1,0 +1,8 @@
+   one-event iso_rss 157548.3 total 172172.2
+   one-event iso_rss 154502.3 total 169030.8
+   one-event iso_rss 153782.8 total 167964.1
+scene 0 iso_rss calls [158551.8, 157306.9, 157548.3, 154310.7, 154502.3, 153701.5, 153782.8] gains [None, 33.1, -6.5, -318.0]
+   one-event iso_rss 150207.3 total 164778.8
+   one-event iso_rss 150056.7 total 164232.2
+   one-event iso_rss 150005.2 total 163755.2
+scene 1 iso_rss calls [150713.7, 150148.1, 150207.3, 150031.4, 150056.7, 150002.9, 150005.2] gains [None, 416.3, 138.7, -212.2]

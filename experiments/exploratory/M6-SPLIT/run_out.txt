@@ -1,0 +1,8 @@
+M6-SPLIT  controls 200 (one source), pairs 40 per cell (near), seeds 20261121/20261122/20261123, thr_ref 23.8, delta <= 0.2 s, numpy 2.5.3
+arm i  : control scenes split at thr 23.8: 3/200 [0.003, 0.043]; near-pair recall 0.10s 0.775, 0.25s 0.850, 0.50s 0.975, 1.00s 0.975, pooled 0.894; AUC 0.946 (true gains n 163, median 1481.3; largest spurious gain per scene n 200, median -114.9, max 52.6); 504 s
+arm ii : control scenes split at thr 23.8: 39/200 [0.142, 0.257]; near-pair recall 0.10s 0.425, 0.25s 0.500, 0.50s 0.650, 1.00s 0.875, pooled 0.613; AUC 0.740 (true gains n 159, median 454.3; largest spurious gain per scene n 200, median -113.7, max 574.2); 1024 s
+arm iii: control scenes split at thr 23.8: 24/200 [0.078, 0.173]; near-pair recall 0.10s 0.475, 0.25s 0.725, 0.50s 0.825, 1.00s 0.950, pooled 0.744; AUC 0.885 (true gains n 160, median 1294.2; largest spurious gain per scene n 200, median -87.5, max 367.4); 2250 s
+arm iv : control scenes split at thr 23.8: 41/200 [0.151, 0.268]; near-pair recall 0.10s 0.450, 0.25s 0.700, 0.50s 0.825, 1.00s 0.975, pooled 0.738; AUC 0.892 (true gains n 160, median 1415.8; largest spurious gain per scene n 200, median -41.3, max 316.4); 3540 s
+
+DECISION (card.md): validity, arm iii 24 of 200 split (limit 12 of 200): FAILS; recall gap i - iii +0.150: COSTS TOO MUCH; AUC iii 0.885: FAILS
+3540 s

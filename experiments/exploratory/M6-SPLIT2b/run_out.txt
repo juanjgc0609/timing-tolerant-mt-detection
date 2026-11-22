@@ -1,0 +1,14 @@
+M6-SPLIT2b  NISO 10, controls 200 (one source), pairs 40 per cell (near), seeds 20261141/20261142/20261143/20261144, thr_ref 23.8, delta <= 0.2 s, numpy 2.5.3
+   isolated fits that did not converge (hit 30 rounds) in arm i: 0
+arm i   : control scenes split at thr 23.8: 6/200 [0.011, 0.064]; near-pair recall 0.10s 0.825, 0.25s 0.925, 0.50s 0.975, 1.00s 1.000, pooled 0.931; AUC 0.952 (true gains n 163, median 1502.3; largest spurious gain per scene n 200, median -103.7, max 41.8); 547 s
+   isolated fits that did not converge (hit 30 rounds) in arm v-i: 0
+arm v-i : control scenes split at thr 23.8: 0/200 [0.000, 0.018]; near-pair recall 0.10s 0.800, 0.25s 0.900, 0.50s 0.950, 1.00s 1.000, pooled 0.912; AUC 0.938 (true gains n 167, median 1666.4; largest spurious gain per scene n 200, median -113.2, max -17.8); 1099 s
+   isolated fits that did not converge (hit 30 rounds) in arm v-w: 0
+arm v-w : control scenes split at thr 23.8: 19/200 [0.058, 0.144]; near-pair recall 0.10s 0.700, 0.25s 0.775, 0.50s 0.825, 1.00s 0.975, pooled 0.819; AUC 0.881 (true gains n 162, median 1352.4; largest spurious gain per scene n 200, median -83.8, max 368.4); 2466 s
+decision: read in card.md against arm i of M6-SPLIT2 is NOT allowed (other seeds); see card
+2466 s
+M6-SPLIT2b  NISO 10, controls 200 (one source), pairs 40 per cell (near), seeds 20261141/20261142/20261143/20261144, thr_ref 23.8, delta <= 0.2 s, numpy 2.5.3
+   isolated fits that did not converge (hit 30 rounds) in arm iii: 8
+arm iii : control scenes split at thr 23.8: 114/200 [0.498, 0.640]; near-pair recall 0.10s 0.675, 0.25s 0.850, 0.50s 0.875, 1.00s 1.000, pooled 0.850; AUC 0.904 (true gains n 160, median 1787.4; largest spurious gain per scene n 200, median 86.8, max 2727.9); 6287 s
+decision: read in card.md against arm i of M6-SPLIT2 is NOT allowed (other seeds); see card
+6287 s
