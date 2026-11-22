@@ -90,3 +90,10 @@ What is measured, outside the rule:
   supervision design of 14 November) would fix them better; (2) the mismatched pulse shape and the splitting are
   confounded at this resolution. Test that separates them: the same four arms with matched pulses.
 - Limits: simulation (8-station ring, homogeneous medium, Ricker pulses, Gaussian noise); one split draw per scene.
+
+## Note (22 November 2026, after M6-SPLIT2's defect)
+M6-SPLIT has no isolated windows, so it does not have the isolated-RSS convergence defect found in M6-SPLIT2: both
+hypotheses fit only the test window, each with 3 rounds of the joint fit and of the splitting estimate, and the
+median largest spurious gain per control scene in its arm iii (-88) is of the order of the other arms (-115, -114).
+Its result (24 of 200) is not changed.
+

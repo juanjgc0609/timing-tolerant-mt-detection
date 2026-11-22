@@ -219,6 +219,21 @@ def refit_iso(iso, G, resp, frames):
         fit_tensors(Yw, aw, G, resp, frames)
 
 
+def converge_iso(iso, G, resp, frames, rtol=1e-6, max_rounds=30):
+    """M6-SPLIT2b fix: refit the isolated events (splitting fixed) until their RSS changes by less than rtol
+    (relative), so that both hypotheses compare converged nuisance fits. In place; returns the final RSS."""
+    if not iso:
+        return 0.0
+    prev = iso_rss(iso, G, resp, frames)
+    for _ in range(max_rounds):
+        refit_iso(iso, G, resp, frames)
+        cur = iso_rss(iso, G, resp, frames)
+        if abs(prev - cur) <= rtol * max(prev, 1e-12):
+            return cur
+        prev = cur
+    return prev
+
+
 def estimate_split(Y, atoms, G, resp, frames, mode, dmax, extra=None, iso=None):
     """(phi_i, delta_i) per station on the residual of the window: one pair shared by all atoms (station) or one per
     atom (event); tensors and times fixed. extra (ns, 3, NT): fixed model terms (subtracted). iso (station mode):
@@ -290,7 +305,7 @@ def _free_split_fit(Ri, tP, tS, ax, dl, resp):
     return Fi, float((d * d).sum())
 
 
-def free_one_event(Y, others, a, G, resp, frames, mode, dmax, rounds=3, half=16, iso=None):
+def free_one_event(Y, others, a, G, resp, frames, mode, dmax, rounds=3, half=16, iso=None, converge=False):
     """RSS of the one-event alternative with splitting in the same class as the two-event fit: atom a's blocks are one
     free P and one split S per station (free times and amplitudes), the other atoms refitted around it; in "station"
     mode the free S shares (phi_i, delta_i) with the other atoms, estimated here."""
@@ -343,6 +358,8 @@ def free_one_event(Y, others, a, G, resp, frames, mode, dmax, rounds=3, half=16,
             continue
         oth, _R, _rss = joint_refit(Y, oth, G, resp, frames, mode, dmax, rounds=1, extra=F, split=(mode == "event"))
     R = Y - F - (model(oth, G, Y.shape, resp, frames) if oth else 0.0)
+    if converge and iso:
+        return float((R * R).sum()) + converge_iso(iso, G, resp, frames)
     return float((R * R).sum()) + iso_rss(iso, G, resp, frames)
 
 
@@ -358,13 +375,15 @@ def iso_rss(iso, G, resp, frames):
 
 def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=None, near_km=10.0, near_s=1.5,
               bound_read=2.0, bound_unread=4.0, rounds=3, cand_half=8, kernel=LEGACY_KERNEL, mode="station",
-              dmax_s=DMAX_S, iso_windows=None):
+              dmax_s=DMAX_S, iso_windows=None, converge_iso_fits=False):
     """``ttmt.v2.m6.adcg_loop`` with splitting estimated inside the joint fit and inside the one-event alternative
     (mode "station": shared per station; "event": free per atom, descriptive). Atoms carry phi, dl (samples).
     mode "fixed" (M6-SPLIT3): the splitting is estimated once from iso_windows and then held fixed in both hypotheses.
     iso_windows (modes "station" and "fixed"): list of (Y_w, q_w), windows of isolated events at the same stations (M6-SPLIT2);
     each is read with one atom (``m6.adcg_loop``, kmax 1), and its event then shares the station's splitting with
-    the atoms of this window in every joint fit, in both hypotheses; their residual is added to both RSS."""
+    the atoms of this window in every joint fit, in both hypotheses; their residual is added to both RSS.
+    converge_iso_fits (M6-SPLIT2b): the isolated events are refitted to convergence before the loop and at the end of
+    each hypothesis (same rule in both), so the pair gain does not compare unequally converged nuisance fits."""
     reader = reader or default_reader(kernel.dt)
     resp = _Resp(kernel)
     frames = Frames(E.XN, E.STA)
@@ -386,6 +405,14 @@ def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=Non
                           dl=np.zeros(ns))
             iso.append((np.asarray(Yw, float), aw))
         _a, _R, _r = joint_refit(Y, [], E.G, resp, frames, "station", dmax, rounds, iso=iso)
+        if converge_iso_fits:
+            for _ in range(10):                                # alternate splitting and converged refits
+                before = iso_rss(iso, E.G, resp, frames)
+                converge_iso(iso, E.G, resp, frames)
+                estimate_split(Y, [], E.G, resp, frames, "station", dmax, iso=iso)
+                after = converge_iso(iso, E.G, resp, frames)
+                if abs(before - after) <= 1e-6 * max(before, 1e-12):
+                    break
         if mode == "fixed":                                   # estimated once from the isolated events, then fixed
             fixed = (iso[0][1][0]["phi"].copy(), iso[0][1][0]["dl"].copy()) if iso[0][1] else (np.zeros(ns),) * 2
             iso = None
@@ -420,11 +447,12 @@ def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=Non
         iso_t = copy_iso(iso)
         trial, R_t, rss_t = joint_refit(Y, trial, E.G, resp, frames, mode, dmax, rounds, iso=iso_t,
                                         split=(mode != "fixed"))
-        rss_t += iso_rss(iso_t, E.G, resp, frames)
+        rss_t += converge_iso(iso_t, E.G, resp, frames) if converge_iso_fits else iso_rss(iso_t, E.G, resp, frames)
         if near and thr is not None:
             j = atoms.index(min(near, key=lambda a: np.linalg.norm(a["x"][:2] - new["x"][:2])))
             others = [a for k, a in enumerate(atoms) if k != j]
-            rss_one = free_one_event(Y, others, atoms[j], E.G, resp, frames, mode, dmax, iso=iso)
+            rss_one = free_one_event(Y, others, atoms[j], E.G, resp, frames, mode, dmax, iso=iso,
+                                     converge=converge_iso_fits)
             gain = rss_one - rss_t
             new["pair_gain"] = gain
             if gain <= thr:
