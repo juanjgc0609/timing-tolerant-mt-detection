@@ -466,6 +466,28 @@ are recorded below this line before any Hi-net record enters stage 1; (d) statio
 frame by inverting `ttmt.datasets.Dataset.to_xy` about the dataset centre, depth the frame's z; (e) stations in the
 published `--sort` order (three groups by `optimal_transport_clustering` of longitude and latitude, then lexsort
 by group, longitude, latitude; more than 5 stations).
+Amendment 5, erratum 2, hash (18 November 2026). The commit that merges PR #66 is
+5880ff1756a898497070bffd1d7c9bde5a751437 on main. Its diff against its first parent 73cc0f6 is the reviewed change
+only (independent review at 267e03b; the head 3034e18 adds main's PR #69 and nothing of its own):
+`experiments/exploratory/COMPARATORS/eqnet2_stage1.py` (new), erratum 2 in this card, tests in
+`tests/test_associate.py` and the CHANGELOG, 242 lines added and none removed. The Hi-net amplitude factor of item
+(c) is still to be recorded. Every EQNet2 trial reads the whole tuning partition (Ridgecrest and Hi-net sets, the
+data of the other comparators), so no EQNet2 trial starts before that factor line is merged.
+Amendment 5, erratum 2, Hi-net factor (23 November 2026; item (c), recorded before any Hi-net record enters EQNet2
+stage 1; measured, not read from any result). The Hi-net sets are not in counts: their source SAC files (Match&Locate2
+example, `realdata/MatchLocate2/example/Trace/20120902`, 7 stations N.ATKH, INWH, NAZH, ONIH, THTH, TSTH, YNZH; `idep`
+IVEL) are velocity in nm/s. Check on the device: one raw minute of Hi-net (network 0101, 2012-09-02 03:47 JST, HinetPy
+0.13.0, win32 parsed in Python) and its channel table `01_01_20120902.euc.ch` (LSB 1.023e-7 V, gain 0 dB, sensitivity
+156.5 to 181.8 V/(m/s) per channel), converted with each channel's own factor LSB / (S 10^(G/20)) times 1e9, match
+the SAC at lag 0 on all 21 channels with transfer gain 1.000 and coherence 1.00 between 3 and 5 Hz. So the factor
+from the sets' units to um/s is one shared value, 1e-3, for every Hi-net channel (`--scale hinet_2012=1e-3`).
+Declared, changes no criterion: (1) the SAC are band-limited, not broadband (transfer 0.41 at 1.95 Hz, 0.50 at 8 Hz;
+a zero-phase 4-pole 2-8 Hz band-pass of the converted counts reproduces them, correlation 0.998 median; the exact
+filter is a fit, not documented in the source), so EQNet2, like every comparator and the model, reads Hi-net velocity
+in about 2-8 Hz, while the published loader removes the full response; (2) the SAC times are JST (UTC+9), as is the
+local catalogue they are scored against; (3) the SAC carry no sensor depth (`stdp`), so the frame depth of the 7
+borehole stations is 0. Raw files stay on the device (NIED policy) and are not in the repository. EQNet2 trials may
+start after this line is merged.
 
 ## Amendment 6 (station terms; to be anchored as `reg/ATLAS-0/amendment-6`)
 Task ATLAS-0, amendment 6 (16 November 2026), written after the exploratory runs of T420-CEILING (PR #47) and of

@@ -3,6 +3,15 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-23
+
+- ATLAS-0 card: Hi-net amplitude factor of amendment 5, erratum 2, item (c): the Hi-net sets are velocity in nm/s
+  (raw minute and channel table of 2012-09-02 checked on the device), so `--scale hinet_2012=1e-3`; declared: the
+  SAC are band-limited to about 2-8 Hz, their times are JST, and the borehole stations have frame depth 0. EQNet2
+  trials may start after it is merged.
+- ATLAS-0 amendment 5: phasenet+harpa, 60 trials without terms in `tuning_ledger_a5.csv` (59 ok; trial 2 failed
+  inside HARPA) and the frozen best `frozen/phasenet+harpa_a5.json` (trial 44, objective 0.188142).
+
 ## 2026-11-21
 
 - Appendix AB, revision of 21 November (no proof of the first version changes):
@@ -25,6 +34,11 @@ Dated record of changes to the project's process, code and documents. Results ar
   - D.4': all 8 stations are beyond the SV critical angle.
   - D.6: the test window is chosen blind to content too, and a scan needs a multiplicity correction. Masking must drop
     whole windows; the segment-zeroing masks of N1-STACK and FE-FIX make the p-value liberal.
+
+## 2026-11-18
+
+- ATLAS-0 card: hash line of amendment 5, erratum 2 (PR #66 merged as 5880ff1), which also states that no EQNet2
+  trial starts before the Hi-net amplitude-factor line, since every trial reads the whole tuning partition.
 
 ## 2026-11-17
 
