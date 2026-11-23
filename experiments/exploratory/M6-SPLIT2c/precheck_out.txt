@@ -1,0 +1,4 @@
+M6-SPLIT2c  seeds 20261151/20261152/20261153/20261154 (pre-check 20261155), NISO 10, exact slow-S delay, free_atom_start, thr 23.8, numpy 2.5.3
+PRE-CHECK orc (split data, TRUE splitting held (oracle)): 20 scenes, 20 with a spurious near atom; median largest spurious gain -96.9; > 23.8 in 0; values [-170.2, -163.5, -156.5, -144.1, -143.6, -136.6, -132.7, -121.7, -108.2, -99.5, -94.4, -83.0, -73.7, -71.5, -70.8, -64.7, -49.1, -34.5, -25.8, -23.9] -> ok
+PRE-CHECK pre (no splitting, model of arm iii): 20 scenes, 20 with a spurious near atom; median largest spurious gain -85.9; > 23.8 in 1; values [-182.8, -170.7, -137.4, -131.3, -125.8, -125.7, -112.5, -106.2, -105.3, -87.1, -84.7, -81.3, -70.2, -53.0, -52.7, -24.9, -23.8, -20.0, 5.8, 108.0] -> ok
+107 s

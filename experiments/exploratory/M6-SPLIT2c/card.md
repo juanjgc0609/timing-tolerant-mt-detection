@@ -46,3 +46,17 @@ attempt, reported as such.
 ## Procedure and cost
 Smoke test on seed 999 only (one control scene: (i) 2 s, (w) 7 s, (iii) 30 s per loop). Jobs, each under 2 h, as in
 the header of `run.py`: pre-check; (i, w); (iii) controls; (iii) pairs; combine. Run once.
+
+## Project rules 39-43 (added by the owner 23 November 2026; this note added before any main-run output was read)
+- 39 (audit with known truth before a negative): done. The oracle with the true splitting is the known truth; the
+  audit and this card's pre-check both use it.
+- 40 (positive and negative controls in every new test): negative controls are the pre-check without splitting and
+  the oracle with splitting (must not split: medians -85.9 and -96.9, 1 and 0 of 20 above 23.8), and the 200
+  single-source controls of each arm. Positive controls are the 160 true near pairs of each arm, which must be
+  resolved, and arm (i), the reference that must reproduce M6-CAL-level recall. Also the unit test, which fails
+  without the fix and passes with it.
+- 41 (after each merge, fetch main and check the resolution): applies when PR #75 merges.
+- 42 (no untracked result files in the laptop checkout): not applicable (cloud only).
+- 43 (say at close which rules applied and how): in the result section.
+- Note from review: the claim that the earlier failures are not evidence against the idea rests on a post hoc
+  diagnosis on seeds 998 and 999. Those failures stay recorded as run.
