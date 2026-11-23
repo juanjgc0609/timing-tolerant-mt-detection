@@ -49,3 +49,20 @@ def test_converge_iso_returns_the_rss_of_its_final_state():
     E, _Y, _atoms, iso, resp, frames = _setup()
     out = ms.converge_iso(iso, E.G, resp, frames)
     assert np.isclose(out, ms.iso_rss(iso, E.G, resp, frames), rtol=1e-12, atol=0)
+
+
+def test_free_one_event_with_atom_start_nests_the_split_atom():
+    """M6-SPLIT audit (23 Nov 2026): on noise-free data made by the split model itself, the free one-event alternative
+    (a larger class) must fit at least as well as the atom; without atom_start its time search could stay at the
+    unsplit optimum and fit much worse, which biased the pair gain upwards."""
+    E, _Y, atoms, _iso, resp, frames = _setup()
+    a = ms._copy_atoms(atoms)[0]
+    a["anchor"], a["bound"] = a["T"].copy(), np.full(a["T"].shape, 2.0)
+    r = np.random.default_rng(3)
+    a["phi"], a["dl"] = r.uniform(0, np.pi, E.ns), r.uniform(0.05, 0.2, E.ns) / K.dt
+    Y = ms.model([a], E.G, (E.ns, 3, _Y.shape[-1]), resp, frames)
+    a0 = ms._copy_atoms([a])[0]
+    a0["anchor"], a0["bound"] = a["anchor"], a["bound"]
+    dmax = ms.DMAX_S / K.dt
+    rss = ms.free_one_event(Y, [], a0, E.G, resp, frames, "fixed", dmax, atom_start=True)
+    assert rss <= 1e-6 * float((Y * Y).sum())

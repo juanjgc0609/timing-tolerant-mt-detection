@@ -308,10 +308,15 @@ def _free_split_fit(Ri, tP, tS, ax, dl, resp):
     return Fi, float((d * d).sum())
 
 
-def free_one_event(Y, others, a, G, resp, frames, mode, dmax, rounds=3, half=16, iso=None, converge=False):
+def free_one_event(Y, others, a, G, resp, frames, mode, dmax, rounds=3, half=16, iso=None, converge=False,
+                   atom_start=False):
     """RSS of the one-event alternative with splitting in the same class as the two-event fit: atom a's blocks are one
     free P and one split S per station (free times and amplitudes), the other atoms refitted around it; in "station"
-    mode the free S shares (phi_i, delta_i) with the other atoms, estimated here."""
+    mode the free S shares (phi_i, delta_i) with the other atoms, estimated here.
+    atom_start (M6-SPLIT audit, 23 Nov 2026): in the first round each station is fitted from two starting times, the
+    unsplit free fit and atom a's own block times, and the better is kept. Without it the time search can stay at the
+    unsplit optimum, which is off when S is split, so the one-event alternative fits worse than atom a alone (noise-free
+    check: 4.4e-2 against 1.1e-3 relative RSS) and the pair gain is biased upwards."""
     ns, _, nt = Y.shape
     oth = [dict(o, T=o["T"].copy(), anchor=np.array(o.get("anchor", o["T"]), float).copy(),
                 bound=o.get("bound", np.full(o["T"].shape, 2.0)), phi=o["phi"].copy(), dl=o["dl"].copy())
@@ -324,9 +329,6 @@ def free_one_event(Y, others, a, G, resp, frames, mode, dmax, rounds=3, half=16,
     for it in range(rounds):
         for i in range(ns):
             ic = _iso_cost(iso, i, G, resp, frames)
-            if it == 0:                                          # start from the unsplit free fit
-                Ri = Y[i] - (model(oth, G, Y.shape, resp, frames, [i])[i] if oth else 0.0)
-                _d, _r, tc[0, i], tc[1, i] = _free_station(Ri, tc[0, i], tc[1, i], resp, half, return_times=True)
 
             def resid(phv, dlv):
                 if mode == "station":
@@ -335,25 +337,42 @@ def free_one_event(Y, others, a, G, resp, frames, mode, dmax, rounds=3, half=16,
                 Ri = Y[i] - (model(oth, G, Y.shape, resp, frames, [i])[i] if oth else 0.0)
                 return Ri
 
-            def cost(phv, dlv):
-                Ri = resid(phv, dlv)
-                return _free_split_fit(Ri, tc[0, i], tc[1, i], _proj(fr, i, phv)[2], dlv, resp)[1] + ic(phv, dlv)
-            if mode == "fixed":                                   # M6-SPLIT3: splitting held fixed
-                p_, d_ = float(a["phi"][i]), float(a["dl"][i])
+            def fit_from(t0P, t0S):
+                tt = [t0P, t0S]
+
+                def cost(phv, dlv):
+                    Ri = resid(phv, dlv)
+                    return _free_split_fit(Ri, tt[0], tt[1], _proj(fr, i, phv)[2], dlv, resp)[1] + ic(phv, dlv)
+                if mode == "fixed":                                   # M6-SPLIT3: splitting held fixed
+                    p_, d_ = float(a["phi"][i]), float(a["dl"][i])
+                else:
+                    p_, d_, _c = _grid_split(cost, dmax)
+                Ri = resid(p_, d_)
+                ax = _proj(fr, i, p_)[2]
+                th0 = np.array(tt, float)
+                res = minimize(lambda th: _free_split_fit(Ri, th[0], th[1], ax, d_, resp)[1], th0,
+                               method="Nelder-Mead", options={"xatol": 1e-3, "fatol": 1e-9,
+                                                              "initial_simplex": th0 + np.array([[0, 0], [0.5, 0],
+                                                                                                 [0, 0.5]])})
+                if (res.fun < _free_split_fit(Ri, th0[0], th0[1], ax, d_, resp)[1]
+                        and np.all(np.abs(res.x - a["T"][:, i]) <= half)):
+                    tt = [float(res.x[0]), float(res.x[1])]
+                Fi, rw = _free_split_fit(Ri, tt[0], tt[1], ax, d_, resp)
+                return rw + ic(p_, d_), p_, d_, tt, Fi
+
+            if it == 0:                                          # start from the unsplit free fit
+                Ri = Y[i] - (model(oth, G, Y.shape, resp, frames, [i])[i] if oth else 0.0)
+                _d, _r, t0P, t0S = _free_station(Ri, tc[0, i], tc[1, i], resp, half, return_times=True)
+                starts = [(t0P, t0S)] + ([(float(a["T"][0, i]), float(a["T"][1, i]))] if atom_start else [])
             else:
-                p_, d_, _c = _grid_split(cost, dmax)
+                starts = [(tc[0, i], tc[1, i])]
+            best = min((fit_from(*st) for st in starts), key=lambda r: r[0])
+            _c, p_, d_, tt, Fi = best
             ph[i], dls[i] = p_, d_
             _set_iso(iso, i, p_, d_)
-            Ri = resid(p_, d_)
-            ax = _proj(fr, i, p_)[2]
-            th0 = np.array([tc[0, i], tc[1, i]], float)
-            res = minimize(lambda th: _free_split_fit(Ri, th[0], th[1], ax, d_, resp)[1], th0, method="Nelder-Mead",
-                           options={"xatol": 1e-3, "fatol": 1e-9,
-                                    "initial_simplex": th0 + np.array([[0, 0], [0.5, 0], [0, 0.5]])})
-            if (res.fun < _free_split_fit(Ri, th0[0], th0[1], ax, d_, resp)[1]
-                    and np.all(np.abs(res.x - a["T"][:, i]) <= half)):
-                tc[0, i], tc[1, i] = res.x
-            F[i] = _free_split_fit(Ri, tc[0, i], tc[1, i], ax, d_, resp)[0]
+            resid(p_, d_)                                        # leave the other atoms at the kept splitting
+            tc[0, i], tc[1, i] = tt
+            F[i] = Fi
         refit_iso(iso, G, resp, frames)
         if not oth:
             if not iso:
@@ -378,7 +397,8 @@ def iso_rss(iso, G, resp, frames):
 
 def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=None, near_km=10.0, near_s=1.5,
               bound_read=2.0, bound_unread=4.0, rounds=3, cand_half=8, kernel=LEGACY_KERNEL, mode="station",
-              dmax_s=DMAX_S, iso_windows=None, converge_iso_fits=False):
+              dmax_s=DMAX_S, iso_windows=None, converge_iso_fits=False, fixed_split=None,
+              free_atom_start=False):
     """``ttmt.v2.m6.adcg_loop`` with splitting estimated inside the joint fit and inside the one-event alternative
     (mode "station": shared per station; "event": free per atom, descriptive). Atoms carry phi, dl (samples).
     mode "fixed" (M6-SPLIT3): the splitting is estimated once from iso_windows and then held fixed in both hypotheses.
@@ -386,7 +406,9 @@ def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=Non
     each is read with one atom (``m6.adcg_loop``, kmax 1), and its event then shares the station's splitting with
     the atoms of this window in every joint fit, in both hypotheses; their residual is added to both RSS.
     converge_iso_fits (M6-SPLIT2b): the isolated events are refitted to convergence before the loop and at the end of
-    each hypothesis (same rule in both), so the pair gain does not compare unequally converged nuisance fits."""
+    each hypothesis (same rule in both), so the pair gain does not compare unequally converged nuisance fits.
+    fixed_split (audit): (phi, dl in samples) held in mode "fixed" instead of the isolated-event estimate.
+    free_atom_start (audit fix, 23 Nov 2026): passed to ``free_one_event`` as atom_start."""
     reader = reader or default_reader(kernel.dt)
     resp = _Resp(kernel)
     frames = Frames(E.XN, E.STA)
@@ -434,6 +456,8 @@ def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=Non
                                                                               cand_half))] for b in range(2)]
         if mode == "station" and atoms:
             phi0, dl0 = atoms[0]["phi"].copy(), atoms[0]["dl"].copy()
+        elif mode == "fixed" and fixed_split is not None:      # audit: splitting given (e.g. the true one)
+            phi0, dl0 = np.asarray(fixed_split[0], float).copy(), np.asarray(fixed_split[1], float).copy()
         elif mode == "fixed" and iso_windows:
             phi0, dl0 = fixed[0].copy(), fixed[1].copy()
         elif iso and iso[0][1]:
@@ -455,7 +479,7 @@ def adcg_loop(E, MFn, q, kmax, lag, statistic=RANK_DEFAULT, reader=None, thr=Non
             j = atoms.index(min(near, key=lambda a: np.linalg.norm(a["x"][:2] - new["x"][:2])))
             others = [a for k, a in enumerate(atoms) if k != j]
             rss_one = free_one_event(Y, others, atoms[j], E.G, resp, frames, mode, dmax, iso=iso,
-                                     converge=converge_iso_fits)
+                                     converge=converge_iso_fits, atom_start=free_atom_start)
             gain = rss_one - rss_t
             new["pair_gain"] = gain
             if gain <= thr:
