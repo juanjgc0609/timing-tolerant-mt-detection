@@ -11,27 +11,6 @@ Dated record of changes to the project's process, code and documents. Results ar
   hypothesis not tested with fewer than 37 hours; ledger path. Items 2, 4 and 6 approved by the owner on 21 November
   2026, 01:51 UTC ("Apruebo los tres"). Conformance checklist items 25-27 added. No R2 or R3 data read.
 - WHITEN-REVIEW: owner's decision recorded, M5 `--local` not re-run.
-
-## 2026-11-20
-
-- WHITEN-REVIEW (`experiments/exploratory/WHITEN-REVIEW`, card declared before running, commit 1c9f0ef): code audit
-  of every result the whitening mismatch of PR #68 could touch. Affected: R0, R1, C18 b-j, G-M5b Ridgecrest. Not
-  affected: C18a and G-M1a (per-station readings, no subspace), the M6 simulations (equal noise sd), Task 2M.
-  M5 `--local`: median per-station level ratio on i.i.d. noise 1.085 / 1.106 / 1.120 for 4 / 6 / 8 stations; the
-  M5 networks have at least 8 stations, so by the rule written before running (> 1.10) it is affected and listed for a
-  re-run. Post hoc: f loss < 0.005; the owner decides whether to re-run. C18b re-run on the Ridgecrest calibration segment with Q from diag(1/scale) G (data fetched from GitHub at
-  the data card's commit, checksums match): frozen REG and NOCAP reproduced exactly; for the uncapped score
-  (primary) the defect does not explain the failure (AUC +0.011 [+0.001, +0.025]); for the registered capped score
-  it explains part of it (+0.079 [+0.027, +0.136], from below chance to about chance); after the fix neither score
-  separates real events. Thesis draft note updated; the "[whitening review]" markers stay.
-- M6-SPURIOUS (calendar M-2, card and amendment 1 declared before reading): cause of the ~5 % positive spurious pair
-  gains of M6-CAL. Positive scenes of 600: one source 28 mismatched / 0 exact; with neighbours 26 / 11 (McNemar p
-  8.3e-3). Reading of the rule: no clear cause; the tail is a declared limit of M6 in simulation. Descriptive: with
-  one source the tail is entirely pulse mismatch; with neighbours a part remains with exact pulses.
-- `docs/GLOSSARY.md` (rule 27): one definition per term; three SNR meanings in use named apart (SNR_blk, SNR_net,
-  SNR_med); the two scoring modules (`ttmt.stats`, `ttmt.scoring`) described with an open item.
-- `docs/DATA_USE_LEDGER.md` (rule 28, calendar T-4): every read of a held-out or evaluation set so far, and the
-  attempts per line of work as the cards state them.
 - Appendix AB, revision of 21 November (no proof of the first version changes):
   - Conjecture AB.A.8 refuted numerically and replaced by numerical result AB.A.8 (smallest Fisher eigenvalue of a
     co-located pair of order dtau^4 and dtau^6; information on dtau of order dtau^2 and dtau^4).
@@ -53,6 +32,26 @@ Dated record of changes to the project's process, code and documents. Results ar
   - D.6: the test window is chosen blind to content too, and a scan needs a multiplicity correction. Masking must drop
     whole windows; the segment-zeroing masks of N1-STACK and FE-FIX make the p-value liberal.
 
+## 2026-11-20
+
+- WHITEN-REVIEW (`experiments/exploratory/WHITEN-REVIEW`, card declared before running, commit 1c9f0ef): code audit
+  of every result the whitening mismatch of PR #68 could touch. Affected: R0, R1, C18 b-j, G-M5b Ridgecrest. Not
+  affected: C18a and G-M1a (per-station readings, no subspace), the M6 simulations (equal noise sd), Task 2M.
+  M5 `--local`: median per-station level ratio on i.i.d. noise 1.085 / 1.106 / 1.120 for 4 / 6 / 8 stations; the
+  M5 networks have at least 8 stations, so by the rule written before running (> 1.10) it is affected and listed for a
+  re-run. Post hoc: f loss < 0.005; the owner decides whether to re-run. C18b re-run on the Ridgecrest calibration segment with Q from diag(1/scale) G (data fetched from GitHub at
+  the data card's commit, checksums match): frozen REG and NOCAP reproduced exactly; for the uncapped score
+  (primary) the defect does not explain the failure (AUC +0.011 [+0.001, +0.025]); for the registered capped score
+  it explains part of it (+0.079 [+0.027, +0.136], from below chance to about chance); after the fix neither score
+  separates real events. Thesis draft note updated; the "[whitening review]" markers stay.
+- M6-SPURIOUS (calendar M-2, card and amendment 1 declared before reading): cause of the ~5 % positive spurious pair
+  gains of M6-CAL. Positive scenes of 600: one source 28 mismatched / 0 exact; with neighbours 26 / 11 (McNemar p
+  8.3e-3). Reading of the rule: no clear cause; the tail is a declared limit of M6 in simulation. Descriptive: with
+  one source the tail is entirely pulse mismatch; with neighbours a part remains with exact pulses.
+- `docs/GLOSSARY.md` (rule 27): one definition per term; three SNR meanings in use named apart (SNR_blk, SNR_net,
+  SNR_med); the two scoring modules (`ttmt.stats`, `ttmt.scoring`) described with an open item.
+- `docs/DATA_USE_LEDGER.md` (rule 28, calendar T-4): every read of a held-out or evaluation set so far, and the
+  attempts per line of work as the cards state them.
 ## 2026-11-17
 
 - EQNet2 stage 1 on the tuning partition: `experiments/exploratory/COMPARATORS/eqnet2_stage1.py scores` writes the
