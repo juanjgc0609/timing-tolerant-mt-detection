@@ -3,6 +3,29 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-21
+
+- Appendix AB, revision of 21 November (no proof of the first version changes):
+  - Conjecture AB.A.8 refuted numerically and replaced by numerical result AB.A.8 (smallest Fisher eigenvalue of a
+    co-located pair of order dtau^4 and dtau^6; information on dtau of order dtau^2 and dtau^4).
+  - New Propositions AB.A.9 (P arrivals carry no first-order term) and AB.A.10 (S splitting with a free fast axis
+    lowers the S residual to fourth order), both in review.
+  - New Proposition AB.D.6 (background-window null that keeps the dependence between stations) and Remark AB.D.4'
+    (misspecified operator).
+  - Limits stated for AB.B.3, AB.B.5, AB.C.2 (independent blocks, a reading rule blind to directions, multiplicity),
+    AB.D.2 (dependence; what e-BH covers) and AB.D.3 (liberal under correlated noise), and a pulse per arrival in AB.A.6.
+  - New scripts `check_rederive_bcd.py`, `check_assumptions.py` and `check_fisher.py` in
+    `experiments/exploratory/THEORY-5/`, all synthetic, each with its output.
+- Thesis: the Appendix AB paragraphs of Section 4 carry these limits and results; evidence rows E17 to E20 added.
+- Appendix AB, after independent review of 7a9e75d:
+  - A.3(a) uses inf/sup. The two-pulse residual is not continuous on the diagonal t_P = t_S, so the minimum need not
+    be attained, and the one-pulse value there is a convention, not a limit.
+  - A.9 is stated with the take-off and receiver directions.
+  - A.10 swaps the axis when the delay comes out negative.
+  - D.4': all 8 stations are beyond the SV critical angle.
+  - D.6: the test window is chosen blind to content too, and a scan needs a multiplicity correction. Masking must drop
+    whole windows; the segment-zeroing masks of N1-STACK and FE-FIX make the p-value liberal.
+
 ## 2026-11-20
 
 - ADR-0012 (owner's decision of 18 November, "Arreglar pesos y correr el piloto"): operator weighted like the data,
