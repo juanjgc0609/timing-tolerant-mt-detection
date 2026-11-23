@@ -268,18 +268,29 @@ def measure_stage(a):
         print(f"  f_emp median {s['f_emp']:.3f} (does not depend on G; descriptive anchor)")
         print(f"  rays with p*v > 1 (sine clipped): {s['clipped'][0]} of {s['clipped'][1]}, in {s['clipped'][2]} targets")
         cs = {}
+        crng_b = np.random.default_rng(SEED_BOOT)       # its own generator: the main bootstrap stream is unchanged
         for made in ("ray", "straight"):
             c = [x for x in ctrl if x["set_id"] == sid and x["made"] == made]
+            cl = sorted({x["label"] for x in c})
+            cby = {l: ([x["m|ray"] for x in c if x["label"] == l], [x["m|straight"] for x in c if x["label"] == l])
+                   for l in cl}
+            cb = []
+            for _ in range(B):
+                ll = crng_b.choice(cl, len(cl))
+                cb.append(np.median(np.concatenate([cby[l][0] for l in ll]))
+                          / np.median(np.concatenate([cby[l][1] for l in ll])) - 1)
             cs[made] = {"n": len(c),
                         "gain": float(np.median([x["m|ray"] for x in c]) / np.median([x["m|straight"] for x in c]) - 1),
+                        "ci95": np.quantile(cb, [0.025, 0.975]).tolist(),
                         "f_g_own": float(np.median([x[f"f_g|{made}"] for x in c]))}
         pos = cs["ray"]["f_g_own"] >= F_MIN and cs["ray"]["gain"] > 0
         neg = cs["straight"]["f_g_own"] >= F_MIN and cs["straight"]["gain"] <= 0
         s["controls"] = dict(cs, positive_passes=bool(pos), negative_passes=bool(neg))
-        print(f"  control +, made with G_ray (n {cs['ray']['n']}): f_g with G_ray {cs['ray']['f_g_own']:.3f}, m gain "
-              f"{cs['ray']['gain']:+.1%} -> {'passes' if pos else 'FAILS'} (f_g >= 0.99 and gain > 0)")
-        print(f"  control -, made with straight G (n {cs['straight']['n']}): f_g with straight {cs['straight']['f_g_own']:.3f}, m gain "
-              f"{cs['straight']['gain']:+.1%} -> {'passes' if neg else 'FAILS'} (f_g >= 0.99 and gain <= 0)")
+        for tag, made, ok, rule in (("+", "ray", pos, "gain > 0"), ("-", "straight", neg, "gain <= 0")):
+            q = cs[made]
+            print(f"  control {tag}, made with {made} G (n {q['n']}): wiring check, noise-free f_g with the same G "
+                  f"{q['f_g_own']:.3f}; median m gain {q['gain']:+.1%} [95 % {q['ci95'][0]:+.1%}, {q['ci95'][1]:+.1%}]"
+                  f" -> {'passes' if ok else 'FAILS'} (median f_g >= 0.99 and median {rule})")
         if not (pos and neg):
             print("  A CONTROL FAILS: this set's measure is not read (rules 39-40); report to the supervisor")
     print("zones (card; read by the supervisor): m gain >= +20 % in both sets / between, or only one set / <= 0 in both;"

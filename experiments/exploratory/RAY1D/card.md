@@ -93,6 +93,14 @@ Las zonas sobre m quedan como estaban escritas.
   - Si un control falla en un conjunto, la medida de ese conjunto no se lee y se informa al supervisor. En
     particular, un resultado negativo (zona ≤ 0) solo se declara si los dos controles pasan.
   - Las zonas y la regla de f_g no cambian.
+  - Precisiones del supervisor (23 de noviembre, antes de correr):
+    - (a) Cada criterio de control se aplica a la mediana por conjunto sobre los objetivos, el mismo estadístico
+      que usan las zonas. Los controles se informan con su intervalo por realización, 10 000 remuestreos, semilla
+      20261125, en un generador propio, así que la secuencia del bootstrap principal no cambia.
+    - (b) El f_g ≥ 0.99 de cada control se calcula sobre el vector inyectado sin ruido. Es una comprobación del
+      cableado y así se rotula.
+    - (c) Si el control negativo falla solo porque la ganancia mediana de m queda por encima de 0, aunque sea
+      poco y con un intervalo que incluya 0, se informa como fallado. Ese conjunto no se lee y no se reajusta nada.
 - **41 (fusiones).** Después de cada fusión en main se trae main, se revisa la resolución y se declaran los archivos
   compartidos. Los de este PR, en el orden de fusión: `CHANGELOG.md`, `docs/artifact_manifest_and_error_log.md`
   (E66), `src/ttmt/radiation.py`, `src/ttmt/r1.py`.
