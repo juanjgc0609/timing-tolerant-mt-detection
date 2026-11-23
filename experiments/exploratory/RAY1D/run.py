@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[3]
 SEED_GCHECK = 20261125        # gcheck's generator (FE-FIX chain stage)
 SEED_FAKE_SD = 20261126       # cloud check: fake per-station sd for the weighted variant
 SEED_BOOT, B = 20261125, 10000
+SEED_CTRL = 20261127          # rules 39 and 40: known-truth controls of the measure stage
 SNR_MIN, QNOISE, CAP = 5.0, 0.999, 6.0
 F_MIN = 0.99
 GAIN_PASS = 0.20
@@ -149,7 +150,8 @@ def measure_stage(a):
     from ttmt.synth.realdata import first_arrival
     from ttmt.ray_operator import clipped
     n1 = _n1()
-    out = []
+    out, ctrl = [], []
+    crng = np.random.default_rng(SEED_CTRL)
     for sid in a.sets:
         rd = sets.SetReader(sid, "tune", verify="fingerprint")
         STA = np.asarray(rd.man["xyz"], float)
@@ -193,6 +195,28 @@ def measure_stage(a):
                     row[f"f_an|{k}"] = float(y @ y) / vv
                     row[f"f_g|{k}"] = float(yg @ yg) / gg
                 out.append(row)
+                # rules 39-40, known-truth controls (descriptive gate, not the verdict): a synthetic event at the
+                # target's location and origin, made with G_ray (positive control) or with the straight G (negative
+                # control), added to the same masked noise and scaled so that its noise-free read has the target's
+                # ||v||; same front end, read, Q_w, noise quantile and margin as the target.
+                ops = _ops(x, STA, model, sd)
+                mc = crng.normal(size=6)
+                for made in ("ray", "straight"):
+                    Gm = ops[made][0] / w[:, None]                               # unweighted operator
+                    ev = _event(Gm, mc, tt.T, truth.t[e] - truth.t0, len(STA), 100.0, noise.shape[-1])
+                    R0 = n1.matched(n1.pre16(ev)) / sd[:, None, None]
+                    v0 = n1.read_at_best(R0, truth.t[e] + tt.T, truth.t0).reshape(-1)
+                    k = np.sqrt(vv / max(float(v0 @ v0), 1e-300))
+                    Rc = k * R0 + mfn * keep / sd[:, None, None]
+                    Vc = n1.peak_vectors(Rc)
+                    gc = (Gm @ mc) * w
+                    crow = {"set_id": sid, "label": lab, "event": int(e), "made": made}
+                    for kk, (_Gw, Qw) in ops.items():
+                        sn = max(float(np.quantile(_smt(Vn, o_n, tt, Qw, True), QNOISE)), 1e-300)
+                        crow[f"m|{kk}"] = float(_smt(Vc, o_t, tt, Qw, True)[0]) / sn
+                        yg = gc @ Qw
+                        crow[f"f_g|{kk}"] = float(yg @ yg) / max(float(gc @ gc), 1e-300)
+                    ctrl.append(crow)
     rng = np.random.default_rng(SEED_BOOT)
     summary = {}
     for sid in a.sets:
@@ -243,9 +267,24 @@ def measure_stage(a):
                   f"{q['median_ray_fs']:.3f}); difference {q['delta']:+.3f} [95 % {q['ci95'][0]:+.3f}, {q['ci95'][1]:+.3f}]")
         print(f"  f_emp median {s['f_emp']:.3f} (does not depend on G; descriptive anchor)")
         print(f"  rays with p*v > 1 (sine clipped): {s['clipped'][0]} of {s['clipped'][1]}, in {s['clipped'][2]} targets")
+        cs = {}
+        for made in ("ray", "straight"):
+            c = [x for x in ctrl if x["set_id"] == sid and x["made"] == made]
+            cs[made] = {"n": len(c),
+                        "gain": float(np.median([x["m|ray"] for x in c]) / np.median([x["m|straight"] for x in c]) - 1),
+                        "f_g_own": float(np.median([x[f"f_g|{made}"] for x in c]))}
+        pos = cs["ray"]["f_g_own"] >= F_MIN and cs["ray"]["gain"] > 0
+        neg = cs["straight"]["f_g_own"] >= F_MIN and cs["straight"]["gain"] <= 0
+        s["controls"] = dict(cs, positive_passes=bool(pos), negative_passes=bool(neg))
+        print(f"  control +, made with G_ray (n {cs['ray']['n']}): f_g with G_ray {cs['ray']['f_g_own']:.3f}, m gain "
+              f"{cs['ray']['gain']:+.1%} -> {'passes' if pos else 'FAILS'} (f_g >= 0.99 and gain > 0)")
+        print(f"  control -, made with straight G (n {cs['straight']['n']}): f_g with straight {cs['straight']['f_g_own']:.3f}, m gain "
+              f"{cs['straight']['gain']:+.1%} -> {'passes' if neg else 'FAILS'} (f_g >= 0.99 and gain <= 0)")
+        if not (pos and neg):
+            print("  A CONTROL FAILS: this set's measure is not read (rules 39-40); report to the supervisor")
     print("zones (card; read by the supervisor): m gain >= +20 % in both sets / between, or only one set / <= 0 in both;"
           " polarisation (f_g, median difference ray - straight): >= 0.20 supported, < 0.05 not")
-    json.dump({"rows": out, "summary": summary}, open(a.out, "w"), indent=1)
+    json.dump({"rows": out, "controls": ctrl, "summary": summary}, open(a.out, "w"), indent=1)
 
 
 if __name__ == "__main__":

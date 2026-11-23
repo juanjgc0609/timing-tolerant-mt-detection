@@ -77,3 +77,25 @@ Registrada también al final de `supervision/tras-reunion-director-2026-11-20.md
 2. Se acepta `pred_model` para el p de Hi-net. Se cuentan e informan por conjunto los rayos con p·v > 1 (seno
    recortado a 1), en la fuente o en la superficie.
 Las zonas sobre m quedan como estaban escritas.
+
+## Reglas 39-43 del dueño (22 de noviembre de 2026), aplicadas antes de correr la medida
+
+- **39 y 40 (auditoría con verdad conocida y controles positivo y negativo).**
+  - Control positivo de código: la etapa `check` (eventos de G_ray leídos con G_ray, f 0.999 / 0.998).
+  - Control negativo de código: la misma etapa, con los eventos de G_ray leídos con el Q recto (0.925 / 0.866) y
+    con los sd falsos sin pesar (0.716 / 0.797).
+  - Controles de la medida, añadidos ahora a la etapa `measure` (semilla 20261127). Por cada objetivo, un evento
+    sintético en su ubicación y su origen, hecho con G_ray (control positivo) o con el G recto (control negativo).
+    Se suma al mismo ruido enmascarado y se escala para que su lectura sin ruido tenga el ‖v‖ del objetivo. Pasa
+    por el mismo frente, la misma lectura, el mismo Q_w y el mismo cuantil de ruido.
+    - El positivo pasa si f_g con G_ray es ≥ 0.99 y la ganancia de m de G_ray sobre el recto es > 0.
+    - El negativo pasa si f_g con el recto es ≥ 0.99 y la ganancia es ≤ 0.
+  - Si un control falla en un conjunto, la medida de ese conjunto no se lee y se informa al supervisor. En
+    particular, un resultado negativo (zona ≤ 0) solo se declara si los dos controles pasan.
+  - Las zonas y la regla de f_g no cambian.
+- **41 (fusiones).** Después de cada fusión en main se trae main, se revisa la resolución y se declaran los archivos
+  compartidos. Los de este PR, en el orden de fusión: `CHANGELOG.md`, `docs/artifact_manifest_and_error_log.md`
+  (E66), `src/ttmt/radiation.py`, `src/ttmt/r1.py`.
+- **42 (seguimiento).** `measure.json` y `measure_out.txt` se guardan en git desde el checkout del portátil, en la
+  misma rama, antes de leer la zona.
+- **43 (cierre).** Al cerrar, el informe dice qué reglas aplicaron y cómo.
