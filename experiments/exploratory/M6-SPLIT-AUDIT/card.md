@@ -16,7 +16,8 @@ splitting drawn per station phi ~ U[0, pi), delta ~ U[0.02, 0.2] s.
    delta_i) with `m6split` in station mode from that event alone (one atom read by `m6.adcg_loop`, then
    `joint_refit` with splitting). Reported for mismatched pulses (the run setting) and for matched pulses.
    - Pass: delta error <= 0.02 s and phi error <= 15 degrees (modulo 180) at >= 80 % of all stations, pooled
-     over the 100 events.
+     over the 100 events. The criterion applies to the MISMATCHED setting only (the run setting); the matched
+     line is descriptive (clarification after review, before any run).
    - Descriptive only: the same rates for stations with delta >= 0.05 s, and with 10 isolated events per station
      (the arm iii setting).
 2. **Negative control with oracle.** 200 single-source control scenes with splitting in the data. The splitting

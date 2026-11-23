@@ -113,6 +113,7 @@ def main():
                     big = dt >= 0.05
                     print(f"recovery, {lab}, {name}: delta err <= 0.02 s and phi err <= 15 deg at {ok.sum()}/{ok.size} "
                           f"= {ok.mean():.3f} of stations (pass >= 0.80: {'PASSES' if ok.mean() >= 0.80 else 'FAILS'}"
+                          f"{'' if (j == 1 and arm == 'rec') else ', descriptive'}"
                           f"{'' if j == 1 else ', not a criterion'}); delta >= 0.05 s: {ok[big].mean():.3f}; median "
                           f"delta err {np.median(ed):.3f} s, median phi err {np.median(ep):.1f} deg; delta estimated 0 "
                           f"at {(np.array([o[j] for o in out]).ravel() == dt).sum()} stations", flush=True)
