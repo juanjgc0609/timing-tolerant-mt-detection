@@ -9,6 +9,8 @@ Nothing else is used.
 -/
 import Mathlib.Basic.Real.Basic
 import Mathlib.Algebra.Module.LinearMap.Defs
+import Mathlib.Topology.MetricSpace.HausdorffDistance
+import Mathlib.Analysis.Normed.Module.Basic
 
 namespace TTMT
 
@@ -22,5 +24,12 @@ def oneEventClass (G : Θ → V →ₗ[ℝ] W) : Set W := Set.range fun p : Θ �
 theorem coincident_pair_mem_oneEventClass (G : Θ → V →ₗ[ℝ] W) (θ : Θ) (m₁ m₂ : V) :
     G θ m₁ + G θ m₂ ∈ oneEventClass G :=
   ⟨(θ, m₁ + m₂), (G θ).map_add m₁ m₂⟩
+
+/-- **Proposition AB.A.2, margin.** The distance from the coincident-pair signal to the
+one-event class is zero: `δ = inf_{μ ∈ M₁} ‖μ_ξ − μ‖ = 0`. -/
+theorem coincident_pair_margin_zero {W' : Type*} [NormedAddCommGroup W'] [Module ℝ W']
+    (G : Θ → V →ₗ[ℝ] W') (θ : Θ) (m₁ m₂ : V) :
+    Metric.infDist (G θ m₁ + G θ m₂) (oneEventClass G) = 0 :=
+  Metric.infDist_zero_of_mem (coincident_pair_mem_oneEventClass G θ m₁ m₂)
 
 end TTMT
