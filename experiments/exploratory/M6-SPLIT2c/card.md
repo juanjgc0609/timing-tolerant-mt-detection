@@ -60,3 +60,28 @@ the header of `run.py`: pre-check; (i, w); (iii) controls; (iii) pairs; combine.
 - 43 (say at close which rules applied and how): in the result section.
 - Note from review: the claim that the earlier failures are not evidence against the idea rests on a post hoc
   diagnosis on seeds 998 and 999. Those failures stay recorded as run.
+
+## Result (run once, 23-24 November 2026; `precheck_out.txt`, `run_i_w.txt`, `run_iii_ctrl.txt`, `run_iii_pair.txt`, `part_*.json`, `run_out.txt` unchanged)
+Jobs: i and w 1881 s; iii controls 3335 s; iii pairs 2838 s (each under 2 h). Non-converged isolated fits: 2 in iii.
+
+| arm | control scenes split (of 200) | near-pair recall pooled | 0.10 s | AUC | median largest spurious gain |
+|:--|--:|--:|--:|--:|--:|
+| i (reference, no splitting) | 3 | 0.906 (145/160) | 0.800 | 0.953 | -110.4 |
+| w (window-only, director's design) | **5** | 0.769 (123/160) | 0.600 | 0.870 | -120.4 |
+| iii (shared with isolated events, owner's choice) | **16** | 0.838 (134/160) | 0.725 | 0.927 | -77.8 |
+
+- Arm w against i: validity 5 of 200, **passes**. Recall 22 of 160 lost (exact: 2200 > 800, <= 2400): useful zone,
+  owner decides. AUC 0.870 < 0.90: **fails**.
+- Arm iii against i: validity 16 of 200 against the limit 12, **fails** (95 % interval [0.046, 0.127] contains
+  0.06; not relaxed). Recall 11 of 160 lost (exact: 1100 > 800, <= 2400): useful zone, owner decides. AUC 0.927,
+  **passes**.
+- Predictions: "(w) and (iii) pass validity" holds for w only; "the recall loss of (iii) is smaller than that of
+  (w)" holds (11 against 22).
+- Against the same arms before the fixes: false splits fall from 24 (M6-SPLIT iii, window-only) to 5, and from 126
+  (M6-SPLIT2) and 114 (M6-SPLIT2b) to 16. The audit's fixes removed most of the failure, as the oracle predicted.
+- What remains (hypothesis, not tested): the oracle with the true splitting gives 0 of 20 above 23.8. The remaining
+  false splits of iii therefore come from estimating the splitting, not from the model.
+- Next, as declared: iii fails validity, so the pre-calibrated variant with the fixes is declared next
+  (M6-SPLIT3b). G-M6a does not run with any arm yet.
+- Rules: 39 and 40 as in the note above (pre-check oracle and no-splitting negative controls passed; arm i and the
+  true pairs as positive controls); 14 (no threshold relaxed); 28 (attempt recorded, the earlier four unchanged).

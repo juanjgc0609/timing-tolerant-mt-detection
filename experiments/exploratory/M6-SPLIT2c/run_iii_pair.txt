@@ -1,0 +1,3 @@
+M6-SPLIT2c  seeds 20261151/20261152/20261153/20261154 (pre-check 20261155), NISO 10, exact slow-S delay, free_atom_start, thr 23.8, numpy 2.5.3
+arm iii part pair saved; 2838 s
+2838 s
