@@ -177,3 +177,4 @@ if __name__ == "__main__":
     for w in which:
         globals()[w]()
     print(f"total {time.time() - t0:.0f} s")
+    # (added after the run, review of 78c9bab) controls_out.txt has 9 PASS lines = 13 criteria (M5-a holds 5)

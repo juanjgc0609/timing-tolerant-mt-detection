@@ -1,7 +1,7 @@
 # AUDIT-NEG: tabla de auditoría de los negativos (regla 39), 24 de noviembre de 2026
 
 Criterios y controles declarados antes de correr en `card.md` (commit 3a2d667). Salida: `controls_out.txt`
-(nube, CPU, numpy 2.5.3, scipy 1.18.1, 1083 s; semilla 20261124). Los 13 controles con criterio pasan, así que
+(nube, CPU, numpy 2.5.3, scipy 1.18.1, 1083 s; semilla 20261124). Pasan los 9 controles con criterio (13 criterios: M5-a tiene cinco), así que
 los instrumentos de la auditoría son válidos (regla 40). Ningún número registrado cambia. Ningún criterio se relaja.
 
 ## Controles
@@ -18,8 +18,8 @@ los instrumentos de la auditoría son válidos (regla 40). Ningún número regis
 | M2-c campo + ruido t3 | caída 0.335 de 0.356 (0.94), cobertura 0.954 | descriptivo | el GP llega al 94 % de lo alcanzable incluso con colas pesadas |
 | M5-a fondo exacto, H 200 000 | producto 4.3e-4 / 3e-5; S_avg 2.1e-4 / 2e-5 (p 1e-2 / 1e-3); media exp(S_avg) 0.979 | <= p; [0.9, 1.1] | PASA |
 | M5-b fondo demasiado ligero | producto 5.3e-2 a 1e-3 | > 1e-3 | PASA |
-| M5-c potencia | P(S_avg >= log 1000) 0.755 | >= 0.5 | PASA |
-| M5-d lecturas de pico, fondo radial con n_fit 30 000 y 2 000 000 | S_avg y producto 0 a 1e-3 en los dos | descriptivo, lectura fijada | ver M5-EVALUE abajo |
+| M5-c potencia | P(S_avg >= log 1000) 0.755 | >= 0.5 | PASA. Desviación de la ficha, no declarada antes: corrió con H = 20 000 (`controls.py:46`), no con las 200 000 de la ficha. No cambia la lectura (0.755 contra 0.5) |
+| M5-d lecturas de pico, fondo radial con n_fit 30 000 y 2 000 000 | S_avg y producto 0 a 1e-3 en los dos; alpha = 10.00 en los dos, que es el tope `alpha_max` (`m5.py:113`) | descriptivo, lectura fijada | ver M5-EVALUE abajo |
 
 ## Clasificación por línea
 
@@ -31,9 +31,9 @@ los instrumentos de la auditoría son válidos (regla 40). Ningún número regis
 | **C18a** | "ningún medio predice mejor las lecturas" | búsqueda de ±1 s truncada (E50). El blanqueo no aplica: lee tiempos, y escalar una estación no mueve su pico | E50, ya registrado | **contaminado (E50); la conclusión ya estaba retirada** |
 | **M5-ACAP** | ACAP retirado: G-M5a falla en las dos semillas; G-M5b falla en EVAL (N4 0.616) | G-M5a usa la cadena 2M (`code/t2m_lib.py:328`, sd escalar por ventana): sin blanqueo. G-M5b usa `r0_run.Net`: blanqueo | G-M5a: MT@S0 reproduce las 72 de 72 y 49 de 49 partes registradas (control positivo de la cadena); NOCAP queda último en el día con transitorios (control negativo) | **se sostiene** por G-M5a, que basta para la decisión. G-M5b queda **contaminado (blanqueo)** como lectura secundaria; EVAL está gastado y no se rehace |
 | **M5-EVALUE, pasos 1-2** (producto) | falla 1e-3 en ruido real (5.8e-3 / 1.2e-3) | sin blanqueo (sd escalar, `run_c.py:104-108`). El código del e-valor pasa con verdad conocida (M5-a, b, c), también a 1e-3, que los tests no cubrían | ninguna variante del fondo arregla el exceso; el diagnóstico señala colas simultáneas entre estaciones (1.7 veces lo independiente) | **se sostiene**: el código es correcto y el fallo viene de los datos (dependencia entre estaciones) |
-| **M5-EVALUE, paso 3** (S_avg) | 1.4e-3 a 1e-3 en ruido falso i.i.d. (cota 95 % 2.4e-3; 28 800 hipótesis) | `--local` (blanqueo) solo en una variante secundaria | M5-d: con lecturas de pico ideales, el fondo radial da S_avg = 0 a 1e-3, con n_fit 30 000 y con 2 000 000. La lectura declarada ("error finito del fondo" o "defecto en el código") no aplica: **el exceso no se reproduce fuera de la cadena** | **sin auditar todavía**: `m5.py` queda absuelto, pero la causa está en la cadena de `run_c.py` (lector sobre la salida correlacionada del filtro adaptado, hipótesis de red que comparten picos, ajuste por estación) y no se ha localizado. Además el exceso es marginal (la cota inferior del intervalo no está calculada) |
+| **M5-EVALUE, paso 3** (S_avg) | 1.4e-3 a 1e-3 en ruido falso i.i.d. (cota 95 % 2.4e-3; 28 800 hipótesis) | `--local` (blanqueo) solo en una variante secundaria | M5-d: con lecturas de pico ideales, el fondo radial da S_avg = 0 a 1e-3, con n_fit 30 000 y con 2 000 000. La lectura declarada ("error finito del fondo" o "defecto en el código") no aplica: **el exceso no se reproduce fuera de la cadena** | **sin auditar todavía**: `m5.py` queda absuelto, pero la causa está en la cadena de `run_c.py` (lector sobre la salida correlacionada del filtro adaptado, hipótesis de red que comparten picos, ajuste por estación) y no se ha localizado. Además el exceso es marginal (la cota inferior del intervalo no está calculada). Hipótesis sin probar (revisión de 78c9bab): en M5-d el índice queda en el tope 10. Eso hace la cola más pesada que la estimada, y es conservador, lo que explicaría tasas tan por debajo de p. Si en la cadena real el ajuste de cada estación no toca el tope, M5-d no es comparable con ella |
 | **M2-GP** (G-M2) | caída del MSE 0.191 < 0.30 en confirmación | tiempos HK 1-D con rayos directos y refractados (`src/ttmt/traveltime.py:59`), **no** rayo recto homogéneo; el GP modela además el residuo | M2-a y M2-b pasan: el código recupera el 95 % de lo alcanzable y no inventa estructura en ruido puro | **se sostiene** como fallo del gate en el piso de ruido (nota del 14 de noviembre). Dato nuevo, descriptivo: en sintético el GP llega al 94-95 % de lo alcanzable; en los datos reales, al ~60 % de su propia cota, así que la cota de los datos reales está sobreestimada o el residuo real es menos suave que un Matern 3/2 |
-| **N-2** (N2-REPICK) | neto −8 [−23, 7], zona baja | revisado `rebuild` (`N2-REPICK/run.py:100-137`): las formas restadas se guardan en el orden de los objetivos, y en `inject.realise` los objetivos van primero en la verdad (`src/ttmt/synth/inject.py:259-272` y la construcción de `Truth`), así que `comps[f]` es el evento f. El desplazamiento es el de frecuencia (GEN-a) | controles que pasaron en la corrida: la suma reconstruida igual a la guardada (<= 1e-3), el picker reproduce los picks guardados, K_local = K en 120 de 120 | **se sostiene en lo revisado**. Falta un control con verdad conocida: restar el propio objetivo debe dejarlo sin picks. Es barato y necesita el portátil. Defecto del control K por debajo de 0.5 s ya registrado en la ficha |
+| **N-2** (N2-REPICK) | neto −8 [−23, 7], zona baja | revisado `rebuild` (`N2-REPICK/run.py:100-137`): las formas restadas se guardan en el orden de los objetivos, y en `inject.realise` los objetivos van primero en la verdad (`src/ttmt/synth/inject.py:259-272` y la construcción de `Truth`), así que `comps[f]` es el evento f. El desplazamiento es el de frecuencia (GEN-a) | controles que pasaron en la corrida: la suma reconstruida igual a la guardada (<= 1e-3), el picker reproduce los picks guardados, K_local = K en 120 de 120 | **sin auditar todavía**: falta el control con verdad conocida (restar el propio objetivo debe dejarlo sin picks). Necesita el portátil. La revisión estática no basta (regla 39). Defecto del control K por debajo de 0.5 s ya registrado en la ficha |
 | **M1A-ONSET** | no es un negativo (G-M1a pasa en EVAL) | usa `r1.Net` (blanqueo), pero solo lee tiempos de pico y de PhaseNet, que no cambian al escalar una estación | revisión estática | **no aplica** |
 
 ## Patrones buscados en todo el código
@@ -54,11 +54,12 @@ los instrumentos de la auditoría son válidos (regla 40). Ningún número regis
 1. **N-1 con el arreglo del blanqueo** (después de #73; portátil). Mismo control positivo agrupado >= 0.90, mismas
    zonas 0.30 / 0.10, población y partición de ajuste intactas. Es el negativo con más probabilidad de cambiar:
    el defecto explica la pérdida de la cadena que se midió. La banda se decide aparte (ADR-0012 la deja igual).
-2. **N-2, control "restar el propio objetivo"** (portátil, ~3 min, GPU). Cierra la auditoría de N-2. No hace falta #73.
+2. **N-2, control "restar el propio objetivo"** (portátil, ~3 min, GPU). Es la auditoría que le falta a N-2, que hasta entonces queda sin auditar. No hace falta #73.
 3. **M5 paso 3: localizar el exceso en la cadena** (nube, ruido falso). Mismo `run_c.py avg --weighted` con el fondo
    ajustado sobre una muestra independiente grande del mismo ruido falso. Si el exceso sigue, la causa es la cadena
    (dependencia entre hipótesis o entre P y S) y se busca; si desaparece, es el error finito del ajuste. Criterio a
    escribir antes de correr.
+   Imprimir también el índice alpha de cada estación y si toca el tope 10 (hipótesis de M5-d).
 4. **R0, R1 y ACAP G-M5b, descriptivos con el arreglo** (portátil, sobre datos gastados). No cambian ningún registro.
    Solo dicen si "negativo" sigue siendo la palabra correcta para la tesis. Prioridad baja.
 
