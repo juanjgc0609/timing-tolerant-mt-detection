@@ -39,3 +39,7 @@
 'TTMT.Controls2.radial_needs_le_self' depends on axioms: [propext, Classical.choice, Quot.sound]
 'TTMT.Controls2.radial_needs_lipschitz' depends on axioms: [propext, Classical.choice, Quot.sound]
 'TTMT.Controls2.adjoint_needs_contraction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.Controls2.influence_needs_one_block' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.Controls2.cap_score_needs_contraction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.Controls2.contamination_needs_equal_outside' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.Controls2.mean_needs_signal_in_class' depends on axioms: [propext, Classical.choice, Quot.sound]

@@ -43,3 +43,7 @@ import TTMT
 #print axioms TTMT.Controls2.radial_needs_le_self
 #print axioms TTMT.Controls2.radial_needs_lipschitz
 #print axioms TTMT.Controls2.adjoint_needs_contraction
+#print axioms TTMT.Controls2.influence_needs_one_block
+#print axioms TTMT.Controls2.cap_score_needs_contraction
+#print axioms TTMT.Controls2.contamination_needs_equal_outside
+#print axioms TTMT.Controls2.mean_needs_signal_in_class
