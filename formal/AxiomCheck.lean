@@ -84,3 +84,4 @@ import TTMT
 #print axioms TTMT.Controls3.tail_needs_le_a
 #print axioms TTMT.Controls3.tail_needs_law
 #print axioms TTMT.Controls3.tail_needs_indep
+#print axioms TTMT.Controls3.gain_null_tail_instance

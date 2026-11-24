@@ -80,3 +80,4 @@
 'TTMT.Controls3.tail_needs_le_a' depends on axioms: [propext, Classical.choice, Quot.sound]
 'TTMT.Controls3.tail_needs_law' depends on axioms: [propext, Classical.choice, Quot.sound]
 'TTMT.Controls3.tail_needs_indep' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.Controls3.gain_null_tail_instance' depends on axioms: [propext, Classical.choice, Quot.sound]

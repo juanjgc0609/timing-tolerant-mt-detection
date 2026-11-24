@@ -455,37 +455,47 @@ theorem tail_needs_indep :
   rw [Set.mem_ofPred_eq, e1, e2, e3, e4]
   nlinarith [h0.1, h0.2, h1.1, h1.2]
 
-/-- Positive control for `gain_null_tail`: `L = 1`, `A = diag(1, −1)` on `ℝ²`, `τ = 1`. All
-hypotheses are discharged; `det A = −1 = λ₀ λ₁` forces one eigenvalue of each sign. -/
-example : True := by
-  set A : Matrix (Fin 2) (Fin 2) ℝ := diagonal ![1, -1]
-  have hA : Aᵀ = A := diagonal_transpose _
-  have hB := sandwich_isHermitian 1 A hA
-  have hdet : hB.eigenvalues 0 * hB.eigenvalues 1 = -1 := by
-    have hd : (1ᵀ * A * 1).det = -1 := by simp [A, det_diagonal, Fin.prod_univ_two]
-    have h := hB.det_eq_prod_eigenvalues
+/-- `A = diag(1, −1)` on `ℝ²` and the symmetry of `1ᵀ A 1`. -/
+noncomputable def A2 : Matrix (Fin 2) (Fin 2) ℝ := diagonal ![1, -1]
+
+theorem hB2 : ((1 : Matrix (Fin 2) (Fin 2) ℝ)ᵀ * A2 * 1).IsHermitian :=
+  sandwich_isHermitian 1 A2 (diagonal_transpose _)
+
+/-- Positive control for `gain_null_tail`: `L = 1`, `A = diag(1, −1)` on `ℝ²`, `τ = 1`,
+`a = max(λ₀,0) + max(λ₁,0)`. All hypotheses are discharged (`det A = −1 = λ₀ λ₁` forces one
+eigenvalue of each sign) and the conclusion is stated. -/
+theorem gain_null_tail_instance :
+    P2.real {ω | (A2 * (1 * (1 : Matrix (Fin 2) (Fin 2) ℝ)ᵀ)).trace +
+        2 * √((∑ j, max (hB2.eigenvalues j) 0 ^ 2) * 1) +
+        2 * (max (hB2.eigenvalues 0) 0 + max (hB2.eigenvalues 1) 0) * 1 +
+        2 * √((∑ j, max (-hB2.eigenvalues j) 0 ^ 2) * 1) ≤
+        ((1 : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ fun i => ω i) ⬝ᵥ
+          (A2 *ᵥ ((1 : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ fun i => ω i))} ≤ 2 * exp (-1) := by
+  have hdet : hB2.eigenvalues 0 * hB2.eigenvalues 1 = -1 := by
+    have hd : ((1 : Matrix (Fin 2) (Fin 2) ℝ)ᵀ * A2 * 1).det = -1 := by
+      simp [A2, det_diagonal, Fin.prod_univ_two]
+    have h := hB2.det_eq_prod_eigenvalues
     rw [hd, Fin.prod_univ_two] at h
     exact h.symm
-  have hp : 0 < ∑ j, max (hB.eigenvalues j) 0 ^ 2 := by
+  have hp : 0 < ∑ j, max (hB2.eigenvalues j) 0 ^ 2 := by
     rw [Fin.sum_univ_two]
-    rcases lt_or_ge 0 (hB.eigenvalues 0) with h | h
-    · have := max_eq_left h.le; nlinarith [sq_nonneg (max (hB.eigenvalues 1) 0)]
-    · have h1 : 0 < hB.eigenvalues 1 := by nlinarith
-      have := max_eq_left h1.le; nlinarith [sq_nonneg (max (hB.eigenvalues 0) 0)]
-  have hn : 0 < ∑ j, max (-hB.eigenvalues j) 0 ^ 2 := by
+    rcases lt_or_ge 0 (hB2.eigenvalues 0) with h | h
+    · have := max_eq_left h.le; nlinarith [sq_nonneg (max (hB2.eigenvalues 1) 0)]
+    · have h1 : 0 < hB2.eigenvalues 1 := by nlinarith
+      have := max_eq_left h1.le; nlinarith [sq_nonneg (max (hB2.eigenvalues 0) 0)]
+  have hn : 0 < ∑ j, max (-hB2.eigenvalues j) 0 ^ 2 := by
     rw [Fin.sum_univ_two]
-    rcases lt_or_ge (hB.eigenvalues 0) 0 with h | h
-    · have := max_eq_left (neg_pos.mpr h).le; nlinarith [sq_nonneg (max (-hB.eigenvalues 1) 0)]
-    · have h1 : hB.eigenvalues 1 < 0 := by nlinarith
+    rcases lt_or_ge (hB2.eigenvalues 0) 0 with h | h
+    · have := max_eq_left (neg_pos.mpr h).le; nlinarith [sq_nonneg (max (-hB2.eigenvalues 1) 0)]
+    · have h1 : hB2.eigenvalues 1 < 0 := by nlinarith
       have := max_eq_left (neg_pos.mpr h1).le
-      nlinarith [sq_nonneg (max (-hB.eigenvalues 0) 0)]
-  have ha : ∀ j, max (hB.eigenvalues j) 0 ≤
-      max (hB.eigenvalues 0) 0 + max (hB.eigenvalues 1) 0 := by
+      nlinarith [sq_nonneg (max (-hB2.eigenvalues 0) 0)]
+  have ha : ∀ j, max (hB2.eigenvalues j) 0 ≤
+      max (hB2.eigenvalues 0) 0 + max (hB2.eigenvalues 1) 0 := by
     intro j; fin_cases j
     · simp
     · simp
-  have := gain_null_tail (fun (j : Fin 2) (ω : Fin 2 → ℝ) => ω j) (fun i => measurable_pi_apply i) P2_indep P2_law
-    1 A hB ha hp hn one_pos
-  trivial
+  exact gain_null_tail (fun (j : Fin 2) (ω : Fin 2 → ℝ) => ω j) (fun i => measurable_pi_apply i)
+    P2_indep P2_law 1 A2 hB2 ha hp hn one_pos
 
 end TTMT.Controls3

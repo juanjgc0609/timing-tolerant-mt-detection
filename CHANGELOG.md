@@ -5,7 +5,7 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-24
 
-- Formal proofs in Lean 4, third set (`formal/`, 81 results, standard axioms only): the Gaussian tail of Proposition
+- Formal proofs in Lean 4, third set (`formal/`, 82 results, standard axioms only): the Gaussian tail of Proposition
   E.2. Laurent–Massart upper and lower tails for weighted chi-square sums (`LaurentMassart.lean`), rotation
   invariance of i.i.d. `N(0,1)` and the spectral form of a quadratic form (`GaussianRotation.lean`), and the full
   bound `P(RSS₁ − RSS₂ ≥ tr((P₂−P₁)C) + 2√(v⁺τ) + 2aτ + 2√(v⁻τ)) ≤ 2e^{−τ}` for noise `ε = L X`
