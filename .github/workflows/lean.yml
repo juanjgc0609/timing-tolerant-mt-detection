@@ -1,0 +1,25 @@
+name: lean
+
+on:
+  push:
+    paths: ["formal/**", ".github/workflows/lean.yml"]
+  pull_request:
+    paths: ["formal/**", ".github/workflows/lean.yml"]
+
+jobs:
+  formal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the Lean proofs (Mathlib from its cache)
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: formal
+      - name: No sorry, admit or new axiom in the proofs
+        run: |
+          ! grep -rnE "\bsorry\b|\badmit\b|^\s*axiom\b" formal/TTMT formal/TTMT.lean
+      - name: Axioms used (fails if any proof depends on sorryAx)
+        working-directory: formal
+        run: |
+          lake env lean AxiomCheck.lean | tee axioms.txt
+          ! grep -q sorryAx axioms.txt

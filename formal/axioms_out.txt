@@ -1,0 +1,12 @@
+# lean v4.35.0, Mathlib v4.35.0 (56a0058), cloud build 2026-11-24
+'TTMT.pAmplitude_cross_eq_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.kappa_P_eq_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.gain_null_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.gain_null_pivotal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.reading_contraction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.lipschitz_comp_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.lipschitz_sup' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.coincident_pair_mem_oneEventClass' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.Controls.generic_cross_ne_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.Controls.gain_depends_on_signal_outside_class' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.Controls.overlapping_rows_not_contraction' depends on axioms: [propext, Classical.choice, Quot.sound]
