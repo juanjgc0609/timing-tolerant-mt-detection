@@ -832,3 +832,42 @@ def test_eqnet2_stage1_run_attaches_scores_in_manifest_order(tmp_path, monkeypat
     monkeypatch.setattr(TU, "load_manifest", lambda p, meth: [SimpleNamespace(data={})])
     with pytest.raises(SystemExit):
         S1.load_records([str(m)])
+
+
+def test_eqnet2_signal_check_positive_and_negative_controls(tmp_path):
+    """stop condition of EQNet2 stage 1: a score peak at the true origin passes (positive control); a score that
+    ignores the origins (flat, or peaked far from them) does not (negative controls); the manifest path reads the
+    score files and the truth of the tuning partition only."""
+    import importlib
+    import json
+    import sys
+    from types import SimpleNamespace
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "experiments" / "exploratory" / "COMPARATORS"))
+    C = importlib.import_module("eqnet2_signal_check")
+    dt, t0, m = 0.16, 100.0, 1875                                # 300 s at the stage-1 output rate
+    t = t0 + dt * np.arange(m)
+    origins = [150.0, 260.0]
+    rng = np.random.default_rng(0)
+    base = rng.uniform(0.0, 0.1, (5, m))
+    good = base.copy()
+    for o in origins:
+        good[2, np.abs(t - o) < 1.0] = 0.9
+    near, noise = C.record_maxima(good, dt, t0, origins)
+    assert near >= 0.9 > noise
+    flat = np.full((5, m), 0.3)
+    far = base.copy()
+    far[1, np.abs(t - 380.0) < 1.0] = 0.9                        # peak 120 s from every origin
+    res = [C.decide([C.record_maxima(good, dt, t0, origins)] * 3),
+           C.decide([C.record_maxima(flat, dt, t0, origins)] * 3),
+           C.decide([C.record_maxima(far, dt, t0, origins)] * 3)]
+    assert [r["passes"] for r in res] == [True, False, False]
+    assert np.isnan(C.record_maxima(good, dt, t0, [t0 + 1e4])[0])  # no sample near an origin
+    np.savez(tmp_path / "eqnet2_b0.npz", score=good, dt=dt, t0=t0)
+    (tmp_path / "tune_eqnet2.json").write_text(json.dumps(
+        {"set_id": "s", "records": [{"label": "b0", "eqnet2": "eqnet2_b0.npz"}]}))
+    reader = SimpleNamespace(partition="tune", truth=lambda lab: SimpleNamespace(t=np.array(origins)))
+    out = C.check_manifest(tmp_path / "tune_eqnet2.json", reader_of=lambda sid: reader)
+    assert out["passes"] and out["n_records"] == 1
+    with pytest.raises(SystemExit):
+        C.check_manifest(tmp_path / "tune_eqnet2.json",
+                         reader_of=lambda sid: SimpleNamespace(partition="eval", truth=reader.truth))
