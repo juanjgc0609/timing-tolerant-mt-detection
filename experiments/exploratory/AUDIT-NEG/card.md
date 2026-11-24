@@ -94,3 +94,5 @@ reservadas ni segmentos gastados (reglas 14, 16); se proponen al dueño en orden
 
 ## Costo
 Todo en CPU de la nube, minutos. No usa GPU, portátil ni datos del proyecto.
+
+Resultados y clasificación: `tabla-auditoria.md` (24 de noviembre de 2026).

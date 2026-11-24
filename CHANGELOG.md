@@ -5,6 +5,12 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-24
 
+- AUDIT-NEG (`experiments/exploratory/AUDIT-NEG/`): retroactive audit of the recorded negatives under rule 39, with
+  known-truth positive and negative controls (all 13 pass) and a classification table. N-1 is contaminated by the
+  whitening defect of PR #68. R0, R1 and the G-M5b reading of ACAP are contaminated too, and C18a was already
+  withdrawn (E50). M5-ACAP (G-M5a), the M5 product e-value, M2-GP and N-2 stand on what was checked. The S_avg step
+  of M5 is not audited yet: its excess on fake noise does not reproduce outside the `run_c.py` pipeline. Re-runs are
+  proposed in order, after #73.
 - Formal proofs in Lean 4 (`formal/`, Lean and Mathlib v4.35.0) of the deterministic cores of four results, with no
   `sorry` and only the standard axioms (`formal/axioms_out.txt`): Proposition AB.A.9 (zero cross product of P
   amplitudes), Proposition E.2 of the M6 test at fixed times (the null gain is the noise form `εᵀ(P₂−P₁)ε` and does not

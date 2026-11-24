@@ -1,0 +1,25 @@
+AUDIT-NEG controls, seed 20261124, numpy 2.5.3
+
+== C-GEN: fractional delay of the generator (ttmt.synth.inject._shift)
+GEN-a _shift (frequency domain): max error 1.01e-14 of the peak, energy +0.00e+00 (criterion both <= 1e-3) -> PASS
+GEN-b np.interp (linear, the M6-SPLIT pattern): max error 1.09e-02, energy -1.82e-02 (criterion |energy| > 1e-3) -> PASS
+
+== C-BL: whitening, per-station sd with an unweighted subspace (pattern of PR #68)
+BL-a equal sd, unweighted Q: min f 1.0000 (criterion >= 0.99) -> PASS
+BL-b unequal sd, Q of diag(1/sd) G: min f 1.0000 (criterion >= 0.99) -> PASS
+BL-c unequal sd (max/min 7.6), unweighted Q: median f 0.799 [0.732, 0.857] (descriptive; N-1 gcheck without noise 0.705 Hi-net, 0.771 Ridgecrest)
+
+== C-M2: GP station term with a known field (ttmt.v2.m2)
+M2-a field sf 0.15 ell 8 km + gaussian noise 0.15: MSE drop 0.401, reachable 0.423 (ratio 0.95), coverage 0.953 (criterion drop >= 0.8 x reachable, cov 0.90-0.98) -> PASS
+M2-b noise only: MSE drop -0.005, coverage 0.950 (criterion |drop| <= 0.03, cov 0.90-0.98) -> PASS
+M2-c field + t3 noise of the same variance: MSE drop 0.335, reachable 0.356 (ratio 0.94), coverage 0.954 (descriptive; real data ratio about 0.6)
+   536 s
+
+== C-M5: mixture e-value with known truth (ttmt.v2.m5.evalue_mix)
+M5-a exact background, H 200000: product {0.01: 0.00043, 0.001: 3e-05}, S_avg {0.01: 0.000205, 0.001: 2e-05}, mean exp(S_avg) 0.979 (criterion: all <= p, mean in [0.9, 1.1]) -> PASS
+M5-b too-light background (sd 0.8): product {0.01: 0.12245, 0.001: 0.05307} (criterion: rate at 1e-3 > 1e-3) -> PASS
+M5-c power, signal 3 x pi, H 20000: P(S_avg >= log 1000) 0.755, median S_avg 17.2 (criterion >= 0.5) -> PASS
+M5-d peak reads, radial background fit on 30000 reads (alpha 10.00): product {0.01: 2e-05, 0.001: 0.0}, S_avg {0.01: 5e-06, 0.001: 0.0}
+M5-d peak reads, radial background fit on 2000000 reads (alpha 10.00): product {0.01: 2.5e-05, 0.001: 0.0}, S_avg {0.01: 2.5e-05, 0.001: 0.0}
+
+total 1083 s
