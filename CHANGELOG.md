@@ -136,6 +136,24 @@ Dated record of changes to the project's process, code and documents. Results ar
   origin times per scene). Gate score of a tested atom min(s, pair gain), chosen by the owner on 15 November 2026,
   14:05 UTC (gain alone printed as secondary). Bootstrap by scene, stratified, with operating points re-chosen in
   each replicate (ADR-0008 item 5; found by the independent review of PR #58). False splits at thr 23.8 descriptive.
+
+- CR-16 flags: `ttmt.qc.teleseism_windows` (rule fixed before any flag: ComCat M >= 5.5 anywhere, iasp91 first P
+  - 30 s to distance / 2.5 km/s + 600 s; test in `tests/test_registry.py`) and `tools/data/teleseism_flags.py` for
+  the development spans used by time-slide nulls (2M noise days of Alto Tiberina, R0, R1).
+- Reservation amendment (sealed SHA-256 996f70ad... -> c0deacc5...): Antelope Valley 2021 and Bodie 2020 fail
+  criterion 4 (6 and 6 three-component stations within 50 km on the sampled day; GM.AE01-06 have no archived data)
+  and are withdrawn but kept sealed. By the replacement rule written before the search (same criteria, ComCat
+  regional catalogues 2020-2026), `conf_kilauea_2024` (HV, 36 stations) is confirmatory and `conf_magna_2020` (UU) the
+  spare. New `tools/data/criterion4_stations.py`; `scan_catalogue.py --types`.
+- CR-04 measured on Ridgecrest 2019 with the QTM catalogue (`experiments/exploratory/CR04-PREVALENCE/ridgecrest_qtm/`,
+  laptop run, pre-run decisions written first): Y = 1.50 %, 1.67 % and 1.42 % for k = 4, 6 and 8 (95 % intervals of
+  about +-0.1 points; 111,918 events, 21 days; epochs only), against a Poisson reference of 17-19 %, so the claim
+  states both values; Y is a lower bound. Fix: `traveltime.first_arrival` gave infinite times for sources at or above
+  the surface (217 QTM events), now the surface direct wave (test in `tests/test_prevalence.py`); `run.py` writes LF
+  so the recorded SHA-256 matches the file on Windows. First run kept in `run1_before_fix/`.
+- Real data: checksums of the laptop downloads (NN StationXML for the Antelope Valley and Bodie discs, ComCat
+  M >= 5.5 2010-2026, QTM Ridgecrest) in `data/manifests/laptop_meta_2026-11-15.tsv`; download scripts
+  `tools/data/laptop_fetch.py` and `tools/data/hinet_jma_fetch.py` (JMA phase readings, waits for the NIED account).
 - Thesis: the [pending #45] mark and the draft note removed after PR #45 merged. The G-M5c sentence now says it
   failed on the noise of both 2M seeds (three days: 101231; 100210-11), not on one day.
 - Comparators added after registration 1 (T4.17, PR #51; no registered number changes). HARPA (Nat. Commun.

@@ -77,9 +77,9 @@ def main():
                note="Y is a lower bound: reviewed catalogues under-list pairs below about 1 s (CR04_PREVALENCE.md, 5)")
     out["k"] = {str(k): v for k, v in out["k"].items()}
     txt = json.dumps(out, indent=1, default=float)
-    with open(a.out, "w", encoding="utf-8") as f:
+    with open(a.out, "w", encoding="utf-8", newline="\n") as f:
         f.write(txt)
-    with open(a.out + ".sha256", "w") as f:
+    with open(a.out + ".sha256", "w", newline="\n") as f:
         f.write(hashlib.sha256(txt.encode()).hexdigest() + "\n")
     for k, v in out["k"].items():
         print(f"k={k}: n={v['n_counted']} Y={v['Y']} CI={v['Y_ci95']} Poisson={v['Y_poisson']}")

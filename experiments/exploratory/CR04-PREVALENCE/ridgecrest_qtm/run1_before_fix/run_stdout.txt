@@ -1,0 +1,8 @@
+...\src\ttmt\atlas\prevalence.py:45: RuntimeWarning: invalid value encountered in subtract
+  d.append(np.abs(other - tp).min() if other.size else np.inf)
+...\src\ttmt\atlas\prevalence.py:116: RuntimeWarning: invalid value encountered in subtract
+  d = np.minimum(d, np.abs(tj - te[None, :]).min(axis=0))
+k=4: n=111893 Y=0.014942847184363632 CI=(0.014009708213272867, 0.015904871742503802) Poisson=0.18635072106363587
+k=6: n=111893 Y=0.01666770932944867 CI=(0.015596232630748082, 0.01776250793867734) Poisson=0.16848942976107506
+k=8: n=111893 Y=0.014174255762201389 CI=(0.013224776967373219, 0.015200330747584472) Poisson=0.1716077842706267
+k=12: n=0 Y=nan CI=(nan, nan) Poisson=nan
