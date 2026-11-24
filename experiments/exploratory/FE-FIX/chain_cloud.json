@@ -1,0 +1,425 @@
+{
+ "rows": [
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "cloud check (start)",
+   "cfg": {
+    "geometry": "fake",
+    "model": "ridgecrest_2019",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9981731962659484,
+    0.9993303647457891,
+    0.9986468587642742,
+    0.9991923454995544,
+    0.9983230559407019,
+    0.9994774004274072,
+    0.9983894464359502,
+    0.9988817902759082,
+    0.9972353899881756,
+    0.9981560631320505
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "cloud + geometry and stations of the set",
+   "cfg": {
+    "geometry": "real",
+    "model": "ridgecrest_2019",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9985944802978837,
+    0.9994010426741423,
+    0.9992917841732933,
+    0.9978722334900366,
+    0.9984494227201026,
+    0.9995084240613695,
+    0.9992479269863005,
+    0.9995271375344738,
+    0.9983559507382319,
+    0.9990247777506367
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "  cumulative up to: geometry and stations of the set",
+   "cfg": {
+    "geometry": "real",
+    "model": "ridgecrest_2019",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9985944802978837,
+    0.9994010426741423,
+    0.9992917841732933,
+    0.9978722334900366,
+    0.9984494227201026,
+    0.9995084240613695,
+    0.9992479269863005,
+    0.9995271375344738,
+    0.9983559507382319,
+    0.9990247777506367
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "cloud + velocity model of the set",
+   "cfg": {
+    "geometry": "fake",
+    "model": "real",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9976426476962045,
+    0.9984449537929263,
+    0.9988328054567032,
+    0.9989783258968646,
+    0.9984548698466483,
+    0.9992303855731474,
+    0.9986389881906457,
+    0.9986701461299943,
+    0.9986375949389347,
+    0.9993016138199925
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "  cumulative up to: velocity model of the set",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.999311805488673,
+    0.9991671437428292,
+    0.9979415198353446,
+    0.9994141154829441,
+    0.9988793026237096,
+    0.9978897895826978,
+    0.9989054265990932,
+    0.9993524686335844,
+    0.9993209576104333,
+    0.9971968192219817
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "real - no per-station noise normalisation (sd = 1)",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.999311805488673,
+    0.9991671437428292,
+    0.9979415198353446,
+    0.9994141154829441,
+    0.9988793026237096,
+    0.9978897895826978,
+    0.9989054265990932,
+    0.9993524686335844,
+    0.9993209576104333,
+    0.9971968192219817
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "cloud check (start)",
+   "cfg": {
+    "geometry": "fake",
+    "model": "ridgecrest_2019",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9978736095281172,
+    0.9974898136403595,
+    0.9991302919026542,
+    0.9986229153990539,
+    0.9993147366572179,
+    0.9987397083004089,
+    0.9991806454510463,
+    0.9989515156737038,
+    0.9992774438905433,
+    0.9992266130531768
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "cloud + geometry and stations of the set",
+   "cfg": {
+    "geometry": "real",
+    "model": "ridgecrest_2019",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9979173097413504,
+    0.998924890619927,
+    0.9984287823184276,
+    0.9971916574364347,
+    0.9993662362736909,
+    0.9960284134083243,
+    0.9981970618792038,
+    0.9994523380578691,
+    0.9982884667208684,
+    0.9981098207674137
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "  cumulative up to: geometry and stations of the set",
+   "cfg": {
+    "geometry": "real",
+    "model": "ridgecrest_2019",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9979173097413504,
+    0.998924890619927,
+    0.9984287823184276,
+    0.9971916574364347,
+    0.9993662362736909,
+    0.9960284134083243,
+    0.9981970618792038,
+    0.9994523380578691,
+    0.9982884667208684,
+    0.9981098207674137
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "cloud + velocity model of the set",
+   "cfg": {
+    "geometry": "fake",
+    "model": "real",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9978736095281172,
+    0.9974898136403595,
+    0.9991302919026542,
+    0.9986229153990539,
+    0.9993147366572179,
+    0.9987397083004089,
+    0.9991806454510463,
+    0.9989515156737038,
+    0.9992774438905433,
+    0.9992266130531768
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "  cumulative up to: velocity model of the set",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9979173097413504,
+    0.998924890619927,
+    0.9984287823184276,
+    0.9971916574364347,
+    0.9993662362736909,
+    0.9960284134083243,
+    0.9981970618792038,
+    0.9994523380578691,
+    0.9982884667208684,
+    0.9981098207674137
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "real - no per-station noise normalisation (sd = 1)",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9979173097413504,
+    0.998924890619927,
+    0.9984287823184276,
+    0.9971916574364347,
+    0.9993662362736909,
+    0.9960284134083243,
+    0.9981970618792038,
+    0.9994523380578691,
+    0.9982884667208684,
+    0.9981098207674137
+   ]
+  }
+ ],
+ "sd": {}
+}

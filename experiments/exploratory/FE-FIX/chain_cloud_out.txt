@@ -1,0 +1,36 @@
+ss_hinet_2012_egf_v1: 10 analytic events, noise-free f median [min, max] per configuration
+  cloud check (start)                                                                             0.999 [0.997, 0.999]
+  cloud + geometry and stations of the set                                                        0.999 [0.998, 1.000]
+    cumulative up to: geometry and stations of the set                                            0.999 [0.998, 1.000]
+  cloud + velocity model of the set                                                               0.999 [0.998, 0.999]
+    cumulative up to: velocity model of the set                                                   0.999 [0.997, 0.999]
+  cloud + per-station noise normalisation (robust sd of the set's noise block)                    needs the set's noise (laptop)
+    cumulative up to: per-station noise normalisation (robust sd of the set's noise block)        needs the set's noise (laptop)
+  real chain (gcheck) = (a): sd normalisation, Q of unweighted G                                  needs the set's noise (laptop)
+  (b) real chain with Q of diag(1/sd) G                                                           needs the set's noise (laptop)
+  real - no per-station noise normalisation (sd = 1)                                              0.999 [0.997, 0.999]
+  real - no resampling (read at 100 Hz, same window and shifts in seconds)                        needs the set's noise (laptop)
+  real - no 0.5-6 Hz band-pass (demean and detrend only)                                          needs the set's noise (laptop)
+  real - no 2 Hz Ricker matched filter                                                            needs the set's noise (laptop)
+  real - no Z flip (sign check: must not raise f)                                                 needs the set's noise (laptop)
+  real - wider read window [-0.25, +1.0] s                                                        needs the set's noise (laptop)
+  real - peak rule: principal polarisation of the window instead of the energy peak               needs the set's noise (laptop)
+  real - no common shift (read at the predicted onset only)                                       needs the set's noise (laptop)
+ss_ridgecrest_2019_egf_v1: 10 analytic events, noise-free f median [min, max] per configuration
+  cloud check (start)                                                                             0.999 [0.997, 0.999]
+  cloud + geometry and stations of the set                                                        0.998 [0.996, 0.999]
+    cumulative up to: geometry and stations of the set                                            0.998 [0.996, 0.999]
+  cloud + velocity model of the set                                                               0.999 [0.997, 0.999]
+    cumulative up to: velocity model of the set                                                   0.998 [0.996, 0.999]
+  cloud + per-station noise normalisation (robust sd of the set's noise block)                    needs the set's noise (laptop)
+    cumulative up to: per-station noise normalisation (robust sd of the set's noise block)        needs the set's noise (laptop)
+  real chain (gcheck) = (a): sd normalisation, Q of unweighted G                                  needs the set's noise (laptop)
+  (b) real chain with Q of diag(1/sd) G                                                           needs the set's noise (laptop)
+  real - no per-station noise normalisation (sd = 1)                                              0.998 [0.996, 0.999]
+  real - no resampling (read at 100 Hz, same window and shifts in seconds)                        needs the set's noise (laptop)
+  real - no 0.5-6 Hz band-pass (demean and detrend only)                                          needs the set's noise (laptop)
+  real - no 2 Hz Ricker matched filter                                                            needs the set's noise (laptop)
+  real - no Z flip (sign check: must not raise f)                                                 needs the set's noise (laptop)
+  real - wider read window [-0.25, +1.0] s                                                        needs the set's noise (laptop)
+  real - peak rule: principal polarisation of the window instead of the energy peak               needs the set's noise (laptop)
+  real - no common shift (read at the predicted onset only)                                       needs the set's noise (laptop)

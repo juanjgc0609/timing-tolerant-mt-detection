@@ -1,0 +1,1212 @@
+{
+ "rows": [
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "cloud check (start)",
+   "cfg": {
+    "geometry": "fake",
+    "model": "ridgecrest_2019",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9981731962659477,
+    0.9993303647457891,
+    0.998646858764274,
+    0.9991923454995544,
+    0.9983230559407021,
+    0.9994774004274077,
+    0.9983894464359493,
+    0.9988817902759092,
+    0.9972353899881751,
+    0.9981560631320501
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "cloud + geometry and stations of the set",
+   "cfg": {
+    "geometry": "real",
+    "model": "ridgecrest_2019",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9985944802978829,
+    0.9994010426741421,
+    0.9992917841732943,
+    0.9978722334900365,
+    0.9984494227201027,
+    0.9995084240613695,
+    0.9992479269863003,
+    0.9995271375344732,
+    0.9983559507382317,
+    0.9990247777506369
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "  cumulative up to: geometry and stations of the set",
+   "cfg": {
+    "geometry": "real",
+    "model": "ridgecrest_2019",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9985944802978829,
+    0.9994010426741421,
+    0.9992917841732943,
+    0.9978722334900365,
+    0.9984494227201027,
+    0.9995084240613695,
+    0.9992479269863003,
+    0.9995271375344732,
+    0.9983559507382317,
+    0.9990247777506369
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "cloud + velocity model of the set",
+   "cfg": {
+    "geometry": "fake",
+    "model": "real",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9976426476962046,
+    0.9984449537929261,
+    0.9988328054567035,
+    0.9989783258968638,
+    0.9984548698466488,
+    0.9992303855731481,
+    0.9986389881906447,
+    0.9986701461299954,
+    0.9986375949389341,
+    0.9993016138199919
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "  cumulative up to: velocity model of the set",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9993118054886735,
+    0.999167143742828,
+    0.997941519835331,
+    0.9994141154829449,
+    0.9988793026237143,
+    0.9978897895826941,
+    0.9989054265990903,
+    0.9993524686335837,
+    0.9993209576104344,
+    0.9971968192219819
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "cloud + per-station noise normalisation (robust sd of the set's noise block)",
+   "cfg": {
+    "geometry": "fake",
+    "model": "ridgecrest_2019",
+    "sd": "real",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.8329086992251088,
+    0.9037484893859944,
+    0.8405558714321463,
+    0.9104120416345309,
+    0.894123882162593,
+    0.8505811790689858,
+    0.812906554347543,
+    0.7531390666807453,
+    0.7989356006047583,
+    0.7751697729471175
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "  cumulative up to: per-station noise normalisation (robust sd of the set's noise block)",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.7299815035187939,
+    0.6237179292569781,
+    0.6499502634086991,
+    0.8186584952080178,
+    0.6448615180608738,
+    0.7135856158517169,
+    0.6543544034930749,
+    0.7820786089481864,
+    0.69673653484797,
+    0.7221594270454249
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "real chain (gcheck) = (a): sd normalisation, Q of unweighted G",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.7299815035187939,
+    0.6237179292569781,
+    0.6499502634086991,
+    0.8186584952080178,
+    0.6448615180608738,
+    0.7135856158517169,
+    0.6543544034930749,
+    0.7820786089481864,
+    0.69673653484797,
+    0.7221594270454249
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "(b) real chain with Q of diag(1/sd) G",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": true
+   },
+   "f": [
+    0.9996828898709149,
+    0.9992216118812345,
+    0.9981243185365394,
+    0.999436465723084,
+    0.9984690430227493,
+    0.9991260004760201,
+    0.9993856130209566,
+    0.9991530648877747,
+    0.9992357229652069,
+    0.9975893907124704
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "real - no per-station noise normalisation (sd = 1)",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9993118054886735,
+    0.999167143742828,
+    0.997941519835331,
+    0.9994141154829449,
+    0.9988793026237143,
+    0.9978897895826941,
+    0.9989054265990903,
+    0.9993524686335837,
+    0.9993209576104344,
+    0.9971968192219819
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "real - no resampling (read at 100 Hz, same window and shifts in seconds)",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": false,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.738775270668086,
+    0.6360621015277895,
+    0.6491875755042904,
+    0.813096632465997,
+    0.6598481123581921,
+    0.7261849914594837,
+    0.6477325625313065,
+    0.7664924548367883,
+    0.7099255612592604,
+    0.7042265369203223
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "real - no 0.5-6 Hz band-pass (demean and detrend only)",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": true,
+    "band": null,
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.7298942565992881,
+    0.6235863359276397,
+    0.6499474631570078,
+    0.8187094952335472,
+    0.6447007686615166,
+    0.7134586725614507,
+    0.6544202631975141,
+    0.782231169955268,
+    0.6965961017751381,
+    0.7223304509331461
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "real - no 2 Hz Ricker matched filter",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": false,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.7204482346386032,
+    0.6092909583898762,
+    0.6482426548711266,
+    0.8236142750703832,
+    0.6265100179247259,
+    0.6991351600409281,
+    0.6610063928191418,
+    0.7979363160570194,
+    0.6811225150147202,
+    0.7395979055206862
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "real - no Z flip (sign check: must not raise f)",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": false,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.37666714897894554,
+    0.31152606980160885,
+    0.14299920675068073,
+    0.2115965137007411,
+    0.18097650516819916,
+    0.22127938461899366,
+    0.1395282284429596,
+    0.36577747078327827,
+    0.11434102327555158,
+    0.17721339527157073
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "real - wider read window [-0.25, +1.0] s",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -4,
+     16
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.7299815035187939,
+    0.6237179292569781,
+    0.6499502634086991,
+    0.8186584952080178,
+    0.6448615180608738,
+    0.7135856158517169,
+    0.6543544034930749,
+    0.7820786089481864,
+    0.69673653484797,
+    0.7221594270454249
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "real - peak rule: principal polarisation of the window instead of the energy peak",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "pca",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.7386267569838467,
+    0.6359025642975322,
+    0.6472401348780573,
+    0.8133435457302945,
+    0.659654772635644,
+    0.7258916381837678,
+    0.6464598596350971,
+    0.7667380859861339,
+    0.7101962967724997,
+    0.7042908982644251
+   ]
+  },
+  {
+   "set_id": "ss_hinet_2012_egf_v1",
+   "config": "real - no common shift (read at the predicted onset only)",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 0,
+    "qweight": false
+   },
+   "f": [
+    0.7299815035187939,
+    0.6237179292569781,
+    0.6499502634086991,
+    0.8186584952080178,
+    0.6448615180608738,
+    0.7135856158517169,
+    0.6543544034930749,
+    0.7820786089481864,
+    0.69673653484797,
+    0.7221594270454249
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "cloud check (start)",
+   "cfg": {
+    "geometry": "fake",
+    "model": "ridgecrest_2019",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9978736095281171,
+    0.9974898136403606,
+    0.9991302919026546,
+    0.9986229153990533,
+    0.9993147366572182,
+    0.998739708300409,
+    0.9991806454510465,
+    0.9989515156737038,
+    0.9992774438905453,
+    0.9992266130531783
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "cloud + geometry and stations of the set",
+   "cfg": {
+    "geometry": "real",
+    "model": "ridgecrest_2019",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9979173097413494,
+    0.9989248906199267,
+    0.9984287823184266,
+    0.9971916574364356,
+    0.9993662362736925,
+    0.9960284134083237,
+    0.9981970618792045,
+    0.9994523380578677,
+    0.9982884667208681,
+    0.9981098207674135
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "  cumulative up to: geometry and stations of the set",
+   "cfg": {
+    "geometry": "real",
+    "model": "ridgecrest_2019",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9979173097413494,
+    0.9989248906199267,
+    0.9984287823184266,
+    0.9971916574364356,
+    0.9993662362736925,
+    0.9960284134083237,
+    0.9981970618792045,
+    0.9994523380578677,
+    0.9982884667208681,
+    0.9981098207674135
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "cloud + velocity model of the set",
+   "cfg": {
+    "geometry": "fake",
+    "model": "real",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9978736095281171,
+    0.9974898136403606,
+    0.9991302919026546,
+    0.9986229153990533,
+    0.9993147366572182,
+    0.998739708300409,
+    0.9991806454510465,
+    0.9989515156737038,
+    0.9992774438905453,
+    0.9992266130531783
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "  cumulative up to: velocity model of the set",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9979173097413494,
+    0.9989248906199267,
+    0.9984287823184266,
+    0.9971916574364356,
+    0.9993662362736925,
+    0.9960284134083237,
+    0.9981970618792045,
+    0.9994523380578677,
+    0.9982884667208681,
+    0.9981098207674135
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "cloud + per-station noise normalisation (robust sd of the set's noise block)",
+   "cfg": {
+    "geometry": "fake",
+    "model": "ridgecrest_2019",
+    "sd": "real",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.8547831554666248,
+    0.6579421734829355,
+    0.8457424139349908,
+    0.8297735751087526,
+    0.8405582903668106,
+    0.8374618535274568,
+    0.9387953548086521,
+    0.7329273894193359,
+    0.7746595534455336,
+    0.8174236164538233
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "  cumulative up to: per-station noise normalisation (robust sd of the set's noise block)",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.7896262605225499,
+    0.734081486055124,
+    0.8189865179649352,
+    0.7277943927149311,
+    0.8489040863821933,
+    0.7823725709650685,
+    0.7722585022311678,
+    0.7641816402876289,
+    0.7697351115869921,
+    0.7682672733347037
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "real chain (gcheck) = (a): sd normalisation, Q of unweighted G",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.7896262605225499,
+    0.734081486055124,
+    0.8189865179649352,
+    0.7277943927149311,
+    0.8489040863821933,
+    0.7823725709650685,
+    0.7722585022311678,
+    0.7641816402876289,
+    0.7697351115869921,
+    0.7682672733347037
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "(b) real chain with Q of diag(1/sd) G",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": true
+   },
+   "f": [
+    0.9985897977426703,
+    0.9994820744143376,
+    0.998722928242412,
+    0.996711372062327,
+    0.9996151810396636,
+    0.997330662694895,
+    0.998566897449511,
+    0.9994873241540586,
+    0.9981979068769067,
+    0.9992829930943637
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "real - no per-station noise normalisation (sd = 1)",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "one",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.9979173097413494,
+    0.9989248906199267,
+    0.9984287823184266,
+    0.9971916574364356,
+    0.9993662362736925,
+    0.9960284134083237,
+    0.9981970618792045,
+    0.9994523380578677,
+    0.9982884667208681,
+    0.9981098207674135
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "real - no resampling (read at 100 Hz, same window and shifts in seconds)",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": false,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.8065364361082594,
+    0.7365460996893941,
+    0.8085880946009865,
+    0.7327255682348414,
+    0.8413276500744453,
+    0.7839294506720289,
+    0.7742525006688882,
+    0.7571175602766071,
+    0.7595138523027951,
+    0.7832351877932143
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "real - no 0.5-6 Hz band-pass (demean and detrend only)",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": true,
+    "band": null,
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.7894471999802405,
+    0.7340560390847392,
+    0.819074808223168,
+    0.7277207522560262,
+    0.8489796185234028,
+    0.7823324647001508,
+    0.772227737904702,
+    0.7642468422735801,
+    0.7698241528489623,
+    0.7681123347370834
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "real - no 2 Hz Ricker matched filter",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": false,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.7695194457560572,
+    0.7309285310844448,
+    0.8266406085830726,
+    0.716760132314601,
+    0.8566745892000633,
+    0.7742710232414377,
+    0.767434611084947,
+    0.7707862889093015,
+    0.7777413347849661,
+    0.7509759986395566
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "real - no Z flip (sign check: must not raise f)",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": false,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.4697842709697058,
+    0.5813207031797242,
+    0.7279909989580478,
+    0.30986693238149154,
+    0.047278021654921266,
+    0.6196121673619143,
+    0.15487476672782713,
+    0.26162719959756864,
+    0.672531422774347,
+    0.3998008005446189
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "real - wider read window [-0.25, +1.0] s",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -4,
+     16
+    ],
+    "peak": "max",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.7896262605225499,
+    0.734081486055124,
+    0.8189865179649352,
+    0.7277943927149311,
+    0.8489040863821933,
+    0.7823725709650685,
+    0.7722585022311678,
+    0.7641816402876289,
+    0.7697351115869921,
+    0.7682672733347037
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "real - peak rule: principal polarisation of the window instead of the energy peak",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "pca",
+    "shift": 4,
+    "qweight": false
+   },
+   "f": [
+    0.8066345907825685,
+    0.7362557481235665,
+    0.808784993165561,
+    0.7329815713596022,
+    0.8414631621945862,
+    0.7840241949252462,
+    0.773685515088512,
+    0.7573123518164713,
+    0.7596575477173609,
+    0.783077064010554
+   ]
+  },
+  {
+   "set_id": "ss_ridgecrest_2019_egf_v1",
+   "config": "real - no common shift (read at the predicted onset only)",
+   "cfg": {
+    "geometry": "real",
+    "model": "real",
+    "sd": "real",
+    "resample": true,
+    "band": [
+     0.5,
+     6.0
+    ],
+    "ricker": true,
+    "zflip": true,
+    "window": [
+     -1,
+     8
+    ],
+    "peak": "max",
+    "shift": 0,
+    "qweight": false
+   },
+   "f": [
+    0.7896262605225499,
+    0.734081486055124,
+    0.8189865179649352,
+    0.7277943927149311,
+    0.8489040863821933,
+    0.7823725709650685,
+    0.7722585022311678,
+    0.7641816402876289,
+    0.7697351115869921,
+    0.7682672733347037
+   ]
+  }
+ ],
+ "sd": {
+  "ss_hinet_2012_egf_v1": [
+   102.69901144730919,
+   26.33761291133766,
+   18.032234260753516,
+   23.90037373257761,
+   46.031580733172376,
+   75.7387107692152,
+   80.84118637164593
+  ],
+  "ss_ridgecrest_2019_egf_v1": [
+   1.2003390421145012e-06,
+   2.8566872891242387e-07,
+   3.010493046991312e-07,
+   3.188381803520005e-07,
+   1.573649032108988e-07,
+   5.609210924939082e-07,
+   9.670737619882431e-07,
+   1.003125972990226e-06,
+   3.4587196043799346e-07,
+   2.1155323326206176e-07,
+   7.534846280395505e-07
+  ]
+ }
+}
