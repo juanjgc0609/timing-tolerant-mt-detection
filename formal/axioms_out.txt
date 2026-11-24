@@ -10,3 +10,8 @@
 'TTMT.Controls.generic_cross_ne_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
 'TTMT.Controls.gain_depends_on_signal_outside_class' depends on axioms: [propext, Classical.choice, Quot.sound]
 'TTMT.Controls.overlapping_rows_not_contraction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.Controls.gain_needs_idempotent' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.Controls.gain_needs_symmetric' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.Controls.gain_positive_control' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.Controls.large_row_not_contraction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TTMT.Controls.nonlinear_pair_not_in_class' depends on axioms: [propext, Classical.choice, Quot.sound]

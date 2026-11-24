@@ -14,3 +14,8 @@ import TTMT
 #print axioms TTMT.Controls.generic_cross_ne_zero
 #print axioms TTMT.Controls.gain_depends_on_signal_outside_class
 #print axioms TTMT.Controls.overlapping_rows_not_contraction
+#print axioms TTMT.Controls.gain_needs_idempotent
+#print axioms TTMT.Controls.gain_needs_symmetric
+#print axioms TTMT.Controls.gain_positive_control
+#print axioms TTMT.Controls.large_row_not_contraction
+#print axioms TTMT.Controls.nonlinear_pair_not_in_class

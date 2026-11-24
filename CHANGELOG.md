@@ -9,7 +9,8 @@ Dated record of changes to the project's process, code and documents. Results ar
   `sorry` and only the standard axioms (`formal/axioms_out.txt`): Proposition AB.A.9 (zero cross product of P
   amplitudes), Proposition E.2 of the M6 test at fixed times (the null gain is the noise form `εᵀ(P₂−P₁)ε` and does not
   depend on the event), Proposition AB.C.1 (the reading is a contraction, so κ becomes 1; Lipschitz composition and
-  finite maximum) and Proposition AB.A.2 (superposition). Negative controls prove each dropped hypothesis is needed.
+  finite maximum) and Proposition AB.A.2 (superposition). Each theorem has a positive control, and negative controls show that the hypotheses named in
+  `formal/TTMT/Controls.lean` are needed (counterexample when one is dropped).
   What each formal statement leaves out is listed in `formal/README.md`. New CI job `lean`.
 
 ## 2026-11-23
