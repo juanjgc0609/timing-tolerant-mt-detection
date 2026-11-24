@@ -5,6 +5,12 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-24
 
+- Formal proofs in Lean 4, third set (`formal/`, 81 results, standard axioms only): the Gaussian tail of Proposition
+  E.2. Laurent–Massart upper and lower tails for weighted chi-square sums (`LaurentMassart.lean`), rotation
+  invariance of i.i.d. `N(0,1)` and the spectral form of a quadratic form (`GaussianRotation.lean`), and the full
+  bound `P(RSS₁ − RSS₂ ≥ tr((P₂−P₁)C) + 2√(v⁺τ) + 2aτ + 2√(v⁻τ)) ≤ 2e^{−τ}` for noise `ε = L X`
+  (`gain_null_tail_rss`). Controls in `formal/TTMT/Controls3.lean`. Docstring of `score_sub_le_blocks` corrected
+  (general form, not AA.9.5(c)).
 - Formal proofs in Lean 4, second set (`formal/`, 40 results, standard axioms only, `formal/axioms_out.txt`):
   - AB.C.1, deterministic part, complete in Euclidean spaces: the reading is 1-Lipschitz from the white noise
     (`readingMap_lipschitz`, the bridge noted in the review of PR #77), the radial maps (identity, cap, logarithmic)

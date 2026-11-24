@@ -204,7 +204,8 @@ section Influence
 variable {κ : Type*} [Fintype κ] [DecidableEq κ]
   {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F] [CompleteSpace F]
 
-/-- **AA.9.5(c), contamination.** If `v` and `v'` differ only in the blocks of `D`, then
+/-- **Several blocks (general form behind AA.9.2 and AA.9.5(c)).** If `v` and `v'` differ
+only in the blocks of `D`, then
 `|σ(v) − σ(v')| ≤ √(∑_{k∈D} (r‖v_k‖ + r‖v'_k‖)²)`. -/
 theorem score_sub_le_blocks {r : ℝ → ℝ} (hr : GoodRadius r) (Q : F →L[ℝ] R κ)
     (hQ : ∀ y, ‖Q y‖ ≤ ‖y‖) (v v' : R κ) (D : Finset κ) (hD : ∀ k ∉ D, v k = v' k) :

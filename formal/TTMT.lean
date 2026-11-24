@@ -7,3 +7,8 @@ import TTMT.CappedScore
 import TTMT.Superposition
 import TTMT.Controls
 import TTMT.Controls2
+import TTMT.LogBounds
+import TTMT.LaurentMassart
+import TTMT.M6NullTail
+import TTMT.GaussianRotation
+import TTMT.Controls3
