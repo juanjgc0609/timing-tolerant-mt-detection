@@ -1,6 +1,6 @@
 # Statistical analysis plan, phase 6 (and the phase-4 gate)
 
-Version 0.2, 14 November 2026 (v0.1, 23 October 2026, statistical design thread; v0.2 drops the e-value guarantee of 7.6 after G-M5c). Draft: it becomes binding for a test when the text is copied
+Version 0.3, 21 November 2026 (v0.1, 23 October 2026, statistical design thread; v0.2, 14 November 2026, drops the e-value guarantee of 7.6 after G-M5c; v0.3 changes are listed in Section 11, with the owner's approval of items 2, 4 and 6). Draft: it becomes binding for a test when the text is copied
 into that test's registration and anchored (ADR-0004). It applies the single beat rule of ADR-0008 to the two
 confirmatory tests of phase 6 (registrations R2 and R3, drafts in `preregistration/drafts/`) and to the phase-4 gate
 G4. Code: `src/ttmt/stats.py` (every decision rule) and `experiments/exploratory/P6-SAP/sample_size.py` (sample size).
@@ -26,6 +26,14 @@ one-sided 0.025. Secondary Holm family at 0.025 after H1 and H2: superiority in 
 non-inferiority in C by 0.03; the same rule at 10 and 100 false detections per hour; the same rule at the deployable
 threshold (Section 7.6). Descriptive: every cell, the epicentre-only rule, duplicates, origin and location errors,
 per-sequence estimates.
+
+Ambition and sufficiency (ADR-0013, PR #72) [v0.3]. The two levels of ADR-0013 (ambition +0.05, sufficient more
+than +0.02 over the best tuned comparator) describe the point estimate of the H1 difference with its interval; they
+are not tests. The confirmatory claim is H1 (superiority, difference > 0, one-sided 0.025). "Sufficient" or "ambition
+met" is never written as confirmed unless H1 is rejected; the report gives the zone of the point estimate next to the
+H1 result. A +0.02 effect is not detectable at any feasible size: by scaling item 4 of the reference output by
+(0.05 / 0.02)², about 6 200 targets in T, that is about 37 000 to 440 000 catalogued events at the prevalences of
+Section 9 (an approximation, not a solved design).
 
 Estimand: the difference in recall, model minus comparator, over the targets of the regime, weighted to the real
 prevalence of its cells (ADR-0008 item 4), at the operating point where each method has at most 30 false detections
@@ -69,7 +77,7 @@ sensitivity analysis it is neutral when it matches, by LOC+T, an event of an ind
 by none of the compared methods (named in the registration). A catalogue produced by template matching is never used
 to score template matching.
 
-3.5 **Spent data (CR-23).** A ledger (`data/cards/USE_LEDGER.md`, to be created by the data thread) counts the
+3.5 **Spent data (CR-23).** A ledger (`docs/DATA_USE_LEDGER.md` [v0.3]) counts the
 configurations evaluated on each segment. A gate is evaluated only on a segment with no earlier configuration count;
 the Ridgecrest development hour is spent (about 20 configurations, E53), so G-M5b and G4 use fresh segments.
 
@@ -101,6 +109,9 @@ detections over the evaluated record (`operating_point`); tied scores enter toge
 7.2 **Paired block sums.** Blocks: in R3 and G4 one injected network realisation (one noise block of one network with
 one station subset); in R2 consecutive time blocks of 1 hour, or of T/30 when a sequence holds fewer than 30 hours,
 within each sequence. d_j and n_j as in ADR-0008 item 5 (`block_sums` with the prevalence weights).
+Serial dependence in R2 [v0.3]: the lag-1 autocorrelation of d_j over consecutive blocks of each sequence is reported.
+If it exceeds 0.2 (pooled over sequences), the primary analysis uses blocks of 2 hours (or 2T/30), fixed by this rule
+before any result is read; the 1-hour analysis is then reported as a sensitivity analysis.
 
 7.3 **Test.** Block sign-flip p-value, exact when at most 16 blocks are non-zero, otherwise 100,000 random sign
 vectors from seed 20261023 (`signflip_pvalue`); the clustered McNemar z of Durkalski et al. is reported next to it.
@@ -125,7 +136,9 @@ interval; indicative with fewer than 30 blocks or an atom above 5 % at a bound. 
 7.6 **False-alarm budget check.** At the deployable threshold (fixed on development), the realised rate of each method
 passes when the quasi-Poisson score test rejects "rate at least 1.2 x budget" at one-sided 0.025 (`budget_check`;
 the Wald bound under-covers for overdispersed counts, measured in `tests/test_stats.py`). The deployable secondary
-hypothesis is claimed only for a method that passes. The check is stratified (CR-01): blocks without catalogued
+hypothesis is claimed only for a method that passes. [v0.3] The registration states the hours of evaluated record;
+with fewer than 37 hours (the length that gives the check power 0.80 at overdispersion 5, `sample_size_out.txt`
+item 5) the deployable hypothesis is not tested in that registration. The check is stratified (CR-01): blocks without catalogued
 events within 15 km and 4 s before the window, and windows with a parent event (M >= 2 within 3 to 15 km and 1 to
 4 s), reported separately; for the model's detection statistic S_mix, R3 also reports the rate of S_mix >= log(1/p)
 on hypotheses placed at 3 to 15 km and 1 to 4 s from injected events as a measured false-detection rate. No
@@ -149,7 +162,15 @@ blocks run and its achieved power, as underpowered.
 
 With `sample_size.py solve`, using the recall, method correlation rho and intra-block correlation icc estimated on
 development hits (`sample_size.py estimate`), the targets per block and the share of targets in T of the reserved
-catalogue. Planning effects: +0.05 in T for R3 and G4, +0.10 for R2; true difference 0 in C. Reference numbers are in
+catalogue. Planning effects: +0.05 in T for R3 and G4, +0.10 for R2; true difference 0 in C.
+Feasibility [v0.3]: +0.05 in T needs about 1 000 targets in T at power 0.80 (item 4 of the reference output: 992 at
+rho 0.7, icc 0.1, f 0.3). With the close-pair prevalence measured on a development catalogue (CR-04, 1.42-1.67 %, a
+strong lower bound because of catalogue dead time; 16.8 % under the Poisson reference) that is between about 6 000 and
+70 000 catalogued events, before the truth-precision and station rules of 3.3-3.4 remove more. So +0.05 in T is
+planned for R3 (and the simulated gate G4), not R2; R2 plans +0.10 and, by Section 8, does not test T if its eligible targets give power below 0.50.
+The comparator recall assumed here (0.40) is above the measured one (0.215-0.233 in T with station terms, tune
+partition); `sample_size.py solve` is re-run with the recall, rho and icc estimated after pilot P1, before any
+registration is anchored (rule 30). Reference numbers are in
 `experiments/exploratory/P6-SAP/sample_size_out.txt`; the registration quotes the run made with its own parameters.
 
 ## 10. Deviations, anchoring and verification
@@ -159,3 +180,16 @@ amendments and freeze are anchored by tag, Release and OpenTimestamps, and R2 an
 author holds the OSF account and submits. Verification is a reimplementation by a separate AI session, so described
 (CR-19), plus a number re-derived by a person: for R2, the hit or miss of ten discordant targets chosen by the seed
 of ADR-0004 item 4.
+
+## 11. Changes from v0.2 (21 November 2026)
+
+| # | Section | Change | Kind | Owner's approval (rule 14) |
+|:--|:--|:--|:--|:--|
+| 1 | 9 | Feasibility paragraph: +0.05 in T planned for R3 only; R2 plans +0.10; recall assumption to be re-estimated after P1 | states what the numbers already imply; no threshold changes | not needed (wording); owner informed |
+| 2 | 2 | ADR-0013 levels are descriptive zones of the point estimate, not tests; "sufficient" never claimed as confirmed without H1 | interpretation of a decision already approved (ADR-0013) | **approved** by the owner, 21 Nov 2026 01:51 UTC ("Apruebo los tres") |
+| 3 | 9 | Re-run of the sample size with measured recall after P1 | already required by rule 30 | not needed |
+| 4 | 7.2 | R2 serial-dependence rule: lag-1 autocorrelation of d_j > 0.2 -> 2-hour blocks primary | new analysis rule, fixed before any R2 data | **approved** by the owner, 21 Nov 2026 01:51 UTC ("Apruebo los tres") |
+| 5 | 3.5 | Ledger path `docs/DATA_USE_LEDGER.md` | cohesion | not needed |
+| 6 | 7.6 | Deployable hypothesis not tested with fewer than 37 hours of record | new condition, fixed before any R2 data | **approved** by the owner, 21 Nov 2026 01:51 UTC ("Apruebo los tres") |
+
+Items 2, 4 and 6 were approved together on the owner's decision card. No data of R2 or R3 has been read; every change is made before any result it could depend on.

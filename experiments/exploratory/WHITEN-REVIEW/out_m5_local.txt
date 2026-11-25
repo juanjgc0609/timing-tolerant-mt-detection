@@ -1,0 +1,6 @@
+seed 20261126; i.i.d. Student t (4 dof), equal scale; 640 samples x 3 components per station; 2000 windows
+ns 4: max/min per-station level, median 1.085, q95 1.160, max 1.277
+ns 6: max/min per-station level, median 1.106, q95 1.179, max 1.292
+ns 8: max/min per-station level, median 1.120, q95 1.196, max 1.329
+reading fixed in the card: median <= 1.10 -> inert (real noise in FE-FIX: 5.7-7.6)
+descriptive: noise-free f in the unweighted basis at those levels (N8, 500 draws): median 0.9992, min 0.9950

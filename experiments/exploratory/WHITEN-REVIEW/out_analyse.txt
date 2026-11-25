@@ -1,0 +1,30 @@
+check 1: REG and NOCAP against the frozen C18b
+   N4 REG: AUC 0.4262 frozen 0.4262, null 222/222 same
+   N4 NOCAP: AUC 0.7396 frozen 0.7396, null 222/222 same
+   N6 REG: AUC 0.4330 frozen 0.4330, null 222/222 same
+   N6 NOCAP: AUC 0.7221 frozen 0.7221, null 222/222 same
+   N8 REG: AUC 0.4938 frozen 0.4938, null 222/222 same
+   N8 NOCAP: AUC 0.7069 frozen 0.7069, null 222/222 same
+   U8 REG: AUC 0.3944 frozen 0.3944, null 222/222 same
+   U8 NOCAP: AUC 0.6869 frozen 0.6869, null 222/222 same
+check 1 PASS
+N4: station_scale max/min 4.48
+N6: station_scale max/min 4.48
+N8: station_scale max/min 4.48
+U8: station_scale max/min 8.81
+
+NOCAP-W - NOCAP
+   N4: AUC 0.740 -> 0.753 (+0.013); above q99 0.125 -> 0.125; median s_true/q90 1.016 -> 0.835
+   N6: AUC 0.722 -> 0.736 (+0.014); above q99 0.062 -> 0.062; median s_true/q90 1.332 -> 1.462
+   N8: AUC 0.707 -> 0.720 (+0.013); above q99 0.125 -> 0.125; median s_true/q90 1.099 -> 1.271
+   U8: AUC 0.687 -> 0.693 (+0.006); above q99 0.062 -> 0.125; median s_true/q90 0.943 -> 0.925
+   per subnet 95 %: N4 [-0.001, +0.028], N6 [+0.000, +0.031], N8 [-0.009, +0.041], U8 [-0.013, +0.022]
+   pooled mean +0.011, 95 % [+0.001, +0.025] (n events 16, null windows 222, 10000 resamples, seed 20261126) -> defect does not explain the failure
+
+REG-W - REG
+   N4: AUC 0.426 -> 0.478 (+0.052); above q99 0.000 -> 0.000; median s_true/q90 0.668 -> 0.671
+   N6: AUC 0.433 -> 0.534 (+0.101); above q99 0.062 -> 0.000; median s_true/q90 0.638 -> 0.741
+   N8: AUC 0.494 -> 0.595 (+0.102); above q99 0.000 -> 0.000; median s_true/q90 0.632 -> 0.795
+   U8: AUC 0.394 -> 0.457 (+0.062); above q99 0.062 -> 0.000; median s_true/q90 0.622 -> 0.627
+   per subnet 95 %: N4 [+0.002, +0.099], N6 [+0.022, +0.188], N8 [+0.015, +0.194], U8 [-0.013, +0.142]
+   pooled mean +0.079, 95 % [+0.027, +0.136] (n events 16, null windows 222, 10000 resamples, seed 20261126) -> defect explains part of the failure

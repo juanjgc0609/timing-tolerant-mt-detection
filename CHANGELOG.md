@@ -11,6 +11,14 @@ Dated record of changes to the project's process, code and documents. Results ar
   was already withdrawn (E50). M5-ACAP (G-M5a), the M5 product e-value and M2-GP stand. N-2 and the S_avg step of M5
   are not audited yet: N-2 lacks its known-truth control (laptop), and the S_avg excess on fake noise does not
   reproduce outside the `run_c.py` pipeline. Re-runs are proposed in order.
+- Formal proofs in Lean 4, second set (`formal/`, 40 results, standard axioms only, `formal/axioms_out.txt`):
+  - AB.C.1, deterministic part, complete in Euclidean spaces: the reading is 1-Lipschitz from the white noise
+    (`readingMap_lipschitz`, the bridge noted in the review of PR #77), the radial maps (identity, cap, logarithmic)
+    are 1-Lipschitz, and `F = max_s ‖Q† φ(A_s z)‖` is 1-Lipschitz.
+  - Lemma AA.9.1 from orthonormal-or-zero columns; AA.9.2 (influence), AA.9.3 (saturation bound) and AA.9.5(c)
+    (contamination, `2c√m`).
+  - AB.A.2 margin zero; E.2 mean `E[gain] = tr((P₂−P₁)Cᵀ)` and `tr(C P) = λ_r dim P`.
+  - Controls in `formal/TTMT/Controls2.lean`; AB.A.9 positive control now computed directly.
 - Formal proofs in Lean 4 (`formal/`, Lean and Mathlib v4.35.0) of the deterministic cores of four results, with no
   `sorry` and only the standard axioms (`formal/axioms_out.txt`): Proposition AB.A.9 (zero cross product of P
   amplitudes), Proposition E.2 of the M6 test at fixed times (the null gain is the noise form `εᵀ(P₂−P₁)ε` and does not
@@ -30,6 +38,12 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-21
 
+- SAP v0.3 (`docs/protocol/PHASE6_SAP.md`, Section 11 lists every change): ADR-0013 levels are descriptive zones of
+  the point estimate, not tests; +0.05 in T planned for R3 only (about 1 000 targets in T, between about 6 000 and
+  70 000 catalogued events); R2 serial-dependence rule (lag-1 autocorrelation > 0.2 -> 2-hour blocks); deployable
+  hypothesis not tested with fewer than 37 hours; ledger path. Items 2, 4 and 6 approved by the owner on 21 November
+  2026, 01:51 UTC ("Apruebo los tres"). Conformance checklist items 25-27 added. No R2 or R3 data read.
+- WHITEN-REVIEW: owner's decision recorded, M5 `--local` not re-run.
 - Appendix AB, revision of 21 November (no proof of the first version changes):
   - Conjecture AB.A.8 refuted numerically and replaced by numerical result AB.A.8 (smallest Fisher eigenvalue of a
     co-located pair of order dtau^4 and dtau^6; information on dtau of order dtau^2 and dtau^4).
@@ -50,6 +64,31 @@ Dated record of changes to the project's process, code and documents. Results ar
   - D.4': all 8 stations are beyond the SV critical angle.
   - D.6: the test window is chosen blind to content too, and a scan needs a multiplicity correction. Masking must drop
     whole windows; the segment-zeroing masks of N1-STACK and FE-FIX make the p-value liberal.
+
+## 2026-11-20
+
+- WHITEN-REVIEW (`experiments/exploratory/WHITEN-REVIEW`, card declared before running, commit 1c9f0ef): code audit
+  of every result the whitening mismatch of PR #68 could touch. Affected: R0, R1, C18 b-j, G-M5b Ridgecrest. Not
+  affected: C18a and G-M1a (per-station readings, no subspace), the M6 simulations (equal noise sd), Task 2M.
+  M5 `--local`: median per-station level ratio on i.i.d. noise 1.085 / 1.106 / 1.120 for 4 / 6 / 8 stations; the
+  M5 networks have at least 8 stations, so by the rule written before running (> 1.10) it is affected and listed for a
+  re-run. Post hoc: f loss < 0.005; the owner decides whether to re-run. C18b re-run on the Ridgecrest calibration segment with Q from diag(1/scale) G (data fetched from GitHub at
+  the data card's commit, checksums match): frozen REG and NOCAP reproduced exactly; for the uncapped score
+  (primary) the defect does not explain the failure (AUC +0.011 [+0.001, +0.025]); for the registered capped score
+  it explains part of it (+0.079 [+0.027, +0.136], from below chance to about chance); after the fix neither score
+  separates real events. Thesis draft note updated; the "[whitening review]" markers stay.
+- M6-SPURIOUS (calendar M-2, card and amendment 1 declared before reading): cause of the ~5 % positive spurious pair
+  gains of M6-CAL. Positive scenes of 600: one source 28 mismatched / 0 exact; with neighbours 26 / 11 (McNemar p
+  8.3e-3). Reading of the rule: no clear cause; the tail is a declared limit of M6 in simulation. Descriptive: with
+  one source the tail is entirely pulse mismatch; with neighbours a part remains with exact pulses.
+- `docs/GLOSSARY.md` (rule 27): one definition per term; three SNR meanings in use named apart (SNR_blk, SNR_net,
+  SNR_med); the two scoring modules (`ttmt.stats`, `ttmt.scoring`) described with an open item.
+- `docs/DATA_USE_LEDGER.md` (rule 28, calendar T-4): every read of a held-out or evaluation set so far, and the
+  attempts per line of work as the cards state them.
+- ADR-0012 (owner's decision of 18 November, "Arreglar pesos y correr el piloto"): operator weighted like the data,
+  Q of diag(1/sd) G. `ttmt.radiation.node_operators(..., weights)`, `station_weights`; `ttmt.r1.Net(..., weighted_q)`
+  and `ttmt.r1 p1 --weighted-q`. Off by default: the registered R1 path is unchanged. Band unchanged. Tests in
+  `tests/test_adr0012.py`. Error E66.
 
 ## 2026-11-18
 

@@ -26,3 +26,6 @@ code/r1/pyocto_jma2001.model
 # cached PhaseNet probabilities of the v2 experiments (regenerable)
 experiments/exploratory/M1A-ONSET/q_cal.npz
 experiments/exploratory/M1A-ONSET/q_*.npz
+
+# run logs written on the device by long runs (rule 42: kept outside the checkout, never results)
+/logs/
