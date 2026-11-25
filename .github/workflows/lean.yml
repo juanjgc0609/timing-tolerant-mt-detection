@@ -1,0 +1,30 @@
+name: lean
+
+on:
+  push:
+    paths: ["formal/**", ".github/workflows/lean.yml"]
+  pull_request:
+    paths: ["formal/**", ".github/workflows/lean.yml"]
+
+jobs:
+  formal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the Lean proofs (Mathlib from its cache)
+        uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: formal
+      - name: No sorry, admit or new axiom in the proofs
+        run: |
+          ! grep -rnE "\bsorry\b|\badmit\b|^\s*axiom\b" formal/TTMT formal/TTMT.lean formal/AxiomCheck.lean
+      - name: Axioms used (each result must list exactly the three standard axioms)
+        working-directory: formal
+        shell: bash
+        run: |
+          set -o pipefail
+          lake env lean AxiomCheck.lean | tee axioms.txt
+          n=$(grep -c "depends on axioms" axioms.txt)
+          ok=$(grep -cx "'.*' depends on axioms: \[propext, Classical.choice, Quot.sound\]" axioms.txt)
+          echo "results: $n, standard axioms only: $ok"
+          test "$n" -gt 0 && test "$n" -eq "$(grep -c '^#print axioms' AxiomCheck.lean)" && test "$n" -eq "$ok"

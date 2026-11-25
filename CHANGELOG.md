@@ -3,6 +3,16 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-24
+
+- Formal proofs in Lean 4 (`formal/`, Lean and Mathlib v4.35.0) of the deterministic cores of four results, with no
+  `sorry` and only the standard axioms (`formal/axioms_out.txt`): Proposition AB.A.9 (zero cross product of P
+  amplitudes), Proposition E.2 of the M6 test at fixed times (the null gain is the noise form `εᵀ(P₂−P₁)ε` and does not
+  depend on the event), Proposition AB.C.1 (the reading is a contraction, so κ becomes 1; Lipschitz composition and
+  finite maximum) and Proposition AB.A.2 (superposition). Each theorem has a positive control, and negative controls show that the hypotheses named in
+  `formal/TTMT/Controls.lean` are needed (counterexample when one is dropped).
+  What each formal statement leaves out is listed in `formal/README.md`. New CI job `lean`.
+
 ## 2026-11-23
 
 - ATLAS-0 card: Hi-net amplitude factor of amendment 5, erratum 2, item (c): the Hi-net sets are velocity in nm/s
@@ -61,6 +71,11 @@ Dated record of changes to the project's process, code and documents. Results ar
   SNR_med); the two scoring modules (`ttmt.stats`, `ttmt.scoring`) described with an open item.
 - `docs/DATA_USE_LEDGER.md` (rule 28, calendar T-4): every read of a held-out or evaluation set so far, and the
   attempts per line of work as the cards state them.
+- ADR-0012 (owner's decision of 18 November, "Arreglar pesos y correr el piloto"): operator weighted like the data,
+  Q of diag(1/sd) G. `ttmt.radiation.node_operators(..., weights)`, `station_weights`; `ttmt.r1.Net(..., weighted_q)`
+  and `ttmt.r1 p1 --weighted-q`. Off by default: the registered R1 path is unchanged. Band unchanged. Tests in
+  `tests/test_adr0012.py`. Error E66.
+
 ## 2026-11-18
 
 - ATLAS-0 card: hash line of amendment 5, erratum 2 (PR #66 merged as 5880ff1), which also states that no EQNet2
