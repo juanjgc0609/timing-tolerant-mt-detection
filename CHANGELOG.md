@@ -5,6 +5,14 @@ Dated record of changes to the project's process, code and documents. Results ar
 
 ## 2026-11-24
 
+- Formal proofs in Lean 4, second set (`formal/`, 40 results, standard axioms only, `formal/axioms_out.txt`):
+  - AB.C.1, deterministic part, complete in Euclidean spaces: the reading is 1-Lipschitz from the white noise
+    (`readingMap_lipschitz`, the bridge noted in the review of PR #77), the radial maps (identity, cap, logarithmic)
+    are 1-Lipschitz, and `F = max_s ‖Q† φ(A_s z)‖` is 1-Lipschitz.
+  - Lemma AA.9.1 from orthonormal-or-zero columns; AA.9.2 (influence), AA.9.3 (saturation bound) and AA.9.5(c)
+    (contamination, `2c√m`).
+  - AB.A.2 margin zero; E.2 mean `E[gain] = tr((P₂−P₁)Cᵀ)` and `tr(C P) = λ_r dim P`.
+  - Controls in `formal/TTMT/Controls2.lean`; AB.A.9 positive control now computed directly.
 - Formal proofs in Lean 4 (`formal/`, Lean and Mathlib v4.35.0) of the deterministic cores of four results, with no
   `sorry` and only the standard axioms (`formal/axioms_out.txt`): Proposition AB.A.9 (zero cross product of P
   amplitudes), Proposition E.2 of the M6 test at fixed times (the null gain is the noise form `εᵀ(P₂−P₁)ε` and does not

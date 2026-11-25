@@ -1,7 +1,8 @@
 /-
 Controls for the formal results (rule 40). Each negative control drops ONE named
 hypothesis of a theorem and proves that the conclusion then fails on an explicit
-counterexample, so that hypothesis is needed. Each theorem also has a positive control:
+counterexample, so that hypothesis is needed. Each of the four results also has a positive
+control:
 a concrete case whose value is computed directly (by `norm_num`/`simp`, not through the
 theorem) and agrees with it.
 
@@ -27,9 +28,11 @@ theorem generic_cross_ne_zero : (![1, 0, 0] : Fin 3 → ℝ) ⨯₃ ![0, 1, 0] �
   have h2 := congrFun h 2
   simp [cross_apply] at h2
 
-/-- Positive control for AB.A.9 on a concrete case. -/
-example : pAmplitude ![0, 0, 1] ![1, 1, 0] 2 1 ⨯₃ pAmplitude ![0, 0, 1] ![1, 1, 0] 2 0 = 0 :=
-  pAmplitude_cross_eq_zero _ _ _ _ _
+/-- Positive control for AB.A.9 on a concrete case, computed directly (not through the
+theorem): `u = e₃`, `n_src = (1,1,0)`, `c = 2`, tensors `I` and `diag(1,−1,0)`. -/
+example : pAmplitude ![0, 0, 1] ![1, 1, 0] 2 1 ⨯₃
+    pAmplitude ![0, 0, 1] ![1, 1, 0] 2 (Matrix.diagonal ![1, -1, 0]) = 0 := by
+  ext i; fin_cases i <;> simp [pAmplitude, cross_apply, dotProduct, mulVec, Fin.sum_univ_three]
 
 /-- Negative control for E.2: if the signal is NOT in the pair class (`P₂ μ ≠ μ`), the gain
 depends on the signal. One dimension, `P₁ = I`, `P₂ = 0`, `μ = 1`, `ε = 0`:
