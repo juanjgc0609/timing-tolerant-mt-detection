@@ -45,6 +45,13 @@ Dated record of changes to the project's process, code and documents. Results ar
   - D.6: the test window is chosen blind to content too, and a scan needs a multiplicity correction. Masking must drop
     whole windows; the segment-zeroing masks of N1-STACK and FE-FIX make the p-value liberal.
 
+## 2026-11-20
+
+- ADR-0012 (owner's decision of 18 November, "Arreglar pesos y correr el piloto"): operator weighted like the data,
+  Q of diag(1/sd) G. `ttmt.radiation.node_operators(..., weights)`, `station_weights`; `ttmt.r1.Net(..., weighted_q)`
+  and `ttmt.r1 p1 --weighted-q`. Off by default: the registered R1 path is unchanged. Band unchanged. Tests in
+  `tests/test_adr0012.py`. Error E66.
+
 ## 2026-11-18
 
 - ATLAS-0 card: hash line of amendment 5, erratum 2 (PR #66 merged as 5880ff1), which also states that no EQNet2
