@@ -121,3 +121,13 @@ still leaves it without separating power after the fix.
 ## Owner's decision (21 November 2026, 01:36 UTC)
 M5 `--local` is not re-run. Owner's words: "Y no es necesario repetirlo, ya que recomiendas que no." It stays listed
 as affected (by the rule), with the post-hoc f loss < 0.005 as the reason it is not repeated.
+
+## Re-run with the ADR-0012 code (27 November 2026, cloud, after PR #73 merged)
+Item 3 of "What this changes". `run.py` now takes `WHITEN_Q=adr0012`, which builds the weighted basis with
+`ttmt.radiation.node_operators(net.G, net.STA, 1 / scale)` (the ADR-0012 code) instead of the 3-line `weighted_Q`.
+Same data (checksums as above), same seed. Result: on N8 the two bases are equal bit for bit; on all four subnets the
+`wr_*.json` files are byte-identical to `out/` and `out_analyse.txt` is identical, check 1 included. The numbers above
+stand, now produced by the merged code.
+
+    WHITEN_Q=adr0012 python run.py N4 OUT/wr_N4.json   (N6, N8, U8 alike)
+    python run.py analyse OUT                           (diff against out_analyse.txt: none)
