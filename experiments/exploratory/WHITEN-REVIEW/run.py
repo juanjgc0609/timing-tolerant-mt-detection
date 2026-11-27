@@ -15,7 +15,7 @@ import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
-for p in (os.path.join(ROOT, "code"), os.path.join(ROOT, "code", "r0"), os.path.join(ROOT, "code", "explore_contrib")):
+for p in (os.path.join(ROOT, "src"), os.path.join(ROOT, "code"), os.path.join(ROOT, "code", "r0"), os.path.join(ROOT, "code", "explore_contrib")):
     if p not in sys.path:
         sys.path.insert(0, p)
 
@@ -44,9 +44,16 @@ def weighted_Q(Gs, scale):
 
 
 def engines(net):
+    """REG/NOCAP engine and its weighted copy. With WHITEN_Q=adr0012 the weighted basis comes from the ADR-0012 code
+    (ttmt.radiation.node_operators with weights 1/scale) instead of the 3-line weighted_Q above; it must give the same
+    numbers (card, Results, item 3)."""
     E = net.eng["SC"][0]
     Ew = copy.copy(E)
-    Ew.Q = weighted_Q(net.Gs, net.scale)
+    if os.environ.get("WHITEN_Q") == "adr0012":
+        from ttmt.radiation import node_operators
+        _, Ew.Q = node_operators(net.G, net.STA, 1.0 / np.asarray(net.scale, float))
+    else:
+        Ew.Q = weighted_Q(net.Gs, net.scale)
     return E, Ew
 
 

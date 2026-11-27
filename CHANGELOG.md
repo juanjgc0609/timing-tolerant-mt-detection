@@ -3,6 +3,11 @@
 Dated record of changes to the project's process, code and documents. Results are recorded in the sealed log
 (`preregistration/`), errors in `docs/artifact_manifest_and_error_log.md`.
 
+## 2026-11-27
+
+- WHITEN-REVIEW re-run with the ADR-0012 code (`WHITEN_Q=adr0012`, `ttmt.radiation.node_operators` with weights
+  1 / scale): the four per-subnet outputs and `out_analyse.txt` are identical to the recorded ones; no number changes.
+
 ## 2026-11-24
 
 - Formal proofs in Lean 4, second set (`formal/`, 40 results, standard axioms only, `formal/axioms_out.txt`):
