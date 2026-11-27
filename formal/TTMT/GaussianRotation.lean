@@ -145,8 +145,8 @@ theorem gain_null_tail (X : ι → Ω → ℝ) (hmeas : ∀ i, Measurable (X i))
   simp only [Set.mem_ofPred_eq]
   rw [hT, hQ]
 
-/-- `Lᵀ A L` is symmetric whenever `A` is; this supplies the hypothesis `hB` above. -/
 omit [DecidableEq ι] in
+/-- `Lᵀ A L` is symmetric whenever `A` is; this supplies the hypothesis `hB` above. -/
 theorem sandwich_isHermitian (L A : Matrix ι ι ℝ) (hA : Aᵀ = A) : (Lᵀ * A * L).IsHermitian := by
   unfold Matrix.IsHermitian
   rw [conjTranspose_eq_transpose_of_trivial, transpose_mul, transpose_mul, transpose_transpose,
